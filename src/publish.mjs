@@ -7,6 +7,7 @@ import { inspectGezkArchive } from './toolchain.mjs';
 import { getJson, githubApi, githubHeaders, request } from './http.mjs';
 import { digest, exists, hashFile, inside, inventory, readJson, writeJson } from './files.mjs';
 import { sourceCommit } from './build.mjs';
+import { datasetLicense } from './dataset-license.mjs';
 
 export async function verifyRemote(url, sha256, size, headers = {}) {
   const response = await fetch(url, { headers, signal: AbortSignal.timeout(300000) });
@@ -39,6 +40,7 @@ export async function publishRelease(root, directory, { apply = false, services 
   if (!apply) return { ...plan, applied: false };
   if (!release.sourceCommit || release.sourceCommit !== io.commit(root)) throw new Error('Publish the checked-out commit used for the build');
   if (io.dirty(root)) throw new Error('Publishing requires a clean committed working tree');
+  const license = await datasetLicense(root);
   const { hf: hfToken, github: ghToken } = io.tokens();
   if (!hfToken || !ghToken) throw new Error('Publishing requires HF_TOKEN and GH_TOKEN (or GITHUB_TOKEN)');
   const hfRepo = { type: 'dataset', name: plan.huggingFace.repository };
@@ -61,7 +63,10 @@ export async function publishRelease(root, directory, { apply = false, services 
     let revision;
     if (!previous) {
       const files = (await inventory(directory)).filter((f) => f.path !== 'published.json');
-      const uploaded = await io.uploadFiles({ repo: hfRepo, accessToken: hfToken, parentCommit: metadata.sha, commitTitle: `${release.catalogId} ${release.version}`, files: files.map((f) => ({ path: `${prefix}/${f.path}`, content: pathToFileURL(inside(directory, f.path)) })) });
+      const uploaded = await io.uploadFiles({ repo: hfRepo, accessToken: hfToken, parentCommit: metadata.sha, commitTitle: `${release.catalogId} ${release.version}`, files: [
+        { path: 'LICENSE', content: new Blob([license], { type: 'text/plain;charset=utf-8' }) },
+        ...files.map((f) => ({ path: `${prefix}/${f.path}`, content: pathToFileURL(inside(directory, f.path)) })),
+      ] });
       revision = uploaded?.commit.oid;
     } else {
       // Recover the commit that introduced this version, even after unrelated

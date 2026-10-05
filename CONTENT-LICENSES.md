@@ -3,6 +3,15 @@
 The root MIT license covers this repository's pipeline code and original project
 documentation. It does not relicense third-party material.
 
+The root `LICENSE` is also the Hugging Face dataset's `LICENSE`: general MIT
+terms with their scope first, followed by a per-catalog license list generated
+from the manifests. Run `npm run licenses` after adding a catalog or changing
+its license metadata, then commit the updated file. `npm run check` detects
+stale entries. Each new catalog publication uploads the same file to the dataset
+root alongside the immutable release. Earlier release license records remain
+unchanged. Catalogs are listed even before their first compiled publication;
+Wikipedia's quarterly package IDs inherit their source catalog's licenses.
+
 Every enabled catalog must have an automatic or recorded license assessment, complete license
 texts, attribution, and rules assigning every content file to a license record.
 The catalog NOTICE must explain mixed licensing, including code samples embedded

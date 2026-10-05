@@ -1,3 +1,19 @@
+Bendyline Knowledge - repository and dataset licenses
+
+1. General license and scope
+============================
+
+The MIT License below applies to Bendyline's original pipeline code, original
+project documentation, and original dataset metadata, unless a more specific
+license is identified. Imported catalog content and adaptations of that content
+retain their applicable source licenses. The MIT grant does not replace them.
+
+The per-catalog list in section 2 identifies the applicable licenses and notices.
+It describes catalogs registered in the source repository; a listing does not
+mean that a compiled release has been published. For a particular release, use
+the license texts, attribution, source revisions, and notices shipped with that
+release. Later changes to this overview do not change earlier release licenses.
+
 MIT License
 
 Copyright (c) 2026 Bendyline
@@ -20,5 +36,56 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Imported catalog content is governed by its own license records. This license
-does not replace or supersede the licenses of third-party content.
+2. Per-catalog licenses
+======================
+
+License summaries are a guide to the full terms, not additional restrictions or
+substitute licenses. Retain the applicable license texts and notices when
+redistributing material. For CC BY content, retain attribution and identify
+modifications. For CC BY-SA content, also license shared adaptations under the
+applicable ShareAlike terms. Follow the full license for the material you reuse.
+Source-specific notices and separately identified third-party material remain
+subject to their own applicable terms. This file grants no trademark rights or
+endorsement by the original publishers.
+
+Each .gezk contains LICENSES/ with full license texts and catalog notices, plus
+source provenance where applicable. Hugging Face release directories also carry
+license sidecars. The source records linked below provide the current catalog
+definitions; the records bundled with an immutable release describe that release.
+
+<!-- BEGIN CATALOG LICENSES -->
+Knowledge catalog handbook (bendyline/knowledge-handbook)
+Catalog ID: bendyline-knowledge-handbook
+Source: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/knowledge-handbook/manifest.json
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/knowledge-handbook/manifest.json
+License: MIT License (MIT; record: mit)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/knowledge-handbook/LICENSES/MIT.txt
+Attribution: Copyright (c) 2026 Bendyline
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/knowledge-handbook/NOTICE.md
+
+Azure AI Search documentation (microsoftdocs/azure-ai-search-en)
+Catalog ID: microsoftdocs-azure-ai-search-en
+Source: https://github.com/MicrosoftDocs/azure-ai-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-search-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-search-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through include expansion, link rewriting, YAML-to-Markdown conversion, and image omission. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-search-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code samples remain under the MIT License.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-search-en/NOTICE.md
+
+Wikipedia: On this day — News (wikipedia/on-this-day-en)
+Catalog ID: wikipedia-on-this-day-en
+Source: https://en.wikipedia.org/
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/wikipedia/on-this-day-en/manifest.json
+Package coverage: wikipedia-on-this-day-en and wikipedia-on-this-day-en-YYYY-qN quarterly archives share these content licenses.
+License: Creative Commons Attribution-ShareAlike 4.0 (CC-BY-SA-4.0; record: wikipedia)
+Terms: https://creativecommons.org/licenses/by-sa/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/wikipedia/on-this-day-en/LICENSES/CC-BY-SA-4.0.txt
+Attribution: Wikipedia contributors; see each document's revision and history URL
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/wikipedia/on-this-day-en/NOTICE.md
+<!-- END CATALOG LICENSES -->

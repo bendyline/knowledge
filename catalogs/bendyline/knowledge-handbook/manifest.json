@@ -21,7 +21,7 @@
   "normalization": { "images": "omit" },
   "build": { "embeddingProfile": "bge-small-en-v1.5@1", "toc": { "format": "folders" } },
   "publish": {
-    "enabled": false,
+    "enabled": true,
     "huggingFace": "Bendyline/knowledge",
     "github": "bendyline/knowledge",
     "gilde": { "repository": "bendyline/gilde", "category": "manuals", "tags": ["knowledge", "catalogs", "gezk"] }

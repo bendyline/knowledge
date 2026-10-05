@@ -9,5 +9,6 @@ for (const [name, schema] of [['catalog', CatalogSchema], ['sources-lock', Sourc
   if (await readFile(`schemas/${name}.schema.json`, 'utf8') !== json(z.toJSONSchema(schema, { unrepresentable: 'any' }))) throw new Error('Generated schemas are stale; run npm run schema');
 }
 for (const file of await walk('.github/workflows')) parse(await readFile(`.github/workflows/${file}`, 'utf8'), { uniqueKeys: true });
+execFileSync(process.execPath, ['scripts/licenses.mjs', '--check'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['src/cli.mjs', 'validate'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['--test', '--test-concurrency=1'], { stdio: 'inherit' });

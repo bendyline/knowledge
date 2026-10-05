@@ -19,7 +19,8 @@
     "gilde": "node src/cli.mjs gilde",
     "test": "node --test --test-concurrency=1",
     "check": "node scripts/check.mjs",
-    "schema": "node scripts/schema.mjs"
+    "schema": "node scripts/schema.mjs",
+    "licenses": "node scripts/licenses.mjs"
   },
   "overrides": { "sharp": "0.35.5" },
   "dependencies": {

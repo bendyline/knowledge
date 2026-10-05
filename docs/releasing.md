@@ -27,6 +27,13 @@ from Git; publish compiled archives through release hosts instead.
    must explain that code is MIT but catalog content has individual licenses,
    including Wikipedia CC BY-SA 4.0 and the Azure documentation/code licenses.
    This is a dataset repository, not an npm package or Hugging Face model.
+   Use this repository's root `LICENSE` verbatim as the dataset `LICENSE`, with
+   card metadata `license: other` and `license_link: LICENSE`. It contains the
+   general MIT scope and each catalog's licenses, attribution, and notice links.
+   Run `npm run licenses` when catalog license metadata changes. New catalog
+   publications update the dataset's root license automatically. For an initial
+   license-only upload after `hf auth login`, use
+   `hf upload Bendyline/knowledge LICENSE LICENSE --type dataset`.
 5. In **Settings > Environments**, create `knowledge-publishing`, restrict it
    to `main`, and configure the desired reviewer protection. Add `HF_TOKEN` and
    `GILDE_PR_TOKEN` there using the scopes below. Put the optional sync token

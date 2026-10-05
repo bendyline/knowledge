@@ -1,4 +1,4 @@
 # Add the maintainers who own licensing and publication before enabling imports.
-# /catalogs/*/*/manifest.json @bendymike
-# /catalogs/*/*/LICENSES/ @bendymike
-# /.github/workflows/ @bendymike
+/catalogs/*/*/manifest.json @bendymike
+/catalogs/*/*/LICENSES/ @bendymike
+/.github/workflows/ @bendymike
