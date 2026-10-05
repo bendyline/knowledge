@@ -1,0 +1,6 @@
+[
+  { "query": "Vector Search Overview", "expectedDocumentIds": ["articles/search/vector-search-overview"] },
+  { "query": "Hybrid Search Overview", "expectedDocumentIds": ["articles/search/hybrid-search-overview"] },
+  { "query": "Semantic Ranking Overview", "expectedDocumentIds": ["articles/search/semantic-search-overview"] },
+  { "query": "Azure AI Search Frequently Asked Questions", "expectedDocumentIds": ["articles/search/search-faq-frequently-asked-questions"] }
+]

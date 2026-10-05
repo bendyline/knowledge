@@ -1,0 +1,587 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2
+    },
+    "enabled": {
+      "default": true,
+      "type": "boolean"
+    },
+    "publisher": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "url"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "manual"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "github"
+            },
+            "repository": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]+\\/[A-Za-z0-9_.-]+$"
+            },
+            "ref": {
+              "default": "main",
+              "type": "string",
+              "minLength": 1
+            },
+            "paths": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "."
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                ]
+              }
+            },
+            "include": {
+              "default": [
+                "**/*.md",
+                "**/*.yml",
+                "**/*.yaml"
+              ],
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "exclude": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "licenseFiles": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "license": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "license"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "noticeFiles": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "publishedBaseUrl": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": [
+            "type",
+            "repository",
+            "ref",
+            "paths",
+            "include",
+            "exclude",
+            "licenseFiles",
+            "noticeFiles"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "wikipedia"
+            },
+            "language": {
+              "type": "string",
+              "pattern": "^[a-z][a-z-]{0,11}$"
+            },
+            "seeds": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "depth": {
+              "default": 2,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "currentEvents": {
+              "type": "object",
+              "properties": {
+                "days": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 3660
+                },
+                "endDate": {
+                  "default": "today",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "today"
+                    },
+                    {
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "days",
+                "endDate"
+              ],
+              "additionalProperties": false
+            },
+            "maxPages": {
+              "default": 250,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50000
+            },
+            "userAgent": {
+              "type": "string",
+              "minLength": 20
+            }
+          },
+          "required": [
+            "type",
+            "language",
+            "seeds",
+            "depth",
+            "maxPages",
+            "userAgent"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "licensing": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "approved",
+            "automatic"
+          ]
+        },
+        "policy": {
+          "type": "string",
+          "const": "standard-open-v1"
+        },
+        "reviewedBy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1
+        },
+        "licenses": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "spdx": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "attribution": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "spdx",
+              "url",
+              "text",
+              "attribution"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rules": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "include": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "license": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+              }
+            },
+            "required": [
+              "include",
+              "license"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "status",
+        "notice",
+        "licenses",
+        "rules"
+      ],
+      "additionalProperties": false
+    },
+    "normalization": {
+      "default": {
+        "images": "omit",
+        "docfx": false
+      },
+      "type": "object",
+      "properties": {
+        "images": {
+          "default": "omit",
+          "type": "string",
+          "enum": [
+            "omit",
+            "preserve"
+          ]
+        },
+        "docfx": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "images",
+        "docfx"
+      ],
+      "additionalProperties": false
+    },
+    "sync": {
+      "default": {
+        "maxFileBytes": 20000000,
+        "maxTotalBytes": 200000000,
+        "maxDeleteFraction": 0.2
+      },
+      "type": "object",
+      "properties": {
+        "maxFileBytes": {
+          "default": 20000000,
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 100000000
+        },
+        "maxTotalBytes": {
+          "default": 200000000,
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxDeleteFraction": {
+          "default": 0.2,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "maxFileBytes",
+        "maxTotalBytes",
+        "maxDeleteFraction"
+      ],
+      "additionalProperties": false
+    },
+    "build": {
+      "type": "object",
+      "properties": {
+        "embeddingProfile": {
+          "default": "multilingual-e5-small@2",
+          "type": "string",
+          "enum": [
+            "multilingual-e5-small@2",
+            "bge-small-en-v1.5@1"
+          ]
+        },
+        "toc": {
+          "default": {
+            "format": "folders"
+          },
+          "type": "object",
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": [
+                "folders",
+                "docfx",
+                "gitbook",
+                "mkdocs",
+                "jupyter-book",
+                "hugo",
+                "wikipedia-days"
+              ]
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "format"
+          ],
+          "additionalProperties": false
+        },
+        "ignore": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "packaging": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "wikipedia-news"
+            },
+            "latestMonths": {
+              "type": "number",
+              "const": 3
+            },
+            "archiveQuarters": {
+              "default": 6,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          },
+          "required": [
+            "type",
+            "latestMonths",
+            "archiveQuarters"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "embeddingProfile",
+        "toc",
+        "ignore"
+      ],
+      "additionalProperties": false
+    },
+    "publish": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "huggingFace": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+\\/[A-Za-z0-9_.-]+$"
+        },
+        "github": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+\\/[A-Za-z0-9_.-]+$"
+        },
+        "gilde": {
+          "type": "object",
+          "properties": {
+            "repository": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]+\\/[A-Za-z0-9_.-]+$"
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "encyclopedia",
+                "reference",
+                "science",
+                "history",
+                "technology",
+                "culture",
+                "manuals",
+                "other"
+              ]
+            },
+            "tags": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "minGezelVersion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "category",
+            "tags"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "enabled",
+        "huggingFace",
+        "github",
+        "gilde"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "description",
+    "language",
+    "enabled",
+    "publisher",
+    "source",
+    "licensing",
+    "normalization",
+    "sync",
+    "build",
+    "publish"
+  ],
+  "additionalProperties": false
+}

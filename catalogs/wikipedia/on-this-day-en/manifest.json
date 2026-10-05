@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "wikipedia-on-this-day-en",
+  "name": "Wikipedia: On this day — News",
+  "description": "The last 365 daily Wikipedia current-events pages and their directly linked articles, with one shared copy of each canonical article.",
+  "language": "en",
+  "enabled": true,
+  "publisher": { "id": "bendyline", "name": "Bendyline", "url": "https://github.com/bendyline/knowledge" },
+  "source": { "type": "wikipedia", "language": "en", "currentEvents": { "days": 365, "endDate": "today" }, "depth": 1, "maxPages": 25000, "userAgent": "BendylineKnowledge/0.1 (https://github.com/bendyline/knowledge)" },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [{ "id": "wikipedia", "name": "Creative Commons Attribution-ShareAlike 4.0", "spdx": "CC-BY-SA-4.0", "url": "https://creativecommons.org/licenses/by-sa/4.0/", "text": "LICENSES/CC-BY-SA-4.0.txt", "attribution": "Wikipedia contributors; see each document's revision and history URL" }],
+    "rules": [{ "include": ["**/*.md"], "license": "wikipedia" }]
+  },
+  "normalization": { "images": "omit" },
+  "sync": { "maxFileBytes": 20000000, "maxTotalBytes": 10000000000, "maxDeleteFraction": 0.2 },
+  "build": { "embeddingProfile": "bge-small-en-v1.5@1", "toc": { "format": "wikipedia-days" }, "packaging": { "type": "wikipedia-news", "latestMonths": 3, "archiveQuarters": 6 } },
+  "publish": { "enabled": false, "huggingFace": "Bendyline/knowledge", "github": "bendyline/knowledge", "gilde": { "repository": "bendyline/gilde", "category": "reference", "tags": ["wikipedia", "news", "current-events"] } }
+}

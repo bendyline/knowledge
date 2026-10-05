@@ -1,0 +1,36 @@
+{
+  "name": "@bendyline/knowledge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Public knowledge catalogs, source synchronization, and Gezk publishing.",
+  "license": "MIT",
+  "engines": { "node": ">=24.15.0" },
+  "scripts": {
+    "knowledge": "node src/cli.mjs",
+    "catalogs": "node src/cli.mjs list",
+    "packages": "node src/cli.mjs packages",
+    "validate": "node src/cli.mjs validate",
+    "sync": "node src/cli.mjs sync",
+    "import": "node src/cli.mjs import",
+    "build": "node src/cli.mjs build",
+    "verify": "node src/cli.mjs verify",
+    "publish": "node src/cli.mjs publish",
+    "gilde": "node src/cli.mjs gilde",
+    "test": "node --test --test-concurrency=1",
+    "check": "node scripts/check.mjs",
+    "schema": "node scripts/schema.mjs"
+  },
+  "overrides": { "sharp": "0.35.5" },
+  "dependencies": {
+    "@bendyline/gezel": "1.2.2",
+    "@bendyline/gezel-knowledge": "1.2.2",
+    "@bendyline/gezk": "1.0.2",
+    "@bendyline/squisq": "2.11.12",
+    "@bendyline/squisq-formats": "2.6.12",
+    "@huggingface/hub": "2.17.5",
+    "@huggingface/transformers": "3.8.1",
+    "yaml": "2.9.1",
+    "zod": "4.4.3"
+  }
+}

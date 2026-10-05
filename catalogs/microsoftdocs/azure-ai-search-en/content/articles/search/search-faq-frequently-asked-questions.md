@@ -1,0 +1,189 @@
+---
+title: "Azure AI Search Frequently Asked Questions"
+---
+
+
+# Azure AI Search Frequently Asked Questions
+
+Find answers to commonly asked questions about Azure AI Search.
+
+## General
+
+### What is Azure AI Search?
+
+Azure AI Search provides a dedicated search engine and persistent storage of your searchable content for agentic, full-text, and vector search scenarios. It also includes optional integrated AI to extract text and structure from raw content and to chunk and vectorize content for vector search.
+
+### How do I work with Azure AI Search?
+
+The primary workflow is create, load, and query an index. Although you can use the Azure portal for most tasks, Azure AI Search is intended to be used programmatically, handling requests from client code. Programmatic support is provided through REST APIs and client libraries in .NET, Python, Java, and JavaScript SDKs for Azure.
+
+### Are "Azure Search," "Azure Cognitive Search," and "Azure AI Search" the same product?
+
+Yes. They're all the same product, with rebranding occurring in October 2019 and again in October 2023. You might occasionally see evidence of the former names at the programmatic level.
+
+### What languages are supported?
+
+For vectors, the embedding models you use determines the linguistic experience. 
+
+For nonvector strings and numbers, the default analyzer used for tokenization is standard Lucene, which is language agnostic. Otherwise, language support is expressed through [language analyzers](index-add-language-analyzers.md#supported-language-analyzers) that apply linguistic rules to inbound (indexing) and outbound (queries) content. Some features, such as [speller](speller-how-to-add.md#supported-languages) and [query rewrite](semantic-how-to-query-rewrite.md), are limited to a subset of languages.
+
+### How do I integrate search into my solution?
+
+Client code should call the Azure SDK client libraries or REST APIs to connect to a search index, formulate queries, and handle responses. You can also write code that builds and refreshes an index, or that runs indexers programmatically or via script.
+
+### Can I pause the service and stop billing?
+
+You can't pause a search service. In Azure AI Search, computing resources are allocated when the service is created. It's not possible to release and reclaim those resources on demand.
+
+### Can I upgrade or downgrade the service?
+
+Services created before April 2024 in select regions can be [upgraded to higher-capacity clusters](search-how-to-upgrade.md). Downgrading your service isn't supported.
+
+To get more or less capacity, you can also [switch to a different pricing tier](search-capacity-planning.md). Scaling is blocked if your current service configuration exceeds the [limits of the target tier](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity) or if your region has [capacity constraints on the target tier](search-region-support.md). Currently, you can only switch between Basic and Standard (S1, S2, and S3) tiers.
+
+### Can I rename or move the service?
+
+Service name and region are fixed for the lifetime of the service.
+
+### If I migrate my search service to another subscription or resource group, should I expect any downtime?
+
+As long as you follow the [checklist before moving resources](https://learn.microsoft.com/azure/azure-resource-manager/management/move-resource-group-and-subscription) and make sure each step is completed, there shouldn't be any downtime.
+
+### Why do I see different storage limits for same-tier search services?
+
+Storage limits can vary by service creation date. In most supported regions, [newer services have higher storage limits than older services](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#partition-storage-gb), even if they're on the same tier. However, you might be able to [upgrade your old service](search-how-to-upgrade.md) to access the new limits.
+
+## Indexing
+
+### What does "indexing" mean in Azure AI Search?
+
+It refers to the ingestion, parsing, and storing of textual content and tokens that populate a search index. Indexing creates inverted indexes and other physical data structures that support information retrieval. 
+
+It creates vector indexes if the schema includes vector fields.
+
+### Can I move, backup, and restore indexes?
+
+There's no native support for porting indexes. Search indexes are considered downstream data structures, accepting content from other data sources that collect operational data. Therefore, there's no built-in support for backing up and restoring indexes. The expectation is that you would rebuild an index from source data if it was deleted or needed to be moved.
+
+However, if you want to move an index between search services, you can try the backup and restore code sample for [.NET](https://github.com/Azure-Samples/azure-search-dotnet-utilities/tree/main/index-backup-restore) or [Python](https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/utilities/index-backup-restore/azure-search-backup-and-restore.ipynb).
+
+### Can I restore my index or service after it's deleted?
+
+No. If you delete an Azure AI Search index or service, it can't be recovered. When you delete a search service, all indexes in the service are permanently deleted.
+
+### Can I index from SQL Database replicas?
+
+If you're using the search indexer for Azure SQL Database, there are no restrictions on the use of primary or secondary replicas as a data source when building an index from scratch. However, refreshing an index with incremental updates (based on changed records) requires the primary replica. This requirement comes from SQL Database, which guarantees change tracking on primary replicas only. If you try using secondary replicas for an index refresh workload, there's no guarantee you get all of the data.
+
+## Vectors
+
+### What is vector search?
+
+Vector search is a technique that finds the most similar documents by comparing their vector representations. Because the goal of a vector representation is to capture the essential characteristics of an item in a numerical format, vector queries can identify similar content, even if there are no explicit matches based on keywords or tags.
+
+When a user performs a search, the query is summarized into a vector representation, and the vector search engine identifies the most similar documents. To improve efficiency on large databases, vector search often provides the Approximate Nearest Neighbors (ANN) for a query vector. For more information, see [Vector search in Azure AI Search](vector-search-overview.md).
+
+### Does Azure AI Search support vector search?
+
+Azure AI Search supports vector indexing and retrieval. It can chunk and vectorize query strings and content if you use [integrated vectorization](vector-search-integrated-vectorization.md), which takes a dependency on indexers and skillsets.
+
+### How does vector search work in Azure AI Search?
+
+With standalone vector search, you first use an embedding model to transform content into a vector representation within an embedding space. You can then provide these vectors in a document payload to the search index for indexing. To serve search requests, you use the same embedding model to transform the search query into a vector representation, and vector search finds the most similar vectors and return the corresponding documents.
+
+In Azure AI Search, you can index vector data as fields in documents alongside textual and other types of content. There are [multiple data types](https://learn.microsoft.com/rest/api/searchservice/supported-data-types#edm-data-types-for-vector-fields) for vector fields. 
+
+Vector queries can be issued standalone or in combination with other query types, including term queries and filters in the same search request.
+
+### Can Azure AI Search vectorize my content or queries?
+
+[Built-in integrated vectorization](vector-search-integrated-vectorization.md) is now generally available.
+
+### Does my search service support vector search?
+
+Most existing services support vector search. If you're using a package or API that supports vector search and index creation fails, the underlying search service doesn't support vector search, and a new service must be created. This can occur for a small subset of services created prior to January 1, 2019.
+
+### Can I add vector search to an existing index?
+
+If your search service supports vector search, both existing and new indexes can accommodate vector fields.
+
+### Why do I see different vector index size limits between my new search services and existing search services?
+
+Azure AI Search rolled out improved vector index size limits worldwide for new search services, but [some regions experience capacity constraints](search-region-support.md), and some regions don't have the required infrastructure. New search services created after May 2024 in supported regions should see increased vector index size limits. Alternatively, if you have an existing service in a supported region, you might be able to [upgrade your service](search-how-to-upgrade.md) to access the new limits.
+
+### Why does my vector index show zero storage?
+
+Only vector indexes that use the Hierarchical Navigable Small World (HNSW) algorithm report on vector index size in the Azure portal. If your index uses exhaustive KNN, vector index size is reported as zero, even though the index contains vectors.
+
+### How do I enable vector search on a search index?
+
+To enable vector search in an index:
+
+* Add one or more vector fields to a field collection.
+
+* Add a "vectorSearch" section to the index schema specifying the configuration used by vector search fields, including the parameters of the ANN algorithm used, like HNSW.
+
+* Use the latest stable REST API version or an Azure SDK to create or update the index, load documents, and issue queries. For more information, see [Create a vector index](vector-search-how-to-create-index.md).
+
+## Queries
+
+### Where does query execution occur?
+
+Queries execute over a single search index that's hosted on your search service. You can't join multiple indexes to search content in two or more indexes, but you can [query same-name indexes in multiple search services](https://github.com/Azure-Samples/azure-search-dotnet-scale/tree/main/multiple-search-services).
+
+### Why are there zero matches on terms I know to be valid?
+
+The most common case isn't knowing that each query type supports different search behaviors and levels of linguistic analyses. Full-text search, which is the predominant workload, includes a language analysis phase that breaks down terms to root forms. This aspect of query parsing casts a broader net over possible matches, because the tokenized term matches a greater number of variants.
+
+However, wildcard, fuzzy, and regex queries aren't analyzed like regular term or phrase queries and can lead to poor recall if the query doesn't match the analyzed form of the word in the search index. For more information about query parsing and analysis, see [Full-text search in Azure AI Search](search-lucene-query-architecture.md).
+
+### Why are my wildcard searches slow?
+
+Most wildcard search queries, like prefix, fuzzy, and regex, are rewritten internally with matching terms in the search index. This extra processing adds to latency. Additionally, broad search queries like `a*` are likely to be rewritten with many terms, which can be slow. For performant wildcard searches, consider defining a [custom analyzer](https://learn.microsoft.com/rest/api/searchservice/custom-analyzers-in-azure-search).
+
+### Can I search across multiple indexes?
+
+No. A query is always scoped to a single index.
+
+### Why is the search score a constant 1.0 for every match?
+
+Search scores are generated for full-text search queries based on the [statistical properties of matching terms](search-lucene-query-architecture.md#stage-4-scoring) and are ordered from high to low in the result set. Query types that aren't full-text search (wildcard, prefix, regex) aren't ranked by a relevance score. A constant score allows matches found through query expansion to be included in the results without affecting the ranking.
+
+For example, suppose an input of "tour*" in a wildcard search produces matches on "tours", "tourettes", and "tourmaline". Given the nature of these results, there's no way to reasonably infer which terms are more valuable than others. For this reason, term frequencies are ignored when scoring results in queries of types wildcard, prefix, and regex. Search results based on a partial input are given a constant score to avoid bias towards potentially unexpected matches.
+
+## Security
+
+### Where does Azure AI Search store customer data?
+
+It stores your data in the [geography (Geo)](https://azure.microsoft.com/explore/global-infrastructure/geographies/#geographies) where your service is deployed. Microsoft might replicate your data within the same geo for high availability and durability. For more information, see [Data residency in Azure](https://azure.microsoft.com/explore/global-infrastructure/data-residency/#overview).
+
+### Does Azure AI Search send customer data to other services for processing?
+
+Yes. Skills and vectorizers make [outbound calls from Azure AI Search](https://learn.microsoft.com/azure/search/search-security-best-practices#configure-outbound-connections) to other Azure resources or external models that you specify for embedding or chat. Calls to those APIs typically contain raw content to be processed or queries that are vectorized by an embedding model. For Azure-to-Azure connections, the service sends requests over the internal network. If you add a custom skill or vectorizer, the indexer sends content to the URI provided in the custom skill over the public network unless you configure a [shared private link](search-indexer-howto-access-private.md).
+
+### Does Azure AI Search process customer data in other regions?
+
+Processing (vectorization or applied AI transformations) is performed in the Geo that hosts the Foundry Tools subservice used by skills, the Azure apps or functions hosting custom skills, or the Azure OpenAI or Microsoft Foundry region that hosts your deployed models. These resources are specified by you, so you can choose whether to deploy them in the same Geo as your search service or not.
+
+If you send data to external (non-Azure) models or services, the processing location is determined by the external service.
+
+### Can I control access to search results based on user identity?
+
+You can if you implement a solution that associates documents with a user identity. Typically, users who are authorized to run your application are also authorized to see all search results. Azure AI Search doesn't have built-in support for row-level or document-level permissions, but you can implement [security filters](search-security-trimming-for-azure-search.md) as a workaround. For steps and script, see [Get started: Chat using your own data (Python sample)](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-template).
+
+### Can I control access to operations based on user identity?
+
+Yes. You can use [role-based authorization](search-security-rbac.md) for data plane operations over content.
+
+### Can I use the Azure portal to view and manage search content if my search service is behind an IP firewall or private endpoint?
+
+You can use the Azure portal on a network-protected search service if you create a network exception that allows client and portal access. For more information, see [Connect through an IP firewall](service-configure-firewall.md#configure-network-access) or [Connect through a private endpoint](service-create-private-endpoint.md#portal-access-private-search-service).
+
+
+## Next steps
+
+If your question isn't answered here, you can refer to the following sources for more questions and answers.
+
+   [Stack Overflow: Azure AI Search](https://stackoverflow.com/questions/tagged/azure-search)   
+   [How full-text search works in Azure AI Search](search-lucene-query-architecture.md)  
+   [What is Azure AI Search?](search-what-is-azure-search.md)

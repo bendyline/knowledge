@@ -1,0 +1,112 @@
+import { readFile, readdir } from 'node:fs/promises';
+import { extname, matchesGlob, resolve } from 'node:path';
+import { parseDocument } from 'yaml';
+import { CatalogSchema, ProvenanceSchema, SourceLockSchema } from './schema.mjs';
+import { digest, exists, inside, inventory, readJson, sha256, walk } from './files.mjs';
+import { NORMALIZER_VERSION } from './normalize.mjs';
+import { parseMarkdown, walkMarkdownTree } from '@bendyline/squisq/markdown';
+import { automaticLicensing, validateAutomaticLicensing } from './licensing.mjs';
+import { validateWikipediaSelection } from './wikipedia-selection.mjs';
+import { toolchainIdentity } from './toolchain.mjs';
+
+export function hasUnresolvedDocfx(text) {
+  const directives = [...text.matchAll(/\[!INCLUDE\b|\[!code-|<xref:|:::\s*(?:image|zone|code|row|column)\b/gi)];
+  // Most catalogs have no DocFX syntax. Avoid parsing every large Wikipedia
+  // article merely to establish that there are no directives to inspect.
+  if (!directives.length) return false;
+  const spans = [];
+  for (const comment of text.matchAll(/<!--[\s\S]*?-->/g)) spans.push([comment.index, comment.index + comment[0].length]);
+  walkMarkdownTree(parseMarkdown(text), (node) => {
+    if (['code', 'inlineCode'].includes(node.type) && node.position) spans.push([node.position.start.offset, node.position.end.offset]);
+  });
+  return directives.some((m) => !spans.some(([start, end]) => m.index >= start && m.index < end));
+}
+
+export function parseYaml(text, label) {
+  if (Buffer.byteLength(text) > 1024 * 1024) throw new Error(`${label}: YAML exceeds 1 MiB`);
+  const doc = parseDocument(text, { schema: 'core', uniqueKeys: true });
+  if (doc.errors.length || doc.warnings.length) throw new Error(`${label}: ${[...doc.errors, ...doc.warnings][0].message}`);
+  return doc.toJS({ maxAliasCount: 0 });
+}
+export function licenseFor(manifest, path) {
+  const rules = manifest.licensing.rules.filter((r) => r.include.some((glob) => matchesGlob(path, glob)));
+  const ids = [...new Set(rules.map((r) => r.license))];
+  if (ids.length !== 1) throw new Error(`${path}: expected exactly one applicable license, found ${ids.length}`);
+  return manifest.licensing.licenses.find((l) => l.id === ids[0]);
+}
+export async function catalogs(root, selector, { disabled = false } = {}) {
+  const base = resolve(root, 'catalogs');
+  const result = [];
+  if (!await exists(base)) return result;
+  // walk first to reject symlinks before directory traversal follows anything.
+  await walk(base);
+  for (const org of await readdir(base, { withFileTypes: true })) {
+    if (!org.isDirectory()) continue;
+    for (const name of await readdir(resolve(base, org.name), { withFileTypes: true })) {
+      if (!name.isDirectory()) continue;
+      const key = `${org.name}/${name.name}`;
+      if (!/^[a-z0-9-]+\/[a-z0-9-]+$/.test(key)) throw new Error(`Invalid catalog directory: ${key}`);
+      const dir = inside(base, key);
+      const manifest = CatalogSchema.parse(await readJson(resolve(dir, 'manifest.json')));
+      result.push({ key, dir, manifest, root });
+    }
+  }
+  const ids = result.map((c) => c.manifest.id);
+  if (new Set(ids).size !== ids.length) throw new Error('Catalog IDs must be globally unique');
+  const selected = result.filter((c) => (disabled || c.manifest.enabled) && (!selector || selector === 'all' || selector === c.key));
+  if (selector && selector !== 'all' && !selected.length) throw new Error(`No enabled catalog matches ${selector}`);
+  return selected.sort((a, b) => a.key.localeCompare(b.key));
+}
+export async function validateCatalog(catalog, { allowEmpty = false } = {}) {
+  const { dir, manifest: m } = catalog;
+  if (m.licensing.status !== 'approved' && !automaticLicensing(m)) {
+    if (m.enabled) throw new Error(`${catalog.key}: license review is pending`);
+    return { catalog: catalog.key, status: 'disabled; license review pending' };
+  }
+  await validateAutomaticLicensing(catalog);
+  for (const path of [m.licensing.notice, ...m.licensing.licenses.map((l) => l.text)]) {
+    if (!(await readFile(inside(dir, path), 'utf8')).trim()) throw new Error(`${path}: empty notice/license`);
+  }
+  const content = resolve(dir, 'content');
+  const files = await inventory(content);
+  if (!allowEmpty && !files.some((f) => /\.md$/i.test(f.path))) throw new Error(`${catalog.key}: no Markdown documents`);
+  for (const file of files) {
+    if (!/\.(md|ya?ml|png|jpe?g|gif|webp|svg)$/i.test(file.path)) throw new Error(`${file.path}: content/ accepts Markdown, YAML, and approved images only; use import/sync to normalize source documents`);
+    licenseFor(m, file.path);
+    if (['.yml', '.yaml'].includes(extname(file.path))) {
+      const text = await readFile(inside(content, file.path), 'utf8');
+      parseYaml(text, file.path);
+      if (/^###\s*YamlMime:/m.test(text) && !/(^|\/)toc\.ya?ml$/i.test(file.path)) throw new Error(`${file.path}: DocFX YAML document bodies need an explicit Markdown converter before import`);
+    }
+    if (/\.md$/i.test(file.path)) {
+      const text = await readFile(inside(content, file.path), 'utf8');
+      if (text.includes('\r') || text.includes('\0')) throw new Error(`${file.path}: Markdown must use LF and contain no NULs`);
+      const front = /^---\n([\s\S]*?)\n---(?:\n|$)/.exec(text);
+      if (front) parseYaml(front[1], file.path);
+      if (hasUnresolvedDocfx(text)) throw new Error(`${file.path}: unresolved DocFX include/xref; normalize it before building`);
+    }
+  }
+  const provenancePath = resolve(dir, 'provenance.jsonl');
+  const provenance = await exists(provenancePath)
+    ? (await readFile(provenancePath, 'utf8')).trim().split('\n').filter(Boolean).map((line) => ProvenanceSchema.parse(JSON.parse(line))) : [];
+  const byPath = new Map(provenance.map((p) => [p.path, p]));
+  if (byPath.size !== provenance.length) throw new Error('Duplicate provenance paths');
+  await validateWikipediaSelection(catalog, provenance);
+  if (m.source.type !== 'manual' && files.length) {
+    const lock = SourceLockSchema.parse(await readJson(resolve(dir, 'sources.lock.json')));
+    if (lock.contentDigest !== digest(files)) throw new Error(`${catalog.key}: synced content has local edits; resync or move edits to a manual catalog`);
+    if (lock.sourceConfigDigest !== sourceConfigDigest(m)) throw new Error(`${catalog.key}: source policy changed; run sync again`);
+    if (digest(lock.files) !== digest(provenance)) throw new Error('Lock/provenance disagreement');
+    for (const file of files) if (byPath.get(file.path)?.sha256 !== file.sha256) throw new Error(`${file.path}: missing or stale provenance`);
+  }
+  return { catalog: catalog.key, files: files.length, documents: files.filter((f) => /\.md$/i.test(f.path)).length, contentDigest: digest(files) };
+}
+export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION });
+export async function buildDigest(catalog, packaging) {
+  const files = await inventory(catalog.dir);
+  const relevant = files.filter((f) => f.path !== 'manifest.json');
+  const { $schema, ...manifest } = catalog.manifest;
+  const code = await inventory(resolve(catalog.root, 'src'));
+  const lock = sha256(await readFile(resolve(catalog.root, 'package-lock.json')));
+  return digest({ manifest, files: relevant, code, lock, node: process.version, toolchain: toolchainIdentity, ...(packaging ? { packaging } : {}) });
+}

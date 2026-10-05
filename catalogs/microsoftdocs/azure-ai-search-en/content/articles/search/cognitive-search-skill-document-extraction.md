@@ -1,0 +1,189 @@
+---
+title: Document Extraction Cognitive Skill
+description: Extracts content from a file within the enrichment pipeline.
+ms.reviewer: gimondra
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+  - doc-kit-assisted
+ms.topic: reference
+ms.date: 08/18/2026
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Document Extraction cognitive skill
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+The **Document Extraction** skill extracts content from a file in the [enrichment pipeline](cognitive-search-concept-intro.md). By default, content extraction or retrieval is built into the enrichment pipeline. However, by using the Document Extraction skill, you can control how parameters are set, and how extracted content is named in the enrichment tree.
+
+For [vector](vector-search-overview.md) and [multimodal search](multimodal-search-overview.md), combine Document Extraction with the [Text Split skill](cognitive-search-skill-textsplit.md) to implement a configurable [data chunking approach](vector-search-how-to-chunk-documents.md). The [Multimodal tutorial](tutorial-multimodal.md) demonstrates this scenario.
+
+> **Note:**
+> This skill isn't bound to Foundry Tools and has no Foundry Tools key requirement.
+>
+> This skill extracts text and images. Text extraction is free. Image extraction is [billable by Azure AI Search](https://azure.microsoft.com/pricing/details/search/). On a free search service, the cost of 20 transactions per indexer per day is absorbed so that you can complete quickstarts, tutorials, and small projects at no charge. For basic and higher tiers, image extraction is billable.
+>
+
+## @odata.type
+
+Microsoft.Skills.Util.DocumentExtractionSkill
+
+## Supported document formats
+
+The DocumentExtractionSkill can extract text from the following document formats:
+
+
+* CSV (see [Indexing CSV blobs](search-how-to-index-azure-blob-csv.md))
+* EML
+* EPUB
+* GZ
+* HTML
+* JSON (see [Indexing JSON blobs](search-how-to-index-azure-blob-json.md))
+* KML (XML for geographic representations)
+* Markdown
+* Microsoft Office formats: DOCX/DOC/DOCM, XLSX/XLS/XLSM, PPTX/PPT/PPTM, MSG (Outlook emails), XML (both 2003 and 2006 WORD XML)
+* Open Document formats: ODT, ODS, ODP  
+* PDF
+* Plain text files (see also [Indexing plain text](search-how-to-index-azure-blob-plaintext.md))
+* RTF
+* XML
+* ZIP
+
+## Skill parameters
+
+Parameters are case sensitive.
+
+| Inputs | Allowed values | Description |
+| --- | --- | --- |
+| `parsingMode` | `default`<br>`text`<br>`json` | Set to `default` for document extraction from files that aren't pure text or JSON. For source files that contain markup, such as PDF, HTML, RTF, and Microsoft Office files, use the default to extract text without markup language or tags. If `parsingMode` isn't defined explicitly, the value is `default`.<br><br>Set to `text` if source files are TXT. This parsing mode improves performance on plain-text files. If files include markup, this mode preserves the tags in the final output.<br><br>Set to `json` to extract structured content from JSON files. |
+| `dataToExtract` | `contentAndMetadata`<br>`allMetadata` | Set to `contentAndMetadata` to extract all metadata and textual content from each file. If `dataToExtract` isn't defined explicitly, the value is `contentAndMetadata`.<br><br>Set to `allMetadata` to extract only the [metadata properties for the content type](search-blob-metadata-properties.md), such as metadata unique to PNG files. |
+| `configuration` | See below. | A dictionary of optional parameters that adjust how the document extraction is performed. See the below table for descriptions of supported configuration properties. |
+
+| Configuration parameter | Allowed values | Description |
+| --- | --- | --- |
+| `imageAction` | `none`<br>`generateNormalizedImages`<br>`generateNormalizedImagePerPage` | Set to `none` to ignore embedded images or image files in the data set, or if the source data doesn't include image files. This value is the default.<br><br>For [OCR and image analysis](cognitive-search-concept-image-scenarios.md), set to `generateNormalizedImages` to have the skill create an array of normalized images as part of [document cracking](search-indexer-overview.md#stage-1-document-cracking). This action requires `parsingMode` set to `default` and `dataToExtract` set to `contentAndMetadata`. A normalized image has uniform output that is sized and rotated to promote consistent rendering in visual search results. The skill generates this information for each image.<br><br>If you set `imageAction` to `generateNormalizedImagePerPage`, each PDF page is rendered as an image and normalized instead of extracting embedded images. Non-PDF file types are treated the same as if `generateNormalizedImages` was set. |
+| `normalizedImageMaxWidth` | Any integer between 50-10000 | The maximum width (in pixels) for normalized images generated. The default is 2000. |
+| `normalizedImageMaxHeight` | Any integer between 50-10000 | The maximum height (in pixels) for normalized images generated. The default is 2000. |
+
+> **Note:**
+> The default of 2000 pixels for the normalized images maximum width and height is based on the maximum sizes supported by the [OCR skill](cognitive-search-skill-ocr.md) and the [image analysis skill](cognitive-search-skill-image-analysis.md). The [OCR skill](cognitive-search-skill-ocr.md) supports a maximum width and height of 4200 for non-English languages, and 10000 for English.  If you increase the maximum limits, processing could fail on larger images depending on your skillset definition and the language of the documents.
+
+## Skill inputs
+
+| Input name | Description |
+| --- | --- |
+| `file_data` | The file that content should be extracted from. |
+
+The "file_data" input must be an object defined as:
+
+```json
+{
+  "$type": "file",
+  "data": "BASE64 encoded string of the file"
+}
+```
+
+Alternatively, it can be defined as:
+
+```json
+{
+  "$type": "file",
+  "url": "URL to download file",
+  "sasToken": "OPTIONAL: SAS token for authentication if the URL provided is for a file in blob storage"
+}
+```
+
+The file reference object can be generated one of three ways:
+
++ Setting the `allowSkillsetToReadFileData` parameter on your indexer definition to "true".  This creates a path `/document/file_data` that is an object representing the original file data downloaded from your blob data source. This parameter only applies to files in Blob storage.
+
+  `allowSkillsetToReadFileData` makes the downloaded file data available to the skill. It doesn't increase the [blob indexer file-size or extracted-content limits](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#indexer-limits).
+
++ Setting the `imageAction` parameter on your indexer definition to a value other than `none`.  This creates an array of images  that follows the required convention for input to this skill if passed individually (that is, `/document/normalized_images/*`).
+
++ Having a custom skill return a json object defined EXACTLY as above.  The `$type` parameter must be set to exactly `file` and the `data` parameter must be the base 64 encoded byte array data of the file content, or the `url` parameter must be a correctly formatted URL with access to download the file at that location.
+
+## Skill outputs
+
+| Output name | Description |
+| --- | --- |
+| `content` | The textual content of the document. |
+| `normalized_images` | When `imageAction` is set to a value other than `none`, the new *normalized_images* field contains an array of images. For more information about the output format, see [Extract text and information from images](cognitive-search-concept-image-scenarios.md). |
+
+## Sample definition
+
+```json
+ {
+    "@odata.type": "#Microsoft.Skills.Util.DocumentExtractionSkill",
+    "parsingMode": "default",
+    "dataToExtract": "contentAndMetadata",
+    "configuration": {
+        "imageAction": "generateNormalizedImages",
+        "normalizedImageMaxWidth": 2000,
+        "normalizedImageMaxHeight": 2000
+    },
+    "context": "/document",
+    "inputs": [
+      {
+        "name": "file_data",
+        "source": "/document/file_data"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "content",
+        "targetName": "extracted_content"
+      },
+      {
+        "name": "normalized_images",
+        "targetName": "extracted_normalized_images"
+      }
+    ]
+  }
+```
+
+## Sample input
+
+```json
+{
+  "values": [
+    {
+      "recordId": "1",
+      "data":
+      {
+        "file_data": {
+          "$type": "file",
+          "data": "aGVsbG8="
+        }
+      }
+    }
+  ]
+}
+```
+
+## Sample output
+
+```json
+{
+  "values": [
+    {
+      "recordId": "1",
+      "data": {
+        "content": "hello",
+        "normalized_images": []
+      }
+    }
+  ]
+}
+```
+
+## See also
+
++ [Built-in skills](cognitive-search-predefined-skills.md)
++ [How to define a skillset](cognitive-search-defining-skillset.md)
++ [How to process and extract information from images](cognitive-search-concept-image-scenarios.md)

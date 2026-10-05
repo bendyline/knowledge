@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "sourceType": {
+      "type": "string",
+      "enum": [
+        "github",
+        "wikipedia"
+      ]
+    },
+    "sourceConfigDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "contentDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "legalDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sourceRevision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "license": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+          },
+          "attribution": {
+            "type": "string",
+            "minLength": 1
+          },
+          "transformation": {
+            "type": "string"
+          },
+          "sourceUpdatedAt": {
+            "type": "string"
+          },
+          "historyUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "discoveredFrom": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "referredBy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "newsDate": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "wikipediaPageId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "sourceSha256",
+          "sourceUrl",
+          "sourceRevision",
+          "license",
+          "attribution",
+          "transformation"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "sourceType",
+    "sourceConfigDigest",
+    "contentDigest",
+    "revision",
+    "files"
+  ],
+  "additionalProperties": false
+}

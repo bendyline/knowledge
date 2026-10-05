@@ -1,0 +1,23 @@
+{
+  "policy": "standard-open-v1",
+  "approved": true,
+  "evidence": [
+    {
+      "license": "wikipedia",
+      "site": "https://en.wikipedia.org",
+      "rights": {
+        "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+        "text": "Creative Commons Attribution-Share Alike 4.0"
+      },
+      "spdx": "CC-BY-SA-4.0",
+      "sha256": "cde7883b9050a1104f4ac19a1572aafd6e5d7323b68351aaf51fbf4beba54966",
+      "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/CC-BY-SA-4.0.json",
+      "obligations": [
+        "retain-license-and-notices",
+        "attribute-source",
+        "mark-modifications",
+        "same-license-for-adaptations"
+      ]
+    }
+  ]
+}

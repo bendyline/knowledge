@@ -1,0 +1,5 @@
+[
+  { "query": "Hurricane Polo", "expectedDocumentIds": ["84283796"] },
+  { "query": "2026 Latvian parliamentary election", "expectedDocumentIds": ["72427860"] },
+  { "query": "United States", "expectedDocumentIds": ["3434750"] }
+]

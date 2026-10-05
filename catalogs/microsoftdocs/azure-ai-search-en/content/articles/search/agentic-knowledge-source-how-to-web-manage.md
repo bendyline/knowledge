@@ -1,0 +1,100 @@
+---
+title: Enable or Disable Access to Web Knowledge Source
+description: Learn how to enable or disable the use of Web Knowledge Source in your Azure subscription. By default, access is enabled, but you can disable or re-enable access using the Azure CLI.
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2025
+ms.topic: how-to
+ms.date: 04/30/2026
+ai-usage: ai-assisted
+#customer intent: As an Azure administrator, I want to check, enable, or disable Web Knowledge Source access so that I can govern its use across all Azure AI Search services in a subscription.
+---
+
+# Manage access to Web Knowledge Source in your Azure subscription
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+> **Important:**
+> + Web Knowledge Source, which uses Grounding with Bing Search and/or Grounding with Bing Custom Search, is a [First Party Consumption Service](https://www.microsoft.com/licensing/terms/product/ForOnlineServices/EAEAS) governed by the [Grounding with Bing terms of use](https://www.microsoft.com/en-us/bing/apis/grounding-legal-enterprise) and the [Microsoft Privacy Statement](https://www.microsoft.com/en-us/privacy/privacystatement).
+>
+> + The [Microsoft Data Protection Addendum](https://www.microsoft.com/licensing/docs/view/Microsoft-Products-and-Services-Data-Protection-Addendum-DPA) doesn't apply to data sent to Web Knowledge Source. When Customer uses Web Knowledge Source, Customer Data flows outside the Azure compliance and Geo boundary. This also means use of Web Knowledge Source waives all elevated Government Community Cloud security and compliance commitments to include data sovereignty and screened/citizenship-based support, as applicable.
+>
+> + Use of Web Knowledge Source incurs costs; learn more about [pricing](https://www.microsoft.com/en-us/bing/apis).
+
+As an Azure admin, you can use the Azure CLI to enable or disable the use of [Web Knowledge Source](agentic-knowledge-source-how-to-web.md) at the subscription level. This setting applies to all search services within the specified subscription.
+
+## Prerequisites
+
++ Have **Owner** or **Contributor** access to the subscription.
+
++ Have the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed. If you're not already signed in to Azure, run `az login`.
+
+## Check the current access state
+
+To check the current status of Web Knowledge Source access, run the following command.
+
+# [Azure CLI](#tab/azure-cli)
+
+```azurecli
+az feature show --name WebKnowledgeSourceDisabled --namespace Microsoft.Search --subscription "<subscription-id>"
+```
+
+# [REST API](#tab/rest-api)
+
+```http
+GET https://management.azure.com/subscriptions/{{subscription-id}}/providers/Microsoft.Features/providers/Microsoft.Search/features/WebKnowledgeSourceDisabled?api-version=2021-07-01
+Authorization: Bearer {{management-access-token}} // Obtain using `az account get-access-token --scope https://management.azure.com/.default --query accessToken --output tsv`
+```
+
+---
+
+The output shows the `state` property, which indicates the current registration status:
+
++ `Registered` means access is **disabled**.
++ `Unregistered` means access is **enabled**, which is the default state.
+
+## Enable use of Web Knowledge Source
+
+Access to Web Knowledge Source is enabled by default. If access has been disabled, you can run the following command to enable it.
+
+# [Azure CLI](#tab/azure-cli)
+
+```azurecli
+az feature unregister --name WebKnowledgeSourceDisabled --namespace Microsoft.Search --subscription "<subscription-id>"
+```
+
+# [REST API](#tab/rest-api)
+
+```http
+POST https://management.azure.com/subscriptions/{{subscription-id}}/providers/Microsoft.Features/providers/Microsoft.Search/features/WebKnowledgeSourceDisabled/unregister?api-version=2021-07-01
+Authorization: Bearer {{management-access-token}} // Obtain using `az account get-access-token --scope https://management.azure.com/.default --query accessToken --output tsv`
+```
+
+---
+
+## Disable use of Web Knowledge Source
+
+Run the following command to disable access to Web Knowledge Source.
+
+# [Azure CLI](#tab/azure-cli)
+
+```azurecli
+az feature register --name WebKnowledgeSourceDisabled --namespace Microsoft.Search --subscription "<subscription-id>"
+```
+
+# [REST API](#tab/rest-api)
+
+```http
+POST https://management.azure.com/subscriptions/{{subscription-id}}/providers/Microsoft.Features/providers/Microsoft.Search/features/WebKnowledgeSourceDisabled/register?api-version=2021-07-01
+Authorization: Bearer {{management-access-token}} // Obtain using `az account get-access-token --scope https://management.azure.com/.default --query accessToken --output tsv`
+```
+
+---
+
+## Related content
+
++ [Create a Web Knowledge Source resource](agentic-knowledge-source-how-to-web.md)
++ [Agentic retrieval in Azure AI Search](agentic-retrieval-overview.md)

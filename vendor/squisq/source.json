@@ -1,0 +1,18 @@
+{
+  "sources": [
+    {
+      "source": "packages/core/src/markdown/contentReferences.ts",
+      "sha256": "bd1e57383a4f861abdf9ed68a236383bf90fd701793d71651d8fb88797461564"
+    },
+    {
+      "source": "packages/core/src/markdown/docfxMarkdown.ts",
+      "sha256": "69eeb044cbeac47c4501b0a7043e949665f6e52cb7420bec344fd35324263187"
+    },
+    {
+      "source": "packages/core/src/markdown/condenseMarkdown.ts",
+      "sha256": "f03fee0067b4ecd783a7e05fecb1a7687610efa5f114e2ea0fc83814993580da"
+    }
+  ],
+  "sha256": "67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971",
+  "removeAfter": "First @bendyline/squisq release exporting rewriteMarkdownReferences, normalizeDocfxMarkdown, and condenseMarkdownSource"
+}

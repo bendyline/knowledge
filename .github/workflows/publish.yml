@@ -1,0 +1,103 @@
+name: Publish knowledge catalog
+on:
+  workflow_dispatch:
+    inputs:
+      catalog:
+        description: Catalog path, for example bendyline/knowledge-handbook
+        required: true
+        type: string
+      version:
+        description: Immutable catalog version, for example 2026.10.1
+        required: true
+        type: string
+      package:
+        description: Optional package (latest or YYYY-qN); blank uses the catalog default
+        required: false
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: knowledge-publish
+  cancel-in-progress: false
+env:
+  CATALOG: ${{ inputs.catalog }}
+  CATALOG_VERSION: ${{ inputs.version }}
+  PACKAGE_KEY: ${{ inputs.package }}
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ${{ vars.KNOWLEDGE_BUILD_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 360
+    env:
+      KNOWLEDGE_EMBEDDING_DEVICE: ${{ vars.KNOWLEDGE_EMBEDDING_DEVICE || 'cpu' }}
+      NODE_OPTIONS: ${{ vars.KNOWLEDGE_BUILD_NODE_OPTIONS || '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: node scripts/action.mjs build
+        id: build
+        env:
+          GEZEL_HF_CACHE_DIR: ${{ runner.temp }}/embedding-models
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: knowledge-release
+          path: .work/releases/
+          retention-days: 30
+          include-hidden-files: true
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: knowledge-publishing
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: knowledge-release
+          path: .work/releases/
+      - run: node scripts/action.mjs publish
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: published-knowledge-release
+          path: .work/releases/
+          retention-days: 30
+          include-hidden-files: true
+  gilde:
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: knowledge-publishing
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: published-knowledge-release
+          path: .work/releases/
+      - run: node scripts/action.mjs gilde
+        env:
+          GH_TOKEN: ${{ secrets.GILDE_PR_TOKEN }}

@@ -1,0 +1,5 @@
+[
+  { "query": "What was Hurricane Polo and which areas did it affect?", "expectedDocumentIds": ["84283796"] },
+  { "query": "Latvia's 2026 parliamentary election to choose representatives in the Saeima", "expectedDocumentIds": ["72427860"] },
+  { "query": "The United States of America is a federal republic in North America", "expectedDocumentIds": ["3434750"] }
+]

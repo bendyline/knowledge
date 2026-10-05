@@ -1,0 +1,110 @@
+---
+title: Indexer Connection to SQL Server on Azure VMs
+description: Enable encrypted connections and configure the firewall to allow connections to SQL Server on an Azure virtual machine (VM) from an indexer on Azure AI Search.
+ms.reviewer: gimondra
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ms.topic: how-to
+ms.date: 03/13/2026
+ms.update-cycle: 365-days
+---
+
+# Configure an indexer connection to a SQL Server instance on an Azure virtual machine
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+> **Important:**
+> These features and functionality support connections to other Microsoft services and third-party services. Use of these services is subject to their respective terms and might result in data processing or storage outside of the Azure compliance boundary, as well as data flowing into the Azure compliance boundary.
+>
+> It's your responsibility to manage whether your data will flow outside of your organization's compliance and geographic boundaries and any related implications, and that appropriate permissions, boundaries, and approvals are provisioned.
+>
+> You're responsible for carefully reviewing and testing applications you build in the context of your specific use cases and making all appropriate decisions and customizations. This includes implementing your own responsible AI mitigations, such as metaprompts, content filters, or other safety systems, and ensuring your applications meet appropriate quality, reliability, security, and trustworthiness standards. For more information, see the [Azure AI Search Transparency Note](https://learn.microsoft.com/azure/foundry/responsible-ai/search/transparency-note).
+
+When configuring an [Azure SQL indexer](search-how-to-index-sql-database.md) to extract content from a database on an Azure virtual machine, extra steps are required for secure connections. 
+
+A connection from Azure AI Search to SQL Server instance on a virtual machine is a public internet connection. In order for secure connections to succeed, perform the following steps:
+
++ Obtain a certificate from a [Certificate Authority provider](https://en.wikipedia.org/wiki/Certificate_authority#Providers) for the fully qualified domain name of the SQL Server instance on the virtual machine.
+
++ Install the certificate on the virtual machine.
+
+After you install the certificate on your VM, you're ready to complete the following steps in this article.
+
+> **Note:**
+> [Always Encrypted](https://learn.microsoft.com/sql/relational-databases/security/encryption/always-encrypted-database-engine) columns are not currently supported by Azure AI Search indexers.
+
+## Enable encrypted connections
+
+Azure AI Search requires an encrypted channel for all indexer requests over a public internet connection. This section lists the steps to make this work.
+
+1. Check the properties of the certificate to verify the subject name is the fully qualified domain name (FQDN) of the Azure VM. 
+
+   You can use a tool like CertUtils or the Certificates snap-in to view the properties. You can get the FQDN from the VM service page Essentials section, in the **Public IP address/DNS name label** field, in the [Azure portal](https://portal.azure.com).
+  
+   The FQDN is typically formatted as `<your-VM-name>.<region>.cloudapp.azure.com`
+
+1. Configure SQL Server to use the certificate using the Registry Editor (regedit). 
+
+   Although SQL Server Configuration Manager is often used for this task, you can't use it for this scenario. It won't find the imported certificate because the FQDN of the VM on Azure doesn't match the FQDN as determined by the VM (it identifies the domain as either the local computer or the network domain to which it's joined). When names don't match, use regedit to specify the certificate.
+
+   1. In regedit, browse to this registry key: `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\[MSSQL13.MSSQLSERVER]\MSSQLServer\SuperSocketNetLib\Certificate`. 
+
+      The `[MSSQL13.MSSQLSERVER]` part varies based on version and instance name.
+
+   1. Set the value of the **Certificate** key to the **thumbprint** (without spaces) of the TLS/SSL certificate you imported to the VM.
+
+      For example, copy the hexadecimal characters to text editor, such as Notepad. Delete all spaces from the thumbprint string. If the thumbprint is `c0 d0 f2 70 95 b0 3d 43 17 e2 19 84 10 24 32 8c ef 24 87 79`, then change it to `c0d0f27095b03d4317e219841024328cef248779`.
+
+      There are several ways to get the thumbprint, some better than others. If you copy it from the **Certificates** snap-in in MMC, you might pick up an invisible leading character, which results in an error when you attempt a connection. Several workarounds exist for correcting this problem. The easiest is to backspace over and then retype the first character of the thumbprint to remove the leading character in the key value field in regedit. Alternatively, you can use a different tool to copy the thumbprint. For more information, see [Certificate thumbprint displayed in MMC certificate snap-in has extra invisible unicode character](https://support.microsoft.com/help/2023835/certificate-thumbprint-displayed-in-mmc-certificate-snap-in-has-extra). 
+
+1. Grant permissions to the service account. 
+
+   Make sure the SQL Server service account is granted appropriate permission on the private key of the TLS/SSL certificate. If you overlook this step, SQL Server doesn't start. You can use the **Certificates** snap-in or **CertUtils** for this task.
+
+1. Restart the SQL Server service.
+
+## Connect to SQL Server
+
+After you set up the encrypted connection required by Azure AI Search, connect to the instance through its public endpoint. The following article explains the connection requirements and syntax:
+
++ [Connect to SQL Server over the internet](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/ways-to-connect-to-sql#connect-to-sql-server-over-the-internet)
+
+## Configure the network security group
+
+It's a best practice to configure the [network security group (NSG)](https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview) and corresponding Azure endpoint or access control list (ACL) to make your Azure VM accessible to other parties. Chances are you've done this before to allow your own application logic to connect to your SQL Azure VM. It's no different for an Azure AI Search connection to your SQL Azure VM. 
+
+The following steps and links provide instructions on NSG configuration for VM deployments. Use these instructions to ACL a search service endpoint based on its IP address.
+
+1. Obtain the IP address of your search service. See the [following section](#restrict-network-access-to-azure-ai-search) for instructions.
+
+1. Add the search IP address to the IP filter list of the security group. Either one of following articles explains the steps:
+
+  + [Tutorial: Filter network traffic with a network security group using the Azure portal](https://learn.microsoft.com/azure/virtual-network/tutorial-filter-network-traffic)
+
+  + [Create, change, or delete a network security group](https://learn.microsoft.com/azure/virtual-network/manage-network-security-group)
+
+IP addressing can pose a few challenges that are easily overcome if you're aware of the issue and potential workarounds. The remaining sections provide recommendations for handling issues related to IP addresses in the ACL.
+
+### Restrict network access to Azure AI Search
+
+We strongly recommend that you restrict the access to the IP address of your search service and the IP address range of `AzureCognitiveSearch` [service tag](https://learn.microsoft.com/azure/virtual-network/service-tags-overview#available-service-tags) in the ACL instead of making your SQL Azure VMs open to all connection requests.
+
+You can find out the IP address by pinging the FQDN (for example, `<your-search-service-name>.search.windows.net`) of your search service. Although it's possible for the search service IP address to change, it's unlikely that it will change. The IP address tends to be static for the lifetime of the service.
+
+You can find out the IP address range of `AzureCognitiveSearch` [service tag](https://learn.microsoft.com/azure/virtual-network/service-tags-overview#available-service-tags) by either using [Downloadable JSON files](https://learn.microsoft.com/azure/virtual-network/service-tags-overview#discover-service-tags-by-using-downloadable-json-files) or via the [Service Tag Discovery API](https://learn.microsoft.com/azure/virtual-network/service-tags-overview#use-the-service-tag-discovery-api). The IP address range is updated weekly.
+
+## Supplement network security with token authentication
+
+Firewalls and network security are a first step in preventing unauthorized access to data and operations. Authorization should be your next step. 
+
+We recommend role-based access, where Microsoft Entra ID users and groups are assigned to roles that determine read and write access to your service. See [Connect to Azure AI Search using role-based access controls](search-security-rbac.md) for a description of built-in roles and instructions for creating custom roles.
+
+If you don't need key-based authentication, we recommend that you disable API keys and use role assignments exclusively.
+
+## Next steps
+
+With configuration out of the way, you can now specify a SQL Server on Azure VM as the data source for an Azure AI Search indexer. For more information, see [Index data from Azure SQL](search-how-to-index-sql-database.md).

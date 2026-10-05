@@ -1,0 +1,287 @@
+---
+title: Use Indexers to Ingest Microsoft Purview Sensitivity Labels
+description: Learn how to configure Azure AI Search indexers to ingest Microsoft Purview sensitivity labels from supported data sources for document-level security enforcement.
+ms.reviewer: gimondra
+ms.service: azure-ai-search
+ms.topic: how-to
+ms.date: 07/07/2026
+ai-usage: ai-assisted
+---
+
+# Use an Azure AI Search indexer to ingest Microsoft Purview sensitivity labels and enforce document-level security (preview)
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+
+> **Important:**
+> Features, capabilities, or properties marked (preview) aren't covered by a service-level agreement, aren't recommended for production workloads, and might change or be constrained before they become generally available. The [Azure AI Search preview terms](https://learn.microsoft.com/azure/search/search-preview-terms) apply to all preview functionality, whether it's standalone or part of a generally available feature.
+
+
+Azure AI Search supports [Microsoft Purview sensitivity label](https://learn.microsoft.com/purview/sensitivity-labels) extraction and query-time enforcement (preview). During indexing, it automatically extracts and stores sensitivity label metadata for each document. At query time, it enforces label-based access control according to existing [information protection policies](https://learn.microsoft.com/purview/create-sensitivity-labels) in Microsoft Purview, ensuring that only authorized users can retrieve labeled content in search results.
+
+This functionality is available for the following data sources:
+
++ [Azure Blob Storage](search-how-to-index-azure-blob-storage.md)
++ [Azure Data Lake Storage Gen2](search-how-to-index-azure-data-lake-storage.md)
++ [SharePoint in Microsoft 365 (preview)](search-how-to-index-sharepoint-online.md)
++ [Microsoft OneLake](search-how-to-index-onelake-files.md)
+
+Architecture diagram showing a governed RAG solution where documents labeled with Microsoft Purview sensitivity labels are indexed into Azure AI Search, and a RAG orchestrator filters query results by label so junior users see only General content while executive users see General, Confidential, and Highly Confidential content.
+
+## Prerequisites
+
++ Configure [Microsoft Purview sensitivity label policies](https://learn.microsoft.com/purview/create-sensitivity-labels) and [apply them to documents](https://learn.microsoft.com/purview/sensitivity-labels) before indexing.
+
++ Have the [Global Administrator](https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference#global-administrator) or [Privileged Role Administrator](https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference#privileged-role-administrator) roles in your Microsoft Entra tenant to grant the search service access to Purview APIs and sensitivity labels.
+
++ Both the Azure AI Search service and the user issuing the query must be in the same Microsoft Entra tenant.
+
++ Use source documents with file types that are both [supported by Purview sensitivity labels](https://learn.microsoft.com/purview/sensitivity-labels-sharepoint-onedrive-files#supported-file-types) and [supported by Azure AI Search indexers](search-how-to-index-azure-blob-storage.md#supported-document-formats).
+
++ Use REST API version 2026-08-01-preview or an equivalent preview SDK package.
+
+> **Important:**
+> The search service must use its **system-assigned managed identity** to authenticate with Microsoft Purview. This feature doesn't support user-assigned managed identities.
+
+## Limitations
+
++ The Azure portal doesn't support this feature.
+
++ [Autocomplete](https://learn.microsoft.com/rest/api/searchservice/documents/autocomplete-post) and [Suggest](https://learn.microsoft.com/rest/api/searchservice/documents/suggest-post) APIs aren't supported for Purview-enabled indexes, as they can't yet enforce label-based access control.
+
++ [Guest accounts](https://learn.microsoft.com/entra/external-id/b2b-quickstart-add-guest-users-portal) and cross-tenant queries aren't supported.
+
++ User-assigned managed identities aren't supported for Microsoft Purview role assignments. Only the service's **system-assigned managed identity** can hold the `Content.SuperUser` and `UnifiedPolicy.Tenant.Read` roles required for label extraction. Assign these roles directly to the service's own identity - it performs the privileged `EXTRACT` operations (reading encrypted content and security classifications) on behalf of the indexer. See [Step 1](#1-enable-ai-search-managed-identity) and [Step 3](#3-grant-access-to-extract-sensitivity-labels).
+
++ The following indexer features don't support documents with sensitivity labels. If you use any of these features in a skillset or indexer, documents with sensitivity labels aren't processed.
+
+  + [Custom Web API skill](cognitive-search-custom-skill-web-api.md)
+
+  + [Knowledge store](knowledge-store-concept-intro.md), including the asset store required for [image serving (preview)](agentic-retrieval-how-to-image-serving.md) in agentic retrieval. Therefore, image serving isn't supported for knowledge sources that ingest sensitivity labels.
+
+  + [Indexer enrichment cache](enrichment-cache-how-to-configure.md)
+  
+  + [Debug sessions](cognitive-search-debug-session.md)
+
+## How policy enforcement works
+
+Sensitivity label support has two phases: indexing and query-time enforcement.
+
+### Indexing
+
+When you configure indexing [on a schedule](search-howto-schedule-indexers.md), the indexer pulls new documents and updates from the data source. For each document, it captures:
+
+- Document content
+- The associated sensitivity label
+- Changes to content or labels since the last indexer run
+
+> **Note:**
+> The index doesn't reflect label changes on source documents until the next successful indexer run.
+
+### Query-time enforcement
+
+At query time, Azure AI Search evaluates sensitivity labels and enforces [document-level access control](search-document-level-access-overview.md) based on the user's Microsoft Entra ID token and Microsoft Purview label policies. Only users authorized to access content with [READ usage right](https://learn.microsoft.com/purview/rights-management-usage-rights) under a given label can retrieve corresponding documents in search results.
+
+Authorized administrators can also issue [elevated read](search-query-sensitivity-labels.md#elevated-read-for-administrative-investigations-preview) requests, which return labeled documents that the calling user wouldn't normally see and emit a Microsoft Purview audit log entry for every document returned. Elevated read requires the **Search Index Data Contributor** role on the search service and API version 2026-05-01-preview or later.
+
+### End-to-end example
+
+The following images show how sensitivity labels flow from authoring to the search experience. In the first image, a user applies the **Confidential** label to a document in Microsoft Word. In the second image, an enterprise chatbot enforces that label at query time, blocking copy and share actions for confidential content.
+
+Screenshot of the Microsoft Word Sensitivity menu showing a label hierarchy including Non-Business, Public, General, Confidential with sublabels such as Project Obsidian and Recipients Only, and Highly Confidential, with the Confidential label currently applied to the document.
+
+Screenshot of a Contoso enterprise chatbot displaying a policy-aware response with numbered citations, a Confidential Project Obsidian sensitivity label banner, blocked copy and share actions, and per-document sensitivity labels shown in the references panel.
+
+## 1. Enable AI Search managed identity
+
+Enable a [system-assigned managed identity for your Azure AI Search service](search-how-to-managed-identities.md) - user-assigned managed identities aren't supported for this feature. The indexer uses this identity to authenticate with Microsoft Purview and extract sensitivity label metadata. It also must receive the role assignments in [Step 3](#3-grant-access-to-extract-sensitivity-labels).
+
+## 2. Enable RBAC on your AI Search service
+
+[Enable role-based access control (RBAC)](search-security-enable-roles.md) on your Azure AI Search service. This step is required so content-related operations such as indexing content and querying the index succeed. Keep both RBAC and API keys to avoid disrupting operations that rely on API keys. 
+
+## 3. Grant access to extract sensitivity labels
+
+Accessing Microsoft Purview sensitivity label metadata involves highly privileged operations, including reading encrypted content and security classifications. To enable this capability in Azure AI Search, you must grant specific roles to the service's managed identity - following your organization's internal governance and approval processes.
+
+
+### Identify your global or privileged role administrators
+
+If you need to determine who can authorize permissions for the search service, you can locate active or eligible Global Administrators in your Microsoft Entra tenant.
+
+1. In the [Azure portal](https://portal.azure.com), search for **Microsoft Entra ID**.
+
+   Screenshot of the search action for Microsoft Entra product.
+   
+1. In the left navigation pane, select **Manage > Roles and administrators**.
+
+   Screenshot of the Entra roles and administrators page.
+   
+1. Search for the **Global Administrator** or **Privileged Role Administrator**  role and select it.
+
+   Screenshot of the selection of global administrator role.
+   
+1. Under **Eligible assignments** and **Active assignments**, review the list of administrators authorized to run the permissions setup process.
+
+   Screenshot of role eligible and active assignments.
+
+### Secure governance approval
+Engage your internal security or compliance teams to review the request. Microsoft recommends following your company's standard governance and security review process before proceeding with any role assignments.
+
+Once approved, a Global Administrator or Privileged Role Administrator must assign the following roles to the Azure AI Search system-assigned managed identity:
+- **Content.SuperUser** – for label and content extraction
+- **UnifiedPolicy.Tenant.Read** – for Purview policy and label metadata access
+
+  
+### Assign roles via PowerShell
+
+> **Note:**
+> Assign these roles only to the **system-assigned managed identity** of the Azure AI Search service - not to a user-assigned managed identity, service principal, or individual user account. The PowerShell script retrieves the managed identity object ID automatically from the service resource.
+
+Your Global Administrator or Privileged Role Administrator should use the following PowerShell script to grant the required permissions. Replace the placeholder values with your actual subscription, resource group, and search service names.
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser
+Install-Module -Name Microsoft.Entra -AllowClobber
+Import-Module Az.Resources
+Connect-Entra -Scopes 'Application.ReadWrite.All'
+
+$resourceIdWithManagedIdentity = "subscriptions/<subscriptionId>/resourceGroups/<resourceGroup>/providers/Microsoft.Search/searchServices/<searchServiceName>"
+$managedIdentityObjectId = (Get-AzResource -ResourceId $resourceIdWithManagedIdentity).Identity.PrincipalId
+
+# Microsoft Information Protection (MIP)
+$MIPResourceSP = Get-EntraServicePrincipal -Filter "appID eq '870c4f2e-85b6-4d43-bdda-6ed9a579b725'"
+New-EntraServicePrincipalAppRoleAssignment -ServicePrincipalId $managedIdentityObjectId -Principal $managedIdentityObjectId -ResourceId $MIPResourceSP.Id -Id "8b2071cd-015a-4025-8052-1c0dba2d3f64"
+
+# Microsoft Rights Management Services (MRMS) - Service Principal for policy read
+$MRMSResourceSP = Get-EntraServicePrincipal -Filter "appID eq '00000012-0000-0000-c000-000000000000'"
+New-EntraServicePrincipalAppRoleAssignment -ServicePrincipalId $managedIdentityObjectId -Principal $managedIdentityObjectId -ResourceId $MRMSResourceSP.Id -Id "7347eb49-7a1a-43c5-8eac-a5cd1d1c7cf0"
+
+```
+
+The appID roles in the provided PowerShell script are associated to the following Azure roles:
+
+| AppID | Service Principal |
+| --- | --- |
+| `870c4f2e-85b6-4d43-bdda-6ed9a579b725` | Microsoft Info Protection Sync Service |
+| `00000012-0000-0000-c000-000000000000` | Microsoft Rights Management Services |
+
+
+
+## 4. Configure the index to enable Purview sensitivity label 
+
+When sensitivity label support is required, set the `purviewEnabled` property to `true` in your [index definition](https://learn.microsoft.com/rest/api/searchservice/indexes/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true).
+
+> **Important:**
+> The `purviewEnabled` property must be set to `true` when the index is created. This setting is permanent and can't be modified later.
+>
+> When `purviewEnabled` is set to `true`, only RBAC authentication is supported for all document operations APIs.
+
+API key access is limited to index schema retrieval (list and get).
+
+```
+PUT https://{service}.search.windows.net/indexes('{indexName}')?api-version=2026-08-01-preview
+{
+  "purviewEnabled": true,
+  "fields": [
+    {
+      "name": "sensitivityLabel",
+      "type": "Edm.String",
+      "filterable": true,
+      "sensitivityLabel": true,
+      "retrievable": true
+    }
+  ]
+}
+```
+
+## 5. Configure the data source
+
+To enable sensitivity label ingestion, configure the [data source](https://learn.microsoft.com/rest/api/searchservice/data-sources/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true) with the indexerPermissionOptions property set to ["sensitivityLabel"].
+
+```
+{
+  "name": "purview-sensitivity-datasource",
+  "type": "azureblob", // < adjust type value according to the data source you are enabling this for: sharepoint, onelake, adlsgen2.
+  "indexerPermissionOptions": [ "sensitivityLabel" ],
+  "credentials": {
+    "connectionString": <your-connection-string>;"
+  },
+  "container": {
+    "name": "<container-name>"
+  }
+}
+```
+
+The `indexerPermissionOptions` property instructs the indexer to extract sensitivity label metadata during ingestion and attach it to the indexed document.
+
+## 6. Configure index projections in your skillset (if applicable)
+
+If your indexer has a [skillset](cognitive-search-working-with-skillsets.md) and you're implementing data chunking through the [Text Split skill](cognitive-search-skill-textsplit.md), such as with integrated vectorization, project the sensitivity label onto each chunk via [index projections in the skillset](https://learn.microsoft.com/rest/api/searchservice/skillsets/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true).
+
+For the broader rule on when permission and ACL fields belong in indexer field mappings versus index projections, see [Choose where to populate ACL fields](search-indexer-sharepoint-access-control-lists.md#choose-where-to-populate-acl-fields).
+
+This step is required for both query-time enforcement and for [agentic retrieval](agentic-retrieval-overview.md) responses to include per-document `sensitivityLabelInfo` for each chunk. Without the projection mapping, child chunk rows won't be filtered correctly.
+
+```
+PUT https://{service}.search.windows.net/skillsets/{skillset}?api-version=2026-08-01-preview
+{
+  "name": "my-skillset",
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Text.SplitSkill",
+      "name": "#split",
+      "context": "/document",
+      "inputs": [{ "name": "text", "source": "/document/content" }],
+      "outputs": [{ "name": "textItems", "targetName": "chunks" }]
+    }
+    // ... (other skills such as embeddings, entity recognition, etc.)
+  ],
+  "indexProjections": {
+    "selectors": [
+      {
+        "targetIndexName": "chunks-index",
+        "parentKeyFieldName": "parentId",          // must exist in target index
+        "sourceContext": "/document/chunks/*",     // match your split output path
+        "mappings": [
+          { "name": "chunkId",           "source": "/document/chunks/*/id" },     // if you create an id per chunk
+          { "name": "content",           "source": "/document/chunks/*/text" },   // chunk text
+          { "name": "parentId",          "source": "/document/id" },              // parent doc id
+          { "name": "sensitivityLabel",  "source": "/document/metadata_sensitivity_label" } // <-- parent → child
+        ]
+      }
+    ],
+    "parameters": {
+      "projectionMode": "skipIndexingParentDocuments"
+    }
+  }
+}
+
+```
+
+## 7. Configure the indexer
+
+- Define field mappings in your [indexer definition](https://learn.microsoft.com/rest/api/searchservice/indexers/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true) to route extracted label metadata to the index fields.
+If your data source emits label metadata under a different field name (for example, `metadata_sensitivity_label`), map it explicitly.
+
+```
+{
+  "fieldMappings": [
+    {
+      "sourceFieldName": "metadata_sensitivity_label",
+      "targetFieldName": "sensitivityLabel"
+    }
+  ]
+}
+```
+
+- The indexer automatically indexes sensitivity label updates when it detects changes to a document's label, content, or metadata during a scheduled indexer run. [Configure the indexer on a recurring schedule](search-howto-schedule-indexers.md). The minimum supported interval is every 5 minutes. 
+
+## Next steps
+
+- [How to query a sensitivity labels-enabled index](search-query-sensitivity-labels.md)
+- [Elevated read for administrative investigations](search-query-sensitivity-labels.md#elevated-read-for-administrative-investigations-preview)
+- [Document-level security in Azure AI Search](search-document-level-access-overview.md)

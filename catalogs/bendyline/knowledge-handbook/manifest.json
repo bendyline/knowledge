@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "bendyline-knowledge-handbook",
+  "name": "Knowledge catalog handbook",
+  "description": "A small working catalog explaining how this repository organizes, synchronizes, and publishes knowledge.",
+  "language": "en",
+  "enabled": true,
+  "publisher": { "id": "bendyline", "name": "Bendyline", "url": "https://github.com/bendyline/knowledge" },
+  "source": { "type": "manual" },
+  "licensing": {
+    "status": "approved",
+    "reviewedBy": "Bendyline: original repository example content",
+    "reviewedAt": "2026-10-03T00:00:00Z",
+    "notice": "NOTICE.md",
+    "licenses": [
+      { "id": "mit", "name": "MIT License", "spdx": "MIT", "url": "https://opensource.org/license/mit", "text": "LICENSES/MIT.txt", "attribution": "Copyright (c) 2026 Bendyline" }
+    ],
+    "rules": [{ "include": ["**"], "license": "mit" }]
+  },
+  "normalization": { "images": "omit" },
+  "build": { "embeddingProfile": "bge-small-en-v1.5@1", "toc": { "format": "folders" } },
+  "publish": {
+    "enabled": false,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "manuals", "tags": ["knowledge", "catalogs", "gezk"] }
+  }
+}

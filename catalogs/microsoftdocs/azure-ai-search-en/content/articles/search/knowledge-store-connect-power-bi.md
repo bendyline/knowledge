@@ -1,0 +1,97 @@
+---
+title: Connect to a Knowledge Store with Power BI
+description: Connect an Azure AI Search knowledge store with Power BI for analysis and exploration.
+ms.service: azure-ai-search
+ms.topic: how-to
+ms.date: 10/21/2025
+ms.update-cycle: 365-days
+ms.custom:
+  - ignite-2023
+  - sfi-image-nochange
+---
+
+# Connect a knowledge store with Power BI
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+> **Note:**
+> *Knowledge stores* are secondary storage that exists in Azure Storage and contain the outputs of Azure AI Search skillsets. They're separate from knowledge sources and knowledge bases, which are used in [agentic retrieval](agentic-retrieval-overview.md) workflows.
+
+In this article, learn how to connect to and query a knowledge store using Power Query in the Power BI Desktop app. You can get started faster with templates, or build a custom dashboard from scratch.
+
+A knowledge store that's composed of tables in Azure Storage work best in Power BI. If the tables contain projections from the same skillset and projection group, you can easily "join" them to build table visualizations that include fields from related tables.
+
+Follow the steps in this article using sample data and a knowledge store as [created in this REST quickstart](knowledge-store-create-rest.md).
+
+## Connect to Azure Storage
+
+1. Start [Power BI Desktop](https://powerbi.microsoft.com/downloads/) and select **Get data**. 
+
+1. In **Get Data**, select **Azure**, and then select **Azure Table Storage**.
+
+1. Select **Connect**.
+
+1. For **Account Name or URL**, enter in your Azure Storage account name (the full URL is created for you).
+
+1. If prompted, enter the storage account key.
+
+## Set up tables
+
+1. Select the checkbox next to all of the tables that were created from the same skillset, and then select **Load**.
+
+   Load tables
+
+1. On the top ribbon, select **Transform Data** to open the **Power Query Editor**.
+
+   Open Power Query
+
+1. Open *hotelReviewsDocument* and remove its *PartitionKey*, *RowKey*, and *Timestamp* columns. Those columns are used for table relationships in Azure Table Storage. Power BI doesn't need them. You should be left with one column named "Content" showing *Record* in each one. 
+
+   Edit tables
+
+1. Select the icon with opposing arrows at the upper right side of the table to expand *Content*. When the list of columns appears, select all columns. Clear columns starting with 'metadata'. Select **OK** to include the selected columns.
+
+   Expand content
+
+1. Change the data type for the following columns by clicking the  ABC-123 icon at the top left of the column.
+
+   + For *content.latitude* and *Content.longitude*, select **Decimal Number**.
+   + For *Content.reviews_date* and *Content.reviews_dateAdded*,  select **Date/Time**.
+
+   Change data types
+
+1. Open *hotelReviewsSsPages* and repeat column deletion steps, expanding *Content* to select columns from the records. There are no data type modifications for this table.
+
+1. Open *hotelReviewsSsKeyPhrases* and repeat column deletion steps, expanding *Content* to select columns from the records. There are no data type modifications for this table.
+
+1. On the command bar, select **Close and Apply**.
+
+## Check table relationships
+
+1. Select the Model tile on the left pane and validate that Power BI shows relationships between all three tables.
+
+   Validate relationships
+
+1. Double-click each relationship and make sure that the **Cross-filter direction** is set to **Both**.  This enables your visuals to refresh when a filter is applied.
+
+## Build a report
+
+1. Select the Report tile on the left pane to explore data through visualizations. For text fields, tables and cards are useful visualizations.
+
+1. Choose fields from each of the three tables to fill in the table or card.
+
+   Build a table report
+
+## Video introduction
+
+For a demonstration of using Power BI with a knowledge store, watch the following video.
+
+> [!VIDEO https://www.youtube.com/embed/XWzLBP8iWqg?version=3]
+
+## Next steps
+
+> 
+> [Tables in Power BI reports and dashboards](https://learn.microsoft.com/power-bi/visuals/power-bi-visualization-tables)

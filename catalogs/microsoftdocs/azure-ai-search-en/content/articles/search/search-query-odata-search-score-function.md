@@ -1,0 +1,56 @@
+---
+title: OData search.score Function Reference
+description: Syntax and reference documentation for using the search.score function in Azure AI Search queries.
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ms.topic: concept-article
+ms.date: 07/20/2026
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+translation.priority.mt:
+  - "de-de"
+  - "es-es"
+  - "fr-fr"
+  - "it-it"
+  - "ja-jp"
+  - "ko-kr"
+  - "pt-br"
+  - "ru-ru"
+  - "zh-cn"
+  - "zh-tw"
+---
+
+# OData `search.score` function in Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+When you send a query to Azure AI Search without the [**$orderby** parameter](search-query-odata-orderby.md), the results that come back will be sorted in descending order by relevance score. Even when you do use **$orderby**, the relevance score is used to break ties by default. However, sometimes it's useful to use the relevance score as an initial sort criteria, and some other criteria as the tie-breaker. The example in this article demonstrates using the `search.score` function for sorting.
+
+> **Note:**
+> The relevance score is computed by the relevance ranking algorithm, and the range varies depending on which algorithm you use. For more information, see [Relevance and scoring in Azure AI Search](index-similarity-and-scoring.md).
+
+## Syntax
+
+The syntax for `search.score` in **$orderby** is `search.score()`. The function `search.score` doesn't take any parameters. For full-text queries, you can use it with the `asc` or `desc` sort-order specifier, just like any other clause in the **$orderby** parameter. It can appear anywhere in the list of sort criteria.
+
+## Example
+
+Sort hotels in descending order by `search.score` and `rating`, and then in ascending order by distance from the given coordinates so that between two hotels with identical relevance scores and ratings, the closest one is listed first:
+
+```odata-filter-expr
+    search.score() desc,rating desc,geo.distance(location, geography'POINT(-122.131577 47.678581)') asc
+```
+
+## Limitations
+
+You can't use `search.score()` in **$orderby** for pure vector or hybrid queries. The service rejects these requests with an HTTP 400 `InvalidRequestParameter` error. To correct the request, remove `search.score()` from **$orderby**.
+
+## Next steps  
+
+- [OData expression language overview for Azure AI Search](query-odata-filter-orderby-syntax.md)
+- [OData expression syntax reference for Azure AI Search](search-query-odata-syntax-reference.md)
+- [Search Documents (Azure AI Search REST API)](https://learn.microsoft.com/rest/api/searchservice/documents/search-post)

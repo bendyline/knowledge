@@ -1,0 +1,121 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-azure-ai-search-en",
+  "name": "Azure AI Search documentation",
+  "description": "Azure AI Search documentation from MicrosoftDocs, normalized to Markdown with source attribution, licenses, and search navigation.",
+  "language": "en",
+  "enabled": true,
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "MicrosoftDocs/azure-ai-docs",
+    "ref": "main",
+    "paths": [
+      "articles/search",
+      "articles/foundry/includes/role-rename-note.md",
+      "articles/foundry/includes/vary-mcp-headers-per-request.md"
+    ],
+    "include": [
+      "**/*.md",
+      "articles/search/toc.yml",
+      "articles/search/index.yml",
+      "articles/search/search-faq-frequently-asked-questions.yml"
+    ],
+    "exclude": [
+      "articles/search/monitor-azure-cognitive-search.md",
+      "articles/search/monitor-azure-cognitive-search-data-reference.md",
+      "articles/search/policy-reference.md",
+      "articles/search/search-get-started-arm.md",
+      "articles/search/search-get-started-bicep.md",
+      "articles/search/search-get-started-terraform.md",
+      "articles/search/search-limits-quotas-capacity.md",
+      "articles/search/search-manage-azure-cli.md",
+      "articles/search/search-security-best-practices.md",
+      "articles/search/security-controls-policy.md",
+      "articles/search/tutorial-csharp-search-query-integration.md"
+    ],
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices.md",
+        "sha256": "dd2a53262bfad067bab98b0c26934558c19d3512c9fc33bc189d1ed1e5f646ed"
+      }
+    ],
+    "publishedBaseUrl": "https://learn.microsoft.com/azure/search/"
+  },
+  "licensing": {
+    "status": "automatic",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through include expansion, link rewriting, YAML-to-Markdown conversion, and image omission. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code samples remain under the MIT License."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "**/*.md",
+          "**/*.yml",
+          "**/*.yaml"
+        ],
+        "license": "docs"
+      }
+    ],
+    "policy": "standard-open-v1"
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "docfx",
+      "path": "articles/search/toc.yml"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": false,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "azure",
+        "search",
+        "microsoftdocs"
+      ]
+    }
+  }
+}

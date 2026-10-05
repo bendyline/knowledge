@@ -1,0 +1,137 @@
+---
+title: Add Spell Check to Queries
+description: Attach spelling correction to the query pipeline, to fix typos on query terms before executing the query.
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ms.topic: how-to
+ms.date: 08/27/2025
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Add spell check to queries in Azure AI Search (preview)
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+
+> **Important:**
+> Features, capabilities, or properties marked (preview) aren't covered by a service-level agreement, aren't recommended for production workloads, and might change or be constrained before they become generally available. The [Azure AI Search preview terms](https://learn.microsoft.com/azure/search/search-preview-terms) apply to all preview functionality, whether it's standalone or part of a generally available feature.
+
+
+You can improve recall by spell-correcting words in a query before they reach the search engine. The `speller` parameter (preview) is supported for all text (non-vector) query types and is available through the Azure portal, preview REST APIs, and beta versions of Azure SDK libraries.
+
+## Prerequisites
+
++ A search service at the Basic tier or higher, in any region.
+
++ An existing search index with content in a [supported language](#supported-languages).
+
++ A [query request](https://learn.microsoft.com/rest/api/searchservice/documents/search-post?view=rest-searchservice-2026-08-01-preview\&preserve-view=true) that has `speller=lexicon` and `queryLanguage` set to a [supported language](#supported-languages). Spell check works on strings passed in the `search` parameter. It's not supported for filters, fuzzy search, wildcard search, regular expressions, or vector queries.
+
+Use a search client that supports preview APIs on the query request. You can use a [REST client](search-get-started-text.md) or beta releases of the Azure SDKs.
+
+| Client library | Versions |
+| --- | --- |
+| REST API | Versions 2020-06-30-Preview and later. We recommend the latest preview API: [2026-08-01-preview](https://learn.microsoft.com/rest/api/searchservice/documents/search-post?view=rest-searchservice-2026-08-01-preview\&preserve-view=true) |
+| Azure SDK for .NET | [version 11.7.0-beta.4](https://www.nuget.org/packages/Azure.Search.Documents/11.7.0-beta.4) |
+| Azure SDK for Java | [version 11.8.0-beta.7](https://central.sonatype.com/artifact/com.azure/azure-search-documents/11.8.0-beta.7) |
+| Azure SDK for JavaScript | [version 11.3.0-beta.8](https://www.npmjs.com/package/@azure/search-documents/v/11.3.0-beta.8) |
+| Azure SDK for Python | [version 11.6.0b12](https://pypi.org/project/azure-search-documents/11.6.0b12/) |
+
+## Spell correction with simple search
+
+The following example uses the [hotels-sample index](search-get-started-portal.md) to demonstrate spell correction on a simple text query. Without spell correction, the query returns zero results. With correction, the query returns one result for Johnson's family-oriented resort.
+
+```http
+POST https://[service name].search.windows.net/indexes/hotels-sample/docs/search?api-version=2026-08-01-preview
+{
+    "search": "famly acitvites",
+    "speller": "lexicon",
+    "queryLanguage": "en-us",
+    "queryType": "simple",
+    "select": "HotelId,HotelName,Description,Category,Tags",
+    "count": true
+}
+```
+
+## Spell correction with full Lucene
+
+Spelling correction occurs on individual query terms that undergo text analysis, which is why you can use the speller parameter with some Lucene queries, but not others.
+
++ Incompatible query forms that bypass text analysis include: wildcard, regex, fuzzy
++ Compatible query forms include: fielded search, proximity, term boosting
+
+This example uses fielded search over the Category field, with full Lucene syntax, and a misspelled query term. By including speller, the typo in "Suiite" is corrected and the query succeeds.
+
+```http
+POST https://[service name].search.windows.net/indexes/hotels-sample/docs/search?api-version=2026-08-01-preview
+{
+    "search": "Category:(Resort and Spa) OR Category:Suiite",
+    "queryType": "full",
+    "speller": "lexicon",
+    "queryLanguage": "en-us",
+    "select": "Category",
+    "count": true
+}
+```
+
+## Spell correction with semantic ranking
+
+This query, with typos in every term except one, undergoes spelling corrections to return relevant results. To learn more, see [Configure semantic ranker](semantic-how-to-query-request.md).
+
+```http
+POST https://[service name].search.windows.net/indexes/hotels-sample/docs/search?api-version=2026-08-01-preview
+{
+    "search": "hisotoric hotell wiht great restrant nad wiifi",
+    "queryType": "semantic",
+    "speller": "lexicon",
+    "queryLanguage": "en-us",
+    "searchFields": "HotelName,Tags,Description",
+    "select": "HotelId,HotelName,Description,Category,Tags",
+    "count": true
+}
+```
+
+## Supported languages
+
+Valid values for `queryLanguage` can be found in the following table, copied from the list of [supported languages (REST API reference)](https://learn.microsoft.com/rest/api/searchservice/documents/search-post?view=rest-searchservice-2026-08-01-preview\&tabs=HTTP#querylanguage\&preserve-view=true).
+
+| Language | queryLanguage |
+| --- | --- |
+| English [EN] | EN, EN-US (default) |
+| Spanish [ES] | ES, ES-ES (default) |
+| French [FR] | FR, FR-FR (default) |
+| German [DE] | DE, DE-DE (default) |
+| Dutch [NL] | NL, NL-BE, NL-NL (default) |
+
+> **Note:**
+> Previously, while semantic ranker was in preview, the `queryLanguage` parameter was also used for semantic ranking. Semantic ranker is now language-agnostic.
+
+### Language analyzer considerations
+
+Indexes that contain non-English content often use [language analyzers](index-add-language-analyzers.md) on non-English fields to apply the linguistic rules of the native language.
+
+When adding spell check to content that also undergoes language analysis, you can achieve better results using the same language for each indexing and query processing step. For example, if a field's content was indexed using the "fr.microsoft" language analyzer, then queries and spell check should all use a French lexicon or language library of some form.
+
+To recap how language libraries are used in Azure AI Search:
+
++ Language analyzers can be invoked during indexing and query execution, and are either Apache Lucene (for example, "de.lucene") or Microsoft ("de.microsoft).
+
++ Language lexicons invoked during spell check are specified using one of the language codes in the [supported language](#supported-languages) table.
+
+In a query request, the value assigned to `queryLanguage` applies to `speller`. 
+
+> **Note:**
+> Language consistency across various property values is only a concern if you are using language analyzers. If you are using language-agnostic analyzers (such as keyword, simple, standard, stop, whitespace, or `standardasciifolding.lucene`), then the `queryLanguage` value can be whatever you want.
+
+While content in a search index can be composed in multiple languages, the query input is most likely in one. The search engine doesn't check for compatibility of `queryLanguage`, language analyzer, and the language in which content is composed, so be sure to scope queries accordingly to avoid producing incorrect results.
+
+## Next steps
+
++ [Create a basic query](search-query-create.md)
++ [Use full Lucene query syntax](https://learn.microsoft.com/azure/search/query-Lucene-syntax)
++ [Use simple query syntax](query-simple-syntax.md)

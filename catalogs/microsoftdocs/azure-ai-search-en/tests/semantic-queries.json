@@ -1,0 +1,5 @@
+[
+  { "query": "How does hybrid search combine keyword and vector queries using reciprocal rank fusion?", "expectedDocumentIds": ["articles/search/hybrid-search-overview"] },
+  { "query": "What does the semantic ranker do to rerank search results?", "expectedDocumentIds": ["articles/search/semantic-search-overview"] },
+  { "query": "How does vector search find conceptually similar text using embeddings?", "expectedDocumentIds": ["articles/search/vector-search-overview"] }
+]

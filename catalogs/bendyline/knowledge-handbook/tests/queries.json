@@ -1,0 +1,5 @@
+[
+  { "query": "Catalog organization", "expectedDocumentIds": ["organization"] },
+  { "query": "Source synchronization", "expectedDocumentIds": ["synchronization"] },
+  { "query": "Publishing knowledge catalogs", "expectedDocumentIds": ["publishing"] }
+]
