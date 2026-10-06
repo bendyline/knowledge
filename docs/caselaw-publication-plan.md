@@ -4,7 +4,7 @@ Scope: **6,920,596 CAP case records**, 60 populated jurisdictions, 40,622 source
 
 Target: **1 GiB per .gezk**, with a 1.5 GiB actual ceiling. The capacity estimate is **368 archives / 335.18 GiB**. These counts are provisional, not measured or frozen package boundaries.
 
-The estimates scale CAP source-page counts against the four measured Wyoming archives. A national case inventory and measured normalized content must replace these estimates before release. Small jurisdictions remain standalone; cases are never split. Adjacent years are grouped into parts. The last part may be smaller.
+The estimates scale CAP source-page counts against the four measured Wyoming archives. Measured normalized content must replace these estimates before release. See the [national metadata sweep](caselaw.md#national-metadata-sweep) for recorded inventory results and jurisdiction exceptions; the table reflects root metadata totals. Small jurisdictions remain standalone; cases are never split. Adjacent years are grouped into parts. The last part may be smaller.
 
 Every ID below is a collection prefix. Append `-part-0001`, `-part-0002`, etc. to identify the proposed archive slots, followed by an immutable release version in the filename. The JSON companion enumerates every provisional package ID and includes a usable collection configuration per jurisdiction.
 
@@ -118,15 +118,15 @@ These volume counts describe complete source reporter inventories, not counts of
 
 ## Scope and release conditions
 
-CAP’s `regional` entry has no advertised case or page count. Treat it as unresolved until the exhaustive index sweep proves whether it contains records needing their own collection. It is not assumed to be empty.
+CAP’s `regional` entry has no advertised case or page count. The [national metadata sweep](caselaw.md#national-metadata-sweep) records the observed case membership, including jurisdictions absent from the root list. Any unmapped records require an explicit collection policy before national publication.
 
 CAP record identity is preserved; equal case names or parallel citations are not grounds for silently dropping records. Unknown jurisdiction IDs and duplicate CAP IDs block completion. The root counts describe CAP coverage, not every decision ever issued by these courts.
 
-Explicitly labeled limited public pilots may precede national releases. The combined U.S. Reports 347–349 pilot is enabled for that purpose; the single-volume pilot and four-part Wyoming benchmark remain development artifacts. Full national releases supersede overlapping pilots, which should not be installed alongside their replacements.
+Explicitly labeled limited public pilots may precede national releases. The [published U.S. Reports 347–349 and Alaska pilots](caselaw.md#published-pilots) exercise that path; the single-volume pilot and four-part Wyoming benchmark remain development artifacts. Full national releases supersede overlapping pilots, which should not be installed alongside their replacements.
 
 Wyoming’s four archives total 1,056,484,052 bytes (0.984 GiB). The updated token-based estimate selects all 10,931 cases for one part; a combined build still needs actual-size and retrieval verification. The existing semantic miss remains unresolved.
 
-The existing frozen Wyoming plan remains unchanged under snapshot `2026-10-06`. The current Wyoming configuration now requests 1 GiB using `wyoming-bge-v1`; use preview against the cached corpus, then a new snapshot/plan identity for a production freeze. Do not overwrite the old plan.
+The existing frozen Wyoming plan remains unchanged under snapshot `2026-10-06`. The current Wyoming configuration now requests 1 GiB using `wyoming-bge-v1`; reingest and audit with the current normalizer before previewing the cached corpus, then use a new snapshot/plan identity for a production freeze. Do not overwrite the old plan.
 
 Other collection configurations in the JSON are production-scope proposals, not a claim that those corpora are already ingested. Add representative citation and semantic checks before freezing each collection. Puerto Rico and other multilingual content require checking language coverage and the embedding profile; size calibration must be remeasured if that profile changes.
 

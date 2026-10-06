@@ -8,15 +8,10 @@ import { getJson, githubApi, githubHeaders, request } from './http.mjs';
 import { digest, exists, hashFile, inside, inventory, readJson, writeJson } from './files.mjs';
 import { sourceCommit } from './build.mjs';
 import { datasetLicense } from './dataset-license.mjs';
+import { verifyRemote } from './remote-verification.mjs';
 
-export async function verifyRemote(url, sha256, size, headers = {}) {
-  const response = await fetch(url, { headers, signal: AbortSignal.timeout(300000) });
-  if (!response.ok) throw new Error(`Download verification failed: HTTP ${response.status}`);
-  const { createHash } = await import('node:crypto');
-  const hash = createHash('sha256'); let bytes = 0;
-  for await (const chunk of response.body) { bytes += chunk.length; if (bytes > size) throw new Error('Remote file is larger than expected'); hash.update(chunk); }
-  if (bytes !== size || hash.digest('hex') !== sha256) throw new Error('Remote file digest/size mismatch');
-}
+export { verifyRemote };
+
 export function publishPlan(release) {
   if (release.testOnly) throw new Error('Test embeddings may never be published');
   if (!release.targets.enabled) throw new Error('Publishing is disabled in this catalog manifest');
@@ -107,7 +102,7 @@ export async function publishRelease(root, directory, { apply = false, services 
       continue;
     }
     if (!ghRelease.draft) throw new Error('A published GitHub release is missing assets; refusing to mutate it');
-    await io.request(`${ghRelease.upload_url.replace(/\{.*$/, '')}?name=${encodeURIComponent(file.path)}`, { method: 'POST', headers: { ...githubHeaders(ghToken), 'Content-Type': 'application/octet-stream' }, body: data, maxBytes: 1000000, attempts: 1 });
+    await io.request(`${ghRelease.upload_url.replace(/\{.*$/, '')}?name=${encodeURIComponent(file.path)}`, { method: 'POST', headers: { ...githubHeaders(ghToken), 'Content-Type': 'application/octet-stream' }, body: data, maxBytes: 1000000, attempts: 1, signal: AbortSignal.timeout(30 * 60 * 1000) });
   }
   if (ghRelease.draft) ghRelease = await io.githubApi(`/repos/${plan.github.repository}/releases/${ghRelease.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ draft: false }) });
   const githubUrl = `https://github.com/${plan.github.repository}/releases/download/${encodeURIComponent(plan.github.tag)}/${release.archive}`;

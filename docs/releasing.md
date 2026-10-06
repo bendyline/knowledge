@@ -145,7 +145,9 @@ configure its protection rules in GitHub as appropriate.
 Both hosts receive the same `.gezk` bytes. The archive includes all licensing
 records. The Hugging Face version directory also contains the release record,
 checksums, and license sidecars; GitHub gets the archive, release record, checksum,
-and NOTICE assets. Downloads are streamed and hashed after upload.
+and NOTICE assets. Downloads are hashed completely after upload. Large files
+use bounded concurrent ranges, retrying transient failures within a range before
+adding it to the ordered SHA-256; servers without ranges use a streamed full GET.
 
 Publication writes `.work/releases/<id>/<version>/published.json` after each
 successful target. Retry the publish job with the original build artifact after
@@ -195,3 +197,21 @@ validation to a privileged persistent runner.
 
 Optional local signing uses `build --sign-key PATH`. Keep private keys outside the
 repository. Signing-key provisioning and rotation are not automated in the starter.
+
+## Complete Gilde discovery
+
+A merged Gilde definition is not yet the published catalog package. After its
+checks pass and the PR is merged, dispatch Gilde's normal `publish.yml` workflow
+on `main`. Confirm that the npm registry's `@bendyline/gilde` latest version
+has the intended `gitHead` and contains the new knowledge-catalog definition.
+An accepted npm publication can remain unavailable while it is processed;
+wait for the registry rather than issuing a duplicate publication.
+
+Once npm exposes the intended release, dispatch `deploy-site.yml` in
+`bendyline/gilde-pipeline` with `gilde_ref` set to the exact merged Gilde SHA.
+Verify `https://gezelgilde.com/catalog/v1/latest.json` identifies that version
+and SHA. Fetch each new knowledge-catalog version manifest from its `baseUrl`
+and compare archive SHA-256, size, document count, and immutable Hugging Face
+coordinates with the local verified release and publication receipt. Confirm
+earlier catalog entries remain present. These are distinct release steps; do
+not treat a successful definition PR as evidence that runtime discovery is live.

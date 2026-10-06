@@ -9,8 +9,10 @@ The [national publication list](caselaw-publication-plan.md) covers all 50 state
 the complete federal collection, D.C., territories, and tribal jurisdictions:
 6,920,596 advertised CAP records. Its companion
 `collections/caselaw/publication-plan.json` enumerates every provisional package
-ID and configuration at a 1 GiB target. Counts outside Wyoming are capacity
-estimates pending the national case-index sweep and measured ingestion.
+ID and configuration at a 1 GiB target. Package counts remain capacity estimates
+pending measured ingestion; the
+[national metadata sweep](#national-metadata-sweep) is complete and records two
+additional cases absent from the root jurisdiction totals.
 
 ```sh
 npm run caselaw -- publication-plan --snapshot 2026-10-06 --report collections/caselaw/publication-plan.json --markdown docs/caselaw-publication-plan.md
@@ -29,6 +31,42 @@ collection configuration → measured, frozen package plan → .gezk parts
                                               verified collection index
 ```
 
+## Published pilots
+
+| Collection | Version | Case records | Archive size | Release |
+| --- | --- | ---: | ---: | --- |
+| U.S. Reports 347–349 | 2026.10.5 | 2,142 | 28.73 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-347-349-v2026.10.5) |
+| Alaska CAP jurisdiction | 2026.10.1 | 10,749 | 993.19 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-alaska-part-0001-v2026.10.1) |
+
+Both archives are published on Hugging Face and GitHub with complete download
+SHA-256 verification. Alaska's [collection index](https://github.com/bendyline/knowledge/releases/download/caselaw-alaska-v2026.10.1/collection.json)
+records exact case membership, checksums, and immutable download coordinates.
+The public [dataset overview](https://huggingface.co/datasets/Bendyline/knowledge)
+links both pilots. CAP bodies and generated Markdown remain outside Git.
+
+Alaska spans 1887–2019 and combines 1,096 selected source books into one archive
+near the 1 GiB target. It contains 349,739 chunks in two internal shards.
+Measured planning estimated 1,077,205,344 bytes; the actual 1,041,433,404 bytes
+are 3.3% smaller. The national page-count estimate remains provisional.
+All 10,749 normalized texts match their source HTML; 439,974 page/footnote links
+resolve. Four citation probes and four semantic probes pass. These are smoke
+tests, not a broad legal retrieval evaluation. The collection retains CAP's
+Alaska assignment, including 21 federal district-court records with explicit
+court labels.
+
+The Alaska build and verification took 3,986.7 seconds (66.4 minutes) on a
+Ryzen 9 7950X3D and Radeon AI PRO R9700 using DirectML. Existing source, model,
+and shared embedding caches were retained; this is not an uncached benchmark.
+Regenerating the normalized corpus took 229.1 seconds and its source audit
+212.9 seconds. Compact evidence, archive hashes, and both host receipts are in
+[the Alaska benchmark](../collections/caselaw/alaska/benchmark-2026-10-06.json).
+
+Large-download verification uses bounded concurrent HTTP ranges with transient
+connection retries and a final SHA-256 over every byte in file order. Servers
+without range support fall back to full-file verification. Interrupted uploads
+resume from immutable host metadata and verified receipts; the collection index
+is published only after every part passes on both hosts.
+
 ## State collection workflow
 
 ```sh
@@ -40,8 +78,9 @@ npm run caselaw -- plan --preview --snapshot 2026-10-06 --collection collections
 
 The cached snapshot above already contains the original four-part frozen plan.
 The current configuration requests one approximately 1 GiB Wyoming archive.
-Preview it against the cached corpus; freeze and build under a new snapshot/plan
-identity after the updated source audit. Shared source objects can be reused.
+Reingest and audit with the current `cap-html@4` normalizer before previewing
+the cached corpus. Freeze and build under a new snapshot/plan identity after
+the updated source audit. Shared source objects can be reused.
 Do not overwrite the existing plan or reuse its release version.
 
 Each stage fails closed on incomplete input and can be rerun. Acquisition checks
@@ -147,9 +186,10 @@ skips these catalogs. State collections use the shared object store above.
 
 Preparation, compilation, and publication remain separate stages. The ordinary
 catalog Actions build prepares content before compiling. Its upload stage only
-consumes the verified release artifact. The state collection CLI currently stops
-at local verified artifacts. A persistent build workspace avoids repeated ZIP
-downloads and embedding inference; a fresh hosted runner has neither cache.
+consumes the verified release artifact. The state collection CLI publishes
+verified parts and their collection index. A persistent build workspace avoids
+repeated ZIP downloads and embedding inference; a fresh hosted runner has
+neither cache.
 
 On this machine, regenerating all 10,931 Wyoming Markdown documents from cached
 ZIPs took 151.4 seconds, and the full text/link audit took 183.4 seconds. The
@@ -273,8 +313,8 @@ live in `.work/catalogs/caselaw/<pilot>/content/`; builds do not download case d
 ```sh
 npm run prepare-content -- --catalog caselaw/us-347-349
 npm run check
-npm run build -- --catalog caselaw/us-347-349 --version 2026.10.4 --created-at 2026-10-06T00:00:00Z
-npm run verify -- --catalog caselaw/us-347-349 --version 2026.10.4 --semantic
+npm run build -- --catalog caselaw/us-347-349 --version 2026.10.6 --created-at 2026-10-06T00:00:00Z
+npm run verify -- --catalog caselaw/us-347-349 --version 2026.10.6 --semantic
 ```
 
 Use a new release version after changing source or build inputs. Sync checks live
@@ -285,15 +325,15 @@ counts; `.work/verification/` records integrity and search checks.
 
 ## Combined-volume results
 
-The current workspace-based `2026.10.4` rebuild contains 2,142 documents,
-12,853 chunks, and one shard in 30,043,355 bytes (28.65 MiB). Deep validation,
-six citation/name checks, and four semantic checks pass. All four semantic
-checks return their expected case first. Its SHA-256 is
-`3e647577382fb693257969622c50b26cd4d19b64cbd9aaf2141e3ca070283753`.
-The archive is
-`.work/releases/caselaw-us-347-349/2026.10.4/caselaw-us-347-349-2026.10.4.gezk`;
-its report is `.work/verification/caselaw-us-347-349-2026.10.4.json`.
-The earlier measurements below remain as the original pilot baseline.
+The published workspace-based `2026.10.5` release contains 2,142 documents,
+12,847 chunks, and one shard in 30,128,630 bytes (28.73 MiB). Deep validation,
+six citation/name checks, and four semantic checks pass. All 2,142 texts match
+their source HTML, and all 4,872 page/footnote links resolve. Its SHA-256 is
+`db08e80f8c6880791e5ace109a43c55f5f95083289f735188e0b9fdaafe41712`.
+The [public release](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-347-349-v2026.10.5)
+contains checksums and verification reports. Immutable Hugging Face download
+coordinates are recorded in Gilde. The earlier measurements below remain
+historical pilot evidence.
 
 The earlier combined `2026.10.1` build was verified on October 6, 2026 using the pinned
 `bge-small-en-v1.5@1` embedding model on CPU:
