@@ -40,6 +40,17 @@ test('CAP plans preserve whole cases and years, split oversized years, and rejec
   assert.match(bound, /\[outside\]\(https:\/\/static.case.law/);
 });
 
+test('CAP coalesces tiny final parts within target tolerance without exceeding the ceiling', () => {
+  const rows = [100, 5].map((estimatedBytes, i) => ({ id: i + 1, date: `${2000 + i}-01-01`, court: 1, chunks: i + 1, estimatedBytes }));
+  const parts = partitionCapCases(rows, { targetBytes: 100, ceilingBytes: 150 });
+  assert.equal(parts.length, 1);
+  assert.equal(parts[0].estimatedBytes, 105);
+  assert.equal(parts[0].chunks, 3);
+  assert.deepEqual(parts[0].cases, rows);
+  assert.equal(partitionCapCases(rows, { targetBytes: 100, ceilingBytes: 104 }).length, 2);
+  assert.equal(partitionCapCases([rows[0], { ...rows[1], estimatedBytes: 6 }], { targetBytes: 100, ceilingBytes: 150 }).length, 2);
+});
+
 test('CAP uses a 1 GiB target and applies Wyoming calibration only to its measured profile', () => {
   const config = CapCollection.parse({ schemaVersion: 1, id: 'cap-size', name: 'Size', jurisdiction: 'wyo', sizeEstimate: 'wyoming-bge-v1' });
   assert.equal(config.targetBytes, 1073741824);

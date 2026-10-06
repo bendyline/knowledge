@@ -83,6 +83,9 @@ and case-ID order. Cases are never split across archives. The default target is
 now **1 GiB**, the provisional actual archive ceiling is 1.5 GiB, and every release
 must also remain below the repository's 2 GiB asset limit. Actual sizes calibrate
 future plans; estimates do not substitute for the post-build ceiling check.
+A final remainder no larger than 10% of the target merges into its preceding
+part when their combined estimate is within 5% of the target and under the hard
+ceiling. This avoids tiny final downloads for collections just over 1 GiB.
 
 The national configurations and Wyoming use `sizeEstimate: wyoming-bge-v1`,
 which multiplies the original estimate by 0.60. The four Wyoming archives
@@ -439,6 +442,19 @@ an explicit, bounded selection and a checked archive cache, not a website crawl.
 
 CAP data includes OCR errors and historical opinions; a citation is not an
 assertion of continuing legal validity. Coverage must be stated per collection.
+
+## National metadata sweep
+
+The 2026-10-06 sweep indexed all 40,622 source volumes without download or
+validation failures. All 60 advertised populated jurisdiction counts reconcile.
+The indexes contain 6,920,598 distinct case IDs, two more than the root totals:
+two United Kingdom decisions appear in Colorado Law Reporter volume 4, but CAP
+omits their jurisdiction from its root list. They remain in the inventory and
+require an explicit collection policy before national publication. The compact
+evidence is `collections/caselaw/inventory-2026-10-06.json`. The provisional
+national package list still covers the 60 advertised jurisdictions; it does not
+silently absorb these two records into Colorado. The full metadata sweep is
+separate from case-body ingestion and archive publication.
 
 ## Expansion into state collections
 

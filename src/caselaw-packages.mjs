@@ -63,6 +63,16 @@ export function partitionCapCases(cases, { targetBytes, ceilingBytes }) {
     }
   }
   flush();
+  // The target is approximate. Avoid a tiny last download when the complete
+  // remainder fits within 5% of the target and still respects the hard ceiling.
+  const tail = parts.at(-1); const prior = parts.at(-2);
+  if (prior && tail.estimatedBytes <= targetBytes * 0.10
+    && prior.estimatedBytes + tail.estimatedBytes <= Math.min(ceilingBytes, Math.floor(targetBytes * 1.05))) {
+    prior.cases.push(...tail.cases);
+    prior.estimatedBytes += tail.estimatedBytes;
+    prior.chunks += tail.chunks;
+    parts.pop();
+  }
   return parts;
 }
 
@@ -102,6 +112,7 @@ export async function planCapCollection(store, config, { embedderFactory = creat
     coverage: { advertisedCases: coverage.advertisedCases, selectedCases: coverage.records, metadataComplete: true, ingestionComplete: true, scope: coverage.scope },
     termsSha256: CASELAW_TERMS.sha256, roots: coverage.roots, sourceIndexes: coverage.sources,
     embeddingProfile: config.embeddingProfile, targetBytes: config.targetBytes, ceilingBytes: config.ceilingBytes,
+    packing: { smallTailFraction: 0.10, mergedTargetTolerance: 0.05 },
     estimate: `${config.sizeEstimate === 'wyoming-bge-v1' ? '0.60 × (' : ''}2 × normalized bytes + 3072 × measured token chunks + source metadata bytes + 4096 per case${config.sizeEstimate === 'wyoming-bge-v1' ? ')' : ''}; actual build ceiling enforced`,
     parts: parts.map(p => ({ ...p, catalogId: `${config.id}-${p.key}` })) };
   plan.planDigest = digest(plan);

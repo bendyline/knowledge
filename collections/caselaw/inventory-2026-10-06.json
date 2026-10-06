@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-06",
+  "scope": "All 40,622 volume indexes from the pinned CAP national volume inventory; case bodies acquired only for pilot selections.",
+  "indexedVolumes": 40622,
+  "failedVolumes": 0,
+  "advertisedCases": 6920596,
+  "indexedCases": 6920598,
+  "distinctCaseIds": 6920598,
+  "knownJurisdictionCountsReconciled": true,
+  "inventoryDigest": "ac4abfe367f5ebc6f733afebcd84adda2ee8209b164830e9daec3ce80df32c68",
+  "selectionDigest": "ae3a43ba26a1eec3d8fd42a930c9e6cfd16164a8877193d96c6c2dc248a990e9",
+  "nationalPublicationReady": false,
+  "additionalJurisdictions": [
+    {
+      "id": 63,
+      "name": "United Kingdom",
+      "presentInRootJurisdictionIndex": false,
+      "cases": [
+        { "id": 12131320, "reporter": "colo-l-rep", "volume": "4", "file": "0221-01", "name": "HUGHES v. PERCIVAL" },
+        { "id": 12145963, "reporter": "colo-l-rep", "volume": "4", "file": "0841-01", "name": "NICHOLS v. PITMAN" }
+      ],
+      "disposition": "Preserved in inventory. Requires explicit national collection policy before publication; never silently assign to Colorado or drop."
+    }
+  ]
+}
