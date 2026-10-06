@@ -1,0 +1,5 @@
+[
+  { "query": "Brown Board Education", "expectedDocumentIds": ["cap-11301409"] },
+  { "query": "347 U.S. 483", "expectedDocumentIds": ["cap-11301409"] },
+  { "query": "Pereira United States", "expectedDocumentIds": ["cap-11299228"] }
+]

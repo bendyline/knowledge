@@ -3,12 +3,14 @@ import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { parse } from 'yaml';
 import { CatalogSchema, SourceLockSchema } from '../src/schema.mjs';
+import { CapCollection } from '../src/caselaw-packages.mjs';
 import { walk, json } from '../src/files.mjs';
 for (const base of ['src', 'scripts', 'test']) for (const file of await walk(base)) if (file.endsWith('.mjs')) execFileSync(process.execPath, ['--check', `${base}/${file}`], { stdio: 'inherit' });
 for (const [name, schema] of [['catalog', CatalogSchema], ['sources-lock', SourceLockSchema]]) {
   if (await readFile(`schemas/${name}.schema.json`, 'utf8') !== json(z.toJSONSchema(schema, { unrepresentable: 'any' }))) throw new Error('Generated schemas are stale; run npm run schema');
 }
 for (const file of await walk('.github/workflows')) parse(await readFile(`.github/workflows/${file}`, 'utf8'), { uniqueKeys: true });
+for (const file of await walk('collections')) if (file.endsWith('/collection.json')) CapCollection.parse(JSON.parse(await readFile(`collections/${file}`, 'utf8')));
 execFileSync(process.execPath, ['scripts/licenses.mjs', '--check'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['src/cli.mjs', 'validate'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['--test', '--test-concurrency=1'], { stdio: 'inherit' });

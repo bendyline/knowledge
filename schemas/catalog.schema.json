@@ -29,6 +29,13 @@
       "default": true,
       "type": "boolean"
     },
+    "contentStorage": {
+      "type": "string",
+      "enum": [
+        "git",
+        "workspace"
+      ]
+    },
     "publisher": {
       "type": "object",
       "properties": {
@@ -255,6 +262,114 @@
             "depth",
             "maxPages",
             "userAgent"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "caselaw"
+            },
+            "volumes": {
+              "minItems": 1,
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reporter": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+                  },
+                  "volume": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "cases": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "reporter",
+                  "volume",
+                  "sha256",
+                  "cases"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "jurisdictions": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "courts": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "maxExpandedBytes": {
+              "default": 100000000,
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 1000000000
+            }
+          },
+          "required": [
+            "type",
+            "volumes",
+            "jurisdictions",
+            "courts",
+            "maxExpandedBytes"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "caselaw-collection"
+            },
+            "snapshot": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+            },
+            "selectionDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "corpusDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "part": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$|^[a-z0-9]$"
+            }
+          },
+          "required": [
+            "type",
+            "snapshot",
+            "selectionDigest",
+            "corpusDigest",
+            "part"
           ],
           "additionalProperties": false
         }

@@ -10,7 +10,9 @@
       "type": "string",
       "enum": [
         "github",
-        "wikipedia"
+        "wikipedia",
+        "caselaw",
+        "caselaw-collection"
       ]
     },
     "sourceConfigDigest": {
@@ -95,6 +97,40 @@
             "type": "integer",
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
+          },
+          "caselaw": {
+            "type": "object",
+            "properties": {
+              "caseId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "archiveUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "archiveSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "jsonSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "htmlSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "caseId",
+              "archiveUrl",
+              "archiveSha256",
+              "jsonSha256",
+              "htmlSha256"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

@@ -4,6 +4,27 @@ Copy the handbook structure to `catalogs/<organization>/<catalog>/` and assign
 a globally unique lowercase catalog ID. `manifest.json` is validated by the
 runtime schema in `src/schema.mjs`; the generated JSON schemas support editors.
 
+Choose content storage independently of the source adapter. The default
+`contentStorage: git` keeps accepted Markdown in `catalogs/<key>/content/`.
+Choose Git storage when preserving readable content through upstream repository
+removal or access changes is a priority. Azure documentation explicitly uses this
+mode, retaining its license evidence and provenance alongside the flat files.
+Builds use the accepted snapshot; source sync remains a separate operation.
+
+For generated GitHub, Wikipedia, or CAP catalogs, `contentStorage: workspace`
+keeps only the manifest, NOTICE, static license texts, and retrieval checks in
+that directory. `npm run prepare-content -- --catalog <key>` materializes the
+accepted snapshot under `.work/catalogs/<key>/`, with the same full content and
+license validation. Repeated preparation reuses a valid snapshot without source
+downloads. Explicit `sync --catalog <key>` previews a source refresh;
+`--apply` accepts it. Bulk/nightly sync skips workspace catalogs.
+
+Fresh-checkout validation checks workspace definitions. Build requires prepared
+content and checks all generated rights evidence, provenance, and hashes.
+The release workflow prepares content in its build job. Pin immutable revisions
+or source checksums when the source supports them; preserve accepted workspace
+snapshots when later downloads cannot reproduce their bytes.
+
 Use `source.type: manual` for directly edited Markdown or local document imports.
 Keep all readable document bodies as `.md`; YAML is metadata or a table of
 contents, not an automatically indexed document. Raw HTML/PDF/DOCX files are

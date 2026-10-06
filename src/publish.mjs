@@ -30,6 +30,20 @@ export async function verifyLocalRelease(directory, release) {
   const { size } = await (await import('node:fs/promises')).stat(archive);
   if (digest(inspected.manifest) !== digest(release.manifest) || inspected.totalUncompressedBytes !== release.uncompressedBytes || size !== release.archiveBytes || release.catalogId !== release.manifest.id || release.version !== release.manifest.version) throw new Error('Release metadata does not match the archive');
 }
+export async function verifyPublicationChecks(directory, release) {
+  const policy = release.verificationPolicy;
+  if (!policy || !Array.isArray(policy.fullText) || !policy.fullText.length || !Array.isArray(policy.semantic)) throw new Error('Release lacks a retrieval verification policy; rebuild before publishing');
+  const report = await readJson(resolve(directory, 'verification.json'));
+  if (report.catalogId !== release.catalogId || report.version !== release.version || report.sha256 !== release.sha256
+    || report.inputDigest !== release.inputDigest || report.archiveBytes !== release.archiveBytes || report.integrity !== true) throw new Error('Publication verification does not match this archive');
+  for (const kind of ['fullText', 'semantic']) {
+    const checks = report[kind];
+    if (!Array.isArray(checks) || checks.length !== policy[kind].length
+      || digest(checks.map(({ query, expectedDocumentIds }) => ({ query, expectedDocumentIds }))) !== digest(policy[kind])
+      || checks.some(q => q.passed !== true || !q.expectedDocumentIds.every(id => q.hits.includes(id)))) throw new Error(`Publication requires all configured ${kind} checks to pass`);
+  }
+  return report;
+}
 export async function publishRelease(root, directory, { apply = false, services = {} } = {}) {
   const io = { getJson, githubApi, listFiles, uploadFiles, request, verifyRemote,
     commit: sourceCommit, dirty: (cwd) => execFileSync('git', ['status', '--porcelain'], { cwd, encoding: 'utf8' }).trim(),
@@ -37,6 +51,7 @@ export async function publishRelease(root, directory, { apply = false, services 
   const release = await readJson(resolve(directory, 'release.json'));
   const plan = publishPlan(release);
   await verifyLocalRelease(directory, release);
+  await verifyPublicationChecks(directory, release);
   if (!apply) return { ...plan, applied: false };
   if (!release.sourceCommit || release.sourceCommit !== io.commit(root)) throw new Error('Publish the checked-out commit used for the build');
   if (io.dirty(root)) throw new Error('Publishing requires a clean committed working tree');

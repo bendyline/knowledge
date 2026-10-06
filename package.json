@@ -9,8 +9,10 @@
   "scripts": {
     "knowledge": "node src/cli.mjs",
     "catalogs": "node src/cli.mjs list",
+    "caselaw": "node src/caselaw-cli.mjs",
     "packages": "node src/cli.mjs packages",
     "validate": "node src/cli.mjs validate",
+    "prepare-content": "node src/cli.mjs prepare",
     "sync": "node src/cli.mjs sync",
     "import": "node src/cli.mjs import",
     "build": "node src/cli.mjs build",
@@ -31,7 +33,10 @@
     "@bendyline/squisq-formats": "2.6.12",
     "@huggingface/hub": "2.17.5",
     "@huggingface/transformers": "3.8.1",
+    "parse5": "7.3.0",
     "yaml": "2.9.1",
+    "yauzl": "3.4.0",
     "zod": "4.4.3"
-  }
+  },
+  "devDependencies": { "yazl": "3.3.1" }
 }

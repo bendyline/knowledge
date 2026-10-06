@@ -3,6 +3,36 @@
 The starter supports deliberate releases of one catalog/version at a time.
 Automatic changed-catalog selection and version allocation are not enabled yet.
 
+## Checked-in and generated content
+
+Catalogs default to `contentStorage: git`. Generated catalogs may use
+`contentStorage: workspace`, keeping definitions in Git and accepted source
+snapshots under `.work/catalogs/<key>/`. Run `npm run prepare-content -- --catalog
+<key>` before a local build. Preparation validates and reuses an accepted local
+snapshot; otherwise it downloads, normalizes, and validates the configured
+selection. Deliberate source refreshes use explicit `sync` commands. Bulk sync
+skips workspace catalogs.
+
+The Actions build operation runs preparation before compilation. The publish job
+uses the resulting artifact and does not download sources or generate Markdown.
+The build job also runs verification, including configured semantic probes.
+`verification.json` travels with the artifact; publishing requires it to match
+the archive hash, version, input digest, and complete configured query set. A
+failed or missing check blocks upload. Legacy artifacts need a new build and
+verification report before they can use this publication path.
+Definition checks on pull requests do not ingest workspace catalogs. This keeps
+acquisition failures and source changes out of the upload stage. A fresh runner
+still pays the preparation and embedding costs: there is no persistent source,
+model, or embedding cache configured in Actions yet. Preserve validated local
+workspaces or use a suitably provisioned build runner for large releases.
+
+CAP state collections use their staged inventory/corpus/plan commands and
+`caselaw publish --collection PATH --snapshot ID --version VERSION --apply`.
+Collection publishing checks every part before uploading, retains receipts for
+resuming interrupted uploads, and publishes the collection index only after all
+part downloads verify on both hosts. See [CAP ingestion](caselaw.md). Their data
+stays under `.work/`; Git records configuration and compact evidence.
+
 ## First public repository setup
 
 The repository can be made public before catalog publishing is enabled. Keep

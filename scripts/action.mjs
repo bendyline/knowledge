@@ -14,8 +14,13 @@ if (operation === 'sync') {
   run('validate');
   run('sync-pr');
 } else if (operation === 'build') {
+  run('prepare', '--catalog', catalog);
   run('build', '--catalog', catalog, '--version', version, ...packageArgs);
   const [selected] = await catalogs(process.cwd(), catalog);
+  const { exists } = await import('../src/files.mjs');
+  const { resolve } = await import('node:path');
+  run('verify', '--catalog', catalog, '--version', version, ...packageArgs,
+    ...(await exists(resolve(selected.dir, 'tests/semantic-queries.json')) ? ['--semantic'] : []));
   if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `release-dir=${releaseDir(selected, version, process.env.PACKAGE_KEY || undefined)}\n`);
 } else if (operation === 'publish') run('publish', '--catalog', catalog, '--version', version, ...packageArgs, '--apply');
 else if (operation === 'gilde') run('gilde', '--catalog', catalog, '--version', version, ...packageArgs, '--apply');

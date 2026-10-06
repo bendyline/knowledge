@@ -1,0 +1,1992 @@
+{
+  "schemaVersion": 1,
+  "status": "provisional-national-publication-plan",
+  "snapshot": "2026-10-06",
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeUnit": "GiB (1,073,741,824 bytes)",
+  "selection": "Every CAP case record, assigned by its source jurisdiction ID; all source reporters and volumes included in the national inventory. CAP classification anomalies are retained and disclosed, not silently reassigned or dropped.",
+  "sources": [
+    {
+      "name": "ReportersMetadata",
+      "url": "https://static.case.law/ReportersMetadata.json",
+      "sha256": "fb40c4837c795785076350939afd8b8cc135fe4a6e7b8302967460d9e821f6e5",
+      "bytes": 146015
+    },
+    {
+      "name": "VolumesMetadata",
+      "url": "https://static.case.law/VolumesMetadata.json",
+      "sha256": "df5da71c76b6d75b59cfbb07387c71fb255e7a9f8d095c8a676559527532204d",
+      "bytes": 30302826
+    },
+    {
+      "name": "JurisdictionsMetadata",
+      "url": "https://static.case.law/JurisdictionsMetadata.json",
+      "sha256": "1b3e25514142b552aa2fd69b78c9322e6eeaa43fb67c3efbab90edd639dc97bc",
+      "bytes": 136880
+    }
+  ],
+  "sourceReporters": 401,
+  "sourceVolumes": 40622,
+  "advertisedCases": 6920596,
+  "collections": 60,
+  "estimatedArchiveBytes": 359898475979,
+  "estimatedParts": 368,
+  "estimate": {
+    "method": "CAP jurisdiction page counts multiplied by Wyoming measured archive bytes per source page; ceil(bytes / target) estimates part counts.",
+    "calibration": {
+      "collection": "caselaw-wyoming",
+      "version": "2026.10.2",
+      "archiveBytes": 1056484052,
+      "sourcePages": 106617
+    },
+    "caveat": "Capacity estimates from one jurisdiction, not measured national archive sizes or frozen membership. Compression, document lengths, languages, chunking, case overhead and year boundaries will change counts. No final date boundaries are claimed."
+  },
+  "collectionsPlan": [
+    {
+      "id": "caselaw-alabama",
+      "name": "Alabama",
+      "kind": "state",
+      "jurisdiction": "ala",
+      "jurisdictionId": 23,
+      "advertisedCases": 133318,
+      "advertisedPages": 567700,
+      "estimatedArchiveBytes": 5625425555,
+      "estimatedParts": 6,
+      "packageIds": [
+        "caselaw-alabama-part-0001",
+        "caselaw-alabama-part-0002",
+        "caselaw-alabama-part-0003",
+        "caselaw-alabama-part-0004",
+        "caselaw-alabama-part-0005",
+        "caselaw-alabama-part-0006"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-alabama",
+        "name": "Alabama caselaw — Caselaw Access Project",
+        "jurisdiction": "ala",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-alaska",
+      "name": "Alaska",
+      "kind": "state",
+      "jurisdiction": "alaska",
+      "jurisdictionId": 53,
+      "advertisedCases": 10749,
+      "advertisedPages": 81884,
+      "estimatedArchiveBytes": 811400998,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-alaska-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-alaska",
+        "name": "Alaska caselaw — Caselaw Access Project",
+        "jurisdiction": "alaska",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-american-samoa",
+      "name": "American Samoa",
+      "kind": "territory",
+      "jurisdiction": "am-samoa",
+      "jurisdictionId": 58,
+      "advertisedCases": 2171,
+      "advertisedPages": 11844,
+      "estimatedArchiveBytes": 117363996,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-american-samoa-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-american-samoa",
+        "name": "American Samoa caselaw — Caselaw Access Project",
+        "jurisdiction": "am-samoa",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-arizona",
+      "name": "Arizona",
+      "kind": "state",
+      "jurisdiction": "ariz",
+      "jurisdictionId": 21,
+      "advertisedCases": 28481,
+      "advertisedPages": 173478,
+      "estimatedArchiveBytes": 1719019860,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-arizona-part-0001",
+        "caselaw-arizona-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-arizona",
+        "name": "Arizona caselaw — Caselaw Access Project",
+        "jurisdiction": "ariz",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-arkansas",
+      "name": "Arkansas",
+      "kind": "state",
+      "jurisdiction": "ark",
+      "jurisdictionId": 34,
+      "advertisedCases": 60582,
+      "advertisedPages": 390915,
+      "estimatedArchiveBytes": 3873636130,
+      "estimatedParts": 4,
+      "packageIds": [
+        "caselaw-arkansas-part-0001",
+        "caselaw-arkansas-part-0002",
+        "caselaw-arkansas-part-0003",
+        "caselaw-arkansas-part-0004"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-arkansas",
+        "name": "Arkansas caselaw — Caselaw Access Project",
+        "jurisdiction": "ark",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-california",
+      "name": "California",
+      "kind": "state",
+      "jurisdiction": "cal",
+      "jurisdictionId": 30,
+      "advertisedCases": 144162,
+      "advertisedPages": 1337352,
+      "estimatedArchiveBytes": 13252024161,
+      "estimatedParts": 13,
+      "packageIds": [
+        "caselaw-california-part-0001",
+        "caselaw-california-part-0002",
+        "caselaw-california-part-0003",
+        "caselaw-california-part-0004",
+        "caselaw-california-part-0005",
+        "caselaw-california-part-0006",
+        "caselaw-california-part-0007",
+        "caselaw-california-part-0008",
+        "caselaw-california-part-0009",
+        "caselaw-california-part-0010",
+        "caselaw-california-part-0011",
+        "caselaw-california-part-0012",
+        "caselaw-california-part-0013"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-california",
+        "name": "California caselaw — Caselaw Access Project",
+        "jurisdiction": "cal",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-colorado",
+      "name": "Colorado",
+      "kind": "state",
+      "jurisdiction": "colo",
+      "jurisdictionId": 31,
+      "advertisedCases": 40897,
+      "advertisedPages": 260938,
+      "estimatedArchiveBytes": 2585674288,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-colorado-part-0001",
+        "caselaw-colorado-part-0002",
+        "caselaw-colorado-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-colorado",
+        "name": "Colorado caselaw — Caselaw Access Project",
+        "jurisdiction": "colo",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-connecticut",
+      "name": "Connecticut",
+      "kind": "state",
+      "jurisdiction": "conn",
+      "jurisdictionId": 2,
+      "advertisedCases": 57564,
+      "advertisedPages": 446088,
+      "estimatedArchiveBytes": 4420353769,
+      "estimatedParts": 5,
+      "packageIds": [
+        "caselaw-connecticut-part-0001",
+        "caselaw-connecticut-part-0002",
+        "caselaw-connecticut-part-0003",
+        "caselaw-connecticut-part-0004",
+        "caselaw-connecticut-part-0005"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-connecticut",
+        "name": "Connecticut caselaw — Caselaw Access Project",
+        "jurisdiction": "conn",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-dakota-territory",
+      "name": "Dakota Territory",
+      "kind": "historical-territory",
+      "jurisdiction": "dakota-territory",
+      "jurisdictionId": 55,
+      "advertisedCases": 310,
+      "advertisedPages": 3372,
+      "estimatedArchiveBytes": 33413661,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-dakota-territory-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-dakota-territory",
+        "name": "Dakota Territory caselaw — Caselaw Access Project",
+        "jurisdiction": "dakota-territory",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-delaware",
+      "name": "Delaware",
+      "kind": "state",
+      "jurisdiction": "del",
+      "jurisdictionId": 8,
+      "advertisedCases": 17657,
+      "advertisedPages": 123754,
+      "estimatedArchiveBytes": 1226297189,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-delaware-part-0001",
+        "caselaw-delaware-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-delaware",
+        "name": "Delaware caselaw — Caselaw Access Project",
+        "jurisdiction": "del",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-district-of-columbia",
+      "name": "District of Columbia",
+      "kind": "district",
+      "jurisdiction": "dc",
+      "jurisdictionId": 56,
+      "advertisedCases": 33226,
+      "advertisedPages": 261977,
+      "estimatedArchiveBytes": 2595969897,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-district-of-columbia-part-0001",
+        "caselaw-district-of-columbia-part-0002",
+        "caselaw-district-of-columbia-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-district-of-columbia",
+        "name": "District of Columbia caselaw — Caselaw Access Project",
+        "jurisdiction": "dc",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-florida",
+      "name": "Florida",
+      "kind": "state",
+      "jurisdiction": "fla",
+      "jurisdictionId": 28,
+      "advertisedCases": 329447,
+      "advertisedPages": 883822,
+      "estimatedArchiveBytes": 8757926483,
+      "estimatedParts": 9,
+      "packageIds": [
+        "caselaw-florida-part-0001",
+        "caselaw-florida-part-0002",
+        "caselaw-florida-part-0003",
+        "caselaw-florida-part-0004",
+        "caselaw-florida-part-0005",
+        "caselaw-florida-part-0006",
+        "caselaw-florida-part-0007",
+        "caselaw-florida-part-0008",
+        "caselaw-florida-part-0009"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-florida",
+        "name": "Florida caselaw — Caselaw Access Project",
+        "jurisdiction": "fla",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-georgia",
+      "name": "Georgia",
+      "kind": "state",
+      "jurisdiction": "ga",
+      "jurisdictionId": 3,
+      "advertisedCases": 172343,
+      "advertisedPages": 705482,
+      "estimatedArchiveBytes": 6990728327,
+      "estimatedParts": 7,
+      "packageIds": [
+        "caselaw-georgia-part-0001",
+        "caselaw-georgia-part-0002",
+        "caselaw-georgia-part-0003",
+        "caselaw-georgia-part-0004",
+        "caselaw-georgia-part-0005",
+        "caselaw-georgia-part-0006",
+        "caselaw-georgia-part-0007"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-georgia",
+        "name": "Georgia caselaw — Caselaw Access Project",
+        "jurisdiction": "ga",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-guam",
+      "name": "Guam",
+      "kind": "territory",
+      "jurisdiction": "guam",
+      "jurisdictionId": 60,
+      "advertisedCases": 278,
+      "advertisedPages": 1009,
+      "estimatedArchiveBytes": 9998335,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-guam-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-guam",
+        "name": "Guam caselaw — Caselaw Access Project",
+        "jurisdiction": "guam",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-hawaii",
+      "name": "Hawaii",
+      "kind": "state",
+      "jurisdiction": "haw",
+      "jurisdictionId": 40,
+      "advertisedCases": 18848,
+      "advertisedPages": 107704,
+      "estimatedArchiveBytes": 1067255301,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-hawaii-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-hawaii",
+        "name": "Hawaii caselaw — Caselaw Access Project",
+        "jurisdiction": "haw",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-idaho",
+      "name": "Idaho",
+      "kind": "state",
+      "jurisdiction": "idaho",
+      "jurisdictionId": 27,
+      "advertisedCases": 19402,
+      "advertisedPages": 150381,
+      "estimatedArchiveBytes": 1490148178,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-idaho-part-0001",
+        "caselaw-idaho-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-idaho",
+        "name": "Idaho caselaw — Caselaw Access Project",
+        "jurisdiction": "idaho",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-illinois",
+      "name": "Illinois",
+      "kind": "state",
+      "jurisdiction": "ill",
+      "jurisdictionId": 29,
+      "advertisedCases": 186586,
+      "advertisedPages": 1272136,
+      "estimatedArchiveBytes": 12605788908,
+      "estimatedParts": 12,
+      "packageIds": [
+        "caselaw-illinois-part-0001",
+        "caselaw-illinois-part-0002",
+        "caselaw-illinois-part-0003",
+        "caselaw-illinois-part-0004",
+        "caselaw-illinois-part-0005",
+        "caselaw-illinois-part-0006",
+        "caselaw-illinois-part-0007",
+        "caselaw-illinois-part-0008",
+        "caselaw-illinois-part-0009",
+        "caselaw-illinois-part-0010",
+        "caselaw-illinois-part-0011",
+        "caselaw-illinois-part-0012"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-illinois",
+        "name": "Illinois caselaw — Caselaw Access Project",
+        "jurisdiction": "ill",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-indiana",
+      "name": "Indiana",
+      "kind": "state",
+      "jurisdiction": "ind",
+      "jurisdictionId": 14,
+      "advertisedCases": 93619,
+      "advertisedPages": 568251,
+      "estimatedArchiveBytes": 5630885497,
+      "estimatedParts": 6,
+      "packageIds": [
+        "caselaw-indiana-part-0001",
+        "caselaw-indiana-part-0002",
+        "caselaw-indiana-part-0003",
+        "caselaw-indiana-part-0004",
+        "caselaw-indiana-part-0005",
+        "caselaw-indiana-part-0006"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-indiana",
+        "name": "Indiana caselaw — Caselaw Access Project",
+        "jurisdiction": "ind",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-iowa",
+      "name": "Iowa",
+      "kind": "state",
+      "jurisdiction": "iowa",
+      "jurisdictionId": 45,
+      "advertisedCases": 57776,
+      "advertisedPages": 369357,
+      "estimatedArchiveBytes": 3660014632,
+      "estimatedParts": 4,
+      "packageIds": [
+        "caselaw-iowa-part-0001",
+        "caselaw-iowa-part-0002",
+        "caselaw-iowa-part-0003",
+        "caselaw-iowa-part-0004"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-iowa",
+        "name": "Iowa caselaw — Caselaw Access Project",
+        "jurisdiction": "iowa",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-kansas",
+      "name": "Kansas",
+      "kind": "state",
+      "jurisdiction": "kan",
+      "jurisdictionId": 43,
+      "advertisedCases": 50182,
+      "advertisedPages": 341313,
+      "estimatedArchiveBytes": 3382122375,
+      "estimatedParts": 4,
+      "packageIds": [
+        "caselaw-kansas-part-0001",
+        "caselaw-kansas-part-0002",
+        "caselaw-kansas-part-0003",
+        "caselaw-kansas-part-0004"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-kansas",
+        "name": "Kansas caselaw — Caselaw Access Project",
+        "jurisdiction": "kan",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-kentucky",
+      "name": "Kentucky",
+      "kind": "state",
+      "jurisdiction": "ky",
+      "jurisdictionId": 26,
+      "advertisedCases": 79574,
+      "advertisedPages": 402890,
+      "estimatedArchiveBytes": 3992298224,
+      "estimatedParts": 4,
+      "packageIds": [
+        "caselaw-kentucky-part-0001",
+        "caselaw-kentucky-part-0002",
+        "caselaw-kentucky-part-0003",
+        "caselaw-kentucky-part-0004"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-kentucky",
+        "name": "Kentucky caselaw — Caselaw Access Project",
+        "jurisdiction": "ky",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-louisiana",
+      "name": "Louisiana",
+      "kind": "state",
+      "jurisdiction": "la",
+      "jurisdictionId": 10,
+      "advertisedCases": 314588,
+      "advertisedPages": 1161482,
+      "estimatedArchiveBytes": 11509301610,
+      "estimatedParts": 11,
+      "packageIds": [
+        "caselaw-louisiana-part-0001",
+        "caselaw-louisiana-part-0002",
+        "caselaw-louisiana-part-0003",
+        "caselaw-louisiana-part-0004",
+        "caselaw-louisiana-part-0005",
+        "caselaw-louisiana-part-0006",
+        "caselaw-louisiana-part-0007",
+        "caselaw-louisiana-part-0008",
+        "caselaw-louisiana-part-0009",
+        "caselaw-louisiana-part-0010",
+        "caselaw-louisiana-part-0011"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-louisiana",
+        "name": "Louisiana caselaw — Caselaw Access Project",
+        "jurisdiction": "la",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-maine",
+      "name": "Maine",
+      "kind": "state",
+      "jurisdiction": "me",
+      "jurisdictionId": 42,
+      "advertisedCases": 27935,
+      "advertisedPages": 152218,
+      "estimatedArchiveBytes": 1508351290,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-maine-part-0001",
+        "caselaw-maine-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-maine",
+        "name": "Maine caselaw — Caselaw Access Project",
+        "jurisdiction": "me",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-maryland",
+      "name": "Maryland",
+      "kind": "state",
+      "jurisdiction": "md",
+      "jurisdictionId": 50,
+      "advertisedCases": 45746,
+      "advertisedPages": 547871,
+      "estimatedArchiveBytes": 5428936981,
+      "estimatedParts": 6,
+      "packageIds": [
+        "caselaw-maryland-part-0001",
+        "caselaw-maryland-part-0002",
+        "caselaw-maryland-part-0003",
+        "caselaw-maryland-part-0004",
+        "caselaw-maryland-part-0005",
+        "caselaw-maryland-part-0006"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-maryland",
+        "name": "Maryland caselaw — Caselaw Access Project",
+        "jurisdiction": "md",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-massachusetts",
+      "name": "Massachusetts",
+      "kind": "state",
+      "jurisdiction": "mass",
+      "jurisdictionId": 4,
+      "advertisedCases": 93274,
+      "advertisedPages": 513787,
+      "estimatedArchiveBytes": 5091193446,
+      "estimatedParts": 5,
+      "packageIds": [
+        "caselaw-massachusetts-part-0001",
+        "caselaw-massachusetts-part-0002",
+        "caselaw-massachusetts-part-0003",
+        "caselaw-massachusetts-part-0004",
+        "caselaw-massachusetts-part-0005"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-massachusetts",
+        "name": "Massachusetts caselaw — Caselaw Access Project",
+        "jurisdiction": "mass",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-michigan",
+      "name": "Michigan",
+      "kind": "state",
+      "jurisdiction": "mich",
+      "jurisdictionId": 49,
+      "advertisedCases": 83027,
+      "advertisedPages": 630198,
+      "estimatedArchiveBytes": 6244727732,
+      "estimatedParts": 6,
+      "packageIds": [
+        "caselaw-michigan-part-0001",
+        "caselaw-michigan-part-0002",
+        "caselaw-michigan-part-0003",
+        "caselaw-michigan-part-0004",
+        "caselaw-michigan-part-0005",
+        "caselaw-michigan-part-0006"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-michigan",
+        "name": "Michigan caselaw — Caselaw Access Project",
+        "jurisdiction": "mich",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-minnesota",
+      "name": "Minnesota",
+      "kind": "state",
+      "jurisdiction": "minn",
+      "jurisdictionId": 36,
+      "advertisedCases": 56091,
+      "advertisedPages": 320716,
+      "estimatedArchiveBytes": 3178023573,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-minnesota-part-0001",
+        "caselaw-minnesota-part-0002",
+        "caselaw-minnesota-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-minnesota",
+        "name": "Minnesota caselaw — Caselaw Access Project",
+        "jurisdiction": "minn",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-mississippi",
+      "name": "Mississippi",
+      "kind": "state",
+      "jurisdiction": "miss",
+      "jurisdictionId": 16,
+      "advertisedCases": 60608,
+      "advertisedPages": 422510,
+      "estimatedArchiveBytes": 4186715785,
+      "estimatedParts": 4,
+      "packageIds": [
+        "caselaw-mississippi-part-0001",
+        "caselaw-mississippi-part-0002",
+        "caselaw-mississippi-part-0003",
+        "caselaw-mississippi-part-0004"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-mississippi",
+        "name": "Mississippi caselaw — Caselaw Access Project",
+        "jurisdiction": "miss",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-missouri",
+      "name": "Missouri",
+      "kind": "state",
+      "jurisdiction": "mo",
+      "jurisdictionId": 37,
+      "advertisedCases": 139635,
+      "advertisedPages": 889209,
+      "estimatedArchiveBytes": 8811307085,
+      "estimatedParts": 9,
+      "packageIds": [
+        "caselaw-missouri-part-0001",
+        "caselaw-missouri-part-0002",
+        "caselaw-missouri-part-0003",
+        "caselaw-missouri-part-0004",
+        "caselaw-missouri-part-0005",
+        "caselaw-missouri-part-0006",
+        "caselaw-missouri-part-0007",
+        "caselaw-missouri-part-0008",
+        "caselaw-missouri-part-0009"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-missouri",
+        "name": "Missouri caselaw — Caselaw Access Project",
+        "jurisdiction": "mo",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-montana",
+      "name": "Montana",
+      "kind": "state",
+      "jurisdiction": "mont",
+      "jurisdictionId": 20,
+      "advertisedCases": 28503,
+      "advertisedPages": 230060,
+      "estimatedArchiveBytes": 2279699495,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-montana-part-0001",
+        "caselaw-montana-part-0002",
+        "caselaw-montana-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-montana",
+        "name": "Montana caselaw — Caselaw Access Project",
+        "jurisdiction": "mont",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-navajo-nation",
+      "name": "Navajo Nation",
+      "kind": "tribal",
+      "jurisdiction": "navajo-nation",
+      "jurisdictionId": 41,
+      "advertisedCases": 966,
+      "advertisedPages": 5237,
+      "estimatedArchiveBytes": 51894229,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-navajo-nation-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-navajo-nation",
+        "name": "Navajo Nation caselaw — Caselaw Access Project",
+        "jurisdiction": "navajo-nation",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-nebraska",
+      "name": "Nebraska",
+      "kind": "state",
+      "jurisdiction": "neb",
+      "jurisdictionId": 51,
+      "advertisedCases": 38910,
+      "advertisedPages": 286593,
+      "estimatedArchiveBytes": 2839893581,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-nebraska-part-0001",
+        "caselaw-nebraska-part-0002",
+        "caselaw-nebraska-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-nebraska",
+        "name": "Nebraska caselaw — Caselaw Access Project",
+        "jurisdiction": "neb",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-nevada",
+      "name": "Nevada",
+      "kind": "state",
+      "jurisdiction": "nev",
+      "jurisdictionId": 48,
+      "advertisedCases": 13707,
+      "advertisedPages": 92680,
+      "estimatedArchiveBytes": 918380202,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-nevada-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-nevada",
+        "name": "Nevada caselaw — Caselaw Access Project",
+        "jurisdiction": "nev",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-new-hampshire",
+      "name": "New Hampshire",
+      "kind": "state",
+      "jurisdiction": "nh",
+      "jurisdictionId": 47,
+      "advertisedCases": 21540,
+      "advertisedPages": 126934,
+      "estimatedArchiveBytes": 1257808292,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-new-hampshire-part-0001",
+        "caselaw-new-hampshire-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-new-hampshire",
+        "name": "New Hampshire caselaw — Caselaw Access Project",
+        "jurisdiction": "nh",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-new-jersey",
+      "name": "New Jersey",
+      "kind": "state",
+      "jurisdiction": "nj",
+      "jurisdictionId": 24,
+      "advertisedCases": 116256,
+      "advertisedPages": 712323,
+      "estimatedArchiveBytes": 7058516835,
+      "estimatedParts": 7,
+      "packageIds": [
+        "caselaw-new-jersey-part-0001",
+        "caselaw-new-jersey-part-0002",
+        "caselaw-new-jersey-part-0003",
+        "caselaw-new-jersey-part-0004",
+        "caselaw-new-jersey-part-0005",
+        "caselaw-new-jersey-part-0006",
+        "caselaw-new-jersey-part-0007"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-new-jersey",
+        "name": "New Jersey caselaw — Caselaw Access Project",
+        "jurisdiction": "nj",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-new-mexico",
+      "name": "New Mexico",
+      "kind": "state",
+      "jurisdiction": "nm",
+      "jurisdictionId": 52,
+      "advertisedCases": 18469,
+      "advertisedPages": 126584,
+      "estimatedArchiveBytes": 1254340089,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-new-mexico-part-0001",
+        "caselaw-new-mexico-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-new-mexico",
+        "name": "New Mexico caselaw — Caselaw Access Project",
+        "jurisdiction": "nm",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-new-york",
+      "name": "New York",
+      "kind": "state",
+      "jurisdiction": "ny",
+      "jurisdictionId": 1,
+      "advertisedCases": 1109433,
+      "advertisedPages": 3045639,
+      "estimatedArchiveBytes": 30179699595,
+      "estimatedParts": 29,
+      "packageIds": [
+        "caselaw-new-york-part-0001",
+        "caselaw-new-york-part-0002",
+        "caselaw-new-york-part-0003",
+        "caselaw-new-york-part-0004",
+        "caselaw-new-york-part-0005",
+        "caselaw-new-york-part-0006",
+        "caselaw-new-york-part-0007",
+        "caselaw-new-york-part-0008",
+        "caselaw-new-york-part-0009",
+        "caselaw-new-york-part-0010",
+        "caselaw-new-york-part-0011",
+        "caselaw-new-york-part-0012",
+        "caselaw-new-york-part-0013",
+        "caselaw-new-york-part-0014",
+        "caselaw-new-york-part-0015",
+        "caselaw-new-york-part-0016",
+        "caselaw-new-york-part-0017",
+        "caselaw-new-york-part-0018",
+        "caselaw-new-york-part-0019",
+        "caselaw-new-york-part-0020",
+        "caselaw-new-york-part-0021",
+        "caselaw-new-york-part-0022",
+        "caselaw-new-york-part-0023",
+        "caselaw-new-york-part-0024",
+        "caselaw-new-york-part-0025",
+        "caselaw-new-york-part-0026",
+        "caselaw-new-york-part-0027",
+        "caselaw-new-york-part-0028",
+        "caselaw-new-york-part-0029"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-new-york",
+        "name": "New York caselaw — Caselaw Access Project",
+        "jurisdiction": "ny",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-north-carolina",
+      "name": "North Carolina",
+      "kind": "state",
+      "jurisdiction": "nc",
+      "jurisdictionId": 5,
+      "advertisedCases": 118446,
+      "advertisedPages": 546518,
+      "estimatedArchiveBytes": 5415529898,
+      "estimatedParts": 6,
+      "packageIds": [
+        "caselaw-north-carolina-part-0001",
+        "caselaw-north-carolina-part-0002",
+        "caselaw-north-carolina-part-0003",
+        "caselaw-north-carolina-part-0004",
+        "caselaw-north-carolina-part-0005",
+        "caselaw-north-carolina-part-0006"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-north-carolina",
+        "name": "North Carolina caselaw — Caselaw Access Project",
+        "jurisdiction": "nc",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-north-dakota",
+      "name": "North Dakota",
+      "kind": "state",
+      "jurisdiction": "nd",
+      "jurisdictionId": 18,
+      "advertisedCases": 17017,
+      "advertisedPages": 131604,
+      "estimatedArchiveBytes": 1304084032,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-north-dakota-part-0001",
+        "caselaw-north-dakota-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-north-dakota",
+        "name": "North Dakota caselaw — Caselaw Access Project",
+        "jurisdiction": "nd",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-northern-mariana-islands",
+      "name": "Northern Mariana Islands",
+      "kind": "territory",
+      "jurisdiction": "n-mar-i",
+      "jurisdictionId": 57,
+      "advertisedCases": 395,
+      "advertisedPages": 3821,
+      "estimatedArchiveBytes": 37862870,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-northern-mariana-islands-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-northern-mariana-islands",
+        "name": "Northern Mariana Islands caselaw — Caselaw Access Project",
+        "jurisdiction": "n-mar-i",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-ohio",
+      "name": "Ohio",
+      "kind": "state",
+      "jurisdiction": "ohio",
+      "jurisdictionId": 22,
+      "advertisedCases": 154247,
+      "advertisedPages": 716296,
+      "estimatedArchiveBytes": 7097885896,
+      "estimatedParts": 7,
+      "packageIds": [
+        "caselaw-ohio-part-0001",
+        "caselaw-ohio-part-0002",
+        "caselaw-ohio-part-0003",
+        "caselaw-ohio-part-0004",
+        "caselaw-ohio-part-0005",
+        "caselaw-ohio-part-0006",
+        "caselaw-ohio-part-0007"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-ohio",
+        "name": "Ohio caselaw — Caselaw Access Project",
+        "jurisdiction": "ohio",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-oklahoma",
+      "name": "Oklahoma",
+      "kind": "state",
+      "jurisdiction": "okla",
+      "jurisdictionId": 13,
+      "advertisedCases": 67134,
+      "advertisedPages": 323448,
+      "estimatedArchiveBytes": 3205095376,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-oklahoma-part-0001",
+        "caselaw-oklahoma-part-0002",
+        "caselaw-oklahoma-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-oklahoma",
+        "name": "Oklahoma caselaw — Caselaw Access Project",
+        "jurisdiction": "okla",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-oregon",
+      "name": "Oregon",
+      "kind": "state",
+      "jurisdiction": "or",
+      "jurisdictionId": 19,
+      "advertisedCases": 59660,
+      "advertisedPages": 477696,
+      "estimatedArchiveBytes": 4733562244,
+      "estimatedParts": 5,
+      "packageIds": [
+        "caselaw-oregon-part-0001",
+        "caselaw-oregon-part-0002",
+        "caselaw-oregon-part-0003",
+        "caselaw-oregon-part-0004",
+        "caselaw-oregon-part-0005"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-oregon",
+        "name": "Oregon caselaw — Caselaw Access Project",
+        "jurisdiction": "or",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-pennsylvania",
+      "name": "Pennsylvania",
+      "kind": "state",
+      "jurisdiction": "pa",
+      "jurisdictionId": 6,
+      "advertisedCases": 248710,
+      "advertisedPages": 1453989,
+      "estimatedArchiveBytes": 14407797915,
+      "estimatedParts": 14,
+      "packageIds": [
+        "caselaw-pennsylvania-part-0001",
+        "caselaw-pennsylvania-part-0002",
+        "caselaw-pennsylvania-part-0003",
+        "caselaw-pennsylvania-part-0004",
+        "caselaw-pennsylvania-part-0005",
+        "caselaw-pennsylvania-part-0006",
+        "caselaw-pennsylvania-part-0007",
+        "caselaw-pennsylvania-part-0008",
+        "caselaw-pennsylvania-part-0009",
+        "caselaw-pennsylvania-part-0010",
+        "caselaw-pennsylvania-part-0011",
+        "caselaw-pennsylvania-part-0012",
+        "caselaw-pennsylvania-part-0013",
+        "caselaw-pennsylvania-part-0014"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-pennsylvania",
+        "name": "Pennsylvania caselaw — Caselaw Access Project",
+        "jurisdiction": "pa",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-puerto-rico",
+      "name": "Puerto Rico",
+      "kind": "territory",
+      "jurisdiction": "pr",
+      "jurisdictionId": 25,
+      "advertisedCases": 45682,
+      "advertisedPages": 317492,
+      "estimatedArchiveBytes": 3146076467,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-puerto-rico-part-0001",
+        "caselaw-puerto-rico-part-0002",
+        "caselaw-puerto-rico-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-puerto-rico",
+        "name": "Puerto Rico caselaw — Caselaw Access Project",
+        "jurisdiction": "pr",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-rhode-island",
+      "name": "Rhode Island",
+      "kind": "state",
+      "jurisdiction": "ri",
+      "jurisdictionId": 15,
+      "advertisedCases": 26689,
+      "advertisedPages": 137732,
+      "estimatedArchiveBytes": 1364807315,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-rhode-island-part-0001",
+        "caselaw-rhode-island-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-rhode-island",
+        "name": "Rhode Island caselaw — Caselaw Access Project",
+        "jurisdiction": "ri",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-south-carolina",
+      "name": "South Carolina",
+      "kind": "state",
+      "jurisdiction": "sc",
+      "jurisdictionId": 59,
+      "advertisedCases": 41875,
+      "advertisedPages": 321013,
+      "estimatedArchiveBytes": 3180966591,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-south-carolina-part-0001",
+        "caselaw-south-carolina-part-0002",
+        "caselaw-south-carolina-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-south-carolina",
+        "name": "South Carolina caselaw — Caselaw Access Project",
+        "jurisdiction": "sc",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-south-dakota",
+      "name": "South Dakota",
+      "kind": "state",
+      "jurisdiction": "sd",
+      "jurisdictionId": 54,
+      "advertisedCases": 16782,
+      "advertisedPages": 111855,
+      "estimatedArchiveBytes": 1108388190,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-south-dakota-part-0001",
+        "caselaw-south-dakota-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-south-dakota",
+        "name": "South Dakota caselaw — Caselaw Access Project",
+        "jurisdiction": "sd",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-tennessee",
+      "name": "Tennessee",
+      "kind": "state",
+      "jurisdiction": "tenn",
+      "jurisdictionId": 11,
+      "advertisedCases": 38545,
+      "advertisedPages": 311481,
+      "estimatedArchiveBytes": 3086512555,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-tennessee-part-0001",
+        "caselaw-tennessee-part-0002",
+        "caselaw-tennessee-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-tennessee",
+        "name": "Tennessee caselaw — Caselaw Access Project",
+        "jurisdiction": "tenn",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-texas",
+      "name": "Texas",
+      "kind": "state",
+      "jurisdiction": "tex",
+      "jurisdictionId": 32,
+      "advertisedCases": 250659,
+      "advertisedPages": 1261205,
+      "estimatedArchiveBytes": 12497471968,
+      "estimatedParts": 12,
+      "packageIds": [
+        "caselaw-texas-part-0001",
+        "caselaw-texas-part-0002",
+        "caselaw-texas-part-0003",
+        "caselaw-texas-part-0004",
+        "caselaw-texas-part-0005",
+        "caselaw-texas-part-0006",
+        "caselaw-texas-part-0007",
+        "caselaw-texas-part-0008",
+        "caselaw-texas-part-0009",
+        "caselaw-texas-part-0010",
+        "caselaw-texas-part-0011",
+        "caselaw-texas-part-0012"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-texas",
+        "name": "Texas caselaw — Caselaw Access Project",
+        "jurisdiction": "tex",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-tribal-jurisdictions",
+      "name": "Tribal Jurisdictions",
+      "kind": "tribal",
+      "jurisdiction": "tribal",
+      "jurisdictionId": 62,
+      "advertisedCases": 1402,
+      "advertisedPages": 6621,
+      "estimatedArchiveBytes": 65608495,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-tribal-jurisdictions-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-tribal-jurisdictions",
+        "name": "Tribal Jurisdictions caselaw — Caselaw Access Project",
+        "jurisdiction": "tribal",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-united-states",
+      "name": "United States",
+      "kind": "federal",
+      "jurisdiction": "us",
+      "jurisdictionId": 39,
+      "advertisedCases": 1842424,
+      "advertisedPages": 10409520,
+      "estimatedArchiveBytes": 103149515265,
+      "estimatedParts": 97,
+      "packageIds": [
+        "caselaw-united-states-part-0001",
+        "caselaw-united-states-part-0002",
+        "caselaw-united-states-part-0003",
+        "caselaw-united-states-part-0004",
+        "caselaw-united-states-part-0005",
+        "caselaw-united-states-part-0006",
+        "caselaw-united-states-part-0007",
+        "caselaw-united-states-part-0008",
+        "caselaw-united-states-part-0009",
+        "caselaw-united-states-part-0010",
+        "caselaw-united-states-part-0011",
+        "caselaw-united-states-part-0012",
+        "caselaw-united-states-part-0013",
+        "caselaw-united-states-part-0014",
+        "caselaw-united-states-part-0015",
+        "caselaw-united-states-part-0016",
+        "caselaw-united-states-part-0017",
+        "caselaw-united-states-part-0018",
+        "caselaw-united-states-part-0019",
+        "caselaw-united-states-part-0020",
+        "caselaw-united-states-part-0021",
+        "caselaw-united-states-part-0022",
+        "caselaw-united-states-part-0023",
+        "caselaw-united-states-part-0024",
+        "caselaw-united-states-part-0025",
+        "caselaw-united-states-part-0026",
+        "caselaw-united-states-part-0027",
+        "caselaw-united-states-part-0028",
+        "caselaw-united-states-part-0029",
+        "caselaw-united-states-part-0030",
+        "caselaw-united-states-part-0031",
+        "caselaw-united-states-part-0032",
+        "caselaw-united-states-part-0033",
+        "caselaw-united-states-part-0034",
+        "caselaw-united-states-part-0035",
+        "caselaw-united-states-part-0036",
+        "caselaw-united-states-part-0037",
+        "caselaw-united-states-part-0038",
+        "caselaw-united-states-part-0039",
+        "caselaw-united-states-part-0040",
+        "caselaw-united-states-part-0041",
+        "caselaw-united-states-part-0042",
+        "caselaw-united-states-part-0043",
+        "caselaw-united-states-part-0044",
+        "caselaw-united-states-part-0045",
+        "caselaw-united-states-part-0046",
+        "caselaw-united-states-part-0047",
+        "caselaw-united-states-part-0048",
+        "caselaw-united-states-part-0049",
+        "caselaw-united-states-part-0050",
+        "caselaw-united-states-part-0051",
+        "caselaw-united-states-part-0052",
+        "caselaw-united-states-part-0053",
+        "caselaw-united-states-part-0054",
+        "caselaw-united-states-part-0055",
+        "caselaw-united-states-part-0056",
+        "caselaw-united-states-part-0057",
+        "caselaw-united-states-part-0058",
+        "caselaw-united-states-part-0059",
+        "caselaw-united-states-part-0060",
+        "caselaw-united-states-part-0061",
+        "caselaw-united-states-part-0062",
+        "caselaw-united-states-part-0063",
+        "caselaw-united-states-part-0064",
+        "caselaw-united-states-part-0065",
+        "caselaw-united-states-part-0066",
+        "caselaw-united-states-part-0067",
+        "caselaw-united-states-part-0068",
+        "caselaw-united-states-part-0069",
+        "caselaw-united-states-part-0070",
+        "caselaw-united-states-part-0071",
+        "caselaw-united-states-part-0072",
+        "caselaw-united-states-part-0073",
+        "caselaw-united-states-part-0074",
+        "caselaw-united-states-part-0075",
+        "caselaw-united-states-part-0076",
+        "caselaw-united-states-part-0077",
+        "caselaw-united-states-part-0078",
+        "caselaw-united-states-part-0079",
+        "caselaw-united-states-part-0080",
+        "caselaw-united-states-part-0081",
+        "caselaw-united-states-part-0082",
+        "caselaw-united-states-part-0083",
+        "caselaw-united-states-part-0084",
+        "caselaw-united-states-part-0085",
+        "caselaw-united-states-part-0086",
+        "caselaw-united-states-part-0087",
+        "caselaw-united-states-part-0088",
+        "caselaw-united-states-part-0089",
+        "caselaw-united-states-part-0090",
+        "caselaw-united-states-part-0091",
+        "caselaw-united-states-part-0092",
+        "caselaw-united-states-part-0093",
+        "caselaw-united-states-part-0094",
+        "caselaw-united-states-part-0095",
+        "caselaw-united-states-part-0096",
+        "caselaw-united-states-part-0097"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-united-states",
+        "name": "United States caselaw — Caselaw Access Project",
+        "jurisdiction": "us",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-utah",
+      "name": "Utah",
+      "kind": "state",
+      "jurisdiction": "utah",
+      "jurisdictionId": 12,
+      "advertisedCases": 22904,
+      "advertisedPages": 174199,
+      "estimatedArchiveBytes": 1726164359,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-utah-part-0001",
+        "caselaw-utah-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-utah",
+        "name": "Utah caselaw — Caselaw Access Project",
+        "jurisdiction": "utah",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-vermont",
+      "name": "Vermont",
+      "kind": "state",
+      "jurisdiction": "vt",
+      "jurisdictionId": 17,
+      "advertisedCases": 22745,
+      "advertisedPages": 146242,
+      "estimatedArchiveBytes": 1449134198,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-vermont-part-0001",
+        "caselaw-vermont-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-vermont",
+        "name": "Vermont caselaw — Caselaw Access Project",
+        "jurisdiction": "vt",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-virgin-islands",
+      "name": "Virgin Islands",
+      "kind": "territory",
+      "jurisdiction": "vi",
+      "jurisdictionId": 44,
+      "advertisedCases": 3474,
+      "advertisedPages": 39374,
+      "estimatedArchiveBytes": 390162949,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-virgin-islands-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-virgin-islands",
+        "name": "Virgin Islands caselaw — Caselaw Access Project",
+        "jurisdiction": "vi",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-virginia",
+      "name": "Virginia",
+      "kind": "state",
+      "jurisdiction": "va",
+      "jurisdictionId": 7,
+      "advertisedCases": 40707,
+      "advertisedPages": 299600,
+      "estimatedArchiveBytes": 2968781921,
+      "estimatedParts": 3,
+      "packageIds": [
+        "caselaw-virginia-part-0001",
+        "caselaw-virginia-part-0002",
+        "caselaw-virginia-part-0003"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-virginia",
+        "name": "Virginia caselaw — Caselaw Access Project",
+        "jurisdiction": "va",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-washington",
+      "name": "Washington",
+      "kind": "state",
+      "jurisdiction": "wash",
+      "jurisdictionId": 38,
+      "advertisedCases": 106177,
+      "advertisedPages": 581403,
+      "estimatedArchiveBytes": 5761210664,
+      "estimatedParts": 6,
+      "packageIds": [
+        "caselaw-washington-part-0001",
+        "caselaw-washington-part-0002",
+        "caselaw-washington-part-0003",
+        "caselaw-washington-part-0004",
+        "caselaw-washington-part-0005",
+        "caselaw-washington-part-0006"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-washington",
+        "name": "Washington caselaw — Caselaw Access Project",
+        "jurisdiction": "wash",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-west-virginia",
+      "name": "West Virginia",
+      "kind": "state",
+      "jurisdiction": "w-va",
+      "jurisdictionId": 35,
+      "advertisedCases": 27661,
+      "advertisedPages": 214178,
+      "estimatedArchiveBytes": 2122322344,
+      "estimatedParts": 2,
+      "packageIds": [
+        "caselaw-west-virginia-part-0001",
+        "caselaw-west-virginia-part-0002"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-west-virginia",
+        "name": "West Virginia caselaw — Caselaw Access Project",
+        "jurisdiction": "w-va",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-wisconsin",
+      "name": "Wisconsin",
+      "kind": "state",
+      "jurisdiction": "wis",
+      "jurisdictionId": 46,
+      "advertisedCases": 50470,
+      "advertisedPages": 502214,
+      "estimatedArchiveBytes": 4976514831,
+      "estimatedParts": 5,
+      "packageIds": [
+        "caselaw-wisconsin-part-0001",
+        "caselaw-wisconsin-part-0002",
+        "caselaw-wisconsin-part-0003",
+        "caselaw-wisconsin-part-0004",
+        "caselaw-wisconsin-part-0005"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-wisconsin",
+        "name": "Wisconsin caselaw — Caselaw Access Project",
+        "jurisdiction": "wis",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    },
+    {
+      "id": "caselaw-wyoming",
+      "name": "Wyoming",
+      "kind": "state",
+      "jurisdiction": "wyo",
+      "jurisdictionId": 33,
+      "advertisedCases": 10931,
+      "advertisedPages": 106617,
+      "estimatedArchiveBytes": 1056484052,
+      "estimatedParts": 1,
+      "packageIds": [
+        "caselaw-wyoming-part-0001"
+      ],
+      "config": {
+        "schemaVersion": 1,
+        "id": "caselaw-wyoming",
+        "name": "Wyoming caselaw — Caselaw Access Project",
+        "jurisdiction": "wyo",
+        "targetBytes": 1073741824,
+        "ceilingBytes": 1610612736,
+        "sizeEstimate": "wyoming-bge-v1",
+        "embeddingProfile": "bge-small-en-v1.5@1"
+      }
+    }
+  ],
+  "unresolvedJurisdictions": [
+    {
+      "jurisdiction": "regional",
+      "jurisdictionId": 9,
+      "name": "Regional",
+      "reason": "No advertised case/page counts. National case-index sweep must establish whether records need a separate collection; never silently discard them."
+    }
+  ],
+  "federalSourceReporters": [
+    {
+      "slug": "a2d",
+      "name": "West's Atlantic Reporter, Second Series",
+      "availableSourceVolumes": 967
+    },
+    {
+      "slug": "a3d",
+      "name": "West's Atlantic Reporter, Third Series",
+      "availableSourceVolumes": 253
+    },
+    {
+      "slug": "alaska-fed",
+      "name": "Alaska Federal Reports",
+      "availableSourceVolumes": 5
+    },
+    {
+      "slug": "br",
+      "name": "West's Bankruptcy Reporter",
+      "availableSourceVolumes": 603
+    },
+    {
+      "slug": "bta",
+      "name": "Reports of the United States Board of Tax Appeals",
+      "availableSourceVolumes": 47
+    },
+    {
+      "slug": "ccpa",
+      "name": "Court of Customs and Patent Appeals Reports",
+      "availableSourceVolumes": 96
+    },
+    {
+      "slug": "cl-ct",
+      "name": "United States Claims Court Reporter",
+      "availableSourceVolumes": 26
+    },
+    {
+      "slug": "cma",
+      "name": "Decisions of the United States Court of Military Appeals",
+      "availableSourceVolumes": 23
+    },
+    {
+      "slug": "ct-cust",
+      "name": "Court of Customs Appeals reports",
+      "availableSourceVolumes": 16
+    },
+    {
+      "slug": "ct-intl-trade",
+      "name": "United States Court of International Trade Reports",
+      "availableSourceVolumes": 34
+    },
+    {
+      "slug": "cust-ct",
+      "name": "United States Customs Court Reports",
+      "availableSourceVolumes": 85
+    },
+    {
+      "slug": "d-haw",
+      "name": "Reports of causes determined in the United States District Court for the District of Hawaii.",
+      "availableSourceVolumes": 4
+    },
+    {
+      "slug": "dc",
+      "name": "Reports of cases argued and determined in the Supreme Court of the District of Columbia (District of Columbia - reported by Mackey)",
+      "availableSourceVolumes": 21
+    },
+    {
+      "slug": "ed-pa",
+      "name": "Cadwalader's cases, being decisions of the Hon. John Cadwalader",
+      "availableSourceVolumes": 1
+    },
+    {
+      "slug": "f",
+      "name": "Federal Reporter",
+      "availableSourceVolumes": 300
+    },
+    {
+      "slug": "f-appx",
+      "name": "West's Federal Appendix",
+      "availableSourceVolumes": 714
+    },
+    {
+      "slug": "f-cas",
+      "name": "Federal Cases",
+      "availableSourceVolumes": 30
+    },
+    {
+      "slug": "f-supp",
+      "name": "Federal Supplement",
+      "availableSourceVolumes": 997
+    },
+    {
+      "slug": "f-supp-2d",
+      "name": "Federal Supplement 2d",
+      "availableSourceVolumes": 999
+    },
+    {
+      "slug": "f-supp-3d",
+      "name": "Federal Supplement 3d",
+      "availableSourceVolumes": 386
+    },
+    {
+      "slug": "f2d",
+      "name": "Federal Reporter 2d Series",
+      "availableSourceVolumes": 999
+    },
+    {
+      "slug": "f3d",
+      "name": "Federal Reporter 3d Series",
+      "availableSourceVolumes": 935
+    },
+    {
+      "slug": "fed-cl",
+      "name": "Federal Claims Reporter",
+      "availableSourceVolumes": 109
+    },
+    {
+      "slug": "frd",
+      "name": "Federal Rules Decisions",
+      "availableSourceVolumes": 322
+    },
+    {
+      "slug": "l-ed-2d",
+      "name": "United States Supreme Court Reports, Lawyers' Edition",
+      "availableSourceVolumes": 6
+    },
+    {
+      "slug": "mj",
+      "name": "West's Military Justice Reporter",
+      "availableSourceVolumes": 76
+    },
+    {
+      "slug": "n-mar-i-commw",
+      "name": "Northern Mariana Islands Commonwealth Reporter",
+      "availableSourceVolumes": 3
+    },
+    {
+      "slug": "pr-fed",
+      "name": "Porto Rico Federal Reports",
+      "availableSourceVolumes": 13
+    },
+    {
+      "slug": "s-ct",
+      "name": "Supreme Court Reporter",
+      "availableSourceVolumes": 7
+    },
+    {
+      "slug": "sw3d",
+      "name": "South Western Reporter Third Series",
+      "availableSourceVolumes": 579
+    },
+    {
+      "slug": "tc",
+      "name": "Reports of the Tax Court of the United States",
+      "availableSourceVolumes": 144
+    },
+    {
+      "slug": "us",
+      "name": "United States Reports",
+      "availableSourceVolumes": 572
+    },
+    {
+      "slug": "us-ct-cl",
+      "name": "United States Court of Claims Reports",
+      "availableSourceVolumes": 231
+    },
+    {
+      "slug": "vet-app",
+      "name": "West's Veterans Appeals Reporter",
+      "availableSourceVolumes": 28
+    }
+  ],
+  "federalOrganization": "One complete federal collection, split chronologically into approximately 1 GiB archives with court/reporter metadata retained. U.S. Reports 1–572 and every other CAP federal source are included. This does not publish a separate duplicate of each source reporter.",
+  "pilots": {
+    "role": "Explicitly labeled limited public pilots may precede the national collections; consumers must not install overlapping selections together.",
+    "supersededCatalogs": [
+      "caselaw-us-347",
+      "caselaw-us-347-349"
+    ],
+    "priorWyomingParts": "The four 512 MiB-estimate pilot parts are replaced by a newly planned single archive; historical build evidence remains immutable."
+  },
+  "releaseGates": [
+    "Exhaustive national case-index sweep and case-count reconciliation",
+    "Resolve uncounted/unmapped jurisdictions and duplicate CAP IDs",
+    "Complete source normalization and fidelity audits",
+    "Freeze measured case membership and date spans",
+    "Build and verify actual archive sizes, integrity, citations and semantic retrieval",
+    "Collection publishing and verified remote receipts"
+  ]
+}

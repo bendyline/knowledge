@@ -7,6 +7,7 @@ import { applyWikipediaToc } from './wikipedia-toc.mjs';
 import { buildDigest, licenseFor, parseYaml, validateCatalog } from './catalogs.mjs';
 import { digest, exists, hashFile, inside, inventory, readJson, removeWork, write, writeJson } from './files.mjs';
 import { cachedEmbedder } from './embedding-cache.mjs';
+import { attributionRequired } from './licensing.mjs';
 import { bindPackageLinks, packageCatalogId, packageQueries, resolveBuildPackage } from './news-packages.mjs';
 
 export function assertVersion(version) {
@@ -31,9 +32,11 @@ export async function buildCatalog(catalog, { version, createdAt, embedderFactor
   const signingKey = signKey ? await readFile(signKey, 'utf8') : null;
   const signingKeyId = signingKey ? digest(createPublicKey(signingKey).export({ type: 'spki', format: 'pem' })) : null;
   const testOnly = Boolean(embedderFactory);
+  const runtime = process.env.KNOWLEDGE_EMBEDDING_DEVICE ?? 'cpu';
+  if (!['cpu', 'dml'].includes(runtime)) throw new Error('KNOWLEDGE_EMBEDDING_DEVICE must be cpu or dml');
   if (await exists(releasePath)) {
     const previous = await readJson(releasePath);
-    if (previous.inputDigest !== fingerprint || previous.signingKeyId !== signingKeyId || previous.testOnly !== testOnly) throw new Error(`${m.id}@${version} already built from different inputs; choose a new version`);
+    if (previous.inputDigest !== fingerprint || previous.signingKeyId !== signingKeyId || previous.testOnly !== testOnly || (previous.embeddingRuntime ?? 'cpu') !== runtime) throw new Error(`${m.id}@${version} already built from different inputs; choose a new version`);
     if (await hashFile(inside(output, previous.archive)) !== previous.sha256) throw new Error('Existing release archive failed checksum verification');
     return { ...previous, directory: output, reused: true };
   }
@@ -71,7 +74,8 @@ export async function buildCatalog(catalog, { version, createdAt, embedderFactor
     if (p?.sourceUpdatedAt) document.sourceUpdatedAt = p.sourceUpdatedAt;
     document.attribution = { license: info.license.spdx, licenseUrl: info.license.url, notice: p?.attribution ?? info.license.attribution, ...(p?.historyUrl ? { historyUrl: p.historyUrl } : {}) };
   }
-  const extraFiles = { 'README.md': `# ${m.name}\n\n${m.description}\n\nSource: https://github.com/${m.publish.github}/tree/${commit ?? 'main'}/catalogs/${catalog.key}\n\nSee LICENSES/catalog.txt and LICENSES/source-notices.json for licensing.\n`, 'LICENSES/catalog.txt': await readFile(inside(dir, m.licensing.notice), 'utf8') };
+  const sourceHome = m.source.type.startsWith('caselaw') ? 'https://static.case.law/' : `https://github.com/${m.publish.github}/tree/${commit ?? 'main'}/catalogs/${catalog.key}`;
+  const extraFiles = { 'README.md': `# ${m.name}\n\n${m.description}\n\nSource: ${sourceHome}\n\nSee LICENSES/catalog.txt and LICENSES/source-notices.json for licensing.\n`, 'LICENSES/catalog.txt': await readFile(inside(dir, m.licensing.notice), 'utf8') };
   for (const file of await inventory(resolve(dir, 'LICENSES'))) extraFiles[`LICENSES/${file.path}`] = await readFile(inside(resolve(dir, 'LICENSES'), file.path), 'utf8');
   if (packaging) {
     extraFiles['LICENSES/corpus-selection.json'] = extraFiles['LICENSES/selection.json'];
@@ -83,8 +87,9 @@ export async function buildCatalog(catalog, { version, createdAt, embedderFactor
   if (provenance.length) extraFiles['LICENSES/provenance.jsonl'] = provenance.filter(p => !packaging || packaging.paths.has(p.path)).map((p) => JSON.stringify(p)).join('\n') + '\n';
   let queries = await exists(resolve(dir, 'tests/queries.json')) ? packageQueries(await readJson(resolve(dir, 'tests/queries.json')), packaging?.documentIds) : undefined;
   if (packaging && !queries?.length) queries = [{ query: source.documents[0].title, expectedDocumentIds: [source.documents[0].id] }];
-  const runtime = process.env.KNOWLEDGE_EMBEDDING_DEVICE ?? 'cpu';
-  if (!['cpu', 'dml'].includes(runtime)) throw new Error('KNOWLEDGE_EMBEDDING_DEVICE must be cpu or dml');
+  const semanticPath = resolve(dir, 'tests/semantic-queries.json');
+  const semanticQueries = await exists(semanticPath) ? packageQueries(await readJson(semanticPath), packaging?.documentIds) : [];
+  if (m.publish.enabled && m.source.type.startsWith('caselaw') && !semanticQueries.length) throw new Error('Publishable CAP archives require semantic retrieval checks');
   const embedder = await (embedderFactory ?? createProfileEmbedder)(profile, runtime === 'dml' ? { sessionOptions: { executionProviders: ['dml'], enableMemPattern: false, executionMode: 'sequential', intraOpNumThreads: 4 } } : undefined);
   await mkdir(resolve(root, '.work/build'), { recursive: true });
   const scratch = await mkdtemp(resolve(root, '.work/build/catalog-'));
@@ -97,7 +102,7 @@ export async function buildCatalog(catalog, { version, createdAt, embedderFactor
     const primary = m.licensing.licenses[0];
     await compileKnowledgeCatalog({
       toolchain: manifestToolchain,
-      catalog: { id: m.id, version, name: m.name, description: m.description, language: m.language, publisher: m.publisher, createdAt, license: { name: m.licensing.licenses.map((l) => l.name).join('; '), ...(m.licensing.licenses.length === 1 ? { spdx: primary.spdx } : {}), attributionRequired: true, noticePath: 'LICENSES/catalog.txt' } },
+      catalog: { id: m.id, version, name: m.name, description: m.description, language: m.language, publisher: m.publisher, createdAt, license: { name: m.licensing.licenses.map((l) => l.name).join('; '), ...(m.licensing.licenses.length === 1 ? { spdx: primary.spdx } : {}), attributionRequired: attributionRequired(m), noticePath: 'LICENSES/catalog.txt' } },
       topics: source.topics, documents: (async function* () {
         for (const [index, document] of source.documents.entries()) {
           yield document;
@@ -126,6 +131,7 @@ export async function buildCatalog(catalog, { version, createdAt, embedderFactor
       archive, sha256: await hashFile(resolve(output, archive)), archiveBytes: (await stat(resolve(output, archive))).size,
       uncompressedBytes: inspection.totalUncompressedBytes, manifest: inspection.manifest,
       testOnly, signingKeyId, embeddingRuntime: runtime, toolchain: toolchainIdentity, targets: m.publish,
+      verificationPolicy: { fullText: queries ?? [], semantic: semanticQueries },
       ...(packaging ? { packaging: packaging.metadata } : {}),
     };
     await writeJson(releasePath, release);

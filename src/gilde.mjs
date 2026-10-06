@@ -20,7 +20,7 @@ export function gildeDefinitions(release, receipt, previous = {}) {
     license: m.license.name,
     licenseClass: ['MIT', 'Apache-2.0', 'CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC'].includes(m.license.spdx) ? 'open' : undefined,
     category: previous.category ?? config.category, tags: previous.tags ?? config.tags,
-    upstream: previous.upstream ?? `https://github.com/${release.targets.github}/tree/${release.sourceCommit}/catalogs/${release.catalog}`,
+    upstream: previous.upstream ?? (release.catalogId.startsWith('caselaw-') ? 'https://static.case.law/' : `https://github.com/${release.targets.github}/tree/${release.sourceCommit}/catalogs/${release.catalog}`),
   });
   const version = KnowledgeCatalogVersionManifestSchema.parse({
     schemaVersion: 1, version: m.version, releasedAt: m.createdAt, formatVersion: m.formatVersion,

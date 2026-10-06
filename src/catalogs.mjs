@@ -8,6 +8,8 @@ import { parseMarkdown, walkMarkdownTree } from '@bendyline/squisq/markdown';
 import { automaticLicensing, validateAutomaticLicensing } from './licensing.mjs';
 import { validateWikipediaSelection } from './wikipedia-selection.mjs';
 import { toolchainIdentity } from './toolchain.mjs';
+import { CASELAW_NORMALIZER } from './sources/caselaw-normalize.mjs';
+import { workspaceDefinitionFiles } from './catalog-workspace.mjs';
 
 export function hasUnresolvedDocfx(text) {
   const directives = [...text.matchAll(/\[!INCLUDE\b|\[!code-|<xref:|:::\s*(?:image|zone|code|row|column)\b/gi)];
@@ -48,7 +50,8 @@ export async function catalogs(root, selector, { disabled = false } = {}) {
       if (!/^[a-z0-9-]+\/[a-z0-9-]+$/.test(key)) throw new Error(`Invalid catalog directory: ${key}`);
       const dir = inside(base, key);
       const manifest = CatalogSchema.parse(await readJson(resolve(dir, 'manifest.json')));
-      result.push({ key, dir, manifest, root });
+      result.push({ key, dir: manifest.contentStorage === 'workspace' ? inside(resolve(root, '.work/catalogs'), key) : dir,
+        ...(manifest.contentStorage === 'workspace' ? { definitionDir: dir } : {}), manifest, root });
     }
   }
   const ids = result.map((c) => c.manifest.id);
@@ -57,8 +60,16 @@ export async function catalogs(root, selector, { disabled = false } = {}) {
   if (selector && selector !== 'all' && !selected.length) throw new Error(`No enabled catalog matches ${selector}`);
   return selected.sort((a, b) => a.key.localeCompare(b.key));
 }
-export async function validateCatalog(catalog, { allowEmpty = false } = {}) {
+export async function validateCatalog(catalog, { allowEmpty = false, definitionOnly = false } = {}) {
   const { dir, manifest: m } = catalog;
+  if (definitionOnly && m.contentStorage === 'workspace') {
+    await workspaceDefinitionFiles(catalog);
+    for (const path of [m.licensing.notice, ...m.licensing.licenses.map(l => l.text)]) {
+      if (!(await readFile(inside(catalog.definitionDir, path), 'utf8')).trim()) throw new Error(`${path}: empty notice/license`);
+    }
+    return { catalog: catalog.key, status: 'definition valid; source evidence and content checked during prepare/build', contentStorage: 'workspace' };
+  }
+  if (m.contentStorage === 'workspace' && !await exists(resolve(dir, 'sources.lock.json'))) throw new Error(`${catalog.key}: content is not prepared; run npm run prepare-content -- --catalog ${catalog.key}`);
   if (m.licensing.status !== 'approved' && !automaticLicensing(m)) {
     if (m.enabled) throw new Error(`${catalog.key}: license review is pending`);
     return { catalog: catalog.key, status: 'disabled; license review pending' };
@@ -101,7 +112,7 @@ export async function validateCatalog(catalog, { allowEmpty = false } = {}) {
   }
   return { catalog: catalog.key, files: files.length, documents: files.filter((f) => /\.md$/i.test(f.path)).length, contentDigest: digest(files) };
 }
-export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION });
+export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION, ...(m.source.type.startsWith('caselaw') ? { caselawNormalizer: CASELAW_NORMALIZER } : {}) });
 export async function buildDigest(catalog, packaging) {
   const files = await inventory(catalog.dir);
   const relevant = files.filter((f) => f.path !== 'manifest.json');

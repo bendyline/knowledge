@@ -6,6 +6,7 @@
   "description": "Azure AI Search documentation from MicrosoftDocs, normalized to Markdown with source attribution, licenses, and search navigation.",
   "language": "en",
   "enabled": true,
+  "contentStorage": "git",
   "publisher": {
     "id": "bendyline",
     "name": "Bendyline",

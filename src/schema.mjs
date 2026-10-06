@@ -7,6 +7,16 @@ const sha = z.string().regex(/^[a-f0-9]{64}$/);
 const repository = z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/);
 const rule = z.object({ include: z.array(z.string().min(1)).min(1), license: id }).strict();
 const manual = z.object({ type: z.literal('manual') }).strict();
+const caselawCollection = z.object({ type: z.literal('caselaw-collection'), snapshot: id, selectionDigest: sha, corpusDigest: sha, part: id }).strict();
+const caselaw = z.object({
+  type: z.literal('caselaw'),
+  volumes: z.array(z.object({ reporter: id, volume: id, sha256: sha, cases: z.number().int().positive() }).strict()).min(1).max(100),
+  jurisdictions: z.array(z.number().int().positive()).default([]),
+  courts: z.array(z.number().int().positive()).default([]),
+  maxExpandedBytes: z.number().int().positive().max(1000000000).default(100000000),
+}).strict().superRefine((s, ctx) => {
+  if (new Set(s.volumes.map(v => `${v.reporter}/${v.volume}`)).size !== s.volumes.length) ctx.addIssue({ code: 'custom', message: 'Duplicate CAP source volume' });
+});
 const github = z.object({
   type: z.literal('github'), repository, ref: z.string().min(1).default('main'),
   paths: z.array(z.union([z.literal('.'), path])).min(1), include: z.array(z.string()).min(1).default(['**/*.md', '**/*.yml', '**/*.yaml']),
@@ -25,8 +35,9 @@ const wikipedia = z.object({
 export const CatalogSchema = z.object({
   $schema: z.string().optional(), schemaVersion: z.literal(1), id,
   name: z.string().min(1), description: z.string().min(1), language: z.string().min(2), enabled: z.boolean().default(true),
+  contentStorage: z.enum(['git', 'workspace']).optional(),
   publisher: z.object({ id, name: z.string().min(1), url: z.string().url() }).strict(),
-  source: z.discriminatedUnion('type', [manual, github, wikipedia]),
+  source: z.discriminatedUnion('type', [manual, github, wikipedia, caselaw, caselawCollection]),
   licensing: z.object({
     status: z.enum(['pending', 'approved', 'automatic']), policy: z.literal('standard-open-v1').optional(), reviewedBy: z.string().min(1).optional(), reviewedAt: z.string().datetime().optional(),
     notice: path,
@@ -46,6 +57,7 @@ export const CatalogSchema = z.object({
     gilde: z.object({ repository, category: z.enum(['encyclopedia', 'reference', 'science', 'history', 'technology', 'culture', 'manuals', 'other']), tags: z.array(z.string()).default([]), minGezelVersion: z.string().optional() }).strict(),
   }).strict(),
 }).strict().superRefine((m, ctx) => {
+  if (m.contentStorage === 'workspace' && !['github', 'wikipedia', 'caselaw'].includes(m.source.type)) ctx.addIssue({ code: 'custom', message: 'Workspace content requires a supported source adapter' });
   if (m.build.packaging && (m.build.toc.format !== 'wikipedia-days' || m.source.type !== 'wikipedia' || m.source.depth !== 1 || m.source.seeds.length)) ctx.addIssue({ code: 'custom', message: 'Wikipedia news packages require a depth-one current-events corpus with a daily TOC and no extra seeds' });
   if (m.build.toc.format === 'wikipedia-days' && (m.source.type !== 'wikipedia' || !m.source.currentEvents || m.build.toc.path)) ctx.addIssue({ code: 'custom', message: 'wikipedia-days TOC requires a Wikipedia currentEvents source and derives its paths from the accepted selection' });
   const ids = m.licensing.licenses.map((l) => l.id);
@@ -54,7 +66,8 @@ export const CatalogSchema = z.object({
     if (!ids.includes(r.license)) ctx.addIssue({ code: 'custom', message: `Unknown license ${r.license}` });
   }
   if (m.licensing.status === 'approved' && (!m.licensing.reviewedBy || !m.licensing.reviewedAt)) ctx.addIssue({ code: 'custom', message: 'Approved licensing requires reviewedBy and reviewedAt' });
-  if (m.licensing.status === 'automatic' && (m.licensing.policy !== 'standard-open-v1' || !['github', 'wikipedia'].includes(m.source.type))) ctx.addIssue({ code: 'custom', message: 'Automatic licensing requires the standard-open-v1 source-evidence policy' });
+  if (m.licensing.status === 'automatic' && (m.licensing.policy !== 'standard-open-v1' || !['github', 'wikipedia', 'caselaw', 'caselaw-collection'].includes(m.source.type))) ctx.addIssue({ code: 'custom', message: 'Automatic licensing requires the standard-open-v1 source-evidence policy' });
+  if (m.source.type.startsWith('caselaw') && (m.licensing.status !== 'automatic' || m.normalization.images !== 'omit')) ctx.addIssue({ code: 'custom', message: 'CAP requires automatic CC0 evidence and images=omit' });
   if (m.source.type === 'wikipedia' && !m.source.seeds.length && !m.source.currentEvents) ctx.addIssue({ code: 'custom', message: 'Wikipedia requires seeds or a currentEvents window' });
   if (m.source.type === 'wikipedia' && m.source.currentEvents && m.source.language !== 'en') ctx.addIssue({ code: 'custom', message: 'Current-events date titles currently support English Wikipedia' });
   if (m.source.type === 'github' && !m.licensing.policy && m.source.licenseFiles.some((f) => !f.sha256)) ctx.addIssue({ code: 'custom', message: 'Manual license approval requires pinned license hashes' });
@@ -66,8 +79,9 @@ export const ProvenanceSchema = z.object({
   license: id, attribution: z.string().min(1), transformation: z.string(),
   sourceUpdatedAt: z.string().optional(), historyUrl: z.string().url().optional(), discoveredFrom: z.string().optional(), depth: z.number().int().optional(),
   referredBy: z.array(z.string()).optional(), newsDate: z.iso.date().optional(), wikipediaPageId: z.number().int().positive().optional(),
+  caselaw: z.object({ caseId: z.number().int().positive(), archiveUrl: z.string().url(), archiveSha256: sha, jsonSha256: sha, htmlSha256: sha }).strict().optional(),
 }).strict();
 export const SourceLockSchema = z.object({
-  schemaVersion: z.literal(1), sourceType: z.enum(['github', 'wikipedia']),
+  schemaVersion: z.literal(1), sourceType: z.enum(['github', 'wikipedia', 'caselaw', 'caselaw-collection']),
   sourceConfigDigest: sha, contentDigest: sha, legalDigest: sha.optional(), revision: z.string().min(1), files: z.array(ProvenanceSchema),
 }).strict();

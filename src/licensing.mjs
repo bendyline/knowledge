@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import references from '../policy/license-references.json' with { type: 'json' };
 import { inside, sha256, digest } from './files.mjs';
+import { CASELAW_TERMS } from './caselaw-policy.mjs';
 
 export const LICENSE_POLICY = 'standard-open-v1';
 const normalized = (text) => text.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
@@ -20,7 +21,20 @@ export function recognizeLicense(bytes, expected) {
   if (!variants.length) throw new Error(`${expected}: not covered by the automatic public-redistribution policy (NC/ND/custom terms are not treated as unrestricted open licenses)`);
   const reference = variants.find((r) => comparable(text, expected) === comparable(r.text, expected));
   if (!reference) throw new Error(`${expected}: license text differs from the standard terms; automatic approval cannot assume added or changed conditions are harmless`);
-  return { spdx: expected, sha256: sha256(bytes), reference: reference.source, obligations: ['retain-license-and-notices', 'attribute-source', 'mark-modifications', ...(expected.includes('-SA-') ? ['same-license-for-adaptations'] : [])] };
+  return { spdx: expected, sha256: sha256(bytes), reference: reference.source, obligations: expected === 'CC0-1.0' ? [] : ['retain-license-and-notices', 'attribute-source', 'mark-modifications', ...(expected.includes('-SA-') ? ['same-license-for-adaptations'] : [])] };
+}
+export const attributionRequired = (manifest) => manifest.licensing.licenses.some(l => l.spdx !== 'CC0-1.0');
+export function caselawLegal(manifest, termsSha256) {
+  if (termsSha256 !== CASELAW_TERMS.sha256) throw new Error('CAP terms changed; reassess the complete source notice before importing');
+  if (manifest.licensing.licenses.length !== 1 || manifest.licensing.licenses[0].spdx !== 'CC0-1.0') throw new Error('CAP case data requires CC0-1.0 licensing');
+  const license = manifest.licensing.licenses[0];
+  const text = references.licenses.find(r => r.id === 'CC0-1.0').text;
+  const assessment = { policy: LICENSE_POLICY, approved: true, evidence: [{ license: license.id, declaration: CASELAW_TERMS, ...recognizeLicense(text, license.spdx) }] };
+  return [
+    { path: license.text, bytes: Buffer.from(text) },
+    { path: 'LICENSES/caselaw-rights.json', bytes: Buffer.from(JSON.stringify(CASELAW_TERMS, null, 2) + '\n') },
+    { path: 'LICENSES/assessment.json', bytes: Buffer.from(JSON.stringify(assessment, null, 2) + '\n') },
+  ];
 }
 export function automaticLicensing(manifest) { return manifest.licensing.policy === LICENSE_POLICY; }
 export function assessLicenseFiles(manifest, files) {
@@ -57,6 +71,16 @@ export function wikipediaLegal(manifest, rights) {
 export async function validateAutomaticLicensing(catalog) {
   const m = catalog.manifest;
   if (!automaticLicensing(m)) return;
+  if (m.source.type === 'caselaw' || m.source.type === 'caselaw-collection') {
+    for (const file of caselawLegal(m, CASELAW_TERMS.sha256)) {
+      if (sha256(await readFile(inside(catalog.dir, file.path))) !== sha256(file.bytes)) throw new Error(`CAP license evidence differs: ${file.path}`);
+    }
+    if (m.source.type === 'caselaw-collection') {
+      const selection = JSON.parse(await readFile(inside(catalog.dir, 'LICENSES/collection-selection.json'), 'utf8'));
+      if (digest(selection) !== m.source.selectionDigest || selection.corpusDigest !== m.source.corpusDigest || selection.snapshot !== m.source.snapshot || selection.part !== m.source.part) throw new Error('CAP collection selection evidence differs');
+    }
+    return;
+  }
   if (m.source.type === 'wikipedia') {
     const rights = JSON.parse(await readFile(inside(catalog.dir, 'LICENSES/wikipedia-rights.json'), 'utf8'));
     const expected = wikipediaLegal(m, rights);

@@ -1,0 +1,34 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "caselaw-us-347",
+  "name": "U.S. Reports, volume 347 — CAP pilot",
+  "description": "690 historical case records from volume 347 of U.S. Reports, supplied by the Caselaw Access Project. Includes case metadata, citations, separately labeled opinions, footnotes, and original page references. OCR may contain errors; this collection does not establish current legal authority.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "workspace",
+  "publisher": { "id": "bendyline", "name": "Bendyline", "url": "https://github.com/bendyline/knowledge" },
+  "source": {
+    "type": "caselaw",
+    "volumes": [{ "reporter": "us", "volume": "347", "sha256": "d536930da946795e3fa752a40876c837a2aaeeb769af9c21a4c57fa764f22eed", "cases": 690 }],
+    "jurisdictions": [],
+    "courts": [],
+    "maxExpandedBytes": 30000000
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [{ "id": "cc0", "name": "CC0 1.0 Universal", "spdx": "CC0-1.0", "url": "https://creativecommons.org/publicdomain/zero/1.0/", "text": "LICENSES/CC0-1.0.txt", "attribution": "Caselaw Access Project, Harvard Law School Library, President and Fellows of Harvard College. Source: https://static.case.law/us/347.zip. Credit is provided voluntarily under CAP community norms." }],
+    "rules": [{ "include": ["**"], "license": "cc0" }]
+  },
+  "normalization": { "images": "omit" },
+  "sync": { "maxFileBytes": 20000000, "maxTotalBytes": 50000000, "maxDeleteFraction": 0.2 },
+  "build": { "embeddingProfile": "bge-small-en-v1.5@1", "toc": { "format": "folders" } },
+  "publish": {
+    "enabled": false,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "reference", "tags": ["law", "caselaw", "united-states", "historical", "pilot"] }
+  }
+}

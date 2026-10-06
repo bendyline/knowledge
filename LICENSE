@@ -64,6 +64,26 @@ Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/ben
 Attribution: Copyright (c) 2026 Bendyline
 Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/knowledge-handbook/NOTICE.md
 
+U.S. Reports, volume 347 — CAP pilot (caselaw/us-347)
+Catalog ID: caselaw-us-347
+Source: https://static.case.law/
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347/manifest.json
+License: CC0 1.0 Universal (CC0-1.0; record: cc0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347/LICENSES/CC0-1.0.txt
+Attribution: Caselaw Access Project, Harvard Law School Library, President and Fellows of Harvard College. Source: https://static.case.law/us/347.zip. Credit is provided voluntarily under CAP community norms.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347/NOTICE.md
+
+U.S. Reports, volumes 347–349 — CAP pilot (caselaw/us-347-349)
+Catalog ID: caselaw-us-347-349
+Source: https://static.case.law/
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347-349/manifest.json
+License: CC0 1.0 Universal (CC0-1.0; record: cc0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347-349/LICENSES/CC0-1.0.txt
+Attribution: Caselaw Access Project, Harvard Law School Library, President and Fellows of Harvard College. Sources: U.S. Reports volumes 347–349 at https://static.case.law/us/. Credit is provided voluntarily under CAP community norms.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347-349/NOTICE.md
+
 Azure AI Search documentation (microsoftdocs/azure-ai-search-en)
 Catalog ID: microsoftdocs-azure-ai-search-en
 Source: https://github.com/MicrosoftDocs/azure-ai-docs
@@ -88,4 +108,15 @@ Terms: https://creativecommons.org/licenses/by-sa/4.0/
 Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/wikipedia/on-this-day-en/LICENSES/CC-BY-SA-4.0.txt
 Attribution: Wikipedia contributors; see each document's revision and history URL
 Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/wikipedia/on-this-day-en/NOTICE.md
+
+Alaska caselaw — CAP jurisdiction collection
+Collection ID: caselaw-alaska
+Package coverage: caselaw-alaska-part-NNNN archives share these content licenses.
+Source: https://static.case.law/
+Collection definition: https://github.com/bendyline/knowledge/blob/main/collections/caselaw/alaska/collection.json
+License: CC0 1.0 Universal (CC0-1.0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text and source evidence: included in every archive's LICENSES directory.
+Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
+Scope: Preserves CAP's Alaska jurisdiction assignment, including 21 U.S. District Court for the District of Alaska records printed in Federal Supplement, Third Series. Court names remain explicit; this is not exclusively state-court material.
 <!-- END CATALOG LICENSES -->

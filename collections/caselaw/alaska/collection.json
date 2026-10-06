@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "caselaw-alaska",
+  "name": "Alaska caselaw — CAP jurisdiction collection",
+  "jurisdiction": "alaska",
+  "scopeNote": "Preserves CAP's Alaska jurisdiction assignment, including 21 U.S. District Court for the District of Alaska records printed in Federal Supplement, Third Series. Court names remain explicit; this is not exclusively state-court material.",
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeEstimate": "wyoming-bge-v1",
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "queries": [
+    { "query": "537 P.2d 494", "expectedDocumentIds": ["cap-10466265"] },
+    { "query": "583 P.2d 872", "expectedDocumentIds": ["cap-10458061"] },
+    { "query": "974 P.2d 386", "expectedDocumentIds": ["cap-11627321"] },
+    { "query": "363 F. Supp. 3d 1013", "expectedDocumentIds": ["cap-12529892"] }
+  ],
+  "semanticQueries": [
+    { "query": "constitutional right to privacy protects an adult's possession of marijuana for personal use in the home", "expectedDocumentIds": ["cap-10466265"] },
+    { "query": "police secretly record a conversation with an informant without a warrant and violate the Alaska constitutional right to privacy", "expectedDocumentIds": ["cap-10458061"] },
+    { "query": "admissibility of scientific expert evidence under Daubert instead of the Frye general acceptance test", "expectedDocumentIds": ["cap-11627321"] },
+    { "query": "president cannot revoke prior withdrawals of offshore lands from oil and gas leasing", "expectedDocumentIds": ["cap-12529892"] }
+  ],
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "reference", "tags": ["law", "caselaw", "alaska", "historical"] }
+  }
+}

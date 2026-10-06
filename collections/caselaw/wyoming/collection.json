@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "caselaw-wyoming",
+  "name": "Wyoming caselaw — Caselaw Access Project",
+  "jurisdiction": "wyo",
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeEstimate": "wyoming-bge-v1",
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "queries": [
+    { "query": "1 Wyo. 20", "expectedDocumentIds": ["cap-5270729"] },
+    { "query": "606 P.2d 310", "expectedDocumentIds": ["cap-10446561"] },
+    { "query": "907 P.2d 1238", "expectedDocumentIds": ["cap-10344371"] },
+    { "query": "2 P.3d 558", "expectedDocumentIds": ["cap-11211597"] },
+    { "query": "267 P.3d 1107", "expectedDocumentIds": ["cap-6986122"] }
+  ],
+  "semanticQueries": [
+    { "query": "prosecutor allowed to add witness names to a misdemeanor indictment during trial", "expectedDocumentIds": ["cap-5270729"] },
+    { "query": "public school funding based on local property wealth violates equal educational opportunity", "expectedDocumentIds": ["cap-10446561"] },
+    { "query": "prisoner reassigned from janitor to laundry has no property right in a prison job or wage", "expectedDocumentIds": ["cap-11211597"] },
+    { "query": "stalking conviction reversed because conflicting jury instructions used preponderance instead of reasonable doubt for a course of harassment", "expectedDocumentIds": ["cap-6986122"] }
+  ]
+}

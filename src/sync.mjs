@@ -2,10 +2,12 @@ import { cp, mkdir, mkdtemp, readFile, rename } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 import { githubSnapshot } from './sources/github.mjs';
 import { wikipediaSnapshot } from './sources/wikipedia.mjs';
+import { caselawSnapshot } from './sources/caselaw.mjs';
 import { sourceConfigDigest, validateCatalog, licenseFor } from './catalogs.mjs';
 import { digest, diffFiles, exists, hashFile, inside, inventory, readJson, removeWork, sha256, write, writeJson } from './files.mjs';
 import { normalizeDocument } from './normalize.mjs';
 import { automaticLicensing } from './licensing.mjs';
+import { refreshWorkspaceDefinition } from './catalog-workspace.mjs';
 
 export async function applySnapshot(catalog, snapshot, { apply = false, allowDeletions = false } = {}) {
   const { dir, manifest: m, root } = catalog;
@@ -53,8 +55,24 @@ export async function syncCatalog(catalog, options = {}) {
   const m = catalog.manifest;
   if (m.licensing.status !== 'approved' && !automaticLicensing(m)) throw new Error('Configure automatic standard-open licensing or approve the source license before importing');
   if (m.source.type === 'manual') return { catalog: catalog.key, changed: false, status: 'manual' };
-  const snapshot = await (m.source.type === 'github' ? githubSnapshot : wikipediaSnapshot)(catalog, options);
+  await refreshWorkspaceDefinition(catalog);
+  const adapters = { github: githubSnapshot, wikipedia: wikipediaSnapshot, caselaw: caselawSnapshot };
+  if (!adapters[m.source.type]) throw new Error('CAP collection parts are materialized by npm run caselaw -- build; sync the shared corpus with caselaw ingest');
+  const snapshot = await adapters[m.source.type](catalog, options);
   return applySnapshot(catalog, snapshot, options);
+}
+
+export async function prepareCatalog(catalog, options = {}) {
+  if (catalog.manifest.contentStorage !== 'workspace') return { catalog: catalog.key, status: 'uses checked-in content', prepared: false };
+  await refreshWorkspaceDefinition(catalog);
+  if (await exists(resolve(catalog.dir, 'sources.lock.json'))) {
+    try {
+      const checked = await validateCatalog(catalog);
+      return { ...checked, prepared: true, reused: true, directory: catalog.dir };
+    } catch { /* Sync checks existing hashes before replacing an outdated snapshot. */ }
+  }
+  await syncCatalog(catalog, { ...options, apply: true });
+  return { ...await validateCatalog(catalog), prepared: true, reused: false, directory: catalog.dir };
 }
 
 export async function importDocument(catalog, { file, target, sourceUrl, apply = false }) {

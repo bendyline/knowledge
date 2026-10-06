@@ -8,3 +8,10 @@ node_modules/
 *.gezk
 coverage/
 *.log
+
+# CAP source content is prepared into .work, never versioned with definitions.
+catalogs/caselaw/*/content/
+catalogs/caselaw/*/sources.lock.json
+catalogs/caselaw/*/provenance.jsonl
+catalogs/caselaw/*/LICENSES/assessment.json
+catalogs/caselaw/*/LICENSES/caselaw-selection.json

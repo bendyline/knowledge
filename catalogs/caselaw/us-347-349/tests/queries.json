@@ -1,0 +1,8 @@
+[
+  { "query": "347 U.S. 483", "expectedDocumentIds": ["cap-11301409"] },
+  { "query": "349 U.S. 294", "expectedDocumentIds": ["cap-11334782"] },
+  { "query": "Berman Parker", "expectedDocumentIds": ["cap-6930659"] },
+  { "query": "Commissioner Glenshaw Glass", "expectedDocumentIds": ["cap-6931705"] },
+  { "query": "Williamson Lee Optical", "expectedDocumentIds": ["cap-6931894"] },
+  { "query": "Pereira United States", "expectedDocumentIds": ["cap-11299228"] }
+]

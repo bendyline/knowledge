@@ -1,0 +1,38 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "caselaw-us-347-349",
+  "name": "U.S. Reports, volumes 347–349 — CAP pilot",
+  "description": "2,142 historical case records from U.S. Reports volumes 347–349 in one searchable archive, supplied by the Caselaw Access Project. Includes case metadata, citation links across volumes, separately labeled opinions, footnotes, and original page references. This source selection is not a complete court term or current-law collection; OCR may contain errors.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "workspace",
+  "publisher": { "id": "bendyline", "name": "Bendyline", "url": "https://github.com/bendyline/knowledge" },
+  "source": {
+    "type": "caselaw",
+    "volumes": [
+      { "reporter": "us", "volume": "347", "sha256": "d536930da946795e3fa752a40876c837a2aaeeb769af9c21a4c57fa764f22eed", "cases": 690 },
+      { "reporter": "us", "volume": "348", "sha256": "eb5bf866c7f7e8010b4db66c441be9dc0aa2ed9eae48a6e38a50f06426f55162", "cases": 1028 },
+      { "reporter": "us", "volume": "349", "sha256": "2761469f18abc7090030f39fb0313bd7a06dcc7d798726fdd857f04c2d7ab7ee", "cases": 424 }
+    ],
+    "jurisdictions": [],
+    "courts": [],
+    "maxExpandedBytes": 60000000
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [{ "id": "cc0", "name": "CC0 1.0 Universal", "spdx": "CC0-1.0", "url": "https://creativecommons.org/publicdomain/zero/1.0/", "text": "LICENSES/CC0-1.0.txt", "attribution": "Caselaw Access Project, Harvard Law School Library, President and Fellows of Harvard College. Sources: U.S. Reports volumes 347–349 at https://static.case.law/us/. Credit is provided voluntarily under CAP community norms." }],
+    "rules": [{ "include": ["**"], "license": "cc0" }]
+  },
+  "normalization": { "images": "omit" },
+  "sync": { "maxFileBytes": 20000000, "maxTotalBytes": 100000000, "maxDeleteFraction": 0.2 },
+  "build": { "embeddingProfile": "bge-small-en-v1.5@1", "toc": { "format": "folders" } },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "reference", "tags": ["law", "caselaw", "united-states", "historical", "pilot"] }
+  }
+}

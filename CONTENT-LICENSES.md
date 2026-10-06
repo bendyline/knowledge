@@ -24,6 +24,12 @@ snapshot, as well as before building and publishing. The checks enforce recorded
 decisions. Supported standard free licenses are accepted automatically; unknown
 or restricted terms do not become acceptable merely because a repository is public.
 
+Catalogs with `contentStorage: workspace` keep source bodies and generated
+evidence outside Git. Fresh-checkout validation checks their definitions and
+static notices; preparation and build enforce the same full licensing checks as
+checked-in catalogs. Each compiled archive carries the accepted assessment,
+license texts, notices, and per-document provenance.
+
 For `licensing.status: automatic` with `policy: standard-open-v1`, actual upstream
 license texts are compared to bundled SPDX and Creative Commons references.
 The policy accepts MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0,
@@ -46,6 +52,20 @@ Wikipedia images are omitted in the initial adapter.
 Wikipedia's automatic assessment also verifies the edition's `rightsinfo` API
 declaration against the expected CC BY-SA 4.0 URL. That evidence, the standard
 license text, and article-level provenance accompany the snapshot and archive.
+
+CAP's case data and metadata use CC0-1.0. Its adapter checks the complete current
+terms template against the hash recorded in `src/caselaw-policy.mjs`; a changed
+template requires reassessment before importing. The generated assessment
+records the source URLs, effective date, hash, scope, and community norms,
+without copying the separately licensed website prose. CC0 has no attribution
+obligation; source credit and the repository's retention of notices remain
+voluntary provenance practices. CC0-only archives set `attributionRequired` to
+false. This does not waive third-party rights or warrant the accuracy of OCR.
+State collection parts additionally carry the exact frozen case selection and
+root/index hashes. The shared corpus stays in `.work/`; every generated part
+receives its own CC0 text, assessment, notices, and source provenance. Collection
+configuration and original documentation remain MIT. Collection publishing is
+disabled and needs a separate distribution integration before public release.
 
 Builds ship the catalog NOTICE, full license texts, and imported provenance inside
 `LICENSES/` in each `.gezk`. A single dataset-wide MIT tag would be incorrect for

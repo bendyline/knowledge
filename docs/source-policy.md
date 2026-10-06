@@ -1,9 +1,18 @@
 # Source and transformation policy
 
-Only public GitHub repositories and explicitly configured Wikipedia editions are
-currently supported. No login sessions, private repository files, cookies, or
+Public GitHub repositories, explicitly configured Wikipedia editions, and pinned
+Caselaw Access Project volume ZIPs are supported. No login sessions, private repository files, cookies, or
 secrets are copied into catalogs. Ingested files are data; their scripts, workflow
 files, and build plugins are never executed.
+
+Storage is a per-catalog preservation decision. Azure documentation uses
+`contentStorage: git`: accepted flat Markdown, navigation, source revisions,
+licenses, and notices remain in this repository so builds do not depend on the
+upstream repository remaining available. The current Azure AI Search catalog
+preserves its declared selection and exclusions. CAP's larger bulk collections
+use workspace storage, with source objects and accepted snapshots backed up
+separately as described in [CAP ingestion](caselaw.md). Source availability risk
+favors Git storage even when a source adapter supports on-demand preparation.
 
 The pipeline rejects symlinks, path traversal, Windows special paths, case-folded
 filename collisions, incomplete GitHub listings, unrecognized license terms,
@@ -50,3 +59,15 @@ using the revision actually rendered. Website downloads honor robots.txt and
 Retry-After. A checked local render cache permits resuming interrupted
 syncs; it expires after 24 hours because templates can change independently of article
 revision IDs. Canonical page IDs deduplicate redirects and repeated daily mentions.
+
+CAP is a bulk-download source. Its documentation explicitly invites downloading
+volume ZIPs, while static.case.law's robots.txt disallows website crawling.
+The bounded adapter downloads explicit ZIPs and licensing evidence. State
+discovery also uses the published root and per-volume JSON metadata indexes;
+it does not crawl HTML directory listings or case pages. Archives and metadata
+are pinned by SHA-256 and cached by digest. The state pipeline uses four bounded
+acquisition/conversion workers by default, with resumable case statuses.
+Expanded byte budgets, exact case counts, safe entries, complete JSON/HTML pairs,
+matching metadata, unique IDs, and unchanged terms are required. Full source-text
+and link audits gate package planning. CAP bodies and normalized Markdown remain
+outside Git. See [CAP ingestion](caselaw.md).

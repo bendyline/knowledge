@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-06",
+  "collection": "caselaw-wyoming",
+  "scope": "All volumes in jurisdiction-linked reporters plus all volume jurisdiction hints; case-level membership reconciled with the advertised jurisdiction count. Other reporter case indexes are not exhaustively surveyed.",
+  "roots": [
+    {
+      "name": "ReportersMetadata",
+      "url": "https://static.case.law/ReportersMetadata.json",
+      "sha256": "fb40c4837c795785076350939afd8b8cc135fe4a6e7b8302967460d9e821f6e5",
+      "bytes": 146015
+    },
+    {
+      "name": "VolumesMetadata",
+      "url": "https://static.case.law/VolumesMetadata.json",
+      "sha256": "df5da71c76b6d75b59cfbb07387c71fb255e7a9f8d095c8a676559527532204d",
+      "bytes": 30302826
+    },
+    {
+      "name": "JurisdictionsMetadata",
+      "url": "https://static.case.law/JurisdictionsMetadata.json",
+      "sha256": "1b3e25514142b552aa2fd69b78c9322e6eeaa43fb67c3efbab90edd639dc97bc",
+      "bytes": 136880
+    }
+  ],
+  "termsSha256": "186b08bff878b46c0849e7b1f19776c465b41a495aa02dc9dd29c1d67510312e",
+  "inventoryDigest": "5670d9ce15f4ec8f8a648901e18a1b12e0549cee00c5ebcad54af09157290f57",
+  "membershipDigest": "45955319b3fbcae7db2d5448ff9d40d52372404313d753128f711a693a05e803",
+  "corpusDigest": "e37cc489ad6241215579d575f8197e831cf682b89c2dcd7919f78fd878f30480",
+  "normalizer": "de8ddcac54f37bafceefaca58402a7e754248ad57b32553cd9b113934ebf7820",
+  "planDigest": "80cfb9385b2621e8e8eb5cb48c65615fa834f63314d659177025d4febee759a1",
+  "acquisition": {
+    "candidateVolumes": 1275,
+    "indexedVolumes": 1275,
+    "indexedCases": 87859,
+    "sourceArchives": 1184,
+    "compressedBytes": 1465236468,
+    "expandedBytes": 5121447639,
+    "inventoryBytes": 546373632,
+    "reporters": [
+      {
+        "reporter": "p2d",
+        "records": 5029,
+        "volumes": 664
+      },
+      {
+        "reporter": "p3d",
+        "records": 3166,
+        "volumes": 440
+      },
+      {
+        "reporter": "wyo",
+        "records": 2736,
+        "volumes": 80
+      }
+    ]
+  },
+  "corpus": {
+    "ready": 10931,
+    "pending": 0,
+    "failed": 0,
+    "corrupt": 0,
+    "normalizedBytes": 317853931,
+    "advertisedCases": 10931,
+    "records": 10931,
+    "ingestionComplete": true
+  },
+  "audit": {
+    "verified": true,
+    "checked": 10931,
+    "textMatches": 10931,
+    "fragmentLinks": 143500,
+    "issues": 0
+  },
+  "timing": {
+    "cachedMarkdownRegenerationSeconds": 151.4,
+    "sourceAuditSeconds": 183.4,
+    "uncachedTokenPlanningSeconds": 96.2,
+    "initialPartBuildSeconds": {
+      "part-0002": 1424.4,
+      "part-0003": 1425.4
+    },
+    "cachedCollectionBuildSeconds": 643.9,
+    "caveat": "Local measurements on Ryzen 9 7950X3D / Radeon AI PRO R9700. Initial part builds ran as two concurrent GPU jobs. Regeneration excludes first-time ZIP downloads; planning counts tokens without embedding inference."
+  },
+  "build": {
+    "status": "retrieval-check-failed",
+    "version": "2026.10.2",
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "runtime": "dml",
+    "targetBytes": 536870912,
+    "ceilingBytes": 1610612736,
+    "coverageComplete": true,
+    "complete": false,
+    "totalArchiveBytes": 1056484052,
+    "parts": [
+      {
+        "part": "part-0001",
+        "catalogId": "caselaw-wyoming-part-0001",
+        "firstDecisionDate": "1870-05",
+        "lastDecisionDate": "1967-12-19",
+        "cases": 3276,
+        "plannedChunks": 101634,
+        "estimatedBytes": 534811129,
+        "archive": "caselaw-wyoming-part-0001-2026.10.2.gezk",
+        "sha256": "4b9663396bfc61ddf2076e7688b2992cc7e86ec1024ddf840abf2754c84eb332",
+        "archiveBytes": 315363027,
+        "counts": {
+          "documents": 3276,
+          "chunks": 101700,
+          "shards": 1,
+          "assets": 0
+        },
+        "integrity": true,
+        "fullTextChecks": 1,
+        "semanticChecks": 1,
+        "semanticPassed": false
+      },
+      {
+        "part": "part-0002",
+        "catalogId": "caselaw-wyoming-part-0002",
+        "firstDecisionDate": "1968-01-09",
+        "lastDecisionDate": "1992-12-31",
+        "cases": 3215,
+        "plannedChunks": 97312,
+        "estimatedBytes": 511359797,
+        "archive": "caselaw-wyoming-part-0002-2026.10.2.gezk",
+        "sha256": "7040fac72a0f91c1083b6e7ce022911a2822224d6845d5c34a7fa3dd4164ba5e",
+        "archiveBytes": 303990447,
+        "counts": {
+          "documents": 3215,
+          "chunks": 97183,
+          "shards": 1,
+          "assets": 0
+        },
+        "integrity": true,
+        "fullTextChecks": 1,
+        "semanticChecks": 1,
+        "semanticPassed": true
+      },
+      {
+        "part": "part-0003",
+        "catalogId": "caselaw-wyoming-part-0003",
+        "firstDecisionDate": "1993-01-06",
+        "lastDecisionDate": "2011-12-30",
+        "cases": 3275,
+        "plannedChunks": 97859,
+        "estimatedBytes": 516377249,
+        "archive": "caselaw-wyoming-part-0003-2026.10.2.gezk",
+        "sha256": "d484d786dc5252db4ba01233284f9ede4000f3da592f0c816f16293ac8168440",
+        "archiveBytes": 307862634,
+        "counts": {
+          "documents": 3275,
+          "chunks": 97886,
+          "shards": 1,
+          "assets": 0
+        },
+        "integrity": true,
+        "fullTextChecks": 2,
+        "semanticChecks": 1,
+        "semanticPassed": true
+      },
+      {
+        "part": "part-0004",
+        "catalogId": "caselaw-wyoming-part-0004",
+        "firstDecisionDate": "2012-01-04",
+        "lastDecisionDate": "2019-08-28",
+        "cases": 1165,
+        "plannedChunks": 41566,
+        "estimatedBytes": 218266011,
+        "archive": "caselaw-wyoming-part-0004-2026.10.2.gezk",
+        "sha256": "d917ca8bd56ede23faf14b3727b7a79cf827108310c167282dfed2d09595119c",
+        "archiveBytes": 129267944,
+        "counts": {
+          "documents": 1165,
+          "chunks": 41625,
+          "shards": 1,
+          "assets": 0
+        },
+        "integrity": true,
+        "fullTextChecks": 1,
+        "semanticChecks": 1,
+        "semanticPassed": true
+      }
+    ]
+  },
+  "qualityFindings": [
+    {
+      "catalogId": "caselaw-wyoming-part-0001",
+      "version": "2026.10.1",
+      "query": "prosecutor allowed to add witness names to a misdemeanor indictment during trial",
+      "expectedDocumentId": "cap-5270729",
+      "requiredTopChunks": 20,
+      "observedChunkRank": 36,
+      "exhaustiveInt8ChunkRank": 36,
+      "exhaustiveCosine": 0.6493621924527699,
+      "diagnosis": "The expected case is present, but the embedding model ranks other chunks higher. Increasing candidate retrieval to 200 and an exhaustive scan agree on rank 36. The original acceptance query remains unchanged and fails its top-20 gate."
+    }
+  ],
+  "publication": "disabled"
+}

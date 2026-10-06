@@ -1,0 +1,6 @@
+[
+  { "query": "racial segregation in public schools denies equal protection of the laws", "expectedDocumentIds": ["cap-11301409"] },
+  { "query": "how should federal district courts supervise the timing of school desegregation", "expectedDocumentIds": ["cap-11334782"] },
+  { "query": "taking private property to redevelop a blighted urban area serves a public purpose", "expectedDocumentIds": ["cap-6930659"] },
+  { "query": "punitive damages received by a business are taxable gross income", "expectedDocumentIds": ["cap-6931705"] }
+]

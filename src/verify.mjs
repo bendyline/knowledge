@@ -7,7 +7,7 @@ import { buildDigest, validateCatalog } from './catalogs.mjs';
 import { verifyLocalRelease } from './publish.mjs';
 import { packageQueries, resolveBuildPackage } from './news-packages.mjs';
 
-export async function verifyRelease(catalog, directory, { semantic = false } = {}) {
+export async function verifyRelease(catalog, directory, { semantic = false, allowSemanticFailure = false } = {}) {
   await validateCatalog(catalog);
   const release = await readJson(resolve(directory, 'release.json'));
   const packaging = await resolveBuildPackage(catalog, release.packaging?.key);
@@ -46,11 +46,15 @@ export async function verifyRelease(catalog, directory, { semantic = false } = {
         const ids = [...new Set(hits.map((h) => h.documentId))];
         semanticResults.push({ query, expectedDocumentIds, hits: ids, passed: expectedDocumentIds.every((id) => ids.includes(id)) });
       }
-      if (semanticResults.some((q) => !q.passed)) throw new Error(`Semantic-search checks failed: ${JSON.stringify(semanticResults)}`);
     }
-    const report = { catalog: catalog.key, version: release.version, sha256: release.sha256, archiveBytes: release.archiveBytes, counts: release.manifest.counts, integrity: true, ...(packaging ? { packaging: packaging.metadata } : {}), ...(toc ? { toc } : {}), licenses: catalog.manifest.licensing.licenses.map((l) => l.spdx), fullText, semantic: semanticResults };
+    const semanticPassed = semanticResults.every(q => q.passed);
+    const report = { catalog: catalog.key, catalogId: release.catalogId, version: release.version, inputDigest: release.inputDigest, sha256: release.sha256, archiveBytes: release.archiveBytes, counts: release.manifest.counts, integrity: true, ...(packaging ? { packaging: packaging.metadata } : {}), ...(toc ? { toc } : {}), licenses: catalog.manifest.licensing.licenses.map((l) => l.spdx), fullText, semantic: semanticResults, semanticPassed };
     const path = resolve(catalog.root, '.work/verification', `${release.catalogId}-${release.version}.json`);
     await writeJson(path, report);
+    // Keep the report with the artifact, including failed results. Upload jobs
+    // must validate this exact archive's checks without regenerating content.
+    await writeJson(resolve(directory, 'verification.json'), report);
+    if (!semanticPassed && !allowSemanticFailure) throw new Error(`Semantic-search checks failed; report: ${path}`);
     return { ...report, report: path };
   } finally { handle?.close(); await embedder?.dispose(); await removeWork(catalog.root, scratch); }
 }

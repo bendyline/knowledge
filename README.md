@@ -4,6 +4,8 @@ Public knowledge catalogs and a Node.js pipeline for synchronizing sources,
 building `.gezk` archives, publishing to Hugging Face and GitHub Releases, and
 proposing catalog definitions in Gilde.
 
+The default catalog layout uses `contentStorage: git`:
+
 ```text
 catalogs/<organization>/<catalog>/
   manifest.json          identity, source selection, licensing, build targets
@@ -15,11 +17,13 @@ catalogs/<organization>/<catalog>/
   tests/queries.json     optional expected search results
 ```
 
-**Normalize during synchronization, not compilation.** Source HTML, DOCX, and
-PDF documents pass through Squisq before Markdown is written to `content/`.
-The raw source bytes stay in temporary processing only. Builds consume the
-checked-in Markdown snapshot and never crawl or convert source documents.
-The embedding model may be downloaded the first time a catalog is built.
+**Normalize during source preparation.** Source HTML, DOCX, and PDF documents
+pass through Squisq before compilation. Catalogs can keep accepted Markdown in
+Git or use `contentStorage: workspace` to keep definitions in Git and generated
+snapshots under `.work/catalogs/`. `prepare-content` materializes or reuses those
+snapshots; bulk sync skips workspace catalogs. CAP additionally retains pinned
+source ZIPs in its ignored cache. Builds consume prepared Markdown, and the
+embedding model may be downloaded on first use.
 
 ## Try it locally
 
@@ -65,10 +69,15 @@ npm run sync -- --catalog organization/catalog --apply
 Sync defaults to a preview. It fetches and normalizes a complete source snapshot,
 checks licenses and output paths, then stages the diff under `.work/sync/`.
 `--apply` replaces the accepted catalog snapshot, including deleted source files.
-Changes are intended to land through a reviewed PR.
+Checked-in content changes are intended to land through a reviewed PR.
+Workspace catalog refreshes update ignored snapshots; their definitions remain
+versioned and reviewed.
 
 The Azure AI Search catalog is enabled and contains a real normalized MicrosoftDocs
-snapshot. Its CC BY 4.0 documentation and MIT code licenses are automatically
+snapshot. It explicitly uses `contentStorage: git` to preserve readable Markdown,
+licenses, and provenance if the upstream repository becomes unavailable. Builds
+use the saved snapshot without fetching MicrosoftDocs; sync is a separate refresh.
+Its CC BY 4.0 documentation and MIT code licenses are automatically
 recognized under `standard-open-v1`; full license texts, Microsoft notices, and
 per-file provenance accompany the content. Its NOTICE lists explicit exclusions
 for pages with unavailable or unconfigured external dependencies. The Wikipedia
@@ -123,6 +132,40 @@ version allocation and publication after accepted sync PRs are follow-up work.
 
 See [adding a catalog](docs/adding-a-catalog.md), [source policy](docs/source-policy.md),
 and [content licensing](CONTENT-LICENSES.md).
+
+## Caselaw Access Project
+
+`caselaw/us-347-349` combines all 2,142 records from CAP's U.S. Reports volumes
+347–349 into one `.gezk`, including citation links across source volumes.
+The original 690-case `caselaw/us-347` pilot remains as a comparison baseline.
+The adapter accepts explicit, checksum-pinned volume ZIPs and produces Markdown
+with stable case IDs, citation aliases, opinion headings, footnotes, and page
+anchors. Browse by jurisdiction, court, and year; each case retains its reporter
+and volume in metadata. CAP designates the data CC0; the source declaration and
+full license accompany every build.
+
+```sh
+npm run prepare-content -- --catalog caselaw/us-347-349
+npm run build -- --catalog caselaw/us-347-349 --version 2026.10.4
+npm run verify -- --catalog caselaw/us-347-349 --version 2026.10.4 --semantic
+```
+
+These pilots use `contentStorage: workspace`: Git contains manifests, notices,
+license text, and retrieval checks. Downloaded cases, normalized Markdown, and
+generated provenance live in `.work/catalogs/`. Preparation reuses a validated
+local snapshot; publishing consumes the verified build artifact.
+
+State collections use the `caselaw` CLI: inventory, ingest, audit, plan, build,
+and diff. The Wyoming configuration selects its cases across regional reporters
+and now targets one approximately 1 GiB archive. The [national publication
+list](docs/caselaw-publication-plan.md) covers all 50 states, federal cases,
+D.C., territories, and tribal jurisdictions, with provisional package counts.
+Source ZIPs and normalized
+documents share an ignored object store; exact membership and provenance follow
+each release. The combined U.S. pilot and Alaska collection enable publication
+with mandatory verification; Wyoming remains disabled pending its retrieval
+quality gate. See [CAP ingestion and collection
+planning](docs/caselaw.md) for commands, coverage limits, and distribution work.
 
 ## Azure AI Search example
 

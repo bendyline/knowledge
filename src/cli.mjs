@@ -3,7 +3,7 @@ import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
 import { catalogs, validateCatalog } from './catalogs.mjs';
 import { buildCatalog, releaseDir, sourceCommit } from './build.mjs';
-import { syncCatalog, importDocument } from './sync.mjs';
+import { syncCatalog, importDocument, prepareCatalog } from './sync.mjs';
 import { publishRelease } from './publish.mjs';
 import { verifyRelease } from './verify.mjs';
 import { proposeGilde } from './gilde.mjs';
@@ -23,22 +23,26 @@ try {
     report: { type: 'string' },
   } });
   const command = positionals[0] ?? 'help';
-  if (command === 'help' || values.help) { console.log(help); process.exit(0); }
+  if (command === 'help' || values.help) { console.log(help + '\nprepare --catalog org/name materializes or reuses workspace content.\nWorkspace definitions validate without downloads; bulk sync skips them.\n'); process.exit(0); }
   if (positionals.length !== 1) throw new Error('Expected one command; use --help');
-  if (!['list', 'packages', 'validate', 'sync', 'import', 'build', 'verify', 'publish', 'gilde', 'sync-pr'].includes(command)) throw new Error(`Unknown command ${command}`);
+  if (!['list', 'packages', 'validate', 'prepare', 'sync', 'import', 'build', 'verify', 'publish', 'gilde', 'sync-pr'].includes(command)) throw new Error(`Unknown command ${command}`);
   if (values.package && !['build', 'verify', 'publish', 'gilde'].includes(command)) throw new Error('--package only applies to build, verify, publish, and gilde; it never changes synchronization');
   const root = resolve(values.root ?? '.');
-  if (['import', 'build', 'verify', 'publish', 'gilde'].includes(command) && (!values.catalog || values.catalog === 'all')) throw new Error('This command requires --catalog org/name');
+  if (['prepare', 'import', 'build', 'verify', 'publish', 'gilde'].includes(command) && (!values.catalog || values.catalog === 'all')) throw new Error('This command requires --catalog org/name');
   const selected = await catalogs(root, values.catalog, { disabled: ['list', 'validate'].includes(command) });
   const results = [];
   if (command === 'sync-pr') {
     const changes = await workingChanges(root, (path) => /^catalogs\/[a-z0-9-]+\/[a-z0-9-]+\/(content\/|LICENSES\/|provenance.jsonl$|sources.lock.json$)/.test(path));
     results.push(await proposeChanges({ repository: process.env.GITHUB_REPOSITORY ?? 'bendyline/knowledge', branch: 'codex/knowledge-sync', title: 'Synchronize knowledge catalog sources', body: 'Updates normalized Markdown, source revisions, attribution, and approved source notices. Source staging and catalog validation passed.\n\nManaged by the nightly knowledge sync workflow.', baseSha: sourceCommit(root), changes }));
   } else for (const catalog of selected) {
-    if (command === 'list') results.push({ catalog: catalog.key, id: catalog.manifest.id, source: catalog.manifest.source.type, enabled: catalog.manifest.enabled, publish: catalog.manifest.publish.enabled });
+    if (command === 'list') results.push({ catalog: catalog.key, id: catalog.manifest.id, source: catalog.manifest.source.type, contentStorage: catalog.manifest.contentStorage ?? 'git', enabled: catalog.manifest.enabled, publish: catalog.manifest.publish.enabled });
     else if (command === 'packages') results.push({ catalog: catalog.key, packages: await listPackages(catalog) });
-    else if (command === 'validate') results.push(await validateCatalog(catalog));
-    else if (command === 'sync') results.push(await syncCatalog(catalog, { apply: values.apply, allowDeletions: values['allow-deletions'] }));
+    else if (command === 'validate') results.push(await validateCatalog(catalog, { definitionOnly: true }));
+    else if (command === 'prepare') results.push(await prepareCatalog(catalog));
+    else if (command === 'sync') {
+      if (catalog.manifest.contentStorage === 'workspace' && (!values.catalog || values.catalog === 'all')) results.push({ catalog: catalog.key, status: 'on-demand content; skipped by bulk sync' });
+      else results.push(await syncCatalog(catalog, { apply: values.apply, allowDeletions: values['allow-deletions'] }));
+    }
     else if (command === 'import') {
       if (!values.file || !values['source-url']) throw new Error('import requires --file and --source-url');
       results.push(await importDocument(catalog, { file: resolve(values.file), target: values.target, sourceUrl: values['source-url'], apply: values.apply }));
