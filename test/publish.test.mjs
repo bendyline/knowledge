@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { buildCatalog } from '../src/build.mjs';
 import { verifyRelease } from '../src/verify.mjs';
 import { publishRelease, verifyLocalRelease } from '../src/publish.mjs';
-import { readJson, sha256, writeJson } from '../src/files.mjs';
+import { exists, readJson, sha256, writeJson } from '../src/files.mjs';
 import { fixture, fakeEmbedder } from './helpers.mjs';
 import { datasetLicense } from '../src/dataset-license.mjs';
 
@@ -96,4 +96,28 @@ test('publication resumes partial uploads and recovers the original immutable HF
   host.hfFiles.set(metadataPath, Buffer.from(JSON.stringify({ ...release, createdAt: '2026-10-04T00:00:00Z' })));
   await assert.rejects(publish(), /different bytes\/metadata/);
   await assert.rejects(verifyLocalRelease(built.directory, { ...release, archiveBytes: 1 }), /metadata does not match/);
+});
+
+test('cloud staging enforces local publication checks but leaves remote verification and GitHub publication pending', async () => {
+  const c = await fixture();
+  await writeFile(resolve(c.root, 'LICENSE'), await readFile('LICENSE'));
+  await writeFile(resolve(c.root, 'LICENSE'), await datasetLicense(c.root, { check: false }));
+  const built = await buildCatalog(c, { version: '2026.10.1', embedderFactory: fakeEmbedder });
+  await verifyRelease(c, built.directory);
+  const release = await readJson(resolve(built.directory, 'release.json'));
+  release.testOnly = false; release.targets.enabled = true; release.sourceCommit = 'a'.repeat(40);
+  await writeJson(resolve(built.directory, 'release.json'), release);
+  const host = fakeHosts(release);
+  const services = { ...host.services, verifyRemote: () => { throw Error('Remote verification belongs to the cloud mirror'); } };
+  await assert.rejects(publishRelease(c.root, built.directory, { apply: true, stageOnly: true, services: { ...services, dirty: () => 'M source' } }), /clean committed/);
+  assert.equal(host.stats().uploads, 0);
+  for (let n = 0; n < 2; n++) {
+    const staged = await publishRelease(c.root, built.directory, { apply: true, stageOnly: true, services });
+    assert.equal(staged.staged, true);
+    assert.equal(staged.huggingface.revision, host.originalRevision);
+    assert.equal(host.stats().draft, undefined);
+    assert.equal(await exists(resolve(built.directory, 'published.json')), false);
+  }
+  assert.equal(host.stats().uploads, 1);
+  assert.equal(host.stats().listed, 1);
 });

@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "id": "caselaw-us-300-385",
+  "name": "U.S. Reports volumes 300–385 — Caselaw Access Project",
+  "reporter": "us",
+  "volumes": [
+    "300",
+    "301",
+    "302",
+    "303",
+    "304",
+    "305",
+    "306",
+    "307",
+    "308",
+    "309",
+    "310",
+    "311",
+    "312",
+    "313",
+    "314",
+    "315",
+    "316",
+    "317",
+    "318",
+    "319",
+    "320",
+    "321",
+    "322",
+    "323",
+    "324",
+    "325",
+    "326",
+    "327",
+    "328",
+    "329",
+    "330",
+    "331",
+    "332",
+    "333",
+    "334",
+    "335",
+    "336",
+    "337",
+    "338",
+    "339",
+    "340",
+    "341",
+    "342",
+    "343",
+    "344",
+    "345",
+    "346",
+    "347",
+    "348",
+    "349",
+    "350",
+    "351",
+    "352",
+    "353",
+    "354",
+    "355",
+    "356",
+    "357",
+    "358",
+    "359",
+    "360",
+    "361",
+    "362",
+    "363",
+    "364",
+    "365",
+    "366",
+    "367",
+    "368",
+    "369",
+    "370",
+    "371",
+    "372",
+    "373",
+    "374",
+    "375",
+    "376",
+    "377",
+    "378",
+    "379",
+    "380",
+    "381",
+    "382",
+    "383",
+    "384",
+    "385"
+  ],
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeEstimate": "wyoming-bge-v1",
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "scopeNote": "Every CAP case record in U.S. Reports volumes 300–385, preserving source jurisdiction, court labels, and decision dates, including four source dates earlier than the books' 1937–1967 period. This bounded historical reporter collection contains the earlier 347–349 pilot in full; installing both duplicates those records. It is not the complete U.S. Reports or federal collection.",
+  "queries": [
+    {
+      "query": "304 U.S. 64",
+      "expectedDocumentIds": [
+        "cap-10687"
+      ]
+    },
+    {
+      "query": "347 U.S. 483",
+      "expectedDocumentIds": [
+        "cap-11301409"
+      ]
+    },
+    {
+      "query": "349 U.S. 294",
+      "expectedDocumentIds": [
+        "cap-11334782"
+      ]
+    },
+    {
+      "query": "348 U.S. 26",
+      "expectedDocumentIds": [
+        "cap-6930659"
+      ]
+    },
+    {
+      "query": "348 U.S. 426",
+      "expectedDocumentIds": [
+        "cap-6931705"
+      ]
+    },
+    {
+      "query": "367 U.S. 643",
+      "expectedDocumentIds": [
+        "cap-1785580"
+      ]
+    },
+    {
+      "query": "372 U.S. 335",
+      "expectedDocumentIds": [
+        "cap-1765333"
+      ]
+    },
+    {
+      "query": "384 U.S. 436",
+      "expectedDocumentIds": [
+        "cap-12046400"
+      ]
+    }
+  ],
+  "semanticQueries": [
+    {
+      "query": "racial segregation in public schools denies equal protection of the laws",
+      "expectedDocumentIds": [
+        "cap-11301409"
+      ]
+    },
+    {
+      "query": "how should federal district courts supervise the timing of school desegregation",
+      "expectedDocumentIds": [
+        "cap-11334782"
+      ]
+    },
+    {
+      "query": "taking private property to redevelop a blighted urban area serves a public purpose",
+      "expectedDocumentIds": [
+        "cap-6930659"
+      ]
+    },
+    {
+      "query": "punitive damages received by a business are taxable gross income",
+      "expectedDocumentIds": [
+        "cap-6931705"
+      ]
+    },
+    {
+      "query": "federal diversity courts must apply state common law rather than a federal general common law when a railroad injures a pedestrian beside its tracks",
+      "expectedDocumentIds": [
+        "cap-10687"
+      ]
+    },
+    {
+      "query": "unlawfully seized evidence from a police search of a home cannot be admitted in a state criminal trial",
+      "expectedDocumentIds": [
+        "cap-1785580"
+      ]
+    },
+    {
+      "query": "an indigent defendant charged with a noncapital felony is entitled to appointed counsel in state court",
+      "expectedDocumentIds": [
+        "cap-1765333"
+      ]
+    },
+    {
+      "query": "police must warn a suspect about silence and the right to counsel before custodial interrogation",
+      "expectedDocumentIds": [
+        "cap-12046400"
+      ]
+    }
+  ],
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "reference",
+      "tags": [
+        "law",
+        "caselaw",
+        "united-states",
+        "historical"
+      ]
+    }
+  }
+}

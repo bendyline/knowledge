@@ -39,7 +39,7 @@ export async function verifyPublicationChecks(directory, release) {
   }
   return report;
 }
-export async function publishRelease(root, directory, { apply = false, services = {} } = {}) {
+export async function publishRelease(root, directory, { apply = false, stageOnly = false, services = {} } = {}) {
   const io = { getJson, githubApi, listFiles, uploadFiles, request, verifyRemote,
     commit: sourceCommit, dirty: (cwd) => execFileSync('git', ['status', '--porcelain'], { cwd, encoding: 'utf8' }).trim(),
     tokens: () => ({ hf: process.env.HF_TOKEN, github: process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN }), ...services };
@@ -86,10 +86,17 @@ export async function publishRelease(root, directory, { apply = false, services 
       }
     }
     if (!/^[a-f0-9]{40}$/.test(revision ?? '')) throw new Error('Hugging Face did not return an immutable commit');
+    // A cloud runner will download and verify the complete staged archive before
+    // mirroring it. Staging never creates a publication receipt or GitHub release.
+    if (stageOnly) return { ...plan, applied: true, staged: true, sourceCommit: release.sourceCommit, archiveBytes: release.archiveBytes,
+      huggingface: { repo: hfRepo.name, revision, path: plan.huggingFace.path } };
     await io.verifyRemote(`${hfBase}/resolve/${revision}/${plan.huggingFace.path}`, release.sha256, release.archiveBytes);
     receipt.huggingface = { repo: hfRepo.name, revision, path: plan.huggingFace.path };
     await writeJson(receiptPath, receipt);
-  } else await io.verifyRemote(`${hfBase}/resolve/${receipt.huggingface.revision}/${receipt.huggingface.path}`, release.sha256, release.archiveBytes);
+  } else {
+    if (stageOnly) return { ...plan, applied: true, staged: true, sourceCommit: release.sourceCommit, archiveBytes: release.archiveBytes, huggingface: receipt.huggingface };
+    await io.verifyRemote(`${hfBase}/resolve/${receipt.huggingface.revision}/${receipt.huggingface.path}`, release.sha256, release.archiveBytes);
+  }
   let ghRelease;
   try { ghRelease = await io.githubApi(`/repos/${plan.github.repository}/releases/tags/${encodeURIComponent(plan.github.tag)}`); } catch (e) { if (e.status !== 404) throw e; }
   if (!ghRelease) ghRelease = await io.githubApi(`/repos/${plan.github.repository}/releases`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tag_name: plan.github.tag, target_commitish: release.sourceCommit, name: `${release.manifest.name} ${release.version}`, draft: true, body: `${release.manifest.description}\n\nSource commit: ${release.sourceCommit}\nSHA-256: ${release.sha256}\nSee release.json and LICENSES for provenance and licensing.` }) });

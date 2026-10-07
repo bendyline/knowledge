@@ -10,7 +10,8 @@ import { auditCapCorpus, auditCapText } from '../src/caselaw-audit.mjs';
 import { compareCapRecords, compareCapSnapshots } from '../src/caselaw-diff.mjs';
 import { CapCollection, bindCapPartLinks, buildCapCollection, estimateCapArchiveBytes, partitionCapCases, planCapCollection } from '../src/caselaw-packages.mjs';
 import { fakeEmbedder } from './helpers.mjs';
-import { digest, exists, json, removeWork, sha256 } from '../src/files.mjs';
+import { digest, exists, json, readJson, removeWork, sha256 } from '../src/files.mjs';
+import { capSelectionCoverage, capSelectionKey } from '../src/caselaw-selection.mjs';
 
 const record = (id, jurisdiction = 33) => ({ id, name: `Example ${id} v. State`, name_abbreviation: `Example ${id} v. State`, file_name: `000${id}-01`, decision_date: '1954-05-01',
   jurisdiction: { id: jurisdiction, name: jurisdiction === 33 ? 'Wyo.' : 'Okla.', name_long: jurisdiction === 33 ? 'Wyoming' : 'Oklahoma' }, court: { id: 90, name: 'Example Court' },
@@ -133,11 +134,33 @@ test('CAP inventory resumes failures, reconciles regional membership, ingests on
     const source = (await readCapObject(store, capDocument(store, row).markdown_sha)).toString();
     assert.match(source, /https:\/\/static.case.law\/p2d\/1\/html\/0002-01.html/);
     assert.equal((await buildCapCollection(store, config, plan, { version: '2026.10.1', embedderFactory: fakeEmbedder })).parts[0].sha256, result.parts[0].sha256);
+    // A reporter collection includes every jurisdiction in the selected books,
+    // while retaining exact bounded volume membership and the same audit gates.
+    const selection = { reporter: 'p2d', volumes: ['1'] };
+    const reporterConfig = CapCollection.parse({ schemaVersion: 1, id: 'cap-reporter', name: 'Reporter', ...selection });
+    assert.throws(() => CapCollection.parse({ ...reporterConfig, jurisdiction: 'wyo' }), /exactly one/);
+    assert.throws(() => CapCollection.parse({ ...config, volumes: ['1'] }), /requires a reporter/);
+    const reporterCoverage = capSelectionCoverage(store, await loadCapRoots(store), selection);
+    assert.equal(reporterCoverage.records, 2);
+    assert.equal(reporterCoverage.metadataComplete, true);
+    assert.throws(() => capSelectionCoverage(store, roots, { reporter: 'p2d', volumes: ['missing'] }), /Unknown CAP reporter volume/);
+    assert.equal(capSelectionKey({ reporter: 'p2d', volumes: ['2', '1'] }), capSelectionKey({ reporter: 'p2d', volumes: ['1', '2'] }));
+    assert.equal((await ingestCapCorpus(store, selection, { download })).ingestionComplete, true);
+    assert.equal((await auditCapCorpus(store, selection)).verified, true);
+    const reporterPlan = await planCapCollection(store, reporterConfig, { embedderFactory: fakeEmbedder });
+    assert.deepEqual(reporterPlan.parts.flatMap(p => p.cases.map(c => c.id)).sort(), [2, 3]);
+    const frozenReporterPlan = await readJson(resolve(store.directory, 'cap-reporter-plan.json'));
+    const reporterBuild = await buildCapCollection(store, reporterConfig, frozenReporterPlan, { version: '2026.10.1', embedderFactory: fakeEmbedder });
+    assert.equal(reporterBuild.complete, true);
+    assert.deepEqual(reporterBuild.selection, selection);
+    assert.equal(reporterBuild.parts[0].counts.documents, 2);
     await assert.rejects(buildCapCollection(store, config, { ...plan, corpusDigest: 'changed' }, { version: '2026.10.2', embedderFactory: fakeEmbedder }), /plan or configuration/);
     indexCapVolume(store, 'p2d', '1', metadata([record(1)]), 'a'.repeat(64));
     const duplicate = capCoverage(store, await loadCapRoots(store), 'wyo');
     assert.equal(duplicate.metadataComplete, false);
     assert.equal(duplicate.duplicates.length, 1);
+    store.db.prepare("UPDATE volumes SET status='pending' WHERE reporter='p2d'").run();
+    assert.equal(capSelectionCoverage(store, await loadCapRoots(store), selection).metadataComplete, false);
     await assert.rejects(compareCapSnapshots(store, store, 'wyo'), /incomplete/);
   } finally { CASELAW_TERMS.sha256 = previous; store.close(); await removeWork(process.cwd(), root); }
 });

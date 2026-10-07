@@ -7,10 +7,21 @@ import { publishRelease } from '../src/publish.mjs';
 import { proposeGilde } from '../src/gilde.mjs';
 import { createCloudMirrorVerifier } from '../src/cloud-mirror-proof.mjs';
 const { positionals, values } = parseArgs({ allowPositionals: true, options: { collection: { type: 'string' }, version: { type: 'string' }, proofs: { type: 'string' }, report: { type: 'string' }, apply: { type: 'boolean', default: false } } });
-if (positionals.length !== 1 || !['publish', 'gilde'].includes(positionals[0]) || !values.collection || !values.version || !values.proofs) throw Error('Usage: node scripts/cloud-caselaw.mjs publish|gilde --collection PATH --version VERSION --proofs PATH [--report PATH] [--apply]');
+if (positionals.length !== 1 || !['stage', 'publish', 'gilde'].includes(positionals[0]) || !values.collection || !values.version || (positionals[0] !== 'stage' && !values.proofs)) throw Error('Usage: node scripts/cloud-caselaw.mjs stage|publish|gilde --collection PATH --version VERSION [--proofs PATH] [--report PATH] [--apply]');
 const root = process.cwd(), config = await loadCapCollection(resolve(values.collection));
 const index = await readJson(inside(resolve('.work/collections'), `${config.id}/${values.version}/collection.json`));
 if (index.collection !== config.id || index.version !== values.version || !index.complete || !index.coverageComplete || !index.parts.length) throw Error('Cloud publication requires a complete verified collection');
+if (positionals[0] === 'stage') {
+  // Reuse collection-level reconciliation and validate every release before the
+  // first upload. A stage result is not proof that remote bytes were verified.
+  await publishCapCollection(root, config, { version: values.version, apply: false });
+  const result = [];
+  for (const part of index.parts) result.push(await publishRelease(root, inside(resolve('.work/releases'), `${part.catalogId}/${values.version}`), { apply: values.apply, stageOnly: true }));
+  const report = { stagedOnly: true, result };
+  if (values.report) await writeJson(resolve(values.report), report);
+  console.log(JSON.stringify(report, null, 2));
+  process.exit(0);
+}
 const proofs = await readJson(resolve(values.proofs));
 if (!Array.isArray(proofs) || proofs.length !== index.parts.length || new Set(proofs.map(p => p.catalogId)).size !== proofs.length) throw Error('Require one cloud mirror proof per collection part');
 const verified = new Map(), evidence = [];

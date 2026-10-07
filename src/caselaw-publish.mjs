@@ -28,9 +28,9 @@ export async function publishCapCollection(root, config, { version, apply = fals
   }
   // Validate all parts before the first public side effect.
   for (const p of parts) await io.publishRelease(root, p.partDirectory, { apply: false });
-  if (!apply) return { applied: false, collection: config.id, version, parts: parts.map(p => p.part.catalogId), publishIndexLast: true };
   const sourceCommit = parts[0].release.sourceCommit;
   if (parts.some(p => p.release.sourceCommit !== sourceCommit)) throw new Error('Collection parts must come from the same source commit');
+  if (!apply) return { applied: false, collection: config.id, version, parts: parts.map(p => p.part.catalogId), publishIndexLast: true };
   const published = [];
   for (const { part, partDirectory } of parts) {
     await io.publishRelease(root, partDirectory, { apply: true });

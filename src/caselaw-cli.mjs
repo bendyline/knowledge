@@ -9,6 +9,7 @@ import { buildCapCollection, loadCapCollection, planCapCollection } from './case
 import { planCapPublication, renderCapPublication } from './caselaw-publication.mjs';
 import { publishCapCollection } from './caselaw-publish.mjs';
 import { readJson, write, writeJson } from './files.mjs';
+import { collectionSelection } from './caselaw-selection.mjs';
 
 const { positionals, values } = parseArgs({ allowPositionals: true, options: {
   snapshot: { type: 'string' }, jurisdiction: { type: 'string' }, root: { type: 'string' },
@@ -32,8 +33,12 @@ try {
   const action = { inventory: scanCapInventory, ingest: ingestCapCorpus, audit: auditCapCorpus }[positionals[0]];
   let report;
   if (action) {
-    if (!values.jurisdiction) throw new Error('Acquisition requires --jurisdiction');
-    report = await action(store, values.jurisdiction, { concurrency: Number(values.concurrency), progress });
+    const config = values.collection ? await loadCapCollection(resolve(values.collection)) : null;
+    if (config && values.jurisdiction && values.jurisdiction !== config.jurisdiction) throw new Error('Collection differs from requested jurisdiction');
+    const selection = config ? collectionSelection(config) : values.jurisdiction;
+    if (!selection) throw new Error('Acquisition requires --jurisdiction or --collection');
+    if (positionals[0] === 'inventory' && typeof selection !== 'string') throw new Error('Run inventory --jurisdiction all before reporter collection acquisition');
+    report = await action(store, selection, { concurrency: Number(values.concurrency), progress });
   } else if (positionals[0] === 'publication-plan') {
     report = planCapPublication(await loadCapRoots(store), await readJson(resolve(store.root, 'collections/caselaw/wyoming/benchmark-2026-10-06.json')));
     if (values.markdown) await write(resolve(values.markdown), renderCapPublication(report));

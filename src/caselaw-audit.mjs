@@ -1,11 +1,12 @@
 import { resolve } from 'node:path';
 import { parseFragment } from 'parse5';
 import { parseMarkdown, extractPlainText, walkMarkdownTree } from '@bendyline/squisq/markdown';
-import { capCoverage, loadCapRoots, readCapObject } from './caselaw-inventory.mjs';
+import { loadCapRoots, readCapObject } from './caselaw-inventory.mjs';
 import { capCorpusCoverage, capDocument, capRows } from './caselaw-corpus.mjs';
 import { readCaselawZip } from './sources/caselaw.mjs';
 import { atomicJson, digest, sha256 } from './files.mjs';
 import { addCapHeadMatterSections } from './sources/caselaw-structure.mjs';
+import { capSelectionCoverage, capSelectionKey } from './caselaw-selection.mjs';
 
 const htmlText = node => node.nodeName === '#text' ? node.value : (node.childNodes ?? []).map(htmlText).join('');
 const compact = text => text.replace(/\s/g, '');
@@ -30,12 +31,12 @@ export function auditCapText(markdown, html) {
 
 export async function auditCapCorpus(store, jurisdiction, { progress } = {}) {
   if (jurisdiction === 'all') throw new Error('Audit explicit jurisdictions');
-  const coverage = await capCorpusCoverage(store, capCoverage(store, await loadCapRoots(store), jurisdiction));
+  const coverage = await capCorpusCoverage(store, capSelectionCoverage(store, await loadCapRoots(store), jurisdiction));
   if (!coverage.ingestionComplete) throw new Error('Complete ingestion is required before the source audit');
-  const rows = capRows(store, coverage.jurisdiction.id);
+  const rows = capRows(store, coverage.selection ?? coverage.jurisdiction.id);
   const groups = new Map();
   for (const row of rows) { const key = `${row.reporter}/${row.folder}`; if (!groups.has(key)) groups.set(key, []); groups.get(key).push(row); }
-  const report = { schemaVersion: 1, snapshot: store.snapshot, jurisdiction, corpusDigest: coverage.corpusDigest,
+  const report = { schemaVersion: 1, snapshot: store.snapshot, ...(typeof jurisdiction === 'string' ? { jurisdiction } : { selection: jurisdiction }), corpusDigest: coverage.corpusDigest,
     cases: rows.length, checked: 0, textMatches: 0, fragmentLinks: 0, issues: [], verified: false };
   for (const selected of groups.values()) {
     const first = selected[0];
@@ -59,6 +60,6 @@ export async function auditCapCorpus(store, jurisdiction, { progress } = {}) {
     }
   }
   report.verified = report.checked === report.cases && !report.issues.length;
-  await atomicJson(resolve(store.directory, `source-audit-${jurisdiction}.json`), report);
+  await atomicJson(resolve(store.directory, `source-audit-${capSelectionKey(jurisdiction)}.json`), report);
   return report;
 }

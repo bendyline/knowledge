@@ -6,5 +6,24 @@
   "targetBytes": 1073741824,
   "ceilingBytes": 1610612736,
   "sizeEstimate": "wyoming-bge-v1",
-  "embeddingProfile": "bge-small-en-v1.5@1"
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "scopeNote": "Preserves CAP's Utah jurisdiction assignment: 16,874 Supreme Court records, 6,029 Court of Appeals records under two source court labels, and one historical Salt Lake City Register and Receiver record. Coverage reflects the pinned historical archive, not every decision issued by those courts.",
+  "queries": [
+    { "query": "21 Utah 207", "expectedDocumentIds": ["cap-8871762"] },
+    { "query": "626 P.2d 440", "expectedDocumentIds": ["cap-10442069"] },
+    { "query": "402 P.3d 184", "expectedDocumentIds": ["cap-12343210"] },
+    { "query": "912 P.2d 433", "expectedDocumentIds": ["cap-10336874"] }
+  ],
+  "semanticQueries": [
+    { "query": "county business license imposed for revenue alone rather than regulation exceeds the county commissioners' licensing power", "expectedDocumentIds": ["cap-8871762"] },
+    { "query": "conditional use permits to build homes on agricultural land denied under a numerical evaluation system designed to protect farmland", "expectedDocumentIds": ["cap-10442069"] },
+    { "query": "divorcing spouses dispute insurance proceeds from a destroyed Lexus and whether the car was a separate birthday gift or marital property", "expectedDocumentIds": ["cap-12343210"] },
+    { "query": "legal malpractice claims against bankruptcy attorneys fail for lack of evidence that they caused the denial of the debtor's discharge", "expectedDocumentIds": ["cap-10336874"] }
+  ],
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "reference", "tags": ["law", "caselaw", "utah", "historical"] }
+  }
 }

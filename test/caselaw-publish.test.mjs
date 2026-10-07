@@ -75,4 +75,7 @@ test('collection publication waits for every verified part, resumes, and publish
   assert.equal(gh.draft, false);
   await publish();
   assert.equal(uploads, 1);
+  const partPath = resolve(c.root, '.work/releases', parts[1].catalogId, version, 'release.json');
+  await writeJson(partPath, { ...await readJson(partPath), sourceCommit: 'e'.repeat(40) });
+  await assert.rejects(publishCapCollection(c.root, config, { version, services }), /same source commit/);
 });

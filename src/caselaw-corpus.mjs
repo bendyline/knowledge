@@ -6,17 +6,19 @@ import { NORMALIZER_VERSION } from './normalize.mjs';
 import { CaselawCase, readCaselawZip } from './sources/caselaw.mjs';
 import { CASELAW_NORMALIZER } from './sources/caselaw-normalize.mjs';
 import { createCapNormalizer } from './caselaw-workers.mjs';
-import { capBase, capCoverage, capVolumeKey, capWorkers, checkCapTerms, initializeCapInventory, putCapObject, readCapObject } from './caselaw-inventory.mjs';
+import { capSelectionCoverage, capSelectionFilter, capSelectionKey } from './caselaw-selection.mjs';
+import { capBase, capVolumeKey, capWorkers, checkCapTerms, initializeCapInventory, putCapObject, readCapObject } from './caselaw-inventory.mjs';
 
 export const CAP_CORPUS_NORMALIZER = digest({ cap: CASELAW_NORMALIZER, converter: NORMALIZER_VERSION });
 export function capRows(store, jurisdictionId) {
-  return store.db.prepare('SELECT * FROM cases WHERE jurisdiction=? ORDER BY COALESCE(decision_date,\'9999\'),court,id,reporter,folder').all(jurisdictionId);
+  const { where, args } = capSelectionFilter(jurisdictionId);
+  return store.db.prepare(`SELECT * FROM cases WHERE ${where} ORDER BY COALESCE(decision_date,'9999'),court,id,reporter,folder`).all(...args);
 }
 export function capDocument(store, row) {
   return store.db.prepare('SELECT * FROM documents WHERE meta_sha=? AND normalizer=?').get(row.meta_sha, CAP_CORPUS_NORMALIZER);
 }
 export async function capCorpusCoverage(store, coverage) {
-  const rows = capRows(store, coverage.jurisdiction.id);
+  const rows = capRows(store, coverage.selection ?? coverage.jurisdiction.id);
   const counts = { ready: 0, pending: 0, failed: 0, corrupt: 0, normalizedBytes: 0 };
   const issues = []; const documents = [];
   for (const row of rows) {
@@ -38,10 +40,10 @@ export async function capCorpusCoverage(store, coverage) {
 
 export async function ingestCapCorpus(store, jurisdiction, { download = request, concurrency = 4, progress } = {}) {
   const roots = await initializeCapInventory(store, { download });
-  const coverage = capCoverage(store, roots, jurisdiction);
+  const coverage = capSelectionCoverage(store, roots, jurisdiction);
   if (jurisdiction === 'all') throw new Error('Ingest explicit jurisdictions; use inventory --jurisdiction all for the national metadata sweep');
   if (!coverage.metadataComplete) throw new Error('CAP metadata coverage is incomplete; run inventory and resolve its coverage report first');
-  const rows = capRows(store, coverage.jurisdiction.id);
+  const rows = capRows(store, coverage.selection ?? coverage.jurisdiction.id);
   const grouped = new Map();
   for (const row of rows) {
     const key = capVolumeKey(row.reporter, row.folder);
@@ -115,6 +117,6 @@ export async function ingestCapCorpus(store, jurisdiction, { download = request,
     }
   }, progress); } finally { await normalizer.close(); }
   const report = await capCorpusCoverage(store, coverage);
-  await atomicJson(resolve(store.directory, `ingestion-${jurisdiction}.json`), report);
+  await atomicJson(resolve(store.directory, `ingestion-${capSelectionKey(jurisdiction)}.json`), report);
   return { ...report, failedVolumesThisRun: failures.length };
 }

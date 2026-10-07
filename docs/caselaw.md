@@ -33,6 +33,16 @@ collection configuration → measured, frozen package plan → .gezk parts
 
 ## Published pilots
 
+The next measured pilots are Utah (two parts) and U.S. Reports volumes 300–385
+(one part). The latter combines 86 books and 50,292 records, estimated at
+1,070,017,862 bytes, instead of repeating the original three-book package size.
+Utah's 22,904 records are estimated at 1,069,408,251 and 769,988,778 bytes.
+These are planning measurements; actual compiled sizes and publication receipts
+are recorded only after build and verification. The larger U.S. selection
+contains all records in the original 347–349 pilot, so readers should choose
+one of those overlapping packages. Four anomalously early CAP decision dates
+are preserved and disclosed in the new collection's scope.
+
 | Collection | Version | Case records | Archive size | Release |
 | --- | --- | ---: | ---: | --- |
 | U.S. Reports 347–349 | 2026.10.5 | 2,142 | 28.73 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-347-349-v2026.10.5) |
@@ -103,6 +113,17 @@ resume from immutable host metadata and verified receipts; the collection index
 is published only after every part passes on both hosts.
 
 ### Cloud mirroring and verified receipts
+
+Stage a complete locally verified collection with:
+
+```sh
+node scripts/cloud-caselaw.mjs stage --collection collections/caselaw/utah/collection.json --version VERSION --report .work/staged.json --apply
+```
+
+Staging checks every part before uploading, requires the clean build commit,
+and returns immutable Hugging Face coordinates. It does not write a publication
+receipt or claim remote verification. The cloud mirror performs those checks
+before the collection index and discovery registrations can be published.
 
 `.github/workflows/mirror-release.yml` mirrors an already-uploaded immutable
 Hugging Face release to GitHub without a second large upload from the build
@@ -640,6 +661,16 @@ volume jurisdiction metadata are discovery hints, not sufficient evidence of
 case membership. For example, volume 1 of U.S. Reports contains Pennsylvania
 cases. Regional reporters span several states. Use actual metadata paths;
 volume folders can include suffixes such as `138-2` and need not be continuous.
+
+Reporter collections use `reporter` instead of `jurisdiction`, optionally with
+an explicit `volumes` array. Omit `volumes` for the entire reporter. Run the
+national metadata inventory first, then pass the collection to `ingest`,
+`audit`, and `plan`. Every case in each selected book is retained, irrespective
+of its jurisdiction label; completeness reconciles against the pinned volume
+indexes. Both selection types use the same source audit, measured chunk sizing,
+whole-case partitioning, retrieval checks, and immutable publication workflow.
+Reporter collections can overlap jurisdiction collections and earlier bounded
+pilots. Their scope must disclose that overlap; case IDs remain stable.
 
 The defaults and immutable planning workflow are described above. Calibrate
 using measured chunks and compiled bytes, not case counts alone.

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { stringify } from 'yaml';
 import { z } from 'zod';
 import { digest, exists, json, readJson, sha256, write, writeJson } from './files.mjs';
-import { capCoverage, loadCapRoots, readCapObject } from './caselaw-inventory.mjs';
+import { loadCapRoots, readCapObject } from './caselaw-inventory.mjs';
 import { CAP_CORPUS_NORMALIZER, capCorpusCoverage, capDocument, capRows } from './caselaw-corpus.mjs';
 import { knowledge, createProfileEmbedder, knowledgeEmbeddingProfile, MARKDOWN_CHUNKS_2, toolchainIdentity } from './toolchain.mjs';
 import { CatalogSchema } from './schema.mjs';
@@ -13,11 +13,13 @@ import { applySnapshot } from './sync.mjs';
 import { assertVersion, buildCatalog } from './build.mjs';
 import { verifyRelease } from './verify.mjs';
 import { rewriteMarkdownReferences } from '../vendor/squisq/contentReferences.mjs';
+import { capSelectionCoverage, capSelectionKey, collectionSelection } from './caselaw-selection.mjs';
 
 const slug = z.string().regex(/^[a-z0-9][a-z0-9-]{0,47}$/);
 const query = z.object({ query: z.string().min(1), expectedDocumentIds: z.array(z.string().regex(/^cap-\d+$/)).min(1) }).strict();
 export const CapCollection = z.object({
-  schemaVersion: z.literal(1), id: slug, name: z.string().min(1), jurisdiction: slug,
+  schemaVersion: z.literal(1), id: slug, name: z.string().min(1), jurisdiction: slug.optional(), reporter: slug.optional(),
+  volumes: z.array(slug).min(1).refine(v => new Set(v).size === v.length, 'Volumes must be unique').optional(),
   scopeNote: z.string().min(1).optional(),
   targetBytes: z.number().int().min(1048576).max(1073741824).default(1073741824),
   ceilingBytes: z.number().int().min(1048576).max(1610612736).default(1610612736),
@@ -26,6 +28,8 @@ export const CapCollection = z.object({
   queries: z.array(query).default([]), semanticQueries: z.array(query).default([]),
   publish: CatalogSchema.shape.publish.optional(),
 }).strict().refine(c => c.targetBytes <= c.ceilingBytes, 'Target must fit under ceiling')
+  .refine(c => Boolean(c.jurisdiction) !== Boolean(c.reporter), 'Choose exactly one jurisdiction or reporter')
+  .refine(c => !c.volumes || c.reporter, 'Volume selection requires a reporter')
   .refine(c => c.sizeEstimate !== 'wyoming-bge-v1' || c.embeddingProfile === 'bge-small-en-v1.5@1', 'Wyoming calibration requires its measured embedding profile');
 export async function loadCapCollection(path) { return CapCollection.parse(await readJson(path)); }
 
@@ -78,9 +82,10 @@ export function partitionCapCases(cases, { targetBytes, ceilingBytes }) {
 
 export async function planCapCollection(store, config, { embedderFactory = createProfileEmbedder, progress, freeze = true } = {}) {
   const roots = await loadCapRoots(store);
-  const coverage = await capCorpusCoverage(store, capCoverage(store, roots, config.jurisdiction));
+  const selection = collectionSelection(config);
+  const coverage = await capCorpusCoverage(store, capSelectionCoverage(store, roots, selection));
   if (!coverage.ingestionComplete) throw new Error(`CAP collection is not complete: ${JSON.stringify(coverage.corpus)}`);
-  const audit = await readJson(resolve(store.directory, `source-audit-${config.jurisdiction}.json`));
+  const audit = await readJson(resolve(store.directory, `source-audit-${capSelectionKey(selection)}.json`));
   if (!audit.verified || audit.corpusDigest !== coverage.corpusDigest || audit.cases !== coverage.records) throw new Error('CAP source audit is missing or stale; run caselaw audit');
   const profile = knowledgeEmbeddingProfile(config.embeddingProfile);
   const embedder = await embedderFactory(profile);
@@ -90,7 +95,7 @@ export async function planCapCollection(store, config, { embedderFactory = creat
   const put = store.db.prepare('INSERT OR REPLACE INTO measurements VALUES (?,?,?)');
   const measurements = [];
   try {
-    const rows = capRows(store, coverage.jurisdiction.id);
+    const rows = capRows(store, coverage.selection ?? coverage.jurisdiction.id);
     for (const [index, row] of rows.entries()) {
       const doc = capDocument(store, row);
       let chunks = get.get(doc.markdown_sha, profileDigest)?.chunks;
@@ -107,7 +112,7 @@ export async function planCapCollection(store, config, { embedderFactory = creat
   } finally { await embedder.dispose(); }
   const parts = partitionCapCases(measurements, config);
   const plan = { schemaVersion: 1, collection: config.id, name: config.name, snapshot: store.snapshot,
-    jurisdiction: coverage.jurisdiction, configDigest: digest(config), inventoryDigest: coverage.inventoryDigest,
+    ...(coverage.selection ? { selection: coverage.selection, reporter: coverage.reporter } : { jurisdiction: coverage.jurisdiction }), configDigest: digest(config), inventoryDigest: coverage.inventoryDigest,
     membershipDigest: coverage.selectionDigest, corpusDigest: coverage.corpusDigest, normalizer: CAP_CORPUS_NORMALIZER,
     coverage: { advertisedCases: coverage.advertisedCases, selectedCases: coverage.records, metadataComplete: true, ingestionComplete: true, scope: coverage.scope },
     termsSha256: CASELAW_TERMS.sha256, roots: coverage.roots, sourceIndexes: coverage.sources,
@@ -142,19 +147,20 @@ export async function materializeCapPart(store, config, plan, part) {
   const selection = { schemaVersion: 1, snapshot: store.snapshot, collection: config.id, part: part.key,
     planDigest: plan.planDigest, corpusDigest: plan.corpusDigest, inventoryDigest: plan.inventoryDigest,
     cases: part.cases, coverage: plan.coverage };
+  const selectionLabel = config.reporter ? 'selected reporter volumes' : "CAP's jurisdiction label";
   const manifest = CatalogSchema.parse({ schemaVersion: 1, id: part.catalogId,
-    name: `${config.name} — ${period} (${part.key})`, description: `${part.cases.length} historical CAP case records, selected by CAP's jurisdiction label. Part of ${config.name}; see the collection index for complete coverage. ${config.scopeNote ? config.scopeNote + ' ' : ''}OCR may contain errors; inclusion does not establish current legal authority.`,
+    name: `${config.name} — ${period} (${part.key})`, description: `${part.cases.length} historical CAP case records, selected by ${selectionLabel}. Part of ${config.name}; see the collection index for complete coverage. ${config.scopeNote ? config.scopeNote + ' ' : ''}OCR may contain errors; inclusion does not establish current legal authority.`,
     language: 'en', enabled: true, publisher: { id: 'bendyline', name: 'Bendyline', url: 'https://github.com/bendyline/knowledge' },
     source: { type: 'caselaw-collection', snapshot: store.snapshot, selectionDigest: digest(selection), corpusDigest: plan.corpusDigest, part: part.key },
     licensing: { status: 'automatic', policy: 'standard-open-v1', notice: 'NOTICE.md', licenses: [{ id: 'cc0', name: 'CC0 1.0 Universal', spdx: 'CC0-1.0', url: 'https://creativecommons.org/publicdomain/zero/1.0/', text: 'LICENSES/CC0-1.0.txt', attribution: 'Caselaw Access Project, Harvard Law School Library. Voluntary credit under CAP community norms.' }], rules: [{ include: ['**'], license: 'cc0' }] },
     normalization: { images: 'omit' }, build: { embeddingProfile: config.embeddingProfile, toc: { format: 'folders' } },
-    publish: config.publish ?? { enabled: false, github: 'bendyline/knowledge', huggingFace: 'Bendyline/knowledge', gilde: { repository: 'bendyline/gilde', category: 'reference', tags: ['law', 'caselaw', config.jurisdiction] } },
+    publish: config.publish ?? { enabled: false, github: 'bendyline/knowledge', huggingFace: 'Bendyline/knowledge', gilde: { repository: 'bendyline/gilde', category: 'reference', tags: ['law', 'caselaw', config.jurisdiction ?? config.reporter] } },
   });
   const catalog = { key: `caselaw/${part.catalogId}`, dir, root: store.root, manifest };
   const notice = `# ${manifest.name}\n\nCAP case data and metadata are designated CC0 1.0 Universal. Credit: Harvard Law School Library, Caselaw Access Project. Credit and sharing improvements are voluntary community norms. Source terms: https://case.law/terms/.\n\nThis is a historical jurisdiction-based source selection, not all law or a statement of current legal validity. See LICENSES/collection-selection.json and the collection index for exact membership and scope. Separate opinions, source metadata, and per-case source hashes are retained. HTML is normalized to Markdown without OCR correction. Source website prose, scans, PDFs, and vendor TARs are excluded. CAP provides no warranty or clearance of third-party rights.\n\nWithin-part case citations resolve locally. Citations to cases in other parts or outside the selection remain CAP web links. The collection index maps every selected CAP ID to its archive. Upstream dangling footnote links retain their labels as text when return targets or all source-labeled note bodies are absent, with the absence recorded in provenance. Malformed literal OCR URLs remain unchanged as code; no note text or corrected URLs are invented. Publication status and targets are recorded in release.json.\n`;
   await writeJson(resolve(dir, 'manifest.json'), manifest);
-  await write(resolve(dir, 'NOTICE.md'), notice + (config.scopeNote ? `\nScope note: ${config.scopeNote}\n` : ''));
-  const all = capRows(store, plan.jurisdiction.id);
+  await write(resolve(dir, 'NOTICE.md'), notice.replace('historical jurisdiction-based source selection', `historical ${config.reporter ? 'reporter-based' : 'jurisdiction-based'} source selection`) + (config.scopeNote ? `\nScope note: ${config.scopeNote}\n` : ''));
+  const all = capRows(store, plan.selection ?? plan.jurisdiction.id);
   const byId = new Map(all.map(r => [r.id, r]));
   const targets = new Map(all.map(r => [`${capBaseForRow(r)}`, recordPath(r)]));
   const selectedPaths = new Set(part.cases.map(c => recordPath(byId.get(c.id))));
@@ -192,7 +198,7 @@ export async function buildCapCollection(store, config, plan, { version, created
   const { planDigest, ...body } = plan;
   if (digest(body) !== planDigest || digest(config) !== plan.configDigest || plan.normalizer !== CAP_CORPUS_NORMALIZER || plan.snapshot !== store.snapshot) throw new Error('CAP plan or configuration changed; use a new frozen plan');
   const indexPath = resolve(store.root, '.work/collections', config.id, version, 'collection.json');
-  const index = { schemaVersion: 1, collection: config.id, name: config.name, ...(config.scopeNote ? { scopeNote: config.scopeNote } : {}), snapshot: store.snapshot, version, planDigest, coverage: plan.coverage, license: 'CC0-1.0', coverageComplete: false, complete: false, parts: [] };
+  const index = { schemaVersion: 1, collection: config.id, name: config.name, ...(config.scopeNote ? { scopeNote: config.scopeNote } : {}), ...(plan.selection ? { selection: plan.selection, reporter: plan.reporter } : {}), snapshot: store.snapshot, version, planDigest, coverage: plan.coverage, license: 'CC0-1.0', coverageComplete: false, complete: false, parts: [] };
   if (await exists(indexPath)) {
     const previous = await readJson(indexPath);
     if (previous.planDigest !== planDigest) throw new Error('Collection version already identifies another plan');

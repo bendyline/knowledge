@@ -131,6 +131,28 @@ Full license text and source evidence: included in every archive's LICENSES dire
 Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
 Scope: Preserves CAP's Nevada jurisdiction assignment: 13,688 Supreme Court records, 18 Court of Appeals records, and one historical Eureka County District Court record. Coverage reflects this pinned historical archive, not every decision issued by those courts.
 
+U.S. Reports volumes 300–385 — Caselaw Access Project
+Collection ID: caselaw-us-300-385
+Package coverage: caselaw-us-300-385-part-NNNN archives share these content licenses.
+Source: https://static.case.law/
+Collection definition: https://github.com/bendyline/knowledge/blob/main/collections/caselaw/us-300-385/collection.json
+License: CC0 1.0 Universal (CC0-1.0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text and source evidence: included in every archive's LICENSES directory.
+Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
+Scope: Every CAP case record in U.S. Reports volumes 300–385, preserving source jurisdiction, court labels, and decision dates, including four source dates earlier than the books' 1937–1967 period. This bounded historical reporter collection contains the earlier 347–349 pilot in full; installing both duplicates those records. It is not the complete U.S. Reports or federal collection.
+
+Utah caselaw — Caselaw Access Project
+Collection ID: caselaw-utah
+Package coverage: caselaw-utah-part-NNNN archives share these content licenses.
+Source: https://static.case.law/
+Collection definition: https://github.com/bendyline/knowledge/blob/main/collections/caselaw/utah/collection.json
+License: CC0 1.0 Universal (CC0-1.0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text and source evidence: included in every archive's LICENSES directory.
+Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
+Scope: Preserves CAP's Utah jurisdiction assignment: 16,874 Supreme Court records, 6,029 Court of Appeals records under two source court labels, and one historical Salt Lake City Register and Receiver record. Coverage reflects the pinned historical archive, not every decision issued by those courts.
+
 Wyoming caselaw — Caselaw Access Project
 Collection ID: caselaw-wyoming
 Package coverage: caselaw-wyoming-part-NNNN archives share these content licenses.
