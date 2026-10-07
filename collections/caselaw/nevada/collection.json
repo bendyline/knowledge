@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "caselaw-nevada",
+  "name": "Nevada caselaw — CAP jurisdiction collection",
+  "jurisdiction": "nev",
+  "scopeNote": "Preserves CAP's Nevada jurisdiction assignment: 13,688 Supreme Court records, 18 Court of Appeals records, and one historical Eureka County District Court record. Coverage reflects this pinned historical archive, not every decision issued by those courts.",
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeEstimate": "wyoming-bge-v1",
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "queries": [
+    { "query": "78 Nev. 384", "expectedDocumentIds": ["cap-4914212"] },
+    { "query": "106 Nev. 484", "expectedDocumentIds": ["cap-8557739"] },
+    { "query": "109 Nev. 966", "expectedDocumentIds": ["cap-8557397"] },
+    { "query": "124 Nev. 224", "expectedDocumentIds": ["cap-5726049"] }
+  ],
+  "semanticQueries": [
+    { "query": "airplane damaged in a windstorm because the storage operator used inadequate tie-down chains", "expectedDocumentIds": ["cap-4914212"] },
+    { "query": "self-defense jury instructions wrongly required actual danger and a duty to retreat before using deadly force", "expectedDocumentIds": ["cap-8557739"] },
+    { "query": "new murder trial without involuntary antipsychotic medication unless medically necessary and less intrusive alternatives are inadequate", "expectedDocumentIds": ["cap-8557397"] },
+    { "query": "city announces it will condemn private land but delays the eminent domain action and the owner seeks precondemnation damages", "expectedDocumentIds": ["cap-5726049"] }
+  ],
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "reference", "tags": ["law", "caselaw", "nevada", "historical"] }
+  }
+}

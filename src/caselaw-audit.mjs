@@ -5,6 +5,7 @@ import { capCoverage, loadCapRoots, readCapObject } from './caselaw-inventory.mj
 import { capCorpusCoverage, capDocument, capRows } from './caselaw-corpus.mjs';
 import { readCaselawZip } from './sources/caselaw.mjs';
 import { atomicJson, digest, sha256 } from './files.mjs';
+import { addCapHeadMatterSections } from './sources/caselaw-structure.mjs';
 
 const htmlText = node => node.nodeName === '#text' ? node.value : (node.childNodes ?? []).map(htmlText).join('');
 const compact = text => text.replace(/\s/g, '');
@@ -20,7 +21,11 @@ export function auditCapText(markdown, html) {
   if (document.children[0]?.type !== 'heading' || document.children[0].depth !== 1) throw new Error('CAP generated title is absent');
   document.children.shift();
   document.children = document.children.filter(n => !(n.type === 'heading' && n.depth === 2 && /^(Case information$|.* opinion \d+(?: — .*)?$)/.test(extractPlainText(n))));
-  return { textMatches: compact(extractPlainText(document)) === compact(htmlText(parseFragment(html))), fragmentLinks: links, missing };
+  // Derive section labels from the original HTML, rather than discarding any
+  // H3 that happens to share a label with a generated heading.
+  const source = parseFragment(html);
+  addCapHeadMatterSections(source);
+  return { textMatches: compact(extractPlainText(document)) === compact(htmlText(source)), fragmentLinks: links, missing };
 }
 
 export async function auditCapCorpus(store, jurisdiction, { progress } = {}) {

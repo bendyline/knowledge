@@ -3,8 +3,9 @@ import { stringify } from 'yaml';
 import { posix } from 'node:path';
 import { normalizeDocument } from '../normalize.mjs';
 import { sha256 } from '../files.mjs';
+import { addCapHeadMatterSections, neutralizeEmptyCapMarks } from './caselaw-structure.mjs';
 
-export const CASELAW_NORMALIZER = 'cap-html@4';
+export const CASELAW_NORMALIZER = 'cap-html@6';
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
 const hasClass = (node, name) => (attr(node, 'class') ?? '').split(/\s+/).includes(name);
 const textNode = (value) => ({ nodeName: '#text', value });
@@ -20,6 +21,8 @@ export function casePath(record) {
 export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, mapping = new Map() }) {
   const html = new TextDecoder('utf-8', { fatal: true }).decode(htmlBytes);
   const root = parseFragment(html);
+  const emptyFormattingMarks = neutralizeEmptyCapMarks(root);
+  const headMatterSections = addCapHeadMatterSections(root);
   const elements = []; walk(root, n => { if (n.tagName) elements.push(n); });
   if (elements.filter(n => hasClass(n, 'casebody')).length !== 1) throw new Error(`CAP ${record.id}: expected one case body`);
   const opinions = elements.filter(n => hasClass(n, 'opinion'));
@@ -122,8 +125,10 @@ export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, ma
       ...(droppedFootnoteBacklinks ? { droppedFootnoteBacklinks } : {}),
       ...(literalSyntaxProtected ? { literalSyntaxProtected } : {}),
       ...(preformattedLinkBlocks ? { preformattedLinkBlocks } : {}),
+      ...(headMatterSections ? { headMatterSections } : {}),
+      ...(emptyFormattingMarks ? { emptyFormattingMarks } : {}),
     },
   };
   markdown = `---\n${stringify(front, { lineWidth: 0 })}---\n\n${heading}\n${markdown}`;
-  return { markdown, sourceUrl, transformation: `${CASELAW_NORMALIZER}; ${result.transformation}; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged${droppedFootnoteBacklinks ? `; ${droppedFootnoteBacklinks} dangling upstream footnote return links retained as plain text` : ''}${literalSyntaxProtected ? `; ${literalSyntaxProtected} literal syntax characters encoded as character references` : ''}${preformattedLinkBlocks ? `; ${preformattedLinkBlocks} preformatted blocks with active links rendered as prose` : ''}` };
+  return { markdown, sourceUrl, transformation: `${CASELAW_NORMALIZER}; ${result.transformation}; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged${headMatterSections ? `; ${headMatterSections} source head-matter section boundaries retained` : ''}${emptyFormattingMarks ? `; ${emptyFormattingMarks} empty formatting marks made transparent` : ''}${droppedFootnoteBacklinks ? `; ${droppedFootnoteBacklinks} dangling upstream footnote return links retained as plain text` : ''}${literalSyntaxProtected ? `; ${literalSyntaxProtected} literal syntax characters encoded as character references` : ''}${preformattedLinkBlocks ? `; ${preformattedLinkBlocks} preformatted blocks with active links rendered as prose` : ''}` };
 }

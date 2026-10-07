@@ -119,4 +119,26 @@ Terms: https://creativecommons.org/publicdomain/zero/1.0/
 Full license text and source evidence: included in every archive's LICENSES directory.
 Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
 Scope: Preserves CAP's Alaska jurisdiction assignment, including 21 U.S. District Court for the District of Alaska records printed in Federal Supplement, Third Series. Court names remain explicit; this is not exclusively state-court material.
+
+Nevada caselaw — CAP jurisdiction collection
+Collection ID: caselaw-nevada
+Package coverage: caselaw-nevada-part-NNNN archives share these content licenses.
+Source: https://static.case.law/
+Collection definition: https://github.com/bendyline/knowledge/blob/main/collections/caselaw/nevada/collection.json
+License: CC0 1.0 Universal (CC0-1.0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text and source evidence: included in every archive's LICENSES directory.
+Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
+Scope: Preserves CAP's Nevada jurisdiction assignment: 13,688 Supreme Court records, 18 Court of Appeals records, and one historical Eureka County District Court record. Coverage reflects this pinned historical archive, not every decision issued by those courts.
+
+Wyoming caselaw — Caselaw Access Project
+Collection ID: caselaw-wyoming
+Package coverage: caselaw-wyoming-part-NNNN archives share these content licenses.
+Source: https://static.case.law/
+Collection definition: https://github.com/bendyline/knowledge/blob/main/collections/caselaw/wyoming/collection.json
+License: CC0 1.0 Universal (CC0-1.0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text and source evidence: included in every archive's LICENSES directory.
+Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
+Scope: Historical CAP records selected by source jurisdiction.
 <!-- END CATALOG LICENSES -->

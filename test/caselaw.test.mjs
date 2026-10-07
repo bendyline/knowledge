@@ -13,7 +13,7 @@ import { applySnapshot, prepareCatalog } from '../src/sync.mjs';
 import { catalogs, validateCatalog } from '../src/catalogs.mjs';
 import { buildCatalog } from '../src/build.mjs';
 import { verifyRelease } from '../src/verify.mjs';
-import { loadMarkdownCatalog } from '../src/toolchain.mjs';
+import { loadMarkdownCatalog, knowledge, MARKDOWN_CHUNKS_2 } from '../src/toolchain.mjs';
 import { sha256, digest, json, removeWork, write, writeJson, inventory } from '../src/files.mjs';
 import references from '../policy/license-references.json' with { type: 'json' };
 import { createCapNormalizer } from '../src/caselaw-workers.mjs';
@@ -67,6 +67,30 @@ test('CAP conversion keeps case identity, partial dates, opinion context, footno
   assert.match(repaired.markdown, /Footnote body/);
   await assert.rejects(normalizeCaselaw(r, Buffer.from(html.replace('id="footnote_1_1"', '')), { reporter: 'us', volume: '347' }), /unresolved source anchor/);
   await assert.rejects(normalizeCaselaw(r, Buffer.from(html.replace('data-type="dissent"', 'data-type="majority"')), { reporter: 'us', volume: '347' }), /opinion type differs/);
+});
+
+test('CAP source headnotes remain separate searchable sections with faithful text and anchors', async () => {
+  const source = html.replace('<p>Case caption</p>', '<h4>Case caption</h4>'
+    + '<p class="headnotes" id="headnote">A witness may testify.</p>\n'
+    + '<p class="headnotes">The indictment may be amended.</p>'
+    + '<p class="summary">The defendant appealed.</p><p class="summary">Judgment affirmed.</p>'
+    + '<p class="attorneys">Counsel appeared.</p>'
+    + '<h3>Headnotes</h3><p>An original source heading is retained.</p>'
+    + '<p class="headnotes">A separate headnote group.</p>')
+    .replace('The majority at', '<a href="#headnote">See the headnote</a>. The majority at');
+  const result = await normalizeCaselaw(record(), Buffer.from(source), { reporter: 'us', volume: '347' });
+  assert.equal(auditCapText(result.markdown, source).textMatches, true);
+  assert.deepEqual(auditCapText(result.markdown, source).missing, []);
+  assert.equal(auditCapText(result.markdown.replace('may testify', 'must testify'), source).textMatches, false);
+  assert.equal(auditCapText(result.markdown.replace('An original source heading is retained.', ''), source).textMatches, false);
+  const chunks = knowledge.chunkMarkdownProfile(result.markdown.replace(/^---\n[\s\S]*?\n---\n/, ''),
+    { ...MARKDOWN_CHUNKS_2, countTokens: text => Math.ceil(text.length / 4) });
+  const headnote = chunks.find(c => c.text.includes('A witness may testify.'));
+  assert.ok(headnote.headingPath.includes('Headnotes'));
+  assert.ok(headnote.text.includes('The indictment may be amended.'));
+  assert.ok(!headnote.text.includes('The defendant appealed.'));
+  assert.ok(!headnote.text.includes('Counsel appeared.'));
+  assert.match(result.transformation, /source head-matter section boundaries retained/);
 });
 
 test('CAP archives reject traversal, collisions, symlinks and expansion beyond the budget', async () => {
@@ -127,6 +151,17 @@ test('CAP retains emphasis beginning with a colon after an unspaced case name', 
   const source = html.replace('Case caption', '<em>The Written Statement Requirement of</em> Wolff v. McDonnell<em>: An Argument for Factual Specificity</em>');
   const result = await normalizeCaselaw(record(), Buffer.from(source), { reporter: 'us', volume: '347' });
   assert.equal(auditCapText(result.markdown, source).textMatches, true);
+});
+
+test('CAP empty formatting adds no visible delimiters and keeps anchor targets', async () => {
+  const source = html.replace('Case caption', 'A citation, <em></em>cert. '
+    + '<strong><em> </em></strong><s></s><em id="empty"><span></span></em>'
+    + '<a href="#empty">empty target</a>, <em>visible emphasis</em>.');
+  const result = await normalizeCaselaw(record(), Buffer.from(source), { reporter: 'us', volume: '347' });
+  assert.equal(auditCapText(result.markdown, source).textMatches, true);
+  assert.deepEqual(auditCapText(result.markdown, source).missing, []);
+  assert.match(result.markdown, /\*visible emphasis\*/);
+  assert.match(result.transformation, /empty formatting marks made transparent/);
 });
 
 test('CAP evidence pins the complete terms and does not invent CC0 attribution conditions', () => {

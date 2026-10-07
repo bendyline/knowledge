@@ -78,7 +78,7 @@ npm run caselaw -- plan --preview --snapshot 2026-10-06 --collection collections
 
 The cached snapshot above already contains the original four-part frozen plan.
 The current configuration requests one approximately 1 GiB Wyoming archive.
-Reingest and audit with the current `cap-html@4` normalizer before previewing
+Reingest and audit with the current `cap-html@6` normalizer before previewing
 the cached corpus. Freeze and build under a new snapshot/plan identity after
 the updated source audit. Shared source objects can be reused.
 Do not overwrite the existing plan or reuse its release version.
@@ -111,6 +111,16 @@ and verifies JSON, HTML, ZIP, and normalized-document provenance hashes. Plannin
 requires a passing audit bound to the same corpus digest. OCR is preserved,
 including apparent mistakes; the converter protects literal braces from Squisq
 template interpretation using character references with identical visible text.
+The normalizer also retains CAP's headnote, summary, and attorney groups as
+separate Markdown sections. Headnotes remain labeled separately from judicial
+opinions; no summaries, OCR corrections, or legal conclusions are generated.
+The audit derives these section labels from the original HTML and compares all
+source text, including any source headings with the same names.
+Empty emphasis, bold, and strike tags are made transparent before conversion,
+with whitespace and link targets preserved. This avoids visible delimiter
+characters from the pinned Squisq importer; the source audit caught this defect
+in Nevada's *Tillema v. State*, CAP 11824094. The compatibility handling is
+covered by a regression test and recorded in per-case transformation evidence.
 
 Planning counts token chunks in the canonical Markdown using the pinned embedding
 profile. Binding local citation URLs for each part can slightly change the final
@@ -254,6 +264,15 @@ are retained, so this remains a failed quality gate rather than a silently
 relaxed test. Source-text fidelity and complete case membership do not establish
 semantic-search quality. A broader legal retrieval evaluation and an explicit
 quality decision are needed before publication.
+
+The next build uses `cap-html@6`, which retains source-labeled headnote and
+summary boundaries instead of merging them into one search chunk. Against the
+old first-part index, the original witness-name query ranks the new headnote
+chunk first. This is a diagnostic comparison, not a passing collection result:
+the complete rebuilt collection must pass the unchanged top-20 gate before it
+can publish. The `2026-10-06-wave-2` planning snapshot is a SQLite backup of the
+pinned national inventory, with a separate derivation record and new plan paths.
+It reuses the source objects and does not claim a newly acquired metadata view.
 
 ## Updates and distribution
 
