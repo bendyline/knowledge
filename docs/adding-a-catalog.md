@@ -11,7 +11,7 @@ removal or access changes is a priority. Azure documentation explicitly uses thi
 mode, retaining its license evidence and provenance alongside the flat files.
 Builds use the accepted snapshot; source sync remains a separate operation.
 
-For generated GitHub, Wikipedia, or CAP catalogs, `contentStorage: workspace`
+For generated GitHub, Wikipedia, CAP, or Gutenberg catalogs, `contentStorage: workspace`
 keeps only the manifest, NOTICE, static license texts, and retrieval checks in
 that directory. `npm run prepare-content -- --catalog <key>` materializes the
 accepted snapshot under `.work/catalogs/<key>/`, with the same full content and

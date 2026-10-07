@@ -168,6 +168,26 @@ verification. Utah has an audited two-part measured plan awaiting compilation.
 See [CAP ingestion and collection
 planning](docs/caselaw.md) for commands, coverage limits, and distribution work.
 
+## How-to books
+
+`bendyline/how-to-books` contains every English book on Project
+Gutenberg's "How To ..." bookshelf that PG marks public domain, split into
+chapter documents, plus original how-to guides that cite those chapters.
+The books cover cooking, gardening, crafts, building, animals, household
+management, outdoor skills, and more. Book text carries the Public Domain
+Mark. The guides are licensed CC BY-SA 4.0 and kept in Git under the
+catalog's `guides/` directory. Downloads come from PG's own mirror, never the
+PG website. PG's license and trademark text, and every reference to Project
+Gutenberg, are removed from book text.
+
+```sh
+npm run prepare-content -- --catalog bendyline/how-to-books
+npm run build -- --catalog bendyline/how-to-books --version 2026.10.1
+```
+
+See [the Gutenberg catalog](docs/gutenberg.md) for selection, rights evidence,
+conversion, and the guide format.
+
 ## Azure AI Search example
 
 ```sh

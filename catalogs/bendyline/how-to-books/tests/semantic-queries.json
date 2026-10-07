@@ -1,0 +1,86 @@
+[
+  {
+    "query": "How long should I knead bread dough and how do I know when it has risen enough?",
+    "expectedDocumentIds": [
+      "guides/cooking/bake-a-loaf-of-yeast-bread"
+    ]
+  },
+  {
+    "query": "How can I tell when homemade jelly is done without a thermometer?",
+    "expectedDocumentIds": [
+      "guides/food-preservation/make-apple-jelly-without-added-pectin"
+    ]
+  },
+  {
+    "query": "What should I put in a compost heap so it heats up?",
+    "expectedDocumentIds": [
+      "guides/gardening/make-a-hot-compost-pile"
+    ]
+  },
+  {
+    "query": "How do I graft a new apple variety onto an old tree?",
+    "expectedDocumentIds": [
+      "guides/fruit-growing/cleft-graft-an-apple-tree"
+    ]
+  },
+  {
+    "query": "My kitchen tap keeps dripping after I turn it off. How do I replace the washer?",
+    "expectedDocumentIds": [
+      "guides/building-and-repair/fix-a-dripping-compression-faucet"
+    ]
+  },
+  {
+    "query": "How do I mend a hole in the heel of a wool sock?",
+    "expectedDocumentIds": [
+      "guides/needlework/darn-a-hole-in-a-sock"
+    ]
+  },
+  {
+    "query": "How do I make sure my campfire is completely out before leaving?",
+    "expectedDocumentIds": [
+      "guides/outdoors/build-and-put-out-a-campfire"
+    ]
+  },
+  {
+    "query": "How do I keep a canoe going straight when paddling alone in the stern?",
+    "expectedDocumentIds": [
+      "guides/fishing-and-boating/paddle-and-steer-a-canoe"
+    ]
+  },
+  {
+    "query": "What temperature do newly hatched chicks need in the first week?",
+    "expectedDocumentIds": [
+      "guides/animals/raise-baby-chicks-in-a-brooder"
+    ]
+  },
+  {
+    "query": "How do I get a grease stain out of a cotton shirt?",
+    "expectedDocumentIds": [
+      "guides/household/remove-common-stains-from-washable-fabrics"
+    ]
+  },
+  {
+    "query": "How does a motion get amended and voted on at a club meeting?",
+    "expectedDocumentIds": [
+      "guides/communication/chair-a-meeting-using-parliamentary-procedure"
+    ]
+  },
+  {
+    "query": "How much honey does a bee colony need to get through the winter?",
+    "expectedDocumentIds": [
+      "guides/beekeeping/prepare-a-beehive-for-winter"
+    ]
+  },
+  {
+    "query": "How can I tell a white oak from a red oak?",
+    "expectedDocumentIds": [
+      "guides/plants-and-botany/identify-a-tree-by-its-leaves-bark-and-buds"
+    ]
+  },
+  {
+    "query": "What is the best way to dry sage and thyme so they keep their flavor?",
+    "expectedDocumentIds": [
+      "guides/plants-and-botany/harvest-and-dry-culinary-herbs"
+    ]
+  }
+]

@@ -3,6 +3,7 @@ import { basename, resolve } from 'node:path';
 import { githubSnapshot } from './sources/github.mjs';
 import { wikipediaSnapshot } from './sources/wikipedia.mjs';
 import { caselawSnapshot } from './sources/caselaw.mjs';
+import { gutenbergSnapshot } from './sources/gutenberg.mjs';
 import { sourceConfigDigest, validateCatalog, licenseFor } from './catalogs.mjs';
 import { digest, diffFiles, exists, hashFile, inside, inventory, readJson, removeWork, sha256, write, writeJson } from './files.mjs';
 import { normalizeDocument } from './normalize.mjs';
@@ -56,7 +57,7 @@ export async function syncCatalog(catalog, options = {}) {
   if (m.licensing.status !== 'approved' && !automaticLicensing(m)) throw new Error('Configure automatic standard-open licensing or approve the source license before importing');
   if (m.source.type === 'manual') return { catalog: catalog.key, changed: false, status: 'manual' };
   await refreshWorkspaceDefinition(catalog);
-  const adapters = { github: githubSnapshot, wikipedia: wikipediaSnapshot, caselaw: caselawSnapshot };
+  const adapters = { github: githubSnapshot, wikipedia: wikipediaSnapshot, caselaw: caselawSnapshot, gutenberg: gutenbergSnapshot };
   if (!adapters[m.source.type]) throw new Error('CAP collection parts are materialized by npm run caselaw -- build; sync the shared corpus with caselaw ingest');
   const snapshot = await adapters[m.source.type](catalog, options);
   return applySnapshot(catalog, snapshot, options);

@@ -54,6 +54,20 @@ license sidecars. The source records linked below provide the current catalog
 definitions; the records bundled with an immutable release describe that release.
 
 <!-- BEGIN CATALOG LICENSES -->
+How-to books (bendyline/how-to-books)
+Catalog ID: bendyline-how-to-books
+Source: https://www.gutenberg.org/ (public-domain transcriptions; Project Gutenberg license and trademark text removed)
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/how-to-books/manifest.json
+License: Public Domain Mark 1.0 (CC-PDM-1.0; record: public-domain)
+Terms: https://creativecommons.org/publicdomain/mark/1.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/how-to-books/LICENSES/CC-PDM-1.0.txt
+Attribution: Public-domain book text transcribed by Project Gutenberg volunteers (https://www.gutenberg.org); the Project Gutenberg license and trademark text are removed. Credit is voluntary.
+License: Creative Commons Attribution-ShareAlike 4.0 International (CC-BY-SA-4.0; record: cc-by-sa)
+Terms: https://creativecommons.org/licenses/by-sa/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/how-to-books/LICENSES/CC-BY-SA-4.0.txt
+Attribution: How-to guides by Bendyline (https://github.com/bendyline/knowledge), licensed CC BY-SA 4.0, derived from the public-domain books in this catalog.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/how-to-books/NOTICE.md
+
 Knowledge catalog handbook (bendyline/knowledge-handbook)
 Catalog ID: bendyline-knowledge-handbook
 Source: https://github.com/bendyline/knowledge/blob/main/catalogs/bendyline/knowledge-handbook/manifest.json

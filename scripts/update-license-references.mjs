@@ -2,7 +2,7 @@ import { getJson, request } from '../src/http.mjs';
 import { sha256, writeJson } from '../src/files.mjs';
 const revision = process.argv[2];
 if (!/^[a-f0-9]{40}$/.test(revision ?? '')) throw new Error('Supply the reviewed SPDX license-list-data commit SHA');
-const ids = ['MIT','Apache-2.0','BSD-2-Clause','BSD-3-Clause','ISC','CC0-1.0','CC-BY-3.0','CC-BY-4.0','CC-BY-SA-3.0','CC-BY-SA-4.0'];
+const ids = ['MIT','Apache-2.0','BSD-2-Clause','BSD-3-Clause','ISC','CC0-1.0','CC-BY-3.0','CC-BY-4.0','CC-BY-SA-3.0','CC-BY-SA-4.0','CC-PDM-1.0'];
 const licenses = [];
 for (const id of ids) {
   const source = `https://raw.githubusercontent.com/spdx/license-list-data/${revision}/json/details/${id}.json`;
