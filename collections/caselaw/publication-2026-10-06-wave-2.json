@@ -1,0 +1,72 @@
+{
+  "complete": true,
+  "verifiedAt": "2026-10-07T03:11:10.815Z",
+  "gildeCommit": "1ad672ad10ebc87f1bb0c732b8472f13d3e955d3",
+  "npmVersion": "0.1.88",
+  "npmPackageBytes": 18146096,
+  "npmIntegrity": "sha512-mzsOnj9AZ1eJfJeghTSqNqpLLGHogiLCfclZluF1JW/393Xgs0lWzgDkB2OBdepqWwaQeyTq7FCPTGcQfmynCg==",
+  "site": "https://gezelgilde.com/catalog/v1/content/0.1.88",
+  "catalogs": [
+    {
+      "id": "caselaw-us-347-349",
+      "version": "2026.10.5",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.88/data/knowledge-catalogs/ca/caselaw-us-347-349/versions/2026.10.5/manifest.json",
+      "sha256": "db08e80f8c6880791e5ace109a43c55f5f95083289f735188e0b9fdaafe41712",
+      "bytes": 30128630,
+      "documents": 2142
+    },
+    {
+      "id": "caselaw-alaska-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.88/data/knowledge-catalogs/ca/caselaw-alaska-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "d7566e0ef822769dd652029a47f0dd9c126a593e2fffcc1469f1e004f8b23a06",
+      "bytes": 1041433404,
+      "documents": 10749
+    },
+    {
+      "id": "caselaw-wyoming-part-0001",
+      "version": "2026.10.3",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.88/data/knowledge-catalogs/ca/caselaw-wyoming-part-0001/versions/2026.10.3/manifest.json",
+      "sha256": "2a3950c39e86c558c8f9ba6af930bed3faeef4b02c90e0b60422a3181be0a759",
+      "bytes": 1069210109,
+      "documents": 10931
+    },
+    {
+      "id": "caselaw-nevada-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.88/data/knowledge-catalogs/ca/caselaw-nevada-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "54125a78a84fd136fdc74b6af95c7fb148990f312757867f89105520fc76e479",
+      "bytes": 766348339,
+      "documents": 13707
+    }
+  ],
+  "collections": [
+    {
+      "id": "caselaw-wyoming",
+      "version": "2026.10.3",
+      "url": "https://huggingface.co/datasets/Bendyline/knowledge/resolve/0cde42e6af8a3c7c726a0f18ab37919e27ef458e/collections/caselaw-wyoming/releases/2026.10.3/collection.json",
+      "sha256": "59e004d52184687685b543b0f7d05938976efb0d30f5d5c6f8eb3e96cf93d831",
+      "cases": 10931
+    },
+    {
+      "id": "caselaw-nevada",
+      "version": "2026.10.1",
+      "url": "https://huggingface.co/datasets/Bendyline/knowledge/resolve/e40db523aa0231184da82b499b716553aed1b5f7/collections/caselaw-nevada/releases/2026.10.1/collection.json",
+      "sha256": "cfc2c1c5b2e36c0638c2e9c42b3c026374270bad1e30adc5fd8840a514195315",
+      "cases": 13707
+    }
+  ],
+  "datasetCardVerified": true,
+  "toolingCommit": "086d346afb5609c7c54d179eb23697b19091943e",
+  "workflows": {
+    "wyomingMirror": "https://github.com/bendyline/knowledge/actions/runs/37561826065",
+    "nevadaMirror": "https://github.com/bendyline/knowledge/actions/runs/37563087102",
+    "npm": "https://github.com/bendyline/gilde/actions/runs/37563949437",
+    "site": "https://github.com/bendyline/gilde-pipeline/actions/runs/37565434793",
+    "windowsLinuxChecks": "https://github.com/bendyline/knowledge/actions/runs/37564597738"
+  },
+  "registryPullRequests": [
+    "https://github.com/bendyline/gilde/pull/12",
+    "https://github.com/bendyline/gilde/pull/13"
+  ]
+}

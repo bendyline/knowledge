@@ -49,6 +49,13 @@ record exact case membership, checksums, and immutable download coordinates.
 The public [dataset overview](https://huggingface.co/datasets/Bendyline/knowledge)
 links every published pilot. CAP bodies and generated Markdown remain outside Git.
 
+All four catalogs are included in the verified `@bendyline/gilde@0.1.88` npm
+tarball and the live `gezelgilde.com` catalog snapshot from Gilde commit
+`1ad672ad10ebc87f1bb0c732b8472f13d3e955d3`. Archive hashes, sizes, document/chunk
+counts, and immutable Hugging Face coordinates match on both discovery surfaces.
+The [publication verification record](../collections/caselaw/publication-2026-10-06-wave-2.json)
+also checks the two new collection indexes and the dataset overview.
+
 Wyoming combines 1,184 selected source books into one 1,069,210,109-byte archive,
 covering 1870–2019. Nevada combines 179 books into one 766,348,339-byte archive,
 covering 1865–2019. Their full source audits pass: 10,931/10,931 and
