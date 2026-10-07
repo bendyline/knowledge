@@ -1,0 +1,990 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-07T07:05:08.534Z",
+  "catalogId": "caselaw-us-300-399",
+  "unpublishedVersion": "2026.10.1",
+  "archiveSha256": "5157abbfe77f898bb7bbb708016841b0d7219adaf506a57e01d5b26abcce5fc2",
+  "archiveBytes": 1033287052,
+  "integrity": true,
+  "counts": {
+    "documents": 61926,
+    "chunks": 453624,
+    "shards": 3,
+    "assets": 0
+  },
+  "originalChecks": {
+    "catalog": "caselaw/caselaw-us-300-399-part-0001",
+    "catalogId": "caselaw-us-300-399-part-0001",
+    "version": "2026.10.1",
+    "inputDigest": "f62a38582546463a19fc7b320854d5c37a1114888ac534b4ea126f5b97e4aeac",
+    "sha256": "5157abbfe77f898bb7bbb708016841b0d7219adaf506a57e01d5b26abcce5fc2",
+    "archiveBytes": 1033287052,
+    "counts": {
+      "documents": 61926,
+      "chunks": 453624,
+      "shards": 3,
+      "assets": 0
+    },
+    "integrity": true,
+    "licenses": [
+      "CC0-1.0"
+    ],
+    "fullText": [
+      {
+        "query": "304 U.S. 64",
+        "expectedDocumentIds": [
+          "cap-10687"
+        ],
+        "hits": [
+          "cap-10687",
+          "cap-6162278",
+          "cap-3657475",
+          "cap-11728748",
+          "cap-11328461",
+          "cap-6162222",
+          "cap-6162286",
+          "cap-6156621",
+          "cap-11716660",
+          "cap-10609"
+        ],
+        "passed": true
+      },
+      {
+        "query": "347 U.S. 483",
+        "expectedDocumentIds": [
+          "cap-11301409"
+        ],
+        "hits": [
+          "cap-11301409",
+          "cap-11327182",
+          "cap-11306832",
+          "cap-6176755",
+          "cap-12052719",
+          "cap-379537",
+          "cap-6158328",
+          "cap-6203843",
+          "cap-11318268",
+          "cap-6931894"
+        ],
+        "passed": true
+      },
+      {
+        "query": "349 U.S. 294",
+        "expectedDocumentIds": [
+          "cap-11334782"
+        ],
+        "hits": [
+          "cap-11334782",
+          "cap-6170223",
+          "cap-6167116",
+          "cap-12064207",
+          "cap-6207557",
+          "cap-3938784",
+          "cap-11336837",
+          "cap-11730244",
+          "cap-6140021",
+          "cap-6168106"
+        ],
+        "passed": true
+      },
+      {
+        "query": "348 U.S. 26",
+        "expectedDocumentIds": [
+          "cap-6930659"
+        ],
+        "hits": [
+          "cap-6930659",
+          "cap-6932068",
+          "cap-6937748",
+          "cap-11327548",
+          "cap-11327487",
+          "cap-6160684",
+          "cap-6161824",
+          "cap-11333263",
+          "cap-11333476",
+          "cap-11333209"
+        ],
+        "passed": true
+      },
+      {
+        "query": "348 U.S. 426",
+        "expectedDocumentIds": [
+          "cap-6931705"
+        ],
+        "hits": [
+          "cap-6931705",
+          "cap-6931561",
+          "cap-6949868",
+          "cap-11337825",
+          "cap-6167767",
+          "cap-6168801",
+          "cap-11337889",
+          "cap-11340123",
+          "cap-11340185",
+          "cap-6163385"
+        ],
+        "passed": true
+      },
+      {
+        "query": "367 U.S. 643",
+        "expectedDocumentIds": [
+          "cap-1785580"
+        ],
+        "hits": [
+          "cap-1785580",
+          "cap-6150478",
+          "cap-6149406",
+          "cap-6150404",
+          "cap-6149789",
+          "cap-6150038",
+          "cap-3653769",
+          "cap-6174298",
+          "cap-6149527",
+          "cap-6149856"
+        ],
+        "passed": true
+      },
+      {
+        "query": "372 U.S. 335",
+        "expectedDocumentIds": [
+          "cap-1765333"
+        ],
+        "hits": [
+          "cap-1765333",
+          "cap-1765539",
+          "cap-6259648",
+          "cap-3937877",
+          "cap-1765046",
+          "cap-1765068",
+          "cap-1765135",
+          "cap-1765138",
+          "cap-1765150",
+          "cap-1765215"
+        ],
+        "passed": true
+      },
+      {
+        "query": "384 U.S. 436",
+        "expectedDocumentIds": [
+          "cap-12046400"
+        ],
+        "hits": [
+          "cap-12046400",
+          "cap-6168166",
+          "cap-6171490",
+          "cap-6166587",
+          "cap-6166542",
+          "cap-6171403",
+          "cap-12054849",
+          "cap-6140642",
+          "cap-6172764",
+          "cap-366847"
+        ],
+        "passed": true
+      },
+      {
+        "query": "392 U.S. 1",
+        "expectedDocumentIds": [
+          "cap-6167798"
+        ],
+        "hits": [
+          "cap-6167798",
+          "cap-6169056",
+          "cap-6159061",
+          "cap-6198586",
+          "cap-11726082",
+          "cap-6179327",
+          "cap-6180003",
+          "cap-6180335",
+          "cap-6183649",
+          "cap-6184034"
+        ],
+        "passed": true
+      },
+      {
+        "query": "393 U.S. 503",
+        "expectedDocumentIds": [
+          "cap-11318417"
+        ],
+        "hits": [
+          "cap-11318417",
+          "cap-11390939",
+          "cap-11396910",
+          "cap-6142045",
+          "cap-6141947",
+          "cap-11718904",
+          "cap-366615",
+          "cap-301876",
+          "cap-6931942",
+          "cap-8441"
+        ],
+        "passed": true
+      }
+    ],
+    "semantic": [
+      {
+        "query": "racial segregation in public schools denies equal protection of the laws",
+        "expectedDocumentIds": [
+          "cap-11301409"
+        ],
+        "hits": [
+          "cap-3655212",
+          "cap-11301409",
+          "cap-11301453",
+          "cap-8318",
+          "cap-1767577",
+          "cap-11432753",
+          "cap-11718948",
+          "cap-6174691",
+          "cap-6168803",
+          "cap-6167370",
+          "cap-11719845",
+          "cap-1772190"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-11301409",
+            "rank": 2
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "how should federal district courts supervise the timing of school desegregation",
+        "expectedDocumentIds": [
+          "cap-11334782"
+        ],
+        "hits": [
+          "cap-11432753",
+          "cap-3655212",
+          "cap-1767543",
+          "cap-11432702",
+          "cap-11331820",
+          "cap-6171646",
+          "cap-11718948",
+          "cap-12051848",
+          "cap-11334782",
+          "cap-1772124",
+          "cap-6167754"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-11334782",
+            "rank": 16
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "taking private property to redevelop a blighted urban area serves a public purpose",
+        "expectedDocumentIds": [
+          "cap-6930659"
+        ],
+        "hits": [
+          "cap-6930659",
+          "cap-6159304",
+          "cap-336890",
+          "cap-11337097",
+          "cap-1767776",
+          "cap-1104910",
+          "cap-6139334",
+          "cap-10692",
+          "cap-353633",
+          "cap-1771869",
+          "cap-366608",
+          "cap-1148101"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-6930659",
+            "rank": 1
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "punitive damages received by a business are taxable gross income",
+        "expectedDocumentIds": [
+          "cap-6931705"
+        ],
+        "hits": [
+          "cap-6931705",
+          "cap-6931756",
+          "cap-414131",
+          "cap-12031244",
+          "cap-1230296",
+          "cap-10719",
+          "cap-6141099",
+          "cap-11300759",
+          "cap-6139505",
+          "cap-11299551",
+          "cap-6136739",
+          "cap-1285816",
+          "cap-304302",
+          "cap-6138393",
+          "cap-6160870"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-6931705",
+            "rank": 1
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "federal diversity courts must apply state common law rather than a federal general common law when a railroad injures a pedestrian beside its tracks",
+        "expectedDocumentIds": [
+          "cap-10687"
+        ],
+        "hits": [
+          "cap-6157962",
+          "cap-10687",
+          "cap-374624",
+          "cap-1105061",
+          "cap-6161625",
+          "cap-6156359",
+          "cap-1771945",
+          "cap-1785576",
+          "cap-11300350",
+          "cap-365474",
+          "cap-372855",
+          "cap-6157855",
+          "cap-6155729",
+          "cap-6218429",
+          "cap-6175285"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-10687",
+            "rank": 2
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "unlawfully seized evidence from a police search of a home cannot be admitted in a state criminal trial",
+        "expectedDocumentIds": [
+          "cap-1785580"
+        ],
+        "hits": [
+          "cap-6165069",
+          "cap-6165037",
+          "cap-11341381",
+          "cap-6163905",
+          "cap-11336837",
+          "cap-1785580",
+          "cap-1772077",
+          "cap-12032017",
+          "cap-6144433",
+          "cap-377283",
+          "cap-450611",
+          "cap-6169225",
+          "cap-6171487",
+          "cap-11717703",
+          "cap-6168184",
+          "cap-6267056"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-1785580",
+            "rank": 6
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "an indigent defendant charged with a noncapital felony is entitled to appointed counsel in state court",
+        "expectedDocumentIds": [
+          "cap-1765333"
+        ],
+        "hits": [
+          "cap-368158",
+          "cap-11719292",
+          "cap-365492",
+          "cap-6167940",
+          "cap-11318268",
+          "cap-1765332",
+          "cap-6182899",
+          "cap-6158928",
+          "cap-11333627",
+          "cap-1229906",
+          "cap-6159137",
+          "cap-6164493",
+          "cap-1765282"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-1765333",
+            "rank": null
+          }
+        ],
+        "passed": false
+      },
+      {
+        "query": "police must warn a suspect about silence and the right to counsel before custodial interrogation",
+        "expectedDocumentIds": [
+          "cap-12046400"
+        ],
+        "hits": [
+          "cap-12046400",
+          "cap-1785545",
+          "cap-6168861"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-12046400",
+            "rank": 1
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "a police detective observes men repeatedly inspecting a store window and conducts a limited pat-down for weapons while investigating a suspected robbery",
+        "expectedDocumentIds": [
+          "cap-6167798"
+        ],
+        "hits": [
+          "cap-6167798",
+          "cap-6167951",
+          "cap-6168184",
+          "cap-1785545",
+          "cap-11336837",
+          "cap-6161235",
+          "cap-6163723",
+          "cap-12054849",
+          "cap-11338823",
+          "cap-374809",
+          "cap-6173399",
+          "cap-1785566"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-6167798",
+            "rank": 1
+          }
+        ],
+        "passed": true
+      },
+      {
+        "query": "public school students suspended for wearing black armbands to protest the Vietnam War without materially disrupting school activities",
+        "expectedDocumentIds": [
+          "cap-11318417"
+        ],
+        "hits": [
+          "cap-11318417",
+          "cap-366560"
+        ],
+        "chunkLimit": 20,
+        "expectedChunkRanks": [
+          {
+            "id": "cap-11318417",
+            "rank": 1
+          }
+        ],
+        "passed": true
+      }
+    ],
+    "semanticPassed": false
+  },
+  "expandedDiagnostic": {
+    "query": "an indigent defendant charged with a noncapital felony is entitled to appointed counsel in state court",
+    "chunkRank": 24,
+    "documentRank": 16,
+    "uniqueTextChunkRank": 22,
+    "top": [
+      {
+        "chunkUid": "66599c69022716d20420f166a96f6b60",
+        "documentId": "cap-368158",
+        "title": "Betts v. Brady — 316 U.S. 455",
+        "cosine": 0.7545323282433033,
+        "headingPath": [
+          "Betts v. Brady — 316 U.S. 455",
+          "Majority opinion 1 — Mr. Justice Roberts"
+        ],
+        "shardId": 0,
+        "lineStart": 111,
+        "lineEnd": 115
+      },
+      {
+        "chunkUid": "e0e15c3ba5693a074f9a4d0d574c4cd9",
+        "documentId": "cap-368158",
+        "title": "Betts v. Brady — 316 U.S. 455",
+        "cosine": 0.7545323282433033,
+        "headingPath": [
+          "Betts v. Brady — 316 U.S. 455",
+          "Majority opinion 1 — Mr. Justice Roberts"
+        ],
+        "shardId": 0,
+        "lineStart": 112,
+        "lineEnd": 115
+      },
+      {
+        "chunkUid": "edbdab7de6fca959cfeb01ecb871cb7f",
+        "documentId": "cap-368158",
+        "title": "Betts v. Brady — 316 U.S. 455",
+        "cosine": 0.746309654624705,
+        "headingPath": [
+          "Betts v. Brady — 316 U.S. 455",
+          "Majority opinion 1 — Mr. Justice Roberts"
+        ],
+        "shardId": 0,
+        "lineStart": 113,
+        "lineEnd": 115
+      },
+      {
+        "chunkUid": "af4b6c64ce56bc5b0eb64d744db9dfef",
+        "documentId": "cap-368158",
+        "title": "Betts v. Brady — 316 U.S. 455",
+        "cosine": 0.746309654624705,
+        "headingPath": [
+          "Betts v. Brady — 316 U.S. 455",
+          "Majority opinion 1 — Mr. Justice Roberts"
+        ],
+        "shardId": 0,
+        "lineStart": 114,
+        "lineEnd": 115
+      },
+      {
+        "chunkUid": "ab92b4e13f9903ab1c628b9866106e38",
+        "documentId": "cap-11719292",
+        "title": "Hardy v. United States — 375 U.S. 277",
+        "cosine": 0.7299313804982176,
+        "headingPath": [
+          "Hardy v. United States — 375 U.S. 277",
+          "Concurrence opinion 2 — Mr. Justice Goldberg,"
+        ],
+        "shardId": 1,
+        "lineStart": 75,
+        "lineEnd": 77
+      },
+      {
+        "chunkUid": "ceb7fa9b8c1311cc9c63719819fabf70",
+        "documentId": "cap-365492",
+        "title": "Foster v. Illinois — 332 U.S. 134",
+        "cosine": 0.720436391243977,
+        "headingPath": [
+          "Foster v. Illinois — 332 U.S. 134",
+          "Dissent opinion 3 — Mr. Justice Rutledge,"
+        ],
+        "shardId": 0,
+        "lineStart": 85,
+        "lineEnd": 91
+      },
+      {
+        "chunkUid": "fd6722ad40a09bcd130474a86dd0ebdc",
+        "documentId": "cap-368158",
+        "title": "Betts v. Brady — 316 U.S. 455",
+        "cosine": 0.718928621519049,
+        "headingPath": [
+          "Betts v. Brady — 316 U.S. 455",
+          "Majority opinion 1 — Mr. Justice Roberts"
+        ],
+        "shardId": 0,
+        "lineStart": 129,
+        "lineEnd": 135
+      },
+      {
+        "chunkUid": "504249f4cea053b8640a108d52cf3dc5",
+        "documentId": "cap-6167940",
+        "title": "Kinsella v. United States ex rel. Singleton — 361 U.S. 234",
+        "cosine": 0.7096548316907227,
+        "headingPath": [
+          "Kinsella v. United States ex rel. Singleton — 361 U.S. 234",
+          "Dissent opinion 2 — Mu. Justice Harlan,"
+        ],
+        "shardId": 1,
+        "lineStart": 156,
+        "lineEnd": 156
+      },
+      {
+        "chunkUid": "b7f2c328e40ddea4ded73a3396c0057b",
+        "documentId": "cap-11318268",
+        "title": "Johnson v. Avery — 393 U.S. 483",
+        "cosine": 0.7077523915422074,
+        "headingPath": [
+          "Johnson v. Avery — 393 U.S. 483",
+          "Concurrence opinion 2 — Mr. Justice Douglas,"
+        ],
+        "shardId": 2,
+        "lineStart": 141,
+        "lineEnd": 143
+      },
+      {
+        "chunkUid": "e3837af48691b7cd3003af52260a6e99",
+        "documentId": "cap-1765332",
+        "title": "Lane v. Brown — 372 U.S. 477",
+        "cosine": 0.7048175387965849,
+        "headingPath": [
+          "Lane v. Brown — 372 U.S. 477",
+          "Majority opinion 1 — Mr. Justice Stewart"
+        ],
+        "shardId": 1,
+        "lineStart": 28,
+        "lineEnd": 28
+      },
+      {
+        "chunkUid": "e5d96b4922273f440ca62a963d509b5a",
+        "documentId": "cap-6182899",
+        "title": "Entsminger v. Iowa — 386 U.S. 748",
+        "cosine": 0.6995530183744191,
+        "headingPath": [
+          "Entsminger v. Iowa — 386 U.S. 748",
+          "Majority opinion 1 — Mr. Justice Clark"
+        ],
+        "shardId": 1,
+        "lineStart": 36,
+        "lineEnd": 36
+      },
+      {
+        "chunkUid": "360050417940d1a9c18856e4036fe793",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6979955819675577,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Majority opinion 1 — Mr. Justice Burton"
+        ],
+        "shardId": 0,
+        "lineStart": 307,
+        "lineEnd": 311
+      },
+      {
+        "chunkUid": "9c8fcf559e8943f972e18920134ea2e3",
+        "documentId": "cap-11333627",
+        "title": "In re Gault — 387 U.S. 1",
+        "cosine": 0.6973464622979939,
+        "headingPath": [
+          "In re Gault — 387 U.S. 1",
+          "Majority opinion 1 — Mr. Justice Fortas"
+        ],
+        "shardId": 1,
+        "lineStart": 532,
+        "lineEnd": 532
+      },
+      {
+        "chunkUid": "ad90619e588908353546745e758346eb",
+        "documentId": "cap-1229906",
+        "title": "Williams v. Kaiser — 323 U.S. 471",
+        "cosine": 0.6971158014587955,
+        "headingPath": [
+          "Williams v. Kaiser — 323 U.S. 471",
+          "Majority opinion 1 — Mr. Justice Douglas"
+        ],
+        "shardId": 0,
+        "lineStart": 32,
+        "lineEnd": 32
+      },
+      {
+        "chunkUid": "07542a206a2a1cf29efc039c79ffc04f",
+        "documentId": "cap-6159137",
+        "title": "Gryger v. Burke — 334 U.S. 728",
+        "cosine": 0.6965278250911902,
+        "headingPath": [
+          "Gryger v. Burke — 334 U.S. 728",
+          "Majority opinion 1 — Mr. Justice Jackson"
+        ],
+        "shardId": 0,
+        "lineStart": 55,
+        "lineEnd": 57
+      },
+      {
+        "chunkUid": "c6f3ae5b0422b4dbc4dabab4da104e57",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6959007054193339,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Majority opinion 1 — Mr. Justice Burton"
+        ],
+        "shardId": 0,
+        "lineStart": 255,
+        "lineEnd": 257
+      },
+      {
+        "chunkUid": "412e63fd7c6d3e7e17fe6bfec59b19f0",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6951219624822308,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Concurring-in-part-and-dissenting-in-part opinion 2 — Mr. Justice Douglas,"
+        ],
+        "shardId": 0,
+        "lineStart": 334,
+        "lineEnd": 334
+      },
+      {
+        "chunkUid": "108d32c57953b2760ce721246f9ca4c3",
+        "documentId": "cap-6164493",
+        "title": "McNeal v. Culver — 365 U.S. 109",
+        "cosine": 0.6946897470162205,
+        "headingPath": [
+          "McNeal v. Culver — 365 U.S. 109",
+          "Concurrence opinion 2 — Mr. Justice Douglas,"
+        ],
+        "shardId": 1,
+        "lineStart": 123,
+        "lineEnd": 137
+      },
+      {
+        "chunkUid": "d6cf41d7d38b3e7c30b322eda5e8642c",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6946578278489534,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Majority opinion 1 — Mr. Justice Burton"
+        ],
+        "shardId": 0,
+        "lineStart": 285,
+        "lineEnd": 291
+      },
+      {
+        "chunkUid": "2359372026ba23fdedce15cf7ceb5561",
+        "documentId": "cap-1765282",
+        "title": "Douglas v. California — 372 U.S. 353",
+        "cosine": 0.6943831061011665,
+        "headingPath": [
+          "Douglas v. California — 372 U.S. 353",
+          "Majority opinion 1 — Mr. Justice Douglas"
+        ],
+        "shardId": 1,
+        "lineStart": 40,
+        "lineEnd": 40
+      },
+      {
+        "chunkUid": "16563a6d44a90a63a836a04a152c4abb",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6902107698551841,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Concurring-in-part-and-dissenting-in-part opinion 2 — Mr. Justice Douglas,"
+        ],
+        "shardId": 0,
+        "lineStart": 350,
+        "lineEnd": 359
+      },
+      {
+        "chunkUid": "f417a7471115f22ca4a88dad92273c00",
+        "documentId": "cap-6182629",
+        "title": "Anders v. California — 386 U.S. 738",
+        "cosine": 0.6888407123963508,
+        "headingPath": [
+          "Anders v. California — 386 U.S. 738",
+          "Dissent opinion 2 — Mr. Justice Stewart,"
+        ],
+        "shardId": 1,
+        "lineStart": 81,
+        "lineEnd": 85
+      },
+      {
+        "chunkUid": "d2cc469ba0dcd018388720751f28cffe",
+        "documentId": "cap-1105068",
+        "title": "Griffin v. Illinois — 351 U.S. 12",
+        "cosine": 0.6884461815132559,
+        "headingPath": [
+          "Griffin v. Illinois — 351 U.S. 12",
+          "Dissent opinion 3 — Mr. Justice Harlan,"
+        ],
+        "shardId": 1,
+        "lineStart": 209,
+        "lineEnd": 211
+      },
+      {
+        "chunkUid": "29817cf99104b6739844164f41b9c26d",
+        "documentId": "cap-1765333",
+        "title": "Gideon v. Wainwright — 372 U.S. 335",
+        "cosine": 0.6881783614890731,
+        "headingPath": [
+          "Gideon v. Wainwright — 372 U.S. 335",
+          "Majority opinion 1 — Mr. Justice Black Mr. Justice Douglas."
+        ],
+        "shardId": 1,
+        "lineStart": 52,
+        "lineEnd": 52
+      },
+      {
+        "chunkUid": "1eaac400fbc8e48e0b432500e05a2e63",
+        "documentId": "cap-1767723",
+        "title": "Duncan v. Louisiana — 391 U.S. 145",
+        "cosine": 0.6878510948305395,
+        "headingPath": [
+          "Duncan v. Louisiana — 391 U.S. 145",
+          "Dissent opinion 3 — Mr. Justice Harlan,"
+        ],
+        "shardId": 2,
+        "lineStart": 343,
+        "lineEnd": 345
+      },
+      {
+        "chunkUid": "cdf29b0d7ad3b5697e1edaf02f3cca55",
+        "documentId": "cap-1765333",
+        "title": "Gideon v. Wainwright — 372 U.S. 335",
+        "cosine": 0.6877033584522027,
+        "headingPath": [
+          "Gideon v. Wainwright — 372 U.S. 335",
+          "Concurrence opinion 3 — Mr. Justice Harlan,"
+        ],
+        "shardId": 1,
+        "lineStart": 165,
+        "lineEnd": 167
+      },
+      {
+        "chunkUid": "3a6641ad84e9f4ef2949ac5cf6d54567",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6875106094952302,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Majority opinion 1 — Mr. Justice Burton"
+        ],
+        "shardId": 0,
+        "lineStart": 153,
+        "lineEnd": 155
+      },
+      {
+        "chunkUid": "ceec62aa8cd13d254b61d846b4b982bf",
+        "documentId": "cap-6170591",
+        "title": "Desist v. United States — 394 U.S. 244",
+        "cosine": 0.6868894712398596,
+        "headingPath": [
+          "Desist v. United States — 394 U.S. 244",
+          "Dissent opinion 3 — Mr. Justice Harlan,"
+        ],
+        "shardId": 2,
+        "lineStart": 246,
+        "lineEnd": 246
+      },
+      {
+        "chunkUid": "e4a8cbdc3f54d2ac88134a6be0562469",
+        "documentId": "cap-6158928",
+        "title": "Bute v. Illinois — 333 U.S. 640",
+        "cosine": 0.6854423507690564,
+        "headingPath": [
+          "Bute v. Illinois — 333 U.S. 640",
+          "Majority opinion 1 — Mr. Justice Burton"
+        ],
+        "shardId": 0,
+        "lineStart": 117,
+        "lineEnd": 123
+      },
+      {
+        "chunkUid": "560ecb4270a766322ad86b9080221005",
+        "documentId": "cap-1765333",
+        "title": "Gideon v. Wainwright — 372 U.S. 335",
+        "cosine": 0.6842907039273531,
+        "headingPath": [
+          "Gideon v. Wainwright — 372 U.S. 335",
+          "Majority opinion 1 — Mr. Justice Black Mr. Justice Douglas."
+        ],
+        "shardId": 1,
+        "lineStart": 28,
+        "lineEnd": 39
+      },
+      {
+        "chunkUid": "be415afe600ee45e9947c5b36d3e1461",
+        "documentId": "cap-1765333",
+        "title": "Gideon v. Wainwright — 372 U.S. 335",
+        "cosine": 0.6842317689158841,
+        "headingPath": [
+          "Gideon v. Wainwright — 372 U.S. 335",
+          "Majority opinion 1 — Mr. Justice Black Mr. Justice Douglas."
+        ],
+        "shardId": 1,
+        "lineStart": 52,
+        "lineEnd": 52
+      },
+      {
+        "chunkUid": "fa1a9fc925aecece943facbd7d16deb6",
+        "documentId": "cap-1229906",
+        "title": "Williams v. Kaiser — 323 U.S. 471",
+        "cosine": 0.6839188445289802,
+        "headingPath": [
+          "Williams v. Kaiser — 323 U.S. 471",
+          "Dissent opinion 2 — Mr. Justice Frankfurter,"
+        ],
+        "shardId": 0,
+        "lineStart": 80,
+        "lineEnd": 80
+      },
+      {
+        "chunkUid": "dcc4125f98247037abd976f98093eca4",
+        "documentId": "cap-6159734",
+        "title": "Uveges v. Pennsylvania — 335 U.S. 437",
+        "cosine": 0.6837778881127582,
+        "headingPath": [
+          "Uveges v. Pennsylvania — 335 U.S. 437",
+          "Majority opinion 1 — Mr. Justice Reed"
+        ],
+        "shardId": 0,
+        "lineStart": 32,
+        "lineEnd": 32
+      },
+      {
+        "chunkUid": "464f1c745622de54f0459718993464b6",
+        "documentId": "cap-1765282",
+        "title": "Douglas v. California — 372 U.S. 353",
+        "cosine": 0.6835831839251638,
+        "headingPath": [
+          "Douglas v. California — 372 U.S. 353",
+          "Dissent opinion 3 — Mr. Justice Harlan,"
+        ],
+        "shardId": 1,
+        "lineStart": 104,
+        "lineEnd": 104
+      },
+      {
+        "chunkUid": "4f68ae21a105b020d0a89d39cb94aa3e",
+        "documentId": "cap-368158",
+        "title": "Betts v. Brady — 316 U.S. 455",
+        "cosine": 0.683006291536891,
+        "headingPath": [
+          "Betts v. Brady — 316 U.S. 455",
+          "Majority opinion 1 — Mr. Justice Roberts"
+        ],
+        "shardId": 0,
+        "lineStart": 76,
+        "lineEnd": 76
+      }
+    ]
+  },
+  "revisedProbe": {
+    "query": "a Florida defendant charged with breaking into a poolroom was denied a court-appointed lawyer because the charge was not a capital offense",
+    "expectedDocumentIds": [
+      "cap-1765333"
+    ],
+    "chunkLimit": 20,
+    "rank": 1,
+    "hits": [
+      "cap-1765333",
+      "cap-6164493",
+      "cap-6166404",
+      "cap-11718478",
+      "cap-6161679",
+      "cap-6245445",
+      "cap-11335736",
+      "cap-3655894",
+      "cap-6143497",
+      "cap-11337320",
+      "cap-6167404",
+      "cap-11387382",
+      "cap-641185",
+      "cap-366657",
+      "cap-6163569",
+      "cap-362794",
+      "cap-1765282"
+    ]
+  },
+  "assessment": "The broad right-to-counsel query ranks Gideon 24th by chunk and 16th by distinct case; its original global-top-20 acceptance check failed. Related decisions and repeated chunk tails rank above it. The required smoke probe now describes case-specific facts without its name or citation. The global top-20 threshold is unchanged. This is a probe clarification, not an improvement to the search engine; the original failure remains a retrieval limitation. Original archive/version remain unpublished and unchanged. A new plan/version is required."
+}

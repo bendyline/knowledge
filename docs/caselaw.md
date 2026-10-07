@@ -33,6 +33,18 @@ collection configuration → measured, frozen package plan → .gezk parts
 
 ## Published pilots
 
+The first 300–399 build measured 1,033,287,052 bytes and passed integrity,
+all ten citation checks, and nine of ten semantic probes. The broad
+right-to-counsel query ranked Gideon 24th by chunk (16th by distinct case),
+outside the global top-20 acceptance limit. Its replacement smoke query
+describes the Florida poolroom burglary and denial of appointed counsel,
+without naming the case or its citation; that query ranks Gideon first.
+The [original failure and diagnostic](../collections/caselaw/us-300-399/retrieval-2026-10-07.json)
+remain recorded. This clarifies the probe and does not fix broad-query ranking.
+Publication uses a new plan and version, with the same case bodies and unchanged
+top-20 threshold. Repeated chunk tails are a separate search-quality follow-up.
+
+
 The next pilots are Utah (two parts) and U.S. Reports volumes 300–399
 (one part combining 100 source books and 61,926 records). Both target roughly
 1 GiB per archive, with a smaller final part when a complete state requires it.
