@@ -1,0 +1,122 @@
+{
+  "complete": true,
+  "verifiedAt": "2026-10-07T18:21:16.842Z",
+  "gildeCommit": "a6e562db7f3a630656250a467bdc216fe592b824",
+  "npmVersion": "0.1.92",
+  "npmPackageBytes": 18796417,
+  "npmIntegrity": "sha512-wvVBGDuv8B4Pv8QQDwCtmxY56GhEs+B2q4LGRhI4+Y9bsj3hT1G4sZi+M1zyePerbwLgbsqTKVimCx3XojS/UQ==",
+  "site": "https://gezelgilde.com/catalog/v1/content/0.1.92",
+  "catalogs": [
+    {
+      "id": "caselaw-us-347-349",
+      "version": "2026.10.5",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-us-347-349/versions/2026.10.5/manifest.json",
+      "sha256": "db08e80f8c6880791e5ace109a43c55f5f95083289f735188e0b9fdaafe41712",
+      "bytes": 30128630,
+      "documents": 2142
+    },
+    {
+      "id": "caselaw-alaska-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-alaska-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "d7566e0ef822769dd652029a47f0dd9c126a593e2fffcc1469f1e004f8b23a06",
+      "bytes": 1041433404,
+      "documents": 10749
+    },
+    {
+      "id": "caselaw-wyoming-part-0001",
+      "version": "2026.10.3",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-wyoming-part-0001/versions/2026.10.3/manifest.json",
+      "sha256": "2a3950c39e86c558c8f9ba6af930bed3faeef4b02c90e0b60422a3181be0a759",
+      "bytes": 1069210109,
+      "documents": 10931
+    },
+    {
+      "id": "caselaw-nevada-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-nevada-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "54125a78a84fd136fdc74b6af95c7fb148990f312757867f89105520fc76e479",
+      "bytes": 766348339,
+      "documents": 13707
+    },
+    {
+      "id": "caselaw-utah-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-utah-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "a20e5631af22cb336e2d381ffe7122b5f890e45b8a8a334beeca6fbc0df2a3ef",
+      "bytes": 1020134686,
+      "documents": 15254
+    },
+    {
+      "id": "caselaw-utah-part-0002",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-utah-part-0002/versions/2026.10.1/manifest.json",
+      "sha256": "8c1a4adfca5a235b6d9e9e7d54e0be7dec613d772fc5d2a395037573535e6aae",
+      "bytes": 729473439,
+      "documents": 7650
+    },
+    {
+      "id": "caselaw-us-300-399-part-0001",
+      "version": "2026.10.2",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-us-300-399-part-0001/versions/2026.10.2/manifest.json",
+      "sha256": "28fd2603b3cf26b445d0cd830da87316ce561b2f000ce1dc92fddaaad5680def",
+      "bytes": 1033287056,
+      "documents": 61926
+    },
+    {
+      "id": "caselaw-washington-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-washington-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "5b231618c96b58dbd3a5e2c08af168c4e5389c5917c0d5fabd6525503c82ed67",
+      "bytes": 976861117,
+      "documents": 20139
+    },
+    {
+      "id": "caselaw-washington-part-0002",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-washington-part-0002/versions/2026.10.1/manifest.json",
+      "sha256": "67ccebb661f9ef5364c6b5d6dada2d20e775208752ac26dc6ceb5798d3935b42",
+      "bytes": 1014748849,
+      "documents": 18778
+    },
+    {
+      "id": "caselaw-washington-part-0003",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-washington-part-0003/versions/2026.10.1/manifest.json",
+      "sha256": "bd877fffb8d6f0571ca1eec32f96b774945f61005ae9f56c29785d4bb31f705d",
+      "bytes": 966631618,
+      "documents": 28210
+    },
+    {
+      "id": "caselaw-washington-part-0004",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-washington-part-0004/versions/2026.10.1/manifest.json",
+      "sha256": "f0f30d2eda66f80e823421db3eae52f0c0b4cf97fb46105f3bf786cf26c6c013",
+      "bytes": 921147918,
+      "documents": 24936
+    },
+    {
+      "id": "caselaw-washington-part-0005",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.92/data/knowledge-catalogs/ca/caselaw-washington-part-0005/versions/2026.10.1/manifest.json",
+      "sha256": "42e89af25537adbd12392277196ec9575cc16765352ed842787a70002adb814f",
+      "bytes": 564116391,
+      "documents": 14114
+    }
+  ],
+  "collections": [
+    {
+      "id": "caselaw-washington",
+      "version": "2026.10.1",
+      "url": "https://huggingface.co/datasets/Bendyline/knowledge/resolve/e8cc0e24d48dddede8798630ee912ed91f722bd1/collections/caselaw-washington/releases/2026.10.1/collection.json",
+      "sha256": "16ae4ecc42071b8f5863f6c6950ab9a7e4e4c04ff12fbd64ca74a56aaaf4e258",
+      "cases": 106177
+    }
+  ],
+  "datasetCardVerified": true,
+  "datasetOverview": {
+    "revision": "9deec281a2a2c575a690950ae6235c88d4e8ef65",
+    "readmeSha256": "df949d7b073f49b5c097ed77a6d8f3d15b6f80272c7c193c49af1db88f27d42b",
+    "licenseSha256": "7cb87db7ec88d2f0072a31ca52894e1a1676bb3c67b40b79774b862b61d24729"
+  }
+}

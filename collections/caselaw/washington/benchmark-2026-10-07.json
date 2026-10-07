@@ -1,0 +1,1046 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-07-washington",
+  "derivedFrom": "2026-10-07-us-300-399",
+  "inventorySnapshot": "2026-10-06",
+  "metadataPolicy": "Reuses the pinned exhaustive national metadata inventory; no claim of refreshed upstream metadata.",
+  "collection": "caselaw-washington",
+  "version": "2026.10.1",
+  "sourceCommit": "c0e4066847df82238e2d02b4f75710b52a886eec",
+  "scopeNote": "Preserves CAP's Washington jurisdiction assignment: 41,045 Supreme Court records, 65,131 Court of Appeals records under four source court labels, and one historical Washington District Court record. Includes territorial-era records and upstream dates from 1854 through 2019. Coverage reflects the pinned historical archive, not every decision issued by those courts.",
+  "selection": {
+    "jurisdiction": "wash"
+  },
+  "cases": 106177,
+  "sourceVolumes": 629,
+  "dates": {
+    "first": "1854-12",
+    "last": "2019-09-05"
+  },
+  "normalizerName": "cap-html@9",
+  "normalizer": "9a7debaa2144ad3427ae0102ddbe1b10758cc38173c1dadf9c7d2e56234d6f40",
+  "corpusDigest": "fca8a580920fdaa8f84011aba3603661be03ddbde99d40f2999ce359a9956120",
+  "normalizedBytes": 1196673077,
+  "sourceAudit": {
+    "verified": true,
+    "textMatches": 106177,
+    "fragmentLinks": 891535,
+    "issues": 0
+  },
+  "missingSourceFootnotes": {
+    "verified": true,
+    "normalizer": "9a7debaa2144ad3427ae0102ddbe1b10758cc38173c1dadf9c7d2e56234d6f40",
+    "cases": 5,
+    "results": [
+      {
+        "id": 5207112,
+        "source": "https://static.case.law/wash/35/html/0696-01.html",
+        "markdownSha256": "35352638bb0eae95b59303482dbb4525ea6b09e709c24d5f59a54d3d368a353b",
+        "textMatches": true,
+        "fragmentLinks": 2,
+        "missing": [],
+        "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 1 source footnote references with absent note bodies retained as plain text; 3 source head-matter section boundaries retained"
+      },
+      {
+        "id": 5229525,
+        "source": "https://static.case.law/wash/39/html/0587-01.html",
+        "markdownSha256": "3d9270727ee3132f9563012a679176377b1dccd2893ef1eee083b7643fd77398",
+        "textMatches": true,
+        "fragmentLinks": 4,
+        "missing": [],
+        "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 1 source footnote references with absent note bodies retained as plain text; 4 source head-matter section boundaries retained"
+      },
+      {
+        "id": 5229653,
+        "source": "https://static.case.law/wash/39/html/0648-01.html",
+        "markdownSha256": "0c05b5fedd9222ea2366a6137221ad8fe5f319afe8229d74a238c456e03f28c4",
+        "textMatches": true,
+        "fragmentLinks": 25,
+        "missing": [],
+        "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 1 source footnote references with absent note bodies retained as plain text; 6 source head-matter section boundaries retained"
+      },
+      {
+        "id": 527703,
+        "source": "https://static.case.law/wash/59/html/0686-01.html",
+        "markdownSha256": "9751f995c1f5b452c051301926793001894fe0836f55cb3c4451947bb66f708c",
+        "textMatches": true,
+        "fragmentLinks": 4,
+        "missing": [],
+        "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 1 source footnote references with absent note bodies retained as plain text; 4 source head-matter section boundaries retained"
+      },
+      {
+        "id": 527890,
+        "source": "https://static.case.law/wash/59/html/0689-01.html",
+        "markdownSha256": "f7773663bb0ac776051ac0030b64d810d237cee28b7a3f318e07f4a3f52c51a9",
+        "textMatches": true,
+        "fragmentLinks": 5,
+        "missing": [],
+        "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 1 source footnote references with absent note bodies retained as plain text; 4 source head-matter section boundaries retained"
+      }
+    ]
+  },
+  "planning": {
+    "targetBytes": 1073741824,
+    "ceilingBytes": 1610612736,
+    "planDigest": "dbf4909f18dff9bccb6c7fc85f3a5d37fcf72171f8a7c8bece8826be3217086c",
+    "packing": {
+      "smallTailFraction": 0.1,
+      "mergedTargetTolerance": 0.05
+    }
+  },
+  "build": {
+    "stage": "build",
+    "version": "2026.10.1",
+    "snapshot": "2026-10-07-washington",
+    "sourceCommit": "c0e4066847df82238e2d02b4f75710b52a886eec",
+    "startedAt": "2026-10-07T14:20:57.979Z",
+    "parallelStartedAt": "2026-10-07T14:31:35.643Z",
+    "finishedAt": "2026-10-07T17:19:59.986Z",
+    "elapsedSeconds": 10742,
+    "parallelElapsedSeconds": 10104.3,
+    "concurrency": 3,
+    "partExitCodes": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "initialSerialAttempt": {
+      "startedAt": "2026-10-07T14:20:57.979Z",
+      "stoppedAt": "2026-10-07T14:31:34.8503522Z",
+      "reason": "Restart with two independent part builds; cached embedding vectors are retained."
+    },
+    "exitCode": 0,
+    "queueConcurrency": 2,
+    "extraWorkers": [
+      {
+        "catalogId": "caselaw-washington-part-0005",
+        "sourceCommit": "c0e4066847df82238e2d02b4f75710b52a886eec",
+        "createdAt": "2026-10-07T14:31:35.643Z",
+        "startedAt": "2026-10-07T14:47:39.4978979Z",
+        "maximumWorkers": 3,
+        "heapGiBPerWorker": 12,
+        "exitCode": 0,
+        "finishedAt": "2026-10-07T15:38:56.3009014Z"
+      },
+      {
+        "catalogId": "caselaw-washington-part-0004",
+        "sourceCommit": "c0e4066847df82238e2d02b4f75710b52a886eec",
+        "createdAt": "2026-10-07T14:31:35.643Z",
+        "startedAt": "2026-10-07T15:39:45.2795826Z",
+        "maximumWorkers": 3,
+        "heapGiBPerWorker": 12,
+        "exitCode": 0,
+        "finishedAt": "2026-10-07T16:55:23.5737107Z"
+      }
+    ],
+    "runtime": "dml",
+    "hardware": {
+      "gpu": "AMD Radeon AI PRO R9700",
+      "cpu": "AMD Ryzen 9 7950X3D"
+    },
+    "cacheConditions": "Existing source, model, and embedding caches retained; up to three part workers ran concurrently with a 12 GiB JavaScript heap cap per worker. Total elapsed time includes the initial serial attempt, restart, and final standard collection verification. This is not an uncached throughput benchmark."
+  },
+  "parts": [
+    {
+      "catalogId": "caselaw-washington-part-0001",
+      "file": "caselaw-washington-part-0001-2026.10.1.gezk",
+      "sha256": "5b231618c96b58dbd3a5e2c08af168c4e5389c5917c0d5fabd6525503c82ed67",
+      "bytes": 976861117,
+      "uncompressedBytes": 976859269,
+      "estimatedBytes": 1049824913,
+      "documents": 20139,
+      "chunks": 357368,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-washington-part-0001",
+        "catalogId": "caselaw-washington-part-0001",
+        "version": "2026.10.1",
+        "inputDigest": "3118111cf0f66b2be8e7bb05c2c2dcc057cb7825067f4663d3cbc0ec72937336",
+        "sha256": "5b231618c96b58dbd3a5e2c08af168c4e5389c5917c0d5fabd6525503c82ed67",
+        "archiveBytes": 976861117,
+        "counts": {
+          "documents": 20139,
+          "chunks": 357368,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "78 Wash. 438",
+            "expectedDocumentIds": [
+              "cap-596549"
+            ],
+            "hits": [
+              "cap-596549",
+              "cap-2431067",
+              "cap-529786",
+              "cap-691172",
+              "cap-5242027",
+              "cap-557230",
+              "cap-615423",
+              "cap-672116",
+              "cap-613146",
+              "cap-8531320"
+            ],
+            "passed": true
+          },
+          {
+            "query": "116 Wash. 56",
+            "expectedDocumentIds": [
+              "cap-1428979"
+            ],
+            "hits": [
+              "cap-1428979",
+              "cap-526255",
+              "cap-1429071",
+              "cap-639304",
+              "cap-1428956",
+              "cap-1429005",
+              "cap-1429008",
+              "cap-1429012",
+              "cap-1429026",
+              "cap-1429043"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "automobile collision on an unfenced, ungraded highway where a driver turned left to avoid an oncoming car after moving toward telegraph poles",
+            "expectedDocumentIds": [
+              "cap-596549"
+            ],
+            "hits": [
+              "cap-774371",
+              "cap-778172",
+              "cap-596549",
+              "cap-607853",
+              "cap-796473",
+              "cap-775780",
+              "cap-527765",
+              "cap-820230",
+              "cap-762392",
+              "cap-812009",
+              "cap-826064",
+              "cap-820325",
+              "cap-550965",
+              "cap-766377",
+              "cap-802245",
+              "cap-704381",
+              "cap-837058",
+              "cap-798744"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-596549",
+                "rank": 3
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "landowners sought to stop artificial river freshets from splash dams used to drive logs, after years of acquiescence and resulting erosion",
+            "expectedDocumentIds": [
+              "cap-1428979"
+            ],
+            "hits": [
+              "cap-1297899",
+              "cap-5208760",
+              "cap-532294",
+              "cap-1428979",
+              "cap-529848",
+              "cap-1295721",
+              "cap-618076",
+              "cap-535947",
+              "cap-591407",
+              "cap-295471",
+              "cap-782222",
+              "cap-594043"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-1428979",
+                "rank": 4
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "5b231618c96b58dbd3a5e2c08af168c4e5389c5917c0d5fabd6525503c82ed67",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "43c18bf0b9647cb2936fa013466ed22bfa496642",
+          "path": "catalogs/caselaw-washington-part-0001/releases/2026.10.1/caselaw-washington-part-0001-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-washington-part-0001-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0001-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-washington-part-0001-v2026.10.1/caselaw-washington-part-0001-2026.10.1.gezk"
+        }
+      }
+    },
+    {
+      "catalogId": "caselaw-washington-part-0002",
+      "file": "caselaw-washington-part-0002-2026.10.1.gezk",
+      "sha256": "67ccebb661f9ef5364c6b5d6dada2d20e775208752ac26dc6ceb5798d3935b42",
+      "bytes": 1014748849,
+      "uncompressedBytes": 1014747001,
+      "estimatedBytes": 1047933795,
+      "documents": 18778,
+      "chunks": 337434,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-washington-part-0002",
+        "catalogId": "caselaw-washington-part-0002",
+        "version": "2026.10.1",
+        "inputDigest": "10ede990db93c23b1025688ce3e833c540f5d84e1c2b8b8fd529ccc3c604506b",
+        "sha256": "67ccebb661f9ef5364c6b5d6dada2d20e775208752ac26dc6ceb5798d3935b42",
+        "archiveBytes": 1014748849,
+        "counts": {
+          "documents": 18778,
+          "chunks": 337434,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "8 Wash. 2d 622",
+            "expectedDocumentIds": [
+              "cap-5292316"
+            ],
+            "hits": [
+              "cap-475683",
+              "cap-5292316",
+              "cap-475688",
+              "cap-478465",
+              "cap-1859879",
+              "cap-469210",
+              "cap-852026",
+              "cap-1292834",
+              "cap-5042349",
+              "cap-2522644"
+            ],
+            "passed": true
+          },
+          {
+            "query": "78 Wash. 2d 894",
+            "expectedDocumentIds": [
+              "cap-1072567"
+            ],
+            "hits": [
+              "cap-1072567",
+              "cap-4975468",
+              "cap-1082919",
+              "cap-2418232",
+              "cap-1120439",
+              "cap-1843387",
+              "cap-475897",
+              "cap-1028309",
+              "cap-4971667",
+              "cap-996344"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "probate in Washington of an Idaho resident's will covering Whitman County farmland while an appeal of the Idaho probate order was pending",
+            "expectedDocumentIds": [
+              "cap-5292316"
+            ],
+            "hits": [
+              "cap-5292316",
+              "cap-869853",
+              "cap-2552009",
+              "cap-473848",
+              "cap-1849664",
+              "cap-859451",
+              "cap-2602499",
+              "cap-2426187",
+              "cap-1851264",
+              "cap-1125196",
+              "cap-852016",
+              "cap-848076",
+              "cap-1789563",
+              "cap-2551233"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-5292316",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "collateral estoppel after an acquittal for one death in a mailed bomb explosion was asserted against prosecution for another death in the same explosion",
+            "expectedDocumentIds": [
+              "cap-1072567"
+            ],
+            "hits": [
+              "cap-1113773",
+              "cap-1847479",
+              "cap-1072567",
+              "cap-469257",
+              "cap-1789550",
+              "cap-1082947",
+              "cap-1113759",
+              "cap-1127956",
+              "cap-5039958",
+              "cap-1088509",
+              "cap-2558426",
+              "cap-1095258",
+              "cap-471784",
+              "cap-1067143"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-1072567",
+                "rank": 3
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "67ccebb661f9ef5364c6b5d6dada2d20e775208752ac26dc6ceb5798d3935b42",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "9b3b618d97937b908bc65e348eafbe4b874e8633",
+          "path": "catalogs/caselaw-washington-part-0002/releases/2026.10.1/caselaw-washington-part-0002-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-washington-part-0002-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0002-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-washington-part-0002-v2026.10.1/caselaw-washington-part-0002-2026.10.1.gezk"
+        }
+      }
+    },
+    {
+      "catalogId": "caselaw-washington-part-0003",
+      "file": "caselaw-washington-part-0003-2026.10.1.gezk",
+      "sha256": "bd877fffb8d6f0571ca1eec32f96b774945f61005ae9f56c29785d4bb31f705d",
+      "bytes": 966631618,
+      "uncompressedBytes": 966629770,
+      "estimatedBytes": 1072409054,
+      "documents": 28210,
+      "chunks": 354418,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-washington-part-0003",
+        "catalogId": "caselaw-washington-part-0003",
+        "version": "2026.10.1",
+        "inputDigest": "9235e7de542db41aeef2a0a8a324a63e8d52cadf4e743362438dc7970fefa8d2",
+        "sha256": "bd877fffb8d6f0571ca1eec32f96b774945f61005ae9f56c29785d4bb31f705d",
+        "archiveBytes": 966631618,
+        "counts": {
+          "documents": 28210,
+          "chunks": 354418,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "101 Wash. 2d 490",
+            "expectedDocumentIds": [
+              "cap-1139589"
+            ],
+            "hits": [
+              "cap-1139589",
+              "cap-433060",
+              "cap-331080",
+              "cap-1368181",
+              "cap-1139537",
+              "cap-1139552",
+              "cap-1139559",
+              "cap-1139593",
+              "cap-1139539",
+              "cap-1139542"
+            ],
+            "passed": true
+          },
+          {
+            "query": "70 Wash. App. 225",
+            "expectedDocumentIds": [
+              "cap-1745339"
+            ],
+            "hits": [
+              "cap-1745339",
+              "cap-1803994",
+              "cap-1748631",
+              "cap-1779493",
+              "cap-591725",
+              "cap-1761977",
+              "cap-1145918",
+              "cap-1845917",
+              "cap-1192436",
+              "cap-1817082"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "Washington prisoners held in out-of-state penitentiaries sought personal appearances before the parole board before it denied good time credits for disciplinary violations",
+            "expectedDocumentIds": [
+              "cap-1139589"
+            ],
+            "hits": [
+              "cap-1139589",
+              "cap-1785041",
+              "cap-1169897",
+              "cap-518022",
+              "cap-1791787",
+              "cap-1736018",
+              "cap-1798575",
+              "cap-1741706",
+              "cap-1137186",
+              "cap-812771",
+              "cap-1365803",
+              "cap-1801020",
+              "cap-1703250",
+              "cap-1700849",
+              "cap-1791763",
+              "cap-1725371",
+              "cap-1169880"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-1139589",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "a retail sales associate was discharged between expiration of a collective bargaining agreement and the effective date of its successor, and claimed an employee handbook required good cause",
+            "expectedDocumentIds": [
+              "cap-1745339"
+            ],
+            "hits": [
+              "cap-1199187",
+              "cap-812817",
+              "cap-1833646",
+              "cap-1745339",
+              "cap-1845794",
+              "cap-1759955",
+              "cap-1804082",
+              "cap-8848542",
+              "cap-11979152",
+              "cap-1043636",
+              "cap-1725384",
+              "cap-1372142",
+              "cap-1373861",
+              "cap-1806207",
+              "cap-507094",
+              "cap-1175522"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-1745339",
+                "rank": 4
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "bd877fffb8d6f0571ca1eec32f96b774945f61005ae9f56c29785d4bb31f705d",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "c7628014dcca6657e7948358e8fa8a86bef68f39",
+          "path": "catalogs/caselaw-washington-part-0003/releases/2026.10.1/caselaw-washington-part-0003-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-washington-part-0003-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0003-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-washington-part-0003-v2026.10.1/caselaw-washington-part-0003-2026.10.1.gezk"
+        }
+      }
+    },
+    {
+      "catalogId": "caselaw-washington-part-0004",
+      "file": "caselaw-washington-part-0004-2026.10.1.gezk",
+      "sha256": "f0f30d2eda66f80e823421db3eae52f0c0b4cf97fb46105f3bf786cf26c6c013",
+      "bytes": 921147918,
+      "uncompressedBytes": 921146070,
+      "estimatedBytes": 1031472422,
+      "documents": 24936,
+      "chunks": 344643,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-washington-part-0004",
+        "catalogId": "caselaw-washington-part-0004",
+        "version": "2026.10.1",
+        "inputDigest": "034473ff76bc80e89258dc119273cb1c4d053e7db7fcac30044cd5e8ee98e2da",
+        "sha256": "f0f30d2eda66f80e823421db3eae52f0c0b4cf97fb46105f3bf786cf26c6c013",
+        "archiveBytes": 921147918,
+        "counts": {
+          "documents": 24936,
+          "chunks": 344643,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "120 Wash. App. 839",
+            "expectedDocumentIds": [
+              "cap-1422693"
+            ],
+            "hits": [
+              "cap-1422693",
+              "cap-254683",
+              "cap-764515",
+              "cap-48705",
+              "cap-358834",
+              "cap-128594",
+              "cap-1422731",
+              "cap-1422921",
+              "cap-1422917",
+              "cap-1422637"
+            ],
+            "passed": true
+          },
+          {
+            "query": "138 Wash. App. 267",
+            "expectedDocumentIds": [
+              "cap-3726590"
+            ],
+            "hits": [
+              "cap-3726590",
+              "cap-425230",
+              "cap-184435",
+              "cap-1119546",
+              "cap-102657",
+              "cap-4000648",
+              "cap-3972762",
+              "cap-1352669",
+              "cap-3274364",
+              "cap-699899"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "a city passed ordinances dissolving a joint city-county housing authority and creating a replacement authority to undertake neighborhood rehabilitation",
+            "expectedDocumentIds": [
+              "cap-1422693"
+            ],
+            "hits": [
+              "cap-1422693",
+              "cap-1301286",
+              "cap-1352799",
+              "cap-4046316",
+              "cap-3593080",
+              "cap-1350247",
+              "cap-960838",
+              "cap-3085318",
+              "cap-3592607",
+              "cap-5738901",
+              "cap-3995473",
+              "cap-221985",
+              "cap-3836426",
+              "cap-1016154"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-1422693",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "a purchaser of structured personal injury settlement payments obtained a default judgment and sought garnishment despite antiassignment language in the qualified assignment",
+            "expectedDocumentIds": [
+              "cap-3726590"
+            ],
+            "hits": [
+              "cap-179362",
+              "cap-3976750",
+              "cap-452328",
+              "cap-4105247",
+              "cap-3726590",
+              "cap-4107091",
+              "cap-1071977",
+              "cap-1292550",
+              "cap-1352625"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-3726590",
+                "rank": 8
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "f0f30d2eda66f80e823421db3eae52f0c0b4cf97fb46105f3bf786cf26c6c013",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "ee318cbea19f8910182e5d8ce41b065ea5535945",
+          "path": "catalogs/caselaw-washington-part-0004/releases/2026.10.1/caselaw-washington-part-0004-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-washington-part-0004-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0004-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-washington-part-0004-v2026.10.1/caselaw-washington-part-0004-2026.10.1.gezk"
+        }
+      }
+    },
+    {
+      "catalogId": "caselaw-washington-part-0005",
+      "file": "caselaw-washington-part-0005-2026.10.1.gezk",
+      "sha256": "42e89af25537adbd12392277196ec9575cc16765352ed842787a70002adb814f",
+      "bytes": 564116391,
+      "uncompressedBytes": 564114543,
+      "estimatedBytes": 627259603,
+      "documents": 14114,
+      "chunks": 208727,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-washington-part-0005",
+        "catalogId": "caselaw-washington-part-0005",
+        "version": "2026.10.1",
+        "inputDigest": "e66c2ff91beb617debde6deb43c58b47829389746c98b5ab350dffa80933cd84",
+        "sha256": "42e89af25537adbd12392277196ec9575cc16765352ed842787a70002adb814f",
+        "archiveBytes": 564116391,
+        "counts": {
+          "documents": 14114,
+          "chunks": 208727,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "175 Wash. 2d 68",
+            "expectedDocumentIds": [
+              "cap-4024357"
+            ],
+            "hits": [
+              "cap-4024357",
+              "cap-4241853",
+              "cap-4131268",
+              "cap-4024102",
+              "cap-4024116",
+              "cap-4024269",
+              "cap-4024049",
+              "cap-4024087",
+              "cap-4024141",
+              "cap-4024233"
+            ],
+            "passed": true
+          },
+          {
+            "query": "194 Wash. App. 470",
+            "expectedDocumentIds": [
+              "cap-12451651"
+            ],
+            "hits": [
+              "cap-12451651",
+              "cap-4022183",
+              "cap-4104352",
+              "cap-12566507",
+              "cap-12451649",
+              "cap-12451875",
+              "cap-12451715",
+              "cap-12451740",
+              "cap-12451628",
+              "cap-12451637"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "quiet title based on ten years of adverse possession completed while land was privately owned before it was dedicated to a city for a roadway project",
+            "expectedDocumentIds": [
+              "cap-4024357"
+            ],
+            "hits": [
+              "cap-4024357",
+              "cap-4024611",
+              "cap-6780045",
+              "cap-4271008",
+              "cap-4270755",
+              "cap-12456077",
+              "cap-4306431",
+              "cap-4075935",
+              "cap-4056105",
+              "cap-4026880",
+              "cap-4010499",
+              "cap-12452165",
+              "cap-12569979"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-4024357",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "an online payment was applied to only one of three court-debt accounts, leading to a pay-or-appear arrest warrant and discovery of methamphetamine",
+            "expectedDocumentIds": [
+              "cap-12451651"
+            ],
+            "hits": [
+              "cap-12451651",
+              "cap-12453194",
+              "cap-4319678",
+              "cap-4015425",
+              "cap-12574095",
+              "cap-12454255",
+              "cap-4021906",
+              "cap-12461592",
+              "cap-4069954",
+              "cap-4321416",
+              "cap-12574096",
+              "cap-4033770",
+              "cap-12449923",
+              "cap-12569454"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-12451651",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "42e89af25537adbd12392277196ec9575cc16765352ed842787a70002adb814f",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "008a40f5d78997c6dca56e5e608c3402fbbef6f4",
+          "path": "catalogs/caselaw-washington-part-0005/releases/2026.10.1/caselaw-washington-part-0005-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-washington-part-0005-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0005-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-washington-part-0005-v2026.10.1/caselaw-washington-part-0005-2026.10.1.gezk"
+        }
+      }
+    }
+  ],
+  "collectionPublication": {
+    "schemaVersion": 1,
+    "collection": "caselaw-washington",
+    "version": "2026.10.1",
+    "sha256": "16ae4ecc42071b8f5863f6c6950ab9a7e4e4c04ff12fbd64ca74a56aaaf4e258",
+    "huggingface": {
+      "repo": "Bendyline/knowledge",
+      "revision": "e8cc0e24d48dddede8798630ee912ed91f722bd1",
+      "path": "collections/caselaw-washington/releases/2026.10.1/collection.json"
+    },
+    "github": {
+      "repository": "bendyline/knowledge",
+      "tag": "caselaw-washington-v2026.10.1",
+      "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-v2026.10.1",
+      "indexUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-washington-v2026.10.1/collection.json"
+    }
+  },
+  "cloudMirrorEvidence": [
+    {
+      "catalogId": "caselaw-washington-part-0001",
+      "version": "2026.10.1",
+      "sha256": "5b231618c96b58dbd3a5e2c08af168c4e5389c5917c0d5fabd6525503c82ed67",
+      "runId": 37659393972,
+      "workflowCommit": "14843f70c47a68ff84d5eb2da233f501fb9d38c1",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37659393972",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T17:40:04.813Z"
+    },
+    {
+      "catalogId": "caselaw-washington-part-0002",
+      "version": "2026.10.1",
+      "sha256": "67ccebb661f9ef5364c6b5d6dada2d20e775208752ac26dc6ceb5798d3935b42",
+      "runId": 37659684482,
+      "workflowCommit": "14843f70c47a68ff84d5eb2da233f501fb9d38c1",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37659684482",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T17:40:06.742Z"
+    },
+    {
+      "catalogId": "caselaw-washington-part-0003",
+      "version": "2026.10.1",
+      "sha256": "bd877fffb8d6f0571ca1eec32f96b774945f61005ae9f56c29785d4bb31f705d",
+      "runId": 37659976546,
+      "workflowCommit": "14843f70c47a68ff84d5eb2da233f501fb9d38c1",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37659976546",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T17:40:08.660Z"
+    },
+    {
+      "catalogId": "caselaw-washington-part-0004",
+      "version": "2026.10.1",
+      "sha256": "f0f30d2eda66f80e823421db3eae52f0c0b4cf97fb46105f3bf786cf26c6c013",
+      "runId": 37660263594,
+      "workflowCommit": "14843f70c47a68ff84d5eb2da233f501fb9d38c1",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37660263594",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T17:40:10.513Z"
+    },
+    {
+      "catalogId": "caselaw-washington-part-0005",
+      "version": "2026.10.1",
+      "sha256": "42e89af25537adbd12392277196ec9575cc16765352ed842787a70002adb814f",
+      "runId": 37660546119,
+      "workflowCommit": "14843f70c47a68ff84d5eb2da233f501fb9d38c1",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37660546119",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T17:40:11.931Z"
+    }
+  ],
+  "priorSourceAudit": {
+    "schemaVersion": 1,
+    "snapshot": "2026-10-07-washington",
+    "jurisdiction": "wash",
+    "corpusDigest": "c68c3df6eab527541b39c85ffd8edecddd5fd3ddeaca891b317b079d96e360ac",
+    "cases": 106177,
+    "checked": 106177,
+    "textMatches": 106175,
+    "fragmentLinks": 891535,
+    "issues": [
+      {
+        "id": 3085985,
+        "reporter": "wash-2d",
+        "volume": "158",
+        "error": "Normalized text differs from HTML after ignoring whitespace/generated headings"
+      },
+      {
+        "id": 12574325,
+        "reporter": "p3d",
+        "volume": "436",
+        "error": "Normalized text differs from HTML after ignoring whitespace/generated headings"
+      }
+    ],
+    "verified": false
+  },
+  "sourceFidelityRepairs": [
+    {
+      "id": 3085985,
+      "textMatches": true,
+      "fragmentLinks": 56,
+      "missing": [],
+      "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 1 source head-matter section boundaries retained; 1 literal syntax characters encoded as character references"
+    },
+    {
+      "id": 12574325,
+      "textMatches": true,
+      "fragmentLinks": 64,
+      "missing": [],
+      "transformation": "cap-html@9; squisq-formats@2.6.12+references@67377ac2a2c74514c12a11698ad17ffbc8703345927de81852a2d5f5e7d39971; html->markdown; images=omit; references rewritten; table padding and dividers condensed; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged; 8 source head-matter section boundaries retained; 23 literal syntax characters encoded as character references"
+    }
+  ],
+  "workflowReview": {
+    "sourceCommit": "c0e4066847df82238e2d02b4f75710b52a886eec",
+    "workflowCommit": "14843f70c47a68ff84d5eb2da233f501fb9d38c1",
+    "bootstrapUnchanged": true,
+    "changedFiles": 171
+  },
+  "datasetLicenseUpdates": [
+    {
+      "catalogId": "caselaw-washington-part-0001",
+      "parentCommit": "edfa0202dd0ec947fc8bc19c1c29c807d83d4ff9",
+      "previousSha256": "446cab6ca503505cc7ec7e82c45c8547da2038c4e0451ebcf5c5ce19658f59b1",
+      "resultSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "preservedExistingText": true,
+      "changed": true
+    },
+    {
+      "catalogId": "caselaw-washington-part-0002",
+      "parentCommit": "43c18bf0b9647cb2936fa013466ed22bfa496642",
+      "previousSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "resultSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "preservedExistingText": true,
+      "changed": false
+    },
+    {
+      "catalogId": "caselaw-washington-part-0003",
+      "parentCommit": "9b3b618d97937b908bc65e348eafbe4b874e8633",
+      "previousSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "resultSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "preservedExistingText": true,
+      "changed": false
+    },
+    {
+      "catalogId": "caselaw-washington-part-0004",
+      "parentCommit": "c7628014dcca6657e7948358e8fa8a86bef68f39",
+      "previousSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "resultSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "preservedExistingText": true,
+      "changed": false
+    },
+    {
+      "catalogId": "caselaw-washington-part-0005",
+      "parentCommit": "ee318cbea19f8910182e5d8ce41b065ea5535945",
+      "previousSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "resultSha256": "8ffef822ba185cb6b71622e70096f8b43f9ccac7fecd16f4b037a6a591875bd5",
+      "preservedExistingText": true,
+      "changed": false
+    }
+  ]
+}
