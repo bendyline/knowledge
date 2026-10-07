@@ -30,21 +30,31 @@ export function mirrorRelativePath(prefix, path) {
   return relative;
 }
 
-export async function restorePublishedRelease(root, env = process.env) {
-  const expected = mirrorCoordinates(env);
-  const base = `https://huggingface.co/datasets/Bendyline/knowledge/resolve/${expected.revision}`;
-  const release = await getJson(`${base}/${expected.prefix}/release.json`, { maxBytes: 5000000 });
-  checkMirrorRelease(release, expected);
+export async function mirrorRootFiles(release, expected, listing, base) {
   const files = []; let total = 0;
-  for await (const file of listFiles({ repo: { type: 'dataset', name: 'Bendyline/knowledge' }, path: expected.prefix, revision: expected.revision, recursive: true })) {
+  for await (const file of listing) {
     if (file.type !== 'file') continue;
     const path = mirrorRelativePath(expected.prefix, file.path);
+    if (path.includes('/')) throw Error('Unexpected nested mirror file');
     if (!Number.isSafeInteger(file.size) || file.size < 0) throw Error('Invalid mirror file size');
     total += file.size;
     files.push({ path, size: file.size, url: `${base}/${file.path}` });
     if (files.length > 200 || total > release.archiveBytes + 50 * 1024 ** 2) throw Error('Mirror release exceeds its file budget');
   }
   for (const required of [release.archive, 'release.json', 'verification.json', 'SHA256SUMS']) if (!files.some(f => f.path === required)) throw Error(`Missing mirror file: ${required}`);
+  return { files, total };
+}
+
+export async function restorePublishedRelease(root, env = process.env) {
+  const expected = mirrorCoordinates(env);
+  const base = `https://huggingface.co/datasets/Bendyline/knowledge/resolve/${expected.revision}`;
+  const release = await getJson(`${base}/${expected.prefix}/release.json`, { maxBytes: 5000000 });
+  checkMirrorRelease(release, expected);
+  // GitHub publication uses only root release files. LICENSES is already
+  // embedded in the hash-verified .gezk; downloading its duplicate HF directory
+  // adds no publication input. Keep the existing 50 MiB sidecar/200-file limits.
+  const listing = listFiles({ repo: { type: 'dataset', name: 'Bendyline/knowledge' }, path: expected.prefix, revision: expected.revision, recursive: false });
+  const { files, total } = await mirrorRootFiles(release, expected, listing, base);
   const directory = inside(resolve(root, '.work/releases'), `${expected.id}/${expected.version}`);
   for (const file of files) {
     const output = inside(directory, file.path);
