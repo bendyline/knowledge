@@ -1,0 +1,72 @@
+name: Mirror verified release from Hugging Face
+on:
+  workflow_dispatch:
+    inputs:
+      catalog_id:
+        description: Exact catalog ID
+        required: true
+        type: string
+      version:
+        description: Immutable release version
+        required: true
+        type: string
+      hf_revision:
+        description: Exact Hugging Face commit (40 hex characters)
+        required: true
+        type: string
+      source_commit:
+        description: Exact knowledge build commit (40 hex characters)
+        required: true
+        type: string
+      archive_sha256:
+        description: Verified archive SHA-256
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: knowledge-publish
+  cancel-in-progress: false
+jobs:
+  mirror:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: knowledge-publishing
+    permissions:
+      contents: write
+    env:
+      CATALOG_ID: ${{ inputs.catalog_id }}
+      CATALOG_VERSION: ${{ inputs.version }}
+      HF_REVISION: ${{ inputs.hf_revision }}
+      SOURCE_COMMIT: ${{ inputs.source_commit }}
+      ARCHIVE_SHA256: ${{ inputs.archive_sha256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Restore and hash-check the immutable release
+        run: node scripts/restore-published-release.mjs
+      - name: Use the exact build source and dependencies
+        shell: bash
+        run: |
+          git fetch --depth=1 origin "$SOURCE_COMMIT"
+          git checkout --detach "$SOURCE_COMMIT"
+          npm ci --ignore-scripts
+      - name: Verify and mirror through the pinned publisher
+        run: node .work/mirror-publish.mjs
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: mirror-publication-receipt
+          path: .work/releases/**/published.json
+          include-hidden-files: true
+          retention-days: 30
