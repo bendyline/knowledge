@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "id": "caselaw-washington",
+  "name": "Washington caselaw — Caselaw Access Project",
+  "jurisdiction": "wash",
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeEstimate": "wyoming-bge-v1",
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "scopeNote": "Preserves CAP's Washington jurisdiction assignment: 41,045 Supreme Court records, 65,131 Court of Appeals records under four source court labels, and one historical Washington District Court record. Includes territorial-era records and upstream dates from 1854 through 2019. Coverage reflects the pinned historical archive, not every decision issued by those courts.",
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "reference",
+      "tags": [
+        "law",
+        "caselaw",
+        "washington",
+        "historical"
+      ]
+    }
+  },
+  "queries": [
+    {
+      "query": "78 Wash. 438",
+      "expectedDocumentIds": [
+        "cap-596549"
+      ]
+    },
+    {
+      "query": "116 Wash. 56",
+      "expectedDocumentIds": [
+        "cap-1428979"
+      ]
+    },
+    {
+      "query": "8 Wash. 2d 622",
+      "expectedDocumentIds": [
+        "cap-5292316"
+      ]
+    },
+    {
+      "query": "78 Wash. 2d 894",
+      "expectedDocumentIds": [
+        "cap-1072567"
+      ]
+    },
+    {
+      "query": "101 Wash. 2d 490",
+      "expectedDocumentIds": [
+        "cap-1139589"
+      ]
+    },
+    {
+      "query": "70 Wash. App. 225",
+      "expectedDocumentIds": [
+        "cap-1745339"
+      ]
+    },
+    {
+      "query": "120 Wash. App. 839",
+      "expectedDocumentIds": [
+        "cap-1422693"
+      ]
+    },
+    {
+      "query": "138 Wash. App. 267",
+      "expectedDocumentIds": [
+        "cap-3726590"
+      ]
+    },
+    {
+      "query": "175 Wash. 2d 68",
+      "expectedDocumentIds": [
+        "cap-4024357"
+      ]
+    },
+    {
+      "query": "194 Wash. App. 470",
+      "expectedDocumentIds": [
+        "cap-12451651"
+      ]
+    }
+  ],
+  "semanticQueries": [
+    {
+      "query": "automobile collision on an unfenced, ungraded highway where a driver turned left to avoid an oncoming car after moving toward telegraph poles",
+      "expectedDocumentIds": [
+        "cap-596549"
+      ]
+    },
+    {
+      "query": "landowners sought to stop artificial river freshets from splash dams used to drive logs, after years of acquiescence and resulting erosion",
+      "expectedDocumentIds": [
+        "cap-1428979"
+      ]
+    },
+    {
+      "query": "probate in Washington of an Idaho resident's will covering Whitman County farmland while an appeal of the Idaho probate order was pending",
+      "expectedDocumentIds": [
+        "cap-5292316"
+      ]
+    },
+    {
+      "query": "collateral estoppel after an acquittal for one death in a mailed bomb explosion was asserted against prosecution for another death in the same explosion",
+      "expectedDocumentIds": [
+        "cap-1072567"
+      ]
+    },
+    {
+      "query": "Washington prisoners held in out-of-state penitentiaries sought personal appearances before the parole board before it denied good time credits for disciplinary violations",
+      "expectedDocumentIds": [
+        "cap-1139589"
+      ]
+    },
+    {
+      "query": "a retail sales associate was discharged between expiration of a collective bargaining agreement and the effective date of its successor, and claimed an employee handbook required good cause",
+      "expectedDocumentIds": [
+        "cap-1745339"
+      ]
+    },
+    {
+      "query": "a city passed ordinances dissolving a joint city-county housing authority and creating a replacement authority to undertake neighborhood rehabilitation",
+      "expectedDocumentIds": [
+        "cap-1422693"
+      ]
+    },
+    {
+      "query": "a purchaser of structured personal injury settlement payments obtained a default judgment and sought garnishment despite antiassignment language in the qualified assignment",
+      "expectedDocumentIds": [
+        "cap-3726590"
+      ]
+    },
+    {
+      "query": "quiet title based on ten years of adverse possession completed while land was privately owned before it was dedicated to a city for a roadway project",
+      "expectedDocumentIds": [
+        "cap-4024357"
+      ]
+    },
+    {
+      "query": "an online payment was applied to only one of three court-debt accounts, leading to a pay-or-appear arrest warrant and discovery of methamphetamine",
+      "expectedDocumentIds": [
+        "cap-12451651"
+      ]
+    }
+  ]
+}
