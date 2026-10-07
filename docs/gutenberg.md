@@ -129,7 +129,11 @@ book has no `dc.creator`, typically because it lists only an editor, the
 creators come from the catalog feed.
 
 Paths are `books/pg<ebook>/<NNN>.md` with a `_topic.yaml` naming the book and
-author. Books are ordered by title in the table of contents. Section numbers
+author. The table of contents is Root › Source books › book › sections. Books
+are ordered by title, and each section's front matter sets `order` to its
+position, so a book reads cover to cover in the table of contents. Gezel would
+otherwise sort sections by title. Guides sit beside the books under How-to
+guides › topic, ordered by title. Section numbers
 can change when PG revises an edition. Guide links are validated on every
 sync, so such a change stops the sync instead of breaking a citation.
 

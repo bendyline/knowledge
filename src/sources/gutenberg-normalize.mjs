@@ -417,7 +417,8 @@ export async function normalizeBook(html, { ebook, title: listedTitle, authors =
     if (image) throw new Error(`Section ${i + 1} still contains an image reference: …${result.markdown.slice(Math.max(0, image.index - 40), image.index + 60)}…`);
     const body = tidy(PG_REFERENCE.test(result.markdown) ? dropReferences(result.markdown, stats) : result.markdown, stats);
     const named = shortTitle(section, 160);
-    const front = { title: [book, label].some((t) => comparable(t) === comparable(named)) ? label : `${label}: ${named}`, book, authors: meta.creators, ebook, section: i + 1, sections: sections.length };
+    // Gezel sorts unordered documents by title; `order` keeps book sequence.
+    const front = { title: [book, label].some((t) => comparable(t) === comparable(named)) ? label : `${label}: ${named}`, order: i + 1, book, authors: meta.creators, ebook, section: i + 1, sections: sections.length };
     const markdown = `---\n${stringify(front)}---\n\n${body}`;
     const leftover = PG_REFERENCE.exec(markdown);
     if (leftover) throw new Error(`Section ${i + 1} still refers to Project Gutenberg after boilerplate removal: …${cleanText(markdown.slice(Math.max(0, leftover.index - 60), leftover.index + 40))}…`);

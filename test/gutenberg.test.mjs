@@ -36,6 +36,7 @@ test('Gutenberg books lose all PG license and trademark text and split into link
   const [first, second, third] = book.documents.map((d) => d.markdown);
   assert.match(first, /^---\ntitle: Camp Craft\n/);
   assert.match(first, /ebook: 101\n/);
+  assert.match(book.documents[2].markdown, /\norder: 3\n/);
   assert.match(first, /Sears, George Washington, 1821-1890/);
   assert.match(first, /Build the fire/);
   assert.match(first, /\]\(002\.md\)/);
