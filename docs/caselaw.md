@@ -33,9 +33,9 @@ collection configuration → measured, frozen package plan → .gezk parts
 
 ## Published pilots
 
-Seven archives are published on Hugging Face and GitHub, with complete download
-SHA-256 verification. The latest additions are all 22,904 Utah records in two
-parts and all 61,926 records from U.S. Reports volumes 300–399 in one part.
+Twelve archives are published on Hugging Face and GitHub, with complete download
+SHA-256 verification. The latest addition is the complete pinned Washington
+selection: 106,177 historical records in five chronological archives.
 
 | Collection | Version | Case records | Archive size | Release |
 | --- | --- | ---: | ---: | --- |
@@ -46,24 +46,47 @@ parts and all 61,926 records from U.S. Reports volumes 300–399 in one part.
 | Utah caselaw — Caselaw Access Project — 1861–1992 (part-0001) | 2026.10.1 | 15,254 | 972.88 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-part-0001-v2026.10.1) |
 | Utah caselaw — Caselaw Access Project — 1993–2019 (part-0002) | 2026.10.1 | 7,650 | 695.68 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-part-0002-v2026.10.1) |
 | U.S. Reports volumes 300–399 — Caselaw Access Project — 1910–1970 (part-0001) | 2026.10.2 | 61,926 | 985.42 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-300-399-part-0001-v2026.10.2) |
+| Washington caselaw — Caselaw Access Project — 1854–1930 (part-0001) | 2026.10.1 | 20,139 | 931.61 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0001-v2026.10.1) |
+| Washington caselaw — Caselaw Access Project — 1931–1978 (part-0002) | 2026.10.1 | 18,778 | 967.74 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0002-v2026.10.1) |
+| Washington caselaw — Caselaw Access Project — 1979–1997 (part-0003) | 2026.10.1 | 28,210 | 921.85 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0003-v2026.10.1) |
+| Washington caselaw — Caselaw Access Project — 1998–2010 (part-0004) | 2026.10.1 | 24,936 | 878.48 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0004-v2026.10.1) |
+| Washington caselaw — Caselaw Access Project — 2011–2019 (part-0005) | 2026.10.1 | 14,114 | 537.98 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-washington-part-0005-v2026.10.1) |
 
 Collection indexes for
 [Alaska](https://github.com/bendyline/knowledge/releases/download/caselaw-alaska-v2026.10.1/collection.json),
 [Wyoming](https://github.com/bendyline/knowledge/releases/download/caselaw-wyoming-v2026.10.3/collection.json),
 [Nevada](https://github.com/bendyline/knowledge/releases/download/caselaw-nevada-v2026.10.1/collection.json),
-[Utah](https://github.com/bendyline/knowledge/releases/download/caselaw-utah-v2026.10.1/collection.json), and
-[U.S. Reports 300–399](https://github.com/bendyline/knowledge/releases/download/caselaw-us-300-399-v2026.10.2/collection.json)
+[Utah](https://github.com/bendyline/knowledge/releases/download/caselaw-utah-v2026.10.1/collection.json),
+[U.S. Reports 300–399](https://github.com/bendyline/knowledge/releases/download/caselaw-us-300-399-v2026.10.2/collection.json), and
+[Washington](https://github.com/bendyline/knowledge/releases/download/caselaw-washington-v2026.10.1/collection.json)
 record exact case membership, checksums, and immutable download coordinates.
 The [dataset overview](https://huggingface.co/datasets/Bendyline/knowledge)
 links every published pilot. CAP bodies and generated Markdown remain outside Git.
 
-All seven catalogs are included in the verified `@bendyline/gilde@0.1.89`
+All 12 catalogs are included in the verified `@bendyline/gilde@0.1.92`
 npm tarball and the live `gezelgilde.com` catalog snapshot from Gilde commit
-`e1353b62c8a8b5060d7bf82ada937b6dac16f12d`. Archive hashes, sizes, document/chunk counts, and
+`a6e562db7f3a630656250a467bdc216fe592b824`. Archive hashes, sizes, document/chunk counts, and
 immutable Hugging Face coordinates match on both discovery surfaces.
-The [publication verification record](../collections/caselaw/publication-2026-10-07-wave-3.json)
-also checks both new collection indexes and the dataset overview. Earlier
-publication evidence remains in the [wave-2 record](../collections/caselaw/publication-2026-10-06-wave-2.json).
+The [Washington publication verification](../collections/caselaw/publication-2026-10-07-washington.json)
+also checks the complete collection index and dataset overview. Earlier evidence
+remains in the [wave-3 record](../collections/caselaw/publication-2026-10-07-wave-3.json)
+and [wave-2 record](../collections/caselaw/publication-2026-10-06-wave-2.json).
+
+Washington combines 629 source books into five archives totaling
+4,443,505,893 bytes. It preserves CAP's 1854–2019
+jurisdiction selection, including territorial records, four Court of Appeals
+labels, and one historical district court record. All 106,177 normalized case
+texts match their source HTML, and 891,535 page/footnote links resolve.
+All ten citation probes pass, and all ten configured semantic probes pass within
+the global top 20 chunks. These are smoke tests, not a broad retrieval evaluation.
+The `cap-html@9` normalizer records five missing-note references, including
+four cases with an absent note 2 alongside a valid note 1; no source text is
+invented or removed. DirectML builds with up to three concurrent part workers
+took 10,742 seconds
+including the initial serial attempt, restart, and final collection verification,
+with existing caches retained. Exact membership, measured sizes, retrieval
+results, and both-host publication evidence are in the
+[Washington benchmark](../collections/caselaw/washington/benchmark-2026-10-07.json).
 
 U.S. Reports 300–399 combines 100 books into 1,033,287,056 bytes,
 near the 1 GiB target. Its first sizing build, volumes 300–385, measured only
@@ -444,12 +467,13 @@ not alter them. The `2026-10-06-wave-2` planning snapshot is a SQLite backup of 
 pinned national inventory, with a separate derivation record and new plan paths.
 It reuses the source objects and does not claim a newly acquired metadata view.
 
-## Utah measured preview
+## Historical Utah measured preview
 
 Utah is ingested and audited with `cap-html@7`: all 22,904 case texts match the
 source HTML, and 354,806 internal links resolve. Regeneration from cached ZIPs
 took 202.8 seconds, the stored-corpus audit 243.0 seconds, and token measurement
-147.9 seconds. No Utah archive or embedding index has been built or published.
+147.9 seconds. This was the pre-build measurement; the completed Utah releases
+and their verification are recorded in [Published pilots](#published-pilots).
 
 | Proposed archive | Decision dates | Cases | Estimated bytes | Measured chunks |
 | --- | --- | ---: | ---: | ---: |
