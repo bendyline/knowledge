@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "status": "measured-preview-not-built",
+  "collection": "caselaw-utah",
+  "snapshot": "2026-10-06-wave-2",
+  "derivedFrom": "2026-10-06",
+  "normalizerName": "cap-html@7",
+  "normalizer": "f3dc3af1cf9fd203f19346a9f31dd9207738d6ccb986dc3cbe56b24e0c873fca",
+  "normalizerSourceSha256": "5cd4d29f2a3557c34ac528e67a0657e6654cd2a25f5a0b9b62853227750906ad",
+  "corpusDigest": "220a40d5509e78e71d75df21386dfd0aa80f4c31df158cf260b4c68525c032a0",
+  "inventoryDigest": "547cead38e82234a7d04a4ad6b18b0e4eac8f6c67144b21a2e5e55cd578d8eae",
+  "membershipDigest": "86b8412e81eb9390f47e458fe06b359ac34f2bf4561e8dfe9e68f43d581fcc54",
+  "planDigest": "6017cf95c7d65b6d8ab9717f107d8650c359273f942df774e6c2c6f95b8d2205",
+  "cases": 22904,
+  "normalizedBytes": 508952191,
+  "roots": [
+    {
+      "name": "ReportersMetadata",
+      "url": "https://static.case.law/ReportersMetadata.json",
+      "sha256": "fb40c4837c795785076350939afd8b8cc135fe4a6e7b8302967460d9e821f6e5",
+      "bytes": 146015
+    },
+    {
+      "name": "VolumesMetadata",
+      "url": "https://static.case.law/VolumesMetadata.json",
+      "sha256": "df5da71c76b6d75b59cfbb07387c71fb255e7a9f8d095c8a676559527532204d",
+      "bytes": 30302826
+    },
+    {
+      "name": "JurisdictionsMetadata",
+      "url": "https://static.case.law/JurisdictionsMetadata.json",
+      "sha256": "1b3e25514142b552aa2fd69b78c9322e6eeaa43fb67c3efbab90edd639dc97bc",
+      "bytes": 136880
+    }
+  ],
+  "sourceAudit": {
+    "verified": true,
+    "checked": 22904,
+    "textMatches": 22904,
+    "fragmentLinks": 354806,
+    "issues": 0
+  },
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "estimate": "0.60 × (2 × normalized bytes + 3072 × measured token chunks + source metadata bytes + 4096 per case); actual build ceiling enforced",
+  "timings": {
+    "ingest": {
+      "exitCode": 0,
+      "elapsedSeconds": 202.8
+    },
+    "audit": {
+      "exitCode": 0,
+      "elapsedSeconds": 243
+    },
+    "plan": {
+      "exitCode": 0,
+      "elapsedSeconds": 147.9
+    }
+  },
+  "cacheConditions": "Cached source ZIPs and model retained. No embeddings or archives built. Uses the exact adopted converter in an isolated source copy while release publications held their original checkout.",
+  "parts": [
+    {
+      "catalogId": "caselaw-utah-part-0001",
+      "cases": 15254,
+      "firstDecisionDate": "1861-01",
+      "lastDecisionDate": "1992-12-31",
+      "chunks": 353233,
+      "estimatedBytes": 1069408251
+    },
+    {
+      "catalogId": "caselaw-utah-part-0002",
+      "cases": 7650,
+      "firstDecisionDate": "1993-01-07",
+      "lastDecisionDate": "2019-08-08",
+      "chunks": 253859,
+      "estimatedBytes": 769988778
+    }
+  ]
+}

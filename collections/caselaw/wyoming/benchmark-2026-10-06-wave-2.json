@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-06-wave-2",
+  "derivedFrom": "2026-10-06",
+  "metadataPolicy": "Reuses the pinned exhaustive national metadata inventory; no claim of refreshed upstream metadata.",
+  "collection": "caselaw-wyoming",
+  "version": "2026.10.3",
+  "sourceCommit": "a5e2644d6d1d09dabb4c95dcf275dcd588ff3ff5",
+  "cases": 10931,
+  "sourceVolumes": 1184,
+  "dates": {
+    "first": "1870-05",
+    "last": "2019-08-28"
+  },
+  "normalizerName": "cap-html@6",
+  "normalizer": "e8dc3fb52335386db68c5890bdf3aec40760f49a439719a3a347bdeaddadc669",
+  "corpusDigest": "445613a065e51d328789e641603915475fb56e3b83ede334a9aeed8f823cf553",
+  "normalizedBytes": 317909368,
+  "sourceAudit": {
+    "verified": true,
+    "textMatches": 10931,
+    "fragmentLinks": 143500,
+    "issues": 0
+  },
+  "planning": {
+    "targetBytes": 1073741824,
+    "ceilingBytes": 1610612736,
+    "planDigest": "65557257a7f5fece6dc87beaafc367817c181f195e495c962c2cea9b0f64a7b5",
+    "packing": {
+      "smallTailFraction": 0.1,
+      "mergedTargetTolerance": 0.05
+    }
+  },
+  "build": {
+    "state": "wyoming",
+    "version": "2026.10.3",
+    "sourceCommit": "a5e2644d6d1d09dabb4c95dcf275dcd588ff3ff5",
+    "startedAt": "2026-10-07T01:08:07.762Z",
+    "finishedAt": "2026-10-07T01:59:23.778Z",
+    "elapsedSeconds": 3076,
+    "exitCode": 0,
+    "runtime": "dml",
+    "hardware": {
+      "gpu": "AMD Radeon AI PRO R9700",
+      "cpu": "AMD Ryzen 9 7950X3D"
+    },
+    "cacheConditions": "Existing source, model, and embedding caches retained. Wyoming and Nevada builds ran concurrently with a 12 GiB JavaScript heap cap per process; this is not an uncached or isolated throughput benchmark."
+  },
+  "parts": [
+    {
+      "catalogId": "caselaw-wyoming-part-0001",
+      "file": "caselaw-wyoming-part-0001-2026.10.3.gezk",
+      "sha256": "2a3950c39e86c558c8f9ba6af930bed3faeef4b02c90e0b60422a3181be0a759",
+      "bytes": 1069210109,
+      "uncompressedBytes": 1069208261,
+      "estimatedBytes": 1103602381,
+      "documents": 10931,
+      "chunks": 357434,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "integrity": true,
+        "fullText": [
+          {
+            "query": "1 Wyo. 20",
+            "expectedDocumentIds": [
+              "cap-5270729"
+            ],
+            "passed": true
+          },
+          {
+            "query": "606 P.2d 310",
+            "expectedDocumentIds": [
+              "cap-10446561"
+            ],
+            "passed": true
+          },
+          {
+            "query": "907 P.2d 1238",
+            "expectedDocumentIds": [
+              "cap-10344371"
+            ],
+            "passed": true
+          },
+          {
+            "query": "2 P.3d 558",
+            "expectedDocumentIds": [
+              "cap-11211597"
+            ],
+            "passed": true
+          },
+          {
+            "query": "267 P.3d 1107",
+            "expectedDocumentIds": [
+              "cap-6986122"
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPolicy": "First 20 globally cosine-ranked chunks across every archive shard, before document deduplication",
+        "semantic": [
+          {
+            "query": "prosecutor allowed to add witness names to a misdemeanor indictment during trial",
+            "expectedDocumentIds": [
+              "cap-5270729"
+            ],
+            "ranks": [
+              {
+                "id": "cap-5270729",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          },
+          {
+            "query": "public school funding based on local property wealth violates equal educational opportunity",
+            "expectedDocumentIds": [
+              "cap-10446561"
+            ],
+            "ranks": [
+              {
+                "id": "cap-10446561",
+                "chunkRank": 7
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          },
+          {
+            "query": "prisoner reassigned from janitor to laundry has no property right in a prison job or wage",
+            "expectedDocumentIds": [
+              "cap-11211597"
+            ],
+            "ranks": [
+              {
+                "id": "cap-11211597",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          },
+          {
+            "query": "stalking conviction reversed because conflicting jury instructions used preponderance instead of reasonable doubt for a course of harassment",
+            "expectedDocumentIds": [
+              "cap-6986122"
+            ],
+            "ranks": [
+              {
+                "id": "cap-6986122",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          }
+        ]
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "2a3950c39e86c558c8f9ba6af930bed3faeef4b02c90e0b60422a3181be0a759",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "a1a7a3436a978cea4d8fef4269c51cd6a6650412",
+          "path": "catalogs/caselaw-wyoming-part-0001/releases/2026.10.3/caselaw-wyoming-part-0001-2026.10.3.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-wyoming-part-0001-v2026.10.3",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-wyoming-part-0001-v2026.10.3",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-wyoming-part-0001-v2026.10.3/caselaw-wyoming-part-0001-2026.10.3.gezk"
+        }
+      }
+    }
+  ],
+  "collectionPublication": {
+    "schemaVersion": 1,
+    "collection": "caselaw-wyoming",
+    "version": "2026.10.3",
+    "sha256": "59e004d52184687685b543b0f7d05938976efb0d30f5d5c6f8eb3e96cf93d831",
+    "huggingface": {
+      "repo": "Bendyline/knowledge",
+      "revision": "0cde42e6af8a3c7c726a0f18ab37919e27ef458e",
+      "path": "collections/caselaw-wyoming/releases/2026.10.3/collection.json"
+    },
+    "github": {
+      "repository": "bendyline/knowledge",
+      "tag": "caselaw-wyoming-v2026.10.3",
+      "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-wyoming-v2026.10.3",
+      "indexUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-wyoming-v2026.10.3/collection.json"
+    }
+  },
+  "cloudVerification": {
+    "runId": 37561826065,
+    "workflowCommit": "0ad83bf0b9dcbadcbf011edbd7413cc0a4408301",
+    "url": "https://github.com/bendyline/knowledge/actions/runs/37561826065",
+    "sha256": "2a3950c39e86c558c8f9ba6af930bed3faeef4b02c90e0b60422a3181be0a759",
+    "hostHashesMatch": true,
+    "verifiedAt": "2026-10-07T02:36:34.500Z"
+  }
+}

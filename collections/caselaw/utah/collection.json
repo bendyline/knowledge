@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "caselaw-utah",
+  "name": "Utah caselaw — Caselaw Access Project",
+  "jurisdiction": "utah",
+  "targetBytes": 1073741824,
+  "ceilingBytes": 1610612736,
+  "sizeEstimate": "wyoming-bge-v1",
+  "embeddingProfile": "bge-small-en-v1.5@1"
+}

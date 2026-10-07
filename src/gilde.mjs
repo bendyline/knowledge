@@ -32,20 +32,20 @@ export function gildeDefinitions(release, receipt, previous = {}) {
   return new Map([[`${prefix}/manifest.json`, identity], [`${prefix}/versions/${m.version}/manifest.json`, version]]);
 }
 
-function runNpm(cwd, args) {
+function runNpm(cwd, args, { capture = false } = {}) {
   const npm = [process.env.npm_execpath, resolve(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'), resolve(dirname(process.execPath), '../lib/node_modules/npm/bin/npm-cli.js')].find((path) => path && existsSync(path));
   if (!npm) throw new Error('Cannot locate npm; invoke through npm run gilde');
   const env = { ...process.env };
   for (const key of Object.keys(env)) if (/TOKEN|SECRET|PRIVATE_KEY/i.test(key)) delete env[key];
-  execFileSync(process.execPath, [npm, ...args], { cwd, env, stdio: 'inherit' });
+  return execFileSync(process.execPath, [npm, ...args], { cwd, env, stdio: capture ? ['ignore', 'pipe', 'inherit'] : 'inherit', encoding: 'utf8', maxBuffer: 20 * 1024 ** 2 });
 }
 
-export async function proposeGilde(root, directory, { apply = false } = {}) {
+export async function proposeGilde(root, directory, { apply = false, verifyPublishedArchive = verifyRemote } = {}) {
   const release = await readJson(resolve(directory, 'release.json'));
   const receipt = await readJson(resolve(directory, 'published.json'));
   gildeDefinitions(release, receipt);
   if (await hashFile(inside(directory, release.archive)) !== release.sha256) throw new Error('Local archive changed after publication');
-  await verifyRemote(`https://huggingface.co/datasets/${receipt.huggingface.repo}/resolve/${receipt.huggingface.revision}/${receipt.huggingface.path}`, release.sha256, release.archiveBytes);
+  await verifyPublishedArchive(`https://huggingface.co/datasets/${receipt.huggingface.repo}/resolve/${receipt.huggingface.revision}/${receipt.huggingface.path}`, release.sha256, release.archiveBytes);
   await mkdir(resolve(root, '.work/gilde'), { recursive: true });
   const work = await mkdtemp(resolve(root, '.work/gilde/pr-'));
   const env = { ...process.env, GIT_TERMINAL_PROMPT: '0' };
@@ -62,8 +62,10 @@ export async function proposeGilde(root, directory, { apply = false } = {}) {
   runNpm(work, ['ci', '--ignore-scripts', '--no-audit']);
   runNpm(work, ['run', 'format']);
   runNpm(work, ['run', 'build-index']);
-  runNpm(work, ['run', 'check']);
+  const validation = runNpm(work, ['run', 'check'], { capture: true });
+  process.stdout.write(validation);
+  const validationSummary = validation.trim().split(/\r?\n/).filter(Boolean).at(-1);
   const changes = await workingChanges(work, (path) => path.startsWith('data/knowledge-catalogs/'));
   if (!apply) return { applied: false, checkout: work, files: changes.map((c) => c.path) };
-  return proposeChanges({ repository, baseSha, branch: `codex/knowledge-${release.catalogId}-${release.version}`, title: `Update ${release.manifest.name} to ${release.version}`, body: `${release.manifest.description}\n\nPublished from [knowledge](${receipt.github.url}).\n\n- Version: ${release.version}\n- Documents: ${release.manifest.counts.documents}\n- SHA-256: ${release.sha256}\n- Hugging Face revision: ${receipt.huggingface.revision}\n- Validation: archive deep validation and Gilde npm run check passed.\n\nLicense: ${release.manifest.license.name}. License texts and provenance are included in the archive.`, changes });
+  return proposeChanges({ repository, baseSha, branch: `codex/knowledge-${release.catalogId}-${release.version}`, title: `Update ${release.manifest.name} to ${release.version}`, body: `${release.manifest.description}\n\nPublished from [knowledge](${receipt.github.url}).\n\n- Version: ${release.version}\n- Documents: ${release.manifest.counts.documents}\n- SHA-256: ${release.sha256}\n- Hugging Face revision: ${receipt.huggingface.revision}\n- Validation: archive deep validation and Gilde npm run check passed.\n- Gilde validation summary: ${validationSummary}\n\nLicense: ${release.manifest.license.name}. License texts and provenance are included in the archive.`, changes });
 }

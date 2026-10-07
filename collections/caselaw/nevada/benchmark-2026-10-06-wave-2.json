@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-06-wave-2",
+  "derivedFrom": "2026-10-06",
+  "metadataPolicy": "Reuses the pinned exhaustive national metadata inventory; no claim of refreshed upstream metadata.",
+  "collection": "caselaw-nevada",
+  "version": "2026.10.1",
+  "sourceCommit": "a5e2644d6d1d09dabb4c95dcf275dcd588ff3ff5",
+  "scopeNote": "Preserves CAP's Nevada jurisdiction assignment: 13,688 Supreme Court records, 18 Court of Appeals records, and one historical Eureka County District Court record. Coverage reflects this pinned historical archive, not every decision issued by those courts.",
+  "cases": 13707,
+  "sourceVolumes": 179,
+  "dates": {
+    "first": "1865",
+    "last": "2019-09-16"
+  },
+  "normalizerName": "cap-html@6",
+  "normalizer": "e8dc3fb52335386db68c5890bdf3aec40760f49a439719a3a347bdeaddadc669",
+  "corpusDigest": "599b30ead90256e3c30a9283ffb6af25c85e782c7cc5f163998942b689754ae9",
+  "normalizedBytes": 215047868,
+  "sourceAudit": {
+    "verified": true,
+    "textMatches": 13707,
+    "fragmentLinks": 162663,
+    "issues": 0
+  },
+  "planning": {
+    "targetBytes": 1073741824,
+    "ceilingBytes": 1610612736,
+    "planDigest": "03b87d0875643d9bbcc0fa7b2b0f050d3bdbc1cfc22d52de06f9f25868e3cf36",
+    "packing": {
+      "smallTailFraction": 0.1,
+      "mergedTargetTolerance": 0.05
+    }
+  },
+  "build": {
+    "state": "nevada",
+    "version": "2026.10.1",
+    "sourceCommit": "a5e2644d6d1d09dabb4c95dcf275dcd588ff3ff5",
+    "startedAt": "2026-10-07T01:08:16.312Z",
+    "finishedAt": "2026-10-07T02:04:52.744Z",
+    "elapsedSeconds": 3396.4,
+    "exitCode": 0,
+    "runtime": "dml",
+    "hardware": {
+      "gpu": "AMD Radeon AI PRO R9700",
+      "cpu": "AMD Ryzen 9 7950X3D"
+    },
+    "cacheConditions": "Existing source, model, and embedding caches retained. Wyoming and Nevada builds ran concurrently with a 12 GiB JavaScript heap cap per process; this is not an uncached or isolated throughput benchmark."
+  },
+  "parts": [
+    {
+      "catalogId": "caselaw-nevada-part-0001",
+      "file": "caselaw-nevada-part-0001-2026.10.1.gezk",
+      "sha256": "54125a78a84fd136fdc74b6af95c7fb148990f312757867f89105520fc76e479",
+      "bytes": 766348339,
+      "uncompressedBytes": 766346491,
+      "estimatedBytes": 815346217,
+      "documents": 13707,
+      "chunks": 270375,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "integrity": true,
+        "fullText": [
+          {
+            "query": "78 Nev. 384",
+            "expectedDocumentIds": [
+              "cap-4914212"
+            ],
+            "passed": true
+          },
+          {
+            "query": "106 Nev. 484",
+            "expectedDocumentIds": [
+              "cap-8557739"
+            ],
+            "passed": true
+          },
+          {
+            "query": "109 Nev. 966",
+            "expectedDocumentIds": [
+              "cap-8557397"
+            ],
+            "passed": true
+          },
+          {
+            "query": "124 Nev. 224",
+            "expectedDocumentIds": [
+              "cap-5726049"
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPolicy": "First 20 globally cosine-ranked chunks across every archive shard, before document deduplication",
+        "semantic": [
+          {
+            "query": "airplane damaged in a windstorm because the storage operator used inadequate tie-down chains",
+            "expectedDocumentIds": [
+              "cap-4914212"
+            ],
+            "ranks": [
+              {
+                "id": "cap-4914212",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          },
+          {
+            "query": "self-defense jury instructions wrongly required actual danger and a duty to retreat before using deadly force",
+            "expectedDocumentIds": [
+              "cap-8557739"
+            ],
+            "ranks": [
+              {
+                "id": "cap-8557739",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          },
+          {
+            "query": "new murder trial without involuntary antipsychotic medication unless medically necessary and less intrusive alternatives are inadequate",
+            "expectedDocumentIds": [
+              "cap-8557397"
+            ],
+            "ranks": [
+              {
+                "id": "cap-8557397",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          },
+          {
+            "query": "city announces it will condemn private land but delays the eminent domain action and the owner seeks precondemnation damages",
+            "expectedDocumentIds": [
+              "cap-5726049"
+            ],
+            "ranks": [
+              {
+                "id": "cap-5726049",
+                "chunkRank": 1
+              }
+            ],
+            "returnedChunks": 40,
+            "passed": true
+          }
+        ]
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "54125a78a84fd136fdc74b6af95c7fb148990f312757867f89105520fc76e479",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "29be2e59831494f20eeb71675ecc791b7e460e66",
+          "path": "catalogs/caselaw-nevada-part-0001/releases/2026.10.1/caselaw-nevada-part-0001-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-nevada-part-0001-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-nevada-part-0001-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-nevada-part-0001-v2026.10.1/caselaw-nevada-part-0001-2026.10.1.gezk"
+        }
+      }
+    }
+  ],
+  "collectionPublication": {
+    "schemaVersion": 1,
+    "collection": "caselaw-nevada",
+    "version": "2026.10.1",
+    "sha256": "cfc2c1c5b2e36c0638c2e9c42b3c026374270bad1e30adc5fd8840a514195315",
+    "huggingface": {
+      "repo": "Bendyline/knowledge",
+      "revision": "e40db523aa0231184da82b499b716553aed1b5f7",
+      "path": "collections/caselaw-nevada/releases/2026.10.1/collection.json"
+    },
+    "github": {
+      "repository": "bendyline/knowledge",
+      "tag": "caselaw-nevada-v2026.10.1",
+      "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-nevada-v2026.10.1",
+      "indexUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-nevada-v2026.10.1/collection.json"
+    }
+  },
+  "cloudVerification": {
+    "runId": 37563087102,
+    "workflowCommit": "0ad83bf0b9dcbadcbf011edbd7413cc0a4408301",
+    "url": "https://github.com/bendyline/knowledge/actions/runs/37563087102",
+    "sha256": "54125a78a84fd136fdc74b6af95c7fb148990f312757867f89105520fc76e479",
+    "hostHashesMatch": true,
+    "verifiedAt": "2026-10-07T02:45:19.161Z"
+  }
+}

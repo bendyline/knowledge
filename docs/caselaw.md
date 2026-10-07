@@ -37,12 +37,40 @@ collection configuration → measured, frozen package plan → .gezk parts
 | --- | --- | ---: | ---: | --- |
 | U.S. Reports 347–349 | 2026.10.5 | 2,142 | 28.73 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-347-349-v2026.10.5) |
 | Alaska CAP jurisdiction | 2026.10.1 | 10,749 | 993.19 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-alaska-part-0001-v2026.10.1) |
+| Wyoming CAP jurisdiction | 2026.10.3 | 10,931 | 1,019.68 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-wyoming-part-0001-v2026.10.3) |
+| Nevada CAP jurisdiction | 2026.10.1 | 13,707 | 730.85 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-nevada-part-0001-v2026.10.1) |
 
-Both archives are published on Hugging Face and GitHub with complete download
-SHA-256 verification. Alaska's [collection index](https://github.com/bendyline/knowledge/releases/download/caselaw-alaska-v2026.10.1/collection.json)
-records exact case membership, checksums, and immutable download coordinates.
+All four archives are published on Hugging Face and GitHub with complete download
+SHA-256 verification. The collection indexes for
+[Alaska](https://github.com/bendyline/knowledge/releases/download/caselaw-alaska-v2026.10.1/collection.json),
+[Wyoming](https://github.com/bendyline/knowledge/releases/download/caselaw-wyoming-v2026.10.3/collection.json), and
+[Nevada](https://github.com/bendyline/knowledge/releases/download/caselaw-nevada-v2026.10.1/collection.json)
+record exact case membership, checksums, and immutable download coordinates.
 The public [dataset overview](https://huggingface.co/datasets/Bendyline/knowledge)
-links both pilots. CAP bodies and generated Markdown remain outside Git.
+links every published pilot. CAP bodies and generated Markdown remain outside Git.
+
+Wyoming combines 1,184 selected source books into one 1,069,210,109-byte archive,
+covering 1870–2019. Nevada combines 179 books into one 766,348,339-byte archive,
+covering 1865–2019. Their full source audits pass: 10,931/10,931 and
+13,707/13,707 texts, with 143,500 and 162,663 resolved internal links.
+Nevada retains CAP's jurisdiction assignment, including one Eureka County
+District Court record alongside its appellate decisions.
+
+All nine citation probes and eight semantic probes for these two collections
+pass. Wyoming's original witness-name query now ranks the expected case first
+in the complete state archive. Its four expected cases rank 1, 7, 1, and 1 in
+the combined chunk results; Nevada's all rank first. Verification caps results
+at 20 globally ranked chunks before deduplicating documents. The search API's
+`finalK` is per shard, so it cannot alone impose this global limit. The existing
+Alaska archive was also checked against the explicit limit and passes at ranks
+2, 16, 2, and 1; see its [additional retrieval evidence](../collections/caselaw/alaska/retrieval-2026-10-06-global-top20.json).
+
+The two builds ran concurrently on the same DirectML GPU with 12 GiB JavaScript
+heap limits and retained caches. Build plus verification took 3,076.0 seconds
+for Wyoming and 3,396.4 seconds for Nevada. These are concurrent local timings,
+not isolated or uncached throughput measurements. Compact evidence is in the
+[Wyoming](../collections/caselaw/wyoming/benchmark-2026-10-06-wave-2.json) and
+[Nevada](../collections/caselaw/nevada/benchmark-2026-10-06-wave-2.json) release benchmarks.
 
 Alaska spans 1887–2019 and combines 1,096 selected source books into one archive
 near the 1 GiB target. It contains 349,739 chunks in two internal shards.
@@ -67,6 +95,55 @@ without range support fall back to full-file verification. Interrupted uploads
 resume from immutable host metadata and verified receipts; the collection index
 is published only after every part passes on both hosts.
 
+### Cloud mirroring and verified receipts
+
+`.github/workflows/mirror-release.yml` mirrors an already-uploaded immutable
+Hugging Face release to GitHub without a second large upload from the build
+machine. Supply its catalog ID, version, Hugging Face commit, build source
+commit, and archive SHA-256. The workflow restores the bounded release folder,
+hashes the archive, checks out the exact build commit, and invokes that commit's
+normal publisher. Its `mirror-publication-receipt` artifact contains the result.
+It uses the existing `knowledge-publishing` environment and credentials.
+
+The successful [Wyoming](https://github.com/bendyline/knowledge/actions/runs/37561826065)
+and [Nevada](https://github.com/bendyline/knowledge/actions/runs/37563087102)
+runs downloaded and hash-verified both hosts. A build machine with slow download
+bandwidth can reuse that evidence through `scripts/cloud-caselaw.mjs`. This
+requires a pinned successful workflow run, its downloaded receipt, an identical
+Hugging Face LFS object digest, and an identical GitHub asset digest and size.
+Local archive and configured retrieval checks still run. Other files still use
+the ordinary download verifier; a mismatch never silently falls back to trusting
+the receipt. Collection publication retains the ordinary source-commit and
+clean-checkout requirements.
+
+Supply one proof per part in a local JSON array. For example, the completed
+Wyoming release used:
+
+```json
+[
+  {
+    "catalogId": "caselaw-wyoming-part-0001",
+    "runId": 37561826065,
+    "workflowCommit": "0ad83bf0b9dcbadcbf011edbd7413cc0a4408301",
+    "receiptPath": ".work/caselaw/cloud-receipts/wyoming/caselaw-wyoming-part-0001/2026.10.3/published.json"
+  }
+]
+```
+
+For a new release built from a checkout containing this script:
+
+```sh
+node scripts/cloud-caselaw.mjs publish --collection collections/caselaw/wyoming/collection.json --version VERSION --proofs .work/mirror-proofs.json --apply
+node scripts/cloud-caselaw.mjs gilde --collection collections/caselaw/wyoming/collection.json --version VERSION --proofs .work/mirror-proofs.json --apply
+```
+
+Omit `--apply` to review the proposed action. Gilde registration uses the same
+verified archive evidence, then runs its normal formatter, index builder, and
+full validation loop before opening a PR. Merge registrations, publish Gilde
+once, wait until the npm version is publicly available, then deploy the site at
+that exact Gilde commit. Verify the actual npm tarball and public catalog
+manifests against the archive hashes before calling discovery complete.
+
 ## State collection workflow
 
 ```sh
@@ -78,7 +155,7 @@ npm run caselaw -- plan --preview --snapshot 2026-10-06 --collection collections
 
 The cached snapshot above already contains the original four-part frozen plan.
 The current configuration requests one approximately 1 GiB Wyoming archive.
-Reingest and audit with the current `cap-html@6` normalizer before previewing
+Reingest and audit with the current `cap-html@7` normalizer before previewing
 the cached corpus. Freeze and build under a new snapshot/plan identity after
 the updated source audit. Shared source objects can be reused.
 Do not overwrite the existing plan or reuse its release version.
@@ -121,6 +198,11 @@ with whitespace and link targets preserved. This avoids visible delimiter
 characters from the pinned Squisq importer; the source audit caught this defect
 in Nevada's *Tillema v. State*, CAP 11824094. The compatibility handling is
 covered by a regression test and recorded in per-case transformation evidence.
+The `cap-html@7` converter also preserves malformed OCR URL text as inline code
+so automatic linking cannot turn it into an invalid URL. When a source footnote
+marker has no target and the HTML contains no footnote bodies, its label remains
+plain text and the absence is recorded. It never invents a note body or guesses
+a corrected URL; other unresolved anchors still stop ingestion.
 
 Planning counts token chunks in the canonical Markdown using the pinned embedding
 profile. Binding local citation URLs for each part can slightly change the final
@@ -201,7 +283,7 @@ verified parts and their collection index. A persistent build workspace avoids
 repeated ZIP downloads and embedding inference; a fresh hosted runner has
 neither cache.
 
-On this machine, regenerating all 10,931 Wyoming Markdown documents from cached
+In the earlier benchmark, regenerating all 10,931 Wyoming Markdown documents from cached
 ZIPs took 151.4 seconds, and the full text/link audit took 183.4 seconds. The
 corpus contains 317,853,931 normalized bytes. All documents matched their source
 HTML text, and 143,500 page/footnote links had valid targets. These timings exclude
@@ -221,9 +303,9 @@ release evidence. They preserve source bytes if upstream changes. A compact
 report in Git records counts, pins, and build results; hashes alone cannot
 recover unavailable source data.
 
-## Wyoming build result
+## Historical Wyoming four-part benchmark
 
-The `2026.10.2` collection packages all 10,931 selected CAP records in four
+The unpublished `2026.10.2` collection packages all 10,931 selected CAP records in four
 date-labeled archives, with 338,394 chunks and no overlapping case IDs:
 
 | Decision years | Cases | Archive MiB | Chunks |
@@ -237,7 +319,8 @@ Total archive size is 1,056,484,052 bytes (1,007.54 MiB). All four archives pass
 deep integrity validation, and all five citation checks pass. Three of four
 semantic probes pass; the remaining probe is described below. The index reports
 `coverageComplete: true` and `complete: false`, and the build command exits 1
-after saving the full result. Publication remains disabled.
+after saving the full result. That historical version remains unpublished;
+the passing `2026.10.3` single-archive release is listed above.
 
 The final build/verification command took 643.9 seconds using existing source
 and embedding caches. Initial builds of the two middle parts each took about
@@ -255,24 +338,42 @@ Compact source pins and benchmark results are versioned in
 
 ## Retrieval quality finding
 
-The first Wyoming part's query about adding witness names to a misdemeanor
-indictment does not return the selected 1870 case, CAP 5270729, in the required
+The old first Wyoming part's query about adding witness names to a misdemeanor
+indictment did not return the selected 1870 case, CAP 5270729, in the required
 top 20 chunks. An exhaustive int8-vector scan ranks that case's best chunk 36th;
 expanding approximate retrieval to 200 gives the same rank. Its text is present
 and its exact citation lookup passes. The acceptance query and top-20 requirement
-are retained, so this remains a failed quality gate rather than a silently
-relaxed test. Source-text fidelity and complete case membership do not establish
-semantic-search quality. A broader legal retrieval evaluation and an explicit
-quality decision are needed before publication.
+were retained, so that release remained blocked rather than relaxing the test.
+Source-text fidelity and complete case membership do not establish
+semantic-search quality. The later release passes this same query and limit;
+a broader legal retrieval evaluation remains future work.
 
-The next build uses `cap-html@6`, which retains source-labeled headnote and
+The published wave-2 builds use `cap-html@6`, which retains source-labeled headnote and
 summary boundaries instead of merging them into one search chunk. Against the
 old first-part index, the original witness-name query ranks the new headnote
-chunk first. This is a diagnostic comparison, not a passing collection result:
-the complete rebuilt collection must pass the unchanged top-20 gate before it
-can publish. The `2026-10-06-wave-2` planning snapshot is a SQLite backup of the
+chunk first. The complete rebuilt Wyoming archive also passes the unchanged
+query at global chunk rank one. Both releases were built from commit
+`a5e2644d6d1d09dabb4c95dcf275dcd588ff3ff5`; the later `cap-html@7` Utah work does
+not alter them. The `2026-10-06-wave-2` planning snapshot is a SQLite backup of the
 pinned national inventory, with a separate derivation record and new plan paths.
 It reuses the source objects and does not claim a newly acquired metadata view.
+
+## Utah measured preview
+
+Utah is ingested and audited with `cap-html@7`: all 22,904 case texts match the
+source HTML, and 354,806 internal links resolve. Regeneration from cached ZIPs
+took 202.8 seconds, the stored-corpus audit 243.0 seconds, and token measurement
+147.9 seconds. No Utah archive or embedding index has been built or published.
+
+| Proposed archive | Decision dates | Cases | Estimated bytes | Measured chunks |
+| --- | --- | ---: | ---: | ---: |
+| `caselaw-utah-part-0001` | 1861–1992 | 15,254 | 1,069,408,251 | 353,233 |
+| `caselaw-utah-part-0002` | 1993–2019 | 7,650 | 769,988,778 | 253,859 |
+
+The [measurement record](../collections/caselaw/utah/measurement-2026-10-06.json)
+pins the corpus and preview digests. Add representative citation and semantic
+checks to each part, freeze the plan, compile, and verify actual sizes before
+publication. The current configuration leaves publication disabled.
 
 ## Updates and distribution
 
@@ -481,7 +582,8 @@ Squisq packages until those library fixes are released and adopted.
 Two upstream cases have footnote return links without targets: fourteen in
 `347 U.S. 298` and one in `348 U.S. 296`. These links retain their labels as
 plain text, with the adjustment recorded in metadata and provenance. Other
-missing anchor targets stop import.
+missing anchor targets stop import, apart from the explicitly recorded absent
+footnote bodies described above.
 The original footnote bodies remain intact. The pilot does not expose a full
 structured citation graph or retain scanned-page coordinates for a PDF viewer.
 

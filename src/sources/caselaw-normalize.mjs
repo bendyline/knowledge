@@ -3,9 +3,10 @@ import { stringify } from 'yaml';
 import { posix } from 'node:path';
 import { normalizeDocument } from '../normalize.mjs';
 import { sha256 } from '../files.mjs';
+import { protectMalformedCapUrls } from './caselaw-literal-urls.mjs';
 import { addCapHeadMatterSections, neutralizeEmptyCapMarks } from './caselaw-structure.mjs';
 
-export const CASELAW_NORMALIZER = 'cap-html@6';
+export const CASELAW_NORMALIZER = 'cap-html@7';
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
 const hasClass = (node, name) => (attr(node, 'class') ?? '').split(/\s+/).includes(name);
 const textNode = (value) => ({ nodeName: '#text', value });
@@ -21,6 +22,7 @@ export function casePath(record) {
 export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, mapping = new Map() }) {
   const html = new TextDecoder('utf-8', { fatal: true }).decode(htmlBytes);
   const root = parseFragment(html);
+  const malformedLiteralUrls = protectMalformedCapUrls(root);
   const emptyFormattingMarks = neutralizeEmptyCapMarks(root);
   const headMatterSections = addCapHeadMatterSections(root);
   const elements = []; walk(root, n => { if (n.tagName) elements.push(n); });
@@ -30,12 +32,18 @@ export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, ma
   const targets = new Set(elements.map(n => attr(n, 'href')).filter(h => h?.startsWith('#')).map(h => h.slice(1)));
   const knownIds = new Set(elements.map(n => attr(n, 'id')).filter(Boolean));
   let droppedFootnoteBacklinks = 0;
+  let missingFootnoteReferences = 0;
   for (const target of targets) if (!knownIds.has(target)) {
     const links = elements.filter(n => attr(n, 'href') === `#${target}`);
     const inFootnote = (node) => { for (let p = node.parentNode; p; p = p.parentNode) if (hasClass(p, 'footnote')) return true; return false; };
-    if (!target.startsWith('ref_footnote_') || !links.every(inFootnote)) throw new Error(`CAP ${record.id}: unresolved source anchor ${target}`);
+    const backlink = target.startsWith('ref_footnote_') && links.every(inFootnote);
+    const absentNoteBody = /^footnote_\d+_\d+$/.test(target)
+      && links.every(link => hasClass(link, 'footnotemark'))
+      && !elements.some(node => hasClass(node, 'footnote'));
+    if (!backlink && !absentNoteBody) throw new Error(`CAP ${record.id}: unresolved source anchor ${target}`);
     for (const link of links) link.attrs = link.attrs.filter(a => a.name !== 'href');
-    droppedFootnoteBacklinks += links.length;
+    if (backlink) droppedFootnoteBacklinks += links.length;
+    else missingFootnoteReferences += links.length;
     targets.delete(target);
   }
   // Squisq drops HTML IDs. Carry only link targets through conversion as opaque
@@ -127,8 +135,10 @@ export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, ma
       ...(preformattedLinkBlocks ? { preformattedLinkBlocks } : {}),
       ...(headMatterSections ? { headMatterSections } : {}),
       ...(emptyFormattingMarks ? { emptyFormattingMarks } : {}),
+      ...(malformedLiteralUrls ? { malformedLiteralUrls } : {}),
+      ...(missingFootnoteReferences ? { missingFootnoteReferences } : {}),
     },
   };
   markdown = `---\n${stringify(front, { lineWidth: 0 })}---\n\n${heading}\n${markdown}`;
-  return { markdown, sourceUrl, transformation: `${CASELAW_NORMALIZER}; ${result.transformation}; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged${headMatterSections ? `; ${headMatterSections} source head-matter section boundaries retained` : ''}${emptyFormattingMarks ? `; ${emptyFormattingMarks} empty formatting marks made transparent` : ''}${droppedFootnoteBacklinks ? `; ${droppedFootnoteBacklinks} dangling upstream footnote return links retained as plain text` : ''}${literalSyntaxProtected ? `; ${literalSyntaxProtected} literal syntax characters encoded as character references` : ''}${preformattedLinkBlocks ? `; ${preformattedLinkBlocks} preformatted blocks with active links rendered as prose` : ''}` };
+  return { markdown, sourceUrl, transformation: `${CASELAW_NORMALIZER}; ${result.transformation}; case metadata and opinion headings added; link targets retained; selected case citations linked locally; OCR unchanged${malformedLiteralUrls ? `; ${malformedLiteralUrls} malformed literal URLs rendered as code without correction` : ''}${missingFootnoteReferences ? `; ${missingFootnoteReferences} source footnote references with absent note bodies retained as plain text` : ''}${headMatterSections ? `; ${headMatterSections} source head-matter section boundaries retained` : ''}${emptyFormattingMarks ? `; ${emptyFormattingMarks} empty formatting marks made transparent` : ''}${droppedFootnoteBacklinks ? `; ${droppedFootnoteBacklinks} dangling upstream footnote return links retained as plain text` : ''}${literalSyntaxProtected ? `; ${literalSyntaxProtected} literal syntax characters encoded as character references` : ''}${preformattedLinkBlocks ? `; ${preformattedLinkBlocks} preformatted blocks with active links rendered as prose` : ''}` };
 }

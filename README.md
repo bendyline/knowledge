@@ -156,15 +156,16 @@ generated provenance live in `.work/catalogs/`. Preparation reuses a validated
 local snapshot; publishing consumes the verified build artifact.
 
 State collections use the `caselaw` CLI: inventory, ingest, audit, plan, build,
-and diff. The Wyoming configuration selects its cases across regional reporters
-and now targets one approximately 1 GiB archive. The [national publication
+publish, and diff. Collections select cases across reporters and target
+approximately 1 GiB archives. The [national publication
 list](docs/caselaw-publication-plan.md) covers all 50 states, federal cases,
 D.C., territories, and tribal jurisdictions, with provisional package counts.
 Source ZIPs and normalized
 documents share an ignored object store; exact membership and provenance follow
-each release. The combined U.S. pilot and Alaska collection enable publication
-with mandatory verification; Wyoming remains disabled pending its retrieval
-quality gate. See [CAP ingestion and collection
+each release. The combined U.S. pilot and complete Alaska, Wyoming, and Nevada
+CAP collections are published with mandatory source, integrity, and retrieval
+verification. Utah has an audited two-part measured plan awaiting compilation.
+See [CAP ingestion and collection
 planning](docs/caselaw.md) for commands, coverage limits, and distribution work.
 
 ## Azure AI Search example

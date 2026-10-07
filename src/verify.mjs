@@ -6,6 +6,7 @@ import { digest, exists, readJson, removeWork, writeJson } from './files.mjs';
 import { buildDigest, validateCatalog } from './catalogs.mjs';
 import { verifyLocalRelease } from './publish.mjs';
 import { packageQueries, resolveBuildPackage } from './news-packages.mjs';
+import { evaluateSemanticProbe, SEMANTIC_CHUNK_LIMIT } from './semantic-verification.mjs';
 
 export async function verifyRelease(catalog, directory, { semantic = false, allowSemanticFailure = false } = {}) {
   await validateCatalog(catalog);
@@ -42,9 +43,8 @@ export async function verifyRelease(catalog, directory, { semantic = false, allo
       const selectedQueries = packageQueries(await readJson(path), packaging?.documentIds);
       if (!selectedQueries.length) throw new Error('No semantic queries target documents in this package; add a query for one of its selected articles');
       for (const { query, expectedDocumentIds } of selectedQueries) {
-        const hits = handle.searchSemantic(await embedder.embedQuery(query), { shardBudget: release.manifest.counts.shards, finalK: 20 });
-        const ids = [...new Set(hits.map((h) => h.documentId))];
-        semanticResults.push({ query, expectedDocumentIds, hits: ids, passed: expectedDocumentIds.every((id) => ids.includes(id)) });
+        const hits = handle.searchSemantic(await embedder.embedQuery(query), { shardBudget: release.manifest.counts.shards, finalK: SEMANTIC_CHUNK_LIMIT });
+        semanticResults.push(evaluateSemanticProbe({ query, expectedDocumentIds }, hits));
       }
     }
     const semanticPassed = semanticResults.every(q => q.passed);

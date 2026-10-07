@@ -1,0 +1,65 @@
+{
+  "catalogId": "caselaw-alaska-part-0001",
+  "version": "2026.10.1",
+  "sha256": "d7566e0ef822769dd652029a47f0dd9c126a593e2fffcc1469f1e004f8b23a06",
+  "policy": "First 20 globally cosine-ranked chunks across every archive shard, before document deduplication",
+  "queries": [
+    {
+      "query": "constitutional right to privacy protects an adult's possession of marijuana for personal use in the home",
+      "expectedDocumentIds": [
+        "cap-10466265"
+      ],
+      "ranks": [
+        {
+          "id": "cap-10466265",
+          "chunkRank": 2
+        }
+      ],
+      "returnedChunks": 40,
+      "passed": true
+    },
+    {
+      "query": "police secretly record a conversation with an informant without a warrant and violate the Alaska constitutional right to privacy",
+      "expectedDocumentIds": [
+        "cap-10458061"
+      ],
+      "ranks": [
+        {
+          "id": "cap-10458061",
+          "chunkRank": 16
+        }
+      ],
+      "returnedChunks": 40,
+      "passed": true
+    },
+    {
+      "query": "admissibility of scientific expert evidence under Daubert instead of the Frye general acceptance test",
+      "expectedDocumentIds": [
+        "cap-11627321"
+      ],
+      "ranks": [
+        {
+          "id": "cap-11627321",
+          "chunkRank": 2
+        }
+      ],
+      "returnedChunks": 40,
+      "passed": true
+    },
+    {
+      "query": "president cannot revoke prior withdrawals of offshore lands from oil and gas leasing",
+      "expectedDocumentIds": [
+        "cap-12529892"
+      ],
+      "ranks": [
+        {
+          "id": "cap-12529892",
+          "chunkRank": 1
+        }
+      ],
+      "returnedChunks": 40,
+      "passed": true
+    }
+  ],
+  "passed": true
+}
