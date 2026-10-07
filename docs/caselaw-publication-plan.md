@@ -122,11 +122,11 @@ CAP’s `regional` entry has no advertised case or page count. The [national met
 
 CAP record identity is preserved; equal case names or parallel citations are not grounds for silently dropping records. Unknown jurisdiction IDs and duplicate CAP IDs block completion. The root counts describe CAP coverage, not every decision ever issued by these courts.
 
-Explicitly labeled limited public pilots may precede national releases. The [published U.S. Reports 347–349 and Alaska pilots](caselaw.md#published-pilots) exercise that path; the single-volume pilot and four-part Wyoming benchmark remain development artifacts. Full national releases supersede overlapping pilots, which should not be installed alongside their replacements.
+Explicitly labeled limited public pilots may precede national releases. The [published pilots and verification records](caselaw.md#published-pilots) track completed collections separately from this national capacity model. The single-volume pilot and original four-part Wyoming benchmark remain development artifacts. Broader releases can overlap earlier pilots; do not install overlapping selections for distinct coverage.
 
-Wyoming’s four archives total 1,056,484,052 bytes (0.984 GiB). The updated token-based estimate selects all 10,931 cases for one part; a combined build still needs actual-size and retrieval verification. The existing semantic miss remains unresolved.
+This capacity model retains the original four-part Wyoming measurement: 1,056,484,052 bytes (0.984 GiB). Those development archives and their original semantic miss are historical evidence. The published combined Wyoming release contains all 10,931 records in 1,069,210,109 bytes and passes its configured retrieval checks; see the [release benchmark](../collections/caselaw/wyoming/benchmark-2026-10-06-wave-2.json).
 
-The existing frozen Wyoming plan remains unchanged under snapshot `2026-10-06`. The current Wyoming configuration now requests 1 GiB using `wyoming-bge-v1`; reingest and audit with the current normalizer before previewing the cached corpus, then use a new snapshot/plan identity for a production freeze. Do not overwrite the old plan.
+The original frozen Wyoming plan remains unchanged under snapshot `2026-10-06`; the published one-part release uses a separate frozen plan. Future source, normalizer, or configuration changes require a fresh audit and a new snapshot/plan identity. Do not overwrite existing plans or release versions.
 
 Other collection configurations in the JSON are production-scope proposals, not a claim that those corpora are already ingested. Add representative citation and semantic checks before freezing each collection. Puerto Rico and other multilingual content require checking language coverage and the embedding profile; size calibration must be remeasured if that profile changes.
 

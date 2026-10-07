@@ -1,0 +1,106 @@
+{
+  "complete": true,
+  "verifiedAt": "2026-10-07T07:58:25.635Z",
+  "gildeCommit": "e1353b62c8a8b5060d7bf82ada937b6dac16f12d",
+  "npmVersion": "0.1.89",
+  "npmPackageBytes": 18149896,
+  "npmIntegrity": "sha512-CTZsVMcXvKoFvAAA446PWSJFzSnWluDvKm83qIz5ju/AR/kQXmY9agujfvNieGX3PpB/MgMmhYSOHUSh2/wL8Q==",
+  "site": "https://gezelgilde.com/catalog/v1/content/0.1.89",
+  "catalogs": [
+    {
+      "id": "caselaw-us-347-349",
+      "version": "2026.10.5",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-us-347-349/versions/2026.10.5/manifest.json",
+      "sha256": "db08e80f8c6880791e5ace109a43c55f5f95083289f735188e0b9fdaafe41712",
+      "bytes": 30128630,
+      "documents": 2142
+    },
+    {
+      "id": "caselaw-alaska-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-alaska-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "d7566e0ef822769dd652029a47f0dd9c126a593e2fffcc1469f1e004f8b23a06",
+      "bytes": 1041433404,
+      "documents": 10749
+    },
+    {
+      "id": "caselaw-wyoming-part-0001",
+      "version": "2026.10.3",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-wyoming-part-0001/versions/2026.10.3/manifest.json",
+      "sha256": "2a3950c39e86c558c8f9ba6af930bed3faeef4b02c90e0b60422a3181be0a759",
+      "bytes": 1069210109,
+      "documents": 10931
+    },
+    {
+      "id": "caselaw-nevada-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-nevada-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "54125a78a84fd136fdc74b6af95c7fb148990f312757867f89105520fc76e479",
+      "bytes": 766348339,
+      "documents": 13707
+    },
+    {
+      "id": "caselaw-utah-part-0001",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-utah-part-0001/versions/2026.10.1/manifest.json",
+      "sha256": "a20e5631af22cb336e2d381ffe7122b5f890e45b8a8a334beeca6fbc0df2a3ef",
+      "bytes": 1020134686,
+      "documents": 15254
+    },
+    {
+      "id": "caselaw-utah-part-0002",
+      "version": "2026.10.1",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-utah-part-0002/versions/2026.10.1/manifest.json",
+      "sha256": "8c1a4adfca5a235b6d9e9e7d54e0be7dec613d772fc5d2a395037573535e6aae",
+      "bytes": 729473439,
+      "documents": 7650
+    },
+    {
+      "id": "caselaw-us-300-399-part-0001",
+      "version": "2026.10.2",
+      "url": "https://gezelgilde.com/catalog/v1/content/0.1.89/data/knowledge-catalogs/ca/caselaw-us-300-399-part-0001/versions/2026.10.2/manifest.json",
+      "sha256": "28fd2603b3cf26b445d0cd830da87316ce561b2f000ce1dc92fddaaad5680def",
+      "bytes": 1033287056,
+      "documents": 61926
+    }
+  ],
+  "collections": [
+    {
+      "id": "caselaw-utah",
+      "version": "2026.10.1",
+      "url": "https://huggingface.co/datasets/Bendyline/knowledge/resolve/103f807eae326c8f326f2289aed91ce2ee15d19d/collections/caselaw-utah/releases/2026.10.1/collection.json",
+      "sha256": "5c66509511fa314839cc2b1003a2b31d709c24157852b2c2c548f03ee318d6d7",
+      "cases": 22904
+    },
+    {
+      "id": "caselaw-us-300-399",
+      "version": "2026.10.2",
+      "url": "https://huggingface.co/datasets/Bendyline/knowledge/resolve/ac765d1460c99c619a7a85ed9b41eba184820fe5/collections/caselaw-us-300-399/releases/2026.10.2/collection.json",
+      "sha256": "90e7ea100085bf487bb97a3098f848c655a62101e61f1aca55b937b2f5825ee5",
+      "cases": 61926
+    }
+  ],
+  "datasetCardVerified": true,
+  "datasetOverview": {
+    "revision": "edfa0202dd0ec947fc8bc19c1c29c807d83d4ff9",
+    "readmeSha256": "3afcfcb71a4ddeffcc6ec24c69336625c18637208f72f9aa8b8d7e5aeac0fdde",
+    "licenseSha256": "446cab6ca503505cc7ec7e82c45c8547da2038c4e0451ebcf5c5ce19658f59b1"
+  },
+  "discoveryRuns": {
+    "gildeCommit": "e1353b62c8a8b5060d7bf82ada937b6dac16f12d",
+    "gildePullRequests": [
+      14,
+      15,
+      16
+    ],
+    "publishRunId": 37589272542,
+    "publishUrl": "https://github.com/bendyline/gilde/actions/runs/37589272542",
+    "publishDispatched": true,
+    "npmVersion": "0.1.89",
+    "publishConclusion": "success",
+    "siteRunId": 37590482483,
+    "siteUrl": "https://github.com/bendyline/gilde-pipeline/actions/runs/37590482483",
+    "siteConclusion": "success",
+    "note": "Do not republish to handle npm propagation. Wait for public npm gitHead to match, then deploy-site with this exact gilde_ref."
+  }
+}
