@@ -210,7 +210,7 @@
       ]
     },
     {
-      "query": "an indigent defendant charged with a noncapital felony is entitled to appointed counsel in state court",
+      "query": "a Florida defendant charged with breaking into a poolroom was denied a court-appointed lawyer because the charge was not a capital offense",
       "expectedDocumentIds": [
         "cap-1765333"
       ]
