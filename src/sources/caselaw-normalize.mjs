@@ -5,8 +5,9 @@ import { normalizeDocument } from '../normalize.mjs';
 import { sha256 } from '../files.mjs';
 import { protectMalformedCapUrls } from './caselaw-literal-urls.mjs';
 import { addCapHeadMatterSections, neutralizeEmptyCapMarks } from './caselaw-structure.mjs';
+import { absentNumberedCapNote } from './caselaw-footnotes.mjs';
 
-export const CASELAW_NORMALIZER = 'cap-html@7';
+export const CASELAW_NORMALIZER = 'cap-html@9';
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
 const hasClass = (node, name) => (attr(node, 'class') ?? '').split(/\s+/).includes(name);
 const textNode = (value) => ({ nodeName: '#text', value });
@@ -33,19 +34,23 @@ export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, ma
   const knownIds = new Set(elements.map(n => attr(n, 'id')).filter(Boolean));
   let droppedFootnoteBacklinks = 0;
   let missingFootnoteReferences = 0;
+  const danglingLinks = [];
   for (const target of targets) if (!knownIds.has(target)) {
     const links = elements.filter(n => attr(n, 'href') === `#${target}`);
     const inFootnote = (node) => { for (let p = node.parentNode; p; p = p.parentNode) if (hasClass(p, 'footnote')) return true; return false; };
     const backlink = target.startsWith('ref_footnote_') && links.every(inFootnote);
     const absentNoteBody = /^footnote_\d+_\d+$/.test(target)
       && links.every(link => hasClass(link, 'footnotemark'))
-      && !elements.some(node => hasClass(node, 'footnote'));
+      && (!elements.some(node => hasClass(node, 'footnote'))
+        || absentNumberedCapNote(target, links, elements.filter(node => hasClass(node, 'footnote'))));
     if (!backlink && !absentNoteBody) throw new Error(`CAP ${record.id}: unresolved source anchor ${target}`);
-    for (const link of links) link.attrs = link.attrs.filter(a => a.name !== 'href');
+    danglingLinks.push(...links);
     if (backlink) droppedFootnoteBacklinks += links.length;
     else missingFootnoteReferences += links.length;
     targets.delete(target);
   }
+  // Validate against the original links, independent of source element order.
+  for (const link of danglingLinks) link.attrs = link.attrs.filter(a => a.name !== 'href');
   // Squisq drops HTML IDs. Carry only link targets through conversion as opaque
   // text, then restore safe generated anchors in the accepted Markdown snapshot.
   const prefix = `capanchor${sha256(htmlBytes).slice(0, 16)}`;
@@ -55,10 +60,12 @@ export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, ma
   // directives or hard breaks. Unfinished template spans can also trigger
   // catastrophic serializer backtracking. Character references preserve text.
   let literalSyntaxProtected = 0;
-  // Only letter-prefixed colons can open directives. Ordinary punctuation must
-  // stay visible to the serializer so emphasis delimiters keep valid flanking.
-  const protectSyntax = value => value.replace(/[{$\\]|:(?=[A-Za-z])/g, character => {
-    const token = `${prefix}${placeholders.size}end`;
+  // Keep punctuation on both placeholder boundaries: restored character
+  // references also start/end with punctuation, so emphasis stays well formed.
+  // Uppercase HTTP(S) endings need colon protection too: the pinned GFM writer
+  // escapes the domain dot but misses uppercase protocol endings.
+  const protectSyntax = value => value.replace(/[{$\\]|:(?=[A-Za-z])|(?<=[PS]):(?=\/\/)/g, character => {
+    const token = `;${prefix}${placeholders.size}end;`;
     placeholders.set(token, `&#${character.codePointAt(0)};`); literalSyntaxProtected++;
     return token;
   });
@@ -113,7 +120,10 @@ export async function normalizeCaselaw(record, htmlBytes, { reporter, volume, ma
     },
   });
   let markdown = result.markdown;
-  const restoreToken = (text, token, replacement) => text.replace(new RegExp(`(?:c|&#x0*63;|&#0*99;)${token.slice(1)}`, 'gi'), () => replacement);
+  const restoreToken = (text, token, replacement) => {
+    const first = token.startsWith(';') ? '(?:;|&#x0*3b;|&#0*59;)' : '(?:c|&#x0*63;|&#0*99;)';
+    return text.replace(new RegExp(`${first}${token.slice(1)}`, 'gi'), () => replacement);
+  };
   for (const [token, anchor] of placeholders) {
     // Remark can encode the first character after an emphasis boundary.
     const restored = restoreToken(markdown, token, anchor);

@@ -226,7 +226,7 @@ npm run caselaw -- plan --preview --snapshot 2026-10-06 --collection collections
 
 The cached snapshot above already contains the original four-part frozen plan.
 The current configuration requests one approximately 1 GiB Wyoming archive.
-Reingest and audit with the current `cap-html@7` normalizer before previewing
+Reingest and audit with the current `cap-html@9` normalizer before previewing
 the cached corpus. Freeze and build under a new snapshot/plan identity after
 the updated source audit. Shared source objects can be reused.
 Do not overwrite the existing plan or reuse its release version.
@@ -274,6 +274,21 @@ so automatic linking cannot turn it into an invalid URL. When a source footnote
 marker has no target and the HTML contains no footnote bodies, its label remains
 plain text and the absence is recorded. It never invents a note body or guesses
 a corrected URL; other unresolved anchors still stop ingestion.
+
+`cap-html@8` also handles an absent numbered footnote when other notes are
+present. Every existing note must have a numbered ID and matching source label;
+none may share the missing label or link back to its reference. Only then is the
+unresolved marker retained as plain text and recorded in provenance. Ambiguous
+note bodies still stop ingestion. This preserves four early Washington records
+whose source contains note 1 but only a marker for note 2, without inventing text
+or redirecting the marker to an unrelated note.
+
+`cap-html@9` keeps punctuation at the boundaries of opaque literal placeholders
+so restoring a backslash or other escaped syntax cannot break adjacent emphasis.
+It also protects uppercase HTTP(S) protocol endings from a pinned GFM serializer
+defect that added a backslash before the domain dot. Both Washington failures
+are reproduced in regression tests; the complete source-text audit remains the
+acceptance check rather than correcting OCR or ignoring punctuation differences.
 
 Planning counts token chunks in the canonical Markdown using the pinned embedding
 profile. Binding local citation URLs for each part can slightly change the final

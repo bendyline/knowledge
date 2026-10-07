@@ -153,6 +153,17 @@ Full license text and source evidence: included in every archive's LICENSES dire
 Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
 Scope: Preserves CAP's Utah jurisdiction assignment: 16,874 Supreme Court records, 6,029 Court of Appeals records under two source court labels, and one historical Salt Lake City Register and Receiver record. Coverage reflects the pinned historical archive, not every decision issued by those courts.
 
+Washington caselaw — Caselaw Access Project
+Collection ID: caselaw-washington
+Package coverage: caselaw-washington-part-NNNN archives share these content licenses.
+Source: https://static.case.law/
+Collection definition: https://github.com/bendyline/knowledge/blob/main/collections/caselaw/washington/collection.json
+License: CC0 1.0 Universal (CC0-1.0)
+Terms: https://creativecommons.org/publicdomain/zero/1.0/
+Full license text and source evidence: included in every archive's LICENSES directory.
+Attribution: Caselaw Access Project, Harvard Law School Library; credit is voluntary under CAP community norms.
+Scope: Preserves CAP's Washington jurisdiction assignment: 41,045 Supreme Court records, 65,131 Court of Appeals records under four source court labels, and one historical Washington District Court record. Includes territorial-era records and upstream dates from 1854 through 2019. Coverage reflects the pinned historical archive, not every decision issued by those courts.
+
 Wyoming caselaw — Caselaw Access Project
 Collection ID: caselaw-wyoming
 Package coverage: caselaw-wyoming-part-NNNN archives share these content licenses.
