@@ -33,15 +33,22 @@ collection configuration → measured, frozen package plan → .gezk parts
 
 ## Published pilots
 
-The next measured pilots are Utah (two parts) and U.S. Reports volumes 300–385
-(one part). The latter combines 86 books and 50,292 records, estimated at
-1,070,017,862 bytes, instead of repeating the original three-book package size.
+The next pilots are Utah (two parts) and U.S. Reports volumes 300–399
+(one part combining 100 source books and 61,926 records). Both target roughly
+1 GiB per archive, with a smaller final part when a complete state requires it.
+The initial 300–385 sizing build compiled to 864,009,647 bytes (824 MiB), against
+a 1,070,017,862-byte estimate, and passed eight citation and eight semantic checks.
+It remains an unpublished calibration artifact; its
+[measurement](../collections/caselaw/us-300-385/sizing-2026-10-07.json) justifies
+the larger selection. The U.S. Reports estimator rounds the observed 0.4845
+conservative-estimate ratio upward to 0.49 and is restricted to that reporter
+and BGE profile. It is a planning calibration, not a guarantee for other eras.
+
 Utah's 22,904 records are estimated at 1,069,408,251 and 769,988,778 bytes.
-These are planning measurements; actual compiled sizes and publication receipts
-are recorded only after build and verification. The larger U.S. selection
-contains all records in the original 347–349 pilot, so readers should choose
-one of those overlapping packages. Four anomalously early CAP decision dates
-are preserved and disclosed in the new collection's scope.
+Actual compiled sizes and publication receipts follow build and verification.
+The larger U.S. selection contains all records in the original 347–349 pilot;
+readers should choose one of those overlapping packages. Four anomalously early
+CAP decision dates are preserved and disclosed in the collection's scope.
 
 | Collection | Version | Case records | Archive size | Release |
 | --- | --- | ---: | ---: | --- |

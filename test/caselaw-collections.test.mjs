@@ -172,3 +172,15 @@ test('CAP snapshot differences distinguish removals, additions, metadata and bod
   });
   assert.throws(() => compareCapRecords([r(1), r(1)], []), /duplicate/);
 });
+
+test('U.S. Reports sizing uses the audited archive and rejects other reporters or embedding profiles', async () => {
+  const measured = await readJson('collections/caselaw/us-300-385/sizing-2026-10-07.json');
+  assert.equal(measured.integrity, true);
+  assert.ok([...measured.fullText, ...measured.semantic].every(q => q.passed));
+  const estimate = estimateCapArchiveBytes(measured.normalizedBytes, measured.measuredChunks,
+    measured.metadataBytes + 4096 * (measured.counts.documents - 1), 'us-reports-bge-v1');
+  assert.ok(estimate >= measured.archiveBytes && estimate < measured.archiveBytes * 1.02);
+  const config = CapCollection.parse({ schemaVersion: 1, id: 'cap-us-size', name: 'Size', reporter: 'us', sizeEstimate: 'us-reports-bge-v1' });
+  assert.throws(() => CapCollection.parse({ ...config, reporter: 'p2d' }), /requires reporter us/);
+  assert.throws(() => CapCollection.parse({ ...config, embeddingProfile: 'multilingual-e5-small@2' }), /measured embedding profile/);
+});

@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Unpublished size calibration; the larger 300–399 pilot is the publication target.",
+  "snapshot": "2026-10-06-wave-2",
+  "sourceCommit": "997ea62088721bc01749755f56868794f2e26a60",
+  "version": "2026.10.1",
+  "catalogId": "caselaw-us-300-385-part-0001",
+  "planDigest": "8ee387d5230f58e0aeab857fdd779398b8fd41448184bd72908c40523ff9f2ba",
+  "normalizer": "f3dc3af1cf9fd203f19346a9f31dd9207738d6ccb986dc3cbe56b24e0c873fca",
+  "corpusDigest": "71dbecd5fd24a93e5bb7400e8d54fbd556e8f43a5c316ceb5985bbee442d0088",
+  "archiveSha256": "e3980e5b1a111a1445ddde577cb51fdcedc1ab86eb0a5ba6c3df86d0dc10dea1",
+  "archiveBytes": 864009647,
+  "counts": {
+    "documents": 50292,
+    "chunks": 375477,
+    "shards": 2,
+    "assets": 0
+  },
+  "estimatedBytes": 1070017862,
+  "conservativeBytes": 1783329556,
+  "measuredFactor": 0.48449241705945234,
+  "adoptedFactor": 0.49,
+  "embeddingProfile": "bge-small-en-v1.5@1",
+  "integrity": true,
+  "fullText": [
+    {
+      "query": "304 U.S. 64",
+      "expectedDocumentIds": [
+        "cap-10687"
+      ],
+      "passed": true
+    },
+    {
+      "query": "347 U.S. 483",
+      "expectedDocumentIds": [
+        "cap-11301409"
+      ],
+      "passed": true
+    },
+    {
+      "query": "349 U.S. 294",
+      "expectedDocumentIds": [
+        "cap-11334782"
+      ],
+      "passed": true
+    },
+    {
+      "query": "348 U.S. 26",
+      "expectedDocumentIds": [
+        "cap-6930659"
+      ],
+      "passed": true
+    },
+    {
+      "query": "348 U.S. 426",
+      "expectedDocumentIds": [
+        "cap-6931705"
+      ],
+      "passed": true
+    },
+    {
+      "query": "367 U.S. 643",
+      "expectedDocumentIds": [
+        "cap-1785580"
+      ],
+      "passed": true
+    },
+    {
+      "query": "372 U.S. 335",
+      "expectedDocumentIds": [
+        "cap-1765333"
+      ],
+      "passed": true
+    },
+    {
+      "query": "384 U.S. 436",
+      "expectedDocumentIds": [
+        "cap-12046400"
+      ],
+      "passed": true
+    }
+  ],
+  "semantic": [
+    {
+      "query": "racial segregation in public schools denies equal protection of the laws",
+      "expectedDocumentIds": [
+        "cap-11301409"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-11301409",
+          "rank": 2
+        }
+      ]
+    },
+    {
+      "query": "how should federal district courts supervise the timing of school desegregation",
+      "expectedDocumentIds": [
+        "cap-11334782"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-11334782",
+          "rank": 9
+        }
+      ]
+    },
+    {
+      "query": "taking private property to redevelop a blighted urban area serves a public purpose",
+      "expectedDocumentIds": [
+        "cap-6930659"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-6930659",
+          "rank": 1
+        }
+      ]
+    },
+    {
+      "query": "punitive damages received by a business are taxable gross income",
+      "expectedDocumentIds": [
+        "cap-6931705"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-6931705",
+          "rank": 1
+        }
+      ]
+    },
+    {
+      "query": "federal diversity courts must apply state common law rather than a federal general common law when a railroad injures a pedestrian beside its tracks",
+      "expectedDocumentIds": [
+        "cap-10687"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-10687",
+          "rank": 2
+        }
+      ]
+    },
+    {
+      "query": "unlawfully seized evidence from a police search of a home cannot be admitted in a state criminal trial",
+      "expectedDocumentIds": [
+        "cap-1785580"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-1785580",
+          "rank": 3
+        }
+      ]
+    },
+    {
+      "query": "an indigent defendant charged with a noncapital felony is entitled to appointed counsel in state court",
+      "expectedDocumentIds": [
+        "cap-1765333"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-1765333",
+          "rank": 20
+        }
+      ]
+    },
+    {
+      "query": "police must warn a suspect about silence and the right to counsel before custodial interrogation",
+      "expectedDocumentIds": [
+        "cap-12046400"
+      ],
+      "passed": true,
+      "chunkLimit": 20,
+      "expectedChunkRanks": [
+        {
+          "id": "cap-12046400",
+          "rank": 1
+        }
+      ]
+    }
+  ],
+  "build": {
+    "key": "us-300-385",
+    "version": "2026.10.1",
+    "sourceCommit": "997ea62088721bc01749755f56868794f2e26a60",
+    "startedAt": "2026-10-07T05:23:44.501Z",
+    "finishedAt": "2026-10-07T06:19:28.581Z",
+    "elapsedSeconds": 3344.1,
+    "exitCode": 0
+  },
+  "normalizedBytes": 182171294,
+  "measuredChunks": 374462,
+  "metadataBytes": 62643672
+}

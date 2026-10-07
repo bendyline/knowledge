@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "caselaw-us-300-385",
-  "name": "U.S. Reports volumes 300–385 — Caselaw Access Project",
+  "id": "caselaw-us-300-399",
+  "name": "U.S. Reports volumes 300–399 — Caselaw Access Project",
   "reporter": "us",
   "volumes": [
     "300",
@@ -89,13 +89,27 @@
     "382",
     "383",
     "384",
-    "385"
+    "385",
+    "386",
+    "387",
+    "388",
+    "389",
+    "390",
+    "391",
+    "392",
+    "393",
+    "394",
+    "395",
+    "396",
+    "397",
+    "398",
+    "399"
   ],
   "targetBytes": 1073741824,
   "ceilingBytes": 1610612736,
-  "sizeEstimate": "wyoming-bge-v1",
+  "sizeEstimate": "us-reports-bge-v1",
   "embeddingProfile": "bge-small-en-v1.5@1",
-  "scopeNote": "Every CAP case record in U.S. Reports volumes 300–385, preserving source jurisdiction, court labels, and decision dates, including four source dates earlier than the books' 1937–1967 period. This bounded historical reporter collection contains the earlier 347–349 pilot in full; installing both duplicates those records. It is not the complete U.S. Reports or federal collection.",
+  "scopeNote": "Every CAP case record in U.S. Reports volumes 300–399, preserving source jurisdiction, court labels, and decision dates, including four source dates earlier than the books' 1937–1970 period. This bounded historical reporter collection contains the earlier 347–349 pilot in full; installing both duplicates those records. It is not the complete U.S. Reports or federal collection.",
   "queries": [
     {
       "query": "304 U.S. 64",
@@ -143,6 +157,18 @@
       "query": "384 U.S. 436",
       "expectedDocumentIds": [
         "cap-12046400"
+      ]
+    },
+    {
+      "query": "392 U.S. 1",
+      "expectedDocumentIds": [
+        "cap-6167798"
+      ]
+    },
+    {
+      "query": "393 U.S. 503",
+      "expectedDocumentIds": [
+        "cap-11318417"
       ]
     }
   ],
@@ -194,10 +220,22 @@
       "expectedDocumentIds": [
         "cap-12046400"
       ]
+    },
+    {
+      "query": "a police detective observes men repeatedly inspecting a store window and conducts a limited pat-down for weapons while investigating a suspected robbery",
+      "expectedDocumentIds": [
+        "cap-6167798"
+      ]
+    },
+    {
+      "query": "public school students suspended for wearing black armbands to protest the Vietnam War without materially disrupting school activities",
+      "expectedDocumentIds": [
+        "cap-11318417"
+      ]
     }
   ],
   "publish": {
-    "enabled": false,
+    "enabled": true,
     "huggingFace": "Bendyline/knowledge",
     "github": "bendyline/knowledge",
     "gilde": {

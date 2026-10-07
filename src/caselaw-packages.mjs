@@ -23,14 +23,15 @@ export const CapCollection = z.object({
   scopeNote: z.string().min(1).optional(),
   targetBytes: z.number().int().min(1048576).max(1073741824).default(1073741824),
   ceilingBytes: z.number().int().min(1048576).max(1610612736).default(1610612736),
-  sizeEstimate: z.enum(['conservative-v1', 'wyoming-bge-v1']).optional(),
+  sizeEstimate: z.enum(['conservative-v1', 'wyoming-bge-v1', 'us-reports-bge-v1']).optional(),
   embeddingProfile: z.enum(['bge-small-en-v1.5@1', 'multilingual-e5-small@2']).default('bge-small-en-v1.5@1'),
   queries: z.array(query).default([]), semanticQueries: z.array(query).default([]),
   publish: CatalogSchema.shape.publish.optional(),
 }).strict().refine(c => c.targetBytes <= c.ceilingBytes, 'Target must fit under ceiling')
   .refine(c => Boolean(c.jurisdiction) !== Boolean(c.reporter), 'Choose exactly one jurisdiction or reporter')
   .refine(c => !c.volumes || c.reporter, 'Volume selection requires a reporter')
-  .refine(c => c.sizeEstimate !== 'wyoming-bge-v1' || c.embeddingProfile === 'bge-small-en-v1.5@1', 'Wyoming calibration requires its measured embedding profile');
+  .refine(c => !['wyoming-bge-v1', 'us-reports-bge-v1'].includes(c.sizeEstimate) || c.embeddingProfile === 'bge-small-en-v1.5@1', 'Calibrated BGE estimates require their measured embedding profile')
+  .refine(c => c.sizeEstimate !== 'us-reports-bge-v1' || c.reporter === 'us', 'U.S. Reports calibration requires reporter us');
 export async function loadCapCollection(path) { return CapCollection.parse(await readJson(path)); }
 
 export function estimateCapArchiveBytes(normalizedBytes, chunks, metadataBytes, model = 'conservative-v1') {
@@ -38,7 +39,10 @@ export function estimateCapArchiveBytes(normalizedBytes, chunks, metadataBytes, 
   // Four audited Wyoming builds totaled 1,056,484,052 bytes against a
   // 1,780,814,186-byte estimate (0.5933). Round upward to 0.60; this is a
   // planning estimate, not a guarantee for other jurisdictions or profiles.
-  return Math.ceil(conservative * (model === 'wyoming-bge-v1' ? 0.60 : 1));
+  // The audited 300–385 U.S. Reports build measured 864,009,647 bytes,
+  // approximately 0.4845 of the conservative estimate. Round up to 0.49.
+  // Its numerous short orders need a different calibration from state opinions.
+  return Math.ceil(conservative * (model === 'wyoming-bge-v1' ? 0.60 : model === 'us-reports-bge-v1' ? 0.49 : 1));
 }
 
 export function partitionCapCases(cases, { targetBytes, ceilingBytes }) {
@@ -118,7 +122,7 @@ export async function planCapCollection(store, config, { embedderFactory = creat
     termsSha256: CASELAW_TERMS.sha256, roots: coverage.roots, sourceIndexes: coverage.sources,
     embeddingProfile: config.embeddingProfile, targetBytes: config.targetBytes, ceilingBytes: config.ceilingBytes,
     packing: { smallTailFraction: 0.10, mergedTargetTolerance: 0.05 },
-    estimate: `${config.sizeEstimate === 'wyoming-bge-v1' ? '0.60 × (' : ''}2 × normalized bytes + 3072 × measured token chunks + source metadata bytes + 4096 per case${config.sizeEstimate === 'wyoming-bge-v1' ? ')' : ''}; actual build ceiling enforced`,
+    estimate: `${config.sizeEstimate === 'wyoming-bge-v1' ? '0.60 × (' : config.sizeEstimate === 'us-reports-bge-v1' ? '0.49 × (' : ''}2 × normalized bytes + 3072 × measured token chunks + source metadata bytes + 4096 per case${['wyoming-bge-v1', 'us-reports-bge-v1'].includes(config.sizeEstimate) ? ')' : ''}; actual build ceiling enforced`,
     parts: parts.map(p => ({ ...p, catalogId: `${config.id}-${p.key}` })) };
   plan.planDigest = digest(plan);
   const path = resolve(store.directory, `${config.id}-plan.json`);
