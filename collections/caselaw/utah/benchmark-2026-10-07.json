@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "2026-10-06-wave-2",
+  "derivedFrom": "2026-10-06",
+  "metadataPolicy": "Reuses the pinned exhaustive national metadata inventory; no claim of refreshed upstream metadata.",
+  "collection": "caselaw-utah",
+  "version": "2026.10.1",
+  "sourceCommit": "997ea62088721bc01749755f56868794f2e26a60",
+  "scopeNote": "Preserves CAP's Utah jurisdiction assignment: 16,874 Supreme Court records, 6,029 Court of Appeals records under two source court labels, and one historical Salt Lake City Register and Receiver record. Coverage reflects the pinned historical archive, not every decision issued by those courts.",
+  "selection": "utah",
+  "cases": 22904,
+  "sourceVolumes": 1053,
+  "dates": {
+    "first": "1861-01",
+    "last": "2019-08-08"
+  },
+  "normalizerName": "cap-html@7",
+  "normalizer": "f3dc3af1cf9fd203f19346a9f31dd9207738d6ccb986dc3cbe56b24e0c873fca",
+  "corpusDigest": "220a40d5509e78e71d75df21386dfd0aa80f4c31df158cf260b4c68525c032a0",
+  "normalizedBytes": 508952191,
+  "sourceAudit": {
+    "verified": true,
+    "textMatches": 22904,
+    "fragmentLinks": 354806,
+    "issues": 0
+  },
+  "planning": {
+    "targetBytes": 1073741824,
+    "ceilingBytes": 1610612736,
+    "planDigest": "cbe1aa62f08cf07fb99d63cca7640da5c9740b549254c108b1c8a985652bfeb2",
+    "packing": {
+      "smallTailFraction": 0.1,
+      "mergedTargetTolerance": 0.05
+    }
+  },
+  "build": {
+    "key": "utah",
+    "version": "2026.10.1",
+    "sourceCommit": "997ea62088721bc01749755f56868794f2e26a60",
+    "startedAt": "2026-10-07T05:22:43.587Z",
+    "finishedAt": "2026-10-07T07:14:56.553Z",
+    "elapsedSeconds": 6733,
+    "exitCode": 0,
+    "runtime": "dml",
+    "hardware": {
+      "gpu": "AMD Radeon AI PRO R9700",
+      "cpu": "AMD Ryzen 9 7950X3D"
+    },
+    "cacheConditions": "Existing source, model, and embedding caches retained. Utah and U.S. Reports builds overlapped with a 12 GiB JavaScript heap cap per process; this is not an uncached or isolated throughput benchmark."
+  },
+  "parts": [
+    {
+      "catalogId": "caselaw-utah-part-0001",
+      "file": "caselaw-utah-part-0001-2026.10.1.gezk",
+      "sha256": "a20e5631af22cb336e2d381ffe7122b5f890e45b8a8a334beeca6fbc0df2a3ef",
+      "bytes": 1020134686,
+      "uncompressedBytes": 1020132838,
+      "estimatedBytes": 1069408251,
+      "documents": 15254,
+      "chunks": 353653,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-utah-part-0001",
+        "catalogId": "caselaw-utah-part-0001",
+        "version": "2026.10.1",
+        "inputDigest": "0de52aa884ab3a6565d045b6cb21a30b05ccac1cc21455ed615d5f7ba50462d5",
+        "sha256": "a20e5631af22cb336e2d381ffe7122b5f890e45b8a8a334beeca6fbc0df2a3ef",
+        "archiveBytes": 1020134686,
+        "counts": {
+          "documents": 15254,
+          "chunks": 353653,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "21 Utah 207",
+            "expectedDocumentIds": [
+              "cap-8871762"
+            ],
+            "hits": [
+              "cap-8868437",
+              "cap-8871762",
+              "cap-45590",
+              "cap-8873564",
+              "cap-8873510",
+              "cap-8873681",
+              "cap-8869894",
+              "cap-10434156",
+              "cap-10411722",
+              "cap-8868601"
+            ],
+            "passed": true
+          },
+          {
+            "query": "626 P.2d 440",
+            "expectedDocumentIds": [
+              "cap-10442069"
+            ],
+            "hits": [
+              "cap-10442069",
+              "cap-8871299",
+              "cap-8870848",
+              "cap-10464700",
+              "cap-10441958",
+              "cap-10442196",
+              "cap-10442231",
+              "cap-10442241",
+              "cap-8868298",
+              "cap-10442007"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "county business license imposed for revenue alone rather than regulation exceeds the county commissioners' licensing power",
+            "expectedDocumentIds": [
+              "cap-8871762"
+            ],
+            "hits": [
+              "cap-8871762",
+              "cap-8871149",
+              "cap-10409345",
+              "cap-8873115",
+              "cap-10409431",
+              "cap-8872827",
+              "cap-10442069",
+              "cap-8869757",
+              "cap-8869136"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-8871762",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "conditional use permits to build homes on agricultural land denied under a numerical evaluation system designed to protect farmland",
+            "expectedDocumentIds": [
+              "cap-10442069"
+            ],
+            "hits": [
+              "cap-10442069",
+              "cap-11945736",
+              "cap-8868723",
+              "cap-8871411",
+              "cap-8872056",
+              "cap-10442108",
+              "cap-10445895",
+              "cap-10435890",
+              "cap-10399627",
+              "cap-8871728"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-10442069",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "a20e5631af22cb336e2d381ffe7122b5f890e45b8a8a334beeca6fbc0df2a3ef",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "78e440be173db65870676d66bf2ece7dc717d805",
+          "path": "catalogs/caselaw-utah-part-0001/releases/2026.10.1/caselaw-utah-part-0001-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-utah-part-0001-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-part-0001-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-utah-part-0001-v2026.10.1/caselaw-utah-part-0001-2026.10.1.gezk"
+        }
+      }
+    },
+    {
+      "catalogId": "caselaw-utah-part-0002",
+      "file": "caselaw-utah-part-0002-2026.10.1.gezk",
+      "sha256": "8c1a4adfca5a235b6d9e9e7d54e0be7dec613d772fc5d2a395037573535e6aae",
+      "bytes": 729473439,
+      "uncompressedBytes": 729471591,
+      "estimatedBytes": 769988778,
+      "documents": 7650,
+      "chunks": 254207,
+      "shards": 2,
+      "assets": 0,
+      "verification": {
+        "catalog": "caselaw/caselaw-utah-part-0002",
+        "catalogId": "caselaw-utah-part-0002",
+        "version": "2026.10.1",
+        "inputDigest": "762288d931dcb9dc305036699295d65b99ef713b9e745f3c6664fbfa02355a07",
+        "sha256": "8c1a4adfca5a235b6d9e9e7d54e0be7dec613d772fc5d2a395037573535e6aae",
+        "archiveBytes": 729473439,
+        "counts": {
+          "documents": 7650,
+          "chunks": 254207,
+          "shards": 2,
+          "assets": 0
+        },
+        "integrity": true,
+        "licenses": [
+          "CC0-1.0"
+        ],
+        "fullText": [
+          {
+            "query": "402 P.3d 184",
+            "expectedDocumentIds": [
+              "cap-12343210"
+            ],
+            "hits": [
+              "cap-12343210",
+              "cap-8321312",
+              "cap-8242105",
+              "cap-8245254",
+              "cap-9110185",
+              "cap-8241871",
+              "cap-8242218",
+              "cap-7331948",
+              "cap-6859578",
+              "cap-8241675"
+            ],
+            "passed": true
+          },
+          {
+            "query": "912 P.2d 433",
+            "expectedDocumentIds": [
+              "cap-10336874"
+            ],
+            "hits": [
+              "cap-10336874",
+              "cap-10342821",
+              "cap-10342732",
+              "cap-10342756",
+              "cap-10336978",
+              "cap-10337107",
+              "cap-10331272",
+              "cap-10342784",
+              "cap-10342671",
+              "cap-10342576"
+            ],
+            "passed": true
+          }
+        ],
+        "semantic": [
+          {
+            "query": "divorcing spouses dispute insurance proceeds from a destroyed Lexus and whether the car was a separate birthday gift or marital property",
+            "expectedDocumentIds": [
+              "cap-12343210"
+            ],
+            "hits": [
+              "cap-12343210",
+              "cap-6785319",
+              "cap-12567372",
+              "cap-6862211",
+              "cap-6996210",
+              "cap-6880021",
+              "cap-8197697",
+              "cap-8164432",
+              "cap-10321150",
+              "cap-12565895",
+              "cap-8350299",
+              "cap-11504192"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-12343210",
+                "rank": 1
+              }
+            ],
+            "passed": true
+          },
+          {
+            "query": "legal malpractice claims against bankruptcy attorneys fail for lack of evidence that they caused the denial of the debtor's discharge",
+            "expectedDocumentIds": [
+              "cap-10336874"
+            ],
+            "hits": [
+              "cap-8403447",
+              "cap-10336874",
+              "cap-10360078",
+              "cap-6958108",
+              "cap-11100878",
+              "cap-8355983",
+              "cap-12570530",
+              "cap-11901598",
+              "cap-6948879",
+              "cap-9116870",
+              "cap-9140921",
+              "cap-6985392",
+              "cap-12176777"
+            ],
+            "chunkLimit": 20,
+            "expectedChunkRanks": [
+              {
+                "id": "cap-10336874",
+                "rank": 2
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "semanticPassed": true
+      },
+      "publication": {
+        "schemaVersion": 1,
+        "sha256": "8c1a4adfca5a235b6d9e9e7d54e0be7dec613d772fc5d2a395037573535e6aae",
+        "huggingface": {
+          "repo": "Bendyline/knowledge",
+          "revision": "d18d500f53269c4ce638b9554f69a787c2d3e2c1",
+          "path": "catalogs/caselaw-utah-part-0002/releases/2026.10.1/caselaw-utah-part-0002-2026.10.1.gezk"
+        },
+        "github": {
+          "repository": "bendyline/knowledge",
+          "tag": "caselaw-utah-part-0002-v2026.10.1",
+          "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-part-0002-v2026.10.1",
+          "archiveUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-utah-part-0002-v2026.10.1/caselaw-utah-part-0002-2026.10.1.gezk"
+        }
+      }
+    }
+  ],
+  "collectionPublication": {
+    "schemaVersion": 1,
+    "collection": "caselaw-utah",
+    "version": "2026.10.1",
+    "sha256": "5c66509511fa314839cc2b1003a2b31d709c24157852b2c2c548f03ee318d6d7",
+    "huggingface": {
+      "repo": "Bendyline/knowledge",
+      "revision": "103f807eae326c8f326f2289aed91ce2ee15d19d",
+      "path": "collections/caselaw-utah/releases/2026.10.1/collection.json"
+    },
+    "github": {
+      "repository": "bendyline/knowledge",
+      "tag": "caselaw-utah-v2026.10.1",
+      "url": "https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-v2026.10.1",
+      "indexUrl": "https://github.com/bendyline/knowledge/releases/download/caselaw-utah-v2026.10.1/collection.json"
+    }
+  },
+  "inventorySnapshot": "2026-10-06",
+  "cloudMirrorEvidence": [
+    {
+      "catalogId": "caselaw-utah-part-0001",
+      "version": "2026.10.1",
+      "sha256": "a20e5631af22cb336e2d381ffe7122b5f890e45b8a8a334beeca6fbc0df2a3ef",
+      "runId": 37586511450,
+      "workflowCommit": "be94fadc6b144ad37b9bd6a230482693d02aa789",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37586511450",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T07:25:37.463Z"
+    },
+    {
+      "catalogId": "caselaw-utah-part-0002",
+      "version": "2026.10.1",
+      "sha256": "8c1a4adfca5a235b6d9e9e7d54e0be7dec613d772fc5d2a395037573535e6aae",
+      "runId": 37586808071,
+      "workflowCommit": "be94fadc6b144ad37b9bd6a230482693d02aa789",
+      "url": "https://github.com/bendyline/knowledge/actions/runs/37586808071",
+      "hostHashesMatch": true,
+      "verifiedAt": "2026-10-07T07:25:38.924Z"
+    }
+  ]
+}

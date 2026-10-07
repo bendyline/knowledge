@@ -33,57 +33,77 @@ collection configuration → measured, frozen package plan → .gezk parts
 
 ## Published pilots
 
-The first 300–399 build measured 1,033,287,052 bytes and passed integrity,
-all ten citation checks, and nine of ten semantic probes. The broad
-right-to-counsel query ranked Gideon 24th by chunk (16th by distinct case),
-outside the global top-20 acceptance limit. Its replacement smoke query
-describes the Florida poolroom burglary and denial of appointed counsel,
-without naming the case or its citation; that query ranks Gideon first.
-The [original failure and diagnostic](../collections/caselaw/us-300-399/retrieval-2026-10-07.json)
-remain recorded. This clarifies the probe and does not fix broad-query ranking.
-Publication uses a new plan and version, with the same case bodies and unchanged
-top-20 threshold. Repeated chunk tails are a separate search-quality follow-up.
-
-
-The next pilots are Utah (two parts) and U.S. Reports volumes 300–399
-(one part combining 100 source books and 61,926 records). Both target roughly
-1 GiB per archive, with a smaller final part when a complete state requires it.
-The initial 300–385 sizing build compiled to 864,009,647 bytes (824 MiB), against
-a 1,070,017,862-byte estimate, and passed eight citation and eight semantic checks.
-It remains an unpublished calibration artifact; its
-[measurement](../collections/caselaw/us-300-385/sizing-2026-10-07.json) justifies
-the larger selection. The U.S. Reports estimator rounds the observed 0.4845
-conservative-estimate ratio upward to 0.49 and is restricted to that reporter
-and BGE profile. It is a planning calibration, not a guarantee for other eras.
-
-Utah's 22,904 records are estimated at 1,069,408,251 and 769,988,778 bytes.
-Actual compiled sizes and publication receipts follow build and verification.
-The larger U.S. selection contains all records in the original 347–349 pilot;
-readers should choose one of those overlapping packages. Four anomalously early
-CAP decision dates are preserved and disclosed in the collection's scope.
+Seven archives are published on Hugging Face and GitHub, with complete download
+SHA-256 verification. The latest additions are all 22,904 Utah records in two
+parts and all 61,926 records from U.S. Reports volumes 300–399 in one part.
 
 | Collection | Version | Case records | Archive size | Release |
 | --- | --- | ---: | ---: | --- |
-| U.S. Reports 347–349 | 2026.10.5 | 2,142 | 28.73 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-347-349-v2026.10.5) |
-| Alaska CAP jurisdiction | 2026.10.1 | 10,749 | 993.19 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-alaska-part-0001-v2026.10.1) |
-| Wyoming CAP jurisdiction | 2026.10.3 | 10,931 | 1,019.68 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-wyoming-part-0001-v2026.10.3) |
-| Nevada CAP jurisdiction | 2026.10.1 | 13,707 | 730.85 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-nevada-part-0001-v2026.10.1) |
+| U.S. Reports, volumes 347–349 — CAP pilot | 2026.10.5 | 2,142 | 28.73 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-347-349-v2026.10.5) |
+| Alaska caselaw — CAP jurisdiction collection — 1887–2019 (part-0001) | 2026.10.1 | 10,749 | 993.19 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-alaska-part-0001-v2026.10.1) |
+| Wyoming caselaw — Caselaw Access Project — 1870–2019 (part-0001) | 2026.10.3 | 10,931 | 1019.68 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-wyoming-part-0001-v2026.10.3) |
+| Nevada caselaw — CAP jurisdiction collection — 1865–2019 (part-0001) | 2026.10.1 | 13,707 | 730.85 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-nevada-part-0001-v2026.10.1) |
+| Utah caselaw — Caselaw Access Project — 1861–1992 (part-0001) | 2026.10.1 | 15,254 | 972.88 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-part-0001-v2026.10.1) |
+| Utah caselaw — Caselaw Access Project — 1993–2019 (part-0002) | 2026.10.1 | 7,650 | 695.68 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-utah-part-0002-v2026.10.1) |
+| U.S. Reports volumes 300–399 — Caselaw Access Project — 1910–1970 (part-0001) | 2026.10.2 | 61,926 | 985.42 MiB | [Archive and verification](https://github.com/bendyline/knowledge/releases/tag/caselaw-us-300-399-part-0001-v2026.10.2) |
 
-All four archives are published on Hugging Face and GitHub with complete download
-SHA-256 verification. The collection indexes for
+Collection indexes for
 [Alaska](https://github.com/bendyline/knowledge/releases/download/caselaw-alaska-v2026.10.1/collection.json),
-[Wyoming](https://github.com/bendyline/knowledge/releases/download/caselaw-wyoming-v2026.10.3/collection.json), and
-[Nevada](https://github.com/bendyline/knowledge/releases/download/caselaw-nevada-v2026.10.1/collection.json)
+[Wyoming](https://github.com/bendyline/knowledge/releases/download/caselaw-wyoming-v2026.10.3/collection.json),
+[Nevada](https://github.com/bendyline/knowledge/releases/download/caselaw-nevada-v2026.10.1/collection.json),
+[Utah](https://github.com/bendyline/knowledge/releases/download/caselaw-utah-v2026.10.1/collection.json), and
+[U.S. Reports 300–399](https://github.com/bendyline/knowledge/releases/download/caselaw-us-300-399-v2026.10.2/collection.json)
 record exact case membership, checksums, and immutable download coordinates.
-The public [dataset overview](https://huggingface.co/datasets/Bendyline/knowledge)
+The [dataset overview](https://huggingface.co/datasets/Bendyline/knowledge)
 links every published pilot. CAP bodies and generated Markdown remain outside Git.
 
-All four catalogs are included in the verified `@bendyline/gilde@0.1.88` npm
-tarball and the live `gezelgilde.com` catalog snapshot from Gilde commit
-`1ad672ad10ebc87f1bb0c732b8472f13d3e955d3`. Archive hashes, sizes, document/chunk
-counts, and immutable Hugging Face coordinates match on both discovery surfaces.
-The [publication verification record](../collections/caselaw/publication-2026-10-06-wave-2.json)
-also checks the two new collection indexes and the dataset overview.
+All seven catalogs are included in the verified `@bendyline/gilde@0.1.89`
+npm tarball and the live `gezelgilde.com` catalog snapshot from Gilde commit
+`e1353b62c8a8b5060d7bf82ada937b6dac16f12d`. Archive hashes, sizes, document/chunk counts, and
+immutable Hugging Face coordinates match on both discovery surfaces.
+The [publication verification record](../collections/caselaw/publication-2026-10-07-wave-3.json)
+also checks both new collection indexes and the dataset overview. Earlier
+publication evidence remains in the [wave-2 record](../collections/caselaw/publication-2026-10-06-wave-2.json).
+
+U.S. Reports 300–399 combines 100 books into 1,033,287,056 bytes,
+near the 1 GiB target. Its first sizing build, volumes 300–385, measured only
+864,009,647 bytes and was not published. That result calibrated the U.S.-specific
+size estimate before expansion to 100 books. The `us-reports-bge-v1` model
+multiplies the conservative estimate by 0.49 and is restricted to U.S. Reports
+with the measured BGE profile. It is a planning calibration, not a guarantee
+for other eras.
+
+The larger collection contains all
+2,142 records in the original 347–349 pilot, whose source ZIP hashes are identical.
+Choose the larger collection for broader coverage; installing both duplicates
+those cases. This remains a bounded reporter selection, not all U.S. Reports or
+the complete federal collection. Four anomalously early CAP decision dates are
+preserved and disclosed in its scope and benchmark.
+
+Utah's two archives contain 15,254 and 7,650 cases in
+1,020,134,686 and 729,473,439 bytes. Membership follows CAP's Utah
+assignment, including one Salt Lake City Register and Receiver record.
+Every normalized source text matches in both new collections: 22,904 Utah
+records and 61,926 U.S. Reports records. Their 354,806 and
+178,012 page/footnote links resolve. All 14 citation probes and 14 configured
+semantic probes pass. Semantic verification retains the global top-20 chunk
+limit. These are smoke tests, not a
+broad legal retrieval evaluation. The original broad right-to-counsel query
+ranked Gideon 24th by chunk and failed its top-20 check. The final required
+probe uses the case-specific Florida poolroom burglary and denial of counsel,
+without a case name or citation. Its top-20 threshold is unchanged. This is a
+probe clarification, not an improvement to broad-query ranking; the
+[original failure and diagnostic](../collections/caselaw/us-300-399/retrieval-2026-10-07.json)
+remain recorded, and the failed 2026.10.1 archive remains unpublished.
+
+The builds shared a DirectML GPU and retained source, model, and embedding
+caches. Utah took 6,733 seconds for both parts; the final
+U.S. build took 750.8 seconds and reused the preceding
+U.S. builds' embedding cache. These are concurrent local timings, not isolated or
+uncached throughput measurements. Full size, source audit, retrieval, timing,
+and publication evidence is in the
+[Utah](../collections/caselaw/utah/benchmark-2026-10-07.json) and
+[U.S. Reports](../collections/caselaw/us-300-399/benchmark-2026-10-07.json) benchmarks.
 
 Wyoming combines 1,184 selected source books into one 1,069,210,109-byte archive,
 covering 1870–2019. Nevada combines 179 books into one 766,348,339-byte archive,
@@ -147,8 +167,12 @@ before the collection index and discovery registrations can be published.
 `.github/workflows/mirror-release.yml` mirrors an already-uploaded immutable
 Hugging Face release to GitHub without a second large upload from the build
 machine. Supply its catalog ID, version, Hugging Face commit, build source
-commit, and archive SHA-256. The workflow restores the bounded release folder,
-hashes the archive, checks out the exact build commit, and invokes that commit's
+commit, and archive SHA-256. The workflow restores only top-level publication
+files, retaining the 50 MiB sidecar budget and 200-file limit. License and
+provenance records are already inside the complete hash-verified archive and
+remain separately available on Hugging Face, so the mirror avoids downloading
+the duplicate LICENSES directory. It hashes the archive, checks out the exact
+build commit, and invokes that commit's
 normal publisher. Its `mirror-publication-receipt` artifact contains the result.
 It uses the existing `knowledge-publishing` environment and credentials.
 
@@ -459,7 +483,7 @@ designation and voluntary credit rules apply separately from repository code.
 
 ## Bounded pilots
 
-The current pilot is `caselaw/us-347-349`: all 2,142 case records from three
+The original bounded pilot is `caselaw/us-347-349`: all 2,142 case records from three
 consecutive source volumes combined into one searchable `.gezk`:
 
 | Source volume | Case records |
