@@ -1,7 +1,8 @@
 # Source and transformation policy
 
-Public GitHub repositories, explicitly configured Wikipedia editions, and pinned
-Caselaw Access Project volume ZIPs are supported. No login sessions, private repository files, cookies, or
+Public GitHub repositories, explicitly configured Wikipedia editions, pinned
+Caselaw Access Project volume ZIPs, and Project Gutenberg bookshelves read from a
+mirror are supported. No login sessions, private repository files, cookies, or
 secrets are copied into catalogs. Ingested files are data; their scripts, workflow
 files, and build plugins are never executed.
 
@@ -71,3 +72,14 @@ Expanded byte budgets, exact case counts, safe entries, complete JSON/HTML pairs
 matching metadata, unique IDs, and unchanged terms are required. Full source-text
 and link audits gate package planning. CAP bodies and normalized Markdown remain
 outside Git. See [CAP ingestion](caselaw.md).
+
+Project Gutenberg's website is for human readers, and PG blocks automated
+access to it. The Gutenberg adapter reads only from a mirror's generated
+collection; the schema rejects `www.gutenberg.org` as a mirror. It downloads
+the gzipped catalog feed and each selected book's HTML over three connections,
+with a pause after each download. Files are cached for 30 days (the feed for
+one day), so an interrupted sync or a guide-only refresh resumes from the
+cache. Rights come from each edition's `dc.rights` statement. PG's license,
+trademark text, and references to Project Gutenberg are removed before
+acceptance, and a section that still mentions them fails. See
+[the Gutenberg catalog](gutenberg.md).

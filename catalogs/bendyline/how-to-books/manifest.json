@@ -1,0 +1,45 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "bendyline-how-to-books",
+  "name": "How-to books",
+  "description": "Every English book on Project Gutenberg's \"How To ...\" bookshelf that PG marks public domain, split into chapter documents, plus original task-focused how-to guides that cite those chapters. Covers cooking, gardening, crafts, building, animals, outdoor skills, household management, and more. Historical practices are reproduced as written; guides add modern safety notes.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "workspace",
+  "publisher": { "id": "bendyline", "name": "Bendyline", "url": "https://github.com/bendyline/knowledge" },
+  "source": {
+    "type": "gutenberg",
+    "mirror": "https://gutenberg.pglaf.org/cache/epub",
+    "bookshelf": "Category: How To ...",
+    "language": "en",
+    "exclude": [],
+    "maxBooks": 3000,
+    "maxFailureFraction": 0.02,
+    "guides": true,
+    "omitIndexes": true,
+    "userAgent": "BendylineKnowledge/0.1 (https://github.com/bendyline/knowledge)"
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      { "id": "public-domain", "name": "Public Domain Mark 1.0", "spdx": "CC-PDM-1.0", "url": "https://creativecommons.org/publicdomain/mark/1.0/", "text": "LICENSES/CC-PDM-1.0.txt", "attribution": "Public-domain book text transcribed by Project Gutenberg volunteers (https://www.gutenberg.org); the Project Gutenberg license and trademark text are removed. Credit is voluntary." },
+      { "id": "cc-by-sa", "name": "Creative Commons Attribution-ShareAlike 4.0 International", "spdx": "CC-BY-SA-4.0", "url": "https://creativecommons.org/licenses/by-sa/4.0/", "text": "LICENSES/CC-BY-SA-4.0.txt", "attribution": "How-to guides by Bendyline (https://github.com/bendyline/knowledge), licensed CC BY-SA 4.0, derived from the public-domain books in this catalog." }
+    ],
+    "rules": [
+      { "include": ["books/**"], "license": "public-domain" },
+      { "include": ["guides/**"], "license": "cc-by-sa" }
+    ]
+  },
+  "normalization": { "images": "omit" },
+  "sync": { "maxFileBytes": 20000000, "maxTotalBytes": 4000000000, "maxDeleteFraction": 0.2 },
+  "build": { "embeddingProfile": "bge-small-en-v1.5@1", "toc": { "format": "folders" } },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": { "repository": "bendyline/gilde", "category": "manuals", "tags": ["how-to", "public-domain", "cooking", "gardening", "crafts", "household", "outdoors"] }
+  }
+}

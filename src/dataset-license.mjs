@@ -11,7 +11,7 @@ export function catalogLicenseSection(items) {
   return items.map(({ key, manifest: m }) => {
     const base = `https://github.com/${m.publish.github}/blob/main/catalogs/${urlPath(key)}`;
     const source = m.source.type === 'github' ? `https://github.com/${m.source.repository}`
-      : m.source.type === 'wikipedia' ? `https://${m.source.language}.wikipedia.org/` : m.source.type.startsWith('caselaw') ? 'https://static.case.law/' : `${base}/manifest.json`;
+      : m.source.type === 'wikipedia' ? `https://${m.source.language}.wikipedia.org/` : m.source.type.startsWith('caselaw') ? 'https://static.case.law/' : m.source.type === 'gutenberg' ? 'https://www.gutenberg.org/ (public-domain transcriptions; Project Gutenberg license and trademark text removed)' : `${base}/manifest.json`;
     const lines = [
       `${m.name} (${key})`,
       `Catalog ID: ${m.id}`,

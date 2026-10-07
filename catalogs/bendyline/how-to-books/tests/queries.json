@@ -1,0 +1,110 @@
+[
+  {
+    "query": "Bake a loaf of yeast bread",
+    "expectedDocumentIds": [
+      "guides/cooking/bake-a-loaf-of-yeast-bread"
+    ]
+  },
+  {
+    "query": "Make apple jelly without added pectin",
+    "expectedDocumentIds": [
+      "guides/food-preservation/make-apple-jelly-without-added-pectin"
+    ]
+  },
+  {
+    "query": "Make a hot compost pile",
+    "expectedDocumentIds": [
+      "guides/gardening/make-a-hot-compost-pile"
+    ]
+  },
+  {
+    "query": "Cleft-graft an apple tree",
+    "expectedDocumentIds": [
+      "guides/fruit-growing/cleft-graft-an-apple-tree"
+    ]
+  },
+  {
+    "query": "Sharpen a chisel or plane iron",
+    "expectedDocumentIds": [
+      "guides/woodworking/sharpen-a-chisel-or-plane-iron"
+    ]
+  },
+  {
+    "query": "Fix a dripping compression faucet",
+    "expectedDocumentIds": [
+      "guides/building-and-repair/fix-a-dripping-compression-faucet"
+    ]
+  },
+  {
+    "query": "Darn a hole in a sock",
+    "expectedDocumentIds": [
+      "guides/needlework/darn-a-hole-in-a-sock"
+    ]
+  },
+  {
+    "query": "Build a coil pot by hand",
+    "expectedDocumentIds": [
+      "guides/crafts/build-a-coil-pot-by-hand"
+    ]
+  },
+  {
+    "query": "Build and put out a campfire",
+    "expectedDocumentIds": [
+      "guides/outdoors/build-and-put-out-a-campfire"
+    ]
+  },
+  {
+    "query": "Paddle and steer a canoe",
+    "expectedDocumentIds": [
+      "guides/fishing-and-boating/paddle-and-steer-a-canoe"
+    ]
+  },
+  {
+    "query": "Play checkers",
+    "expectedDocumentIds": [
+      "guides/games-and-sports/play-checkers"
+    ]
+  },
+  {
+    "query": "Draw a scene in linear perspective",
+    "expectedDocumentIds": [
+      "guides/arts/draw-a-scene-in-linear-perspective"
+    ]
+  },
+  {
+    "query": "Chair a meeting using parliamentary procedure",
+    "expectedDocumentIds": [
+      "guides/communication/chair-a-meeting-using-parliamentary-procedure"
+    ]
+  },
+  {
+    "query": "Make an electromagnet",
+    "expectedDocumentIds": [
+      "guides/mechanics-and-electricity/make-an-electromagnet"
+    ]
+  },
+  {
+    "query": "Raise baby chicks in a brooder",
+    "expectedDocumentIds": [
+      "guides/animals/raise-baby-chicks-in-a-brooder"
+    ]
+  },
+  {
+    "query": "Remove common stains from washable fabrics",
+    "expectedDocumentIds": [
+      "guides/household/remove-common-stains-from-washable-fabrics"
+    ]
+  },
+  {
+    "query": "Prepare a beehive for winter",
+    "expectedDocumentIds": [
+      "guides/beekeeping/prepare-a-beehive-for-winter"
+    ]
+  },
+  {
+    "query": "Press and mount plant specimens",
+    "expectedDocumentIds": [
+      "guides/plants-and-botany/press-and-mount-plant-specimens"
+    ]
+  }
+]

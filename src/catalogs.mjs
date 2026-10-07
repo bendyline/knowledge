@@ -9,6 +9,8 @@ import { automaticLicensing, validateAutomaticLicensing } from './licensing.mjs'
 import { validateWikipediaSelection } from './wikipedia-selection.mjs';
 import { toolchainIdentity } from './toolchain.mjs';
 import { CASELAW_NORMALIZER } from './sources/caselaw-normalize.mjs';
+import { GUTENBERG_NORMALIZER } from './sources/gutenberg-normalize.mjs';
+import { checkGuideDefinitions, validateGutenbergSelection } from './gutenberg-selection.mjs';
 import { workspaceDefinitionFiles } from './catalog-workspace.mjs';
 
 export function hasUnresolvedDocfx(text) {
@@ -67,6 +69,7 @@ export async function validateCatalog(catalog, { allowEmpty = false, definitionO
     for (const path of [m.licensing.notice, ...m.licensing.licenses.map(l => l.text)]) {
       if (!(await readFile(inside(catalog.definitionDir, path), 'utf8')).trim()) throw new Error(`${path}: empty notice/license`);
     }
+    if (m.source.type === 'gutenberg' && m.source.guides) await checkGuideDefinitions(catalog);
     return { catalog: catalog.key, status: 'definition valid; source evidence and content checked during prepare/build', contentStorage: 'workspace' };
   }
   if (m.contentStorage === 'workspace' && !await exists(resolve(dir, 'sources.lock.json'))) throw new Error(`${catalog.key}: content is not prepared; run npm run prepare-content -- --catalog ${catalog.key}`);
@@ -103,6 +106,7 @@ export async function validateCatalog(catalog, { allowEmpty = false, definitionO
   const byPath = new Map(provenance.map((p) => [p.path, p]));
   if (byPath.size !== provenance.length) throw new Error('Duplicate provenance paths');
   await validateWikipediaSelection(catalog, provenance);
+  await validateGutenbergSelection(catalog, provenance);
   if (m.source.type !== 'manual' && files.length) {
     const lock = SourceLockSchema.parse(await readJson(resolve(dir, 'sources.lock.json')));
     if (lock.contentDigest !== digest(files)) throw new Error(`${catalog.key}: synced content has local edits; resync or move edits to a manual catalog`);
@@ -112,7 +116,7 @@ export async function validateCatalog(catalog, { allowEmpty = false, definitionO
   }
   return { catalog: catalog.key, files: files.length, documents: files.filter((f) => /\.md$/i.test(f.path)).length, contentDigest: digest(files) };
 }
-export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION, ...(m.source.type.startsWith('caselaw') ? { caselawNormalizer: CASELAW_NORMALIZER } : {}) });
+export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION, ...(m.source.type.startsWith('caselaw') ? { caselawNormalizer: CASELAW_NORMALIZER } : {}), ...(m.source.type === 'gutenberg' ? { gutenbergNormalizer: GUTENBERG_NORMALIZER } : {}) });
 export async function buildDigest(catalog, packaging) {
   const files = await inventory(catalog.dir);
   const relevant = files.filter((f) => f.path !== 'manifest.json');

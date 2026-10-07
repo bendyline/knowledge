@@ -33,8 +33,10 @@ license texts, notices, and per-document provenance.
 For `licensing.status: automatic` with `policy: standard-open-v1`, actual upstream
 license texts are compared to bundled SPDX and Creative Commons references.
 The policy accepts MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0,
-CC-BY-3.0/4.0, and CC-BY-SA-3.0/4.0 when their terms match. Formatting and MIT
-copyright-holder variations are allowed; added conditions are not. The assessment
+CC-BY-3.0/4.0, and CC-BY-SA-3.0/4.0 when their terms match, and the
+CC-PDM-1.0 Public Domain Mark for source-attested public-domain works.
+Formatting and MIT copyright-holder variations are allowed; added conditions
+are not. The assessment
 stores source hashes, reference URLs, and required attribution, modification
 notices, and share-alike obligations. Adaptations retain the source license.
 No human sign-off is required for these recognized cases.
@@ -70,6 +72,17 @@ disabled and needs a separate distribution integration before public release.
 Builds ship the catalog NOTICE, full license texts, and imported provenance inside
 `LICENSES/` in each `.gezk`. A single dataset-wide MIT tag would be incorrect for
 a mixed collection: the Hugging Face card must explain the per-catalog licenses.
+
+Project Gutenberg books use `CC-PDM-1.0` (Public Domain Mark), whose reference
+text is pinned with the other SPDX texts. Each selected book must carry PG's
+"Public domain in the USA." statement in its HTML edition's `dc.rights`
+metadata. Books PG marks as copyrighted are excluded. The per-book statements,
+source hashes, exclusions, and failures are kept in
+`LICENSES/gutenberg-selection.json`. The status is identified for the United
+States, and the catalog NOTICE says so. PG's license and trademark text and
+every reference to Project Gutenberg are removed from book text, as PG's
+license requires for unrestricted use. Original guides in the same catalog
+carry their own recognized license (CC BY-SA 4.0) under a separate path rule.
 
 If a release needs withdrawal, stop syncing that source, yank its version through
 a reviewed Gilde PR, and follow the host's removal process where required.
