@@ -154,3 +154,20 @@ introduction, "What you need", numbered "Steps", "From the source books"
 where historical practice is now known to be unsafe (food preservation,
 chemicals, lead, arsenic, mercury, electrical work, animal handling). They
 leave out medical remedies, poisons, weapons, and explosives.
+
+## Retrieval checks
+
+`tests/queries.json` searches titles of guides across all 18 topics.
+`tests/semantic-queries.json` asks natural questions of two kinds:
+
+- task-level questions ("How do I bake a loaf of homemade yeast bread?"),
+  which should rank the matching guide in the top 20 chunks;
+- narrow sub-questions ("How long should I knead bread dough…?"), which should
+  rank the book chapter that answers them in depth.
+
+The unpublished 2026.10.7 build expected guides for two narrow sub-questions.
+Search ranked the cited source chapters first instead: Woman's Institute
+bread (`books/pg9935/030`) and Levison's tree identification
+(`books/pg16116/006`). The guides ranked 173rd and 55th, because a guide covers
+each detail in only one step. Those checks now expect the source chapters, and
+task-level checks cover the guides, which rank first.
