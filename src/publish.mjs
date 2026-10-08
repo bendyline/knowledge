@@ -12,6 +12,27 @@ import { verifyRemote } from './remote-verification.mjs';
 
 export { verifyRemote };
 
+export async function findGitHubRelease(api, repository, tag, commit) {
+  const matchingDraft = (release) => {
+    if (release.draft && release.target_commitish !== commit) throw new Error('GitHub draft release targets a different source commit');
+    return release;
+  };
+  try { return matchingDraft(await api(`/repos/${repository}/releases/tags/${encodeURIComponent(tag)}`)); }
+  catch (error) { if (error.status !== 404) throw error; }
+  // The tag endpoint omits unpublished drafts. Search all pages so retries
+  // reuse their completed assets, including after a runner loses its receipt.
+  let found;
+  for (let page = 1; ; page++) {
+    const releases = await api(`/repos/${repository}/releases?per_page=100&page=${page}`);
+    for (const release of releases) {
+      if (!release.draft || release.tag_name !== tag) continue;
+      if (found) throw new Error('Multiple GitHub draft releases use this version tag');
+      found = matchingDraft(release);
+    }
+    if (releases.length < 100) return found;
+  }
+}
+
 export function publishPlan(release) {
   if (release.testOnly) throw new Error('Test embeddings may never be published');
   if (!release.targets.enabled) throw new Error('Publishing is disabled in this catalog manifest');
@@ -97,8 +118,7 @@ export async function publishRelease(root, directory, { apply = false, stageOnly
     if (stageOnly) return { ...plan, applied: true, staged: true, sourceCommit: release.sourceCommit, archiveBytes: release.archiveBytes, huggingface: receipt.huggingface };
     await io.verifyRemote(`${hfBase}/resolve/${receipt.huggingface.revision}/${receipt.huggingface.path}`, release.sha256, release.archiveBytes);
   }
-  let ghRelease;
-  try { ghRelease = await io.githubApi(`/repos/${plan.github.repository}/releases/tags/${encodeURIComponent(plan.github.tag)}`); } catch (e) { if (e.status !== 404) throw e; }
+  let ghRelease = await findGitHubRelease(io.githubApi, plan.github.repository, plan.github.tag, release.sourceCommit);
   if (!ghRelease) ghRelease = await io.githubApi(`/repos/${plan.github.repository}/releases`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tag_name: plan.github.tag, target_commitish: release.sourceCommit, name: `${release.manifest.name} ${release.version}`, draft: true, body: `${release.manifest.description}\n\nSource commit: ${release.sourceCommit}\nSHA-256: ${release.sha256}\nSee release.json and LICENSES for provenance and licensing.` }) });
   for (const file of (await inventory(directory)).filter((f) => f.path !== 'published.json' && !f.path.includes('/'))) {
     const existing = ghRelease.assets.find((a) => a.name === file.path);
