@@ -190,7 +190,8 @@ variant; extra restrictions still fail automatic recognition.
 The local validation builds at version `2026.10.11` use real
 `bge-small-en-v1.5@1` embeddings and the published Gezk 0.6 toolchain. Each archive
 passed deep integrity and license checks, one title-search probe, and one semantic
-retrieval probe. These are local validation artifacts; publication remains disabled.
+retrieval probe. These are historical local validation artifacts; the production
+release is described below.
 
 | Catalog | Indexed documents | Chunks | Gezk size (decimal MB) |
 | --- | ---: | ---: | ---: |
@@ -250,11 +251,16 @@ path. Includes remain preserved in Git but are not indexed as standalone article
 Measure each real archive against the existing GitHub asset limit before enabling
 publication. Existing publish/Gilde Actions accept these catalog selectors.
 
-Publishing is now enabled for all 13 preservation catalogs. Their first public
-release batch uses `2026.10.16`, rebuilt and verified from the clean committed
-checkout; the validation artifacts listed above remain historical. The source
-snapshots need no re-download for publication, and existing embedding caches can
-be reused. Publication updates both archive hosts and proposes Gilde definitions.
+All 13 preservation catalogs are published as `2026.10.16` on
+[Hugging Face](https://huggingface.co/datasets/Bendyline/knowledge) and in
+[GitHub Releases](https://github.com/bendyline/knowledge/releases). Together they
+contain 73,625 indexed documents in 2.18 GB of archives; the largest archive is
+393 MB. The batch was rebuilt from clean source commit
+`924be73ca61c9070e2faacd0e6d41ffea2a4954c`. Every archive passed integrity,
+configured full-text and semantic retrieval checks, and complete download/hash
+verification from both hosts. The validation artifacts listed above remain
+historical. Future releases can reuse accepted source snapshots and embedding
+caches. Publication updates both archive hosts and proposes Gilde definitions.
 Gilde PR merges, its npm release, and site deployment remain separate steps in
 [the release guide](releasing.md#complete-gilde-discovery).
 
