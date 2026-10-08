@@ -1,11 +1,5 @@
 [
   {
-    "query": "How long should I knead bread dough and how do I know when it has risen enough?",
-    "expectedDocumentIds": [
-      "guides/cooking/bake-a-loaf-of-yeast-bread"
-    ]
-  },
-  {
     "query": "How can I tell when homemade jelly is done without a thermometer?",
     "expectedDocumentIds": [
       "guides/food-preservation/make-apple-jelly-without-added-pectin"
@@ -72,15 +66,33 @@
     ]
   },
   {
-    "query": "How can I tell a white oak from a red oak?",
+    "query": "What is the best way to dry sage and thyme so they keep their flavor?",
+    "expectedDocumentIds": [
+      "guides/plants-and-botany/harvest-and-dry-culinary-herbs"
+    ]
+  },
+  {
+    "query": "How do I bake a loaf of homemade yeast bread?",
+    "expectedDocumentIds": [
+      "guides/cooking/bake-a-loaf-of-yeast-bread"
+    ]
+  },
+  {
+    "query": "How long should I knead bread dough and how do I know when it has risen enough?",
+    "expectedDocumentIds": [
+      "books/pg9935/030"
+    ]
+  },
+  {
+    "query": "How do I identify a tree from its leaves, bark and winter buds?",
     "expectedDocumentIds": [
       "guides/plants-and-botany/identify-a-tree-by-its-leaves-bark-and-buds"
     ]
   },
   {
-    "query": "What is the best way to dry sage and thyme so they keep their flavor?",
+    "query": "How can I tell a white oak from a red oak?",
     "expectedDocumentIds": [
-      "guides/plants-and-botany/harvest-and-dry-culinary-herbs"
+      "books/pg16116/006"
     ]
   }
 ]
