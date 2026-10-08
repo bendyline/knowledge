@@ -1,0 +1,543 @@
+---
+title: Create an Azure SQL Managed Instance Using a User-Assigned Managed Identity
+titleSuffix: Azure SQL Managed Instance
+description: This article guides you through creating an Azure SQL Managed Instance using a user-assigned managed identity.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: vanto, mathoma
+ms.date: 03/18/2026
+ms.service: azure-sql-managed-instance
+ms.subservice: security
+ms.topic: how-to
+---
+
+# Create an Azure SQL Managed Instance with a user-assigned managed identity
+
+
+
+  **Applies to:**    [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+> 
+> - [Azure SQL Database](../database/authentication-azure-ad-user-assigned-managed-identity-create-server.md?view=azuresql-db&preserve-view=true)
+> - [Azure SQL Managed Instance](authentication-azure-ad-user-assigned-managed-identity-create-managed-instance.md?view=azuresql-mi&preserve-view=true)
+
+This how-to guide outlines the steps to create an [Azure SQL Managed Instance](sql-managed-instance-paas-overview.md) with a [user-assigned managed identity](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview#managed-identity-types) from Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)). For more information on the benefits of using a user-assigned managed identity for the server identity in Azure SQL Database, see [Managed identities in Microsoft Entra for Azure SQL](../database/authentication-azure-ad-user-assigned-managed-identity.md).
+
+
+> **Note:**  
+> [Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/new-name) was previously known as Azure Active Directory (Azure AD).
+
+## Prerequisites
+
+- Create a user-assigned managed identity and assign it the necessary permission to be a server or managed instance identity. For more information, see [Manage user-assigned managed identities](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities) and [user-assigned managed identity permissions for Azure SQL](../database/authentication-azure-ad-user-assigned-managed-identity.md#permissions).
+- In the general case, the managed identity needs to have the role [SQL Managed Instance Contributor](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#sql-managed-instance-contributor) assigned at subscription scope. In addition, it needs to have an Azure RBAC role with the permission Microsoft.ManagedIdentity/userAssignedIdentities/\*/assign/action (e.g., [Managed Identity Operator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#managed-identity-operator)) at subscription scope.
+- If provisioning in a subnet that is already delegated to Azure SQL Managed Instance, the managed identity only needs the Microsoft.Sql/managedInstances/write permission assigned at subscription scope.
+- [Az.Sql module 3.4](https://www.powershellgallery.com/packages/Az.Sql/3.4.0) or higher is required when using PowerShell for user-assigned managed identities.
+- [The Azure CLI 2.26.0](https://learn.microsoft.com/cli/azure/install-azure-cli) or higher is required to use the Azure CLI with user-assigned managed identities.
+- For a list of limitations and known issues with using user-assigned managed identity, see [User-assigned managed identity in Microsoft Entra for Azure SQL](../database/authentication-azure-ad-user-assigned-managed-identity.md#limitations-and-known-issues)
+
+## Create SQL Managed Instance with a user-assigned managed identity
+
+You can create your instance by using the Azure portal, Azure CLI, Azure PowerShell, REST API, or an ARM template. 
+
+# [Portal](#tab/azure-portal)
+
+To create your SQL managed instance with a user-assigned managed identity in the Azure portal, follow these steps:
+
+1. Go to the [Azure SQL hub at aka.ms/azuresqlhub](https://aka.ms/azuresqlhub).
+1. Under **Azure SQL Managed Instance**, select **SQL managed instances** to open the **SQL managed instances** pane.
+1. On the **SQL managed instances** pane, select **+ Create** and then choose the **SQL managed instance** offer to open the **Create a SQL managed instance** page.
+
+   Screenshot of the SQL managed instances page from the Azure SQL hub page in the Azure portal, showing the +Create button.
+
+
+On the **Create Azure SQL Managed Instance** page, follow these steps: 
+1. Fill out the mandatory information required on the **Basics** tab for **Project details** and **Managed Instance details**. This is a minimum set of information required to provision a SQL Managed Instance.
+
+   Azure portal screenshot of creating the SQL Managed Instance basic tab
+
+   For more information on the configuration options, see [Quickstart: Create Azure SQL Managed Instance](instance-create-quickstart.md).
+
+1. Under **Authentication**, select a preferred authentication model. If you're looking to configure [Microsoft Entra-only authentication](../database/authentication-azure-ad-only-authentication.md), see the [guide](../database/authentication-azure-ad-only-authentication-create-server.md?tabs=azure-portal).
+
+1. Next, go through the **Networking** tab configuration, or leave the default settings.
+
+1. On the Security tab, under **Identity**, select **Configure Identities**.
+
+    Screenshot of Azure portal security settings of the create managed instance process.
+
+1. On the **Identity** pane, under **User assigned managed identity**, select **Add**. Select the desired **Subscription** and then under **User assigned managed identities** select the desired user assigned managed identity from the selected subscription. Then select the **Select** button. 
+
+    Azure portal screenshot of adding user assigned managed identity when configuring managed instance identity.
+
+    Azure portal screenshot of user assigned managed identity when configuring managed instance identity
+
+1. Under **Primary identity**, select the same user-assigned managed identity selected in the previous step.
+
+    Azure portal screenshot of selecting primary identity for the managed instance
+
+    > **Note:**
+    > If the system-assigned managed identity is the primary identity, the **Primary identity** field must be empty.
+
+1. Select **Apply**
+
+1. You can leave the rest of the settings default. For more information on other tabs and settings, follow the guide in the article [Quickstart: Create Azure SQL Managed Instance](instance-create-quickstart.md).
+
+1. On the **Additional settings** tab, consider using Azure tags. For example, the "Owner" or "CreatedBy" tag to identify who created the resource, and the Environment tag to identify whether this resource is in Production, Development, etc. For more information, see [Develop your naming and tagging strategy for Azure resources](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/naming-and-tagging).
+
+1. Once you're done with configuring your settings, select **Review + create** to proceed. Select **Create** to start provisioning the managed instance.
+
+# [The Azure CLI](#tab/azure-cli)
+
+The Azure CLI command `az sql mi create` is used to provision a new Azure SQL Managed Instance. The following command will provision a managed instance with a user-assigned managed identity, and also enable [Microsoft Entra-only authentication](../database/authentication-azure-ad-only-authentication.md).
+
+> **Note:**
+> The script requires a virtual network and subnet be created as a prerequisite.
+
+The managed instance SQL Administrator login will be automatically created and the password will be set to a random password. Since SQL Authentication connectivity is disabled with this provision, the SQL Administrator login won't be used.
+
+The Microsoft Entra admin will be the account you set for `<AzureADAccount>`, and can be used to manage the instance when the provisioning is complete.
+
+Replace the following values in the example:
+
+- `<subscriptionId>`: Your subscription ID can be found in the Azure portal
+- `<ResourceGroupName>`: Name of the resource group for your managed instance. The resource group should also include the virtual network and subnet created
+- `<managedIdentity>`: The user-assigned managed identity. Can also be used as the primary identity.
+- `<primaryIdentity>`: The primary identity you want to use as the instance identity
+- `<AzureADAccount>`: Can be a Microsoft Entra user or group. For example, `DummyLogin`
+- `<AzureADAccountSID>`: The Microsoft Entra Object ID for the user
+- `<managedinstancename>`: Name the managed instance you want to create
+- The `subnet` parameter needs to be updated with the `<subscriptionId>`, `<ResourceGroupName>`, `<VNetName>`, and `<SubnetName>`.
+
+```azurecli
+# Define variables for resources
+subscriptionId="<subscriptionId>"
+resourceGroupName="<ResourceGroupName>"
+managedIdentity="<managedIdentity>"
+primaryIdentity="<primaryIdentity>"
+AzureADAccount="<AzureADAccount>"
+AzureADAccountSID="<AzureADAccountSID>"
+VNetName="<VNetName>"
+SubnetName="<SubnetName>"
+managedinstancename="<managedinstancename>"
+
+# Create a managed instance with a user-assigned managed identity
+az sql mi create \
+  --assign-identity \
+  --identity-type UserAssigned \
+  --user-assigned-identity-id "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$managedIdentity" \
+  --primary-user-assigned-identity-id "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$primaryIdentity" \
+  --enable-ad-only-auth \
+  --external-admin-principal-type User \
+  --external-admin-name $AzureADAccount \
+  --external-admin-sid $AzureADAccountSID \
+  -g $resourceGroupName \
+  -n $managedinstancename \
+  --subnet "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Network/virtualNetworks/$VNetName/subnets/$SubnetName"
+```
+
+For more information, see [az sql mi create](https://learn.microsoft.com/cli/azure/sql/mi#az-sql-mi-create).
+
+> **Note:**
+> The above example provisions a managed instance with only a user-assigned managed identity. You could set the `--identity-type` to be `UserAssigned,SystemAssigned` if you wanted both types of managed identities to be created with the instance.
+
+# [PowerShell](#tab/azure-powershell)
+
+The PowerShell command `New-AzSqlInstance` is used to provision a new Azure SQL Managed Instance. The below command will provision a managed instance with a user-assigned managed identity, and also enable [Microsoft Entra-only authentication](../database/authentication-azure-ad-only-authentication.md).
+
+> **Note:**
+> The script requires a virtual network and subnet be created as a prerequisite.
+
+The managed instance SQL Administrator login will be automatically created and the password will be set to a random password. Since SQL Authentication connectivity is disabled with this provision, the SQL Administrator login won't be used.
+
+The Microsoft Entra admin will be the account you set for `<AzureADAccount>`, and can be used to manage the instance when the provisioning is complete.
+
+Replace the following values in the example:
+
+- `<managedinstancename>`: Name the managed instance you want to create
+- `<ResourceGroupName>`: Name of the resource group for your managed instance. The resource group should also include the virtual network and subnet created
+- `<subscriptionId>`: Your subscription ID can be found in the Azure portal
+- `<managedIdentity>`: The user-assigned managed identity. Can also be used as the primary identity.
+- `<primaryIdentity>`: The primary identity you want to use as the instance identity
+- `<Location>`: Location of the managed instance, such as `West US`, or `Central US`
+- `<AzureADAccount>`: Can be a Microsoft Entra user or group. For example, `DummyLogin`
+- The `SubnetId` parameter needs to be updated with the `<subscriptionId>`, `<ResourceGroupName>`, `<VNetName>`, and `<SubnetName>`.
+
+```powershell
+$instanceName = @{
+    Name = "<managedinstancename>"
+    ResourceGroupName = "<ResourceGroupName>"
+    AssignIdentity = $true
+    IdentityType = "UserAssigned"
+    UserAssignedIdentityId = "/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<managedIdentity>"
+    PrimaryUserAssignedIdentityId = "/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<primaryIdentity>"
+    ExternalAdminName = "<AzureADAccount>"
+    EnableActiveDirectoryOnlyAuthentication = $true
+    Location = "<Location>"
+    SubnetId = "/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.Network/virtualNetworks/<VNetName>/subnets/<SubnetName>"
+    LicenseType = "LicenseIncluded"
+    StorageSizeInGB = 1024
+    VCore = 16
+    Edition = "GeneralPurpose"
+    ComputeGeneration = "Gen5"
+}
+
+New-AzSqlInstance @instanceName
+```
+
+For more information, see [New-AzSqlInstance](https://learn.microsoft.com/powershell/module/az.sql/new-azsqlinstance).
+
+> **Note:**
+> The above example provisions a managed instance with only a user-assigned managed identity. You could set the You could set the `-IdentityType` to be `"UserAssigned,SystemAssigned"` if you wanted both types of managed identities to be created with the instance.
+
+# [REST API](#tab/rest-api)
+
+The [Managed Instances - Create Or Update](https://learn.microsoft.com/rest/api/sql/managed-instances/create-or-update) REST API can be used to create a managed instance with a user-assigned managed identity.
+
+> **Note:**
+> The script requires a virtual network and subnet be created as a prerequisite.
+
+The following script will provision a managed instance with a user-assigned managed identity, set the Microsoft Entra admin as `<AzureADAccount>`, and enable [Microsoft Entra-only authentication](../database/authentication-azure-ad-only-authentication.md). The instance SQL Administrator login will also be created automatically and the password will be set to a random password. Since SQL Authentication connectivity is disabled with this provisioning, the SQL Administrator login won't be used.
+
+The Microsoft Entra admin, `<AzureADAccount>` can be used to manage the instance when the provisioning is complete.
+
+Replace the following values in the example:
+
+- `<tenantId>`: Can be found by going to the [Azure portal](https://portal.azure.com), and going to your **Microsoft Entra ID** resource. In the **Overview** pane, you should see your **Tenant ID**
+- `<subscriptionId>`: Your subscription ID can be found in the Azure portal
+- `<instanceName>`: Use a unique managed instance name
+- `<ResourceGroupName>`: Name of the resource group for your logical server
+- `<AzureADAccount>`: Can be a Microsoft Entra user or group. For example, `DummyLogin`
+- `<Location>`: Location of the server, such as `westus2`, or `centralus`
+- `<objectId>`: Can be found by going to the [Azure portal](https://portal.azure.com), and going to your **Microsoft Entra ID** resource. In the **User** pane, search for the Microsoft Entra user and find their **Object ID**
+- The `subnetId` parameter needs to be updated with the `<ResourceGroupName>`, the `Subscription ID`, `<VNetName>`, and `<SubnetName>`
+
+```rest
+Import-Module Azure
+Import-Module MSAL.PS
+
+$tenantId = '<tenantId>'
+$clientId = '1950a258-227b-4e31-a9cf-717495945fc2' # Static Microsoft client ID used for getting a token
+$subscriptionId = '<subscriptionId>'
+$uri = "urn:ietf:wg:oauth:2.0:oob" 
+$instanceName = "<instanceName>"
+$resourceGroupName = "<ResourceGroupName>"
+$scopes ="https://management.core.windows.net/.default"
+
+Login-AzAccount -tenantId $tenantId
+
+# Login as an Azure AD user with permission to provision a managed instance
+
+$result = Get-MsalToken -RedirectUri $uri -ClientId $clientId -TenantId $tenantId -Scopes $scopes
+
+$authHeader = @{
+'Content-Type'='application\json; '
+'Authorization'=$result.CreateAuthorizationHeader()
+}
+
+$body = '{
+"name": "<instanceName>", "type": "Microsoft.Sql/managedInstances", "identity": {"type" : "UserAssigned", "UserAssignedIdentities" : {"/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<managedIdentity>" : {}}},"location": "<Location>", "sku": {"name": "GP_Gen5", "tier": "GeneralPurpose", "family":"Gen5","capacity": 8},
+"properties": { "PrimaryUserAssignedIdentityId":"/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<primaryIdentity>","administrators":{ "login":"<AzureADAccount>", "sid":"<objectId>", "tenantId":"<tenantId>", "principalType":"User", "azureADOnlyAuthentication":true },
+"subnetId": "/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.Network/virtualNetworks/<VNetName>/subnets/<SubnetName>",
+"licenseType": "LicenseIncluded", "vCores": 8, "storageSizeInGB": 2048, "collation": "SQL_Latin1_General_CP1_CI_AS", "proxyOverride": "Proxy", "timezoneId": "UTC", "privateEndpointConnections": [], "storageAccountType": "GRS", "zoneRedundant": false 
+  }
+}'
+
+# To provision the instance, execute the `PUT` command
+
+Invoke-RestMethod -Uri https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Sql/managedInstances/$instanceName/?api-version=2020-11-01-preview -Method PUT -Headers $authHeader -Body $body -ContentType "application/json"
+```
+
+To check the results, execute the `GET` command:
+
+```rest
+Invoke-RestMethod -Uri https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Sql/managedInstances/$instanceName/?api-version=2020-11-01-preview -Method GET -Headers $authHeader  | Format-List
+```
+
+# [ARM Template](#tab/arm-template)
+
+To provision a new virtual network, subnet, and new managed instance configured with a Microsoft Entra admin, a user-assigned managed identity, and Microsoft Entra-only authentication, use the following template. 
+
+Use a [Custom deployment in the Azure portal](https://portal.azure.com/#create/Microsoft.Template), and **Build your own template in the editor**. Next, **Save** the configuration once you pasted in the example.
+
+To get your user-assigned managed identity **Resource ID**, search for **Managed Identities** in the [Azure portal](https://portal.azure.com). Find your managed identity, and go to **Properties**. An example of your UMI **Resource ID** will look like `/subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<managedIdentity>`.
+
+```json
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "managedInstanceName": {
+            "type": "String",
+            "metadata": {
+                "description": "Enter managed instance name."
+            }
+        },
+        "aad_admin_name": {
+            "type": "String",
+            "metadata": {
+                "description": "The name of the Azure AD admin for the SQL managed instance."
+            }
+        },
+        "aad_admin_objectid": {
+            "type": "String",
+            "metadata": {
+                "description": "The Object ID of the Azure AD admin."
+            }
+        },
+        "aad_admin_tenantid": {
+            "type": "String",
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "The Tenant ID of the Azure Active Directory"
+            }
+        },
+        "aad_admin_type": {
+            "defaultValue": "User",
+            "allowedValues": [
+                "User",
+                "Group",
+                "Application"
+            ],
+            "type": "String"
+        },
+        "aad_only_auth": {
+            "defaultValue": true,
+            "type": "Bool"
+        },
+        "user_identity_resource_id": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "The Resource ID of the user-assigned managed identity, in the form of /subscriptions/<subscriptionId>/resourceGroups/<ResourceGroupName>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<managedIdentity>."
+            }
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String",
+            "metadata": {
+                "description": "Enter location. If you leave this field blank resource group location would be used."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "String",
+            "defaultValue": "SQLMI-VNET",
+            "metadata": {
+                "description": "Enter virtual network name. If you leave this field blank name will be created by the template."
+            }
+        },
+        "addressPrefix": {
+            "defaultValue": "10.0.0.0/16",
+            "type": "String",
+            "metadata": {
+                "description": "Enter virtual network address prefix."
+            }
+        },
+        "subnetName": {
+            "type": "String",
+            "defaultValue": "ManagedInstances",
+            "metadata": {
+                "description": "Enter subnet name. If you leave this field blank name will be created by the template."
+            }
+        },
+        "subnetPrefix": {
+            "defaultValue": "10.0.0.0/24",
+            "type": "String",
+            "metadata": {
+                "description": "Enter subnet address prefix."
+            }
+        },
+        "skuName": {
+            "defaultValue": "GP_Gen5",
+            "allowedValues": [
+                "GP_Gen5",
+                "BC_Gen5"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Enter sku name."
+            }
+        },
+        "vCores": {
+            "defaultValue": 16,
+            "allowedValues": [
+                8,
+                16,
+                24,
+                32,
+                40,
+                64,
+                80
+            ],
+            "type": "Int",
+            "metadata": {
+                "description": "Enter number of vCores."
+            }
+        },
+        "storageSizeInGB": {
+            "defaultValue": 256,
+            "minValue": 32,
+            "maxValue": 8192,
+            "type": "Int",
+            "metadata": {
+                "description": "Enter storage size."
+            }
+        },
+        "licenseType": {
+            "defaultValue": "LicenseIncluded",
+            "allowedValues": [
+                "BasePrice",
+                "LicenseIncluded"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Enter license type."
+            }
+        }
+    },
+    "variables": {
+        "networkSecurityGroupName": "[concat('SQLMI-', parameters('managedInstanceName'), '-NSG')]",
+        "routeTableName": "[concat('SQLMI-', parameters('managedInstanceName'), '-Route-Table')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('networkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "allow_tds_inbound",
+                        "properties": {
+                            "description": "Allow access to data",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1433",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "deny_all_inbound",
+                        "properties": {
+                            "description": "Deny all other inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 4096,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "deny_all_outbound",
+                        "properties": {
+                            "description": "Deny all other outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 4096,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('routeTableName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "disableBgpRoutePropagation": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('virtualNetworkName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('routeTableName')]",
+                "[variables('networkSecurityGroupName')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetPrefix')]",
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                            },
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            },
+                            "delegations": [
+                                {
+                                    "name": "miDelegation",
+                                    "properties": {
+                                        "serviceName": "Microsoft.Sql/managedInstances"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances",
+            "apiVersion": "2020-11-01-preview",
+            "name": "[parameters('managedInstanceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[parameters('virtualNetworkName')]"
+            ],
+            "sku": {
+                "name": "[parameters('skuName')]"
+            },
+            "identity": {
+                "type": "UserAssigned",
+                "UserAssignedIdentities": {
+                    "[parameters('user_identity_resource_id')]": {}
+                }
+            },
+            "properties": {
+                "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
+                "storageSizeInGB": "[parameters('storageSizeInGB')]",
+                "vCores": "[parameters('vCores')]",
+                "licenseType": "[parameters('licenseType')]",
+                "PrimaryUserAssignedIdentityId": "[parameters('user_identity_resource_id')]",
+                "administrators": {
+                    "login": "[parameters('aad_admin_name')]",
+                    "sid": "[parameters('aad_admin_objectid')]",
+                    "tenantId": "[parameters('aad_admin_tenantid')]",
+                    "principalType": "[parameters('aad_admin_type')]",
+                    "azureADOnlyAuthentication": "[parameters('aad_only_auth')]"
+                }
+            }
+        }
+    ]
+}
+```
+
+---
+
+## Related content
+
+- [Managed identities in Microsoft Entra for Azure SQL](../database/authentication-azure-ad-user-assigned-managed-identity.md)

@@ -1,0 +1,56 @@
+# Source code: aspnetcore/fundamentals/host/hosted-services/samples/6.0/BackgroundTasksSample/Services/ConsumeScopedServiceHostedService.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+namespace BackgroundTasksSample.Services
+{
+    #region snippet1
+    public class ConsumeScopedServiceHostedService : BackgroundService
+    {
+        private readonly ILogger<ConsumeScopedServiceHostedService> _logger;
+
+        public ConsumeScopedServiceHostedService(IServiceProvider services, 
+            ILogger<ConsumeScopedServiceHostedService> logger)
+        {
+            Services = services;
+            _logger = logger;
+        }
+
+        public IServiceProvider Services { get; }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            _logger.LogInformation(
+                "Consume Scoped Service Hosted Service running.");
+
+            await DoWork(stoppingToken);
+        }
+
+        private async Task DoWork(CancellationToken stoppingToken)
+        {
+            _logger.LogInformation(
+                "Consume Scoped Service Hosted Service is working.");
+
+            using (var scope = Services.CreateScope())
+            {
+                var scopedProcessingService = 
+                    scope.ServiceProvider
+                        .GetRequiredService<IScopedProcessingService>();
+
+                await scopedProcessingService.DoWork(stoppingToken);
+            }
+        }
+
+        public override async Task StopAsync(CancellationToken stoppingToken)
+        {
+            _logger.LogInformation(
+                "Consume Scoped Service Hosted Service is stopping.");
+
+            await base.StopAsync(stoppingToken);
+        }
+    }
+    #endregion
+}
+
+```

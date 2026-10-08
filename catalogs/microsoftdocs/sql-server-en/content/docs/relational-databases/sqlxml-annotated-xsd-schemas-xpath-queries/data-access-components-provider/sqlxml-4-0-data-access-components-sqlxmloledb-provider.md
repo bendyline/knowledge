@@ -1,0 +1,47 @@
+---
+title: "SQLXML 4.0 Data Access Components"
+description: Learn about the data access components in SQLXML 4.0 - SQLXMLOLEDB Provider, SQLXML Managed Classes, and the SQL Server Native Client (SQLNCLI11).
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: xml
+ms.topic: "reference"
+helpviewer_keywords:
+  - "data access [SQLXML]"
+  - "data providers [SQLXML]"
+  - "SQLXML, data access components"
+  - "data providers [SQLXML], listed"
+  - "providers [SQLXML]"
+  - "providers [SQLXML], listed"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# SQLXML 4.0 Data Access Components - SQLXMLOLEDB Provider
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+   Microsoft 
+ SQLXML 4.0 includes three data providers that can insert XML data into and retrieve XML data from a database in  SQL Server 
+:  
+  
+-   SQLXMLOLEDB Provider  
+  
+     Exposes SQLXML 4.0 functionality through ActiveX Data Objects (ADO).  
+  
+-   SQLXML Managed Classes  
+  
+     Expose SQLXML functionality inside the  Microsoft 
+ .NET Framework. For more information, see [SQLXML Managed Classes](../net-framework-classes/sqlxml-4-0-net-framework-support-managed-classes.md).  
+  
+-   SQL Server Native Client (SQLNCLI11)  
+  
+     Exposes SQLXML 4.0 functionality through a new data access technology that extends and compliments current versions of Microsoft Data Access Components (MDAC). SQLNCLI11 provides full support for features introduced in  SQL Server 2005 (9.x) 
+. For more information, see [SQL Server Native Client Programming](../../native-client/sql-server-native-client-programming.md).

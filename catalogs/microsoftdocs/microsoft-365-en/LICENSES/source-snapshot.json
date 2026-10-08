@@ -1,0 +1,632 @@
+{
+  "repository": "MicrosoftDocs/microsoft-365-docs",
+  "branch": "public",
+  "revision": "eab9d7696cdff87474698b08a1fb328091102a2f",
+  "tree": "94a7aecce6de32b63e5042ec665329b63f962ee7",
+  "licenseFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+        "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE-CODE",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices",
+      "sha256": "d45b694be4373592e745f6c46b3f20b8465a1e2fb9c648b1e9b19de2843ac22b"
+    }
+  ],
+  "markdownFiles": 1313,
+  "markdownBytes": 11472913,
+  "totalBlobBytes": 416711648,
+  "roots": [
+    ".acrolinx-config.edn",
+    ".gitattributes",
+    ".github",
+    ".gitignore",
+    ".openpublishing.publish.config.json",
+    ".openpublishing.redirection.admin.json",
+    ".openpublishing.redirection.bookings.json",
+    ".openpublishing.redirection.business.json",
+    ".openpublishing.redirection.campaigns.json",
+    ".openpublishing.redirection.commerce.json",
+    ".openpublishing.redirection.compliance.json",
+    ".openpublishing.redirection.contentunderstanding.json",
+    ".openpublishing.redirection.copilot.json",
+    ".openpublishing.redirection.enterprise.json",
+    ".openpublishing.redirection.frontline.json",
+    ".openpublishing.redirection.knowledge.json",
+    ".openpublishing.redirection.learning.json",
+    ".openpublishing.redirection.lighthouse.json",
+    ".openpublishing.redirection.loop.json",
+    ".openpublishing.redirection.lti.json",
+    ".openpublishing.redirection.managed-desktop.json",
+    ".openpublishing.redirection.scheduler.json",
+    ".openpublishing.redirection.security.json",
+    ".openpublishing.redirection.services.json",
+    ".openpublishing.redirection.solutions-migration.json",
+    ".openpublishing.redirection.solutions.json",
+    ".openpublishing.redirection.syntex.json",
+    ".openpublishing.redirection.test-base.json",
+    ".openpublishing.redirection.topics.json",
+    ".openpublishing.redirection.viva.json",
+    "CODEOWNERS",
+    "ContentOwners.txt",
+    "LICENSE",
+    "LICENSE-CODE",
+    "README.md",
+    "SECURITY.md",
+    "ThirdPartyNotices",
+    "copilot",
+    "microsoft-365"
+  ],
+  "groups": {
+    ".github/copilot-instructions.md": {
+      "files": 1,
+      "bytes": 2625
+    },
+    ".github/pull_request_template.md": {
+      "files": 1,
+      "bytes": 1
+    },
+    "README.md": {
+      "files": 1,
+      "bytes": 6395
+    },
+    "SECURITY.md": {
+      "files": 1,
+      "bytes": 2785
+    },
+    "copilot/agent-essentials": {
+      "files": 15,
+      "bytes": 131579
+    },
+    "copilot/app-builder-privacy-data-subject-request-faq.md": {
+      "files": 1,
+      "bytes": 4324
+    },
+    "copilot/configure-secure-governed-data-foundation-microsoft-365-copilot.md": {
+      "files": 1,
+      "bytes": 15063
+    },
+    "copilot/connect-to-ai-models.md": {
+      "files": 1,
+      "bytes": 6538
+    },
+    "copilot/connect-to-ai-subprocessor.md": {
+      "files": 1,
+      "bytes": 10032
+    },
+    "copilot/copilot-agent-install.md": {
+      "files": 1,
+      "bytes": 5732
+    },
+    "copilot/copilot-agent-store.md": {
+      "files": 1,
+      "bytes": 9989
+    },
+    "copilot/copilot-ai-provider-user-sec-group-access.md": {
+      "files": 1,
+      "bytes": 2493
+    },
+    "copilot/copilot-anthropic-apps.md": {
+      "files": 1,
+      "bytes": 3706
+    },
+    "copilot/copilot-control-system": {
+      "files": 4,
+      "bytes": 30777
+    },
+    "copilot/copilot-flex-routing.md": {
+      "files": 1,
+      "bytes": 6005
+    },
+    "copilot/copilot-for-microsoft-365-admin.md": {
+      "files": 1,
+      "bytes": 11199
+    },
+    "copilot/copilot-library.md": {
+      "files": 1,
+      "bytes": 5197
+    },
+    "copilot/copilot-personalization-memory.md": {
+      "files": 1,
+      "bytes": 7273
+    },
+    "copilot/copilot-prompt-gallery-export-prompts.md": {
+      "files": 1,
+      "bytes": 15734
+    },
+    "copilot/copilot-prompt-gallery.md": {
+      "files": 1,
+      "bytes": 3922
+    },
+    "copilot/copilot-tuning-admin-guide.md": {
+      "files": 1,
+      "bytes": 13447
+    },
+    "copilot/copilot-tuning-document-summary-template.md": {
+      "files": 1,
+      "bytes": 6880
+    },
+    "copilot/copilot-tuning-document-validation-template.md": {
+      "files": 1,
+      "bytes": 23424
+    },
+    "copilot/copilot-tuning-document-writing-template.md": {
+      "files": 1,
+      "bytes": 11509
+    },
+    "copilot/copilot-tuning-expert-answers-template.md": {
+      "files": 1,
+      "bytes": 13767
+    },
+    "copilot/copilot-tuning-optimization-template.md": {
+      "files": 1,
+      "bytes": 15839
+    },
+    "copilot/copilot-tuning-overview.md": {
+      "files": 1,
+      "bytes": 13236
+    },
+    "copilot/copilot-tuning-process.md": {
+      "files": 1,
+      "bytes": 5882
+    },
+    "copilot/copilot-tuning-style-editing-template.md": {
+      "files": 1,
+      "bytes": 7054
+    },
+    "copilot/cowork": {
+      "files": 7,
+      "bytes": 52902
+    },
+    "copilot/deploy-microsoft-365-copilot-app.md": {
+      "files": 1,
+      "bytes": 3813
+    },
+    "copilot/employee-self-service": {
+      "files": 43,
+      "bytes": 624379
+    },
+    "copilot/enterprise-brand-manager-policy.md": {
+      "files": 1,
+      "bytes": 2223
+    },
+    "copilot/enterprise-brand-manager.md": {
+      "files": 1,
+      "bytes": 3604
+    },
+    "copilot/enterprise-data-protection.md": {
+      "files": 1,
+      "bytes": 7672
+    },
+    "copilot/flow-builder-privacy-data-subject-request-faq.md": {
+      "files": 1,
+      "bytes": 4155
+    },
+    "copilot/gov-overview.md": {
+      "files": 1,
+      "bytes": 7731
+    },
+    "copilot/harmful-content-protection-copilot-chat.md": {
+      "files": 1,
+      "bytes": 7480
+    },
+    "copilot/includes": {
+      "files": 4,
+      "bytes": 1933
+    },
+    "copilot/manage-generative-ai-apps.md": {
+      "files": 1,
+      "bytes": 15616
+    },
+    "copilot/manage-public-web-access.md": {
+      "files": 1,
+      "bytes": 17172
+    },
+    "copilot/microsoft-365-ai-disclaimers.md": {
+      "files": 1,
+      "bytes": 2846
+    },
+    "copilot/microsoft-365-copilot-app-admin-settings.md": {
+      "files": 1,
+      "bytes": 5599
+    },
+    "copilot/microsoft-365-copilot-app-overview.md": {
+      "files": 1,
+      "bytes": 6642
+    },
+    "copilot/microsoft-365-copilot-application-card.md": {
+      "files": 1,
+      "bytes": 43320
+    },
+    "copilot/microsoft-365-copilot-architecture-data-protection-auditing.md": {
+      "files": 1,
+      "bytes": 6708
+    },
+    "copilot/microsoft-365-copilot-architecture.md": {
+      "files": 1,
+      "bytes": 7770
+    },
+    "copilot/microsoft-365-copilot-chat-considerations.md": {
+      "files": 1,
+      "bytes": 9040
+    },
+    "copilot/microsoft-365-copilot-chat-requirements.md": {
+      "files": 1,
+      "bytes": 4032
+    },
+    "copilot/microsoft-365-copilot-enable-users.md": {
+      "files": 1,
+      "bytes": 6638
+    },
+    "copilot/microsoft-365-copilot-enablement-resources.md": {
+      "files": 1,
+      "bytes": 5655
+    },
+    "copilot/microsoft-365-copilot-file-upload-control.md": {
+      "files": 1,
+      "bytes": 2692
+    },
+    "copilot/microsoft-365-copilot-license-feature-overview.md": {
+      "files": 1,
+      "bytes": 6311
+    },
+    "copilot/microsoft-365-copilot-licensing.md": {
+      "files": 1,
+      "bytes": 8611
+    },
+    "copilot/microsoft-365-copilot-minimum-requirements-data-compliance.md": {
+      "files": 1,
+      "bytes": 4509
+    },
+    "copilot/microsoft-365-copilot-minimum-requirements-rollout.md": {
+      "files": 1,
+      "bytes": 5038
+    },
+    "copilot/microsoft-365-copilot-minimum-requirements.md": {
+      "files": 1,
+      "bytes": 5163
+    },
+    "copilot/microsoft-365-copilot-overview.md": {
+      "files": 1,
+      "bytes": 16928
+    },
+    "copilot/microsoft-365-copilot-page.md": {
+      "files": 1,
+      "bytes": 23723
+    },
+    "copilot/microsoft-365-copilot-personal-content-mode.md": {
+      "files": 1,
+      "bytes": 4390
+    },
+    "copilot/microsoft-365-copilot-privacy.md": {
+      "files": 1,
+      "bytes": 28415
+    },
+    "copilot/microsoft-365-copilot-reports-for-admins.md": {
+      "files": 1,
+      "bytes": 17183
+    },
+    "copilot/microsoft-365-copilot-requirements.md": {
+      "files": 1,
+      "bytes": 12106
+    },
+    "copilot/microsoft-365-copilot-search-admin-experience.md": {
+      "files": 1,
+      "bytes": 11957
+    },
+    "copilot/microsoft-365-copilot-search-image-tagging-integration.md": {
+      "files": 1,
+      "bytes": 3927
+    },
+    "copilot/microsoft-365-copilot-search-manage.md": {
+      "files": 1,
+      "bytes": 5407
+    },
+    "copilot/microsoft-365-copilot-search.md": {
+      "files": 1,
+      "bytes": 9036
+    },
+    "copilot/microsoft-365-copilot-service-plans.md": {
+      "files": 1,
+      "bytes": 8130
+    },
+    "copilot/microsoft-365-copilot-setup.md": {
+      "files": 1,
+      "bytes": 19609
+    },
+    "copilot/microsoft-365-copilot-zero-query-logging.md": {
+      "files": 1,
+      "bytes": 4488
+    },
+    "copilot/multiple-account-access.md": {
+      "files": 1,
+      "bytes": 5363
+    },
+    "copilot/opal-settings-manage.md": {
+      "files": 1,
+      "bytes": 4682
+    },
+    "copilot/pay-as-you-go": {
+      "files": 5,
+      "bytes": 37898
+    },
+    "copilot/people-skills-ai-inferencing.md": {
+      "files": 1,
+      "bytes": 6653
+    },
+    "copilot/people-skills-data-and-ai-guidelines.md": {
+      "files": 1,
+      "bytes": 1622
+    },
+    "copilot/people-skills-import-export-skills.md": {
+      "files": 1,
+      "bytes": 3207
+    },
+    "copilot/people-skills-manage-ai-restricted-skills.md": {
+      "files": 1,
+      "bytes": 2285
+    },
+    "copilot/people-skills-manage-custom-skill.md": {
+      "files": 1,
+      "bytes": 3093
+    },
+    "copilot/people-skills-manage-skills-library.md": {
+      "files": 1,
+      "bytes": 5783
+    },
+    "copilot/people-skills-overview.md": {
+      "files": 1,
+      "bytes": 8916
+    },
+    "copilot/people-skills-setup.md": {
+      "files": 1,
+      "bytes": 11101
+    },
+    "copilot/people-skills-sharing-inferencing-controls.md": {
+      "files": 1,
+      "bytes": 32477
+    },
+    "copilot/perform-data-subject-requests-for-workflows-agents.md": {
+      "files": 1,
+      "bytes": 6311
+    },
+    "copilot/pin-copilot-chat-navbar.md": {
+      "files": 1,
+      "bytes": 8911
+    },
+    "copilot/pin-copilot-taskbar.md": {
+      "files": 1,
+      "bytes": 10309
+    },
+    "copilot/release-notes.md": {
+      "files": 1,
+      "bytes": 986548
+    },
+    "copilot/researcher-agent-computer-use.md": {
+      "files": 1,
+      "bytes": 4784
+    },
+    "copilot/researcher-agent.md": {
+      "files": 1,
+      "bytes": 4225
+    },
+    "copilot/responsible-ai": {
+      "files": 6,
+      "bytes": 27779
+    },
+    "copilot/scheduled-prompts-environment.md": {
+      "files": 1,
+      "bytes": 4704
+    },
+    "copilot/scheduled-prompts-inventory.md": {
+      "files": 1,
+      "bytes": 12885
+    },
+    "copilot/scheduled-prompts.md": {
+      "files": 1,
+      "bytes": 4977
+    },
+    "copilot/secure-govern-copilot-foundational-deployment-guidance.md": {
+      "files": 1,
+      "bytes": 4377
+    },
+    "copilot/security-microsoft-365-copilot.md": {
+      "files": 1,
+      "bytes": 4932
+    },
+    "copilot/watermarks.md": {
+      "files": 1,
+      "bytes": 6938
+    },
+    "copilot/which-copilot-for-your-organization.md": {
+      "files": 1,
+      "bytes": 14736
+    },
+    "copilot/wordexcelppt-agents.md": {
+      "files": 1,
+      "bytes": 6792
+    },
+    "copilot/workflows-environment-workflows-agents.md": {
+      "files": 1,
+      "bytes": 4576
+    },
+    "copilot/workforce-insights-agent.md": {
+      "files": 1,
+      "bytes": 26752
+    },
+    "microsoft-365/admin": {
+      "files": 288,
+      "bytes": 2468769
+    },
+    "microsoft-365/archive": {
+      "files": 12,
+      "bytes": 65987
+    },
+    "microsoft-365/backup": {
+      "files": 13,
+      "bytes": 153540
+    },
+    "microsoft-365/baseline-security-mode": {
+      "files": 12,
+      "bytes": 54731
+    },
+    "microsoft-365/bookings": {
+      "files": 33,
+      "bytes": 134796
+    },
+    "microsoft-365/business-premium": {
+      "files": 11,
+      "bytes": 51649
+    },
+    "microsoft-365/commerce": {
+      "files": 79,
+      "bytes": 723283
+    },
+    "microsoft-365/documentprocessing": {
+      "files": 133,
+      "bytes": 770721
+    },
+    "microsoft-365/enterprise": {
+      "files": 270,
+      "bytes": 2472898
+    },
+    "microsoft-365/frontline": {
+      "files": 65,
+      "bytes": 581759
+    },
+    "microsoft-365/includes": {
+      "files": 38,
+      "bytes": 105756
+    },
+    "microsoft-365/lighthouse": {
+      "files": 63,
+      "bytes": 435864
+    },
+    "microsoft-365/loop": {
+      "files": 17,
+      "bytes": 130767
+    },
+    "microsoft-365/lti": {
+      "files": 29,
+      "bytes": 287983
+    },
+    "microsoft-365/microsoft-365-docs-navigation-guide.md": {
+      "files": 1,
+      "bytes": 2972
+    },
+    "microsoft-365/security": {
+      "files": 6,
+      "bytes": 48723
+    },
+    "microsoft-365/test-base": {
+      "files": 50,
+      "bytes": 210705
+    },
+    "microsoft-365/topics": {
+      "files": 2,
+      "bytes": 9018
+    },
+    "microsoft-365/whiteboard": {
+      "files": 15,
+      "bytes": 62416
+    }
+  },
+  "nestedLegal": [
+    "microsoft-365/media/license-type-line-chart.png",
+    "microsoft-365/media/license-type-summary-chart.png"
+  ],
+  "selection": {
+    "markdownGlobs": [
+      "microsoft-365/**/*.md",
+      "copilot/**/*.md"
+    ],
+    "codeGlobs": [
+      "microsoft-365/**/*.cs",
+      "microsoft-365/**/*.vb",
+      "microsoft-365/**/*.fs",
+      "microsoft-365/**/*.fsx",
+      "microsoft-365/**/*.xaml",
+      "microsoft-365/**/*.sql",
+      "microsoft-365/**/*.json",
+      "microsoft-365/**/*.xml",
+      "microsoft-365/**/*.config",
+      "microsoft-365/**/*.csproj",
+      "microsoft-365/**/*.razor",
+      "microsoft-365/**/*.cshtml",
+      "microsoft-365/**/*.js",
+      "microsoft-365/**/*.ts",
+      "microsoft-365/**/*.cpp",
+      "microsoft-365/**/*.h",
+      "microsoft-365/**/*.py",
+      "microsoft-365/**/*.ps1",
+      "microsoft-365/**/*.sh",
+      "microsoft-365/**/*.css",
+      "microsoft-365/**/*.html",
+      "microsoft-365/**/*.props",
+      "microsoft-365/**/*.targets",
+      "copilot/**/*.cs",
+      "copilot/**/*.vb",
+      "copilot/**/*.fs",
+      "copilot/**/*.fsx",
+      "copilot/**/*.xaml",
+      "copilot/**/*.sql",
+      "copilot/**/*.json",
+      "copilot/**/*.xml",
+      "copilot/**/*.config",
+      "copilot/**/*.csproj",
+      "copilot/**/*.razor",
+      "copilot/**/*.cshtml",
+      "copilot/**/*.js",
+      "copilot/**/*.ts",
+      "copilot/**/*.cpp",
+      "copilot/**/*.h",
+      "copilot/**/*.py",
+      "copilot/**/*.ps1",
+      "copilot/**/*.sh",
+      "copilot/**/*.css",
+      "copilot/**/*.html",
+      "copilot/**/*.props",
+      "copilot/**/*.targets"
+    ],
+    "exclude": [
+      "**/wwwroot/lib/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json",
+      "**/jquery*.js",
+      "**/bootstrap*.js",
+      "**/bootstrap*.css",
+      "**/knockout*.js",
+      "**/modernizr*.js",
+      "**/wwwroot/swagger/ui/**",
+      "**/signalr/dist/**"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+---
+title: "Force database mirroring service"
+description: If the principal server fails while the mirror server is available, make the database available by forcing the service to fail over to the mirrored database.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: database-mirroring
+ms.topic: how-to
+helpviewer_keywords:
+  - "forced service [SQL Server]"
+  - "database mirroring [SQL Server], forcing service"
+---
+# Force Service in a Database Mirroring Session (Transact-SQL)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  In high-performance mode and high-safety mode without automatic failover, if the principal server fails while the mirror server is available, the database owner can make the database available by forcing service to fail over (with possible data loss) to the mirror database. This option is available only under all the following conditions:  
+  
+-   The principal server is down.  
+  
+-   WITNESS is set to OFF or is connected to the mirror server.  
+  
+> **Caution:**  
+>  Forced service is strictly a disaster recovery method. Forcing service may involve some data loss. Therefore, force service only if you are willing to risk losing some data in order to restore service to the database immediately. If forcing service risks losing significant data, we recommend that you stop mirroring and manually resynchronize the databases. For more information about the risks of forcing service, see [Database Mirroring Operating Modes](database-mirroring-operating-modes.md).  
+  
+ Forcing service suspends the session and starts a new recovery fork. The effect of forcing service is similar to removing mirroring and recovering the former principal database. However, forcing service facilitates resynchronizing the databases (with possible data loss) when mirroring resumes.  
+  
+### To force service in a database mirroring session  
+  
+1.  Connect to the mirror server.  
+  
+2.  Issue the following statement:  
+  
+     ALTER DATABASE *<database_name>* SET PARTNER FORCE_SERVICE_ALLOW_DATA_LOSS  
+  
+     where *<database_name>* is the mirrored database.  
+  
+     The mirror server immediately transitions to principal server, and mirroring is suspended.  
+  
+## Related content
+
+- [ALTER DATABASE (Transact-SQL)](../../t-sql/statements/alter-database-transact-sql.md)
+- [Database Mirroring Operating Modes](database-mirroring-operating-modes.md)

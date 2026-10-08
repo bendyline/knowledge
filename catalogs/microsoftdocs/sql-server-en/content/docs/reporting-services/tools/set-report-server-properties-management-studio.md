@@ -1,0 +1,28 @@
+---
+title: "Set report server properties (Management Studio)"
+description: Learn how to set report server system properties in SQL Server Management Studio to enable features or set server defaults.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: tools
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "report servers [Reporting Services], properties"
+---
+# Set report server properties (Management Studio)
+  You can set report server system properties in  SQL Server 
+  Management Studio
+ to enable features or set server defaults.  
+  
+### Open the Advanced Server Properties page  
+  
+1.  Start  Management Studio
+ and connect to a report server instance.  
+  
+2.  Right-click the report server node, and select **Properties**. Select **Advanced** to open the properties page. See [Server properties (Advanced page) - Reporting Services](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/reporting-services/tools/server-properties-advanced-page-reporting-services.md) for a description of each property.  
+  
+## Related content
+
+- [Connect to a report server in Management Studio](connect-to-a-report-server-in-management-studio.md)
+- [Reporting Services Properties - Report Server System Properties](../report-server-web-service/net-framework/reporting-services-properties-report-server-system-properties.md)

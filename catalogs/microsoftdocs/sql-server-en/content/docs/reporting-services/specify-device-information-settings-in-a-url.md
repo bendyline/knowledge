@@ -1,0 +1,32 @@
+---
+title: "Specify device information settings in a URL"
+description: Learn how to specify device information settings in a URL, specifically with the DeviceInfo XML element.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "device information settings [Reporting Services], URLs"
+  - "URL access [Reporting Services], device information settings"
+---
+# Specify device information settings in a URL
+  Device information settings are parameters that are passed to a rendering extension. If you use the methods of the  SQL Server 
+ Report Server Web service to render a report, a **DeviceInfo** XML element is passed as an input parameter. Child elements of the **DeviceInfo** element are specific to the device information settings of different rendering extensions. You can include device information settings in a URL by using the *rc:tag=value* parameter string, where *tag* is the name of the device information settings element being accessed. For more information about device information settings in  SQL Server 
+  Reporting Services 
+, see [Pass device information settings to rendering extensions](report-server-web-service/net-framework/passing-device-information-settings-to-rendering-extensions.md).  
+  
+## Example  
+ The following example sets the format of the specified report to JPEG by using the *OutputFormat* device information setting of the image rendering extension (the line breaks in this example are for legibility):  
+  
+```  
+https://servername/reportserver?/SampleReports  
+/Employee Sales Summary&EmployeeID=38&rs:  
+Command=Render&rs:Format=IMAGE&rc:OutputFormat=JPEG  
+```  
+  
+## Related content
+
+- [URL access (SSRS)](url-access-ssrs.md)
+- [URL access parameter reference](url-access-parameter-reference.md)

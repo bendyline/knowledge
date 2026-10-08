@@ -1,0 +1,128 @@
+---
+title: "Accessing the WMI Provider programmatically"
+description: Learn what a WMI provider is, how to find a report server instance, and how to access the WMI Provider programmatically.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+---
+# Access the WMI Provider programmatically
+
+## WMI Provider overview  
+ The namespace used to obtain information about  Reporting Services 
+ in the code samples shown in this article is the **System.Management** namespace, found in the  Microsoft 
+  .NET Framework 
+. The **System.Management** namespace provides a set of managed code classes through which  .NET Framework 
+ applications can access and manipulate management information. For more information on using the Reporting Services WMI classes with the **System.Management** namespace, see "Access Management Information with System.Management" in the  Microsoft 
+  .NET Framework 
+ SDK.  
+  
+## Find a report server instance  
+ The preferred way of finding information on your report server installations is to enumerate through the WMI instance collection. The following example shows how to find properties on every report server instance by creating a collection, and looping through the collection to display the properties.  
+  
+```vb  
+Imports System  
+Imports System.Management  
+Imports System.IO  
+  
+Module Module1  
+    Sub Main()  
+        Const WmiNamespace As String = "\\<ServerName>\root\Microsoft\SqlServer\ReportServer\<InstanceName>\v10\Admin"  
+        Const WmiRSClass As String = _  
+           "\\<ServerName>\root\Microsoft\SqlServer\ReportServer\<InstanceName>\v13\admin:MSReportServer_ConfigurationSetting"  
+  
+        Dim serverClass As ManagementClass  
+        Dim scope As ManagementScope  
+        scope = New ManagementScope(WmiNamespace)  
+        'Connect to the Reporting Services namespace.  
+        scope.Connect()  
+  
+        'Create the server class.  
+        serverClass = New ManagementClass(WmiRSClass)  
+        'Connect to the management object.  
+        serverClass.Get()  
+        If serverClass Is Nothing Then Throw New Exception("No class found")  
+  
+        'Loop through the instances of the server class.  
+        Dim instances As ManagementObjectCollection = serverClass.GetInstances()  
+        Dim instance As ManagementObject  
+        For Each instance In instances  
+            Console.Out.WriteLine("Instance Detected")  
+            Dim instProps As PropertyDataCollection = instance.Properties  
+            Dim prop As PropertyData  
+            For Each prop In instProps  
+                Dim name As String = prop.Name  
+                Dim val As Object = prop.Value  
+                Console.Out.Write("Property Name: " + name)  
+                If val Is Nothing Then  
+                    Console.Out.WriteLine("     Value: <null>")  
+                Else  
+                    Console.Out.WriteLine("     Value: " + val.ToString())  
+                End If  
+            Next  
+        Next  
+  
+        Console.WriteLine("--- Press any key ---")  
+        Console.ReadKey()  
+  
+    End Sub  
+End Module  
+```  
+  
+```csharp  
+using System;  
+using System.Management;  
+using System.IO;  
+[assembly: CLSCompliant(true)]  
+  
+class Class1  
+{  
+    [STAThread]  
+    static void Main(string[] args)  
+    {  
+        const string WmiNamespace = @"\\<ServerName>\root\Microsoft\SqlServer\ReportServer\<InstanceName>\v10\Admin";  
+        const string WmiRSClass =  
+          @"\\<ServerName>\root\Microsoft\SqlServer\ReportServer\<InstanceName>\v13\admin:MSReportServer_ConfigurationSetting";  
+        ManagementClass serverClass;  
+        ManagementScope scope;  
+        scope = new ManagementScope(WmiNamespace);  
+  
+        // Connect to the Reporting Services namespace.  
+        scope.Connect();  
+        // Create the server class.  
+        serverClass = new ManagementClass(WmiRSClass);  
+        // Connect to the management object.  
+        serverClass.Get();  
+        if (serverClass == null)  
+            throw new Exception("No class found");  
+  
+        // Loop through the instances of the server class.  
+        ManagementObjectCollection instances = serverClass.GetInstances();  
+  
+        foreach (ManagementObject instance in instances)  
+        {  
+            Console.Out.WriteLine("Instance Detected");  
+            PropertyDataCollection instProps = instance.Properties;  
+            foreach (PropertyData prop in instProps)  
+            {  
+                string name = prop.Name;  
+                object val = prop.Value;  
+                Console.Out.Write("Property Name: " + name);  
+                if (val != null)  
+                    Console.Out.WriteLine("     Value: " + val.ToString());  
+                else  
+                    Console.Out.WriteLine("     Value: <null>");  
+            }  
+        }  
+        Console.WriteLine("\n--- Press any key ---");  
+        Console.ReadKey();  
+    }  
+}  
+```  
+  
+## Related content
+
+- [Access the Reporting Services WMI provider](tools/access-the-reporting-services-wmi-provider.md)
+- [RsReportServer.config configuration file](report-server/rsreportserver-config-configuration-file.md)

@@ -1,0 +1,1086 @@
+---
+title: Bicep functions - resources
+description: Describes the functions to use in a Bicep file to retrieve values about resources.
+ms.topic: reference
+ms.custom:
+  - devx-track-bicep
+  - build-2025
+ms.date: 08/06/2026
+---
+
+# Resource functions for Bicep
+
+This article describes the Bicep functions for getting resource values.
+
+To get values from the current deployment, see [Deployment value functions](bicep-functions-deployment.md).
+
+## The `this` namespace
+
+The `this` namespace provides functions for runtime resource state discovery within a resource definition. These functions allow your template to adapt its configuration based on whether a resource already exists in the environment.
+
+- [`this.exists()`](#exists): Returns a bool value indicating whether the resource currently exists.
+- [`this.existingResource()`](#existingresource): Returns the object representation of the resource if it exists, or null if it does not.
+
+## exists
+
+`this.exists()`
+
+Returns a bool value indicating whether the resource currently exists in Azure. This function is evaluated during deployment and is intended for use within resource property assignments to handle conditional logic without requiring separate existing resource declarations.
+
+Namespace: [this](#the-this-namespace)
+
+### Example
+
+```bicep
+resource stg 'Microsoft.Storage/storageAccounts@2026-04-01' = {
+  name: 'mystorageaccount'
+  location: 'eastus'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind:  'StorageV2'
+  properties:{
+    accessTier: this.exists() ? this.existingResource()!.properties.accessTier : 'Cold'
+  }
+}
+```
+
+## existingResource
+
+`this.existingResource()`
+
+Returns the object representation of the resource if it exists, or `null` if it doesn't. This function pairs with [`this.exists()`](#exists). While `exists()` returns a simple boolean, `existingResource()` returns the actual resource object. You can safely access nested properties by using the [null-forgiving operator (!)](operator-null-forgiving.md) or the [safe navigation operator(.?)](operator-safe-dereference.md).
+
+Namespace: [this](#the-this-namespace)
+
+### Example
+
+```bicep
+resource stg 'Microsoft.Storage/storageAccounts@2026-04-01' = {
+  name: 'mystorageaccount'
+  location: 'eastus'
+  sku: {
+    name: 'Standard_LRS'  }
+  kind:  'StorageV2'
+  properties:{
+    accessTier: this.existingResource().?properties.accessTier ?? 'Cold'
+  }
+}
+```
+
+## extensionResourceId
+
+`extensionResourceId(resourceId, resourceType, resourceName1, [resourceName2], ...)`
+
+Returns the resource ID for an [extension resource](../management/extension-resource-types.md). An extension resource is a resource type that you apply to another resource to add to its capabilities.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+The first argument must be the fully qualified resource ID of the resource that the extension resource applies to. This requirement is especially important when you deploy a tenant-level resource from a lower scope, such as a subscription or resource group. A value that resolves at tenant scope can fail when the deployment starts from a lower scope.
+
+You can use the `extensionResourceId` function in Bicep files, but you typically don't need it. Instead, use the symbolic name for the resource and access the `id` property. The `id` property returns the fully qualified resource ID.
+
+The basic format of the resource ID returned by this function is:
+
+```json
+{scope}/providers/{extensionResourceProviderNamespace}/{extensionResourceType}/{extensionResourceName}
+```
+
+The scope segment varies by the resource being extended.
+
+When you apply the extension resource to a **resource**, the resource ID is returned in the following format:
+
+```json
+/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{baseResourceProviderNamespace}/{baseResourceType}/{baseResourceName}/providers/{extensionResourceProviderNamespace}/{extensionResourceType}/{extensionResourceName}
+```
+
+When you apply the extension resource to a **resource group**, the format is:
+
+```json
+/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{extensionResourceProviderNamespace}/{extensionResourceType}/{extensionResourceName}
+```
+
+When you apply the extension resource to a **subscription**, the format is:
+
+```json
+/subscriptions/{subscriptionId}/providers/{extensionResourceProviderNamespace}/{extensionResourceType}/{extensionResourceName}
+```
+
+When you apply the extension resource to a **management group**, the format is:
+
+```json
+/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/{extensionResourceProviderNamespace}/{extensionResourceType}/{extensionResourceName}
+```
+
+A custom policy definition deployed to a management group is implemented as an extension resource. To create and assign a policy, deploy the following Bicep file to a management group.
+
+```bicep
+targetScope = 'managementGroup'
+
+@description('An array of the allowed locations, all other locations will be denied by the created policy.')
+param allowedLocations array = [
+  'australiaeast'
+  'australiasoutheast'
+  'australiacentral'
+]
+
+resource policyDefinition 'Microsoft.Authorization/policyDefinitions@2025-03-01' = {
+  name: 'locationRestriction'
+  properties: {
+    policyType: 'Custom'
+    mode: 'All'
+    parameters: {}
+    policyRule: {
+      if: {
+        not: {
+          field: 'location'
+          in: allowedLocations
+        }
+      }
+      then: {
+        effect: 'deny'
+      }
+    }
+  }
+}
+
+resource policyAssignment 'Microsoft.Authorization/policyAssignments@2025-03-01' = {
+  name: 'locationAssignment'
+  properties: {
+    policyDefinitionId: policyDefinition.id
+  }
+}
+```
+
+---
+
+Built-in policy definitions are tenant level resources. For an example of deploying a built-in policy definition, see [tenantResourceId](#tenantresourceid).
+
+## getSecret
+
+`keyVaultName.getSecret(secretName)`
+
+Returns a secret from an Azure Key Vault. Use this function to pass a secret to a secure string parameter of a Bicep module.
+
+> **Note:**
+> Use the `az.getSecret(subscriptionId, resourceGroupName, keyVaultName, secretName, secretVersion)` function in `.bicepparam` files to retrieve key vault secrets. For more information, see [getSecret](bicep-functions-parameters-file.md#getsecret).
+
+You can only use the `getSecret` function from within the `params` section of a module. You can only use it with a `Microsoft.KeyVault/vaults` resource.
+
+```bicep
+module sql './sql.bicep' = {
+  name: 'deploySQL'
+  params: {
+    adminPassword: keyVault.getSecret('vmAdminPassword')
+  }
+}
+```
+
+You get an error if you attempt to use this function in any other part of the Bicep file. You also get an error if you use this function with string interpolation, even when used in the params section.
+
+Use the function only with a module parameter that has the `@secure()` decorator.
+
+The key vault must have `enabledForTemplateDeployment` set to `true`. The user deploying the Bicep file must have access to the secret. For more information, see [Use Azure Key Vault to pass secure parameter value during Bicep deployment](key-vault-parameter.md).
+
+A [namespace qualifier](bicep-functions.md#namespaces-for-functions) isn't needed because the function is used with a resource type.
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| secretName | Yes | string | The name of the secret stored in a key vault. |
+
+### Return value
+
+The secret value for the secret name.
+
+### Example
+
+The following Bicep file is used as a module. It has an `adminPassword` parameter defined with the `@secure()` decorator.
+
+```bicep
+param sqlServerName string
+param adminLogin string
+
+@secure()
+param adminPassword string
+
+resource sqlServer 'Microsoft.Sql/servers@2024-11-01-preview' = {
+  ...
+}
+```
+
+The following Bicep file consumes the preceding Bicep file as a module. The Bicep file references an existing key vault, and calls the `getSecret` function to retrieve the key vault secret, and then passes the value as a parameter to the module.
+
+```bicep
+param sqlServerName string
+param adminLogin string
+
+param subscriptionId string
+param kvResourceGroup string
+param kvName string
+
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
+  name: kvName
+  scope: resourceGroup(subscriptionId, kvResourceGroup )
+}
+
+module sql './sql.bicep' = {
+  name: 'deploySQL'
+  params: {
+    sqlServerName: sqlServerName
+    adminLogin: adminLogin
+    adminPassword: keyVault.getSecret('vmAdminPassword')
+  }
+}
+```
+
+<a id="listkeys"></a>
+<a id="list"></a>
+
+## list*
+
+`resourceName.list([apiVersion], [functionValues])`
+
+You can call a list function for any resource type with an operation that starts with `list`. Some common usages are `list`, `listKeys`, `listKeyValue`, and `listSecrets`.
+
+The syntax for this function varies by the name of the list operation. The returned values also vary by operation. Bicep doesn't currently support completions and validation for `list*` functions.
+
+With [Bicep CLI version 0.4.X or higher](install.md), you call the list function by using the [accessor operator](operators-access.md#function-accessor). For example, `storageAccount.listKeys()`.
+
+A [namespace qualifier](bicep-functions.md#namespaces-for-functions) isn't needed because the function is used with a resource type.
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| apiVersion | No | string | If you don't provide this parameter, the API version for the resource is used. Only provide a custom API version when you need the function to be run with a specific version. Use the format, **yyyy-mm-dd**. |
+| functionValues | No | object | An object that has values for the function. Only provide this object for functions that support receiving an object with parameter values, such as `listAccountSas` on a storage account. An example of passing function values is shown in this article. |
+
+### Valid uses
+
+Use the `list` functions in the properties of a resource definition. Don't use a `list` function that exposes sensitive information in the `outputs` section of a Bicep file. Output values are stored in the deployment history and a malicious user could retrieve them.
+
+When you use a `list` function with an [iterative loop](loops.md), you can use it for `input` because the expression is assigned to the resource property. You can't use it with `count` because the count must be determined before the `list` function is resolved.
+
+If you use a `list` function in a resource that is conditionally deployed, the function is evaluated even if the resource isn't deployed. You get an error if the `list` function refers to a resource that doesn't exist. Use the [conditional expression **?:** operator](operators-logical.md#conditional-expression--) to make sure the function is only evaluated when the resource is being deployed.
+
+The [`use-recognized-resource-type`](linter-rule-use-recognized-resource-type.md) linter rule flags any referenced resource that uses an unrecognized or invalid resource type.
+
+### Return value
+
+The returned object varies by the `list` function you use. For example, the `listKeys` function for a storage account returns the following format:
+
+```json
+{
+  "keys": [
+    {
+      "keyName": "key1",
+      "permissions": "Full",
+      "value": "{value}"
+    },
+    {
+      "keyName": "key2",
+      "permissions": "Full",
+      "value": "{value}"
+    }
+  ]
+}
+```
+
+Other `list` functions have different return formats. To see the format of a function, include it in the `outputs` section as shown in the example Bicep file.
+
+### List example
+
+The following example deploys a storage account and then calls `listKeys` on that storage account. The key is used when setting a value for [deployment scripts](../templates/deployment-script-template.md).
+
+```bicep
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
+  name: 'dscript${uniqueString(resourceGroup().id)}'
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+}
+
+resource dScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
+  name: 'scriptWithStorage'
+  location: location
+  ...
+  properties: {
+    azCliVersion: '2.0.80'
+    storageAccountSettings: {
+      storageAccountName: storageAccount.name
+      storageAccountKey: storageAccount.listKeys().keys[0].value
+    }
+    ...
+  }
+}
+```
+
+The next example shows a `list` function that takes a parameter. In this case, the function is `listAccountSas`. Pass an object for the expiry time. The expiry time must be in the future.
+
+```bicep
+param accountSasProperties object {
+  default: {
+    signedServices: 'b'
+    signedPermission: 'r'
+    signedExpiry: '2020-08-20T11:00:00Z'
+    signedResourceTypes: 's'
+  }
+}
+...
+sasToken: storageAccount.listAccountSas('2021-04-01', accountSasProperties).accountSasToken
+```
+
+### Implementations
+
+The following table shows possible uses of `list*` functions.
+
+| Resource type | Function name |
+| --- | --- |
+| Microsoft.Addons/supportProviders | listsupportplaninfo |
+| Microsoft.AnalysisServices/servers | [listGatewayStatus](https://learn.microsoft.com/rest/api/analysisservices/servers/listgatewaystatus) |
+| Microsoft.ApiManagement/service/authorizationServers | [listSecrets](https://learn.microsoft.com/rest/api/apimanagement/current-ga/authorization-server/list-secrets) |
+| Microsoft.ApiManagement/service/gateways | [listKeys](https://learn.microsoft.com/rest/api/apimanagement/current-ga/gateway/list-keys) |
+| Microsoft.ApiManagement/service/identityProviders | [listSecrets](https://learn.microsoft.com/rest/api/apimanagement/current-ga/identity-provider/list-secrets) |
+| Microsoft.ApiManagement/service/namedValues | [listValue](https://learn.microsoft.com/rest/api/apimanagement/current-ga/named-value/list-value) |
+| Microsoft.ApiManagement/service/openidConnectProviders | [listSecrets](https://learn.microsoft.com/rest/api/apimanagement/current-ga/openid-connect-provider/list-secrets) |
+| Microsoft.ApiManagement/service/subscriptions | [listSecrets](https://learn.microsoft.com/rest/api/apimanagement/current-ga/subscription/list-secrets) |
+| Microsoft.AppConfiguration/configurationStores | [ListKeys](https://learn.microsoft.com/rest/api/appconfiguration/stable/configuration-stores/list-keys) |
+| Microsoft.AppPlatform/Spring | [listTestKeys](https://learn.microsoft.com/rest/api/azurespringapps/services/list-test-keys) |
+| Microsoft.Automation/automationAccounts | [listKeys](https://learn.microsoft.com/rest/api/automation/keys/listbyautomationaccount) |
+| Microsoft.Batch/batchAccounts | [listkeys](https://learn.microsoft.com/rest/api/batchmanagement/batchaccount/getkeys) |
+| Microsoft.BatchAI/workspaces/experiments/jobs | listoutputfiles |
+| Microsoft.BotService/botServices/channels | [listChannelWithKeys](https://github.com/Azure/azure-rest-api-specs/blob/master/specification/botservice/resource-manager/Microsoft.BotService/stable/2020-06-02/botservice.json#L553) |
+| Microsoft.Cache/redis | [listKeys](https://learn.microsoft.com/rest/api/redis/redis/list-keys) |
+| Microsoft.CognitiveServices/accounts | [listKeys](https://learn.microsoft.com/rest/api/aiservices/accountmanagement/accounts/list-keys) |
+| Microsoft.ContainerRegistry/registries | [listCredentials](https://learn.microsoft.com/rest/api/containerregistry/registries/listcredentials) |
+| Microsoft.ContainerRegistry/registries | [listUsages](https://learn.microsoft.com/rest/api/containerregistry/registries/listusages) |
+| Microsoft.ContainerRegistry/registries/agentpools | listQueueStatus |
+| Microsoft.ContainerRegistry/registries/buildTasks | listSourceRepositoryProperties |
+| Microsoft.ContainerRegistry/registries/buildTasks/steps | listBuildArguments |
+| Microsoft.ContainerRegistry/registries/taskruns | listDetails |
+| Microsoft.ContainerRegistry/registries/webhooks | [listEvents](https://learn.microsoft.com/rest/api/containerregistry/webhooks/listevents) |
+| Microsoft.ContainerRegistry/registries/runs | [listLogSasUrl](https://learn.microsoft.com/rest/api/containerregistry/runs/getlogsasurl) |
+| Microsoft.ContainerRegistry/registries/tasks | [listDetails](https://learn.microsoft.com/rest/api/containerregistry/tasks/getdetails) |
+| Microsoft.ContainerService/managedClusters | [listClusterAdminCredential](https://learn.microsoft.com/rest/api/aks/managedclusters/listclusteradmincredentials) |
+| Microsoft.ContainerService/managedClusters | [listClusterMonitoringUserCredential](https://learn.microsoft.com/rest/api/aks/managedclusters/listclustermonitoringusercredentials) |
+| Microsoft.ContainerService/managedClusters | [listClusterUserCredential](https://learn.microsoft.com/rest/api/aks/managedclusters/listclusterusercredentials) |
+| Microsoft.ContainerService/managedClusters/accessProfiles | [listCredential](https://learn.microsoft.com/rest/api/aks/managedclusters/getaccessprofile) |
+| Microsoft.DataBox/jobs | listCredentials |
+| Microsoft.DataFactory/datafactories/gateways | listauthkeys |
+| Microsoft.DataFactory/factories/integrationruntimes | [listauthkeys](https://learn.microsoft.com/rest/api/datafactory/integrationruntimes/listauthkeys) |
+| Microsoft.DataLakeAnalytics/accounts/storageAccounts/Containers | [listSasTokens](https://learn.microsoft.com/rest/api/datalakeanalytics/storageaccounts/listsastokens) |
+| Microsoft.DataShare/accounts/shares | [listSynchronizations](https://learn.microsoft.com/rest/api/datashare/2020-09-01/shares/listsynchronizations) |
+| Microsoft.DataShare/accounts/shareSubscriptions | [listSourceShareSynchronizationSettings](https://learn.microsoft.com/rest/api/datashare/2020-09-01/sharesubscriptions/listsourcesharesynchronizationsettings) |
+| Microsoft.DataShare/accounts/shareSubscriptions | [listSynchronizationDetails](https://learn.microsoft.com/rest/api/datashare/2020-09-01/sharesubscriptions/listsynchronizationdetails) |
+| Microsoft.DataShare/accounts/shareSubscriptions | [listSynchronizations](https://learn.microsoft.com/rest/api/datashare/2020-09-01/sharesubscriptions/listsynchronizations) |
+| Microsoft.Devices/iotHubs | [listkeys](https://learn.microsoft.com/rest/api/iothub/iothubresource/listkeys) |
+| Microsoft.Devices/iotHubs/iotHubKeys | [listkeys](https://learn.microsoft.com/rest/api/iothub/iothubresource/getkeysforkeyname) |
+| Microsoft.Devices/provisioningServices/keys | [listkeys](https://learn.microsoft.com/rest/api/iot-dps/iotdpsresource/listkeysforkeyname) |
+| Microsoft.Devices/provisioningServices | [listkeys](https://learn.microsoft.com/rest/api/iot-dps/iotdpsresource/listkeys) |
+| Microsoft.DevTestLab/labs | [ListVhds](https://learn.microsoft.com/rest/api/dtl/labs/listvhds) |
+| Microsoft.DevTestLab/labs/schedules | [ListApplicable](https://learn.microsoft.com/rest/api/dtl/schedules/listapplicable) |
+| Microsoft.DevTestLab/labs/users/serviceFabrics | [ListApplicableSchedules](https://learn.microsoft.com/rest/api/dtl/servicefabrics/listapplicableschedules) |
+| Microsoft.DevTestLab/labs/virtualMachines | [ListApplicableSchedules](https://learn.microsoft.com/rest/api/dtl/virtualmachines/listapplicableschedules) |
+| Microsoft.DocumentDB/databaseAccounts | [listKeys](https://learn.microsoft.com/rest/api/cosmos-db-resource-provider/2021-11-15-preview/database-accounts/list-keys?tabs=HTTP) |
+| Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces | [listConnectionInfo](https://learn.microsoft.com/rest/api/cosmos-db-resource-provider/2023-03-15-preview/notebook-workspaces/list-connection-info?tabs=HTTP) |
+| Microsoft.DomainRegistration | [listDomainRecommendations](https://learn.microsoft.com/rest/api/appservice/domains/listrecommendations) |
+| Microsoft.DomainRegistration/topLevelDomains | [listAgreements](https://learn.microsoft.com/rest/api/appservice/topleveldomains/listagreements) |
+| Microsoft.EventGrid/domains | [listKeys](https://learn.microsoft.com/rest/api/eventgrid/controlplane/domains/list-shared-access-keys) |
+| Microsoft.EventGrid/topics | [listKeys](https://learn.microsoft.com/rest/api/eventgrid/controlplane/topics/list-shared-access-keys) |
+| Microsoft.EventHub/namespaces/authorizationRules | [listkeys](https://learn.microsoft.com/rest/api/eventhub) |
+| Microsoft.EventHub/namespaces/disasterRecoveryConfigs/authorizationRules | [listkeys](https://learn.microsoft.com/rest/api/eventhub) |
+| Microsoft.EventHub/namespaces/eventhubs/authorizationRules | [listkeys](https://learn.microsoft.com/rest/api/eventhub) |
+| Microsoft.ImportExport/jobs | [listBitLockerKeys](https://learn.microsoft.com/rest/api/storageimportexport/bitlockerkeys/list) |
+| Microsoft.Kusto/Clusters/Databases | [ListPrincipals](https://learn.microsoft.com/rest/api/azurerekusto/databases/listprincipals) |
+| Microsoft.LabServices/labs/users | [list](https://learn.microsoft.com/rest/api/labservices/users/list-by-lab) |
+| Microsoft.LabServices/labs/virtualMachines | [list](https://learn.microsoft.com/rest/api/labservices/virtual-machines/list-by-lab) |
+| Microsoft.Logic/integrationAccounts/agreements | [listContentCallbackUrl](https://learn.microsoft.com/rest/api/logic/agreements/listcontentcallbackurl) |
+| Microsoft.Logic/integrationAccounts/assemblies | [listContentCallbackUrl](https://learn.microsoft.com/rest/api/logic/integrationaccountassemblies/listcontentcallbackurl) |
+| Microsoft.Logic/integrationAccounts | [listCallbackUrl](https://learn.microsoft.com/rest/api/logic/integrationaccounts/getcallbackurl) |
+| Microsoft.Logic/integrationAccounts | [listKeyVaultKeys](https://learn.microsoft.com/rest/api/logic/integrationaccounts/listkeyvaultkeys) |
+| Microsoft.Logic/integrationAccounts/maps | [listContentCallbackUrl](https://learn.microsoft.com/rest/api/logic/maps/listcontentcallbackurl) |
+| Microsoft.Logic/integrationAccounts/partners | [listContentCallbackUrl](https://learn.microsoft.com/rest/api/logic/partners/listcontentcallbackurl) |
+| Microsoft.Logic/integrationAccounts/schemas | [listContentCallbackUrl](https://learn.microsoft.com/rest/api/logic/schemas/listcontentcallbackurl) |
+| Microsoft.Logic/workflows | [listCallbackUrl](https://learn.microsoft.com/rest/api/logic/workflows/listcallbackurl) |
+| Microsoft.Logic/workflows | [listSwagger](https://learn.microsoft.com/rest/api/logic/workflows/listswagger) |
+| Microsoft.Logic/workflows/runs/actions | [listExpressionTraces](https://learn.microsoft.com/rest/api/logic/workflowrunactions/listexpressiontraces) |
+| Microsoft.Logic/workflows/runs/actions/repetitions | [listExpressionTraces](https://learn.microsoft.com/rest/api/logic/workflowrunactionrepetitions/listexpressiontraces) |
+| Microsoft.Logic/workflows/triggers | [listCallbackUrl](https://learn.microsoft.com/rest/api/logic/workflowtriggers/listcallbackurl) |
+| Microsoft.Logic/workflows/versions/triggers | [listCallbackUrl](https://learn.microsoft.com/rest/api/logic/workflowversions/listcallbackurl) |
+| Microsoft.MachineLearning/webServices | [listkeys](https://learn.microsoft.com/rest/api/machinelearning/webservices/listkeys) |
+| Microsoft.MachineLearning/Workspaces | listworkspacekeys |
+| Microsoft.MachineLearningServices/workspaces/computes | [listKeys](https://learn.microsoft.com/rest/api/azureml/compute/list-keys) |
+| Microsoft.MachineLearningServices/workspaces/computes | [listNodes](https://learn.microsoft.com/rest/api/azureml/compute/list-nodes) |
+| Microsoft.MachineLearningServices/workspaces | [listKeys](https://learn.microsoft.com/rest/api/azureml/workspaces/list-keys) |
+| Microsoft.Maps/accounts | [listKeys](https://learn.microsoft.com/rest/api/maps-management/accounts/listkeys) |
+| Microsoft.Media/mediaservices/assets | listContainerSas |
+| Microsoft.Media/mediaservices/assets | listStreamingLocators |
+| Microsoft.Media/mediaservices/streamingLocators | listContentKeys |
+| Microsoft.Media/mediaservices/streamingLocators | listPaths |
+| Microsoft.Network/applicationSecurityGroups | listIpConfigurations |
+| Microsoft.NotificationHubs/Namespaces/authorizationRules | [listkeys](https://learn.microsoft.com/rest/api/notificationhubs/namespaces/listkeys) |
+| Microsoft.NotificationHubs/Namespaces/NotificationHubs/authorizationRules | [listkeys](https://learn.microsoft.com/rest/api/notificationhubs/notificationhubs/listkeys) |
+| Microsoft.OperationalInsights/workspaces | [list](https://learn.microsoft.com/rest/api/loganalytics/workspaces/list) |
+| Microsoft.OperationalInsights/workspaces | listKeys |
+| Microsoft.PolicyInsights/remediations | [listDeployments](https://learn.microsoft.com/rest/api/policy/remediations/listdeploymentsatresourcegroup) |
+| Microsoft.RedHatOpenShift/openShiftClusters | [listCredentials](https://learn.microsoft.com/rest/api/openshift/openshiftclusters/listcredentials) |
+| Microsoft.Relay/namespaces/disasterRecoveryConfigs/authorizationRules | listkeys |
+| Microsoft.Search/searchServices | [listAdminKeys](https://learn.microsoft.com/rest/api/searchmanagement/2021-04-01-preview/admin-keys/get) |
+| Microsoft.Search/searchServices | [listQueryKeys](https://learn.microsoft.com/rest/api/searchmanagement/2021-04-01-preview/query-keys/list-by-search-service) |
+| Microsoft.SignalRService/SignalR | [listkeys](https://learn.microsoft.com/rest/api/signalr/signalr/listkeys) |
+| Microsoft.Storage/storageAccounts | [listAccountSas](https://learn.microsoft.com/rest/api/storagerp/storageaccounts/listaccountsas) |
+| Microsoft.Storage/storageAccounts | [listkeys](https://learn.microsoft.com/rest/api/storagerp/storageaccounts/listkeys) |
+| Microsoft.Storage/storageAccounts | [listServiceSas](https://learn.microsoft.com/rest/api/storagerp/storageaccounts/listservicesas) |
+| Microsoft.StorSimple/managers/devices | [listFailoverSets](https://learn.microsoft.com/rest/api/storsimple/devices/listfailoversets) |
+| Microsoft.StorSimple/managers/devices | [listFailoverTargets](https://learn.microsoft.com/rest/api/storsimple/devices/listfailovertargets) |
+| Microsoft.StorSimple/managers | [listActivationKey](https://learn.microsoft.com/rest/api/storsimple/managers/getactivationkey) |
+| Microsoft.StorSimple/managers | [listPublicEncryptionKey](https://learn.microsoft.com/rest/api/storsimple/managers/getpublicencryptionkey) |
+| Microsoft.Synapse/workspaces/integrationRuntimes | [listAuthKeys](https://learn.microsoft.com/rest/api/synapse/integrationruntimeauthkeys/list) |
+| Microsoft.Web/connectionGateways | ListStatus |
+| microsoft.web/connections | listconsentlinks |
+| Microsoft.Web/customApis | listWsdlInterfaces |
+| microsoft.web/locations | listwsdlinterfaces |
+| microsoft.web/apimanagementaccounts/apis/connections | listconnectionkeys |
+| microsoft.web/apimanagementaccounts/apis/connections | listsecrets |
+| microsoft.web/sites/backups | [list](https://learn.microsoft.com/rest/api/appservice/webapps/listbackups) |
+| Microsoft.Web/sites/config | [list](https://learn.microsoft.com/rest/api/appservice/webapps/listconfigurations) |
+| microsoft.web/sites/functions | [listkeys](https://learn.microsoft.com/rest/api/appservice/webapps/listfunctionkeys) |
+| microsoft.web/sites/functions | [listsecrets](https://learn.microsoft.com/rest/api/appservice/webapps/listfunctionsecrets) |
+| microsoft.web/sites/hybridconnectionnamespaces/relays | [listkeys](https://learn.microsoft.com/rest/api/appservice/appserviceplans/listhybridconnectionkeys) |
+| microsoft.web/sites | [listsyncfunctiontriggerstatus](https://learn.microsoft.com/rest/api/appservice/webapps/listsyncfunctiontriggers) |
+| microsoft.web/sites/slots/functions | [listsecrets](https://learn.microsoft.com/rest/api/appservice/webapps/listfunctionsecretsslot) |
+| microsoft.web/sites/slots/backups | [list](https://learn.microsoft.com/rest/api/appservice/webapps/listbackupsslot) |
+| Microsoft.Web/sites/slots/config | [list](https://learn.microsoft.com/rest/api/appservice/webapps/listconfigurationsslot) |
+| microsoft.web/sites/slots/functions | [listsecrets](https://learn.microsoft.com/rest/api/appservice/webapps/listfunctionsecretsslot) |
+
+To determine which resource types have a list operation, use the following options:
+
+* View the [REST API operations](https://learn.microsoft.com/rest/api/) for a resource provider, and look for list operations. For example, storage accounts have the [listKeys operation](https://learn.microsoft.com/rest/api/storagerp/storageaccounts).
+* Use the [Get-​AzProvider​Operation](https://learn.microsoft.com/powershell/module/az.resources/get-azprovideroperation) PowerShell cmdlet. The following example gets all list operations for storage accounts:
+
+  ```powershell
+  Get-AzProviderOperation -OperationSearchString "Microsoft.Storage/*" | where {$_.Operation -like "*list*"} | FT Operation
+  ```
+
+* Use the following Azure CLI command to filter only the list operations:
+
+  ```azurecli
+  az provider operation show --namespace Microsoft.Storage --query "resourceTypes[?name=='storageAccounts'].operations[].name | [?contains(@, 'list')]"
+  ```
+
+## managementGroupResourceId
+
+`managementGroupResourceId(resourceType, resourceName1, [resourceName2], ...)`
+
+Returns the unique identifier for a resource deployed at the management group level.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+The `managementGroupResourceId` function is available in Bicep files, but you typically don't need it. Instead, use the symbolic name for the resource and access the `id` property.
+
+The identifier is returned in the following format:
+
+```json
+/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/{resourceType}/{resourceName}
+```
+
+### Remarks
+
+Use this function to get the resource ID for resources that are [deployed to the management group](deploy-to-management-group.md) rather than a resource group. The returned ID differs from the value returned by the [resourceId](#resourceid) function by not including a subscription ID and a resource group value.
+
+### managementGroupResourceID example
+
+The following template creates and assigns a policy definition. It uses the `managementGroupResourceId` function to get the resource ID for policy definition.
+
+```bicep
+targetScope = 'managementGroup'
+
+@description('Target Management Group')
+param targetMG string
+
+@description('An array of the allowed locations, all other locations will be denied by the created policy.')
+param allowedLocations array = [
+  'australiaeast'
+  'australiasoutheast'
+  'australiacentral'
+]
+
+var mgScope = tenantResourceId('Microsoft.Management/managementGroups', targetMG)
+var policyDefinitionName = 'LocationRestriction'
+
+resource policyDefinition 'Microsoft.Authorization/policyDefinitions@2025-03-01' = {
+  name: policyDefinitionName
+  properties: {
+    policyType: 'Custom'
+    mode: 'All'
+    parameters: {}
+    policyRule: {
+      if: {
+        not: {
+          field: 'location'
+          in: allowedLocations
+        }
+      }
+      then: {
+        effect: 'deny'
+      }
+    }
+  }
+}
+
+resource location_lock 'Microsoft.Authorization/policyAssignments@2025-03-01' = {
+  name: 'location-lock'
+  properties: {
+    scope: mgScope
+    policyDefinitionId: managementGroupResourceId('Microsoft.Authorization/policyDefinitions', policyDefinitionName)
+  }
+  dependsOn: [
+    policyDefinition
+  ]
+}
+```
+
+## pickZones
+
+`pickZones(providerNamespace, resourceType, location, [numberOfZones], [offset])`
+
+Determines whether a resource type supports zones for a region. This function **only supports zonal resources**. Zone redundant services return an empty array. For more information, see [Azure services that support availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-service-support).
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| providerNamespace | Yes | string | The resource provider namespace for the resource type to check for zone support. |
+| resourceType | Yes | string | The resource type to check for zone support. |
+| location | Yes | string | The region to check for zone support. |
+| numberOfZones | No | integer | The number of logical zones to return. The default is 1. The number must be a positive integer from 1 to 3. Use 1 for single-zoned resources. For multi-zoned resources, the value must be less than or equal to the number of supported zones. |
+| offset | No | integer | The offset from the starting logical zone. The function returns an error if offset plus numberOfZones exceeds the number of supported zones. |
+
+### Return value
+
+An array with the supported zones. When you use the default values for `offset` and `numberOfZones`, a resource type and region that supports zones returns the following array:
+
+```json
+[
+  "1"
+]
+```
+
+When you set the `numberOfZones` parameter to 3, it returns:
+
+```json
+[
+  "1",
+  "2",
+  "3"
+]
+```
+
+When the resource type or region doesn't support zones, the function returns an empty array.
+
+```json
+[
+]
+```
+
+### Remarks
+
+Azure Availability Zones fall into two categories - zonal and zone-redundant. Use the `pickZones` function to return an availability zone for a zonal resource. For zone redundant services (ZRS), the function returns an empty array. Zonal resources typically have a `zones` property at the top level of the resource definition. To determine the category of support for availability zones, see [Azure services that support availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-service-support).
+
+To determine if a given Azure region or location supports availability zones, call the `pickZones` function with a zonal resource type, such as `Microsoft.Network/publicIPAddresses`. If the response isn't empty, the region supports availability zones.
+
+### pickZones example
+
+The following Bicep file shows three results for using the `pickZones` function.
+
+```bicep
+output supported array = pickZones('Microsoft.Compute', 'virtualMachines', 'westus2')
+output notSupportedRegion array = pickZones('Microsoft.Compute', 'virtualMachines', 'westus')
+output notSupportedType array = pickZones('Microsoft.Cdn', 'profiles', 'westus2')
+```
+
+The output from the preceding examples returns three arrays.
+
+| Name | Type | Value |
+| --- | --- | --- |
+| supported | array | [ "1" ] |
+| notSupportedRegion | array | [] |
+| notSupportedType | array | [] |
+
+Use the response from `pickZones` to decide whether to provide null for zones or assign virtual machines to different zones.
+
+## providers
+
+**The providers function is deprecated in Bicep.** Don't use it. If you used this function to get an API version for the resource provider, provide a specific API version in your Bicep file. Using a dynamically returned API version can break your template if the properties change between versions.
+
+The [providers operation](https://learn.microsoft.com/rest/api/resources/providers) is still available through the REST API. You can use it outside of a Bicep file to get information about a resource provider.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+## reference
+
+`reference(resourceName or resourceIdentifier, [apiVersion], ['Full'])`
+
+Returns an object that represents a resource's runtime state. The output and behavior of the `reference` function depend heavily on how each resource provider (RP) implements its PUT and GET responses. 
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+Bicep files provide access to the reference function, although you typically don't need it. Instead, use the symbolic name of the resource. You can only use the reference function within the `properties` object of a resource. You can't use it for top-level properties like `name` or `location`. The same rule generally applies to references that use the symbolic name. However, for properties such as `name`, you can generate a template without using the reference function. You know enough about the resource name to directly emit the name. These are compile-time properties. Bicep validation can identify any incorrect usage of the symbolic name.
+
+The following example deploys a storage account. The first two outputs give you the same results.
+
+```bicep
+param storageAccountName string = uniqueString(resourceGroup().id)
+param location string = resourceGroup().location
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
+  name: storageAccountName
+  location: location
+  kind: 'Storage'
+  sku: {
+    name: 'Standard_LRS'
+  }
+}
+
+output storageObjectSymbolic object = storageAccount.properties
+output storageObjectReference object = reference('storageAccount')
+output storageName string = storageAccount.name
+output storageLocation string = storageAccount.location
+```
+
+To get a property from an existing resource that you didn't deploy in the template, use the `existing` keyword:
+
+```bicep
+param storageAccountName string
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
+  name: storageAccountName
+}
+
+// use later in template as often as needed
+output blobAddress string = storageAccount.properties.primaryEndpoints.blob
+```
+
+To reference a resource that's nested inside a parent resource, use the [nested accessor](operators-access.md#nested-resource-accessor) (`::`). You only use this syntax when you're accessing the nested resource from outside of the parent resource.
+
+```bicep
+vNet1::subnet1.properties.addressPrefix
+```
+
+If you attempt to reference a resource that doesn't exist, you get the `NotFound` error and your deployment fails. The [`use-recognized-resource-type`](linter-rule-use-recognized-resource-type.md) linter rule flags any referenced resource that uses an unrecognized or invalid resource type.
+
+## resourceId
+
+`resourceId([subscriptionId], [resourceGroupName], resourceType, resourceName1, [resourceName2], ...)`
+
+Returns the unique identifier of a resource.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+The `resourceId` function is available in Bicep files, but you typically don't need it. Instead, use the symbolic name for the resource and access the `id` property.
+
+Use this function when the resource name is ambiguous or not provisioned within the same Bicep file. The format of the returned identifier varies based on whether the deployment happens at the scope of a resource group, subscription, management group, or tenant.
+
+For example:
+
+```bicep
+param storageAccountName string
+param location string = resourceGroup().location
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
+  name: storageAccountName
+  location: location
+  kind: 'Storage'
+  sku: {
+    name: 'Standard_LRS'
+  }
+}
+
+output storageID string = storageAccount.id
+```
+
+To get the resource ID for a resource that isn't deployed in the Bicep file, use the existing keyword.
+
+```bicep
+param storageAccountName string
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
+  name: storageAccountName
+}
+
+output storageID string = storageAccount.id
+```
+
+For more information, see the [JSON template resourceId function](../templates/template-functions-resource.md#resourceid).
+
+## roleDefinitions
+
+`roleDefinitions(roleName)`
+
+Returns information about the specified role definition, including `id` and `roleDefinitionId`. It's a name-based helper for Azure RBAC role assignments. Instead of requiring you to hardcode the GUID of a custom or built-in role definition (like Contributor, Reader, and others), it lets you provide the custom or built-in role’s display name, and the function resolves the corresponding role definition information at deployment time.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| roleName | Yes | string | The display name of the role definition. |
+
+### Return value
+
+An object representing the role definition, including `id` and `roleDefinitionId`.
+
+### Examples
+
+The following Bicep code creates a deterministic Azure RBAC role assignment that grants a specified principal the **Storage Blob Data Reader** built-in role at the deployment scope by resolving the role definition by name at deployment time.
+
+```bicep
+@description('Specifies the role definition ID used in the role assignment.')
+param roleDefinitionName string = 'Storage Blob Data Reader'
+
+@description('Specifies the principal ID assigned to the role.')
+param principalId string
+
+var roleAssignmentName= guid(principalId, roleDefinitionName, resourceGroup().id)
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: roleAssignmentName
+  properties: {
+    roleDefinitionId: roleDefinitions(roleDefinitionName).id
+    principalId: principalId
+  }
+}
+
+```
+
+For more information, see the [JSON template resourceId function](../templates/template-functions-resource.md#roledefinitions).
+
+## subscriptionResourceId
+
+`subscriptionResourceId([subscriptionId], resourceType, resourceName1, [resourceName2], ...)`
+
+Returns the unique identifier for a resource deployed at the subscription level.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+The `subscriptionResourceId` function is available in Bicep files, but typically you don't need it. Instead, use the symbolic name for the resource and access the `id` property.
+
+The identifier is returned in the following format:
+
+```json
+/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+```
+
+### Remarks
+
+Use this function to get the resource ID for resources that are [deployed to the subscription](deploy-to-subscription.md) rather than a resource group. The returned ID differs from the value returned by the [resourceId](#resourceid) function by not including a resource group value.
+
+### subscriptionResourceId example
+
+The following Bicep file assigns a built-in role. You can deploy it to either a resource group or subscription. It uses the `subscriptionResourceId` function to get the resource ID for built-in roles.
+
+```bicep
+@description('Principal Id')
+param principalId string
+
+@allowed([
+  'Owner'
+  'Contributor'
+  'Reader'
+])
+@description('Built-in role to assign')
+param builtInRoleType string
+
+var roleDefinitionId = {
+  Owner: {
+    id: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')
+  }
+  Contributor: {
+    id: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+  }
+  Reader: {
+    id: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')
+  }
+}
+
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(resourceGroup().id, principalId, roleDefinitionId[builtInRoleType].id)
+  properties: {
+    roleDefinitionId: roleDefinitionId[builtInRoleType].id
+    principalId: principalId
+  }
+}
+```
+
+## tenantResourceId
+
+`tenantResourceId(resourceType, resourceName1, [resourceName2], ...)`
+
+Returns the unique identifier for a resource deployed at the tenant level.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions).
+
+The `tenantResourceId` function is available in Bicep files, but typically you don't need it. Instead, use the symbolic name for the resource and access the `id` property.
+
+The identifier is returned in the following format:
+
+```json
+/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+```
+
+Built-in policy definitions are tenant level resources. To deploy a policy assignment that references a built-in policy definition, use the `tenantResourceId` function.
+
+```bicep
+@description('Specifies the ID of the policy definition or policy set definition being assigned.')
+param policyDefinitionID string = '0a914e76-4921-4c19-b460-a2d36003525a'
+
+@description('Specifies the name of the policy assignment, can be used defined or an idempotent name as the defaultValue provides.')
+param policyAssignmentName string = guid(policyDefinitionID, resourceGroup().name)
+
+resource policyAssignment 'Microsoft.Authorization/policyAssignments@2025-03-01' = {
+  name: policyAssignmentName
+  properties: {
+    scope: subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)
+    policyDefinitionId: tenantResourceId('Microsoft.Authorization/policyDefinitions', policyDefinitionID)
+  }
+}
+```
+
+## toLogicalZone
+
+`toLogicalZone(subscriptionId, location, physicalZone)`
+
+Returns the logical availability zone (for example, `1`, `2`, or `3`) that corresponds to a physical availability zone for a specified subscription in a given Azure region.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions)
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| subscriptionId | Yes | string | The ID of the Azure subscription, such as `12345678-1234-1234-1234-1234567890ab`. |
+| location | Yes | string | The Azure region that supports availability zones, such as `westus2`. |
+| physicalZone | Yes | string | The physical availability zone identifier (for example, a data center-specific identifier like `westus2-az1`). |
+
+### Return value
+
+A string representing the logical availability zone (for example, `1`, `2`, or `3`) that corresponds to the specified physical zone in the given region and subscription. If the physical zone is invalid or not supported, the function returns an empty string (`''`).
+
+### Remarks
+
+* The `toLogicalZone` function retrieves the logical zone mapping based on the subscription’s zone configuration in the specified region.
+* Logical zones are standardized identifiers (for example, `1`, `2`, `3`) used in resource configurations to ensure consistent zone assignments across Azure services.
+* Physical zone identifiers are region-specific and might vary between subscriptions. Use the [`toPhysicalZone`](#tophysicalzone) function to reverse this mapping.
+* The function requires that the region supports availability zones. For a list of supported regions, see [Azure services that support availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-service-support).
+* If the physical zone doesn't exist or isn't mapped for the subscription, the function returns an empty string.
+* This function is useful for aligning physical zone deployments with logical zone configurations in templates, especially for cross-subscription or multi-region scenarios.
+
+### Examples
+
+The following example retrieves the logical zone for a physical zone in West US 2 for a specific subscription:
+
+```bicep
+param subscriptionId string = '12345678-1234-1234-1234-1234567890ab'
+param physicalZone string = 'westus2-az1'
+
+output logicalZone string = toLogicalZone(subscriptionId, 'westus2', physicalZone)
+```
+
+Expected output:
+
+| Name | Type | Value |
+| --- | --- | --- |
+| logicalZone | String | `1` |
+
+The following example uses `toLogicalZone` to configure a virtual machine with the correct logical zone:
+
+```bicep
+param subscriptionId string = '12345678-1234-1234-1234-1234567890ab'
+param physicalZone string = 'westus2-az1'
+param location string = 'westus2'
+
+var logicalZone = toLogicalZone(subscriptionId, location, physicalZone)
+
+resource vm 'Microsoft.Compute/virtualMachines@2025-04-01' = {
+  name: 'myVM'
+  location: location
+  zones: logicalZone != '' ? [logicalZone] : []
+  properties: {
+    // VM properties
+  }
+}
+
+output logicalZone string = logicalZone
+```
+
+Expected output:
+
+| Name | Type | Value |
+| --- | --- | --- |
+| logicalZone | String | `1` |
+
+## toLogicalZones
+
+`toLogicalZones(subscriptionId, location, physicalZones)`
+
+Returns the logical availability zones (for example, `1`, `2`, or `3`) corresponding to physical availability zones for a specified subscription in a given Azure region. To convert a single physical zone, use the [`toLogicalZone`](#tologicalzone) function.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions)
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| subscriptionId | Yes | string | The ID of the Azure subscription, such as `12345678-1234-1234-1234-1234567890ab`. |
+| location | Yes | string | The Azure region that supports availability zones, such as `westus2`. |
+| physicalZones | Yes | array | An array of physical zone names to convert to logical zones (for example, a data center-specific identifier like `westus2-az1`, `westus2-az2`, ...). |
+
+### Return value
+
+An array of logical zone names corresponding to the provided physical zones (for example, `1`, `2`, or `3`). If a physical zone is invalid or not supported, the function returns an empty string (`''`).
+
+### Remarks
+
+The `toLogicalZones` function maps physical zone names to their logical zone equivalents for a specified Azure subscription and region. This mapping is useful for configuring or querying resources based on logical zones within an Azure region. The function requires a valid subscription ID, a supported Azure location, and an array of physical zone names. If a physical zone is invalid or not available in the specified location, the function might return an empty string for that zone or throw an error, depending on the context.
+
+### Examples
+
+The following example retrieves the logical zones for a list of physical zones in West US 2 for a specific subscription:
+
+```bicep
+param subscriptionId string = '12345678-1234-1234-1234-1234567890ab'
+param physicalZones array = ['westus2-az1', 'westus2-az2', 'westus2-az3']
+
+output logicalZones array = toLogicalZones(subscriptionId, 'westus2', physicalZones)
+```
+
+Expected output:
+
+| Name | Type | Value |
+| --- | --- | --- |
+| logicalZone | array | ["1","2","3"] |
+
+## toPhysicalZone
+
+`toPhysicalZone(subscriptionId, location, logicalZone)`
+
+Returns the physical availability zone identifier, such as a data center-specific identifier like `westus2-az1`, that corresponds to a logical availability zone for a specified subscription in a given Azure region.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions)
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| subscriptionId | Yes | string | The ID of the Azure subscription, such as `12345678-1234-1234-1234-1234567890ab`. |
+| location | Yes | string | The Azure region that supports availability zones, such as `westus2`. |
+| logicalZone | Yes | string | The logical availability zone, such as `1`, `2`, or `3`. |
+
+### Return value
+
+A string representing the physical availability zone identifier, such as `westus2-az1`, that corresponds to the specified logical zone in the given region and subscription. If the logical zone is invalid or not supported, the function returns an empty string (`''`).
+
+### Remarks
+
+* The `toPhysicalZone` function retrieves the physical zone mapping based on the subscription’s zone configuration in the specified region.
+* Physical zones are data center-specific identifiers that can vary between subscriptions, while logical zones, such as `1`, `2`, `3`, are standardized for resource configurations.
+* Use the `toLogicalZone` function to reverse this mapping and convert a physical zone to its logical equivalent.
+* The function requires that the region supports availability zones. For a list of supported regions, see [Azure services that support availability zones](https://learn.microsoft.com/azure/reliability/availability-zones-service-support).
+* If the logical zone doesn't exist or isn't mapped for the subscription, the function returns an empty string.
+* This function is useful for scenarios that require physical zone identifiers, such as logging, auditing, or cross-subscription zone alignment in multiregion deployments.
+
+### Examples
+
+The following example retrieves the physical zone for a logical zone in West US 2 for a specific subscription:
+
+```bicep
+param subscriptionId string = '12345678-1234-1234-1234-1234567890ab'
+param logicalZone string = '1'
+
+output physicalZone string = toPhysicalZone(subscriptionId, 'westus2', logicalZone)
+```
+
+Expected output (assuming logical zone `1` maps to `westus2-az1`):
+
+| Name | Type | Value |
+| --- | --- | --- |
+| physicalZone | String | `westus2-az1` |
+
+The following example uses `toPhysicalZone` to log the physical zone for a virtual machine deployment:
+
+```bicep
+param subscriptionId string = '12345678-1234-1234-1234-1234567890ab'
+param logicalZone string = '1'
+param location string = 'westus2'
+
+var physicalZone = toPhysicalZone(subscriptionId, location, logicalZone)
+
+resource vm 'Microsoft.Compute/virtualMachines@2025-04-01' = {
+  name: 'myVM'
+  location: location
+  zones: [logicalZone]
+  properties: {
+    // VM properties
+  }
+}
+
+output physicalZone string = physicalZone
+```
+
+Expected output:
+
+| Name | Type | Value |
+| --- | --- | --- |
+| physicalZone | String | `westus2-az1` |
+
+## toPhysicalZones
+
+`toPhysicalZones(subscriptionId, location, logicalZones)`
+
+Returns the physical availability zone identifiers (for example, a data center-specific identifier like `westus2-az1`) corresponding to logical availability zones for a specified subscription in a given Azure region. To convert a single logical zone, use the [`toPhysicalZone`](#tophysicalzone) function.
+
+Namespace: [az](bicep-functions.md#namespaces-for-functions)
+
+### Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| subscriptionId | Yes | string | The ID of the Azure subscription, such as `12345678-1234-1234-1234-1234567890ab`. |
+| location | Yes | string | The Azure region that supports availability zones, such as `westus2`. |
+| logicalZone | Yes | string[] | The logical availability zones (for example, `1`, `2`, or `3`) to convert to physical zones. |
+
+### Return value
+
+An array of physical zone names (for example, `westus2-az1`, `westus2-az2` ) corresponding to the provided logical zones. If a logical zone is invalid or not supported, the function returns an empty string (`''`).
+
+### Remarks
+
+The `toPhysicalZones` function maps logical zone names to their physical zone equivalents for a specified Azure subscription and region. This mapping is useful for deploying or configuring resources in specific physical zones within an Azure region. The function requires a valid subscription ID, a supported Azure location, and an array of logical zone names. If a logical zone is invalid or unavailable in the specified location, the function might return an empty string for that zone or throw an error, depending on the context.
+
+### Examples
+
+The following example retrieves the physical zones for a list of logical zones in West US 2 for a specific subscription:
+
+```bicep
+param subscriptionId string = '12345678-1234-1234-1234-1234567890ab'
+param logicalZones array = ['1', '2', '3']
+
+output physicalZones array = toPhysicalZones(subscriptionId, 'westus2', logicalZones)
+```
+
+Expected output (assuming logical zone `1` maps to `westus2-az1`, logical zone `1` maps to `westus2-az1`, and logical zone `3` maps to `westus2-az3`):
+
+| Name | Type | Value |
+| --- | --- | --- |
+| physicalZone | array | ["westus2-az1","westus2-az2","westus2-az3"] |
+
+## Next steps
+
+* To get values from the current deployment, see [Deployment value functions](bicep-functions-deployment.md).
+* To iterate a specified number of times when creating a type of resource, see [Iterative loops in Bicep](loops.md).

@@ -1,0 +1,222 @@
+---
+title: "sys.sp_updateextendedproperty (Transact-SQL)"
+description: Updates the value of an existing extended property.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sp_updateextendedproperty_TSQL"
+  - "sp_updateextendedproperty"
+helpviewer_keywords:
+  - "sp_updateextendedproperty"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.sp_updateextendedproperty (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Updates the value of an existing extended property.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_updateextendedproperty
+    [ @name = ] N'name'
+    [ , [ @value = ] value ]
+    [ , [ @level0type = ] 'level0type' ]
+    [ , [ @level0name = ] N'level0name' ]
+    [ , [ @level1type = ] 'level1type' ]
+    [ , [ @level1name = ] N'level1name' ]
+    [ , [ @level2type = ] 'level2type' ]
+    [ , [ @level2name = ] N'level2name' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @name = ] N'*name*'
+
+The name of the property to be updated. *@name* is **sysname**, with no default.
+
+#### [ @value = ] *value*
+
+The value associated with the property. *@value* is **sql_variant**, with a default of `NULL`. The size of *@value* can't be more than 7,500 bytes.
+
+#### [ @level0type = ] '*level0type*'
+
+The user or user-defined type. *@level0type* is **varchar(128)**, with a default of `NULL`. Valid inputs are:
+
+- `ASSEMBLY`
+- `CONTRACT`
+- `EVENT NOTIFICATION`
+- `FILEGROUP`
+- `MESSAGE TYPE`
+- `PARTITION FUNCTION`
+- `PARTITION SCHEME`
+- `PLAN GUIDE`
+- `REMOTE SERVICE BINDING`
+- `ROUTE`
+- `SCHEMA`
+- `SERVICE`
+- `USER`
+- `TRIGGER`
+- `TYPE`
+- `NULL`
+
+> **Important:**  
+> `USER` and `TYPE` as *level 0* types will be removed in a future version of  SQL Server 
+. Avoid using these features in new development work, and plan to modify applications that currently use these features. Use `SCHEMA` as the *level 0* type instead of `USER`. For `TYPE`, use `SCHEMA` as the *level 0* type and `TYPE` as the *level 1* type.
+
+#### [ @level0name = ] N'*level0name*'
+
+The name of the level 0 object type specified. *@level0name* is **sysname**, with a default of `NULL`.
+
+#### [ @level1type = ] '*level1type*'
+
+The type of level 1 object. *@level1type* is **varchar(128)**, with a default of `NULL`. Valid inputs are:
+
+- `ASSEMBLY`
+- `CONTRACT`
+- `EVENT NOTIFICATION`
+- `FILEGROUP`
+- `MESSAGE TYPE`
+- `PARTITION FUNCTION`
+- `PARTITION SCHEME`
+- `PLAN GUIDE`
+- `REMOTE SERVICE BINDING`
+- `ROUTE`
+- `SCHEMA`
+- `SERVICE`
+- `USER`
+- `TRIGGER`
+- `TYPE`
+- `NULL`
+
+#### [ @level1name = ] N'*level1name*'
+
+The name of the level 1 object type specified. *@level1name* is **sysname**, with a default of `NULL`.
+
+#### [ @level2type = ] '*level2type*'
+
+The type of level 2 object. *@level2type* is **varchar(128)**, with a default of `NULL`. Valid inputs are:
+
+- `COLUMN`
+- `CONSTRAINT`
+- `EVENT NOTIFICATION`
+- `INDEX`
+- `PARAMETER`
+- `TRIGGER`
+- `NULL`
+
+#### [ @level2name = ] N'*level2name*'
+
+The name of the level 2 object type specified. *@level2name* is **sysname**, with a default of `NULL`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+When you specify extended properties, the objects in a  SQL Server 
+ database are classified into three levels (0, 1, and 2). Level 0 is the highest level and is defined as objects contained at the database scope. Level 1 objects are contained in a schema or user scope, and level 2 objects are contained by level 1 objects. Extended properties can be defined for objects at any of these levels. References to an object in one level must be qualified with the names of the higher level objects that own or contain them.
+
+Given a valid *@name* and *@value*, if all object types and names are `NULL`, the property updated belongs to the current database.
+
+## Permissions
+
+Members of the **db_owner** and **db_ddladmin** fixed database roles can update the extended properties of any object with the following exception: **db_ddladmin** can't add properties to the database itself, or to users or roles.
+
+Users can update extended properties to objects they own, or on which they have ALTER or CONTROL permissions.
+
+## Examples
+
+### A. Update an extended property on a column
+
+The following example updates the value of property `Caption` on column `ID` in table `T1`.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+CREATE TABLE T1 (id INT, name CHAR (20));
+GO
+
+EXECUTE sp_addextendedproperty
+    @name = N'Caption',
+    @value = N'Employee ID',
+    @level0type = 'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = 'TABLE',
+    @level1name = N'T1',
+    @level2type = 'COLUMN',
+    @level2name = N'id';
+GO
+
+--Update the extended property.
+EXECUTE sp_updateextendedproperty
+    @name = N'Caption',
+    @value = 'Employee ID must be unique.',
+    @level0type = 'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = 'TABLE',
+    @level1name = N'T1',
+    @level2type = 'COLUMN',
+    @level2name = N'id';
+GO
+```
+
+### B. Update an extended property on a database
+
+The following example first creates an extended property on the  `AdventureWorks2025`  sample database and then updates the value of that property.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_addextendedproperty
+    @name = N'NewCaption',
+    @value = 'AdventureWorks Sample OLTP Database';
+GO
+
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_updateextendedproperty
+    @name = N'NewCaption',
+    @value = 'AdventureWorks Sample Database';
+GO
+```
+
+## Related content
+
+- [Database Engine stored procedures (Transact-SQL)](database-engine-stored-procedures-transact-sql.md)
+- [sys.fn_listextendedproperty (Transact-SQL)](../system-functions/sys-fn-listextendedproperty-transact-sql.md)
+- [sys.sp_addextendedproperty (Transact-SQL)](sp-addextendedproperty-transact-sql.md)
+- [sys.sp_dropextendedproperty (Transact-SQL)](sp-dropextendedproperty-transact-sql.md)
+- [Extended properties catalog views - sys.extended_properties](../system-catalog-views/extended-properties-catalog-views-sys-extended-properties.md)

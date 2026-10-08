@@ -1,0 +1,98 @@
+---
+title: Monitor Your Search Service
+description: Start here to learn how to monitor Azure AI Search.
+ms.date: 06/02/2026
+ms.update-cycle: 365-days
+ms.custom: horz-monitor
+ms.topic: concept-article
+ms.service: azure-ai-search
+author: mattwojo
+ms.author: mattwoj
+---
+
+# Monitor Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+For more information about the resource types for Azure AI Search, see [Azure AI Search monitoring data reference](monitor-azure-cognitive-search-data-reference.md).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+In Azure AI Search, platform metrics measure query performance, indexing volume, and skillset invocation. If you are using the [Serverless pricing model](serverless-cost-optimization.md), you are measuring consumed compute units. For a list of available metrics for Azure AI Search, see [Azure AI Search monitoring data reference](monitor-azure-cognitive-search-data-reference.md#metrics).
+
+To learn how to analyze query and index performance, see [Analyze performance in Azure AI Search](search-performance-analysis.md).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-logs.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+For the available resource log categories, their associated Log Analytics tables, and the logs schemas for Azure AI Search, see [Azure AI Search monitoring data reference](monitor-azure-cognitive-search-data-reference.md#resource-logs).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+In Azure AI Search, activity logs reflect control plane activity such as service creation and configuration, or API key usage or management. Entries often include **Get Admin Key**, one entry for every call that [provided an admin API key](search-security-api-keys.md) on the request. There are no details about the call itself, just a notification that the admin key was used.
+
+API keys can be disabled for data plane operations, such as creating or querying an index, but on the control plane they're used in the Azure portal to return service information. Control plane operations can request API keys so you continue to see key-related requests in the Activity log even if you disable key-based authentication.
+
+The following screenshot shows Azure AI Search activity log signals you can configure in an alert.
+
+Screenshot of the activity log signals that can be used in an alert.
+
+For other entries, see the [Management REST API reference](https://learn.microsoft.com/rest/api/searchmanagement/) for control plane activity that might appear in the log.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+The following queries can get you started. See [Analyze performance in Azure AI Search](search-performance-analysis.md) for more examples and guidance specific to search service.
+
+#### List metrics by name
+
+Return a list of metrics and the associated aggregation. The query is scoped to the current search service over the time range that you specify.
+
+```kusto
+AzureMetrics
+| project MetricName, Total, Count, Maximum, Minimum, Average
+```
+
+#### List operations by name
+
+Return a list of operations and a count of each one.
+
+```kusto
+AzureDiagnostics
+| summarize count() by OperationName
+```
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+### Azure AI Search alert rules
+
+The following table lists common and recommended alert rules for Azure AI Search. On a search service, throttling or query latency that exceeds a given threshold are the most commonly used alerts, but you might also want to be notified if a search service is deleted.
+
+Alerts can be configured so that you receive an email or SMS text depending on your preference.
+
+| Alert type | Condition | Description |
+| --- | --- | --- |
+| Search Latency (metric alert) | Whenever the average search latency is greater than a user-specified threshold (in  seconds) | Send an alert when average query response time exceeds the threshold. |
+| Throttled search queries percentage (metric alert) | Whenever the total throttled search queries percentage is greater than or equal to a user-specified threshold | Send an alert when dropped queries begin to exceed the threshold. |
+| Storage Usage | When total storage usage exceeds a user-defined threshold, trigger an alert. Use the index name dimension to monitor specific scenarios. | Send an alert if the storage usage exceeds the expected limit. |
+| Compute Usage | When total storage usage exceeds a user-defined threshold, trigger an alert. Use the operation name and index name dimensions to monitor specific scenarios. | Send an alert when compute consumed begin to exceed the threshold. |
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/monitor-azure-cognitive-search.md)
+
+## Related content
+
+- [Azure AI Search monitoring data reference](monitor-azure-cognitive-search-data-reference.md)
+- [Monitor Azure resources with Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/monitor-azure-resource)
+- [Monitor queries](search-monitor-queries.md)
+- [Monitor indexer-based indexing](search-monitor-indexers.md)
+- [Analyze performance in Azure AI Search](search-performance-analysis.md)

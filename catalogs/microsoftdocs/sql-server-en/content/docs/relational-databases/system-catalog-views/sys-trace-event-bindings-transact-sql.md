@@ -1,0 +1,57 @@
+---
+title: "sys.trace_event_bindings (Transact-SQL)"
+description: sys.trace_event_bindings (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.trace_event_bindings_TSQL"
+  - "trace_event_bindings"
+  - "sys.trace_event_bindings"
+  - "trace_event_bindings_TSQL"
+helpviewer_keywords:
+  - "sys.trace_event_bindings catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.trace_event_bindings (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  The **sys.trace_event_bindings** catalog view contains a list of all possible usage combinations of events and columns. For each event listed in the **trace_event_id** column, all available columns are listed in the **trace_column_id** column. Not all available columns are populated each time a given event occurs. These values do not change for a given version of the  SQL Server Database Engine 
+.  
+  
+ For a complete list of supported trace events, see [SQL Server Event Class Reference](../event-classes/sql-server-event-class-reference.md).  
+  
+> **Important:**  
+>  This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use Extended Event catalog views instead.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **trace_event_id** | **smallint** | ID of the trace event. This column is also in the **sys.trace_events** catalog view. |
+| **trace_column_id** | **smallint** | ID of the trace column. This column is also in the **sys.trace_columns** catalog view. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [sys.traces (Transact-SQL)](sys-traces-transact-sql.md)
+- [sys.trace_categories (Transact-SQL)](sys-trace-categories-transact-sql.md)
+- [sys.trace_columns (Transact-SQL)](sys-trace-columns-transact-sql.md)
+- [sys.trace_events (Transact-SQL)](sys-trace-events-transact-sql.md)
+- [sys.trace_subclass_values (Transact-SQL)](sys-trace-subclass-values-transact-sql.md)

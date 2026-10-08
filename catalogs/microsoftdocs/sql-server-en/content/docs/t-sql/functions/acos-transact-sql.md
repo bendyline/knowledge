@@ -1,0 +1,95 @@
+---
+title: "ACOS (Transact-SQL)"
+description: "ACOS (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "ACOS"
+  - "ACOS_TSQL"
+helpviewer_keywords:
+  - "cosine"
+  - "ACOS function"
+  - "arccosine"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# ACOS (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+A function that returns the angle, in radians, whose cosine is the specified float expression. This is also called arccosine.
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+ACOS ( float_expression )  
+```  
+  
+## Arguments
+
+*float_expression*  
+An [expression](../language-elements/expressions-transact-sql.md) of either type **float** or of a type that can implicitly convert to float. Only a value ranging from -1.00 to 1.00 is valid. For values outside this range, no value is returned, and ACOS will report a domain error.
+  
+## Return types
+
+
+**float**
+  
+## Examples
+
+This example returns the `ACOS` value of the specified number.
+  
+```sql
+SET NOCOUNT OFF;  
+DECLARE @cos FLOAT;  
+SET @cos = -1.0;  
+SELECT 'The ACOS of the number is: ' + CONVERT(VARCHAR, ACOS(@cos));  
+```  
+  
+ Here's the result set. 
+
+  
+```sql
+---------------------------------   
+The ACOS of the number is: 3.14159   
+  
+(1 row(s) affected)  
+```  
+  
+## Related content
+
+- [Mathematical functions (Transact-SQL)](mathematical-functions-transact-sql.md)
+- [What are the SQL database functions?](functions.md)

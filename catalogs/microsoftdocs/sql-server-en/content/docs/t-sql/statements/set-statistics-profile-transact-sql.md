@@ -1,0 +1,79 @@
+---
+title: "SET STATISTICS PROFILE (Transact-SQL)"
+description: SET STATISTICS PROFILE (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "PROFILE"
+  - "SET_STATISTICS_PROFILE_TSQL"
+  - "PROFILE_TSQL"
+  - "SET STATISTICS PROFILE"
+helpviewer_keywords:
+  - "profiles [SQL Server], displaying"
+  - "statements [SQL Server], profile information"
+  - "SET STATISTICS PROFILE statement"
+  - "STATISTICS PROFILE option"
+  - "statistical information [SQL Server], profiles"
+dev_langs:
+  - "TSQL"
+---
+# SET STATISTICS PROFILE (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Displays the profile information for a statement. STATISTICS PROFILE works for ad hoc queries, views, and stored procedures.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+  
+SET STATISTICS PROFILE { ON | OFF }  
+```  
+  
+## Remarks
+ When STATISTICS PROFILE is ON, each executed query returns its regular result set, followed by an additional result set that shows a profile of the query execution.  
+  
+ The additional result set contains the SHOWPLAN_ALL columns for the query and these additional columns.  
+  
+| Column name | Description |
+| --- | --- |
+| **Rows** | Actual number of rows produced by each operator |
+| **Executes** | Number of times the operator has been executed |
+  
+## Permissions  
+ To use SET STATISTICS PROFILE and view the output, users must have the following permissions:  
+  
+-   Appropriate permissions to execute the  Transact-SQL  statements.  
+  
+-   SHOWPLAN permission on all databases containing objects that are referenced by the  Transact-SQL  statements.  
+  
+ For  Transact-SQL  statements that do not produce STATISTICS PROFILE result sets, only the appropriate permissions to execute the  Transact-SQL  statements are required. For  Transact-SQL  statements that do produce STATISTICS PROFILE result sets, checks for both the  Transact-SQL  statement execution permission and the SHOWPLAN permission must succeed, or the  Transact-SQL  statement execution is aborted and no Showplan information is generated.  
+  
+## Related content
+
+- [SET Statements (Transact-SQL)](set-statements-transact-sql.md)
+- [SET SHOWPLAN_ALL (Transact-SQL)](set-showplan-all-transact-sql.md)
+- [SET STATISTICS TIME (Transact-SQL)](set-statistics-time-transact-sql.md)
+- [SET STATISTICS IO (Transact-SQL)](set-statistics-io-transact-sql.md)

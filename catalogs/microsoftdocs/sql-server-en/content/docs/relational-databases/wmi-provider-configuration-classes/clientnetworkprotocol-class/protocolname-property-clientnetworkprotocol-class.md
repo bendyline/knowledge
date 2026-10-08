@@ -1,0 +1,45 @@
+---
+title: "ProtocolName Property (ClientNetworkProtocol)"
+description: "ProtocolName Property (ClientNetworkProtocol Class)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: wmi
+ms.topic: "reference"
+helpviewer_keywords:
+  - "ProtocolName property"
+apilocation: "sqlmgmproviderxpsp2up.mof"
+apiname: "ProtocolName Property (ClientNetworkProtocol Class)"
+apitype: "MOFDef"
+---
+# ProtocolName Property (ClientNetworkProtocol Class)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Gets the name of the current network protocol specified by the [Configure Client Protocols](../../../database-engine/configure-windows/configure-client-protocols.md).  
+  
+## Syntax  
+  
+```  
+  
+object.ProtocolName [= value]  
+```  
+  
+## Parts  
+ *object*  
+ A [ClientNetworkProtocol Class](clientnetworkprotocol-class.md) object that represents the network protocol used by the  Microsoft 
+  SQL Server 
+ client.  
+  
+## Property Value/Return Value  
+ A string value that specifies the name of the current client network protocol referenced by the [SetOrderValue Method (ClientNetworkProtocol Class)](setordervalue-method-clientnetworkprotocol-class.md).  
+  
+## Remarks  
+  
+## Related content
+
+- [Configure client protocols](../../../database-engine/configure-windows/configure-client-protocols.md)

@@ -1,0 +1,29 @@
+# Source code: aspnetcore/mvc/advanced/custom-model-binding/samples/3.x/PolymorphicModelBindingSample/Pages/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <hr>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            @Model.Message
+        </div>
+    }
+
+    <a asp-page="./AddDevice">Add a device</a>
+</div>
+
+```

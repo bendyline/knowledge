@@ -1,0 +1,46 @@
+---
+title: "Level (MDX)"
+description: "Level (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Level (MDX)
+
+
+  Returns the level of a member.  
+  
+## Syntax  
+  
+```  
+  
+Member_Expression.Level  
+```  
+  
+## Arguments  
+ *Member_Expression*  
+ A valid Multidimensional Expression (MDX) that returns a member.  
+  
+### Examples  
+ The following example uses the **Level** function to return all months in the Adventure Works cube.  
+  
+```  
+SELECT[Date].[Fiscal].[Month].[February 2002].Level.Members ON 0,  
+[Measures].[Internet Sales Amount] ON 1  
+FROM [Adventure Works]  
+```  
+  
+ The following example uses the **Level** function to return the name of the level for the All-Purpose Bike Stand in the Model Name attribute hierarchy in the Adventure Works cube.  
+  
+```  
+WITH MEMBER Measures.x AS   
+   [Product].[Model Name].[All-Purpose Bike Stand].Level.Name  
+SELECT Measures.x ON 0  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

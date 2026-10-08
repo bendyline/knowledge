@@ -1,0 +1,35 @@
+---
+title: "sys.pdw_column_distribution_properties (Transact-SQL)"
+description: "The sys.pdw_column_distribution_properties system catalog view returns distribution information for columns."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: wiassaf
+ms.date: 07/25/2022
+ms.service: sql
+ms.subservice: data-warehouse
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sys.pdw_column_distribution_properties (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+ 
+
+
+Returns distribution information for columns.  
+  
+| Column Name | Data Type | Description | Range |
+| --- | --- | --- | --- |
+| **object_id** | **int** | ID of the object to which the column belongs. |  |
+| **column_id** | **int** | ID of the column. |  |
+| **distribution_ordinal** | **tinyint** | Ordinal (1-based) within set of distribution. | = 0: Not a distribution column. <br /><br /> = 1 or >1:  Azure Synapse Analytics  is using this column to distribute the parent table. |
+  
+## Related content
+
+- [Azure Synapse Analytics catalog views](azure-synapse-analytics-catalog-views.md)
+- [Distribution Advisor in Azure Synapse SQL](https://learn.microsoft.com/azure/synapse-analytics/sql/distribution-advisor)

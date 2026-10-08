@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Node.js Windows",
+    "expectedDocumentIds": [
+      "hub/dev-environment/javascript/nodejs-overview"
+    ]
+  }
+]

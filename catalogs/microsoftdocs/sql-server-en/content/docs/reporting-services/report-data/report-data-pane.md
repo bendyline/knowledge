@@ -1,0 +1,37 @@
+---
+title: Report Data pane
+description: Learn how to use the Report Data pane to view the currently defined parameters, data sources, datasets, field collections, and images in your report.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+
+# Report Data pane in SQL Server Reporting Services (SSRS)
+
+  Use the **Report Data** pane to view the currently defined parameters, data sources, datasets, field collections, and images in your report. The Report Data pane displays a hierarchical view of the items that represent data in your report. The top level nodes represent built-in fields, parameters, images, and data source references. Expand each node to view the data items. For example, when you expand a data source node, the datasets defined for that data source appear. When you expand a dataset, its field collection appears. Drag items to the report design surface to link data with report items on the report page.  
+  
+## Options
+
+ **Built-in Fields**  
+ Represents fields provided by Reporting Services that are commonly used in a report, such as the report name or page number. For more information, see [Built-in Collections in Expressions (Report Builder and SSRS)](../report-design/built-in-collections-in-expressions-report-builder.md).  
+  
+ **Parameters**  
+ Represents the collection of report parameters, each of which can be single-valued or multivalued. For more information, see [Report Parameters (Report Builder and Report Designer)](../report-design/report-parameters-report-builder-and-report-designer.md).  
+  
+ **Images**  
+ Represents the set of images used in the report. For more information, see [Images (Report Builder and SSRS)](../report-design/images-report-builder-and-ssrs.md).  
+  
+ **Data source**  
+ Represents a single data source reference to an embedded data source or to a shared data source. In  SQL Server Data Tools (SSDT) 
+, shared data sources appear in Solution Explorer under the Shared Data Sources folder. A data source specifies one of the data source types supported by Reporting Services. A data source is the parent node for the collection of datasets based on it. For more information, see [Create data connection strings - Report Builder & SSRS](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md) .  
+  
+ **Dataset**  
+ Represents a single dataset. A dataset is the parent node for the collection of fields specified by the query and including any calculated fields. Reporting Services supports query designers to help you specify a query. For more information, see [Report Datasets (SSRS)](report-datasets-ssrs.md) and [Query Design Tools (SSRS)](query-design-tools-ssrs.md).  
+  
+## Related content
+
+- [Dataset Fields Collection (Report Builder and SSRS)](dataset-fields-collection-report-builder-and-ssrs.md)
+- [Grouping pane](../tools/grouping-pane.md)

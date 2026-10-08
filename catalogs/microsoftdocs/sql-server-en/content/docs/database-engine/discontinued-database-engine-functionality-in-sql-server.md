@@ -1,0 +1,168 @@
+---
+title: Discontinued Database Engine Functionality
+description: Learn which database engine functionality and features were discontinued in SQL Server.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 11/18/2025
+ms.service: sql
+ms.subservice: release-landing
+ms.topic: release-notes
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "VIA protocol"
+  - "unsupported features [SQL Server]"
+  - "SQL Mail"
+  - "discontinued functionality [SQL Server]"
+  - "RESTORE WITH DBO_ONLY"
+  - "BACKUP WITH PASSWORD"
+  - "user instances enabled"
+  - "BACKUP WITH MEDIAPASSWORD"
+  - "AWE"
+  - "SQL-DMO"
+  - "*= and =*"
+  - "80 compatibility levels"
+  - "COMPUTE BY"
+  - "user instance timeout"
+  - "sp_dropalias"
+  - "COMPUTE"
+  - "SSL"
+  - "WITH APPEND"
+  - "sys.database_principal_aliases"
+  - "sp_dboption"
+  - "DATABASEPROPERTY"
+  - "FASTFIRSTROW hint"
+  - "SET DISABLE_DEF_CNST_CHK"
+  - "DQS"
+  - "Data Quality Services"
+  - "MDS"
+  - "Master Data Services"
+  - "Synapse Link"
+monikerRange: ">=sql-server-linux-2017 || >=sql-server-2017"
+---
+# Discontinued Database Engine functionality in SQL Server
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This article describes the  Database Engine 
+ features that are no longer available in  SQL Server 
+.
+
+## Discontinued features in SQL Server 2025 (17.x)
+
+- Data Quality Services (DQS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support DQS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+- Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+- Synapse Link is discontinued in this version of SQL Server. Use [Mirroring in Fabric](https://learn.microsoft.com/fabric/database/mirrored-database/overview) instead. For more information, see [Mirroring for SQL Server in Microsoft Fabric (Preview)](https://community.fabric.microsoft.com/blog/fbc_fabricupdatesblogs/mirroring-for-sql-server-in-microsoft-fabric-preview/5172765).
+
+- Purview access policies (DevOps policies and data owner policies) are discontinued in  SQL Server 2025 (17.x) 
+. Use [Fixed server-level roles](../relational-databases/security/authentication-access/server-level-roles.md#fixed-server-level-roles-introduced-in-sql-server-2022) instead.
+
+  - In place of the **SQL Performance Monitoring** Purview policy action, use the `##MS_ServerPerformanceStateReader##` and/or `##MS_PerformanceDefinitionReader##` fixed server roles.
+
+  - In place of **SQL Security Auditing** Purview policy action, use the `##MS_ServerSecurityStateReader##` and/or `##MS_SecurityDefinitionReader##` fixed server roles.
+
+  - Use the `##MS_DatabaseConnector##` server role with existing logins, to connect to a database without the need to create a user in that database.
+
+  - Purview access policies for Azure SQL Database, Azure SQL Managed Instance, and Azure Arc-enabled SQL Server 2022 retire on October 30, 2027. For more information, see [Retirement of Microsoft Purview access policies for SQL](../relational-databases/security/purview-access-policies-retirement.md).
+
+## Discontinued features in SQL Server 2022 (16.x)
+
+- The following Machine Learning Services packages are no longer included with installation of  SQL Server 2022 (16.x) 
+. Instead, you can install any custom packages as desired. For more information, see [What's new in SQL Server Machine Learning Services?](../machine-learning/what-s-new-in-sql-server-machine-learning-services.md)
+
+  | Language | Package |
+  | --- | --- |
+  | Python | [microsoftml](../machine-learning/python/ref-py-microsoftml.md) (Python package in SQL Server Machine Learning Services) |
+  | R | [olapR](../machine-learning/r/ref-r-olapr.md) (R package in SQL Server Machine Learning Services) |
+  | R | [sqlrutils](../machine-learning/r/ref-r-sqlrutils.md) (R package in SQL Server Machine Learning Services) |
+  | R | [MicrosoftML](../machine-learning/r/ref-r-microsoftml.md) (R package in SQL Server Machine Learning Services) |
+
+- SQL Server Big Data Clusters retired on February 28, 2025. For more information, see [Big data options on the Microsoft SQL Server platform](https://learn.microsoft.com/previous-versions/sql/big-data-cluster/big-data-options).
+
+-  SQL Server 
+ PolyBase scale-out groups will be retired. Scale out group functionality is removed from the product in  SQL Server 2022 (16.x) 
+. PolyBase data virtualization continues to be fully supported as a scale-up feature in  SQL Server 
+.
+
+- Support for Hadoop (HDFS) external data sources will be retired for  SQL Server 
+ PolyBase.
+
+- See [Changes to PolyBase support in SQL Server](../big-data-cluster/big-data-options.md#changes-to-polybase-support-in-sql-server).
+
+- In  SQL Server 2022 (16.x) 
+ and later versions, Hadoop external data sources are no longer supported. You must manually recreate external data sources previously created with `TYPE = HADOOP`, and any external table that uses this external data source. You must also configure your external data sources to use new connectors when connecting to Azure Storage.
+
+  | External Data Source | From | To |
+  | --- | --- | --- |
+  | Azure Blob Storage | `wasb[s]` | `abs` |
+  | ADLS Gen 2 | `abfs[s]` | `adls` |
+
+- In July 2024, Stretch Database was discontinued in all supported versions of  SQL Server 
+.
+
+## Discontinued features in SQL Server 2019 (15.x)
+
+The following database scoped configuration options are discontinued:
+
+- `DISABLE_BATCH_MODE_ADAPTIVE_JOIN`
+- `DISABLE_BATCH_MODE_MEMORY_GRANT_FEEDBACK`
+- `DISABLE_INTERLEAVED_EXECUTION_TVF`
+
+For current configuration options, see [ALTER DATABASE SCOPED CONFIGURATION](../t-sql/statements/alter-database-scoped-configuration-transact-sql.md).
+
+In July 2024, Stretch Database was discontinued in all supported versions of  SQL Server 
+.
+
+## Discontinued features in SQL Server 2017 (14.x)
+
+In July 2024, Stretch Database was discontinued in all supported versions of  SQL Server 
+.
+
+No other features were discontinued in  SQL Server 2017 (14.x) 
+.
+
+## Discontinued features in SQL Server 2016 (13.x)
+
+-  SQL Server 2016 (13.x) 
+ is a 64-bit application. 32-bit installation is discontinued, though some elements run as 32-bit components.
+
+- Compatibility level 90 is discontinued. For more information, see [ALTER DATABASE (Transact-SQL) compatibility level](../t-sql/statements/alter-database-transact-sql-compatibility-level.md).
+
+- ActiveX subsystem is discontinued. Use command line or PowerShell scripts instead.
+
+- Startup parameters `-h` and `-g`. For more information, see [Database Engine Service Startup Options](https://learn.microsoft.com/previous-versions/sql/2014/database-engine/configure-windows/database-engine-service-startup-options?view=sql-server-2014\&preserve-view=true).
+
+- Secure Sockets Layer (SSL) encryption is discontinued. Use Transport Layer Security (TLS) instead. For more information, see [Encrypt connections to SQL Server by importing a certificate](configure-windows/configure-sql-server-encryption.md).
+
+- The **precompute rank** server configuration option was discontinued beginning with  SQL Server 2008 (10.0.x) 
+. The article was removed from documentation.
+
+- In July 2024, Stretch Database was discontinued in all supported versions of  SQL Server 
+.
+
+## Previous versions
+
+- [Discontinued Database Engine Functionality in SQL Server 2014](https://learn.microsoft.com/previous-versions/sql/2014/database-engine/discontinued-database-engine-functionality-in-sql-server-2016?view=sql-server-2014\&preserve-view=true)
+
+## Related content
+
+- [Deprecated Database Engine features in SQL Server 2025 (17.x)](deprecated-database-engine-features-in-sql-server-2025.md)
+- [Deprecated Database Engine features in SQL Server 2022 (16.x)](deprecated-database-engine-features-in-sql-server-2022.md)
+- [Deprecated Database Engine features in SQL Server 2019 (15.x)](deprecated-database-engine-features-in-sql-server-2019.md)
+- [Deprecated Database Engine features in SQL Server 2017 (14.x)](deprecated-database-engine-features-in-sql-server-2017.md)
+- [Breaking changes to Database Engine features in SQL Server 2025](breaking-changes-to-database-engine-features-in-sql-server-2025.md)
+- [Breaking changes to Database Engine features in SQL Server 2019](breaking-changes-to-database-engine-features-in-sql-server-2019.md)
+- [Breaking changes to Database Engine features in SQL Server 2017](breaking-changes-to-database-engine-features-in-sql-server-2017.md)
+- [Deprecated Features in SQL Server Replication](../relational-databases/replication/deprecated-features-in-sql-server-replication.md)

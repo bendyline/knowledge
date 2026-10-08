@@ -1,0 +1,16 @@
+# Source code: aspnetcore/migration/50-to-60/samples/WebRP31to60/Pages/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">ASP.NET Core 3.1 to 6.0</h1>
+</div>
+
+```

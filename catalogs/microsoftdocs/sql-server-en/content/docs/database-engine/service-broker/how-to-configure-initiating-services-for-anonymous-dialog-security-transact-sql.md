@@ -1,0 +1,95 @@
+---
+title: "How To: Configure Initiating Services for Anonymous Dialog Security (Transact-SQL)"
+description: "SQL Server uses dialog security for any conversation to a service for which a remote service binding exists."
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: maghan
+ms.date: 08/29/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+---
+
+# How to: Configure initiating services for anonymous dialog security (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+SQL Server uses dialog security for any conversation to a service for which a remote service binding exists. If the database that hosts the target service doesn't contain a user that corresponds to the user that created the dialog, the dialog uses anonymous security.
+
+> **Note:**  
+> Only install certificates from trusted sources.
+
+## Make sure that an initiating service uses dialog security
+
+1. Obtain a certificate for a user in the remote database from a trusted source.
+
+1. Create a user without a login.
+
+1. Install the certificate for the remote service. The user created in step 3 owns the certificate. By default the certificate is active for `BEGIN DIALOG`.
+
+1. Create a remote service binding that specifies the user and the target service. For anonymous dialog security, the remote service binding specifies `ANONYMOUS = ON`.
+
+## Examples
+
+This example configures anonymous dialog security for conversations between the service named `OrderParts` in the current instance and the service named `SupplierOrders` in the remote instance.
+
+> **Note:**  
+> The code samples in this article were tested using the  `AdventureWorks2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+
+```sql
+USE AdventureWorks2008R2;
+GO
+
+-- Given a certificate for a remote user for the remote service
+-- SupplierOrders, create a remote service binding for
+-- the service.  The remote user will be granted permission
+-- to send messages to the local service OrderParts.
+-- This example assumes that the certificate for the service
+-- is saved in the file'C:\Certificates\SupplierOrders.cer' and that
+-- the initiating service already exists.
+-- Create a user without a login.
+CREATE USER [SupplierOrdersUser] WITHOUT LOGIN;
+GO
+
+-- Install a certificate for the owner of the service
+-- in the remote database. The certificate is
+-- provided by the owner of the remote service. The
+-- user for the remote service owns the certificate.
+CREATE CERTIFICATE [SupplierOrdersCertificate]
+    AUTHORIZATION [SupplierOrdersUser]
+    FROM FILE = 'C:\Certificates\SupplierOrders.cer';
+GO
+
+-- Create the remote service binding. Notice
+-- that the user specified in the binding
+-- does not own the binding itself.
+-- Creating this binding specifies that messages from
+-- this database are secured using the certificate for
+-- the [SupplierOrdersUser] user.
+-- Since anonymous is ON, the credentials for the user
+-- that begins the conversation are not used for the
+-- conversation.
+CREATE REMOTE SERVICE BINDING [SupplierOrdersBinding]
+    TO SERVICE 'SupplierOrders'
+    WITH USER = [SupplierOrdersUser], ANONYMOUS = ON;
+GO
+```
+
+## Related content
+
+- [How to: Configure permissions for a local service (Transact-SQL)](how-to-configure-permissions-for-a-local-service-transact-sql.md)
+- [CREATE CERTIFICATE (Transact-SQL)](../../t-sql/statements/create-certificate-transact-sql.md)
+- [CREATE USER (Transact-SQL)](../../t-sql/statements/create-user-transact-sql.md)
+- [CREATE REMOTE SERVICE BINDING (Transact-SQL)](../../t-sql/statements/create-remote-service-binding-transact-sql.md)
+- [OPEN MASTER KEY (Transact-SQL)](../../t-sql/statements/open-master-key-transact-sql.md)
+- [CLOSE MASTER KEY (Transact-SQL)](../../t-sql/statements/close-master-key-transact-sql.md)

@@ -1,0 +1,40 @@
+---
+title: "Arithmetic Operators"
+description: "Arithmetic Operators"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Arithmetic Operators
+
+
+  You can use arithmetic operators in Multidimensional Expressions (MDX) for any arithmetic computations, including addition, subtraction, multiplication, and division.  
+  
+ MDX supports the arithmetic operators listed in the following table.  
+  
+| Operator | Description |
+| --- | --- |
+| [+ (Add)](add-mdx.md) | Adds two numbers. |
+| [/ (Divide)](divide-mdx-operator-reference.md) | Divides one number by another number. |
+| [\* (Multiply)](multiply-mdx.md) | Multiplies two numbers. |
+| [- (Subtract)](subtract-mdx.md) | Subtracts two numbers. |
+| ^ (Power) | Raises one number by another number. |
+  
+> **Note:**  
+>  MDX does not include a function to obtain the square root of a number. To obtain the square root of a number, raise it to the power of 0.5 using the ^ operator.  
+  
+## Order of Precedence  
+ The following rules determine the order of precedence for arithmetic operators in an MDX expression:  
+  
+-   When there is more than one arithmetic operator in an expression, MDX performs multiplication and division first, followed by subtraction and addition.  
+  
+-   When all arithmetic operators in an expression have the same level of precedence, the order of execution is left to right.  
+  
+-   Expressions within parentheses take precedence over all other operations.  
+  
+## Related content
+
+- [MDX Operator Reference (MDX)](mdx-operator-reference-mdx.md)
+- [Operators (MDX Syntax)](operators-mdx-syntax.md)

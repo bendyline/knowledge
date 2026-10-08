@@ -1,0 +1,50 @@
+# Source code: aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie21/Pages/Movies/Details.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "{id:int}"
+@model RazorPagesMovie.Pages.Movies.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Movie.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Movie.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Movie.ReleaseDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Movie.ReleaseDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Movie.Genre)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Movie.Genre)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Movie.Price)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Movie.Price)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Movie.ID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+```

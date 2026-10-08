@@ -1,0 +1,32 @@
+---
+title: "SQLGetStmtOption (Cursor Library)"
+description: "SQLGetStmtOption (Cursor Library)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "SQLGetStmtOption function [ODBC], Cursor Library"
+---
+# SQLGetStmtOption (Cursor Library)
+> **Important:**  
+>  This feature will be removed in a future version of Windows. Avoid using this feature in new development work and plan to modify applications that currently use this feature. Microsoft recommends using the driver's cursor functionality.  
+  
+ This topic discusses the use of the **SQLGetStmtOption** function in the cursor library. For general information about **SQLGetStmtOption**, see [SQLGetStmtOption Function](../syntax/sqlgetstmtoption-function.md).  
+  
+ The cursor library supports the following statement options with **SQLGetStmtOption**:  
+
+
+
+        SQL_BIND_TYPE  
+        SQL_CONCURRENCY  
+        SQL_CURSOR_TYPE  
+        SQL_GET_BOOKMARK  
+
+
+        SQL_ROW_NUMBER  
+        SQL_ROWSET_SIZE  
+        SQL_SIMULATE_CURSOR

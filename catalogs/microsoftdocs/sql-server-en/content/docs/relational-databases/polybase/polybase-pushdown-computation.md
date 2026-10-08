@@ -1,0 +1,391 @@
+---
+title: "Pushdown Computations in PolyBase"
+titleSuffix: SQL Server
+description: Enable pushdown computation to improve performance of queries on your Hadoop cluster. You can select a subset of rows/columns in an external table for pushdown.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: nathansc, hudequei
+ms.date: 02/10/2026
+ms.service: sql
+ms.subservice: polybase
+ms.topic: concept-article
+ai-usage: ai-assisted
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-ver15"
+---
+
+# Pushdown computations in PolyBase
+
+
+**Applies to:**
+ 
+
+ and later versions
+
+Pushdown computation improves the performance of queries on external data sources. Beginning in  SQL Server 2016 (13.x) 
+, pushdown computations were available for Hadoop external data sources.  SQL Server 2019 (15.x) 
+ introduced pushdown computations for other types of external data sources.
+
+> **Note:**  
+> To determine whether or not PolyBase pushdown computation is benefiting your query, see [How to tell if external pushdown occurred](polybase-how-to-tell-pushdown-computation.md).
+
+## Enable pushdown computation
+
+The following articles include information about configuring pushdown computation for specific types of external data sources:
+
+- [Enable pushdown computation in Hadoop](polybase-configure-hadoop.md#pushdown)
+- [Configure PolyBase to access external data in Oracle](polybase-configure-oracle.md)
+- [Configure PolyBase to access external data in Teradata](polybase-configure-teradata.md)
+- [Configure PolyBase to access external data in MongoDB](polybase-configure-mongodb.md)
+- [Configure PolyBase to access external data with ODBC generic types](polybase-configure-odbc-generic.md)
+- [Configure PolyBase to access external data in SQL Server](polybase-configure-sql-server.md)
+
+This table summarizes pushdown computation support on different external data sources:
+
+| Data Source | Joins | Projections | Aggregations | Filters | Statistics |
+| --- | --- | --- | --- | --- | --- |
+| **Generic ODBC** | Yes | Yes | Yes | Yes | Yes |
+| **Oracle** | Yes\+ | Yes | Yes | Yes | Yes |
+| ** SQL Server |
+| ** | Yes | Yes | Yes | Yes | Yes |
+| **Teradata** | Yes | Yes | Yes | Yes | Yes |
+| **MongoDB\*** | **No** | Yes | Yes\*\*\* | Yes\*\*\* | Yes |
+| **Hadoop** | **No** | Yes | Some\*\* | Some\*\* | Yes |
+| **Azure Blob Storage** | No | No | No | No | Yes |
+
+\* Azure Cosmos DB pushdown support is enabled via the Azure Cosmos DB API for MongoDB.
+
+\*\* See [Pushdown computation and Hadoop providers](#pushdown-computation-and-hadoop-providers).
+
+\*\*\* Pushdown support for aggregations and filters for the MongoDB ODBC connector for SQL Server 2019 was introduced with SQL Server 2019 CU18.
+
+\+ Oracle supports pushdown for joins but you might need to create statistics on the join columns to achieve pushdown.
+
+> **Note:**  
+> Pushdown computation can be blocked by some T-SQL syntax. For more information, review [Syntax that prevents pushdown](polybase-pushdown-computation.md#syntax-that-prevents-pushdown).
+
+### Pushdown computation and Hadoop providers
+
+PolyBase currently supports two Hadoop providers: Hortonworks Data Platform (HDP) and Cloudera Distributed Hadoop (CDH). There are no differences between the two providers in terms of pushdown computation.
+
+To use the computation pushdown functionality with Hadoop, the target Hadoop cluster must have the core components: HDFS, YARN, and MapReduce, with the job history server enabled. PolyBase submits the pushdown query via MapReduce and pulls status from the job history server. Without either component, the query fails.
+
+Some aggregation must occur after the data reaches  SQL Server 
+. But a portion of the aggregation occurs in Hadoop. This method is common in computing aggregations in massively parallel processing systems.
+
+Hadoop providers support the following aggregations and filters.
+
+| Aggregations | Filters (binary comparison) |
+| --- | --- |
+| Count_Big | NotEqual |
+| Sum | LessThan |
+| Avg | LessOrEqual |
+| Max | GreaterOrEqual |
+| Min | GreaterThan |
+| Approx_Count_Distinct | Is |
+|  | IsNot |
+
+## Key beneficial scenarios of pushdown computation
+
+With PolyBase pushdown computation, you can delegate computation tasks to external data sources. This reduces the workload on the  SQL Server 
+ instance and can significantly improve performance.
+
+ SQL Server 
+ can push joins, projections, aggregations, and filters to external data sources, taking advantage of remote compute and restricting the data sent over the network.
+
+### Join pushdown
+
+PolyBase can facilitate pushdown of the join operator when you join two external tables on the same external data source, which greatly improves performance.
+
+When the external data source performs the join, it reduces the amount of data movement and improves query performance. Without join pushdown, SQL Server must bring the data from both tables locally into `tempdb` and then perform the join.
+
+In the case of *distributed joins* (joining a local table to an external table), unless your filter applies to the joined external table, SQL Server must bring all data from the external table locally into `tempdb` to perform the join operation. For example, the following query has no filtering on the external table join condition, which results in reading all data from the external table.
+
+```sql
+SELECT * FROM LocalTable L
+JOIN ExternalTable E on L.id = E.id
+```
+
+Since the join uses the `E.id` column of the external table, when you add a filter condition to that column, SQL Server can push down the filter, reducing the number of rows read from the external table.
+
+```sql
+SELECT * FROM LocalTable L
+JOIN ExternalTable E on L.id = E.id
+WHERE E.id = 20000
+```
+
+### Select a subset of rows
+
+Use predicate pushdown to improve performance for a query that selects a subset of rows from an external table.
+
+In this example,  SQL Server 
+ initiates a map-reduce job to retrieve the rows that match the predicate `customer.account_balance < 200000` on Hadoop. Because the query can complete successfully without scanning all of the rows in the table, only the rows that meet the predicate criteria are copied to  SQL Server 
+. This saves significant time and requires less temporary storage space when the number of customer balances < 200000 is small in comparison with the number of customers with account balances >= 200000.
+
+```sql
+SELECT * FROM customer WHERE customer.account_balance < 200000;
+SELECT * FROM SensorData WHERE Speed > 65;
+```
+
+### Select a subset of columns
+
+Use predicate pushdown to improve performance for a query that selects a subset of columns from an external table.
+
+In this query,  SQL Server 
+ initiates a map-reduce job to preprocess the Hadoop delimited-text file so that only the data for the two columns, customer.name and customer.zip_code, will be copied to  SQL Server 
+.
+
+```sql
+SELECT customer.name, customer.zip_code
+FROM customer
+WHERE customer.account_balance < 200000;
+```
+
+### Pushdown for basic expressions and operators
+
+ SQL Server 
+ allows these basic expressions and operators for predicate pushdown:
+
+- Binary comparison operators (`<`, `>`, `=`, `!=`, `<>`, `>=`, `<=`) for numeric, date, and time values.
+- Arithmetic operators (`+`, `-`, `*`, `/`, `%`).
+- Logical operators (`AND`, `OR`).
+- Unary operators (`NOT`, `IS NULL`, `IS NOT NULL`).
+
+The operators `BETWEEN`, `NOT`, `IN`, and `LIKE` can be pushed down depending on how the query optimizer rewrites the operator expressions as a series of statements using basic relational operators.
+
+The query in this example has multiple predicates that can be pushed down to Hadoop.  SQL Server 
+ can push map-reduce jobs to Hadoop to perform the predicate `customer.account_balance <= 200000`. The expression `BETWEEN 92656 AND 92677` is also composed of binary and logical operations that can be pushed to Hadoop. The logical **AND** in `customer.account_balance AND customer.zipcode` is a final expression.
+
+Given this combination of predicates, the map-reduce jobs can perform all of the WHERE clause. Only the data that meets the `SELECT` criteria is copied back to  SQL Server 
+.
+
+```sql
+SELECT * FROM customer
+WHERE customer.account_balance <= 200000
+AND customer.zipcode BETWEEN 92656 AND 92677;
+```
+
+### Supported functions for pushdown
+
+ SQL Server 
+ allows these functions for predicate pushdown:
+
+String functions:
+- `CONCAT`
+- `DATALENGTH`
+- `LEN`
+- `LIKE`
+- `LOWER`
+- `LTRIM`
+- `RTRIM`
+- `SUBSTRING`
+- `UPPER`
+
+Mathematical functions:
+- `ABS`
+- `ACOS`
+- `ASIN`
+- `ATAN`
+- `CEILING`
+- `COS`
+- `EXP`
+- `FLOOR`
+- `POWER`
+- `SIGN`
+- `SIN`
+- `SQRT`
+- `TAN`
+
+General functions:
+- `COALESCE` \*
+- `NULLIF`
+
+\* Using with `COLLATE` can prevent pushdown in some scenarios. For more information, see [Collation conflict](#collation-conflict).
+
+Date & time functions:
+- `DATEADD`
+- `DATEDIFF`
+- `DATEPART`
+
+## Syntax that prevents pushdown
+
+These T-SQL functions or syntax items prevent pushdown computation:
+
+- `AT TIME ZONE`
+- `CONCAT_WS`
+- `TRANSLATE`
+- `RAND`
+- `CHECKSUM`
+- `BINARY_CHECKSUM`
+- `HASHBYTES`
+- `ISJSON`
+- `JSON_VALUE`
+- `JSON_QUERY`
+- `JSON_MODIFY`
+- `NEWID`
+- `STRING_ESCAPE`
+- `COMPRESS`
+- `DECOMPRESS`
+- `GREATEST`
+- `LEAST`
+- `PARSE`
+
+Pushdown support for the `FORMAT` and `TRIM` syntax was introduced in  SQL Server 2019 (15.x) 
+ CU10.
+
+### Filter clause with variable
+
+When you specify a variable in a filter clause, by default SQL Server doesn't push down the filter clause. For example, the following query doesn't push down the filter clause:
+
+```sql
+DECLARE @BusinessEntityID INT
+
+SELECT * FROM [Person].[BusinessEntity]
+WHERE BusinessEntityID = @BusinessEntityID;
+```
+
+To enable pushdown of the variable, enable query optimizer hotfixes functionality using one of these methods:
+
+- **Instance Level**: Enable trace flag 4199 as a startup parameter for the instance.
+- **Database Level**: In the context of the database that has the PolyBase external objects, execute `ALTER DATABASE SCOPED CONFIGURATION SET QUERY_OPTIMIZER_HOTFIXES = ON`.
+- **Query level**: Use query hint `OPTION (QUERYTRACEON 4199)` or `OPTION (USE HINT ('ENABLE_QUERY_OPTIMIZER_HOTFIXES'))`.
+
+This limitation applies to execution of `sp_executesql` and to some functions in the filter clause.
+
+SQL Server 2019 CU5 first introduced the ability to push down the variable.
+
+For more information, see [sp_executesql](../system-stored-procedures/sp-executesql-transact-sql.md).
+
+### Collation conflict
+
+Pushdown might not work with data that has different collations. Operators like `COLLATE` can also interfere with the outcome. SQL Server supports equal collations or binary collations. For more information, see [How to tell if external pushdown occurred](polybase-how-to-tell-pushdown-computation.md).
+
+## Pushdown for parquet files
+
+Starting in  SQL Server 2022 (16.x) 
+, PolyBase introduced support for parquet files. SQL Server is capable of performing both row and column elimination when performing pushdown with parquet.
+
+### Supported external data sources
+
+Parquet pushdown is supported for the following external data sources:
+
+- S3-compatible object storage
+- Azure Blob Storage
+- Azure Data Lake Storage Gen2
+
+For configuration details, see:
+- [Configure PolyBase to access external data in S3-compatible object storage](polybase-configure-s3-compatible.md)
+- [Virtualize parquet file in a S3-compatible object storage with PolyBase](polybase-virtualize-parquet-file.md)
+
+### Pushdown operations
+
+SQL Server can push down these operations with parquet files:
+
+- Binary comparison operators (>, >=, <=, <) for numeric, date, and time values.
+- Combination of comparison operators (> AND <, >= AND <, > AND <=, <= AND >=).
+- In list filter (col1 = val1 OR col1 = val2 OR vol1 = val3).
+- IS NOT NULL over a column.
+
+These items prevent pushdown for parquet files:
+
+- Virtual columns.
+- Column comparison.
+- Parameter type conversion.
+
+### Supported data types
+
+- **bit**
+- **tinyint**
+- **smallint**
+- **bigint**
+- **real**
+- **float**
+- **varchar** (Bin2Collation, CodePageConversion, BinCollation)
+- **nvarchar** (Bin2Collation, BinCollation)
+- **binary**
+- **datetime2** (default and 7-digit precision)
+- **date**
+- **time** (default and 7-digit precision)
+- **numeric** \*
+
+\* Supported when parameter scale aligns with column scale, or when parameter is explicitly cast to **decimal**.
+
+### Data types that prevent parquet pushdown
+
+- **money**
+- **smallmoney**
+- **datetime**
+- **smalldatetime**
+
+### Partition elimination with folder structures
+
+PolyBase can use folder structures for partition elimination, reducing the amount of data scanned during queries. When you organize parquet files in hierarchical folders (such as by year, month, or other partitioning keys), PolyBase can skip entire folders that don't match your query predicates.
+
+For example, if you structure your data as:
+
+```
+/data/year=2024/month=01/*.parquet
+/data/year=2024/month=02/*.parquet
+/data/year=2025/month=01/*.parquet
+```
+
+You can query specific partitions using wildcards in `OPENROWSET` or external table locations:
+
+```sql
+-- Query only January 2025 data
+SELECT *
+FROM OPENROWSET(
+    BULK '/data/year=2025/month=01/*.parquet',
+    DATA_SOURCE = 's3_ds',
+    FORMAT = 'PARQUET'
+) AS [data];
+```
+
+For dynamic folder elimination, query a broader folder path and use `filepath()` predicates to eliminate partitions at runtime:
+
+```sql
+SELECT
+    r.filepath(1) AS [year],
+    r.filepath(2) AS [month],
+    COUNT_BIG(*) AS [rows]
+FROM OPENROWSET(
+    BULK '/data/year=*/month=*/*.parquet',
+    DATA_SOURCE = 's3_ds',
+    FORMAT = 'PARQUET'
+) WITH (
+    customer_id INT,
+    amount DECIMAL(10, 2)
+) AS [r]
+WHERE
+    r.filepath(1) = '2025'
+    AND r.filepath(2) = '01'
+GROUP BY
+    r.filepath(1),
+    r.filepath(2);
+```
+
+This approach combines folder-level partition elimination with parquet file-level pushdown for optimal query performance. For a complete tutorial on querying parquet files with folder patterns, see [Virtualize parquet file in a S3-compatible object storage with PolyBase](polybase-virtualize-parquet-file.md).
+
+## Examples
+
+### Force pushdown
+
+```sql
+SELECT * FROM [dbo].[SensorData]
+WHERE Speed > 65
+OPTION (FORCE EXTERNALPUSHDOWN);
+```
+
+### Disable pushdown
+
+```sql
+SELECT * FROM [dbo].[SensorData]
+WHERE Speed > 65
+OPTION (DISABLE EXTERNALPUSHDOWN);
+```
+
+## Related content
+
+- [PolyBase overview](overview.md)
+- [How to tell if external pushdown occurred](polybase-how-to-tell-pushdown-computation.md)
+- [Configure PolyBase to access external data in S3-compatible object storage](polybase-configure-s3-compatible.md)
+- [Virtualize parquet file in a S3-compatible object storage with PolyBase](polybase-virtualize-parquet-file.md)

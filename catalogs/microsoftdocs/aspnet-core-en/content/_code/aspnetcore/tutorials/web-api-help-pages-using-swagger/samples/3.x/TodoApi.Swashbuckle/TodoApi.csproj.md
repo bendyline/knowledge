@@ -1,0 +1,28 @@
+# Source code: aspnetcore/tutorials/web-api-help-pages-using-swagger/samples/3.x/TodoApi.Swashbuckle/TodoApi.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ProjectUISubcaption>Swashbuckle - ASP.NET Core 3.0</ProjectUISubcaption>
+  </PropertyGroup>
+
+  <!-- <snippet_SuppressWarnings> -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+  <!-- </snippet_SuppressWarnings> -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
+  </ItemGroup>
+
+
+</Project>
+```

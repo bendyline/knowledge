@@ -1,0 +1,155 @@
+---
+title: Incorporate images into prompt flow (preview)
+titleSuffix: Azure Machine Learning
+description: Learn how to incorporate images into prompt flow.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: prompt-flow
+ms.topic: how-to
+ms.author: lagayhar
+author: lgayhardt
+ms.reviewer: sooryar
+ms.date: 08/28/2026
+ms.custom: sfi-image-nochange
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Incorporate images into prompt flow (preview)
+
+
+> **Warning:**
+> Prompt flow in Microsoft Foundry and Azure Machine Learning will be retired on April 20, 2027. Prompt flow is no longer 
+> recommended for new development. Migrate existing Prompt flow applications and deployments to Microsoft Agent Framework before 
+> April 20, 2027.
+>  
+> Prompt flow container images are no longer receiving updates, including security and package updates. This applies to Prompt 
+> flow runtime images, including `promptflow-runtime`, `promptflow-runtime-stable`, and `promptflow-python`.
+>  
+> After April 20, 2027, Prompt flow, including the web authoring experience in Microsoft Foundry and Azure Machine Learning, the 
+> VS Code extensions, and related Prompt flow container images, will no longer be supported or available.
+> 
+> If your application depends on Prompt flow deployments or runtime images, plan to move those workloads to supported 
+> alternatives such as [Microsoft Agent Framework](https://learn.microsoft.com/agent-framework/) before the retirement date. For migration guidance, see the
+> Prompt flow [migration guide](migrate-prompt-flow-to-agent-framework.md) and migration [code samples](https://github.com/microsoft/promptflow/tree/main/migration-guide/PromptFlow-to-MAF).
+
+
+Multimodal large language models (LLMs) that can process and interpret diverse forms of data inputs are powerful tools. They elevate the capabilities of language-only systems. Among the various data types, images are important for many real-world applications. The incorporation of image data into AI systems provides an essential layer of visual understanding. 
+
+In this article, you learn:
+> 
+> - How to use image data in prompt flow
+> - How to use the built-in GPT-4V tool to analyze image inputs
+> - How to build a chatbot that can process image and text inputs
+> - How to create a batch run using image data  
+> - How to consume an online endpoint with image data
+
+> **Important:**
+> Prompt flow image support is currently in public preview. This preview is provided without a service-level agreement, and isn't recommended for production workloads. Certain features might not be supported or might have constrained capabilities.
+> For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+## Image type in prompt flow
+
+Prompt flow input and output support Image as a new data type.
+
+To use image data in prompt flow authoring page:
+
+1. Add a flow input, select the data type as **Image**. You can upload, drag and drop an image file, paste an image from clipboard, or specify an image URL or the relative image path in the flow folder.
+   Screenshot of flow authoring page showing adding flow input as Image type.
+1. Preview the image. If the image isn't displayed correctly, delete the image and add it again.
+   Screenshot of flow authoring page showing image preview flow input.
+1. You might want to **preprocess the image using Python tool** before feeding it to LLM, for example, you can resize or crop the image to a smaller size.
+   Screenshot of using python tool to do image preprocessing.
+    > **Important:**
+    > To process image using Python function, you need to use the `Image` class, import it from `promptflow.contracts.multimedia` package. The Image class is used to represent an Image type within prompt flow. It is designed to work with image data in byte format, which is convenient when you need to handle or manipulate the image data directly.
+    >
+    > To return the processed image data, you need to use the `Image` class to wrap the image data. Create an `Image` object by providing the image data in bytes and the [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) `mime_type`. The MIME type lets the system understand the format of the image data, or it can be `*` for unknown type.
+
+1. Run the Python node and check the output. In this example, the Python function returns the processed Image object. Select the image output to preview the image.
+   Screenshot of Python node's image output.
+If the Image object from Python node is set as the flow output, you can preview the image in the flow output page as well.
+
+## Use GPT-4V tool
+
+The **Azure OpenAI GPT-4 Turbo with Vision** tool and **OpenAI GPT-4V** tool are built-in tools in prompt flow that use the OpenAI GPT-4V model to answer questions based on input images. You can find the tool by selecting **More tool** in the flow authoring page.
+
+> **Important:**
+> The GPT-4 `vision-preview` model referenced by the legacy tool workflow is retired. Before you maintain an existing flow, confirm that the built-in tool supports a model deployment available to your Azure OpenAI resource. For new multimodal applications, use a current [vision-enabled model](https://learn.microsoft.com/azure/ai-foundry/openai/how-to/gpt-with-vision) and migrate from prompt flow.
+
+Add the [Azure OpenAI GPT-4 Turbo with Vision tool](tools-reference/azure-open-ai-gpt-4v-tool.md) to the flow, and select a supported Azure OpenAI model deployment for your connection.
+
+Screenshot of GPT-4V tool.
+
+The Jinja template for composing prompts in the GPT-4V tool follows a similar structure to the chat API in the LLM tool. To represent an image input within your prompt, use the syntax `![image]({{INPUT NAME}})`. You can pass image input in the `user`, `system`, and `assistant` messages.
+
+After you compose the prompt, select **Validate and parse input** to parse the input placeholders. The image input represented by `![image]({{INPUT NAME}})` is parsed as image type with the input name as `INPUT NAME`.
+
+Assign a value to the image input through the following ways:
+
+- Reference from the flow input of Image type.
+- Reference from other node's output of Image type.
+- Upload, drag, paste an image, or specify an image URL or the relative image path.
+
+## Build a chatbot to process images
+
+In this section, you learn how to build a chatbot that can process image and text inputs.
+
+Assume you want to build a chatbot that can answer any questions about the image and text together. You can achieve this goal by following these steps:
+
+1. Create a **chat flow**.
+1. Add a **chat input**, and select the data type as **list**. In the chat box, the user can input a mixed sequence of texts and images, and the prompt flow service transforms that sequence into a list.
+   Screenshot of chat input type configuration.
+1. Add **GPT-4V** tool to the flow.
+    &#x20;Screenshot of GPT-4V tool in chat flow.
+
+    In this example, `{{question}}` refers to the chat input, which is a list of texts and images.
+1. (Optional) Add any custom logic to the flow to process the GPT-4V output. For example, you can add content safety tool to detect if the answer contains any inappropriate content, and return a final answer to the user.
+    Screenshot of processing gpt-4v output with content safety tool.
+1. Now you can **test the chatbot**.  Open the chat window, and input any questions with images. The chatbot answers the questions based on the image and text inputs. The chat input value is automatically backfilled from the input in the chat window. You can find the texts with images in the chat box which is translated into a list of texts and images.
+    Screenshot of chatbot interaction with images.
+
+> **Note:**
+> To enable your chatbot to respond with rich text and images, make the chat output `list` type. The list should consist of strings (for text) and prompt flow Image objects (for images) in custom order. 
+>   Screenshot of chatbot responding with rich text and images.
+
+## Create a batch run using image data
+
+A batch run lets you test the flow with an extensive dataset. You can represent image data in three ways: through an image file, a public image URL, or a Base64 string.
+
+- **Image file:** To test with image files in a batch run, prepare a **data folder**. This folder should contain a batch run entry file in `jsonl` format located in the root directory, along with all image files stored in the same folder or subfolders.
+   Screenshot of batch run sample data with images.
+   In the entry file, use the format `{"data:<mime type>;path": "<image relative path>"}` to reference each image file. For example, `{"data:image/png;path": "./images/1.png"}`.
+- **Public image URL:** Reference the image URL in the entry file by using the format `{"data:<mime type>;url": "<image URL>"}`. For example, `{"data:image/png;url": "https://www.example.com/images/1.png"}`.
+- **Base64 string:** Reference a Base64 string in the entry file by using the format `{"data:<mime type>;base64": "<base64 string>"}`. For example, `{"data:image/png;base64": "iVBORw0KGgoAAAANSUhEUgAAAGQAAABLAQMAAAC81rD0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABlBMVEUAAP7////DYP5JAAAAAWJLR0QB/wIt3gAAAAlwSFlzAAALEgAACxIB0t1+/AAAAAd0SU1FB+QIGBcKN7/nP/UAAAASSURBVDjLY2AYBaNgFIwCdAAABBoAAaNglfsAAAAZdEVYdGNvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVDnr0DLAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTA4LTI0VDIzOjEwOjU1KzAzOjAwkHdeuQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wOC0yNFQyMzoxMDo1NSswMzowMOEq5gUAAAAASUVORK5CYII="}`.
+
+In summary, prompt flow uses a unique dictionary format to represent an image, which is `{"data:<mime type>;<representation>": "<value>"}`. Here, `<mime type>` refers to HTML standard [MIME](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) image types, and `<representation>` refers to the supported image representations: `path`, `url`, and `base64`.
+
+### Create a batch run
+
+In the flow authoring page, select **Evaluate** to initiate a batch run. In **Batch run settings**, select a dataset, which can be either a folder (containing the entry file and image files) or a file (containing only the entry file). You can preview the entry file and perform input mapping to align the columns in the entry file with the flow inputs.
+   Screenshot of batch run data selection.
+
+### View batch run results
+
+You can check the batch run outputs in the run detail page. Select the image object in the output table to easily preview the image.
+
+Screenshot of batch run output.
+
+If the batch run outputs contain images, you can check the **flow_outputs dataset** with the output jsonl file and the output images.
+
+Screenshot of batch run flow output.
+
+## Consume online endpoint with image data
+
+You can [deploy a flow to an online endpoint for real-time inference](how-to-deploy-for-real-time-inference.md).
+
+The **Test** tab in the deployment details page doesn't support image inputs or outputs. Test the endpoint by sending a request that includes image inputs.
+
+To consume the online endpoint with an image input, represent the image by using the format `{"data:<mime type>;<representation>": "<value>"}`. In this case, `<representation>` can either be `url` or `base64`.
+
+If the flow generates an image output, it returns the image in `base64` format, for example, `{"data:<mime type>;base64": "<base64 string>"}`.
+
+## Next steps
+
+- [Iterate and optimize your flow by tuning prompts using variants](how-to-tune-prompts-using-variants.md)
+- [Deploy a flow](how-to-deploy-for-real-time-inference.md)

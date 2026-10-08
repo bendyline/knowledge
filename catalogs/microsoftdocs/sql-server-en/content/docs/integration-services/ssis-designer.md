@@ -1,0 +1,210 @@
+---
+title: "SSIS Designer"
+description: "SSIS Designer"
+ms.date: "04/01/2026"
+ai-usage: ai-assisted
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.controlflowwindow.f1"
+  - "sql13.dts.designer.dataflowwindow.f1"
+  - "sql13.dts.designer.eventhandlerwindow.f1"
+  - "sql13.dts.designer.treeview.f1"
+  - "sql13.dts.designer.progress.f1"
+  - "sql13.dts.designer.connectionstray.f1"
+helpviewer_keywords:
+  - "SQL Server Integration Services, SSIS Designer"
+  - "Business Intelligence Development Studio, Integration Services in"
+  - "tools [Integration Services], SSIS Designer"
+  - "SSIS, SSIS Designer"
+  - "SSIS Designer, about SSIS Designer"
+  - "Integration Services, SSIS Designer"
+---
+# SSIS Designer
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+   SSIS 
+ Designer is a graphical tool that you can use to create and maintain  Integration Services 
+ packages.  SSIS 
+ Designer is available in  SQL Server Data Tools (SSDT) 
+ as part of an  Integration Services 
+ project.  
+  
+ You can use  SSIS 
+ Designer to perform the following tasks:  
+  
+-   Constructing the control flow in a package.  
+  
+-   Constructing the data flows in a package.  
+  
+-   Adding event handlers to the package and package objects.  
+  
+-   Viewing the package content.  
+  
+-   At run time, viewing the execution progress of the package.  
+  
+ The following diagram shows  SSIS 
+ Designer and the **Toolbox** window.  
+  
+ Screenshot of SSIS Designer and Toolbox  
+  
+  Integration Services 
+ includes additional dialog boxes and windows for adding functionality to packages, and  SQL Server Data Tools (SSDT) 
+ provides dialog boxes and windows for configuring the development environment and working with packages. For more information, see [Integration Services User Interface](integration-services-user-interface.md).  
+  
+  SSIS 
+ Designer has no dependency on the  Integration Services 
+ service, the service that manages and monitors packages, and it is not required that the service be running to create or modify packages in  SSIS 
+ Designer. However, if you stop the service while  SSIS 
+ Designer is open, you can no longer open the dialog boxes that  SSIS 
+ Designer provides and you may receive the error message "RPC server is unavailable." To reset  SSIS 
+ Designer and continue working with the package, you must close the designer, exit  SQL Server Data Tools (SSDT) 
+, and then reopen  SQL Server Data Tools (SSDT) 
+, the  Integration Services 
+ project, and the package.  
+  
+## Undo and Redo  
+ You can undo and redo up to 20 actions in the  SSIS 
+ Designer. For a package, undo /redo is available in the **Control Flow**, **Data Flow**, **Event Handlers**, and **Parameters** tabs, and in the **Variables** window. For a project, undo/redo is available in the **Project Parameters** window.  
+  
+ You can't undo/redo changes to the new **SSIS Toolbox**.  
+  
+ When you make changes to a component using the component editor, you undo and redo the changes as a set rather than undoing and redoing individual changes. The set of changes appears as a single action in the undo and redo dropdown list.  
+  
+ To undo an action, click the undo toolbar button, **Edit/Undo** menu item, or press CTRL+Z. To redo an action, click the redo toolbar button, **Edit/Redo** menu item or press CTRL + Y. You can undo and redo multiple actions, by clicking the arrow next to the toolbar button, highlighting multiple actions in the dropdown list, and then clicking in the list.  
+  
+## Parts of the SSIS Designer  
+  SSIS 
+ Designer has five permanent tabs: one each for building package control flow, data flows, parameters, and event handlers, and one tab for viewing the contents of a package. At run time a sixth tab appears that shows the execution progress of a package while it is running and the execution results after it finishes.  
+  
+ In addition,  SSIS 
+ Designer includes the Connection Managers area for adding and configuring the connection managers that a package uses to connect to data.  
+ 
+## Control Flow tab
+Use the **Control Flow** tab of  SSIS 
+ Designer to build the control flow in a  Integration Services 
+ package.  
+  
+ Create the control flow by dragging graphical objects that represent  SSIS 
+ tasks and containers from the **Toolbox** to the design surface of the **Control Flow** tab, and then connecting the objects by dragging the connector on an object to another object. Each connecting line represents a precedence constraint that specifies the order in which the tasks and containers run  
+  
+ Additionally, you can use  SSIS 
+ Designer to add the following functionality from the **Control Flow** tab:  
+  
+-   Implement logging  
+  
+-   Create package configurations  
+  
+-   Sign the package with a certificate  
+  
+-   Manage variables  
+  
+-   Add annotations  
+  
+-   Configure breakpoints  
+  
+ To add these functions to individual tasks or containers in  SSIS 
+ Designer, right-click the object on the design surface, and then select the option.  
+  
+ For more information, see [Control Flow](control-flow/control-flow.md).  
+ 
+## Data Flow tab
+Use the **Data Flow** tab of  SSIS 
+ Designer to create data flows in a  Integration Services 
+ package.  
+  
+ Create the data flows by dragging graphical objects that represent sources, transformations, and destinations from the **Toolbox** to the design surface of the **Data Flow** tab, and then connecting the objects to create paths that determine the sequence in which the transformations run.  
+  
+ Right-click a path, and then click **Data Viewers,** to add data viewers to view the data before and after each data flow object.  
+  
+ You can also use  SSIS 
+ Designer to add the following functionality from the **Data Flow** tab:  
+  
+-   Manage variables  
+  
+-   Add annotations  
+  
+ To add these functions in  SSIS 
+ Designer, right-click the design surface, and then select the option you want.  
+  
+ For more information, see [Data Flow](data-flow/data-flow.md).  
+ 
+## Parameters tab
+ Integration Services (SSIS) parameters allow you to assign values to properties within packages at the time of package execution. You can create project parameters at the project level and package parameters at the package level. Project parameters are used to supply any external input the project receives to one or more packages in the project. Package parameters allow you to modify package execution without having to edit and redeploy the package. This tab allows you to manage package parameters.  
+  
+ For more information about parameters, see [Integration Services (SSIS) Parameters](integration-services-ssis-package-and-project-parameters.md).  
+  
+> **Important:**  
+> Parameters are available only to projects developed for the project deployment model. Therefore, you will see the Parameters tab only for packages that are part of a project configured to use the project deployment model.  
+ 
+## Event Handlers tab
+  Use the **Event Handlers** tab of  SSIS 
+ Designer to build a control flow in an  Integration Services 
+ package. An event handler runs in response to an event raised by the package or by a task or container in the package.  
+  
+ For more information, see [Add an Event Handler to a Package](integration-services-ssis-event-handlers.md).  
+  
+## Options  
+ **Executable**  
+ Select the executable for which you want to build an event handler. The executable can be the package, or a task or containers in the package.  
+  
+ **Event handler**  
+ Select a type of event handler. Create the event handler by dragging items from the **Toolbox**.  
+  
+ **Delete**  
+ Select an event handler, and remove it from the package by clicking **Delete**.  
+  
+ **Click here to create an \<event handler name\> for the executable \<executable name\>**  
+ Click to create the event handler.  
+  
+ Create the control flow by dragging graphical objects that represent  SSIS 
+ tasks and containers from the **Toolbox** to the design surface of the **Event Handlers** tab, and then connecting the objects by using precedence constraints to define the sequence in which they run.  
+  
+ Additionally, to add annotations, right-click the design surface, and then on the menu, click **Add Annotation**.  
+ 
+## Package Explorer tab
+Use the **Package Explorer** tab of  SSIS 
+ Designer to see a hierarchical view of all of the elements in a package: configurations, connections, event handlers, executable objects such as tasks and containers, log providers, precedence constraints, and variables. If a package contains a Data Flow task, the **Package Explorer** tab includes a node that contains a hierarchical view of the data flow components.  
+  
+ Right-click a package element, and then click **Properties** to show the properties of the element in the **Properties** window, or click **Delete** to delete the element.  
+  
+ For more information, see [View Package Objects](view-package-objects.md).  
+ 
+## Progress tab
+Use the **Progress** tab of  SSIS 
+ Designer to view the progress of execution of an  Integration Services 
+ package when you run the package in  SQL Server Data Tools (SSDT) 
+. The **Progress** tab lists the start time, the finish time, and the elapsed time for validation and execution of the package and its executables; any information or warnings for the package; progress notifications; the success or failure of the package; and any error messages that are generated during package execution.  
+  
+ To enable or disable the display of messages on the **Progress** tab, toggle the **Debug Progress Reporting** option on the **SSIS** menu. Disabling progress reporting can help improve performance while running a complex package in  SQL Server Data Tools 
+.  
+  
+ After the package stops running, the **Progress** tab becomes the **Execution Results** tab.  
+ 
+## Connection Managers area
+Packages use connection managers to connect to data sources such as files, relational databases, and servers.  
+  
+ Use the **Connections Managers** area of  SSIS 
+ Designer to add, delete, modify, rename, and copy and paste the connection managers.  
+  
+ Right-click in this area, and then on the menu, click the option for the task you want to perform.  
+  
+ For more information, see [Integration Services (SSIS) Connections](connection-manager/integration-services-ssis-connections.md) and [Create Connection Managers](connection-manager/integration-services-ssis-connections.md).  
+ 
+## Related Tasks  
+  
+-   [Create Packages in SQL Server Data Tools](create-packages-in-sql-server-data-tools.md)  
+  
+## Related content
+
+- [Integration Services User Interface](integration-services-user-interface.md)

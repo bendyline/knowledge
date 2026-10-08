@@ -1,0 +1,20 @@
+# Source code: aspnetcore/metrics/samples/web-metrics/WebMetric.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.6.0-rc.1" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0-rc.1" />
+  </ItemGroup>
+
+</Project>
+```

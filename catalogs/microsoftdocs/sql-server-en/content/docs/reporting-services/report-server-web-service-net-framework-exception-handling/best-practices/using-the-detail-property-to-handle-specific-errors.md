@@ -1,0 +1,83 @@
+---
+title: "Use the Detail property to handle specific errors"
+description: Learn how access the inner text of the Message child element by using the Detail property to handle specific errors.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server-web-service
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "exceptions [Reporting Services], Detail property"
+  - "Detail property"
+  - "InnerText property"
+---
+# Use the Detail property to handle specific errors
+  To further classify exceptions,  Reporting Services 
+ returns other error information in the **InnerText** property of the child elements in the SOAP exception's **Detail** property. Because the **Detail** property is an **XmlNode** object, you can access the inner text of the **Message** child element using the following code.  
+  
+ For a list of all of the available child elements contained in the **Detail** property, see [Detail Property](../soapexception-class/detail-property.md). For more information, see "Detail Property" in the  Microsoft 
+  .NET Framework 
+ SDK documentation.  
+  
+```vb  
+Try  
+' Code for accessing the report server  
+Catch ex As SoapException  
+   ' The exception is a SOAP exception, so use  
+   ' the Detail property's Message element.  
+   Console.WriteLine(ex.Detail("Message").InnerXml)  
+End Try  
+```  
+  
+```csharp  
+try  
+{  
+   // Code for accessing the report server  
+}  
+catch (SoapException ex)  
+{  
+   // The exception is a SOAP exception, so use  
+   // the Detail property's Message element.  
+   Console.WriteLine(ex.Detail["Message"].InnerXml);  
+}  
+```  
+  
+```vb  
+Try  
+' Code for accessing the report server  
+Catch ex As SoapException  
+   If ex.Detail("ErrorCode").InnerXml = "rsInvalidItemName" Then  
+   End If ' Perform an action based on the specific error code  
+End Try  
+```  
+  
+```csharp  
+try  
+{  
+   // Code for accessing the report server  
+}  
+catch (SoapException ex)  
+{  
+   if (ex.Detail["ErrorCode"].InnerXml == "rsInvalidItemName")  
+   {  
+      // Perform an action based on the specific error code  
+   }  
+}  
+```  
+  
+ The following line of code writes the specific error code being returned in the SOAP Exception to the console. You could also evaluate the error code and perform specific actions.  
+  
+```vb  
+Console.WriteLine(ex.Detail("ErrorCode").InnerXml)  
+```  
+  
+```csharp  
+Console.WriteLine(ex.Detail["ErrorCode"].InnerXml);  
+```  
+  
+## Related content
+
+- [Introduction to exception management in Reporting Services](../introducing-exception-handling-in-reporting-services.md)
+- [Reporting Services SoapException class](../soapexception-class/reporting-services-soapexception-class.md)
+- [SoapException Errors table](../soapexception-class/soapexception-errors-table.md)

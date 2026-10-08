@@ -1,0 +1,123 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-windows-server-en",
+  "name": "Microsoft technology: Windows Server",
+  "description": "Preserved English Windows Server documentation from MicrosoftDocs/windowsserverdocs, with normalized Markdown, complete selected code examples, source revisions, and license notices.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "git",
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "MicrosoftDocs/windowsserverdocs",
+    "ref": "b30da775fdeb9df0c446fda330fd0f101422edbe",
+    "paths": [
+      "."
+    ],
+    "include": [
+      "WindowsServerDocs/**/*.md",
+      "HyperVServerDocs/**/*.md",
+      "includes/**/*.md"
+    ],
+    "exclude": [],
+    "transport": "files",
+    "codeFiles": [],
+    "docfxRoot": "WindowsServerDocs",
+    "maxArchiveBytes": 2000000000,
+    "publishedBaseUrl": "https://learn.microsoft.com/windows-server/",
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices",
+        "sha256": "cd91209120ebd78a2887939f5c6311e99d63a7e5c7aa940acdb7c16d39296658"
+      }
+    ],
+    "downloadConcurrency": 8
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "WindowsServerDocs/**/*.md",
+          "HyperVServerDocs/**/*.md",
+          "includes/**/*.md"
+        ],
+        "license": "docs"
+      },
+      {
+        "include": [
+          "_code/**/*.md"
+        ],
+        "license": "code"
+      }
+    ]
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true,
+    "docfxReferences": "preserve"
+  },
+  "sync": {
+    "maxFileBytes": 20000000,
+    "maxTotalBytes": 1500000000,
+    "maxDeleteFraction": 0.2
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "folders"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "microsoft",
+        "technology",
+        "windows-server"
+      ]
+    }
+  }
+}

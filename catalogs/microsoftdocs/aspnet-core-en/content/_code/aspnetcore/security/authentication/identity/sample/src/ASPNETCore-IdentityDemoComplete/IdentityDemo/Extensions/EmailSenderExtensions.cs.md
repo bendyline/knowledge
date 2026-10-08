@@ -1,0 +1,25 @@
+# Source code: aspnetcore/security/authentication/identity/sample/src/ASPNETCore-IdentityDemoComplete/IdentityDemo/Extensions/EmailSenderExtensions.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using IdentityDemo.Services;
+
+namespace IdentityDemo.Services
+{
+    public static class EmailSenderExtensions
+    {
+        public static Task SendEmailConfirmationAsync(this IEmailSender emailSender, string email, string link)
+        {
+            return emailSender.SendEmailAsync(email, "Confirm your email",
+                $"Please confirm your account by clicking this link: <a href='{HtmlEncoder.Default.Encode(link)}'>link</a>");
+        }
+    }
+}
+
+```

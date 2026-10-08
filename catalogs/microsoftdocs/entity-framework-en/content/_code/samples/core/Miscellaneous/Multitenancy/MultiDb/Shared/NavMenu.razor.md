@@ -1,0 +1,43 @@
+# Source code: samples/core/Miscellaneous/Multitenancy/MultiDb/Shared/NavMenu.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using TenantControls
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Multiple Databases</a>
+        <TenantDisplay TenantClass="white"/>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+    </nav>
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <TenantPicker/>
+        </div>
+    </nav>        
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
+
+```

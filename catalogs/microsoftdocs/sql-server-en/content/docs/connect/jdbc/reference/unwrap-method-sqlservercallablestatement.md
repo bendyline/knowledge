@@ -1,0 +1,106 @@
+---
+title: "unwrap Method (SQLServerCallableStatement)"
+description: "unwrap Method (SQLServerCallableStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# unwrap Method (SQLServerCallableStatement)
+
+
+  Returns an object that implements the specified interface to allow access to the  Microsoft JDBC Driver for SQL Server 
+-specific methods.  
+  
+## Syntax  
+  
+```  
+  
+public <T> T unwrap(Class<T> iface)  
+```  
+  
+#### Parameters  
+ *iface*  
+  
+ A class of type **T** defining an interface.  
+  
+## Return Value  
+ An object that implements the specified interface.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ The [unwrap](#unwrap-method-sqlservercallablestatement) method is defined by the java.sql.Wrapper interface, which is introduced in the JDBC 4.0 Spec.  
+  
+ Applications might need to access extensions to the JDBC API that are specific to the  Microsoft JDBC Driver for SQL Server 
+. The unwrap method supports unwrapping to public classes that this object extends, if the classes expose vendor extensions.  
+  
+ [SQLServerCallableStatement](sqlservercallablestatement-class.md) implements [ISQLServerPreparedStatement](sqlserverpreparedstatement-class.md), which is extended from the [ISQLServerStatement](sqlserverstatement-class.md). When this method is called, the object unwraps to the following classes: [SQLServerStatement](sqlserverstatement-class.md), [SQLServerPreparedStatement](sqlserverpreparedstatement-class.md), and [SQLServerCallableStatement](sqlservercallablestatement-class.md).  
+  
+ For more information, see [Wrappers and Interfaces](../wrappers-and-interfaces.md).  
+  
+ The following code example demonstrates how to use the isWrapperFor and unwrap methods to check the driver extensions and invoke the vendor-specific methods, such as [setResponseBuffering](setresponsebuffering-method-sqlserverstatement.md) and [getResponseBuffering](getresponsebuffering-method-sqlserverstatement.md).  
+  
+```  
+public static void executeStoredProcedure(Connection con) {  
+   try {  
+    CallableStatement cstmt =   
+       con.prepareCall("{call dbo.stored_proc_name(?, ?)}");  
+  
+    // The recommended way to access the JDBC   
+    // Driver-specific methods is to use the JDBC 4.0 Wrapper   
+    // functionality.   
+    // The following code statements demonstrates how to use the   
+    // isWrapperFor and unwrap methods  
+    // to access the driver-specific response buffering methods.  
+  
+    if (cstmt.isWrapperFor(  
+      com.microsoft.sqlserver.jdbc.SQLServerCallableStatement.class)) {  
+     // The CallableStatement object can unwrap to   
+     // SQLServerCallableStatement.  
+     SQLServerCallableStatement SQLcstmt =   
+     cstmt.unwrap(  
+        com.microsoft.sqlserver.jdbc.SQLServerCallableStatement.class);  
+     SQLcstmt.setResponseBuffering("adaptive");  
+     System.out.println("Response buffering mode has been set to " +  
+         SQLcstmt.getResponseBuffering());  
+     }  
+  
+    if (cstmt.isWrapperFor(  
+      com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.class)) {  
+      // The CallableStatement object can unwrap to   
+      // SQLServerPreparedStatement.                    
+      SQLServerPreparedStatement SQLpstmt =   
+       cstmt.unwrap(  
+       com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.class);  
+      SQLpstmt.setResponseBuffering("adaptive");  
+      System.out.println("Response buffering mode has been set to " +  
+          SQLpstmt.getResponseBuffering());  
+    }  
+    if (cstmt.isWrapperFor(  
+      com.microsoft.sqlserver.jdbc.SQLServerStatement.class)) {  
+  
+      // The CallableStatement object can unwrap to SQLServerStatement.   
+      SQLServerStatement SQLstmt =   
+        cstmt.unwrap(  
+        com.microsoft.sqlserver.jdbc.SQLServerStatement.class);  
+      SQLstmt.setResponseBuffering("adaptive");  
+      System.out.println("Response buffering mode has been set to " +  
+      SQLstmt.getResponseBuffering());  
+    }  
+  }  
+  catch (Exception e) {  
+     e.printStackTrace();  
+  }  
+}   
+```  
+  
+## Related content
+
+- [isWrapperFor Method (SQLServerCallableStatement)](iswrapperfor-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

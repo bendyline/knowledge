@@ -1,0 +1,40 @@
+---
+title: "Does Data Definition Statement Force Transaction Commit."
+description: "dataDefinitionCausesTransactionCommit Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.dataDefinitionCausesTransactionCommit"
+apitype: "Assembly"
+---
+# dataDefinitionCausesTransactionCommit Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether a data definition statement within a transaction forces the transaction to commit.  
+  
+## Syntax  
+  
+```  
+  
+public boolean dataDefinitionCausesTransactionCommit()  
+```  
+  
+## Return Value  
+ **true** if the DDL statement forces a commit. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This dataDefinitionCausesTransactionCommit method is specified by the dataDefinitionCausesTransactionCommit method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

@@ -1,0 +1,285 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-windows-apps-en",
+  "name": "Microsoft technology: Windows app development",
+  "description": "Preserved English Windows app development documentation from MicrosoftDocs/windows-dev-docs, with normalized Markdown, selected complete code examples, source revisions, and license notices.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "git",
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "MicrosoftDocs/windows-dev-docs",
+    "ref": "aabd22a9113af71e56bd6f5af8fde06df68162e0",
+    "paths": [
+      "."
+    ],
+    "include": [
+      "hub/**/*.md",
+      "landing/**/*.md",
+      "uwp/**/*.md",
+      "windows-apps-src/**/*.md",
+      "WSL/**/*.md",
+      "terminal/**/*.md"
+    ],
+    "exclude": [
+      "**/wwwroot/lib/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json",
+      "**/jquery*.js",
+      "**/bootstrap*.js",
+      "**/bootstrap*.css",
+      "**/knockout*.js",
+      "**/modernizr*.js",
+      "**/wwwroot/swagger/ui/**",
+      "**/signalr/dist/**"
+    ],
+    "transport": "files",
+    "downloadConcurrency": 8,
+    "codeFiles": [
+      "hub/**/*.cs",
+      "hub/**/*.vb",
+      "hub/**/*.fs",
+      "hub/**/*.fsx",
+      "hub/**/*.xaml",
+      "hub/**/*.sql",
+      "hub/**/*.json",
+      "hub/**/*.xml",
+      "hub/**/*.config",
+      "hub/**/*.csproj",
+      "hub/**/*.razor",
+      "hub/**/*.cshtml",
+      "hub/**/*.js",
+      "hub/**/*.ts",
+      "hub/**/*.cpp",
+      "hub/**/*.h",
+      "hub/**/*.py",
+      "hub/**/*.ps1",
+      "hub/**/*.sh",
+      "hub/**/*.css",
+      "hub/**/*.html",
+      "hub/**/*.props",
+      "hub/**/*.targets",
+      "uwp/**/*.cs",
+      "uwp/**/*.vb",
+      "uwp/**/*.fs",
+      "uwp/**/*.fsx",
+      "uwp/**/*.xaml",
+      "uwp/**/*.sql",
+      "uwp/**/*.json",
+      "uwp/**/*.xml",
+      "uwp/**/*.config",
+      "uwp/**/*.csproj",
+      "uwp/**/*.razor",
+      "uwp/**/*.cshtml",
+      "uwp/**/*.js",
+      "uwp/**/*.ts",
+      "uwp/**/*.cpp",
+      "uwp/**/*.h",
+      "uwp/**/*.py",
+      "uwp/**/*.ps1",
+      "uwp/**/*.sh",
+      "uwp/**/*.css",
+      "uwp/**/*.html",
+      "uwp/**/*.props",
+      "uwp/**/*.targets",
+      "windows-apps-src/**/*.cs",
+      "windows-apps-src/**/*.vb",
+      "windows-apps-src/**/*.fs",
+      "windows-apps-src/**/*.fsx",
+      "windows-apps-src/**/*.xaml",
+      "windows-apps-src/**/*.sql",
+      "windows-apps-src/**/*.json",
+      "windows-apps-src/**/*.xml",
+      "windows-apps-src/**/*.config",
+      "windows-apps-src/**/*.csproj",
+      "windows-apps-src/**/*.razor",
+      "windows-apps-src/**/*.cshtml",
+      "windows-apps-src/**/*.js",
+      "windows-apps-src/**/*.ts",
+      "windows-apps-src/**/*.cpp",
+      "windows-apps-src/**/*.h",
+      "windows-apps-src/**/*.py",
+      "windows-apps-src/**/*.ps1",
+      "windows-apps-src/**/*.sh",
+      "windows-apps-src/**/*.css",
+      "windows-apps-src/**/*.html",
+      "windows-apps-src/**/*.props",
+      "windows-apps-src/**/*.targets"
+    ],
+    "docfxRoot": "uwp",
+    "maxArchiveBytes": 2000000000,
+    "publishedBaseUrl": "https://learn.microsoft.com/windows/",
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices",
+        "sha256": "f90a4ebe55a146d29bae7ce11cb57faf7346beab9dd9db5f15b533ac6c48a37f"
+      }
+    ]
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "hub/**/*.md",
+          "landing/**/*.md",
+          "uwp/**/*.md",
+          "windows-apps-src/**/*.md",
+          "WSL/**/*.md",
+          "terminal/**/*.md"
+        ],
+        "license": "docs"
+      },
+      {
+        "include": [
+          "_code/**/*.md",
+          "hub/**/*.cs",
+          "hub/**/*.vb",
+          "hub/**/*.fs",
+          "hub/**/*.fsx",
+          "hub/**/*.xaml",
+          "hub/**/*.sql",
+          "hub/**/*.json",
+          "hub/**/*.xml",
+          "hub/**/*.config",
+          "hub/**/*.csproj",
+          "hub/**/*.razor",
+          "hub/**/*.cshtml",
+          "hub/**/*.js",
+          "hub/**/*.ts",
+          "hub/**/*.cpp",
+          "hub/**/*.h",
+          "hub/**/*.py",
+          "hub/**/*.ps1",
+          "hub/**/*.sh",
+          "hub/**/*.css",
+          "hub/**/*.html",
+          "hub/**/*.props",
+          "hub/**/*.targets",
+          "uwp/**/*.cs",
+          "uwp/**/*.vb",
+          "uwp/**/*.fs",
+          "uwp/**/*.fsx",
+          "uwp/**/*.xaml",
+          "uwp/**/*.sql",
+          "uwp/**/*.json",
+          "uwp/**/*.xml",
+          "uwp/**/*.config",
+          "uwp/**/*.csproj",
+          "uwp/**/*.razor",
+          "uwp/**/*.cshtml",
+          "uwp/**/*.js",
+          "uwp/**/*.ts",
+          "uwp/**/*.cpp",
+          "uwp/**/*.h",
+          "uwp/**/*.py",
+          "uwp/**/*.ps1",
+          "uwp/**/*.sh",
+          "uwp/**/*.css",
+          "uwp/**/*.html",
+          "uwp/**/*.props",
+          "uwp/**/*.targets",
+          "windows-apps-src/**/*.cs",
+          "windows-apps-src/**/*.vb",
+          "windows-apps-src/**/*.fs",
+          "windows-apps-src/**/*.fsx",
+          "windows-apps-src/**/*.xaml",
+          "windows-apps-src/**/*.sql",
+          "windows-apps-src/**/*.json",
+          "windows-apps-src/**/*.xml",
+          "windows-apps-src/**/*.config",
+          "windows-apps-src/**/*.csproj",
+          "windows-apps-src/**/*.razor",
+          "windows-apps-src/**/*.cshtml",
+          "windows-apps-src/**/*.js",
+          "windows-apps-src/**/*.ts",
+          "windows-apps-src/**/*.cpp",
+          "windows-apps-src/**/*.h",
+          "windows-apps-src/**/*.py",
+          "windows-apps-src/**/*.ps1",
+          "windows-apps-src/**/*.sh",
+          "windows-apps-src/**/*.css",
+          "windows-apps-src/**/*.html",
+          "windows-apps-src/**/*.props",
+          "windows-apps-src/**/*.targets"
+        ],
+        "license": "code"
+      }
+    ]
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true,
+    "docfxReferences": "preserve",
+    "docfxMetadataMaxBytes": 12000,
+    "docfxProfile": "rendered-v1"
+  },
+  "sync": {
+    "maxFileBytes": 20000000,
+    "maxTotalBytes": 1500000000,
+    "maxDeleteFraction": 0.2
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "folders"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "microsoft",
+        "technology",
+        "windows-apps"
+      ]
+    }
+  }
+}

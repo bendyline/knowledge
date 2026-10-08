@@ -1,0 +1,42 @@
+---
+title: "DatabaseName property (WMI MSReportServer_ConfigurationSetting)"
+description: "DatabaseName property (WMI MSReportServer_ConfigurationSetting)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "DatabaseName property"
+apilocation: "reportingservices.mof"
+apiname: "DatabaseName Property"
+apitype: MOFDef
+---
+# ConfigurationSetting property - DatabaseName
+  Specifies the name of the  SQL Server 
+ instance that hosts the report server database. Read only.  
+  
+## Syntax  
+  
+```vb  
+Public Dim DatabaseName As String  
+```  
+  
+```csharp  
+public string DatabaseName;  
+```  
+  
+## Property values  
+ A **String** object whose value represents the database instance name of the report server database.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

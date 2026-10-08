@@ -1,0 +1,31 @@
+# Source code: docs/core/whats-new/dotnet-10/snippets/csharp/snippets.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" Version="10.0.12" />
+  </ItemGroup>
+
+  <!-- Exclude all C# files from compilation as they are code snippets, not a complete application -->
+  <ItemGroup>
+    <Compile Remove="**/*.cs" />
+  </ItemGroup>
+  
+  <!-- Include C# files as content for documentation purposes -->
+  <ItemGroup>
+    <Content Include="**/*.cs" />
+  </ItemGroup>
+
+</Project>
+```

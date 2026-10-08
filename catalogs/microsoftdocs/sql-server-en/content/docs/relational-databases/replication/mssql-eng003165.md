@@ -1,0 +1,64 @@
+---
+title: "MSSQL_ENG003165"
+description: "MSSQL_ENG003165"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "MSSQL_ENG003165 error"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# MSSQL_ENG003165
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+    
+## Message Details  
+  
+| Attribute | Value |
+| --- | --- |
+| Product Name | SQL Server |
+| Event ID | 3165 |
+| Event Source | MSSQLSERVER |
+| Component | SQL Server Database Engine |
+|  |
+| Symbolic Name |  |
+| Message Text | Database '%ls' was restored; however, an error was encountered while replication was being restored/removed. The database has been left offline. See the topic MSSQL_ENG003165 in SQL Server Books Online. |
+  
+## Explanation  
+ This error is raised if a problem occurs restoring a backup of a replicated database:  
+  
+-   If the backup is being restored to the same database and server on which it was taken, the error indicates that replication settings could not be restored properly.  
+  
+-   If the backup is being restored to a different database or server, the error indicates that replication settings could not be removed properly (by default, replication settings are removed if the database or server is different).  
+  
+ The error is probably the result of a mismatch between the state of the restored database and one or more system databases that contain replication metadata: **msdb**, **master**, or the distribution database.  
+  
+## User Action  
+ To resolve this issue:  
+  
+1.  Execute ALTER DATABASE to bring the database online; for example: `ALTER DATABASE AdventureWorks SET ONLINE`. For more information, see [ALTER DATABASE &#40;Transact-SQL&#41;](../../t-sql/statements/alter-database-transact-sql.md). If you want to preserve replication settings, go to step 2. If not, go to step 3.  
+  
+2.  Execute [sp_restoredbreplication (Transact-SQL)](../system-stored-procedures/sp-restoredbreplication-transact-sql.md). If this stored procedure executes successfully, the restore is complete. If it does not execute successfully, go to step 3.  
+  
+3.  Execute [sp_removedbreplication (Transact-SQL)](../system-stored-procedures/sp-removedbreplication-transact-sql.md) to remove all replication settings.  
+  
+     Reconfigure replication if necessary. If you have scripted the replication topology as recommended, use scripts to reconfigure the topology.  
+  
+## Related content
+
+- [Back up and restore of SQL Server databases](../backup-restore/back-up-and-restore-of-sql-server-databases.md)
+- [Back Up and Restore Replicated Databases](administration/back-up-and-restore-replicated-databases.md)
+- [Errors and Events Reference (Replication)](errors-and-events-reference-replication.md)

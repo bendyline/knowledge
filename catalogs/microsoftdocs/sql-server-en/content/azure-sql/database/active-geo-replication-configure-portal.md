@@ -1,0 +1,316 @@
+---
+title: "Tutorial: Geo-replication & failover in portal"
+description: Learn how to configure geo-replication for a SQL database using the Azure portal or Azure CLI, and initiate failover.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer:  mathoma, randolphwest
+ms.date: 10/08/2024
+ms.service: azure-sql-database
+ms.subservice: high-availability
+ms.topic: tutorial
+ms.custom:
+  - sqldbrb=1
+  - devx-track-azurecli
+  - ignite-2023
+  - devx-track-azurepowershell
+  - sfi-image-nochange
+---
+# Tutorial: Configure active geo-replication and failover (Azure SQL Database)
+
+
+
+  **Applies to:**    [Azure SQL Database](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This article shows you how to configure [active geo-replication](active-geo-replication-overview.md) and initiate a failover for Azure SQL Database by using the [Azure portal](https://portal.azure.com), PowerShell, or the Azure CLI.
+
+Active geo-replication is configured per database. To fail over a group of databases, or if your application requires a stable connection endpoint, consider [Failover groups](failover-group-sql-db.md) instead.
+
+## Prerequisites
+
+- To complete this tutorial, you need a single Azure SQL Database. To learn how to create a single database with Azure portal, Azure CLI, or PowerShell, see [Quickstart: Create a single database - Azure SQL Database](single-database-create-quickstart.md?view=azuresql&preserve-view=true&tabs=azure-powershell).
+
+- You can use the Azure portal to set up Active geo replication across subscriptions as long as both the subscriptions are in the same Microsoft Entra ID tenant.
+  - To create a geo-secondary replica in a subscription *different* from the subscription of the primary in a different Microsoft Entra ID tenant, use [the geo-secondary across subscriptions and Microsoft Entra ID tenant T-SQL tutorial](#cross-subscription-geo-replication).
+  - Cross-subscription geo-replication operations including setup and geo-failover are also supported using [Databases Create or Update REST API](https://learn.microsoft.com/rest/api/sql/databases/create-or-update).
+
+## Add a secondary database
+
+The following steps create a new secondary database in a geo-replication partnership.
+
+To add a secondary database, you must be the subscription owner or co-owner.
+
+The secondary database has the same name as the primary database and has, by default, the same service tier and compute size. The secondary database can be a single database or a pooled database. For more information, see [DTU-based purchasing model overview](service-tiers-dtu.md) and [vCore-based purchasing model](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/database/service-tiers-vcore.md).
+After the secondary is created and seeded, data begins replicating from the primary database to the new secondary database.
+
+If your secondary replica is used *only* for disaster recovery (DR), and doesn't have any read or write workloads, you can save on licensing costs by designating the database for standby when you configure a new active geo-replication relationship. For more information, see [license-free standby replica](standby-replica-how-to-configure.md).
+
+> **Note:**  
+> If the partner database already exists, (for example, as a result of terminating a previous geo-replication relationship) the command fails.
+
+# [Portal](#tab/portal)
+
+1. In the [Azure portal](https://portal.azure.com), browse to the database that you want to set up for geo-replication.
+
+1. On the SQL Database page, select your database, scroll to **Data management**, select **Replicas**, and then select **Create replica**.
+
+    Screenshot that shows the Configure geo-replication option.
+
+1. Select your geo-secondary database **Subscription** and **Resource group**.
+
+   Screenshot from the Azure portal of the subscription and resource group.
+
+1. Select or create the server for the secondary database, and configure the **Compute + storage** options if necessary. You can select any region for your secondary server, but we recommend the [paired region](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure).
+
+    Optionally, you can add a secondary database to an elastic pool. To create the secondary database in a pool, select **Yes** next to **Want to use SQL elastic pool?** and select a pool on the target server. A pool must already exist on the target server. This workflow doesn't create a pool.
+
+1. Select **Review + create**, review the information, and then select **Create**.
+
+1. The secondary database is created and the deployment process begins.
+
+    Screenshot that shows the deployment status of the secondary database.
+
+1. When the deployment is complete, the secondary database displays its status.
+
+    Screenshot that shows the secondary database status after deployment.
+
+1. Return to the primary database page, and then select **Replicas**. Your secondary database is listed under **Geo replicas**.
+
+    Screenshot that shows the SQL database primary and geo replicas.
+
+# [Azure CLI](#tab/azure-cli)
+
+Select the database you want to set up for geo-replication. You need the following information:
+
+- Your original Azure SQL database name.
+- The Azure SQL server name.
+- Your resource group name.
+- The name of the server to create the new replica in.
+
+> **Note:**  
+> The secondary database must have the same service tier as the primary.
+
+You can select any region for your secondary server, but we recommend the [paired region](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure).
+
+Run the [az sql db replica create](https://learn.microsoft.com/cli/azure/sql/db/replica#az-sql-db-replica-create) command.
+
+```azurecli
+az sql db replica create --resource-group ContosoHotel --server contosoeast --name guestlist --partner-server contosowest --family Gen5 --capacity 2 --secondary-type Geo
+```
+
+Optionally, you can add a secondary database to an elastic pool. To create the secondary database in a pool, use the `--elastic-pool` parameter. A pool must already exist on the target server. This workflow doesn't create a pool.
+
+The secondary database is created and the deployment process begins.
+
+When the deployment is complete, you can check the status of the secondary database by running the [az sql db replica list-links](https://learn.microsoft.com/cli/azure/sql/db/replica#az-sql-db-replica-list-links) command:
+
+```azurecli
+az sql db replica list-links --name guestlist --resource-group ContosoHotel --server contosowest
+```
+
+# [PowerShell](#tab/powershell)
+
+Select the database you want to set up for geo-replication. You need the following information:
+
+- Your original Azure SQL database name.
+- The Azure SQL server name.
+- Your resource group name.
+- The name of the server to create the new replica in.
+
+> **Note:**  
+> The secondary database must have the same service tier as the primary.
+
+You can select any region for your secondary server, but we recommend the [paired region](https://learn.microsoft.com/azure/reliability/cross-region-replication-azure).
+
+As usual, begin your PowerShell session with the following cmdlets to connect your Azure account and set the subscription context:
+
+```powershell
+Connect-AzAccount
+$subscriptionid = <your subscription id here>
+Set-AzContext -SubscriptionId $subscriptionid
+
+$parameters = @{
+    ResourceGroupName = 'PrimaryRG'
+    ServerName = 'PrimaryServer'
+    DatabaseName = 'TestDB'
+    PartnerResourceGroupName = 'SecondaryRG'
+    PartnerServerName = 'SecondaryServer'
+    PartnerDatabaseName = 'TestDB'
+}
+
+New-AzSqlDatabaseSecondary @parameters
+```
+
+When the deployment is complete, you can check the status of the secondary database by running the `Get-AzSqlDatabaseReplicationLink` command:
+
+```powershell
+$parameters = @{
+    ResourceGroupName = 'PrimaryRG'
+    ServerName = 'PrimaryServer'
+    DatabaseName = 'TestDB'
+    PartnerResourceGroupName = 'SecondaryRG'
+}
+
+Get-AzSqlDatabaseReplicationLink @parameters
+```
+
+---
+
+## Initiate a failover
+
+The secondary database can be switched to become the primary.
+
+# [Portal](#tab/portal)
+
+1. In the [Azure portal](https://portal.azure.com), browse to the primary database in the geo-replication partnership.
+1. Scroll to **Data management**, and then select **Replicas**.
+1. In the **Geo replicas** list, select the database you want to become the new primary, select the ellipsis, and then select **Forced failover**.
+
+    Screenshot that shows selecting forced failover from the dropdown list.
+1. Select **Yes** to begin the failover.
+
+# [Azure CLI](#tab/azure-cli)
+
+Run the [az sql db replica set-primary](https://learn.microsoft.com/cli/azure/sql/db/replica#az-sql-db-replica-set-primary) command.
+
+```azurecli
+az sql db replica set-primary --name guestlist --resource-group ContosoHotel --server contosowest
+```
+
+# [PowerShell](#tab/powershell)
+
+Run the following command:
+
+```powershell
+$parameters = @{
+    ResourceGroupName = 'SecondaryRG'
+    ServerName = 'SecondaryServer'
+    DatabaseName = 'TestDB'
+    PartnerResourceGroupName = 'PrimaryServer'
+}
+
+Set-AzSqlDatabaseSecondary @parameters -Failover
+```
+
+---
+
+The command immediately switches the secondary database into the primary role. This process normally should complete within 30 seconds or less.
+
+Both databases are unavailable, for up to 25 seconds, while the roles are switched. If the primary database has multiple secondary databases, the command automatically reconfigures the other secondaries to connect to the new primary. The entire operation should take less than a minute to complete under normal circumstances.
+
+## Remove secondary database
+
+This operation permanently stops the replication to the secondary database, and changes the role of the secondary to a regular read-write database. If the connectivity to the secondary database is broken, the command succeeds but the secondary doesn't become read-write until after connectivity is restored.
+
+# [Portal](#tab/portal)
+
+1. In the [Azure portal](https://portal.azure.com), browse to the primary database in the geo-replication partnership.
+1. Select **Replicas**.
+1. In the **Geo replicas** list, select the database you want to remove from the geo-replication partnership, select the ellipsis, and then select **Stop replication**.
+1. A confirmation window opens. Select **Yes** to remove the database from the geo-replication partnership. (Set it to a read-write database that isn't part of any replication.)
+
+# [Azure CLI](#tab/azure-cli)
+
+Run the [az sql db replica delete-link](https://learn.microsoft.com/cli/azure/sql/db/replica#az-sql-db-replica-delete-link) command.
+
+```azurecli
+az sql db replica delete-link --name guestlist --resource-group ContosoHotel --server contosoeast --partner-server contosowest
+```
+
+Confirm that you want to perform the operation.
+
+# [PowerShell](#tab/powershell)
+
+Run the following command:
+
+```powershell
+$parameters = @{
+    ResourceGroupName = 'SecondaryRG'
+    ServerName = 'SecondaryServer'
+    DatabaseName = 'TestDB'
+    PartnerResourceGroupName = 'PrimaryRG'
+    PartnerServerName = 'PrimaryServer'
+}
+Remove-AzSqlDatabaseSecondary @parameters
+```
+
+---
+
+## Cross-subscription geo-replication
+
+- To create a geo-secondary replica in a subscription *different* from the subscription of the primary in the *same* Microsoft Entra tenant, you can use the Azure portal or the steps in this section.
+- To create a geo-secondary replica in a subscription *different* from the subscription of the primary in a different Microsoft Entra tenant, you must use SQL authentication and T-SQL as described in the steps in this section. [Microsoft Entra authentication for Azure SQL](authentication-aad-overview.md) for cross-subscription geo-replication isn't supported when a logical server is in a different Azure tenant
+
+1. Add the IP address of the client machine executing the T-SQL commands in this example, to the server firewalls of **both** the primary and secondary servers. You can confirm that IP address by executing the following query while connected to the primary server from the same client machine.
+
+   ```sql
+   SELECT client_net_address
+   FROM sys.dm_exec_connections
+   WHERE session_id = @@SPID;
+   ```
+
+   For more information, see [Azure SQL Database and Azure Synapse IP firewall rules](firewall-configure.md).
+
+1. In the `master` database on the **primary** server, create a SQL authentication login dedicated to active geo-replication setup. Replace `<password>` with a strong password.
+
+   ```sql
+   CREATE LOGIN geodrsetup
+       WITH PASSWORD = '<password>';
+   ```
+
+1. In the same database, create a user for the login, and add it to the `dbmanager` role:
+
+   ```sql
+   CREATE USER geodrsetup FOR LOGIN geodrsetup;
+
+   ALTER ROLE dbmanager ADD MEMBER geodrsetup;
+   ```
+
+1. Take note of the SID value of the new login. Obtain the SID value using the following query.
+
+   ```sql
+   SELECT sid
+   FROM sys.sql_logins
+   WHERE name = 'geodrsetup';
+   ```
+
+1. Connect to the **primary** database (not the `master` database), and create a user for the same login.
+
+   ```sql
+   CREATE USER geodrsetup FOR LOGIN geodrsetup;
+   ```
+
+1. In the same database, add the user to the `db_owner` role.
+
+   ```sql
+   ALTER ROLE db_owner ADD MEMBER geodrsetup;
+   ```
+
+1. In the `master` database on the **secondary** server, create the same login as on the primary server, using the same name, password, and SID. Replace the hexadecimal SID value in the sample command below with the one obtained in Step 4.
+
+   ```sql
+   CREATE LOGIN geodrsetup
+       WITH PASSWORD = '<password>', SID = 0x010600000000006400000000000000001C98F52B95D9C84BBBA8578FACE37C3E;
+   ```
+
+1. In the same database, create a user for the login, and add it to the `dbmanager` role.
+
+   ```sql
+   CREATE USER geodrsetup FOR LOGIN geodrsetup;
+
+   ALTER ROLE dbmanager ADD MEMBER geodrsetup;
+   ```
+
+1. Connect to the `master` database on the **primary** server using the new `geodrsetup` login, and initiate geo-secondary creation on the secondary server. Adjust database name and secondary server name as needed. Once the command is executed, you can monitor geo-secondary creation by querying the [sys.dm_geo_replication_link_status](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-geo-replication-link-status-azure-sql-database) view in the **primary** database, and the [sys.dm_operation_status](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-operation-status-azure-sql-database) view in the `master` database on the **primary** server. The time needed to create a geo-secondary depends on the primary database size.
+
+   ```sql
+   alter database [dbrep] add secondary on server [servername];
+   ```
+
+1. After the geo-secondary is successfully created, the users, logins, and firewall rules created by this procedure can be removed.
+
+## Related content
+
+- [Active geo-replication](active-geo-replication-overview.md)
+- [Failover groups overview & best practices (Azure SQL Database)](failover-group-sql-db.md)
+- [Overview of business continuity with Azure SQL Database](business-continuity-high-availability-disaster-recover-hadr-overview.md)
+- [Configure a license-free standby replica for Azure SQL Database](standby-replica-how-to-configure.md)

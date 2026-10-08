@@ -1,0 +1,98 @@
+---
+title: "sp_pdw_add_network_credentials"
+titleSuffix: Azure Synapse Analytics
+description: sp_pdw_add_network_credentials stores network credentials in Azure Synapse Analytics and associates them with a server.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sp_pdw_add_network_credentials (Azure Synapse Analytics)
+
+
+**Applies to:**
+ 
+
+
+ 
+
+
+`sp_pdw_add_network_credentials` stores network credentials in  Azure Synapse Analytics  and associates them with a server. For example, use this stored procedure to give  Azure Synapse Analytics  appropriate read/write permissions to perform database backup and restore operations on a target server, or to create a backup of a certificate used for transparent data encryption (TDE).
+
+
+
+## Syntax
+
+Syntax for Azure Synapse Analytics.
+
+```syntaxsql
+sp_pdw_add_network_credentials
+    'target_server_name'
+    , 'user_name'
+    , 'password'
+[ ; ]
+```
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+## Arguments
+
+#### '*target_server_name*'
+
+Specifies the target server host name or IP address. *target_server_name* is **nvarchar(337)** with no default.  Azure Synapse Analytics  accesses this server with the username and password credentials passed to this stored procedure.
+
+To connect through the InfiniBand network, use the InfiniBand IP address of the target server.
+
+#### '*user_name*'
+
+Specifies the user_name that's permissions to access the target server. *user_name* is **nvarchar(513)** with no default. If credentials already exist for the target server, they're updated to the new credentials.
+
+#### '*password*ꞌ
+
+Specifies the password for *user_name*.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Permissions
+
+Requires `ALTER SERVER STATE` permission.
+
+## Error Handling
+
+An error occurs if adding credentials doesn't succeed on the Control node and all Compute nodes.
+
+## Remarks
+
+This stored procedure adds network credentials to the `NetworkService` account for  Azure Synapse Analytics . The `NetworkService` account runs each instance of SMP  SQL Server 
+ on the Control node and the Compute nodes. For example, when a backup operation runs, the Control node and each Compute node use the `NetworkService` account credentials to gain read and write permission to the target server.
+
+## Examples: Azure Synapse Analytics
+
+### A. Add credentials for performing a database backup
+
+The following example associates the user name and password credentials for the domain user `seattle\david` with a target server that's an IP address of `10.172.63.255`. The user `seattle\david` has read/write permissions to the target server.  Azure Synapse Analytics  stores these credentials and uses them to read and write to and from the target server, as necessary for backup and restore operations. Replace `<password>` with a strong password.
+
+```sql
+EXECUTE sp_pdw_add_network_credentials
+    '10.172.63.255',
+    'seattle\david',
+    '<password>';
+```
+
+The backup command requires that the server name is entered as an IP address.
+
+> **Note:**  
+> To perform the database backup over InfiniBand, be sure to use the InfiniBand IP address of the backup server.
+
+## Related content
+
+- [sp_pdw_remove_network_credentials (Azure Synapse Analytics)](sp-pdw-remove-network-credentials-sql-data-warehouse.md)

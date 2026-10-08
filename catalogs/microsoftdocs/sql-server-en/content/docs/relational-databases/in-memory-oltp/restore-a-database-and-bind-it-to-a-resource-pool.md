@@ -1,0 +1,78 @@
+---
+title: "Restore a Database and Bind it to a Resource Pool"
+description: Learn about restoring a database with memory-optimized tables in SQL Server. Follow best practices by binding the database to a named resource pool.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: in-memory-oltp
+ms.topic: how-to
+---
+# Restore a Database and Bind it to a Resource Pool
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Even though you have enough memory to restore a database with memory-optimized tables, you want to follow best practices and bind the database to a named resource pool. Since the database must exist before you can bind it to the pool restoring your database is a multi-step process. This topic walks you through that process.  
+  
+## Restoring a database with memory-optimized tables  
+ The following steps fully restore the database IMOLTP_DB and bind it to the Pool_IMOLTP.  
+  
+1.  [Restore with NORECOVERY](restore-a-database-and-bind-it-to-a-resource-pool.md#bkmk_NORECOVERY)  
+  
+2.  [Create the resource pool](restore-a-database-and-bind-it-to-a-resource-pool.md#bkmk_createPool)  
+  
+3.  [Bind the database and resource pool](restore-a-database-and-bind-it-to-a-resource-pool.md#bkmk_bind)  
+  
+4.  [Restore with RECOVERY](restore-a-database-and-bind-it-to-a-resource-pool.md#bkmk_RECOVERY)  
+  
+5.  [Monitor the resource pool performance](restore-a-database-and-bind-it-to-a-resource-pool.md#bkmk_Monitor)  
+  
+###  <a name="bkmk_NORECOVERY"></a> Restore with NORECOVERY  
+ When you restore a database, NORECOVERY causes the database to be created and the disk image restored without consuming memory.  
+  
+```sql  
+RESTORE DATABASE IMOLTP_DB   
+   FROM DISK = 'C:\IMOLTP_test\IMOLTP_DB.bak'  
+   WITH NORECOVERY  
+```  
+  
+###  <a name="bkmk_createPool"></a> Create the resource pool  
+ The following  Transact-SQL  creates a resource pool named Pool_IMOLTP with 50% of memory available for its use.  After the pool is created, the Resource Governor is reconfigured to include Pool_IMOLTP.  
+  
+```sql  
+CREATE RESOURCE POOL Pool_IMOLTP WITH (MAX_MEMORY_PERCENT = 50);  
+ALTER RESOURCE GOVERNOR RECONFIGURE;  
+GO  
+```  
+  
+###  <a name="bkmk_bind"></a> Bind the database and resource pool  
+ Use the system function `sp_xtp_bind_db_resource_pool` to bind the database to the resource pool. The function takes two parameters: the database name followed by the resource pool name.  
+  
+ The following  Transact-SQL  defines a binding of the database IMOLTP_DB to the resource pool Pool_IMOLTP. The binding does not become effective until you complete the next step.  
+  
+```sql  
+EXEC sp_xtp_bind_db_resource_pool 'IMOLTP_DB', 'Pool_IMOLTP'  
+GO  
+```  
+  
+###  <a name="bkmk_RECOVERY"></a> Restore with RECOVERY  
+ When you restore the database with recovery the database is brought online and all the data restored.  
+  
+```sql  
+RESTORE DATABASE IMOLTP_DB   
+   WITH RECOVERY  
+```  
+  
+###  <a name="bkmk_Monitor"></a> Monitor the resource pool performance  
+ Once the database is bound to the named resource pool and restored with recovery, monitor the  SQL Server 
+, Resource Pool Stats Object. For more information see [SQL Server, Resource Pool Stats Object](../performance-monitor/sql-server-resource-pool-stats-object.md).  
+  
+## Related content
+
+- [Bind a Database with Memory-Optimized Tables to a Resource Pool](bind-a-database-with-memory-optimized-tables-to-a-resource-pool.md)
+- [sys.sp_xtp_bind_db_resource_pool (Transact-SQL)](../system-stored-procedures/sys-sp-xtp-bind-db-resource-pool-transact-sql.md)
+- [SQL Server, Resource Pool Stats object](../performance-monitor/sql-server-resource-pool-stats-object.md)
+- [sys.sp_xtp_unbind_db_resource_pool (Transact-SQL)](../system-stored-procedures/sys-sp-xtp-unbind-db-resource-pool-transact-sql.md)

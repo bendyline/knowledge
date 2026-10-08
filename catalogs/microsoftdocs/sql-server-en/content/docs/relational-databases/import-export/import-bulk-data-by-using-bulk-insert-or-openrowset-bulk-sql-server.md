@@ -1,0 +1,259 @@
+---
+title: "Use BULK INSERT or OPENROWSET (BULK...) to Import Data to SQL Server"
+description: Find out how to use Transact-SQL statements to bulk import data from a file to a SQL Server or Azure SQL Database table, including security considerations.
+author: markingmyname
+ms.author: maghan
+ms.date: 05/19/2025
+ms.service: sql
+ms.subservice: data-movement
+ms.topic: concept-article
+helpviewer_keywords:
+  - "BULK INSERT statement, importing data from a remote data file"
+  - "bulk importing [SQL Server], methods"
+  - "bulk exporting [SQL Server], methods"
+  - "OPENROWSET function, BULK INSERT"
+  - "bulk importing [SQL Server], security"
+  - "bulk rowset providers [SQL Server]"
+  - "bulk exporting [SQL Server], BULK INSERT statement"
+  - "remote data access [SQL Server], bulk importing"
+  - "bulk importing [SQL Server], BULK INSERT statement"
+  - "Transact-SQL bulk export/import operations"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+
+# Use BULK INSERT or OPENROWSET(BULK...) to import data to SQL Server
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+This article provides an overview of how to use the  Transact-SQL  `BULK INSERT` statement and the `INSERT...SELECT * FROM OPENROWSET(BULK...)` statement to bulk import data from a data file into a  SQL Server 
+ or Azure SQL Database table. 
+
+This article also describes security considerations for using `BULK INSERT` and `OPENROWSET(BULK...)`, and using these methods to bulk import from a remote data source.
+
+
+## BULK INSERT statement
+
+`BULK INSERT` loads data from a data file into a table. This functionality is similar to that provided by the `in` option of the `bcp` command. However, the data file is read by the  SQL Server 
+ process. For a description of the `BULK INSERT` syntax, see [BULK INSERT (Transact-SQL)](../../t-sql/statements/bulk-insert-transact-sql.md).
+
+## BULK INSERT examples
+
+- [BULK INSERT (Transact-SQL)](../../t-sql/statements/bulk-insert-transact-sql.md)
+- [Examples of bulk import and export of XML documents (SQL Server)](examples-of-bulk-import-and-export-of-xml-documents-sql-server.md)
+- [Keep identity values when bulk importing data (SQL Server)](keep-identity-values-when-bulk-importing-data-sql-server.md)
+- [Keep nulls or default values during bulk import (SQL Server)](keep-nulls-or-use-default-values-during-bulk-import-sql-server.md)
+- [Specify field and row terminators (SQL Server)](specify-field-and-row-terminators-sql-server.md)
+- [Use a format file to bulk import data (SQL Server)](use-a-format-file-to-bulk-import-data-sql-server.md)
+- [Use character format to import or export data (SQL Server)](use-character-format-to-import-or-export-data-sql-server.md)
+- [Use native format to import or export data (SQL Server)](use-native-format-to-import-or-export-data-sql-server.md)
+- [Use unicode character format to import or export data (SQL Server)](use-unicode-character-format-to-import-or-export-data-sql-server.md)
+- [Use Unicode Native Format to Import or Export Data (SQL Server)](use-unicode-native-format-to-import-or-export-data-sql-server.md)
+- [Use a Format File to Skip a Table Column (SQL Server)](use-a-format-file-to-skip-a-table-column-sql-server.md)
+- [Use a format file to map table columns to data-file fields (SQL Server)](use-a-format-file-to-map-table-columns-to-data-file-fields-sql-server.md)
+
+## OPENROWSET(BULK...) Function
+
+The `OPENROWSET` bulk rowset provider is accessed by calling the `OPENROWSET` function and specifying the `BULK` option. The `OPENROWSET(BULK...)` function allows you to access remote data by connecting to a remote data source, such as a data file, through a data provider.
+
+To bulk import data, call `OPENROWSET(BULK...)` from a `SELECT...FROM` clause within an `INSERT` statement. 
+
+The basic syntax for bulk importing data is:
+
+```sql
+INSERT ... SELECT * FROM OPENROWSET(BULK...)
+```
+
+When used in an `INSERT` statement, `OPENROWSET(BULK...)` supports table hints. In addition to the regular table hints, such as `TABLOCK`, the `BULK` clause can accept the following specialized table hints: 
+
+- `IGNORE_CONSTRAINTS` (ignores only the CHECK constraints)
+- `IGNORE_TRIGGERS`
+- `KEEPDEFAULTS`
+- `KEEPIDENTITY`
+
+For more information, see [Table hints (Transact-SQL)](../../t-sql/queries/hints-transact-sql-table.md).
+
+For information about additional uses of the BULK option, see [OPENROWSET BULK (Transact-SQL)](../../t-sql/functions/openrowset-bulk-transact-sql.md).
+
+## INSERT...SELECT * FROM OPENROWSET(BULK...) statements - examples
+
+- [Examples of bulk import and export of XML documents (SQL Server)](examples-of-bulk-import-and-export-of-xml-documents-sql-server.md)
+- [Keep identity values when bulk importing data (SQL Server)](keep-identity-values-when-bulk-importing-data-sql-server.md)
+- [Keep nulls or default values during bulk import (SQL Server)](keep-nulls-or-use-default-values-during-bulk-import-sql-server.md)
+- [Use a format file to bulk import data (SQL Server)](use-a-format-file-to-bulk-import-data-sql-server.md)
+- [Use character format to import or export data (SQL Server)](use-character-format-to-import-or-export-data-sql-server.md)
+- [Use a Format File to Skip a Table Column (SQL Server)](use-a-format-file-to-skip-a-table-column-sql-server.md)
+- [Use a format file to skip a data field (SQL Server)](use-a-format-file-to-skip-a-data-field-sql-server.md)
+- [Use a format file to map table columns to data-file fields (SQL Server)](use-a-format-file-to-map-table-columns-to-data-file-fields-sql-server.md)
+
+## Security considerations
+
+If a user uses a  SQL Server 
+ login, the security profile of the  SQL Server 
+ process account is used. A login using SQL Server authentication can't be authenticated outside of the Database Engine. Therefore, when a `BULK INSERT` command is initiated by a login using SQL Server authentication, the connection to the data is made using the security context of the SQL Server process account (the account used by the SQL Server Database Engine service).
+
+To successfully read the source data, you must grant the account used by the SQL Server Database Engine, access to the source data. In contrast, if a  SQL Server 
+ user logs on by using Windows Authentication, the user can read only those files that can be accessed by the user account, regardless of the security profile of the  SQL Server 
+ process.
+
+For example, consider a user who logged in to an instance of  SQL Server 
+ by using Windows Authentication. For the user to be able to use BULK INSERT or OPENROWSET to import data from a data file into a  SQL Server 
+ table, the user account requires read access to the data file. With access to the data file, the user can import data from the file into a table even if the  SQL Server 
+ process doesn't have permission to access the file. The user doesn't have to grant file-access permission to the  SQL Server 
+ process.
+
+ SQL Server 
+ and  Microsoft 
+ Windows can be configured to enable an instance of  SQL Server 
+ to connect to another instance of  SQL Server 
+ by forwarding the credentials of an authenticated Windows user. This arrangement is known as *impersonation* or *delegation*. Understanding how  SQL Server 
+ version handle security for user impersonation is important when you use BULK INSERT or OPENROWSET. User impersonation allows the data file to reside on a different computer than either the  SQL Server 
+ process or the user. For example, if a user on **Computer_A** has access to a data file on **Computer_B**, and the delegation of credentials has been set appropriately, the user can connect to an instance of  SQL Server 
+ that is running on **Computer_C**, access the data file on **Computer_B**, and bulk import data from that file into a table on **Computer_C**.
+
+## Bulk importing to SQL Server from a remote data file
+
+To use `BULK INSERT` or `INSERT...SELECT * FROM OPENROWSET(BULK...)` to bulk import data from another computer, the data file must be shared between the two computers. To specify a shared data file, use its universal naming convention (UNC) name, which takes the general form, `\\Servername\Sharename\Path\Filename`. 
+
+Additionally, the account used to access the data file must have the permissions that are required for reading the file on the remote disk.
+
+For example, the following `BULK INSERT` statement bulk imports data into the `SalesOrderDetail` table of the `AdventureWorks` database from a data file that is named `newdata.txt`. This data file resides in a shared folder named `\dailyorders` on a network share directory named `salesforce` on a system named `computer2`.
+
+```sql
+BULK INSERT AdventureWorks2022.Sales.SalesOrderDetail
+   FROM '\\computer2\salesforce\dailyorders\neworders.txt';
+```
+
+> **Note:**  
+> This restriction does not apply to the `bcp` utility because the client reads the file independently of  SQL Server 
+.
+
+## Bulk importing from Azure Blob storage
+
+When importing from Azure Blob storage and the data isn't public (anonymous access), create a [CREATE DATABASE SCOPED CREDENTIAL](../../t-sql/statements/create-database-scoped-credential-transact-sql.md) based on a SAS key that is encrypted with a [CREATE MASTER KEY](../../t-sql/statements/create-master-key-transact-sql.md), and then create an [external database source](../../t-sql/statements/create-external-data-source-transact-sql.md) for use in your `BULK INSERT` command.
+
+Alternatively, create a [CREATE DATABASE SCOPED CREDENTIAL](../../t-sql/statements/create-database-scoped-credential-transact-sql.md) based on `MANAGED IDENTITY` to authorize requests for data access in nonpublic storage accounts. When using `MANAGED IDENTITY`, Azure storage must grant permissions to the managed identity of the instance by adding the **Storage Blob Data Contributor** built-in Azure role-based access control (RBAC) role that provides read/write access to the managed identity for the necessary Azure Blob Storage containers. Azure SQL Managed Instance have a system assigned managed identity, and can also have one or more user-assigned managed identities. You can use either system-assigned managed identities or user-assigned managed identities to authorize the requests. For authorization, the `default` identity of the managed instance would be used (that is primary user-assigned managed identity, or system-assigned managed identity if user-assigned managed identity isn't specified).
+
+> **Important:**  
+> Managed Identity is not supported on SQL Server versions before SQL Server 2025.
+
+> **Note:**  
+> Do not use explicit transaction, or you receive a 4861 error.
+
+<a id="using-bulk-insert"></a>
+
+### Use BULK INSERT
+
+The following example shows how to use the `BULK INSERT` command to load data from a csv file in an Azure Blob storage location on which you have created a SAS key. The Azure Blob storage location is configured as an external data source. This requires a database scoped credential using a shared access signature that is encrypted using a master key in the user database.
+
+```sql
+--> Optional - a MASTER KEY is not required if a DATABASE SCOPED CREDENTIAL is not required because the blob is configured for public (anonymous) access!
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'YourStrongPassword1';
+GO
+--> Optional - a DATABASE SCOPED CREDENTIAL is not required because the blob is configured for public (anonymous) access!
+CREATE DATABASE SCOPED CREDENTIAL MyAzureBlobStorageCredential
+ WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+ SECRET = '******srt=sco&sp=rwac&se=2017-02-01T00:55:34Z&st=2016-12-29T16:55:34Z***************';
+
+ -- NOTE: Make sure that you don't have a leading ? in SAS token, and
+ -- that you have at least read permission on the object that should be loaded srt=o&sp=r, and
+ -- that expiration period is valid (all dates are in UTC time)
+
+CREATE EXTERNAL DATA SOURCE MyAzureBlobStorage
+WITH ( TYPE = BLOB_STORAGE,
+          LOCATION = 'https://****************.blob.core.windows.net/invoices'
+          , CREDENTIAL= MyAzureBlobStorageCredential --> CREDENTIAL is not required if a blob is configured for public (anonymous) access!
+);
+
+BULK INSERT Sales.Invoices
+FROM 'inv-2017-12-08.csv'
+WITH (DATA_SOURCE = 'MyAzureBlobStorage');
+```
+
+The following example shows how to use the `BULK INSERT` command to load data from a csv file in an Azure Blob storage location using Managed Identity. The Azure Blob storage location is configured as an external data source.
+
+```sql
+--> Optional - a MASTER KEY is not required if a DATABASE SCOPED CREDENTIAL is not required because the blob is configured for public (anonymous) access!
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'YourStrongPassword1';
+GO
+
+--> Optional - a DATABASE SCOPED CREDENTIAL is not required because the blob is configured for public (anonymous) access!
+CREATE DATABASE SCOPED CREDENTIAL MyAzureBlobStorageCredential
+WITH IDENTITY = 'Managed Identity';
+
+-- NOTE: Make sure you have granted Storage Bob Data Contributor RBAC on storage to provides read/write access to the managed identity for the necessary Azure Blob Storage containers.
+
+CREATE EXTERNAL DATA SOURCE MyAzureBlobStorage
+WITH ( TYPE = BLOB_STORAGE,
+          LOCATION = 'https://****************.blob.core.windows.net/invoices'
+          , CREDENTIAL= MyAzureBlobStorageCredential --> CREDENTIAL is not required if a blob is configured for public (anonymous) access!
+);
+
+BULK INSERT Sales.Invoices
+FROM 'inv-2017-12-08.csv'
+WITH (DATA_SOURCE = 'MyAzureBlobStorage');
+```
+
+> **Important:**  
+> Azure SQL Database does not support reading from Windows files.
+
+<a id="using-openrowset"></a>
+
+### Use OPENROWSET
+
+The following example shows how to use the `OPENROWSET` command to load data from a csv file in an Azure Blob storage location on which you have created a SAS key. The Azure Blob storage location is configured as an external data source. This requires a database scoped credential using a shared access signature that is encrypted using a master key in the user database.
+
+```sql
+--> Optional - a MASTER KEY is not required if a DATABASE SCOPED CREDENTIAL is not required because the blob is configured for public (anonymous) access!
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'YourStrongPassword1';
+GO
+--> Optional - a DATABASE SCOPED CREDENTIAL is not required because the blob is configured for public (anonymous) access!
+CREATE DATABASE SCOPED CREDENTIAL MyAzureBlobStorageCredential
+ WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+ SECRET = '******srt=sco&sp=rwac&se=2017-02-01T00:55:34Z&st=2016-12-29T16:55:34Z***************';
+
+ -- NOTE: Make sure that you don't have a leading ? in SAS token, and
+ -- that you have at least read permission on the object that should be loaded srt=o&sp=r, and
+ -- that expiration period is valid (all dates are in UTC time)
+
+CREATE EXTERNAL DATA SOURCE MyAzureBlobStorage
+WITH ( TYPE = BLOB_STORAGE,
+          LOCATION = 'https://****************.blob.core.windows.net/invoices'
+          , CREDENTIAL= MyAzureBlobStorageCredential --> CREDENTIAL is not required if a blob is configured for public (anonymous) access!
+);
+
+INSERT INTO achievements with (TABLOCK) (id, description)
+SELECT * FROM OPENROWSET(
+   BULK  'csv/achievements.csv',
+   DATA_SOURCE = 'MyAzureBlobStorage',
+   FORMAT ='CSV',
+   FORMATFILE='csv/achievements-c.xml',
+   FORMATFILE_DATA_SOURCE = 'MyAzureBlobStorage'
+    ) AS DataFile;
+```
+
+> **Important:**  
+> Azure SQL Database does not support reading from Windows files.
+
+## Related content
+
+- [INSERT (Transact-SQL)](../../t-sql/statements/insert-transact-sql.md)
+- [SELECT clause (Transact-SQL)](../../t-sql/queries/select-clause-transact-sql.md)
+- [Bulk import and export of data (SQL Server)](bulk-import-and-export-of-data-sql-server.md)
+- [OPENROWSET (Transact-SQL)](../../t-sql/functions/openrowset-transact-sql.md)
+- [SELECT (Transact-SQL)](../../t-sql/queries/select-transact-sql.md)
+- [FROM clause plus JOIN, APPLY, PIVOT (Transact-SQL)](../../t-sql/queries/from-transact-sql.md)
+- [bcp utility](../../tools/bcp/bcp-utility.md)
+- [BULK INSERT (Transact-SQL)](../../t-sql/statements/bulk-insert-transact-sql.md)

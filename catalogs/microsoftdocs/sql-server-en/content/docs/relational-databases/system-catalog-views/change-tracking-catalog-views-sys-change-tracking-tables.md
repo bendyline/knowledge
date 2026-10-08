@@ -1,0 +1,60 @@
+---
+title: "sys.change_tracking_tables (Transact-SQL)"
+description: Change Tracking Catalog Views - sys.change_tracking_tables
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "08/08/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "change_tracking_tables_TSQL"
+  - "sys.change_tracking_tables"
+  - "change_tracking_tables"
+  - "sys.change_tracking_tables_TSQL"
+helpviewer_keywords:
+  - "change tracking [SQL Server], sys.change_tracking_tables"
+  - "sys.change_tracking_tables"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Change Tracking Catalog Views - sys.change_tracking_tables
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns one row for each table in the current database that has change tracking enabled.  
+   
+| Column name | Data type | Description |
+| --- | --- | --- |
+| object_id | **int** | ID of a table that has a change journal. The table can have a change journal even if change tracking is currently off.<br /><br /> The table ID is unique within the database. |
+| is_track_columns_updated_on | **bit** | Current state of change tracking on the table:<br /><br /> 0 = OFF<br /><br /> 1 = ON |
+| begin_version | **bigint** | Version of the database when change tracking began for the table. This version is usually indicates when change tracking was enabled, but this value is reset if the table is truncated. |
+| cleanup_version | **bigint** | Version up to which cleanup might have removed change tracking information. |
+| min_valid_version | **bigint** | Minimum valid version of change tracking information that is available for the table.<br /><br /> When obtaining changes from the table that is associated with this row, the value of last_sync_version must be greater than or equal to the version reported by this column. For more information, see [CHANGE_TRACKING_MIN_VALID_VERSION (Transact-SQL)](../system-functions/change-tracking-min-valid-version-transact-sql.md). |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [CHANGE_TRACKING_MIN_VALID_VERSION (Transact-SQL)](../system-functions/change-tracking-min-valid-version-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Track data changes (SQL Server)](../track-changes/track-data-changes-sql-server.md)

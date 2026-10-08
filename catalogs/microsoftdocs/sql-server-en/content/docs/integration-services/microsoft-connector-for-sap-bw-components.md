@@ -1,0 +1,43 @@
+---
+title: "Microsoft Connector for SAP BW Components"
+description: "Microsoft Connector for SAP BW Components"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+---
+# Microsoft Connector for SAP BW Components
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+This section contains articles that describe the three components of the  Microsoft 
+ Connector 1.1 for SAP BW:  
+  
+- SAP BW connection manager  
+  
+- SAP BW source  
+  
+- SAP BW destination
+
+> **Important:**
+> Microsoft doesn't anticipate providing an updated version of the Connector for SAP BW. Microsoft doesn't own the source code for the SAP BW components, which were developed by a third-party, and as a result can't update them. Consider purchasing the latest SAP connectivity components from a Microsoft ISV partner such as [Theobald Software](https://helpcenter.theobald-software.com/xtract-is/). Microsoft's ISV partners have adapted their SAP connectivity components for SSIS for installation in Azure.
+
+> **Important:**  
+>  The documentation for the Microsoft Connector 1.1 for SAP BW assumes familiarity with the SAP Netweaver BW environment. For more information about SAP Netweaver BW, or for information about how to configure SAP Netweaver BW objects and processes, see your SAP documentation.  
+  
+## In This Section  
+ [SAP BW Connection Manager](connection-manager/sap-bw-connection-manager.md)  
+ Describes the SAP BW connection manager. The connection manager connects the SAP BW source or the SAP BW destination to an SAP Netweaver BW version 7 system.  
+  
+ [SAP BW Source](data-flow/sap-bw-source.md)  
+ Describes the SAP BW source that lets you extract data from an SAP Netweaver BW system.  
+  
+ [SAP BW Destination](data-flow/sap-bw-destination.md)  
+ Describes the SAP BW destination that lets you load data into an SAP Netweaver BW system.

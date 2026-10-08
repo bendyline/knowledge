@@ -1,0 +1,57 @@
+---
+title: "registerOutParameter Method (int, int, int)"
+description: "registerOutParameter Method (int, int, int)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.registerOutParameter (int, int, int)"
+apitype: "Assembly"
+---
+# registerOutParameter Method (int, int, int)
+
+
+  Registers the OUT parameter in the specified ordinal position to the given JDBC type and scale.  
+  
+## Syntax  
+  
+```  
+  
+public void registerOutParameter(int index,  
+                                 int sqlType,  
+                                 int scale)  
+```  
+  
+#### Parameters  
+ *index*  
+  
+ An **int** that indicates the ordinal position of the parameter.  
+  
+ *sqlType*  
+  
+ A JDBC type code as defined in java.sql.Types.  
+  
+ *scale*  
+  
+ An **int** that indicates the number of digits to be placed to the right of the decimal point.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This registerOutParameter method is specified by the registerOutParameter method in the java.sql.CallableStatement interface.  
+  
+ Beginning with  SQL Server 
+ JDBC Driver 3.0, when *sqlType* is of type java.sql.Types.TIME, the behavior of this method is modified by the **sendTimeAsDatetime** connection property ([Setting the Connection Properties](../setting-the-connection-properties.md)) and [SQLServerDataSource.setSendTimeAsDatetime](setsendtimeasdatetime-method-sqlserverdatasource.md).  
+  
+ For more information, see [Configuring How java.sql.Time Values are Sent to the Server](../configuring-how-java-sql-time-values-are-sent-to-the-server.md).  
+  
+## Related content
+
+- [registerOutParameter Method (SQLServerCallableStatement)](registeroutparameter-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

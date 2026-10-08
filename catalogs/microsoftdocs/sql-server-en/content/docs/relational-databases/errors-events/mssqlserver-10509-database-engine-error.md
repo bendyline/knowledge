@@ -1,0 +1,55 @@
+---
+title: "MSSQLSERVER_10509"
+description: "MSSQLSERVER_10509"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "10509 (Database Engine error)"
+---
+# MSSQLSERVER_10509
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 10509 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | PG_INVALID_STMT |
+| Message Text | Cannot create plan guide '%.\*ls' because the statement specified by **\@stmt** or **\@statement_start_offset** either contains a syntax error or is ineligible for use in a plan guide. Provide a single valid  Transact-SQL  statement or a valid starting position of the statement within the batch. To obtain a valid starting position, query the statement_start_offset column in the sys.dm_exec_query_stats dynamic management function. |
+  
+## Explanation  
+The statement specified by **\@stmt** or **\@statement_start_offset** either contains a syntax error or is ineligible for use in a plan guide.  
+  
+## User Action  
+Provide a single valid  Transact-SQL  statement or a valid starting position of the statement within the batch. To obtain a valid starting position, query the statement_start_offset column in the sys.dm_exec_query_stats dynamic management function.  
+  
+## Related content
+
+- [sys.sp_create_plan_guide (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-transact-sql.md)
+- [Plan Guides](../performance/plan-guides.md)
+- [sys.dm_exec_query_stats &#40;Transact-SQL&#41;](../system-dynamic-management-objects/sys-dm-exec-query-stats-transact-sql.md)
+- [sys.sp_create_plan_guide_from_handle (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-from-handle-transact-sql.md)

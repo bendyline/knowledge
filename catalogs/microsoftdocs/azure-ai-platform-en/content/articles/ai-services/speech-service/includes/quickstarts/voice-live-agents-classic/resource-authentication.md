@@ -1,0 +1,62 @@
+---
+author: PatrickFarley
+ms.author: pafarley
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 11/06/2025
+ai-usage: ai-assisted
+---
+
+#### [Microsoft Entra ID](#tab/keyless)
+
+Create a new file named `.env` in the folder where you want to run the code. 
+
+In the `.env` file, add the following environment variables for authentication:
+
+```plaintext
+AZURE_VOICELIVE_ENDPOINT=<your_endpoint>
+AZURE_VOICELIVE_PROJECT_NAME=<your_project_name>
+AZURE_VOICELIVE_AGENT_ID=<your_agent_ID>
+AZURE_VOICELIVE_API_VERSION=2025-10-01
+```
+
+Replace the placeholder values with your actual endpoint, project name, agent ID, and API version.
+
+| Variable name | Value |
+| --- | --- |
+| `AZURE_VOICELIVE_ENDPOINT` | This value can be found in the **Keys and Endpoint** section when examining your resource from the Azure portal. |
+| `AZURE_VOICELIVE_PROJECT_NAME` | The name of your Microsoft Foundry project. |
+| `AZURE_VOICELIVE_AGENT_ID` | The ID of your Microsoft Foundry agent. |
+| `AZURE_VOICELIVE_API_VERSION` | The API version you want to use. For example, `2025-10-01`. |
+
+For more information, see [Keyless authentication](https://learn.microsoft.com/azure/ai-services/authentication) and [setting environment variables](https://learn.microsoft.com/azure/ai-services/cognitive-services-environment-variables).
+
+#### [API key](#tab/api-key)
+
+Create a new file named `.env` in the folder where you want to run the code. 
+
+In the `.env` file, add the following environment variables for authentication:
+
+```plaintext
+AZURE_VOICELIVE_ENDPOINT=<your_endpoint>
+AZURE_VOICELIVE_PROJECT_NAME=<your_project_name>
+AZURE_VOICELIVE_AGENT_ID=<your_agent_ID>
+AZURE_VOICELIVE_API_VERSION=2025-10-01
+AZURE_VOICELIVE_API_KEY=<your_api_key> # Only required if using API key authentication
+```
+
+Replace the placeholder values with your actual endpoint, project name, agent ID, API version, and API key.
+
+| Variable name | Value |
+| --- | --- |
+| `AZURE_VOICELIVE_ENDPOINT` | This value can be found in the **Keys and Endpoint** section when examining your resource from the Azure portal. |
+| `AZURE_VOICELIVE_PROJECT_NAME` | The name of your Microsoft Foundry project. |
+| `AZURE_VOICELIVE_AGENT_ID` | The ID of your Microsoft Foundry agent. |
+| `AZURE_VOICELIVE_API_VERSION` | The API version you want to use. For example, `2025-10-01`. |
+| `AZURE_VOICELIVE_API_KEY` | This value can be found in the **Keys and Endpoint** section when examining your resource from the Azure portal. You can use either `KEY1` or `KEY2`. |
+
+For more information, see [Finding API keys](https://learn.microsoft.com/azure/ai-services/cognitive-services-environment-variables) and [setting environment variables](https://learn.microsoft.com/azure/ai-services/cognitive-services-environment-variables).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/azure-key-vault.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/quickstarts/voice-live-agents-classic/resource-authentication.md)
+
+---

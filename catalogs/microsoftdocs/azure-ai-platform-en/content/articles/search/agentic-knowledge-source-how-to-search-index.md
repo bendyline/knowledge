@@ -1,0 +1,1038 @@
+---
+title: Create a Search Index Knowledge Source
+description: Learn how to create a search index knowledge source, which specifies an index used by a knowledge base for agentic retrieval workloads.
+ms.service: azure-ai-search
+ms.topic: how-to
+ms.date: 08/14/2026
+ai-usage: ai-assisted
+zone_pivot_groups: search-csharp-python-rest
+#customer intent: As an application developer, I want to create a search index knowledge source from an existing index and configure its retrieval fields, filters, and query guidance so that agentic retrieval can use relevant indexed content.
+---
+
+# Create a search index knowledge source
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+
+> **Important:**
+> Features, capabilities, or properties marked (preview) aren't covered by a service-level agreement, aren't recommended for production workloads, and might change or be constrained before they become generally available. The [Azure AI Search preview terms](https://learn.microsoft.com/azure/search/search-preview-terms) apply to all preview functionality, whether it's standalone or part of a generally available feature.
+
+
+A *search index knowledge source* connects an existing Azure AI Search index, including its indexed text and vectors, to an agentic retrieval pipeline. [Knowledge sources](agentic-knowledge-source-overview.md) are created independently, referenced in a [knowledge base](agentic-retrieval-how-to-create-knowledge-base.md), and used as grounding data when the knowledge base is [queried at runtime](agentic-retrieval-how-to-retrieve.md).
+
+### Usage support
+
+| [Azure portal](get-started-portal-agentic-retrieval.md) | [Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/agents/concepts/what-is-foundry-iq#workflow) | [.NET SDK](https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/search/Azure.Search.Documents/CHANGELOG.md) | [Python SDK](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/CHANGELOG.md) | [Java SDK](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/search/azure-search-documents/CHANGELOG.md) | [JavaScript SDK](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/search/search-documents/CHANGELOG.md) | [REST API](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources) |
+| --- | --- | --- | --- | --- | --- | --- |
+| ✔️ | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+
+## Prerequisites
+
++ An Azure AI Search service in any [region that provides agentic retrieval](search-region-support.md).
+
++ A search index containing plain text or vector content with a semantic configuration. [Review the index criteria for agentic retrieval](agentic-retrieval-how-to-create-index.md#criteria-for-agentic-retrieval). The index must be on the same search service as the knowledge base.
+
++ Permission to create knowledge sources. Configure [keyless authentication](search-get-started-rbac.md) with the **Search Service Contributor** role assigned to your user account (recommended) or use an [admin API key](search-security-api-keys.md).
+
+**Applies to: csharp**
+
+
++ Required [`Azure.Search.Documents`](https://www.nuget.org/packages/Azure.Search.Documents) package:
+
+  + For `2026-08-01-preview` features, the latest preview package: `dotnet add package Azure.Search.Documents --prerelease`
+
+  + For `2026-04-01` features, the latest stable package: `dotnet add package Azure.Search.Documents`
+
++ For keyless authentication, the [`Azure.Identity`](https://www.nuget.org/packages/Azure.Identity) package: `dotnet add package Azure.Identity`
+
+
+
+**Applies to: python**
+
+
++ Required [`azure-search-documents`](https://pypi.org/project/azure-search-documents/#history) package:
+
+  + For `2026-08-01-preview` features, the latest preview package: `pip install --pre azure-search-documents`
+
+  + For `2026-04-01` features, the latest stable package: `pip install azure-search-documents`
+
++ For keyless authentication, the [`azure-identity`](https://pypi.org/project/azure-identity/) package: `pip install azure-identity`
+
+
+
+**Applies to: rest**
+
+
++ Required Search Service REST API version:
+
+  + For preview features: [2026-08-01-preview](https://learn.microsoft.com/rest/api/searchservice/operation-groups?view=rest-searchservice-2026-08-01-preview\&preserve-view=true)
+
+  + For generally available features: [2026-04-01](https://learn.microsoft.com/rest/api/searchservice/operation-groups?view=rest-searchservice-2026-04-01\&preserve-view=true)
+
++ For keyless authentication, include a [Microsoft Entra ID token](search-get-started-rbac.md?pivots=rest#get-token) in the `Authorization` header of each HTTP request.
+
+
+
+## Limitations
+
+Agentic retrieval doesn't make retrieve requests honor the underlying index's [scoring profiles](index-add-scoring-profiles.md), including `defaultScoringProfile`. Retrieve responses don't surface `@search.rerankerBoostedScore`.
+
+## Check for existing knowledge sources
+
+
+A knowledge source is a top-level, reusable object. Knowing about existing knowledge sources is helpful for either reuse or naming new objects.
+
+Run the following code to list knowledge sources by name and type.
+
+**Applies to: csharp**
+
+
+```csharp
+// List knowledge sources by name and type
+using Azure.Search.Documents.Indexes;
+
+var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+var knowledgeSources = indexClient.GetKnowledgeSourcesAsync();
+
+Console.WriteLine("Knowledge Sources:");
+
+await foreach (var ks in knowledgeSources)
+{
+    Console.WriteLine($"  Name: {ks.Name}, Type: {ks.GetType().Name}");
+}
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: python**
+
+
+```python
+# List knowledge sources by name and type
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.indexes import SearchIndexClient
+
+index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+
+for ks in index_client.list_knowledge_sources():
+    print(f"  - {ks.name} ({ks.kind})")
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: rest**
+
+
+```http
+### List knowledge sources by name and type
+GET {{search-url}}/knowledgesources?api-version={{api-version}}&$select=name,kind
+Authorization: Bearer {{token}}
+```
+
+**Reference:** [Knowledge Sources - List](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/list)
+
+
+
+You can also return a single knowledge source by name to review its JSON definition.
+
+**Applies to: csharp**
+
+
+```csharp
+using Azure.Search.Documents.Indexes;
+using System.Text.Json;
+
+var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+
+// Specify the knowledge source name to retrieve
+string ksNameToGet = "earth-knowledge-source";
+
+// Get its definition
+var knowledgeSourceResponse = await indexClient.GetKnowledgeSourceAsync(ksNameToGet);
+var ks = knowledgeSourceResponse.Value;
+
+// Serialize to JSON for display
+var jsonOptions = new JsonSerializerOptions 
+{ 
+    WriteIndented = true,
+    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never
+};
+Console.WriteLine(JsonSerializer.Serialize(ks, ks.GetType(), jsonOptions));
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: python**
+
+
+```python
+# Get a knowledge source definition
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.indexes import SearchIndexClient
+import json
+
+index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+
+ks = index_client.get_knowledge_source("knowledge_source_name")
+print(json.dumps(ks.as_dict(), indent = 2))
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: rest**
+
+
+```http
+### Get a knowledge source definition
+GET {{search-url}}/knowledgesources/{{knowledge-source-name}}?api-version={{api-version}}
+Authorization: Bearer {{token}}
+```
+
+**Reference:** [Knowledge Sources - Get](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/get)
+
+
+
+
+The following JSON is an example response for a search index knowledge source. Notice that the knowledge source specifies a single index name and which fields in the index to include in the query.
+
+```json
+{
+  "name": "my-search-index-ks",
+  "kind": "searchIndex",
+  "description": "A sample search index knowledge source.",
+  "encryptionKey": null,
+  "searchIndexParameters": {
+    "searchIndexName": "my-search-index",
+    "semanticConfigurationName": null,
+    "sourceDataFields": [],
+    "searchFields": []
+  }
+}
+```
+
+## Create a knowledge source
+
+Run the following code to create a search index knowledge source.
+
+> **Note:**
+> Starting with the `2026-05-01-preview` API version, `semanticConfigurationName` is optional on search index knowledge sources. Earlier API versions still require `semanticConfigurationName`. If your knowledge source needs to support both older and newer API versions, keep specifying `semanticConfigurationName`.
+
+**Applies to: csharp**
+
+
+# [2026-08-01-preview](#tab/2026-08-01-preview)
+
+```csharp
+// Create a search index knowledge source
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
+using Azure.Identity;
+
+var indexClient = new SearchIndexClient(new Uri(searchEndpoint), new DefaultAzureCredential());
+
+var indexKnowledgeSource = new SearchIndexKnowledgeSource(
+    name: knowledgeSourceName,
+    searchIndexParameters: new SearchIndexKnowledgeSourceParameters(searchIndexName: indexName)
+    {
+        SearchFields = { new SearchIndexFieldReference(name: "page_chunk") },
+        SourceDataFields = { new SearchIndexFieldReference(name: "id"), new SearchIndexFieldReference(name: "page_chunk"), new SearchIndexFieldReference(name: "page_number") }
+    }
+);
+
+await indexClient.CreateOrUpdateKnowledgeSourceAsync(indexKnowledgeSource);
+Console.WriteLine($"Knowledge source '{knowledgeSourceName}' created or updated successfully.");
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient?view=azure-dotnet-preview\&preserve-view=true), [SearchIndexKnowledgeSource](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.models.searchindexknowledgesource?view=azure-dotnet-preview\&preserve-view=true)
+
+# [2026-04-01](#tab/2026-04-01)
+
+```csharp
+// Create a search index knowledge source
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
+using Azure.Identity;
+
+var indexClient = new SearchIndexClient(new Uri(searchEndpoint), new DefaultAzureCredential());
+
+var indexKnowledgeSource = new SearchIndexKnowledgeSource(
+    name: knowledgeSourceName,
+    searchIndexParameters: new SearchIndexKnowledgeSourceParameters(searchIndexName: indexName)
+    {
+        SemanticConfigurationName = "semantic_config",
+        SearchFields = { new SearchIndexFieldReference(name: "page_chunk") },
+        SourceDataFields = { new SearchIndexFieldReference(name: "id"), new SearchIndexFieldReference(name: "page_chunk"), new SearchIndexFieldReference(name: "page_number") }
+    }
+);
+
+await indexClient.CreateOrUpdateKnowledgeSourceAsync(indexKnowledgeSource);
+Console.WriteLine($"Knowledge source '{knowledgeSourceName}' created or updated successfully.");
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient?view=azure-dotnet\&preserve-view=true), [SearchIndexKnowledgeSource](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.models.searchindexknowledgesource?view=azure-dotnet\&preserve-view=true)
+
+---
+
+
+
+**Applies to: python**
+
+
+# [2026-08-01-preview](#tab/2026-08-01-preview)
+
+```python
+# Create a search index knowledge source
+from azure.identity import DefaultAzureCredential
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters, SearchIndexFieldReference
+
+index_client = SearchIndexClient(endpoint = "<search-endpoint>", credential = DefaultAzureCredential())
+
+knowledge_source = SearchIndexKnowledgeSource(
+    name = "my-search-index-ks",
+    description= "This knowledge source pulls from an existing index designed for agentic retrieval.",
+    encryption_key = None,
+    search_index_parameters = SearchIndexKnowledgeSourceParameters(
+        search_index_name = "search_index_name",
+        source_data_fields = [
+            SearchIndexFieldReference(name="description"),
+            SearchIndexFieldReference(name="category"),
+        ],
+        search_fields = [
+            SearchIndexFieldReference(name="id")
+        ],
+    )
+)
+
+index_client.create_or_update_knowledge_source(knowledge_source)
+print(f"Knowledge source '{knowledge_source.name}' created or updated successfully.")
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+# [2026-04-01](#tab/2026-04-01)
+
+```python
+# Create a search index knowledge source
+from azure.identity import DefaultAzureCredential
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters, SearchIndexFieldReference
+
+index_client = SearchIndexClient(endpoint = "<search-endpoint>", credential = DefaultAzureCredential())
+
+knowledge_source = SearchIndexKnowledgeSource(
+    name = "my-search-index-ks",
+    description= "This knowledge source pulls from an existing index designed for agentic retrieval.",
+    encryption_key = None,
+    search_index_parameters = SearchIndexKnowledgeSourceParameters(
+        search_index_name = "search_index_name",
+        semantic_configuration_name = "semantic_configuration_name",
+        source_data_fields = [
+            SearchIndexFieldReference(name="description"),
+            SearchIndexFieldReference(name="category"),
+        ],
+        search_fields = [
+            SearchIndexFieldReference(name="id")
+        ],
+    )
+)
+
+index_client.create_or_update_knowledge_source(knowledge_source)
+print(f"Knowledge source '{knowledge_source.name}' created or updated successfully.")
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+---
+
+
+
+**Applies to: rest**
+
+
+# [2026-08-01-preview](#tab/2026-08-01-preview)
+
+```http
+### Create a search index knowledge source
+PUT {{search-endpoint}}/knowledgesources/my-search-index-ks?api-version=2026-08-01-preview
+Authorization: Bearer {{search-access-token}}
+Content-Type: application/json
+
+{
+    "name": "my-search-index-ks",
+    "kind": "searchIndex",
+    "description": "This knowledge source pulls from an existing index designed for agentic retrieval.",
+    "encryptionKey": null,
+    "searchIndexParameters": {
+        "searchIndexName": "<index-name>",
+        "sourceDataFields": [
+          { "name": "description" },
+          { "name": "category" }
+        ]
+    }
+}
+```
+
+**Reference:** [Knowledge Sources - Create or Update](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true)
+
+# [2026-04-01](#tab/2026-04-01)
+
+```http
+### Create a search index knowledge source
+PUT {{search-endpoint}}/knowledgesources/my-search-index-ks?api-version=2026-04-01
+Authorization: Bearer {{search-access-token}}
+Content-Type: application/json
+
+{
+    "name": "my-search-index-ks",
+    "kind": "searchIndex",
+    "description": "This knowledge source pulls from an existing index designed for agentic retrieval.",
+    "encryptionKey": null,
+    "searchIndexParameters": {
+        "searchIndexName": "<index-name>",
+        "semanticConfigurationName": "my-semantic-config",
+        "sourceDataFields": [
+          { "name": "description" },
+          { "name": "category" }
+        ]
+    }
+}
+```
+
+**Reference:** [Knowledge Sources - Create or Update](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/create-or-update?view=rest-searchservice-2026-04-01\&preserve-view=true)
+
+---
+
+
+
+### Persist a base filter on a knowledge source (preview)
+
+Starting with the `2026-05-01-preview` API version, a search index knowledge source can persist a default filter through the `baseFilter` property. Use `baseFilter` when the same filter expression should apply to every retrieve request that uses the knowledge source, so callers don't have to repeat the filter on every call.
+
+The following example stores a base filter on a search index knowledge source.
+
+**Applies to: csharp**
+
+
+```csharp
+var knowledgeSource = new SearchIndexKnowledgeSource(
+    name: "public-docs-ks",
+    searchIndexParameters: new SearchIndexKnowledgeSourceParameters(searchIndexName: "public-docs-index")
+    {
+        BaseFilter = "isPublished eq true and accessScope eq 'public'"
+    }
+);
+
+await indexClient.CreateOrUpdateKnowledgeSourceAsync(knowledgeSource);
+```
+
+**Reference:** [SearchIndexKnowledgeSourceParameters](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.models.searchindexknowledgesourceparameters?view=azure-dotnet-preview\&preserve-view=true)
+
+
+
+**Applies to: python**
+
+
+```python
+knowledge_source = SearchIndexKnowledgeSource(
+    name="public-docs-ks",
+    search_index_parameters=SearchIndexKnowledgeSourceParameters(
+        search_index_name="public-docs-index",
+        base_filter="isPublished eq true and accessScope eq 'public'",
+    ),
+)
+
+index_client.create_or_update_knowledge_source(knowledge_source)
+```
+
+**Reference:** [SearchIndexKnowledgeSourceParameters](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.models.searchindexknowledgesourceparameters)
+
+
+
+**Applies to: rest**
+
+
+```http
+PUT {{search-endpoint}}/knowledgesources/public-docs-ks?api-version=2026-08-01-preview
+Content-Type: application/json
+Authorization: Bearer {{search-access-token}}
+
+{
+  "name": "public-docs-ks",
+  "kind": "searchIndex",
+  "searchIndexParameters": {
+    "searchIndexName": "public-docs-index",
+    "baseFilter": "isPublished eq true and accessScope eq 'public'"
+  }
+}
+```
+
+**Reference:** [Knowledge Sources - Create or Update](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true)
+
+
+
+At retrieve time, `knowledgeSourceParams.filterAddOn` adds request-specific constraints to the stored base filter:
+
+**Applies to: csharp**
+
+
+```csharp
+var retrievalRequest = new KnowledgeBaseRetrievalRequest();
+retrievalRequest.KnowledgeSourceParams.Add(
+    new SearchIndexKnowledgeSourceParams("public-docs-ks")
+    {
+        FilterAddOn = "category eq 'Benefits'"
+    }
+);
+```
+
+
+
+**Applies to: python**
+
+
+```python
+request = KnowledgeBaseRetrievalRequest(
+    knowledge_source_params=[
+        SearchIndexKnowledgeSourceParams(
+            knowledge_source_name="public-docs-ks",
+            filter_add_on="category eq 'Benefits'",
+        ),
+    ],
+)
+```
+
+
+
+**Applies to: rest**
+
+
+```json
+{
+  "knowledgeSourceParams": [
+    {
+      "knowledgeSourceName": "public-docs-ks",
+      "kind": "searchIndex",
+      "filterAddOn": "category eq 'Benefits'"
+    }
+  ]
+}
+```
+
+
+
+The effective filter is composed as:
+
+```text
+baseFilter AND filterAddOn
+```
+
+Because the filters are combined with `AND`, `filterAddOn` can only narrow the persisted base filter. It can't replace or broaden it.
+
+### Configure query hints (preview)
+
+Starting with the `2026-08-01-preview` API version, query hints guide the query-planning model to generate filters and ranking boosts from a user's request. Store default hints in `searchIndexParameters.queryHints`, which can hold both filters and boosts.
+
+The following example stores one filter hint and one `fieldValue` boost on a knowledge source for `product-docs-index`, which has a filterable `productFamily` field and a searchable `language` field.
+
+**Applies to: csharp**
+
+
+```csharp
+using System;
+using Azure.Identity;
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
+
+var endpoint = new Uri("<search-endpoint>");
+var indexClient = new SearchIndexClient(
+    endpoint,
+    new DefaultAzureCredential());
+
+var queryHints = new SearchIndexKnowledgeSourceQueryHints();
+queryHints.Filters.Add(
+    new SearchIndexKnowledgeSourceFilterHint(
+        "productFamily",
+        ["Model-X100", "Model-X200"])
+    {
+        FilterInstructions =
+            "Filter only when the user names a model."
+    });
+
+var languageBoost =
+    new SearchIndexKnowledgeSourceFieldValueBoost(
+        "language",
+        2.0);
+languageBoost.FieldValues.Add("en-US");
+languageBoost.FieldValues.Add("ja-JP");
+languageBoost.BoostInstructions =
+    "Prefer the language requested by the user.";
+queryHints.Boosts.Add(languageBoost);
+
+var knowledgeSource = new SearchIndexKnowledgeSource(
+    "product-docs-ks",
+    new SearchIndexKnowledgeSourceParameters(
+        "product-docs-index")
+    {
+        QueryHints = queryHints
+    });
+
+await indexClient.CreateOrUpdateKnowledgeSourceAsync(
+    knowledgeSource);
+```
+
+**Reference:** [SearchIndexKnowledgeSourceParameters](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.models.searchindexknowledgesourceparameters?view=azure-dotnet-preview\&preserve-view=true)
+
+
+
+**Applies to: python**
+
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import (
+    SearchIndexKnowledgeSource,
+    SearchIndexKnowledgeSourceFieldValueBoost,
+    SearchIndexKnowledgeSourceFilterHint,
+    SearchIndexKnowledgeSourceParameters,
+    SearchIndexKnowledgeSourceQueryHints,
+)
+
+endpoint = "<search-endpoint>"
+index_client = SearchIndexClient(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential(),
+)
+
+query_hints = SearchIndexKnowledgeSourceQueryHints(
+    filters=[
+        SearchIndexKnowledgeSourceFilterHint(
+            field="productFamily",
+            field_values=["Model-X100", "Model-X200"],
+            filter_instructions=(
+                "Filter only when the user names a model."
+            ),
+        )
+    ],
+    boosts=[
+        SearchIndexKnowledgeSourceFieldValueBoost(
+            field="language",
+            field_values=["en-US", "ja-JP"],
+            boost=2.0,
+            boost_instructions=(
+                "Prefer the language requested by the user."
+            ),
+        )
+    ],
+)
+
+knowledge_source = SearchIndexKnowledgeSource(
+    name="product-docs-ks",
+    search_index_parameters=SearchIndexKnowledgeSourceParameters(
+        search_index_name="product-docs-index",
+        query_hints=query_hints,
+    ),
+)
+
+index_client.create_or_update_knowledge_source(knowledge_source)
+```
+
+**Reference:** [SearchIndexKnowledgeSourceParameters](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.models.searchindexknowledgesourceparameters)
+
+
+
+**Applies to: rest**
+
+
+```http
+PUT {{search-endpoint}}/knowledgesources('product-docs-ks')?api-version=2026-08-01-preview
+Content-Type: application/json
+Authorization: Bearer {{search-access-token}}
+
+{
+  "name": "product-docs-ks",
+  "kind": "searchIndex",
+  "searchIndexParameters": {
+    "searchIndexName": "product-docs-index",
+    "queryHints": {
+      "filters": [{
+        "field": "productFamily",
+        "fieldValues": ["Model-X100", "Model-X200"],
+        "filterInstructions": "Filter only when the user names a model."
+      }],
+      "boosts": [{
+        "kind": "fieldValue",
+        "field": "language",
+        "fieldValues": ["en-US", "ja-JP"],
+        "boost": 2.0,
+        "boostInstructions": "Prefer the language requested by the user."
+      }]
+    }
+  }
+}
+```
+
+**Reference:** [Knowledge Sources - Create or Update](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true)
+
+
+
+Configure each hint according to the following requirements:
+
+| Hint | Field requirements | `fieldValues` behavior | Collection limits |
+| --- | --- | --- | --- |
+| Filter | `field` must identify a filterable index field. | Required. List the exhaustive set of allowed values. If the request doesn't map to a listed value, the planner is instructed not to filter on that field. | Up to five hints with unique fields. Each value can contain up to 128 characters, and all values in one hint can contain up to 2,048 characters combined. |
+| `fieldValue` boost | `field` must identify a searchable field that uses a language, standard, or default analyzer. | Optional examples. If you omit them, use `boostInstructions` to explain which value to select from the request. | Up to five hints with unique fields. Each hint can contain up to 20 values, with 128 characters per value and 1,024 characters combined. |
+| `multiWordExpression` boost | Omit `field`. The index must contain at least one searchable field that uses a language, standard, or default analyzer. | Optional examples of domain-specific phrases. | One hint. It can contain up to 20 values, with 128 characters per value and 1,024 characters combined. |
+
+For either boost kind, `boost` is required and must be a finite number greater than `1.0`. Higher values give matching documents more influence in ranking without excluding other documents. Limit each optional `filterInstructions` or `boostInstructions` value to 1,024 characters.
+
+Use a `multiWordExpression` boost for domain-specific phrases whose meaning isn't captured by the individual words. Provide example phrases in `fieldValues`, or omit them and let `boostInstructions` and the user's request guide phrase selection:
+
+```json
+{
+  "boosts": [{
+    "kind": "multiWordExpression",
+    "fieldValues": ["deferred tax", "wash sale"],
+    "boost": 3.0,
+    "boostInstructions": "Boost domain terms used as complete phrases."
+  }]
+}
+```
+
+When you design query hints, keep the following behaviors in mind:
+
++ Hints are best effort, so the model might not generate a filter or boost for every request. For required constraints, such as authorization boundaries, use [document-level access control](search-document-level-access-overview.md) or a [deterministic filter](#persist-a-base-filter-on-a-knowledge-source-preview) instead.
+
++ Hints need model-driven query planning, so they aren't applied when the retrieval reasoning effort is `minimal`. At other effort levels, a GPT-4o or GPT-4.1 family model returns HTTP 400 when the stored `queryHints` object contains a filter. The service checks stored filters before applying `queryHintOverrides`, so an empty or boosts-only override doesn't bypass this validation. Stored `fieldValue` and `multiWordExpression` boosts alone don't trigger the validation.
+
++ Generated filters combine with `baseFilter` and `filterAddOn` by using `AND`. A generated boost rewrites the query in full Lucene syntax while preserving the original terms.
+
++ Query hints use indexed values as grounding. They don't configure analyzers or enable language detection. The `language` values in these examples are ordinary index metadata.
+
+To replace stored hints for a single retrieve request and verify the generated filter or boost, see [Override stored query hints at query time (preview)](agentic-retrieval-how-to-retrieve.md#override-stored-query-hints-at-query-time-preview).
+
+## Assign to a knowledge base
+
+If you're satisfied with the knowledge source, [add it to a knowledge base](agentic-retrieval-how-to-create-knowledge-base.md).
+
+## Query a knowledge base
+
+After the knowledge base is configured, [call the retrieve action or MCP endpoint](agentic-retrieval-how-to-retrieve.md) to query the knowledge source.
+
+## Delete a knowledge source
+
+
+Before you can delete a knowledge source, you must delete any knowledge base that references it or update the knowledge base definition to remove the reference. For knowledge sources that generate an index and indexer pipeline, all *generated objects* are also deleted. However, if you used an existing index to create a knowledge source, your index isn't deleted.
+
+If you try to delete a knowledge source that's in use, the action fails and returns a list of affected knowledge bases.
+
+To delete a knowledge source:
+
+**Applies to: csharp**
+
+
+1. Get a list of all knowledge bases on your search service.
+
+    ```csharp
+    using Azure.Search.Documents.Indexes;
+    
+    var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+    var knowledgeBases = indexClient.GetKnowledgeBasesAsync();
+    
+    Console.WriteLine("Knowledge Bases:");
+    
+    await foreach (var kb in knowledgeBases)
+    {
+        Console.WriteLine($"  - {kb.Name}");
+    }
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+        "@odata.context": "https://my-search-service.search.windows.net/$metadata#knowledgebases(name)",
+        "value": [
+        {
+            "name": "my-kb"
+        },
+        {
+            "name": "my-kb-2"
+        }
+        ]
+    }
+   ```
+
+1. Get an individual knowledge base definition to check for knowledge source references.
+
+    ```csharp
+    using Azure.Search.Documents.Indexes;
+    using System.Text.Json;
+    
+    var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+    
+    // Specify the knowledge base name to retrieve
+    string kbNameToGet = "earth-knowledge-base";
+    
+    // Get a specific knowledge base definition
+    var knowledgeBaseResponse = await indexClient.GetKnowledgeBaseAsync(kbNameToGet);
+    var kb = knowledgeBaseResponse.Value;
+    
+    // Serialize to JSON for display
+    string json = JsonSerializer.Serialize(kb, new JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine(json);
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+      "Name": "earth-knowledge-base",
+      "KnowledgeSources": [
+        {
+          "Name": "earth-knowledge-source"
+        }
+      ],
+      "Models": [
+        {}
+      ],
+      "RetrievalReasoningEffort": {},
+      "OutputMode": {},
+      "ETag": "\u00220x8DE278629D782B3\u0022",
+      "EncryptionKey": null,
+      "Description": null,
+      "RetrievalInstructions": null,
+      "AnswerInstructions": null
+    }
+   ```
+
+1. Either delete the knowledge base or, if you have multiple knowledge sources, update the knowledge base to remove the source. This example shows deletion.
+
+    ```csharp
+    using Azure.Search.Documents.Indexes;
+    var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+    
+    await indexClient.DeleteKnowledgeBaseAsync(knowledgeBaseName);
+    System.Console.WriteLine($"Knowledge base '{knowledgeBaseName}' deleted successfully.");
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+1. Delete the knowledge source.
+
+    ```csharp
+    await indexClient.DeleteKnowledgeSourceAsync(knowledgeSourceName);
+    System.Console.WriteLine($"Knowledge source '{knowledgeSourceName}' deleted successfully.");
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: python**
+
+
+1. Get a list of all knowledge bases on your search service.
+
+    ```python
+    # Get knowledge bases
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    
+    print("Knowledge Bases:")
+    for kb in index_client.list_knowledge_bases():
+        print(f"  - {kb.name}")
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+        "@odata.context": "https://my-search-service.search.windows.net/$metadata#knowledgebases(name)",
+        "value": [
+        {
+            "name": "my-kb"
+        },
+        {
+            "name": "my-kb-2"
+        }
+        ]
+    }
+   ```
+
+1. Get an individual knowledge base definition to check for knowledge source references.
+
+    ```python
+    # Get a knowledge base definition
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    kb = index_client.get_knowledge_base("knowledge_base_name")
+    print(kb)
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+      "name": "my-kb",
+      "description": null,
+      "retrievalInstructions": null,
+      "answerInstructions": null,
+      "outputMode": null,
+      "knowledgeSources": [
+        {
+          "name": "my-blob-ks"
+        }
+      ],
+      "models": [],
+      "encryptionKey": null,
+      "retrievalReasoningEffort": {
+        "kind": "low"
+      }
+    }
+   ```
+
+1. Either delete the knowledge base or, if you have multiple knowledge sources, update the knowledge base to remove the source. This example shows deletion.
+
+    ```python
+    # Delete a knowledge base
+    from azure.core.credentials import AzureKeyCredential 
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    index_client.delete_knowledge_base("knowledge_base_name")
+    print(f"Knowledge base deleted successfully.")
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+1. Delete the knowledge source.
+
+    ```python
+    # Delete a knowledge source
+    from azure.core.credentials import AzureKeyCredential 
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    index_client.delete_knowledge_source("knowledge_source_name")
+    print(f"Knowledge source deleted successfully.")
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: rest**
+
+
+1. Get a list of all knowledge bases on your search service.
+
+    ```http
+    ### Get knowledge bases
+    GET {{search-url}}/knowledgebases?api-version={{api-version}}&$select=name
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Bases - List](https://learn.microsoft.com/rest/api/searchservice/knowledge-bases/list)
+
+   An example response might look like the following:
+
+   ```json
+    {
+        "@odata.context": "https://my-search-service.search.windows.net/$metadata#knowledgebases(name)",
+        "value": [
+        {
+            "name": "my-kb"
+        },
+        {
+            "name": "my-kb-2"
+        }
+        ]
+    }
+   ```
+
+1. Get an individual knowledge base definition to check for knowledge source references.
+
+    ```http
+    ### Get a knowledge base definition
+    GET {{search-url}}/knowledgebases/{{knowledge-base-name}}?api-version={{api-version}}
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Bases - Get](https://learn.microsoft.com/rest/api/searchservice/knowledge-bases/get)
+
+   An example response might look like the following:
+
+   ```json
+    {
+      "name": "my-kb",
+      "description": null,
+      "retrievalInstructions": null,
+      "answerInstructions": null,
+      "outputMode": null,
+      "knowledgeSources": [
+        {
+          "name": "my-blob-ks"
+        }
+      ],
+      "models": [],
+      "encryptionKey": null,
+      "retrievalReasoningEffort": {
+        "kind": "low"
+      }
+    }
+   ```
+
+1. Either delete the knowledge base or, if you have multiple knowledge sources, update the knowledge base to remove the source. This example shows deletion.
+
+    ```http
+    ### Delete a knowledge base
+    DELETE {{search-url}}/knowledgebases/{{knowledge-base-name}}?api-version={{api-version}}
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Bases - Delete](https://learn.microsoft.com/rest/api/searchservice/knowledge-bases/delete)
+
+1. Delete the knowledge source.
+
+    ```http
+    ### Delete a knowledge source
+    DELETE {{search-url}}/knowledgesources/{{knowledge-source-name}}?api-version={{api-version}}
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Sources - Delete](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/delete)
+
+
+
+
+## Related content
+
++ [Agentic retrieval in Azure AI Search](agentic-retrieval-overview.md)
++ [What is a knowledge source?](agentic-knowledge-source-overview.md)
++ [Create a knowledge base](agentic-retrieval-how-to-create-knowledge-base.md)
++ [Query a knowledge base](agentic-retrieval-how-to-retrieve.md)

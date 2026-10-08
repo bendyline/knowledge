@@ -1,0 +1,305 @@
+---
+title: Azure Files frequently asked questions (FAQ)
+description: Get answers to frequently asked questions (FAQ) about Azure Files and Azure File Sync. You can mount Azure file shares concurrently on cloud or on-premises Windows, Linux, or macOS deployments.
+author: khdownie
+ms.service: azure-file-storage
+ms.custom: linux-related-content
+ms.date: 09/30/2025
+ms.author: kendownie
+ms.topic: faq
+# Customer intent: As a cloud storage administrator, I want to understand the capabilities of Azure Files and Azure File Sync, so that I can effectively manage file shares and ensure data consistency across multiple platforms.
+---
+
+# Frequently asked questions (FAQ) about Azure Files and Azure File Sync
+
+[Azure Files](storage-files-introduction.md) offers fully managed file shares in the cloud that you can access through the industry-standard [Server Message Block (SMB) protocol](https://learn.microsoft.com/windows/win32/fileio/microsoft-smb-protocol-and-cifs-protocol-overview) and the [Network File System (NFS) protocol](https://en.wikipedia.org/wiki/Network_File_System). You can mount Azure file shares concurrently on cloud or on-premises deployments of Windows, Linux, and macOS. By using [Azure File Sync](../file-sync/file-sync-introduction.md), you can cache Azure file shares on Windows Server machines for fast access to data close to where it's used.
+
+## Azure File Sync FAQ
+
+* <a id="cross-domain-sync"></a>
+  **Can I have domain-joined and non-domain-joined servers in the same sync group?**  
+    Yes. A sync group can contain server endpoints that have different Active Directory memberships, even if they aren't domain-joined. Although this configuration technically works, we don't recommend this as a typical configuration because access control lists (ACLs) that are defined for files and folders on one server might not be able to be enforced by other servers in the sync group. For best results, we recommend syncing between servers that are in the same Active Directory forest, between servers that are in different Active Directory forests but have [established trust relationships](storage-files-identity-multiple-forests.md#how-forest-trust-relationships-work), or between servers that aren't in a domain. We recommend that you avoid using a mix of these configurations.
+
+* <a id="afs-change-detection"></a>
+  **I created a file directly in my Azure file share by using SMB or in the portal. How long does it take for the file to sync to the servers in the sync group?**  
+    Changes made to the Azure file share by using the Azure portal or SMB are not immediately detected and replicated like changes to the server endpoint. Azure Files does not yet have change notifications or journaling, so there's no way to automatically initiate a sync session when files are changed. On Windows Server, Azure File Sync uses [Windows USN journaling](https://learn.microsoft.com/windows/win32/fileio/change-journals) to automatically initiate a sync session when files change.
+
+To detect changes to the Azure file share, Azure File Sync has a scheduled job called a *change detection job*. A change detection job enumerates every file in the file share, and then compares it to the sync version for that file. When the change detection job determines that files have changed, Azure File Sync initiates a sync session. The change detection job is initiated every 24 hours. Because the change detection job works by enumerating every file in the Azure file share, change detection takes longer in larger namespaces than in smaller namespaces. For large namespaces, it might take longer than once every 24 hours to determine which files have changed.
+
+To immediately sync files that are changed in the Azure file share, the **Invoke-AzStorageSyncChangeDetection** PowerShell cmdlet can be used to manually initiate the detection of changes in the Azure file share. This cmdlet is intended for scenarios where some type of automated process is making changes in the Azure file share or the changes are done by an administrator (like moving files and directories into the share). For end user changes, the recommendation is to install the Azure File Sync agent in an IaaS VM and have end users access the file share through the IaaS VM. This way all changes will quickly sync to other agents without the need to use the Invoke-AzStorageSyncChangeDetection cmdlet. To learn more, see the [Invoke-AzStorageSyncChangeDetection](https://learn.microsoft.com/powershell/module/az.storagesync/invoke-azstoragesyncchangedetection) documentation.
+
+We are exploring adding change detection for an Azure file share similar to USN for volumes on Windows Server. Help us prioritize this feature for future development by voting for it at [Azure Community Feedback](https://feedback.azure.com/d365community/idea/26f8aa9d-3725-ec11-b6e6-000d3a4f0f84).
+
+
+
+* <a id="afs-conflict-resolution"></a>
+  **If the same file is changed on two servers at approximately the same time, what happens?**  
+    File conflicts are created when the file in the Azure file share doesn't match the file in the server endpoint location (size and/or last modified time is different). 
+    
+    The following scenarios can cause file conflicts:
+    - A file is created or modified in an endpoint (for example, Server A). If the same file is modified on a different endpoint before the change on Server A is synced to that endpoint, a conflict file is created.  
+    - The file existed in the Azure file share and server endpoint location prior to the server endpoint creation. If the file size and/or last modified time is different between the file on the server and Azure file share when the server endpoint is created, a conflict file is created.  
+    - You recreate the sync database due to corruption or knowledge limit reached. After you recreate the database, sync enters a mode called reconciliation. If the file size and last modified time are different between the file on the server and Azure file share when reconciliation occurs, a conflict file is created. 
+  
+    After the initial upload to the Azure file share is complete, Azure File Sync doesn't overwrite any files in your sync group. Instead, it uses a simple conflict-resolution strategy: it keeps both changes to files that are changed in two endpoints at the same time. The most recently written change keeps the original file name. The older file (determined by LastWriteTime) has the endpoint name and the conflict number appended to the file name. For server endpoints, the endpoint name is the name of the server. For cloud endpoints, the endpoint name is **Cloud**. The name follows this taxonomy:
+   
+    `\<FileNameWithoutExtension\>-\<endpointName\>\[-#\].\<ext\>`
+
+    For example, the first conflict of CompanyReport.docx becomes CompanyReport-CentralServer.docx if CentralServer is where the older write occurred. The second conflict is named CompanyReport-CentralServer-1.docx. Azure File Sync supports 100 conflict files per file. After the maximum number of conflict files is reached, the file fails to sync until the number of conflict files is less than 100.
+  
+* <a id="afs-tiered-files-tiering-disabled"></a>
+  **I have cloud tiering disabled, why are there tiered files in the server endpoint location?**  
+    There are two reasons why tiered files might exist in the server endpoint location:
+
+    - When adding a new server endpoint to an existing sync group, if you choose either the recall namespace first option or recall namespace only option for initial download mode, files will show up as tiered until they're downloaded locally. To avoid this, select the **avoid tiered files** option for initial download mode. To manually recall files, use the [`Invoke-StorageSyncFileRecall`](../file-sync/file-sync-how-to-manage-tiered-files.md#how-to-recall-a-tiered-file-to-disk) cmdlet.
+
+    - If cloud tiering was enabled on the server endpoint and then disabled, files will remain tiered until they're accessed.
+
+* <a id="afs-tiered-files-not-showing-thumbnails"></a>
+  **Why are my tiered files not showing thumbnails or previews in Windows File Explorer?**  
+    For tiered files, thumbnails and previews won't be visible at your server endpoint. This is expected behavior because the thumbnail cache feature in Windows intentionally skips reading files with the offline attribute. With Cloud Tiering enabled, reading through tiered files would cause them to be downloaded (recalled). However, you can configure Azure File Sync to [skip setting the offline attribute](#afs-tiered-files-skip-offline-attribute).
+
+    This behavior isn't specific to Azure File Sync. Windows File Explorer displays a "grey X" for any files that have the offline attribute set. You'll see the X icon when accessing files over SMB. For a detailed explanation of this behavior, see [Why don't I get thumbnails for files that are marked offline?](https://devblogs.microsoft.com/oldnewthing/20170503-00/?p=96105)
+
+    For questions on how to manage tiered files, see [How to manage tiered files](../file-sync/file-sync-how-to-manage-tiered-files.md).
+
+* <a id="afs-tiered-files-skip-offline-attribute"></a>
+  **Is there an option to skip the offline attribute for tiered files?**
+
+    If you prefer to make thumbnails and previews visible for tiered files, you can configure Azure File Sync to skip setting the offline attribute.
+
+    1. Add the following registry key on the server:
+
+       ```cmd
+       reg ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Azure\StorageSync" /v SkipOfflineAttributeOnTieredFile /t REG_DWORD /d 1 /f
+       ```
+
+    1. Restart the **FileSyncSvc** service.
+
+    After configuration:
+
+    - New tiered files will no longer have the offline attribute.
+    - Existing tiered files will be updated in the next maintenance run (occurs every 24 hours).
+
+    > **Note:**  
+    > This setting is applied globally across all files, not to specific extensions. Without the offline attribute, Windows File Explorer shows a different icon. You can add the **Attributes** column in File Explorer to identify tiered files (attributes `ALM`). Based on usage patterns, skipping the offline attribute might increase file recalls, so you should monitor recall activity and ensure egress costs remain within an acceptable range. See [How to manage tiered files](../file-sync/file-sync-how-to-manage-tiered-files.md).
+
+* <a id="afs-tiered-files-out-of-endpoint"></a>
+  **Why do tiered files exist outside of the server endpoint namespace?**  
+    Before Azure File Sync agent version 3, Azure File Sync blocked moving tiered files outside the server endpoint but on the same volume as the server endpoint. Copy operations, moves of non-tiered files, and moves of tiered files to other volumes weren't affected. The reason for this behavior was the implicit assumption that File Explorer and other Windows APIs have that move operations on the same volume are (nearly) instantaneous rename operations. This assumption means moves make File Explorer or other move methods (such as command line or PowerShell) appear unresponsive while Azure File Sync recalls the data from the cloud. Starting with [Azure File Sync agent version 3.0.12.0](../file-sync/file-sync-release-notes.md#supported-versions), Azure File Sync allows you to move a tiered file outside of the server endpoint. The negative effects mentioned earlier are avoided by allowing the tiered file to exist as a tiered file outside of the server endpoint and then recalling the file in the background. This approach means moves on the same volume are instantaneous, and Azure File Sync recalls the file to disk after the move is complete.
+
+* <a id="afs-do-not-delete-server-endpoint"></a>
+  **I'm having an issue with Azure File Sync on my server (sync, cloud tiering, etc.). Should I remove and recreate my server endpoint?**  
+    No: removing a server endpoint isn't like rebooting a server! Removing and recreating the server endpoint is almost never an appropriate solution to fixing issues with sync, cloud tiering, or other aspects of Azure File Sync. Removing a server endpoint is a destructive operation. It might result in data loss in the case that tiered files exist outside of the server endpoint namespace. For more information, see [why do tiered files exist outside of the server endpoint namespace](storage-files-faq.md#afs-tiered-files-out-of-endpoint) for more information. Or it might result in inaccessible files for tiered files that exist within the server endpoint namespace. These issues won't resolve when the server endpoint is recreated. Tiered files may exist within your server endpoint namespace even if you never had cloud tiering enabled. That's why we recommend that you don't remove the server endpoint unless you would like to stop using Azure File Sync with this particular folder or have been explicitly instructed to do so by a Microsoft engineer. For more information on remove server endpoints, see [Remove a server endpoint](../file-sync/file-sync-server-endpoint-delete.md).
+
+    
+* <a id="afs-resource-move"></a>
+  **Can I move the storage sync service and/or storage account to a different resource group, subscription, or Microsoft Entra tenant?**  
+   Yes, you can move the storage sync service and/or storage account to a different resource group, subscription, or Microsoft Entra tenant. After you move the storage sync service or storage account, you need to give the Microsoft.StorageSync application access to the storage account. Follow these steps:
+   
+   1. Sign in to the Azure portal and select **Access control (IAM)** from the service menu.
+   1. Select the **Role assignments** tab to list the users and applications (*service principals*) that have access to your storage account.
+   1. Verify **Microsoft.StorageSync** or **Hybrid File Sync Service** (old application name) appears in the list with the **Reader and Data Access** role.
+
+      If **Microsoft.StorageSync** or **Hybrid File Sync Service** doesn't appear in the list, follow these steps:
+      
+      - Select **Add**.
+      - In the **Role** field, select **Reader and Data Access**.
+      - In the **Select** field, type **Microsoft.StorageSync**, select the role and then select **Save**.
+    
+      > **Note:**  
+      > When creating the cloud endpoint, the storage sync service and storage account must be in the same Microsoft Entra tenant. After the cloud endpoint is created, you can move the storage sync service and storage account to different Microsoft Entra tenants.
+    
+* <a id="afs-ntfs-acls"></a>
+  **Does Azure File Sync preserve directory/file level NTFS ACLs along with data stored in Azure Files?**
+
+    As of February 24, 2020, new and existing ACLs tiered by Azure file sync will be persisted in NTFS format, and ACL modifications made directly to the Azure file share will sync to all servers in the sync group. Any changes on ACLs made to Azure file shares will sync down via Azure File Sync. When copying data to Azure Files, make sure you use a copy tool that supports the necessary "fidelity" to copy attributes, timestamps, and ACLs into an Azure file share - either via SMB or REST. When using Azure copy tools such as AzCopy, it's important to use the latest version. Check the [file copy tools table](storage-files-migration-overview.md#file-copy-tools) to get an overview of Azure copy tools to ensure you can copy all of the important metadata of a file.
+
+    If you've enabled Azure Backup on your Azure File Sync managed file shares, file ACLs can continue to be restored as part of the backup restore workflow. This works either for the entire share or individual files/directories.
+
+    If you're using snapshots as part of the self-managed backup solution for file shares managed by Azure File Sync, your ACLs might not be restored properly to NTFS ACLs if the snapshots were taken before February 24, 2020. If this occurs, consider contacting Azure Support.
+
+* <a id="afs-lastwritetime"></a>
+  **Does Azure File Sync sync the LastWriteTime for directories? Why isn't the *date modified* timestamp on a directory updated when files within it are changed?**  
+    No, Azure File Sync doesn't sync the LastWriteTime for directories. Furthermore, Azure Files doesn't update the **date modified** timestamp (LastWriteTime) for directories when files within the directory are changed. This is expected behavior.
+
+* <a id="afs-dedup"></a>
+ **How does volume space work for Cloud Tiering as a part of interop with Dedup?**  
+    In some cases where Dedup is installed, the available volume space can increase more than expected after Dedup garbage collection is triggered. For example, let's say that the free space policy for cloud tiering is set to 20%. Azure File Sync is notified when there is low free space (for example, when free space is 19%). Tiering determines that 1% more space needs to be freed, but as a buffer there's 5% extra, so it tiers up to 25% (for example, 30 GiB). The files are tiered until it reaches 30 GiB. As part of interop with Dedup, Azure File Sync initiates garbage collection at the end of the tiering session.
+    
+* <a id="afs-avrecalls"></a>
+  **Why is the antivirus software on the Azure File Sync server recalling tiered files?**  
+   When users access tiered files, some antivirus (AV) software might cause unintended file recalls. This problem occurs if the AV software isn't configured to ignore tiered files (those with the `RECALL_ON_DATA_ACCESS` attribute).
+   Here's what happens:
+   1. A user attempts to access a tiered file.
+   2. The AV software blocks the read handle.
+   3. The AV software then performs its own read to scan the file for viruses.
+     
+  This process might appear as if the AV software is recalling the tiered files, but it's actually triggered by the user's access attempt. To prevent this issue, ensure that your AV vendor configures their software to ignore scanning tiered files with the `RECALL_ON_DATA_ACCESS` attribute.
+
+* <a id="afs-networkconnect"></a>
+  **Can SSL inspection software block access to Azure File Sync servers?**
+  Ensure your SSL inspection software (such as Zscaler or FortiGate) allows Azure File Sync server endpoints to access Azure. These SSL inspection tools can override firewall settings and selectively allow traffic. Contact your network administrator to resolve this issue. Use the `testnet` command to determine if your Azure File Sync server is experiencing this problem.
+
+## Resource providers and classic file shares
+
+- **What's the difference between Microsoft.Storage and Microsoft.FileShares resource providers? What's an Azure file share versus an Azure classic file share?**
+
+  Resource providers are management services that deliver specific types of resources in Azure. You deploy Azure classic file shares within a storage account, which is a top-level resource that uses the Microsoft.Storage resource provider. All storage resources in a storage account share the limits that apply to that storage account. File shares offered by the Microsoft.FileShares resource provider are a new top-level resource that simplifies file share deployment by eliminating the need for a storage account. Currently, Microsoft.FileShares only supports the NFS file sharing protocol. Classic file shares support both SMB and NFS.
+
+## Security, authentication, and access control
+
+* <a id="file-auditing"></a>
+**How can I audit file access and changes in Azure Files?**
+
+  There are two options that provide auditing functionality for Azure Files:
+  - If users are accessing the Azure file share directly, you can use [Azure Storage logs](../blobs/monitor-blob-storage.md?tabs=azure-powershell#analyzing-logs) to track file changes and user access for troubleshooting purposes. Requests are logged on a best-effort basis.
+  - If users are accessing the Azure file share via a Windows Server that has the Azure File Sync agent installed, use an [audit policy](https://learn.microsoft.com/windows/security/threat-protection/auditing/apply-a-basic-audit-policy-on-a-file-or-folder) or third-party product to track file changes and user access on the Windows Server. 
+
+* <a id="access-based-enumeration"></a>
+**Does Azure Files support using Access-Based Enumeration (ABE) to control the visibility of the files and folders in SMB Azure file shares?**
+
+  Azure Files doesn't support using ABE, but you can [use DFS-N with SMB Azure file shares](files-manage-namespaces.md#access-based-enumeration-abe).
+
+* <a id="printer-or-scanner"></a>
+**Can I save to an Azure file share using a printer or scanner?**
+
+  Azure Files only supports Windows, Linux, and macOS. Accessing an Azure file share directly from a printer or scanner isn't supported. However, if you're already using Azure File Sync, you can print or scan to your Windows file server and then sync the file to an Azure file share.
+
+* <a id="alternate-data-streams"></a>
+**Does Azure Files support alternate data streams?**
+
+Azure Files doesn't support [alternate data streams](https://learn.microsoft.com/openspecs/windows_protocols/ms-fscc/e2b19412-a925-4360-b009-86e3b8a020c8). Transferring data via SMB will throw a **file already exists** message if an alternate data stream is found. You can check alternate streams by using the following PowerShell command:
+
+```powershell
+get-item <file path+name> -Stream *
+```
+
+If more than one stream is shown, you can remove them using the following PowerShell command:
+
+```powershell
+remove-Item <file path+name> -Stream *
+```
+
+Alternate data streams are preserved on-premises when Azure File Sync is used.
+
+### Identity-based authentication
+
+* <a id="ad-support-devices"></a>
+**Does Microsoft Entra Domain Services support SMB access using Microsoft Entra credentials from devices joined to or registered with Microsoft Entra ID?**
+
+    No, this scenario isn't supported.
+
+* <a id="ad-file-mount-cname"></a>
+**Can I use the canonical name (CNAME) to mount an Azure file share while using identity-based authentication?**
+
+    Yes, this scenario is now supported in both [single-forest](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/storage-files-identity-mount-file-share.md#mount-file-shares-using-custom-domain-names) and [multi-forest](storage-files-identity-multiple-forests.md) environments for SMB Azure file shares. However, Azure Files only supports configuring CNAMEs using the storage account name as a domain prefix. If you don't want to use the storage account name as a prefix, consider using [DFS Namespaces](files-manage-namespaces.md) instead.
+
+* <a id="ad-vm-subscription"></a>
+**Can I access Azure file shares with Microsoft Entra credentials from a VM under a different subscription?**
+
+    If the subscription under which the file share is deployed is associated with the same Microsoft Entra tenant as the Microsoft Entra Domain Services deployment to which the VM is domain-joined, you can then access Azure file shares using the same Microsoft Entra credentials. The limitation is imposed not on the subscription but on the associated Microsoft Entra tenant.
+    
+* <a id="ad-support-subscription"></a>
+**Can I enable either Microsoft Entra Domain Services or on-premises AD DS authentication for Azure file shares using a Microsoft Entra tenant that's different from the Azure file share's primary tenant?**
+
+    No. Azure Files only supports Microsoft Entra Domain Services or on-premises AD DS integration with a Microsoft Entra tenant that resides in the same subscription as the file share. A subscription can only be associated with one Microsoft Entra tenant. When using on-premises AD DS for authentication, [the AD DS credential should be synced to the Microsoft Entra ID](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/hybrid/how-to-connect-install-roadmap.md) that the storage account is associated with.
+
+* <a id="ad-multiple-forest"></a>
+**Does on-premises AD DS authentication for Azure file shares support integration with an AD DS environment using multiple forests?**
+
+    Azure Files on-premises AD DS authentication only integrates with the forest of the domain service that the storage account is registered to. To support authentication from another forest, your environment must have a forest trust configured correctly. For detailed instructions, see [Use Azure Files with multiple Active Directory forests](storage-files-identity-multiple-forests.md).
+
+   > **Note:**  
+   > In a multi-forest setup, don't use File Explorer to configure Windows ACLs/NTFS permissions at the root, directory, or file level. [Use icacls](storage-files-identity-configure-file-level-permissions.md#configure-windows-acls-by-using-icacls) instead.
+
+   
+* <a id="ad-aad-smb-files"></a>
+**Is there any difference in creating a computer account or service logon account to represent my storage account in Active Directory?**
+
+    Creating either a [computer account](https://learn.microsoft.com/windows/security/identity-protection/access-control/active-directory-accounts#manage-default-local-accounts-in-active-directory) (default) or a [service logon account](https://learn.microsoft.com/windows/win32/ad/about-service-logon-accounts) has no difference on how authentication works with Azure Files. You can make your own choice on how to represent a storage account as an identity in your AD environment. The default DomainAccountType set in `Join-AzStorageAccountForAuth` cmdlet is computer account. However, the password expiration age configured in your AD environment can be different for computer or service logon accounts, and you need to take that into consideration to [Update the password of your storage account identity in AD](storage-files-identity-ad-ds-update-password.md).
+
+* <a id="ad-support-rest-apis"></a>
+**How do I remove cached credentials by using the storage account key and delete existing SMB connections before initializing a new connection with Microsoft Entra ID or AD credentials?**
+
+    Follow the two-step process to remove the saved credential associated with the storage account key and remove the SMB connection:
+
+    1. Run the following command from a Windows command prompt to remove the credential. If you can't find one, it means that you haven't persisted the credential and can skip this step.
+    
+       cmdkey /delete:Domain:target=storage-account-name.file.core.windows.net
+    
+    2. Delete the existing connection to the file share. You can specify the mount path as either the mounted drive letter or the `storage-account-name.file.core.windows.net` path.
+    
+       net use <drive-letter/share-path> /delete
+
+* <a id="ad-sid-to-upn"></a>
+**Is it possible to view the userPrincipalName (UPN) of a file/directory owner in File Explorer instead of the security identifier (SID)?**
+
+    File Explorer calls an RPC API directly to the server (Azure Files) to translate the SID to a UPN. Azure Files doesn't support this API, so in File Explorer, the SID of a file/directory owner is displayed instead of the UPN for files and directories hosted on Azure Files. However, from a domain joined client, you can use the following PowerShell command to view all items in a directory and their owner, including UPN: 
+
+    ```PowerShell
+    Get-ChildItem <Path> | Get-ACL | Select Path, Owner
+    ```
+
+## Network File System (NFS v4.1)
+
+* <a id="when-to-use-nfs"></a>
+**When should I use NFS Azure file shares?**
+
+    See [NFS shares](files-nfs-protocol.md).
+
+* <a id="backup-nfs-data"></a>
+**How do I backup data stored in NFS shares?**
+
+    Backing up your data on NFS shares can either be orchestrated using familiar tooling like rsync or products from one of our third-party backup partners. Multiple backup partners including [Commvault](https://documentation.commvault.com/index.html), [Veeam](https://www.veeam.com/blog/?p=123438), and [Veritas](https://players.brightcove.net/4396107486001/default_default/index.html?videoId=6189967101001) have extended their solutions to work with both SMB 3.x and NFS 4.1 for Azure Files. You can also use [NFS Azure file share snapshots](storage-files-how-to-mount-nfs-shares.md#nfs-file-share-snapshots).
+
+* <a id="migrate-nfs-data"></a>
+**Can I migrate existing data to an NFS share?**
+
+    Within a region, you can use standard tools like scp, rsync, or SSHFS to move data. Because NFS Azure file shares can be accessed from multiple compute instances concurrently, you can improve copying speeds with parallel uploads. To learn more, see [Migrate to NFS Azure file shares](storage-files-migration-nfs.md). If you want to bring data from outside of a region, use a VPN or ExpressRoute to mount to your file system from your on-premises data center.
+    
+* <a id=nfs-ibm-mq-support></a>
+**Can you run IBM MQ (including multi-instance) on NFS Azure file shares?**
+    * Azure Files NFS v4.1 file shares meet the three requirements set by IBM MQ:
+       - https://www.ibm.com/docs/en/ibm-mq/9.2?topic=multiplatforms-requirements-shared-file-systems
+          + Data write integrity
+          + Guaranteed exclusive access to files
+          + Release locks on failure
+    * The following test cases run successfully:
+        1. https://www.ibm.com/docs/en/ibm-mq/9.2?topic=multiplatforms-verifying-shared-file-system-behavior
+        2. https://www.ibm.com/docs/en/ibm-mq/9.2?topic=multiplatforms-running-amqsfhac-test-message-integrity
+
+
+## Share snapshot FAQ
+
+### Create share snapshots
+
+* <a id="geo-redundant-snaphsots"></a>
+**Are my share snapshots geo-redundant?**  
+    Share snapshots have the same redundancy as the Azure file share for which they were taken. If you've selected geo-redundant storage for your account, your share snapshot also is stored redundantly in the paired region.
+  
+### Clean up share snapshots
+* <a id="delete-share-keep-snapshots"></a>
+**Can I delete my share but not delete my share snapshots?**  
+    No. The delete file share workflow automatically deletes the snapshots when you delete the share.
+
+## Azure Files billing and pricing
+
+* <a id="transactions-billing"></a>
+**What are transactions in Azure Files, and how are they billed?**
+    Protocol transactions occur any time a user, application, script, or service interacts with Azure file shares (writing, reading, listing, deleting files, etc.). It's important to remember that some actions that you might perceive as a single operation might actually involve multiple transactions. For pay-as-you-go file shares, different types of transactions have different prices based on their impact on the file share. Transactions don't affect billing for provisioned file shares. For more information, see [Understanding billing](understanding-billing.md).
+
+## Azure Files interoperability with other services
+
+* <a id="azure-files-versus-azure-netapp-files"></a>
+**What's the difference between Azure Files and Azure NetApp Files?**  
+    Azure Files and Azure NetApp Files are different file storage services in Azure, and they're designed for different workloads and performance requirements. Azure Files provides serverless SMB and NFS file shares, and offers Azure File Sync as an option for caching SMB file shares on Windows Server. Azure NetApp Files is a high-performance, bare-metal file storage service powered by NetApp technology that supports NFS, SMB, and dual-protocol file shares. For more information, see [Compare Azure Files and Azure NetApp Files](storage-files-netapp-comparison.md).
+
+* <a id="cluster-witness"></a>
+**Can I use my Azure file share as a *File Share Witness* for my Windows Server Failover Cluster?**  
+    This configuration isn't supported for Azure Files. To learn how to set up this configuration by using Azure Blob storage, see [Deploy a Cloud Witness for a Failover Cluster](https://learn.microsoft.com/windows-server/failover-clustering/deploy-cloud-witness).
+
+## See also
+
+* [Troubleshoot Azure Files](https://learn.microsoft.com/troubleshoot/azure/azure-storage/files-troubleshoot?toc=/azure/storage/files/toc.json)
+* [Troubleshoot Azure File Sync](https://learn.microsoft.com/troubleshoot/azure/azure-storage/file-sync-troubleshoot?toc=/azure/storage/file-sync/toc.json)

@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Asynchronous programming",
+    "expectedDocumentIds": [
+      "docs/csharp/asynchronous-programming/index"
+    ]
+  }
+]

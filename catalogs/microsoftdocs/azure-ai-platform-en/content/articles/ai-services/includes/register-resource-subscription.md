@@ -1,0 +1,9 @@
+---
+title: include file
+description: include file
+ms.topic: include
+ms.date: 05/25/2022
+---
+
+> **Tip:**
+> If your subscription doesn't allow you to create a Foundry resource, you might need to enable the privilege of that [Azure resource provider](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/azure-resource-manager/management/resource-providers-and-types.md#register-resource-provider) using the [Azure portal](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/azure-resource-manager/management/resource-providers-and-types.md#azure-portal), [PowerShell command](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/azure-resource-manager/management/resource-providers-and-types.md#azure-powershell) or an [Azure CLI command](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/azure-resource-manager/management/resource-providers-and-types.md#azure-cli). If you are not the subscription owner, ask the *Subscription Owner* or someone with a role of *admin* to complete the registration for you or ask for the **/register/action** privileges to be granted to your account.

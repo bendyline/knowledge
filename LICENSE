@@ -98,6 +98,34 @@ Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/cas
 Attribution: Caselaw Access Project, Harvard Law School Library, President and Fellows of Harvard College. Sources: U.S. Reports volumes 347–349 at https://static.case.law/us/. Credit is provided voluntarily under CAP community norms.
 Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/caselaw/us-347-349/NOTICE.md
 
+Microsoft technology: ASP.NET Core (microsoftdocs/aspnet-core-en)
+Catalog ID: microsoftdocs-aspnet-core-en
+Source: https://github.com/dotnet/AspNetCore.Docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/aspnet-core-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/aspnet-core-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/aspnet-core-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/aspnet-core-en/NOTICE.md
+
+Microsoft technology: Azure AI, Foundry, and Machine Learning (microsoftdocs/azure-ai-platform-en)
+Catalog ID: microsoftdocs-azure-ai-platform-en
+Source: https://github.com/MicrosoftDocs/azure-ai-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-platform-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-platform-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-platform-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-platform-en/NOTICE.md
+
 Azure AI Search documentation (microsoftdocs/azure-ai-search-en)
 Catalog ID: microsoftdocs-azure-ai-search-en
 Source: https://github.com/MicrosoftDocs/azure-ai-docs
@@ -111,6 +139,160 @@ Terms: https://opensource.org/license/mit
 Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-search-en/LICENSES/MIT.txt
 Attribution: Copyright (c) Microsoft Corporation and contributors. Code samples remain under the MIT License.
 Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-ai-search-en/NOTICE.md
+
+Microsoft technology: Azure applications and compute (microsoftdocs/azure-apps-compute-en)
+Catalog ID: microsoftdocs-azure-apps-compute-en
+Source: https://github.com/MicrosoftDocs/azure-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-apps-compute-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-apps-compute-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-apps-compute-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-apps-compute-en/NOTICE.md
+
+Microsoft technology: Azure data, storage, and IoT (microsoftdocs/azure-data-aiot-en)
+Catalog ID: microsoftdocs-azure-data-aiot-en
+Source: https://github.com/MicrosoftDocs/azure-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-data-aiot-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-data-aiot-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-data-aiot-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-data-aiot-en/NOTICE.md
+
+Microsoft technology: Azure management and hybrid infrastructure (microsoftdocs/azure-management-hybrid-en)
+Catalog ID: microsoftdocs-azure-management-hybrid-en
+Source: https://github.com/MicrosoftDocs/azure-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-management-hybrid-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-management-hybrid-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-management-hybrid-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-management-hybrid-en/NOTICE.md
+
+Microsoft technology: Azure networking and security (microsoftdocs/azure-network-security-en)
+Catalog ID: microsoftdocs-azure-network-security-en
+Source: https://github.com/MicrosoftDocs/azure-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-network-security-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-network-security-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-network-security-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/azure-network-security-en/NOTICE.md
+
+Microsoft technology: .NET and C# (microsoftdocs/dotnet-en)
+Catalog ID: microsoftdocs-dotnet-en
+Source: https://github.com/dotnet/docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/dotnet-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/dotnet-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/dotnet-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/dotnet-en/NOTICE.md
+
+Microsoft technology: Entity Framework (microsoftdocs/entity-framework-en)
+Catalog ID: microsoftdocs-entity-framework-en
+Source: https://github.com/dotnet/EntityFramework.Docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/entity-framework-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/entity-framework-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/entity-framework-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/entity-framework-en/NOTICE.md
+
+Microsoft technology: Microsoft 365 and Copilot (microsoftdocs/microsoft-365-en)
+Catalog ID: microsoftdocs-microsoft-365-en
+Source: https://github.com/MicrosoftDocs/microsoft-365-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/microsoft-365-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/microsoft-365-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/microsoft-365-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/microsoft-365-en/NOTICE.md
+
+Microsoft technology: PowerShell (microsoftdocs/powershell-en)
+Catalog ID: microsoftdocs-powershell-en
+Source: https://github.com/MicrosoftDocs/PowerShell-Docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/powershell-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/powershell-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/powershell-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/powershell-en/NOTICE.md
+
+Microsoft technology: SQL Server and Azure SQL (microsoftdocs/sql-server-en)
+Catalog ID: microsoftdocs-sql-server-en
+Source: https://github.com/MicrosoftDocs/sql-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/sql-server-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/sql-server-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/sql-server-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/sql-server-en/NOTICE.md
+
+Microsoft technology: Windows app development (microsoftdocs/windows-apps-en)
+Catalog ID: microsoftdocs-windows-apps-en
+Source: https://github.com/MicrosoftDocs/windows-dev-docs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-apps-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-apps-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-apps-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-apps-en/NOTICE.md
+
+Microsoft technology: Windows Server (microsoftdocs/windows-server-en)
+Catalog ID: microsoftdocs-windows-server-en
+Source: https://github.com/MicrosoftDocs/windowsserverdocs
+Catalog definition: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-server-en/manifest.json
+License: Creative Commons Attribution 4.0 (CC-BY-4.0; record: docs)
+Terms: https://creativecommons.org/licenses/by/4.0/
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-server-en/LICENSES/CC-BY-4.0.txt
+Attribution: Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement.
+License: MIT License (MIT; record: code)
+Terms: https://opensource.org/license/mit
+Full license text: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-server-en/LICENSES/MIT.txt
+Attribution: Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license.
+Catalog notices and modification details: https://github.com/bendyline/knowledge/blob/main/catalogs/microsoftdocs/windows-server-en/NOTICE.md
 
 Wikipedia: On this day — News (wikipedia/on-this-day-en)
 Catalog ID: wikipedia-on-this-day-en

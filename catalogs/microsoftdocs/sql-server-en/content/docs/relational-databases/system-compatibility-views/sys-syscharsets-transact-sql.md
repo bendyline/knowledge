@@ -1,0 +1,70 @@
+---
+title: "sys.syscharsets (Transact-SQL)"
+description: "sys.syscharsets (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sys.syscharsets"
+  - "syscharsets"
+  - "sys.syscharsets_TSQL"
+  - "syscharsets_TSQL"
+helpviewer_keywords:
+  - "syscharsets system table"
+  - "sys.syscharsets compatibility view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# sys.syscharsets (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Contains one row for each character set and sort order defined for use by the  SQL Server Database Engine 
+. One of the sort orders is marked in **sysconfigures** as the default sort order. This is the only one actually being used.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **type** | **smallint** | Type of entity this row represents:<br /><br /> 1001 = Character set.<br /><br /> 2001 = Sort order. |
+| **id** | **tinyint** | Unique ID for the character set or sort order. Note sort orders and character sets cannot share the same ID number. The ID range of 1 through 240 is reserved for use by the  Database Engine |
+| . |
+| **csid** | **tinyint** | If the row represents a character set, this field is unused. If the row represents a sort order, this field is the ID of the character set that the sort order is built on. It is assumed a character set row with this ID exists in this table. |
+| **status** | **smallint** | Internal system status information bits. |
+| **name** | **sysname** | Unique name for the character set or sort order. This field must contain only the letters A-Z or a-z, numbers 0 - 9, and underscores(_); and it must start with a letter. |
+| **description** | **nvarchar(255)** | Optional description of the features of the character set or sort order. |
+| **binarydefinition** | **varbinary(6000)** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **definition** | **image** | Internal definition of the character set or sort order. The structure of the data in this field depends on the type. |
+  
+## Related content
+
+- [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md)
+- [System Compatibility Views (Transact-SQL)](system-compatibility-views-transact-sql.md)

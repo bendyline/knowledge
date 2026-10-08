@@ -1,0 +1,63 @@
+# Source code: aspnetcore/mvc/views/razor/sample/Views/Home/Contact2.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using  System.IO
+@using RazorSample.Models
+
+@{
+    var output = "Hello World";
+}
+  
+<div>Output: @output</div>
+
+@{
+/* C# */<text>I'm HTML</text>/* C# */
+}
+
+<br />
+
+@{
+/* C# */ @:I'm HTML too/* C# */
+}
+
+@{
+
+    var people = new Person[]
+    {
+            new Person("John", 33),
+            new Person("Doe", 41),
+    };
+}
+
+<br /><br />
+
+@for (var i = 0; i < people.Length; i++)
+{
+    var person = people[i];
+    <text>Name: @person.Name</text>
+}
+
+@for (var i = 0; i < people.Length; i++)
+{
+    var person = people[i];
+    @:Name: @person.Name
+}
+
+@{ 
+    var dir = Directory.GetCurrentDirectory();
+}
+<p>@dir</p>
+
+
+@for (var i = 0; i < people.Length; i++)
+{
+    var person = people[i];
+    <text>Name: @person.Name</text>
+    <!-- Removing HTML tags generates a Razor runtime error
+    Name: @person.Name
+    -->
+}
+
+```

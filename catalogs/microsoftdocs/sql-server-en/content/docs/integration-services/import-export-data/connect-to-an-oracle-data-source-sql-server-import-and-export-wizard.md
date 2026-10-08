@@ -1,0 +1,99 @@
+---
+title: "Connect to an Oracle Data Source (SQL Server Import and Export Wizard)"
+description: "Connect to an Oracle Data Source (SQL Server Import and Export Wizard)"
+ms.date: 06/29/2020
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: integration
+ms.custom:
+  - sfi-image-nochange
+  - sfi-ropc-nochange
+---
+# Connect to an Oracle Data Source (SQL Server Import and Export Wizard)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+This topic shows you how to connect to an **Oracle** data source from the **Choose a Data Source** or **Choose a Destination** page of the SQL Server Import and Export Wizard. There are several data providers that you can use to connect to Oracle.
+
+> **Important:**
+> The detailed requirements and prerequisites for connecting to an Oracle database are beyond the scope of this Microsoft article. This article assumes that you already have Oracle client software installed and that you can already connect successfully to the target Oracle database. For more info, consult your Oracle database administrator or the Oracle documentation.
+
+## Connect to Oracle with the .Net Framework Data Provider for Oracle
+After you select **.NET Framework Data Provider for Oracle** on the **Choose a Data Source** or **Choose a Destination** page of the wizard, the page presents a grouped list of options for the provider. Many of these are unfriendly names and unfamiliar settings. Fortunately, you only have to provide two or three pieces of information. You can ignore the default values for the other settings.
+
+> **Note:**
+> The connection options for this data provider are the same whether Oracle is your source or your destination. That is, the options you see are the same on both the **Choose a Data Source** and the **Choose a Destination** pages of the wizard.
+
+| Required info | .Net Framework Data Provider for Oracle property |
+| --- | --- |
+| Server name | **Data Source** |
+| Authentication (login) info | **User ID** and **Password**; or, **Integrated Security** |
+
+You don't have to enter the connection string in the **ConnectionString** field of the list. After you enter individual values for the Oracle server name (**Data Source**) and login info, the wizard assembles the connection string from the individual properties and their values. 
+
+Connect to Oracle with .NET provider
+
+## Connect to Oracle with the Microsoft ODBC driver for Oracle
+ODBC drivers aren't listed in the dropdown list of data sources. To connect with an ODBC driver, start by selecting the **.NET Framework Data Provider for ODBC** as the data source on the **Choose a Data Source** or **Choose a Destination** page. This provider acts as a wrapper around the ODBC driver.
+
+Here's the generic screen that you see immediately after selecting the .NET Framework Data Provider for ODBC.
+
+Connect to Oracle with ODBC before
+
+### Options to specify (ODBC Driver for Oracle)
+
+> **Note:**
+> The connection options for this data provider and ODBC driver are the same whether Oracle is your source or your destination. That is, the options you see are the same on both the **Choose a Data Source** and the **Choose a Destination** pages of the wizard.
+
+To connect to Oracle with the ODBC Driver for Oracle, assemble a connection string that includes the following settings and their values. The format of a complete connection string immediately follows the list of settings.
+
+> **Tip:**
+> Get help assembling a connection string that's just right. Or, instead of providing a connection string, provide an existing DSN (data source name) or create a new one. For more info about these options, see [Connect to an ODBC Data Source](connect-to-an-odbc-data-source-sql-server-import-and-export-wizard.md).
+
+**Driver**  
+The name of the ODBC driver, **Microsoft ODBC for Oracle**.
+
+**Server**  
+The name of the Oracle server. 
+
+**Uid** and **Pwd**   
+The user ID and password to connect.
+
+### Connection string format
+Here's the format of a typical connection string. Replace `<password>` with a valid password.
+
+```console
+Driver={Microsoft ODBC for Oracle};Server=myServerAddress;Uid=myUsername;Pwd=<password>;
+```
+
+### Enter the connection string
+Enter the connection string in the **ConnectionString** field, or enter the DSN name in the **Dsn** field, on the **Choose a Data Source** or **Choose a Destination** page. After you enter the connection string, the wizard parses the string and displays the individual properties and their values in the list.
+
+Here's the screen that you see after entering the connection string.
+
+Connect to Oracle with ODBC
+
+## What's my Oracle server name?
+Run one of the following queries to get the name of your Oracle server.
+
+`SELECT host_name FROM v$instance`
+
+or
+
+`SELECT sys_context('USERENV','SERVER_HOST') FROM dual`
+
+## Other data providers and more info
+For info about how to connect to Oracle with a data provider that's not listed here, see [Oracle connection strings](https://www.connectionstrings.com/oracle/). This third-party site also contains more info about the data providers and the connection parameters described on this page.
+
+## Related content
+
+- [Choose a Data Source (SQL Server Import and Export Wizard)](choose-a-data-source-sql-server-import-and-export-wizard.md)
+- [Choose a Destination (SQL Server Import and Export Wizard)](choose-a-destination-sql-server-import-and-export-wizard.md)

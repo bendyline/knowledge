@@ -1,0 +1,54 @@
+---
+title: "Fetch single row with IRow (Native Client OLE DB provider)"
+description: "Fetching a Single Row with IRow (Native Client OLE DB Provider)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "fetching rows"
+  - "IRow interface"
+  - "single row fetching [SQL Server Native Client]"
+  - "OLE DB rowsets, fetching"
+  - "rowsets [OLE DB], fetching"
+  - "SQL Server Native Client OLE DB provider, fetching"
+---
+# Fetching a Single Row with IRow (Native Client OLE DB Provider)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The **IRow** interface implementation in the  SQL Server 
+ Native Client OLE DB provider is simplified to increase performance. **IRow** allows direct access to columns of a single row object. If you know beforehand that the result of a command execution will produce exactly one row, **IRow** will retrieve the columns of that row. If the result set includes multiple rows, **IRow** will expose only the first row.  
+  
+ The **IRow** implementation does not allow any navigation of the row. Each column in the row is accessed only one time with one exception: A column can be accessed one time to find the column size and again to fetch the data.  
+  
+> **Note:**  
+>  **IRow::Open** supports only DBGUID_STREAM and DBGUID_NULL type of objects to be opened.  
+  
+ To obtain a row object using **ICommand::Execute** method, IID_IRow must be passed. The **IMultipleResults** interface must be used to handle multiple result sets. **IMultipleResults** supports **IRow** and **IRowset**. **IRowset** is used for bulk operations.  
+  
+## In This Section  
+  
+-   [Using IRow::GetColumns](using-irow-getcolumns.md)  
+  
+  
+## Related content
+
+- [Rowsets (Native Client OLE DB provider)](rowsets.md)

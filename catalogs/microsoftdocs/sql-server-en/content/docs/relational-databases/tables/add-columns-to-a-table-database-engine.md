@@ -1,0 +1,108 @@
+---
+title: "Add Columns to a Table (Database Engine)"
+description: "Learn how to add columns to an existing table in SQL Server and Azure SQL platforms by using SQL Server Management Studio or Transact-SQL."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 08/07/2025
+ms.service: sql
+ms.subservice: table-view-index
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "inserting columns"
+  - "columns [SQL Server], adding"
+  - "adding columns"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# Add Columns to a Table (Database Engine)
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This article describes how to add new columns to a table in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .
+
+## Remarks
+
+Using the `ALTER TABLE` statement to add columns to a table automatically adds those columns to the end of the table.
+
+If you want the columns in a specific order in the table, you must use  SQL Server Management Studio 
+. Though it isn't recommended, for more information on reordering tables, see [Change Column Order in a Table](change-column-order-in-a-table.md).
+
+To query existing columns, use the [sys.columns](../system-catalog-views/sys-columns-transact-sql.md) object catalog view.
+
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires `ALTER` permission on the table.
+
+<a id="SSMSProcedure"></a>
+
+## Use SQL Server Management Studio
+
+> **Important:**
+> Install the latest version of [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/install/install).
+
+SQL Server Management Studio (SSMS) doesn't support all data definition language (DDL) options in Azure Synapse. Use [T-SQL scripts](#TsqlProcedure) instead.
+
+### Insert columns into a table with Table Designer
+
+1. In **Object Explorer**, right-click the table to which you want to add columns and choose **Design**.
+1. Select the first blank cell in the **Column Name** column.
+1. Type the column name in the cell. The column name is a required value.
+1. Press the TAB key to go to the **Data Type** cell and select a data type from the dropdown list. Data type is a required value, and is assigned the default value if you don't choose one.
+
+    > **Note:**
+    > You can change the default value in the **Options** dialog box under **Database Tools**.
+
+1. Continue to define any other column properties in the **Column Properties** tab.
+
+    > **Note:**
+    > The default values for your column properties are added when you create a new column, but you can change them in the **Column Properties** tab.
+
+1. When you're finished adding columns, from the **File** menu, choose **Save _table name_**.
+
+<a id="TsqlProcedure"></a>
+
+## Use Transact-SQL
+
+### Add columns to a table
+
+The following example adds two columns to the table `dbo.doc_exa`.
+
+```sql
+ALTER TABLE dbo.doc_exa 
+ADD column_b VARCHAR(20) NULL, column_c INT NULL ;
+```
+
+## Related content
+
+- [ALTER TABLE (Transact-SQL)](../../t-sql/statements/alter-table-transact-sql.md)
+- [Column Properties (General Page)](column-properties-general-page.md)
+- [Create check constraints](create-check-constraints.md)
+- [Specify default values for columns](specify-default-values-for-columns.md)
+- [Specify computed columns in a table](specify-computed-columns-in-a-table.md)
+- [Create unique constraints](create-unique-constraints.md)
+- [Indexes](../indexes/indexes.md)

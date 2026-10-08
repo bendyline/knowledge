@@ -1,0 +1,181 @@
+---
+title: Create a secure workspace with a managed virtual network
+titleSuffix: Azure Machine Learning
+description: Create an Azure Machine Learning workspace and required Azure services inside a managed virtual network.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: enterprise-readiness
+ms.collection: ce-skilling-fresh-tier2, ce-skilling-ai-copilot
+ms.reviewer: shshubhe
+ms.author: scottpolly
+author: s-polly
+ms.date: 02/05/2026
+ms.topic: tutorial
+monikerRange: 'azureml-api-2 || azureml-api-1'
+ms.custom: sfi-image-nochange, dev-focus
+ai-usage: ai-assisted
+---
+# Tutorial: How to create a secure workspace with a managed virtual network
+
+In this article, you learn how to create and connect to a secure Azure Machine Learning workspace. The steps in this article use an Azure Machine Learning managed virtual network to create a security boundary around resources used by Azure Machine Learning.
+
+In this tutorial, you accomplish the following tasks:
+
+> 
+> * Create a jump box virtual machine and enable Azure Bastion for secure browser-based access.
+> * Create an Azure Machine Learning workspace configured to use a managed virtual network.
+> * Connect to the workspace through the jump box and Azure Machine Learning studio.
+> * Create a compute instance inside the managed network.
+> * Enable studio access to the workspace storage account.
+
+After completing this tutorial, you have the following architecture:
+
+* An Azure Machine Learning workspace that uses a private endpoint to communicate through the managed network.
+* An Azure Storage Account that uses private endpoints to allow storage services such as blob and file to communicate through the managed network.
+* An Azure Container Registry that uses a private endpoint to communicate through the managed network.
+* An Azure Key Vault that uses a private endpoint to communicate through the managed network.
+* An Azure Machine Learning compute instance and compute cluster secured by the managed network.
+
+## Prerequisites
+
+* An Azure subscription. If you don't have an Azure subscription, create a free account before you begin. Try the [free or paid version of Azure Machine Learning](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+* Python 3.10 or later.
+
+## Create a jump box (VM)
+
+You can connect to the secured workspace in several ways. In this tutorial, use a __jump box__. A jump box is a virtual machine in an Azure Virtual Network. You can connect to it by using your web browser and Azure Bastion. 
+
+The following table lists several other ways that you might connect to the secure workspace:
+
+| Method | Description |
+| --- | --- |
+| [Azure VPN gateway](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-about-vpngateways) | Connects on-premises networks to an Azure Virtual Network over a private connection. A private endpoint for your workspace is created within that virtual network. Connection is made over the public internet. |
+| [ExpressRoute](https://learn.microsoft.com/azure/expressroute/expressroute-introduction) | Connects on-premises networks into the cloud over a private connection. Connection is made using a connectivity provider. |
+
+> **Important:**
+> When using a __VPN gateway__ or __ExpressRoute__, plan how name resolution works between your on-premises resources and those in the cloud. For more information, see [Use a custom DNS server](how-to-custom-dns.md).
+
+Use the following steps to create an Azure Virtual Machine to use as a jump box. From the VM desktop, you can use the browser on the VM to connect to resources inside the managed virtual network, such as Azure Machine Learning studio. Or you can install development tools on the VM. 
+
+> **Tip:**
+> The following steps create a Windows 11 enterprise VM. Depending on your requirements, you might want to select a different VM image. The Windows 11 (or 10) enterprise image is useful if you need to join the VM to your organization's domain.
+
+1. In the [Azure portal](https://portal.azure.com), select the portal menu in the upper left corner. From the menu, select __+ Create a resource__ and then enter __Virtual Machine__. Select the __Virtual Machine__ entry, and then select __Create__.
+
+1. From the __Basics__ tab, select the __subscription__, __resource group__, and __Region__ to create the service in. Provide values for the following fields:
+
+    * __Virtual machine name__: A unique name for the VM.
+    * __Username__: The username you use to sign in to the VM.
+    * __Password__: The password for the username.
+    * __Security type__: Standard.
+    * __Image__: Windows 11 Enterprise.
+    * __Public inbound ports__: None
+
+        > **Tip:**
+        > If Windows 11 Enterprise isn't in the list for image selection, use _See all images__. Find the __Windows 11__ entry from Microsoft, and use the __Select__ drop-down to select the enterprise image.
+
+    You can leave other fields at the default values.
+
+1. Select **Networking**. Under the **Virtual network** configuration, verify the address space isn't using the 172.17.0.0/16 IP address range. If it is, select a different range such as 172.16.0.0/16. The 172.17.0.0/16 range can cause conflicts with Docker.
+
+    > **Note:**
+    > The Azure Virtual Machine creates its own Azure Virtual Network for network isolation. This network is separate from the managed virtual network used by Azure Machine Learning.
+
+    Screenshot of the networking tab for the virtual machine.
+
+1. Select __Review + create__. Verify that the information is correct, and then select __Create__.
+
+### Enable Azure Bastion for the VM
+
+By using Azure Bastion, you can connect to the VM desktop through your browser.
+
+1. In the Azure portal, select the VM you created earlier. From the **Connect** section of the page, select **Bastion** and then **Deploy Bastion**.
+
+    Screenshot of the deploy Bastion option.
+
+1. After the portal deploys the Bastion service, it returns you to a connection dialog. Don't use this dialog yet.
+
+## Create a workspace
+
+1. In the [Azure portal](https://portal.azure.com), select the portal menu in the upper left corner. From the menu, select __+ Create a resource__ and then enter **Azure Machine Learning**. Select the __Azure Machine Learning__ entry, and then select __Create__.
+
+1. From the __Basics__ tab, select the __subscription__, __resource group__, and __Region__ to create the service in. Enter a unique name for the __Workspace name__. Leave the rest of the fields at the default values. The portal creates new instances of the required services for the workspace.
+
+    Screenshot of the workspace creation form.
+
+1. From the __Inbound Access__ tab, in the __Workspace inbound access__ section, select __+ Add__.
+
+1. From the __Create private endpoint__ form, enter a unique value in the __Name__ field. Select the __Virtual network__ you created earlier with the VM, and select the default __Subnet__. Leave the rest of the fields at the default values. Select __OK__ to save the endpoint.
+
+    Screenshot of the form to create a private endpoint.
+
+
+1. From the __Outbound Access__ tab, select __Allow Internet Outbound__.
+
+    > **Note:**
+    > This tutorial uses internet outbound access to keep setup simple. If your organization requires stricter egress controls, use a managed virtual network configuration that allows only approved outbound traffic.
+
+   Screenshot of the workspace network tab with internet outbound selected.
+
+1. Select __Review + create__. Verify that the information is correct, and then select __Create__.
+
+1. After the portal creates the workspace, select __Go to resource__.
+
+## Connect to the VM desktop
+
+1. From the [Azure portal](https://portal.azure.com), select the VM you created earlier.
+1. From the __Connect__ section, select __Bastion__. Enter the username and password you configured for the VM, and then select __Connect__.
+
+    Screenshot of the Bastion connect form.
+
+## Connect to studio
+
+At this point, the workspace is created **but the managed virtual network isn't**. You configure the managed virtual network when you create the workspace. To create the managed virtual network, create a compute resource or manually provision the network.
+
+> **Important:**
+> If you plan to run serverless Spark jobs, manually start managed virtual network provisioning before you submit Spark jobs.
+
+Use the following steps to create a compute instance.
+
+1. From the **VM desktop**, use the browser to open the [Azure Machine Learning studio](https://ml.azure.com) and select the workspace you created earlier.
+
+1. From studio, select **Compute**, **Compute instances**, and then **+ New**.
+    
+1. From the **Configure required settings** dialog, enter a unique value as the **Compute name**. Leave the rest of the selections at the default value.
+
+1. Select **Create**. The compute instance takes a few minutes to create. The compute instance is created within the managed network.
+
+    > **Tip:**
+    > It can take several minutes to create the first compute resource. This delay occurs because the managed virtual network is also being created. The managed virtual network isn't created until the first compute resource is created. Subsequent managed compute resources are created much faster.
+
+### Enable studio access to storage
+
+Because Azure Machine Learning studio partially runs in the web browser on the client, the client needs direct access to the default storage account for the workspace to perform data operations. To enable direct access, use the following steps:
+
+1. From the [Azure portal](https://portal.azure.com), select the jump box VM you created earlier. From the __Overview__ section, copy the __Public IP address__.
+1. From the [Azure portal](https://portal.azure.com), select the workspace you created earlier. From the __Overview__ section, select the link for the __Storage__ entry.
+1. From the storage account, select __Networking__, and add the jump box's _public_ IP address to the __Firewall__ section.
+
+    > **Tip:**
+    > In a scenario where you use a VPN gateway or ExpressRoute instead of a jump box, you can add a private endpoint or service endpoint for the storage account to the Azure Virtual Network. By using a private endpoint or service endpoint, multiple clients connecting through the Azure Virtual Network can successfully perform storage operations through studio.
+
+    At this point, you can use the studio to interactively work with notebooks on the compute instance and run training jobs. For a tutorial, see [Tutorial: Model development](tutorial-cloud-workstation.md).
+
+## Clean up resources
+
+While the compute instance is running, it continues to charge your subscription. To avoid excess cost, stop it when not in use: from the Azure Machine Learning studio, select **Compute**, **Compute instances**, select the compute instance, and then select **Stop**.
+
+If you're done with the tutorial and want to delete all resources you created, use the following steps:
+
+1. In the Azure portal, select **Resource groups**.
+1. From the list, select the resource group that you created in this tutorial.
+1. Select **Delete resource group**.
+1. Enter the resource group name, and then select **Delete**.
+
+## Next steps
+
+Now that you have a secure workspace and can access studio, consider the following resources:
+
+- [Deploy a model to an online endpoint with network isolation](how-to-secure-online-endpoint.md)
+- [Secure your workspace with a managed virtual network](how-to-managed-network.md)
+- [Tutorial: Model development on a cloud workstation](tutorial-cloud-workstation.md)

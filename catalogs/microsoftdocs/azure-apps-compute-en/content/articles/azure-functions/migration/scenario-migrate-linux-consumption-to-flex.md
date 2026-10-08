@@ -1,0 +1,146 @@
+---
+title: "Quickstart: Migrate Linux Consumption apps to Flex Consumption using GitHub Copilot"
+description: Use GitHub Copilot with Azure skills to interactively migrate your Linux function apps from the Consumption plan to the Flex Consumption plan.
+ms.service: azure-functions
+ms.collection:
+  - migration
+ms.date: 04/07/2026
+ms.topic: quickstart
+
+#customer intent: As a developer, I want to use GitHub Copilot to more easily migrate my Linux Consumption plan function apps to the Flex Consumption plan so that I can get better performance and features.
+---
+
+# Quickstart: Migrate Linux Consumption apps to Flex Consumption using GitHub Copilot
+
+In this quickstart, use GitHub Copilot with the Azure skills plugin to interactively migrate your Linux function apps from the [Consumption plan](../consumption-plan.md) to the [Flex Consumption plan](../flex-consumption-plan.md). Copilot automates most of the migration, including assessment, app creation, configuration, deployment, and validation.
+
+> **Important:**  
+> This article demonstrates how to use Copilot to recreate an existing Linux Consumption app in a Flex Consumption plan. The [Azure skill](https://github.com/microsoft/GitHub-Copilot-for-Azure/blob/main/plugins/azure-skills/skills/azure-upgrade/references/services/functions/consumption-to-flex.md) that Copilot uses to achieve the migration work is designed to work with most Linux Consumption apps. For high-value production apps, apps with complex deployments or dependencies, and for Consumption apps running on Windows, follow [Migrate Consumption plan apps to the Flex Consumption plan](migrate-plan-consumption-to-flex.md).
+
+You can review the specific skill used by Copilot when performing this migration in the [GitHub Copilot Azure skills repository](https://github.com/microsoft/GitHub-Copilot-for-Azure/blob/main/plugins/azure-skills/skills/azure-upgrade/references/services/functions/consumption-to-flex.md).  
+
+## Prerequisites
+
++ An Azure subscription with one or more Linux function apps running on the Consumption plan.
+
++ The account used for the migration must have the **Owner** or **Contributor** role in the resource group containing your function apps. For the full list of required permissions, see [Prerequisites](migrate-plan-consumption-to-flex.md#prerequisites).
+
++ [Azure CLI](https://learn.microsoft.com/cli/azure), version 2.77.0 or later.
+
++ Configure GitHub Copilot in your preferred mode:
+
+    
+#### [GitHub Copilot CLI](#tab/copilot-cli)
+
+1. [Install Copilot CLI](https://github.com/github/copilot-cli)
+
+1. Sign in to Azure CLI if you haven't already:
+    
+    ```azurecli
+    az login
+    ```
+    
+    Make sure you're signed in to the subscription that contains the function apps you want to migrate.
+
+1. Launch the Copilot CLI:
+    
+    ```
+    copilot
+    ```
+
+1. Add the marketplace source (first time only):
+    
+    ```
+    /plugin marketplace add microsoft/azure-skills
+    ```
+
+1. Install the plugin:
+    
+    ```
+    /plugin install azure@azure-skills
+    ```
+
+1. After install, reload Model Context Protocol (MCP) servers:
+    
+    ```
+    /mcp reload
+    ```
+
+1. Verify installation:
+    
+    ```
+    /mcp show
+    ```
+
+    You should see the **azure** plugin listed with a checkmark. The `functionapp` tool is part of this plugin.
+
+#### [Visual Studio Code](#tab/copilot-vscode)
+
+1. [Install the Azure MCP extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azure-mcp-server) from the Visual Studio Code Marketplace (Extension ID: `ms-azuretools.vscode-azure-mcp-server`).
+
+1. The extension auto-installs a companion extension, GitHub Copilot for Azure, which contains the Azure skills.
+
+1. Sign in to Azure CLI if you haven't already. Open a terminal and run:
+    
+    ```azurecli
+    az login
+    ```
+    
+    Make sure you're signed in to the subscription that contains the function apps you want to migrate.
+
+1. Open Copilot Chat and switch to Agent mode.
+
+1. Open the Command Palette (Ctrl+Shift+P), search for and select `MCP:List servers`, and verify that the **Azure MCP server** is listed and running. If it's not running, select it and select **Start server**. 
+
+---
+
+> **Tip:**
+> If Copilot targets the wrong subscription, ask it to use a specific subscription ID. You can find your subscription ID by running `az account show --query id -o tsv`.
+> If Copilot connects to the wrong Azure tenant, ask Copilot to use your specific tenant ID when making Azure calls. You can find your tenant ID by running `az account show --query tenantId -o tsv`.
+
+## Migrate your apps
+
+Use this prompt to start an interactive migration that scans your subscription and lets you choose which apps to migrate:
+
+```
+migrate my linux function apps in azure from consumption to flex consumption
+```
+
+Copilot follows the [migration  guide](migrate-plan-consumption-to-flex.md) and identifies your eligible Linux Consumption apps, lets you choose which ones to migrate, and then handles assessment, app creation, and configuration migration for each app. 
+
+You might be asked by Copilot for feedback during the migration, as needed for a successful migration.
+## Migration results
+
+When complete, Copilot generates helpful output, which includes: 
+
++ A summary table with the status of each migrated app. 
++ A brief summary of the overall tasks accomplished.
+ + A list of any remaining post-migration tasks that it couldn't complete or that must be done by you. 
+
+## Verify the migration
+
+While Copilot does its best to validate the state of your migrated app, always verify that your new app works correctly:
+
+1. In the [Azure portal](https://portal.azure.com), ensure that each new Flex Consumption app shows a **Status** of `Running`.
+
+1. Call at least one HTTP trigger endpoint or otherwise trigger your new app to confirm it responds as expected.
+
+## (Optional) Remove the original app
+
+When you're confident the new app works correctly, remove the original Consumption plan app. If you keep the original app in place, remember to [disable any triggers](../disable-function.md) to avoid duplicate processing or competing with the new app.
+
+Use this command to remove the original app:
+
+```
+delete my original consumption app <ORIGINAL_APP_NAME>
+```
+
+Copilot always asks for your explicit confirmation before deleting anything.
+
+> **Important:**
+> Before deleting, make sure you migrate all functionality, verify no traffic goes to the original app, and back up any relevant logs or configuration.
+
+## Next step
+
+> 
+> [How to use the Flex Consumption plan](../flex-consumption-how-to.md)

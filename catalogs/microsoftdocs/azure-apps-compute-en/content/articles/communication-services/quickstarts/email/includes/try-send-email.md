@@ -1,0 +1,60 @@
+---
+title: include file
+description: Send an email using try email in portal.
+author: bashan-git
+manager: sundraman
+services: azure-communication-services
+ms.author: bashan
+ms.date: 08/31/2023
+ms.topic: include
+ms.service: azure-communication-services
+---
+
+Get started with Azure Communication Services using the Communication Services Try Email to send Email messages.
+
+## Prerequisites
+
+- An Azure account with an active subscription. [Create an account for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn). 
+- The latest version [.NET Core client library](https://dotnet.microsoft.com/download/dotnet-core) for your operating system.
+- An Azure Email Communication Services Resource created and ready with a provisioned domain [Get started with Creating Email Communication Resource](../create-email-communication-resource.md)
+- An active Communication Services resource connected with Email Domain. [Connect a verified email domain to send email](../connect-email-communication-resource.md).
+
+Completing this article incurs a small cost of a few USD cents or less in your Azure account.
+
+## Send an Email using Try Email
+
+Try Email helps you kick-start sending emails to the desired recipients using Azure Communication Services, and verifying the configuration for your application to send email. It also helps to jump-start your email notification development with the code snippet in your preferred choice of language.
+
+To send a message to a recipient, and to specify the message subject and body:
+
+1. From the overview page of a provisioned Azure Communication Service resource, click **Try Email** on the left navigation panel under Email.
+
+    Screenshot that shows the left navigation panel for Try Email.
+
+2. Select one of the verified domains from drop-down.
+
+   Screenshot that shows the verified domain from drop-down.
+
+3. Compose the email to send.
+    - Enter Recipient email address
+    - Enter Subject
+    - Write the Email Body
+          
+    Screenshot that shows how to filter and select one of the verified email domains to connect.
+
+4. Click **Send**.
+
+   Screenshot that shows one of the verified email domains is now connected.
+   
+5. Email sent successfully.
+ 
+    Screenshot that shows successful email send.
+   
+6. You can also copy the sample *Code Snippet* to send an email for use in your sample project to send notifications.
+   - Select Language of your choice
+   - Click Insert my Connection
+   - Click Copy
+
+     Screenshot that shows code snippet to send email.
+        
+7. Email Code Snippet is now ready to use in your notification project.

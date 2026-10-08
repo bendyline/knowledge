@@ -1,0 +1,52 @@
+---
+title: "SQL Server Integration Services (SSIS) Scale Out"
+description: "This article provides an overview of the SQL Server Integration Services (SSIS) Scale Out feature, which provides high-performance execution of SSIS packages"
+ms.date: "12/13/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: overview
+ms.custom: performance
+---
+# Integration Services (SSIS) Scale Out
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+SQL Server  Integration Services 
+ (SSIS) Scale Out provides high-performance execution of SSIS packages by distributing package executions across multiple computers. After you set up Scale Out, you can run multiple package executions in parallel, in scale-out mode, from SQL Server Management Studio (SSMS).
+
+## Components
+ SSIS 
+ Scale Out consists of an  SSIS 
+ Scale Out Master and one or more  SSIS 
+ Scale Out Workers.
+
+-   The Scale Out Master is responsible for Scale Out management and receives package execution requests from users. For more info, see [Scale Out Master](integration-services-ssis-scale-out-master.md).
+
+-   The Scale Out Workers pull execution tasks from the Scale Out Master and run the packages. For more info, see [Scale Out Worker](integration-services-ssis-scale-out-worker.md).
+
+## Configuration options
+You can set up Scale Out in the following configurations:
+
+-   **On a single computer**, where a Scale Out Master and a Scale Out Worker run side by side on the same computer.
+
+-   **On multiple computers**, where each Scale Out Worker is on a different computer.
+
+## What you can do
+After you set up Scale Out, you can do the following things:
+
+-   Run multiple packages deployed to the SSISDB catalog in parallel. For more info, see [Run packages in Scale Out](run-packages-in-integration-services-ssis-scale-out.md).
+
+-   Manage the Scale Out topology in the Scale Out Manager app. For more info, see [Integration Services Scale Out Manager](integration-services-ssis-scale-out-manager.md).
+
+## Related content
+
+- [Get started with Integration Services (SSIS) Scale Out on a single computer](get-started-with-ssis-scale-out-onebox.md)
+- [Walkthrough: Set up Integration Services (SSIS) Scale Out](walkthrough-set-up-integration-services-scale-out.md)

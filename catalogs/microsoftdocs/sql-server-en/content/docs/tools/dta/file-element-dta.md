@@ -1,0 +1,60 @@
+---
+title: "File Element (DTA)"
+description: In the dta utility, the File element specifies a workload file, which includes Transact-SQL statements that execute for a database to tune.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/14/2017
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: reference
+ms.collection:
+  - data-tools
+helpviewer_keywords:
+  - "File element"
+dev_langs:
+  - "XML"
+---
+
+# File Element (DTA)
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Specifies the workload file. A workload is a set of  Transact-SQL  statements that execute against a database or databases that you want to tune. Workload files can be  Transact-SQL  scripts (.sql) or trace files (.trc). For more information, see [Start and Use the Database Engine Tuning Advisor](../../relational-databases/performance/start-and-use-the-database-engine-tuning-advisor.md).  
+  
+## Syntax  
+  
+```  
+  
+<DTAInput>  
+  <Server>...</Server>  
+  <Workload>  
+    <File>...</File>  
+  </Workload>  
+```  
+  
+## Element Characteristics  
+  
+| Characteristic | Description |
+| --- | --- |
+| **Data type and length** | Use the **string** data type to specify the directory path to your workload file. For example:<br /><br /> `<File>C:\Tuning\tun.sql</File>`<br /><br /> Note that length limit is enforced by the server. |
+| **Default value** | None. |
+| **Occurrence** | Required once if no other type of workload is specified. You must specify an **EventString**, a **File**, or a **Database** child element for the **Workload** parent, but only one type can be used. For example, if you specify a workload with the **File** element, then you cannot also specify a workload with the **Database** element in the same XML input file. |
+  
+## Element Relationships  
+  
+| Relationship | Elements |
+| --- | --- |
+| **Parent element** | [Workload Element (DTA)](workload-element-dta.md) |
+| **Child elements** | None. |
+  
+## Example  
+ For a usage example of this element, see [Simple XML Input File Sample (DTA)](simple-xml-input-file-sample-dta.md).  
+  
+## Related content
+
+- [XML Input File Reference (Database Engine Tuning Advisor)](xml-input-file-reference-database-engine-tuning-advisor.md)

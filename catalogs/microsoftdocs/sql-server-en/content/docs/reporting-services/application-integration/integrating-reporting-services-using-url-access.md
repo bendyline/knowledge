@@ -1,0 +1,36 @@
+---
+title: "Integrate using URL Access"
+description: A URL request enables you to access a specific report server and the reports, resources, and other items in the report server database.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: application-integration
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "URL access [Reporting Services], about URL access"
+  - "integrating reports [Reporting Services]"
+---
+# Integrate Reporting Services by using URL access
+  With URL access, you access reports through a report server URL. A URL request enables you to access a specific report server and the reports, resources, and other items in the report server database. You can also customize the report viewing and navigation experience for your users. The query string of the URL contains device information settings and report parameters targeted at your report and the chosen rendering output. The way the report server handles URL requests depends on the parameters, parameter prefixes, and type of item that you're accessing through the URL.  
+  
+ You can use URL access to embed hyperlinks to reports and other report server items in the applications that you develop, whether in a Windows or Web environment.  
+  
+> **Note:**  
+>  The topics in the section provide you with some basic ideas for integration. You can use the information to begin to design and develop your own  Reporting Services 
+ integration scenarios.  
+  
+## In this section  
+ [Using URL Access in a Web Application](integrating-reporting-services-using-url-access-web-application.md)  
+ Describes how to use URL access to integrate  Reporting Services 
+ into a Web environment.  
+  
+ [Using URL Access in a Windows Application](integrating-reporting-services-using-url-access-windows-application.md)  
+ Describes how to use URL access to integrate  Reporting Services 
+ into a  Microsoft 
+ Win32 environment.  
+  
+## Related content
+
+- [Integrating Reporting Services into Applications](https://learn.microsoft.com/previous-versions/sql/reporting-services/application-integration/integrating-reporting-services-into-applications)
+- [URL access (SSRS)](../url-access-ssrs.md)

@@ -1,0 +1,46 @@
+---
+title: Removing credit limits and changing Azure Dev/Test offers
+description: How to remove credit limits and change Azure Dev/Test offers. Switch from pay-as-you-go to another offer.
+ms.author: amast
+author: joseb-rdc
+ms.service: visual-studio-family
+ms.subservice: subscriptions
+ms.topic: how-to
+ms.date: 10/18/2023
+ms.custom: devtestoffer
+---
+
+# Change Azure DevTest offers & remove limits
+
+If you currently have a subscription with pay-as-you-go rates, you can switch your Azure subscription to another offer. Your reasons for changing offers might be specific to your organizational structure. But here are some common reasons you might want to change your subscription offer or remove credit limits.  
+
+- The credit limit allows you to run experiments, tests, and so on, without charging your credit card. Money can be spent quickly when running services. The credit limit puts guard rails around your subscription. You can create your desired architecture and run it as long as needed without overspending.  
+- Working with other organizations or changes within your organization might require you to change offer types.  
+- Your needs might change for an Azure subscription such that you need to continue to modify the current offer type. You might also need to change how you work on a project. In this case, you might need to switch from a credit limit structure to a pay-as-you-go structure to run the services you need.  
+- You have a critical project to run and need more time. You might remove limits if you need a little more than the $150 or $50 limit.  
+- Your current offer has expired.  
+
+Changing your subscription offer is easy for certain offer types. You can follow [our Switching Azure offers documentation](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/manage/switch-azure-offer.md), or contact support for more assistance.  
+
+## Understand spending limits and cost management
+
+Azure Monthly Credit Subscriptions [cost management](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/costs/cost-mgt-best-practices.md) provides you with the tools to plan for, analyze, and reduce your spending to maximize your cloud investment. Those tools give you the ability to remove and add back your spending limits.  
+
+The spending limit in Azure prevents overspending. While you can't change the limit, you can remove the spending limit. You either have no limit or a limit equal to the amount of the credit.  
+
+You can [remove the spending limit](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/manage/spending-limit.md) at any time as long as there's a valid payment method associated with your Azure subscription.  
+
+More Cost Management docs:  
+
+* [Understand Cost Management Data](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/costs/understand-cost-mgt-data.md)  
+* [Optimize Your Cloud Investment with Microsoft Cost Management](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/costs/cost-mgt-best-practices.md)  
+
+## Payment Methods and Overages
+
+When removing limits or changing offers, you might be required to [update or add a new credit card](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/manage/change-credit-card.md). You aren't able to use your credit card for overages until your credit has been exhausted.  
+
+In the Azure portal, you can change your default payment method to a new credit card and update your credit card details. You must be an [Account Administrator](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/understand/subscription-transfer.md#whoisaa) or you must have the correct [MCA permissions](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/manage/understand-mca-roles.md) to make these changes.  
+
+If you want to delete a credit card, see [Delete an Azure billing payment method](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/manage/delete-azure-payment-method.md)  
+
+You can also update your payment method to check/wire transfer instead of by credit card. You first need approval to pay by invoice. To get approved, see [Pay for Azure subscriptions by invoice](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cost-management-billing/manage/pay-by-invoice.md)

@@ -1,0 +1,186 @@
+---
+title: "SET ANSI_NULL_DFLT_ON (Transact-SQL)"
+description: SET ANSI_NULL_DFLT_ON (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "12/04/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "ANSI_NULL_DFLT_ON"
+  - "ANSI_NULL_DFLT_ON_TSQL"
+  - "SET ANSI_NULL_DFLT_ON"
+  - "SET_ANSI_NULL_DFLT_ON_TSQL"
+helpviewer_keywords:
+  - "SET ANSI_NULL_DFLT_ON statement"
+  - "ANSI_NULL_DFLT_ON option"
+  - "default nullability"
+  - "null values [SQL Server], overriding"
+  - "overriding default nullability"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# SET ANSI_NULL_DFLT_ON (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Modifies the behavior of the session to override default nullability of new columns when the **ANSI null default** option for the database is **false**. For more information about setting the value for **ANSI null default**, see [ALTER DATABASE (Transact-SQL)](alter-database-transact-sql.md).  
+  
+ 
+
+## Syntax
+
+```syntaxsql
+-- Syntax for SQL Server and Azure SQL Database and Microsoft Fabric
+
+SET ANSI_NULL_DFLT_ON {ON | OFF}
+```
+
+```syntaxsql
+-- Syntax for Azure Synapse Analytics
+
+SET ANSI_NULL_DFLT_ON ON
+```
+
+## Remarks
+ This setting only affects the nullability of new columns when the nullability of the column is not specified in the CREATE TABLE and ALTER TABLE statements. When SET ANSI_NULL_DFLT_ON is ON, new columns created by using the ALTER TABLE and CREATE TABLE statements allow null values if the nullability status of the column is not explicitly specified. SET ANSI_NULL_DFLT_ON does not affect columns created with an explicit NULL or NOT NULL.  
+  
+ Both SET ANSI_NULL_DFLT_OFF and SET ANSI_NULL_DFLT_ON cannot be set ON at the same time. If one option is set ON, the other option is set OFF. Therefore, either ANSI_NULL_DFLT_OFF or ANSI_NULL_DFLT_ON can be set ON, or both can be set OFF. If either option is ON, that setting (SET ANSI_NULL_DFLT_OFF or SET ANSI_NULL_DFLT_ON) takes effect. If both options are set OFF,  SQL Server 
+ uses the value of the **is_ansi_null_default_on** column in the [sys.databases](../../relational-databases/system-catalog-views/sys-databases-transact-sql.md) catalog view.  
+  
+ For a more reliable operation of  Transact-SQL  scripts that are used in databases with different nullability settings, it is better to specify NULL or NOT NULL in CREATE TABLE and ALTER TABLE statements.  
+  
+ The  SQL Server 
+ Native Client ODBC driver and  SQL Server 
+ Native Client OLE DB Provider for  SQL Server 
+ automatically set ANSI_NULL_DFLT_ON to ON when connecting. The default for SET ANSI_NULL_DFLT_ON is OFF for connections from DB-Library applications.  
+  
+ When SET ANSI_DEFAULTS is ON, SET ANSI_NULL_DFLT_ON is enabled.  
+  
+ The setting of SET ANSI_NULL_DFLT_ON is set at execute or run time and not at parse time.  
+  
+ The setting of SET ANSI_NULL_DFLT_ON does not apply when tables are created using the SELECT INTO statement.  
+  
+ To view the current setting for this setting, run the following query.  
+  
+```sql  
+DECLARE @ANSI_NULL_DFLT_ON VARCHAR(3) = 'OFF';  
+IF ( (1024 & @@OPTIONS) = 1024 ) SET @ANSI_NULL_DFLT_ON = 'ON';  
+SELECT @ANSI_NULL_DFLT_ON AS ANSI_NULL_DFLT_ON;  
+  
+```  
+  
+## Permissions  
+ Requires membership in the **public** role.  
+  
+## Examples  
+ The following example shows the effects of `SET ANSI_NULL_DFLT_ON` with both settings for the **ANSI null default** database option.  
+  
+```sql  
+USE AdventureWorks2022;  
+GO  
+  
+-- The code from this point on demonstrates that SET ANSI_NULL_DFLT_ON  
+-- has an effect when the 'ANSI null default' for the database is false.  
+-- Set the 'ANSI null default' database option to false by executing  
+-- ALTER DATABASE.  
+ALTER DATABASE AdventureWorks2022 SET ANSI_NULL_DEFAULT OFF;  
+GO  
+-- Create table t1.  
+CREATE TABLE t1 (a TINYINT) ;  
+GO   
+-- NULL INSERT should fail.  
+INSERT INTO t1 (a) VALUES (NULL);  
+GO  
+  
+-- SET ANSI_NULL_DFLT_ON to ON and create table t2.  
+SET ANSI_NULL_DFLT_ON ON;  
+GO  
+CREATE TABLE t2 (a TINYINT);  
+GO   
+-- NULL insert should succeed.  
+INSERT INTO t2 (a) VALUES (NULL);  
+GO  
+  
+-- SET ANSI_NULL_DFLT_ON to OFF and create table t3.  
+SET ANSI_NULL_DFLT_ON OFF;  
+GO  
+CREATE TABLE t3 (a TINYINT);  
+GO  
+-- NULL insert should fail.  
+INSERT INTO t3 (a) VALUES (NULL);  
+GO  
+  
+-- The code from this point on demonstrates that SET ANSI_NULL_DFLT_ON   
+-- has no effect when the 'ANSI null default' for the database is true.  
+-- Set the 'ANSI null default' database option to true.  
+ALTER DATABASE AdventureWorks2022 SET ANSI_NULL_DEFAULT ON  
+GO  
+  
+-- Create table t4.  
+CREATE TABLE t4 (a TINYINT);  
+GO   
+-- NULL INSERT should succeed.  
+INSERT INTO t4 (a) VALUES (NULL);  
+GO  
+  
+-- SET ANSI_NULL_DFLT_ON to ON and create table t5.  
+SET ANSI_NULL_DFLT_ON ON;  
+GO  
+CREATE TABLE t5 (a TINYINT);  
+GO   
+-- NULL INSERT should succeed.  
+INSERT INTO t5 (a) VALUES (NULL);  
+GO  
+  
+-- SET ANSI_NULL_DFLT_ON to OFF and create table t6.  
+SET ANSI_NULL_DFLT_ON OFF;  
+GO  
+CREATE TABLE t6 (a TINYINT);  
+GO   
+-- NULL INSERT should succeed.  
+INSERT INTO t6 (a) VALUES (NULL);  
+GO  
+  
+-- Set the 'ANSI null default' database option to false.  
+ALTER DATABASE AdventureWorks2022 SET ANSI_NULL_DEFAULT ON;  
+GO  
+  
+-- Drop tables t1 through t6.  
+DROP TABLE t1,t2,t3,t4,t5,t6;  
+```  
+  
+## Related content
+
+- [ALTER TABLE (Transact-SQL)](alter-table-transact-sql.md)
+- [CREATE TABLE (Transact-SQL)](create-table-transact-sql.md)
+- [SET Statements (Transact-SQL)](set-statements-transact-sql.md)
+- [SET ANSI_DEFAULTS (Transact-SQL)](set-ansi-defaults-transact-sql.md)
+- [SET ANSI_NULL_DFLT_OFF (Transact-SQL)](set-ansi-null-dflt-off-transact-sql.md)

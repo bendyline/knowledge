@@ -1,0 +1,104 @@
+---
+title: "Notify Operator Task (Maintenance Plan)"
+description: Notify Operator Task (Maintenance Plan)
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 03/27/2023
+ms.service: sql
+ms.subservice: supportability
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.swb.maint.notifyoperator.f1"
+helpviewer_keywords:
+  - "Notify Operator Task dialog box"
+---
+# Notify Operator Task (Maintenance Plan)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Use the **Notify Operators Task** dialog to add an automatic notification to this maintenance plan. To use this task you must have Database Mail enabled and properly configured with `msdb` as a Mail Host Database, and have a  Microsoft 
+  SQL Server 
+ Agent operator with a valid e-mail address.
+
+This task uses the `sp_notify_operator` stored procedure.
+
+## Options
+
+- **Connection**
+
+  Select the server connection to use when performing this task.
+
+- **New**
+
+  Create a new server connection to use when performing this task. The **New Connection** dialog box is described below.
+
+- **Operators to notify**
+
+  Specify the recipient of the e-mail.
+
+- **Notification message subject**
+
+  Specify the text to include in the notification message subject line.
+
+- **Notification message body**
+
+  Specify the text to include in the notification message body.
+
+- **View T-SQL**
+
+  View the  Transact-SQL  statements performed against the server for this task, based on the selected options.
+
+  > **Note:**  
+  > When the number of objects affected is large, this display can take a considerable amount of time.
+
+## New Connection dialog box
+
+- **Connection name**
+
+  Enter a name for the new connection.
+
+- **Select or enter a server name**
+
+  Select a server to connect to when performing this task.
+
+- **Refresh**
+
+  Refresh the list of available servers.
+
+- **Enter information to log on to the server**
+
+  Specify how to authenticate against the server.
+
+- **Use Windows integrated security**
+
+  Connect to an instance of the  SQL Server 
+  Database Engine 
+ with  Microsoft 
+ Windows Authentication.
+
+- **Use a specific user name and password**
+
+  Connect to an instance of the  SQL Server 
+  Database Engine 
+ using  SQL Server 
+ Authentication. This option isn't available.
+
+- **User name**
+
+  Provide a  SQL Server 
+ login to use when authenticating. This option isn't available.
+
+- **Password**
+
+  Provide a password to use when authenticating. This option isn't available.
+
+## Related content
+
+- [Database Mail](../database-mail/database-mail.md)
+- [sp_notify_operator (Transact-SQL)](../system-stored-procedures/sp-notify-operator-transact-sql.md)

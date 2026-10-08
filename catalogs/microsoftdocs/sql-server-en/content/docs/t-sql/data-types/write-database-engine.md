@@ -1,0 +1,73 @@
+---
+title: "Write (Database Engine)"
+description: "Write (Database Engine)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "07/23/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "Write_TSQL"
+  - "Write"
+helpviewer_keywords:
+  - "Write [Database Engine]"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Write (Database Engine)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Write writes out a binary representation of **SqlHierarchyId** to the passed-in **BinaryWriter**. Write cannot be called by using  Transact-SQL . Use CAST or CONVERT instead.
+  
+## Syntax  
+  
+```csharp
+void Write( BinaryWriter w )
+```  
+
+## Arguments
+*w*  
+A **BinaryWriter** object to which the binary representation of this **hierarchyid** node will be written out.
+  
+## Return Types  
+**CLR return type:void**
+  
+## Remarks  
+Write is used internally by  SQL Server 
+ when it is necessary, such as when loading data from a **hierarchyid** column. Write is also called internally when a conversion is done between **hierarchyid** and **varbinary**.
+  
+## Examples  
+  
+```csharp
+MemoryStream stream = new MemoryStream();  
+BinaryWriter bw = new BinaryWriter(stream);  
+hid.Write(bw);  
+byte[] encoding = stream.ToArray();  
+```  
+  
+## Related content
+
+- [Read (Database Engine) by using CSharp](read-database-engine.md)
+- [ToString (Database Engine)](tostring-database-engine.md)
+- [CAST and CONVERT (Transact-SQL)](../functions/cast-and-convert-transact-sql.md)
+- [hierarchyid data type method reference](hierarchyid-data-type-method-reference.md)

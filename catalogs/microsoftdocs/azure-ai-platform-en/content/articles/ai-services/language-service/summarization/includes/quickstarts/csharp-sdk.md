@@ -1,0 +1,532 @@
+---
+author: laujan
+ms.author: lajanuar
+manager: mcleans
+ms.date: 06/30/2026
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.custom:
+  - build-2024
+  - ignite-2024
+  - build-2025
+---
+# [Text summarization](#tab/text-summarization)
+
+[Reference documentation](https://learn.microsoft.com/dotnet/api/azure.ai.textanalytics?view=azure-dotnet\&preserve-view=true) | [More samples](https://github.com/Azure/azure-sdk-for-net/tree/Azure.AI.TextAnalytics_5.3.0/sdk/textanalytics/Azure.AI.TextAnalytics/samples) |  [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.TextAnalytics/5.3.0) | [Library source code](https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/textanalytics/Azure.AI.TextAnalytics) 
+
+# [Conversation summarization](#tab/conversation-summarization)
+
+[Reference documentation](https://learn.microsoft.com/dotnet/api/overview/azure/ai.language.conversations-readme?view=azure-dotnet\&preserve-view=true) | [More samples](https://github.com/Azure/azure-sdk-for-net/tree/Azure.AI.Language.Conversations_1.1.0/sdk/cognitivelanguage/Azure.AI.Language.Conversations/samples) | [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.Language.Conversations/1.1.0) | [Library source code](https://github.com/Azure/azure-sdk-for-net/tree/Azure.AI.Language.Conversations_1.1.0/sdk/cognitivelanguage/Azure.AI.Language.Conversations/src/)
+
+# [Document summarization](#tab/document-summarization)
+
+[Reference documentation](https://learn.microsoft.com/dotnet/api/azure.ai.textanalytics?view=azure-dotnet\&preserve-view=true) | [More samples](https://github.com/Azure/azure-sdk-for-net/tree/Azure.AI.TextAnalytics_5.3.0/sdk/textanalytics/Azure.AI.TextAnalytics/samples) |  [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.TextAnalytics/5.3.0) | [Library source code](https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/textanalytics/Azure.AI.TextAnalytics) 
+
+---
+
+Use this quickstart to create a text summarization application with the client library for .NET. In the following example, you'll create a C# application that can summarize documents or text-based customer service conversations.
+
+> **Tip:**
+> You can try the [**Microsoft Foundry**](https://ai.azure.com/) platform to perform summarization tasks without the need to write code.
+
+
+## Prerequisites
+
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+* The [Visual Studio IDE](https://visualstudio.microsoft.com/vs/)
+* Once you have your Azure subscription, [create a Foundry resource](../../../../multi-service-resource.md?pivots=azportal).
+    * You'll need the key and endpoint from the resource you create to connect your application to the API. You paste your key and endpoint into the code later in the quickstart.
+    * You can use the free pricing tier (`Free F0`) to try the service, and upgrade later to a paid tier for production.
+* To use the Analyze feature, you'll need a Language resource with the standard (S) pricing tier.
+
+## Setting up
+
+### Create environment variables 
+
+Your application must be authenticated to send API requests. For production, use a secure way of storing and accessing your credentials. In this example, you will write your credentials to environment variables on the local machine running the application.
+
+To set the environment variable for your Language resource key, open a console window, and follow the instructions for your operating system and development environment. 
+
+- To set the `LANGUAGE_KEY` environment variable, replace `your-key` with one of the keys for your resource.
+- To set the `LANGUAGE_ENDPOINT` environment variable, replace `your-endpoint` with the endpoint for your resource.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/microsoft-entra-id-akv-expanded.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/summarization/includes/quickstarts/csharp-sdk.md)
+
+#### [Windows](#tab/windows)
+
+```console
+setx LANGUAGE_KEY your-key
+```
+
+```console
+setx LANGUAGE_ENDPOINT your-endpoint
+```
+
+> **Note:**
+> If you only need to access the environment variables in the current running console, you can set the environment variable with `set` instead of `setx`.
+
+After you add the environment variables, you might need to restart any running programs that will need to read the environment variables, including the console window. For example, if you're using Visual Studio as your editor, restart Visual Studio before running the example.
+
+#### [Linux](#tab/linux)
+
+```bash
+export LANGUAGE_KEY=your-key
+```
+
+```bash
+export LANGUAGE_ENDPOINT=your-endpoint
+```
+
+After you add the environment variables, run `source ~/.bashrc` from your console window to make the changes effective.
+
+#### [macOS](#tab/macos)
+
+##### Bash
+
+```bash
+export LANGUAGE_KEY=your-key
+```
+
+```bash
+export LANGUAGE_ENDPOINT=your-endpoint
+```
+
+After you add the environment variables, run `source ~/.bash_profile` from your console window to make the changes effective.
+
+##### Xcode
+
+For iOS and macOS development, you set the environment variables in Xcode. For example, follow these steps to set the environment variable in Xcode 13.4.1.
+
+1. Select **Product** > **Scheme** > **Edit scheme**
+1. Select **Arguments** on the **Run** (Debug Run) page
+1. Under **Environment Variables** select the plus (+) sign to add a new environment variable. 
+1. Enter `LANGUAGE_KEY` for the **Name** and enter your Language resource key for the **Value**.
+1. Perform these steps for your resource endpoint. Name the new environment variable `LANGUAGE_ENDPOINT`.
+
+For more configuration options, see the [Xcode documentation](https://help.apple.com/xcode/#/dev745c5c974).
+
+---
+
+
+
+### Create a new .NET Core application
+
+Using the Visual Studio IDE, create a new .NET Core console app. This creates a "Hello World" project with a single C# source file: *program.cs*.
+
+# [Text summarization](#tab/text-summarization)
+
+Install the client library by right-clicking the solution in the **Solution Explorer** and selecting **Manage NuGet Packages**. In the package manager that opens select **Browse** and search for `Azure.AI.TextAnalytics`. Make sure **Include prerelease** is checked. Select version `5.3.0`, and then **Install**. You can also use the [Package Manager Console](https://learn.microsoft.com/nuget/consume-packages/install-use-packages-powershell#find-and-install-a-package).
+
+# [Conversation summarization](#tab/conversation-summarization)
+
+Install the client library by right-clicking the solution in the **Solution Explorer** and selecting **Manage NuGet Packages**. In the package manager that opens select **Browse** and search for `Azure.AI.Language.Conversations`. Make sure **Include prerelease** is checked. Select version `1.1.0`, and then **Install**. You can also use the [Package Manager Console](https://learn.microsoft.com/nuget/consume-packages/install-use-packages-powershell#find-and-install-a-package).
+
+
+# [Document summarization](#tab/document-summarization)
+
+Install the client library by right-clicking the solution in the **Solution Explorer** and selecting **Manage NuGet Packages**. In the package manager that opens select **Browse** and search for `Azure.AI.TextAnalytics`. Make sure **Include prerelease** is checked. Select version `5.3.0`, and then **Install**. You can also use the [Package Manager Console](https://learn.microsoft.com/nuget/consume-packages/install-use-packages-powershell#find-and-install-a-package).
+
+---
+
+## Code example
+
+Copy the following code into your *program.cs* file. Then run the code.  
+
+> **Important:**
+> Go to the Azure portal. If Azure Language resource you created in the **Prerequisites** section deployed successfully, click the **Go to Resource** button under **Next Steps**. You can find your key and endpoint by navigating to your resource's **Keys and Endpoint** page, under **Resource Management**. 
+
+> **Important:**
+> Remember to remove the key from your code when you're done, and never post it publicly. For production, use a secure way of storing and accessing your credentials like [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview). See the Foundry Tools [security](../../../../security-features.md) article for more information.
+
+
+# [Text summarization](#tab/text-summarization)
+
+```csharp
+using Azure;
+using System;
+using Azure.AI.TextAnalytics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace Example
+{
+    class Program
+    {
+        // This example requires environment variables named "LANGUAGE_KEY" and "LANGUAGE_ENDPOINT"
+        static string languageKey = Environment.GetEnvironmentVariable("LANGUAGE_KEY");
+        static string languageEndpoint = Environment.GetEnvironmentVariable("LANGUAGE_ENDPOINT");
+
+        private static readonly AzureKeyCredential credentials = new AzureKeyCredential(languageKey);
+        private static readonly Uri endpoint = new Uri(languageEndpoint);
+
+        // Example method for summarizing text
+        static async Task TextSummarizationExample(TextAnalyticsClient client)
+        {
+            string document = @"The extractive summarization feature uses natural language processing techniques to locate key sentences in an unstructured text document. 
+                These sentences collectively convey the main idea of the document. This feature is provided as an API for developers. 
+                They can use it to build intelligent solutions based on the relevant information extracted to support various use cases. 
+                Extractive summarization supports several languages. It is based on pretrained multilingual transformer models, part of our quest for holistic representations. 
+                It draws its strength from transfer learning across monolingual and harness the shared nature of languages to produce models of improved quality and efficiency." ;
+        
+            // Prepare analyze operation input. You can add multiple documents to this list and perform the same
+            // operation to all of them.
+            var batchInput = new List<string>
+            {
+                document
+            };
+        
+            TextAnalyticsActions actions = new TextAnalyticsActions()
+            {
+                ExtractiveSummarizeActions = new List<ExtractiveSummarizeAction>() { new ExtractiveSummarizeAction() }
+            };
+        
+            // Start analysis process.
+            AnalyzeActionsOperation operation = await client.StartAnalyzeActionsAsync(batchInput, actions);
+            await operation.WaitForCompletionAsync();
+            // View operation status.
+            Console.WriteLine($"AnalyzeActions operation has completed");
+            Console.WriteLine();
+        
+            Console.WriteLine($"Created On   : {operation.CreatedOn}");
+            Console.WriteLine($"Expires On   : {operation.ExpiresOn}");
+            Console.WriteLine($"Id           : {operation.Id}");
+            Console.WriteLine($"Status       : {operation.Status}");
+        
+            Console.WriteLine();
+            // View operation results.
+            await foreach (AnalyzeActionsResult documentsInPage in operation.Value)
+            {
+                IReadOnlyCollection<ExtractiveSummarizeActionResult> summaryResults = documentsInPage.ExtractiveSummarizeResults;
+        
+                foreach (ExtractiveSummarizeActionResult summaryActionResults in summaryResults)
+                {
+                    if (summaryActionResults.HasError)
+                    {
+                        Console.WriteLine($"  Error!");
+                        Console.WriteLine($"  Action error code: {summaryActionResults.Error.ErrorCode}.");
+                        Console.WriteLine($"  Message: {summaryActionResults.Error.Message}");
+                        continue;
+                    }
+        
+                    foreach (ExtractiveSummarizeResult documentResults in summaryActionResults.DocumentsResults)
+                    {
+                        if (documentResults.HasError)
+                        {
+                            Console.WriteLine($"  Error!");
+                            Console.WriteLine($"  Document error code: {documentResults.Error.ErrorCode}.");
+                            Console.WriteLine($"  Message: {documentResults.Error.Message}");
+                            continue;
+                        }
+        
+                        Console.WriteLine($"  Extracted the following {documentResults.Sentences.Count} sentence(s):");
+                        Console.WriteLine();
+        
+                        foreach (ExtractiveSummarySentence sentence in documentResults.Sentences)
+                        {
+                            Console.WriteLine($"  Sentence: {sentence.Text}");
+                            Console.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+
+        static async Task Main(string[] args)
+        {
+            var client = new TextAnalyticsClient(endpoint, credentials);
+            await TextSummarizationExample(client);
+        }
+    }
+}
+
+```
+
+### Output
+
+```console
+AnalyzeActions operation has completed
+
+Created On   : 9/16/2021 8:04:27 PM +00:00
+Expires On   : 9/17/2021 8:04:27 PM +00:00
+Id           : 2e63fa58-fbaa-4be9-a700-080cff098f91
+Status       : succeeded
+
+Extracted the following 3 sentence(s):
+
+Sentence: The extractive summarization feature in uses natural language processing techniques to locate key sentences in an unstructured text document.
+
+Sentence: This feature is provided as an API for developers.
+
+Sentence: They can use it to build intelligent solutions based on the relevant information extracted to support various use cases.
+```
+
+# [Conversation summarization](#tab/conversation-summarization)
+
+```csharp
+using System;
+using Azure;
+using Azure.Core;
+using Azure.AI.Language.Conversations;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace Example
+{
+    class Program
+    {
+        private static readonly AzureKeyCredential credentials = new AzureKeyCredential("replace-with-your-key-here");
+        private static readonly Uri endpoint = new Uri("replace-with-your-endpoint-here");
+
+        static async Task Main(string[] args)
+        {
+            ConversationAnalysisClient client = new ConversationAnalysisClient(endpoint, credentials);
+            await Summarization(client);
+        }
+
+        static async Task Summarization(ConversationAnalysisClient client)
+        {
+            var data = new
+            {
+                analysisInput = new
+                {
+                    conversations = new[]
+                    {
+                        new
+                        {
+                            conversationItems = new[]
+                            {
+                                new
+                                {
+                                    text = "Hello, you're chatting with Rene. How may I help you?",
+                                    id = "1",
+                                    role = "Agent",
+                                    participantId = "Agent",
+                                },
+                                new
+                                {
+                                    text = "Hi, I tried to set up wifi connection for Smart Brew 300 coffee machine, but it didn't work.",
+                                    id = "2",
+                                    role = "Customer",
+                                    participantId = "Customer",
+                                },
+                                new
+                                {
+                                    text = "I'm sorry to hear that. Let's see what we can do to fix this issue. Could you please try the following steps for me? First, could you push the wifi connection button, hold for 3 seconds, then let me know if the power light is slowly blinking on and off every second?",
+                                    id = "3",
+                                    role = "Agent",
+                                    participantId = "Agent",
+                                },
+                                new
+                                {
+                                    text = "Yes, I pushed the wifi connection button, and now the power light is slowly blinking?",
+                                    id = "4",
+                                    role = "Customer",
+                                    participantId = "Customer",
+                                },
+                                new
+                                {
+                                    text = "Great. Thank you! Now, please check in your Contoso Coffee app. Does it prompt to ask you to connect with the machine?",
+                                    id = "5",
+                                    role = "Agent",
+                                    participantId = "Agent",
+                                },
+                                new
+                                {
+                                    text = "No. Nothing happened.",
+                                    id = "6",
+                                    role = "Customer",
+                                    participantId = "Customer",
+                                },
+                                new
+                                {
+                                    text = "I'm very sorry to hear that. Let me see if there's another way to fix the issue. Please hold on for a minute.",
+                                    id = "7",
+                                    role = "Agent",
+                                    participantId = "Agent",
+                                }
+                            },
+                            id = "1",
+                            language = "en",
+                            modality = "text",
+                        },
+                    }
+                },
+                tasks = new[]
+                {
+                    new
+                    {
+                        parameters = new
+                        {
+                            summaryAspects = new[]
+                            {
+                                "issue",
+                                "resolution",
+                            }
+                        },
+                        kind = "ConversationalSummarizationTask",
+                        taskName = "1",
+                    },
+                },
+            };
+
+            Operation<BinaryData> analyzeConversationOperation = await client.AnalyzeConversationsAsync(WaitUntil.Started, RequestContent.Create(data));
+            analyzeConversationOperation.WaitForCompletion();
+
+            using JsonDocument result = JsonDocument.Parse(analyzeConversationOperation.Value.ToStream());
+            JsonElement jobResults = result.RootElement;
+            foreach (JsonElement task in jobResults.GetProperty("tasks").GetProperty("items").EnumerateArray())
+            {
+                JsonElement results = task.GetProperty("results");
+
+                Console.WriteLine("Conversations:");
+                foreach (JsonElement conversation in results.GetProperty("conversations").EnumerateArray())
+                {
+                    Console.WriteLine($"Conversation: #{conversation.GetProperty("id").GetString()}");
+                    Console.WriteLine("Summaries:");
+                    foreach (JsonElement summary in conversation.GetProperty("summaries").EnumerateArray())
+                    {
+                        Console.WriteLine($"Text: {summary.GetProperty("text").GetString()}");
+                        Console.WriteLine($"Aspect: {summary.GetProperty("aspect").GetString()}");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+    }
+}
+```
+
+### Output
+
+```console
+Conversations:
+Conversation: #1
+Summaries:
+Text: Customer is unable to set up wifi connection for Smart Brew 300 coffee machine.
+Aspect: issue
+Text: The agent instructed the customer to press the wifi connection button, hold for 3 seconds, and check if the power light blinks. The agent also asked the customer to check if the Contoso Coffee app prompts to connect with the machine, but the issue persisted. The agent is looking for another way to fix the issue.
+Aspect: resolution
+```
+
+# [Document summarization](#tab/document-summarization)
+
+```csharp
+using Azure;
+using System;
+using Azure.AI.TextAnalytics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace Example
+{
+    class Program
+    {
+        // This example requires environment variables named "LANGUAGE_KEY" and "LANGUAGE_ENDPOINT"
+        static string languageKey = Environment.GetEnvironmentVariable("LANGUAGE_KEY");
+        static string languageEndpoint = Environment.GetEnvironmentVariable("LANGUAGE_ENDPOINT");
+
+        private static readonly AzureKeyCredential credentials = new AzureKeyCredential(languageKey);
+        private static readonly Uri endpoint = new Uri(languageEndpoint);
+
+        // Example method for summarizing text
+        static async Task TextSummarizationExample(TextAnalyticsClient client)
+        {
+            string document = @"The extractive summarization feature uses natural language processing techniques to locate key sentences in an unstructured text document. 
+                These sentences collectively convey the main idea of the document. This feature is provided as an API for developers. 
+                They can use it to build intelligent solutions based on the relevant information extracted to support various use cases. 
+                Extractive summarization supports several languages. It is based on pretrained multilingual transformer models, part of our quest for holistic representations. 
+                It draws its strength from transfer learning across monolingual and harness the shared nature of languages to produce models of improved quality and efficiency." ;
+        
+            // Prepare analyze operation input. You can add multiple documents to this list and perform the same
+            // operation to all of them.
+            var batchInput = new List<string>
+            {
+                document
+            };
+        
+            TextAnalyticsActions actions = new TextAnalyticsActions()
+            {
+                ExtractiveSummarizeActions = new List<ExtractiveSummarizeAction>() { new ExtractiveSummarizeAction() }
+            };
+        
+            // Start analysis process.
+            AnalyzeActionsOperation operation = await client.StartAnalyzeActionsAsync(batchInput, actions);
+            await operation.WaitForCompletionAsync();
+            // View operation status.
+            Console.WriteLine($"AnalyzeActions operation has completed");
+            Console.WriteLine();
+        
+            Console.WriteLine($"Created On   : {operation.CreatedOn}");
+            Console.WriteLine($"Expires On   : {operation.ExpiresOn}");
+            Console.WriteLine($"Id           : {operation.Id}");
+            Console.WriteLine($"Status       : {operation.Status}");
+        
+            Console.WriteLine();
+            // View operation results.
+            await foreach (AnalyzeActionsResult documentsInPage in operation.Value)
+            {
+                IReadOnlyCollection<ExtractiveSummarizeActionResult> summaryResults = documentsInPage.ExtractiveSummarizeResults;
+        
+                foreach (ExtractiveSummarizeActionResult summaryActionResults in summaryResults)
+                {
+                    if (summaryActionResults.HasError)
+                    {
+                        Console.WriteLine($"  Error!");
+                        Console.WriteLine($"  Action error code: {summaryActionResults.Error.ErrorCode}.");
+                        Console.WriteLine($"  Message: {summaryActionResults.Error.Message}");
+                        continue;
+                    }
+        
+                    foreach (ExtractiveSummarizeResult documentResults in summaryActionResults.DocumentsResults)
+                    {
+                        if (documentResults.HasError)
+                        {
+                            Console.WriteLine($"  Error!");
+                            Console.WriteLine($"  Document error code: {documentResults.Error.ErrorCode}.");
+                            Console.WriteLine($"  Message: {documentResults.Error.Message}");
+                            continue;
+                        }
+        
+                        Console.WriteLine($"  Extracted the following {documentResults.Sentences.Count} sentence(s):");
+                        Console.WriteLine();
+        
+                        foreach (ExtractiveSummarySentence sentence in documentResults.Sentences)
+                        {
+                            Console.WriteLine($"  Sentence: {sentence.Text}");
+                            Console.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+
+        static async Task Main(string[] args)
+        {
+            var client = new TextAnalyticsClient(endpoint, credentials);
+            await TextSummarizationExample(client);
+        }
+    }
+}
+
+```
+
+### Output
+
+```console
+AnalyzeActions operation has completed
+
+Created On   : 9/16/2021 8:04:27 PM +00:00
+Expires On   : 9/17/2021 8:04:27 PM +00:00
+Id           : 2e63fa58-fbaa-4be9-a700-080cff098f91
+Status       : succeeded
+
+Extracted the following 3 sentence(s):
+
+Sentence: The extractive summarization feature in uses natural language processing techniques to locate key sentences in an unstructured text document.
+
+Sentence: This feature is provided as an API for developers.
+
+Sentence: They can use it to build intelligent solutions based on the relevant information extracted to support various use cases.
+```
+
+---

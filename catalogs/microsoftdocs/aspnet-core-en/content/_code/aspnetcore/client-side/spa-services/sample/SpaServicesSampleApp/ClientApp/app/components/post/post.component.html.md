@@ -1,0 +1,30 @@
+# Source code: aspnetcore/client-side/spa-services/sample/SpaServicesSampleApp/ClientApp/app/components/post/post.component.html
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<h1>Posts</h1>
+
+<p *ngIf="!posts"><em>Loading...</em></p>
+
+<table class='table' *ngIf="posts">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Post Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let post of posts">
+            <td>{{ post.title }}</td>
+            <td>{{ post.author }}</td>
+            <td>
+                <a href="{{post.link}}">
+                    <span class='glyphicon glyphicon-send'></span> Read
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+```

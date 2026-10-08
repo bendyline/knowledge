@@ -1,0 +1,24 @@
+---
+title: "Stored Procedures (ODBC Driver for Oracle)"
+description: "Stored Procedures (ODBC Driver for Oracle)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# Stored Procedures (ODBC Driver for Oracle)
+> **Important:**  
+>  This feature will be removed in a future version of Windows. Avoid using this feature in new development work, and plan to modify applications that currently use this feature. Instead, use the ODBC driver provided by Oracle.  
+  
+ This section includes the following topics:  
+  
+-   [Stored Procedure Parameter Limitations](stored-procedure-parameter-limitations.md)  
+  
+-   [Using Synonyms with Stored Procedures](using-synonyms-with-stored-procedures.md)  
+  
+-   [Revoking and Granting Rights When Using Stored Procedures](revoking-and-granting-rights-when-using-stored-procedures.md)  
+  
+-   [Returning Array Parameters from Stored Procedures](returning-array-parameters-from-stored-procedures.md)

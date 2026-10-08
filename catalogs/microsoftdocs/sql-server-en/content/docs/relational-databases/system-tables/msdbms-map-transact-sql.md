@@ -1,0 +1,48 @@
+---
+title: "MSdbms_map (Transact-SQL)"
+description: MSdbms_map (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSdbms_map"
+  - "MSdbms_map_TSQL"
+helpviewer_keywords:
+  - "MSdbms_map system table"
+dev_langs:
+  - "TSQL"
+---
+# MSdbms_map (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSdbms_map** table contains source data type information as well as a link to default destination data type information for source and destination DBMS pairs. This table is stored in the **msdb** database and is used for heterogeneous publishing.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **map_id** | **int** | Uniquely identifies a data type mapping. |
+| **src_dbms_id** | **int** | Identifies the source DBMS by specifying its **dbms_id** in the [MSdbms](msdbms-transact-sql.md) table. |
+| **dest_dbms_id** | **int** | Identifies the destination DBMS by specifying its **dbms_id** in the [MSdbms](msdbms-transact-sql.md) table. |
+| **src_datatype_id** | **int** | Identifies the **datatype_id** from the [MSdbms_datatype](msdbms-datatype-transact-sql.md) table for the source data type. |
+| **src_len_min** | **bigint** | The minimum length of the data type at the source DBMS, where a value of NULL indicates that length is not used. |
+| **src_len_max** | **bigint** | The maximum length of the data type at the source DBMS, where a value of NULL indicates that length is not used. |
+| **src_prec_min** | **bigint** | The minimum precision of the data type at the source DBMS, where a value of NULL indicates that precision is not used. |
+| **src_prec_max** | **bigint** | The maximum precision of the data type at the source DBMS, where a value of NULL indicates that precision is not used. |
+| **src_scale_min** | **int** | The minimum scale of the data type at the source DBMS, where a value of NULL indicates that scale is not used. |
+| **src_scale_max** | **int** | The maximum scale of the data type at the source DBMS, where a value of NULL indicates that scale is not used. |
+| **src_nullable** | **bit** | Indicates whether the destination column in the mapping allows NULL values, where a value of NULL means that this definition is not required. |
+| **default_datatype_mapping_id** | **int** | Identifies the default data type mapping by specifying its **map_id** in table [MSdbms_datatype_mapping](msdbms-datatype-mapping-transact-sql.md). |
+  
+## Related content
+
+- [Heterogeneous Database Replication](../replication/non-sql/heterogeneous-database-replication.md)
+- [Specify Data Type Mappings for an Oracle Publisher](../replication/publish/specify-data-type-mappings-for-an-oracle-publisher.md)
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

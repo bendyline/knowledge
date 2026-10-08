@@ -1,0 +1,201 @@
+---
+title: "Identify the Source of Packages with Digital Signatures"
+description: "Identify the Source of Packages with Digital Signatures"
+ms.date: "08/24/2016"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+ms.custom: security
+f1_keywords:
+  - "sql13.dts.digitalsigning.f1"
+helpviewer_keywords:
+  - "signing packages [Integration Services]"
+  - "certificates [Integration Services]"
+  - "packages [Integration Services], security"
+  - "security [Integration Services], certificates"
+  - "signing policies [Integration Services]"
+---
+# Identify the Source of Packages with Digital Signatures
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  An  Integration Services 
+ package can be signed with a digital certificate to identify its source. After a package has been signed with a digital certificate, you can have  Integration Services 
+ check the digital signature before loading the package. To have  Integration Services 
+ check the signature, you set an option in either  SQL Server Data Tools (SSDT) 
+ or in the **dtexec** utility (dtexec.exe), or set an optional registry value.  
+  
+## Sign a package with a digital certificate  
+ Before you can sign a package with a digital certificate, you first have to obtain or create the certificate. After you have the certificate, you can then use this certificate to sign the package. For more information about how to obtain a certificate and sign a package with that certificate, see [Sign a Package by Using a Digital Certificate](#cert).  
+  
+## Set an option to check the package signature  
+ Both  SQL Server Data Tools (SSDT) 
+ and the **dtexec** utility have an option that configures  Integration Services 
+ to check the digital signature of a signed package. Whether you use  SQL Server Data Tools (SSDT) 
+ or the **dtexec** utility depends on whether you want to check all packages or just specific ones:  
+  
+-   To check the digital signature of all packages before loading the packages at design time, set the **Check digital signature when loading a package** option in  SQL Server Data Tools (SSDT) 
+. This option is a global setting for all packages in  SQL Server Data Tools (SSDT) 
+.
+  
+-   To check the digital signature of an individual package, specify the **/VerifyS[igned]** option when you use the **dtexec** utility to run the package. For more information, see [dtexec Utility](../packages/dtexec-utility.md).  
+  
+## Set a Registry value to check package signature  
+ Integration Services 
+ also supports an optional registry value, **BlockedSignatureStates**, that you can use to manage an organization's policy for loading signed and unsigned packages. The registry value can prevent packages from loading if the packages are unsigned, or have invalid or untrusted signatures. For more information about how to set this registry value, see [Implement a Signing Policy by Setting a Registry Value](#registry).  
+  
+> **Note:**
+> The optional **BlockedSignatureStates** registry value can specify a setting that is more restrictive than the digital signature option set in  SQL Server Data Tools (SSDT) 
+ or at the **dtexec** command line. In this situation, the more restrictive registry setting overrides the other settings.  
+
+## <a name="registry"></a> Implement a Signing Policy by Setting a Registry Value
+You can use an optional registry value to manage an organization's policy for loading signed or unsigned packages. If you use this registry value, you must create this registry value on each computer on which  Integration Services 
+ packages will run and on which you want to enforce the policy. After the registry value has been set,  Integration Services 
+ will check or verify the signatures before loading packages.  
+  
+The procedure in this article describes how to add the optional **BlockedSignatureStates** DWORD value to the HKLM\SOFTWARE\Microsoft\Microsoft SQL Server\150\SSIS\Setup\DTSPath registry key. 
+ 
+ > **Note:**
+ > A registry location under 150 represents SQL Server 2019, under 140 represents SQL Server 2017, under 130 represents SQL Server 2016, under 120 represents SQL Server 2014, and under 110 represents SQL Server 2012.
+ 
+The data value in **BlockedSignatureStates** determines whether a package should be blocked if it has an untrusted signature, has an invalid signature, or is unsigned.
+
+For the status of signatures used to sign packages, the **BlockedSignatureStates** registry value uses the following definitions:  
+  
+-   A *valid signature* is one that can be read successfully.  
+  
+-   An *invalid signature* is one for which the decrypted checksum (the one-way hash of the package code encrypted by a private key) does not match the decrypted checksum that is calculated as part of the process of loading  Integration Services 
+ packages.  
+  
+-   A *trusted signature* is one that is created by using a digital certificate signed by a Trusted Root Certification Authority. This setting does not require the signer to be found in the user's list of Trusted Publishers.  
+  
+-   An *untrusted signature* is one that cannot be verified as issued by a Trusted Root Certification Authority, or a signature that is not current.  
+  
+ The following table lists the valid values of the DWORD data and their associated policy.  
+  
+| Value | Description |
+| --- | --- |
+| 0 | No administrative restriction. |
+| 1 | Block invalid signatures.<br /><br /> This setting does not block unsigned packages. |
+| 2 | Block invalid and untrusted signatures.<br /><br /> This setting does not block unsigned packages, but blocks self-generated signatures. |
+| 3 | Block invalid and untrusted signatures and unsigned packages<br /><br /> This setting also blocks self-generated signatures. |
+  
+> **Note:**  
+>  The recommended setting for **BlockedSignatureStates** is 3. This setting provides the greatest protection against unsigned packages or signatures that are either not valid or untrusted. However, the recommended setting may not be appropriate in all circumstances. For more information about signing digital assets, see the topic, "[Introduction to Code Signing](https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/platform-apis/ms537361\(v=vs.85\))," in the MSDN Library.  
+  
+### To implement a signing policy for packages  
+  
+1.  On the **Start** menu, click **Run**.  
+  
+2.  In the Run dialog box, type **Regedit**, and then click **OK**.  
+  
+3.  Locate the registry key, HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\100\SSIS.  
+  
+4.  Right-click **MSDTS**, point to **New**, and then click **DWORD Value**.  
+  
+5.  Update the name of the new value to **BlockedSignatureStates**.  
+  
+6.  Right-click **BlockedSignatureStates** and click **Modify**.  
+  
+7.  In the **Edit DWORD Value** dialog box, type the value 0, 1, 2, or 3.  
+  
+8.  Click **OK**.  
+  
+9. On the **File** menu, click **Exit**.    
+
+## <a name="cert"></a> Sign a Package by Using a Digital Certificate
+  This topic describes how to sign an  Integration Services 
+ package with a digital certificate. You can use a digital signature, together with other settings, to prevent a package that is not valid from loading and running.  
+  
+ Before you can sign an  Integration Services 
+ package, you must do the following tasks:  
+  
+-   Create or obtain a private key to associate with the certificate, and store this private key on the local computer.  
+  
+-   Obtain a certificate for the purpose of code signing from a trusted certification authority. You can use one of the following methods to obtain or create a certificate:  
+  
+    -   Obtain a certificate from a public, commercial certification authority that issues certificates.  
+  
+    -   Obtain a certificate from a certificate server, that enables an organization to internally issue certificates. You have to add the root certificate that is used to sign the certificate to the **Trusted Root Certification Authorities** store. To add the root certificate, you can use the Certificates snap-in for the  Microsoft 
+ Management Console (MMC). For more information, see the topic, "[Certificate Services](https://learn.microsoft.com/windows/win32/seccrypto/certificate-services)," in the MSDN library.  
+  
+    -   Create your own certificate for testing purposes only. The PowerShell command New-SelfSignedCertificate can creating a new self-signed certificate with secure hash algorithm for testing purpose. For example: 
+    ```powershell
+        $params = @{
+            Type = 'CodeSigningCert'
+            Provider = 'Microsoft Enhanced RSA and AES Cryptographic Provider'
+            Subject = 'CN=PS code signing Certificate 2'
+            TextExtension = @(
+                '2.5.29.37={text}1.3.6.1.5.5.7.3.3',
+                '2.5.29.17={text}upn=yourupn' )
+            KeyExportPolicy = 'NonExportable'
+            KeyUsage = 'DigitalSignature'
+            KeyAlgorithm = 'RSA'
+            KeyLength = 2048
+            CertStoreLocation = 'Cert:\CurrentUser\My'
+                     HashAlgorithm = 'sha512'
+        }
+        New-SelfSignedCertificate @params
+    ```
+    
+    If you see the error message 'Package signing failed with error 0x80090008 "Invalid algorithm specified."', it indicates that your certificate hash algorithm is not secure, please change your certificate to a more secure hash algorithm like SHA512 and use a CSP (Cryptographic Service Provider). As the .NET framework is upgrade to 4.7.2 for SQL Server 2022, and the default SignedXML algorithm is changed to SHA256 because SHA1 is no longer considered to be secure. Details refer to [this article](https://learn.microsoft.com/dotnet/framework/migration-guide/retargeting/4.7.x#default-signedxml-and-signedxms-algorithms-changed-to-sha256).
+
+     For more information about certificates, see the online Help for the Certificates snap-in. For more information about how to sign digital assets, see the topic, "[Signing and Checking Code with Authenticode](https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/platform-apis/ms537364\(v=vs.85\))," in the MSDN Library.  
+  
+-   Make sure that the certificate has been enabled for code signing. To determine whether a certificate is enabled for code signing, review the properties of the certificate in the Certificates snap-in.  
+  
+-   Store the certificate in the Personal store.  
+  
+ After you have completed the previous tasks, you can use the following procedure to sign a package.  
+  
+### To sign a package  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ project that contains the package to be signed.  
+  
+2.  In Solution Explorer, double-click the package to open it.  
+  
+3.  In  SSIS 
+ Designer, on the **SSIS** menu, click **Digital Signing**.  
+  
+4.  In the **Digital Signing** dialog box, click **Sign**.  
+  
+5.  In the **Select a Certificate** dialog box, select a certificate.  
+  
+6.  (Optional) Click **View Certificate** to view certificate information.  
+  
+7.  Click **OK** to close the **Select a Certificate** dialog box.  
+  
+8.  Click **OK** to close the **Digital Signing** dialog box.  
+  
+9. To save the updated package, click **Save Selected Items** on the **File** menu.  
+  
+     Although the package has been signed, you must now configure  Integration Services 
+ to check or verify the digital signature before loading the package.  
+
+## <a name="signing_dialog"></a> Digital Signing Dialog Box UI Reference
+  Use the **Digital Signing** dialog box to sign a package with a digital signature or to remove the signature. The **Digital Signing** dialog box is available from the **Digital Signing** option on the **SSIS** menu in  SQL Server Data Tools (SSDT) 
+.  
+  
+ For more information, see [Sign a Package by Using a Digital Certificate](#cert).  
+  
+### Options  
+ **Sign**  
+ Click to open the **Select Certificate** dialog box, and select the certificate to use.  
+  
+ **Remove**  
+ Click to remove the digital signature.  
+
+## Related content
+
+- [Integration Services (SSIS) Packages](../integration-services-ssis-packages.md)
+- [Security Overview (Integration Services)](security-overview-integration-services.md)

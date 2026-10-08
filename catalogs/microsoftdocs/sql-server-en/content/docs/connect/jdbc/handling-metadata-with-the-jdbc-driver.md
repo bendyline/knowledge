@@ -1,0 +1,43 @@
+---
+title: Handling metadata
+description: Learn what metadata is available in the different JDBC objects when using the JDBC Driver for SQL Server.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: 04/20/2021
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Handling metadata with the JDBC driver
+
+
+
+The  Microsoft JDBC Driver for SQL Server 
+ can be used to work with metadata in a  SQL Server 
+ database in various ways. The JDBC driver can be used to get metadata about the database, a result set, or parameters.
+
+The JDBC driver provides three classes for retrieving metadata from a  SQL Server 
+ database:
+
+- [SQLServerDatabaseMetaData](reference/sqlserverdatabasemetadata-class.md): Used to return information about the database that is currently connected.
+- [SQLServerResultSetMetaData](reference/sqlserverresultsetmetadata-class.md): Used to return information about a result set.
+- [SQLServerParameterMetaData](reference/sqlserverparametermetadata-class.md): Used to return information about the parameters of prepared and callable statements.
+
+The articles in this section describe how you can use each of the three metadata classes to work with metadata in a  SQL Server 
+ database.
+
+> **Note:**
+> The metadata methods discussed in this section are generally expensive in terms of application performance, so care should be taken with their usage.
+
+## In this section
+
+| Article | Description |
+| --- | --- |
+| [Using database metadata](using-database-metadata.md) | Describes how to retrieve metadata information about the currently connected database. |
+| [Using result set metadata](using-result-set-metadata.md) | Describes how to retrieve metadata information about the current result set. |
+| [Using parameter metadata](using-parameter-metadata.md) | Describes how to retrieve metadata information about the parameters of prepared and callable statements. |
+
+## Related content
+
+- [Overview of the JDBC driver](overview-of-the-jdbc-driver.md)

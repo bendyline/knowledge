@@ -1,0 +1,34 @@
+# Source code: aspnetcore/migration/1x-to-2x/samples/AspNetCoreDotNetFx2.0App/AspNetCoreDotNetFx2.0App/Views/Account/LoginWithRecoveryCode.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@model LoginWithRecoveryCodeViewModel
+@{
+    ViewData["Title"] = "Recovery code verification";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+<p>
+    You have requested to login with a recovery code. This login will not be remembered until you provide
+    an authenticator app code at login or disable 2FA and login again.
+</p>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RecoveryCode"></label>
+                <input asp-for="RecoveryCode" class="form-control" autocomplete="off" />
+                <span asp-validation-for="RecoveryCode" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-default">Log in</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+```

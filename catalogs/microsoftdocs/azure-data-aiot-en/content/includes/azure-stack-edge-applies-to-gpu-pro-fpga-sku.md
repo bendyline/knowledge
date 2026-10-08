@@ -1,0 +1,9 @@
+---
+author: alkohli
+ms.service: azure-data-box
+ms.author: alkohli
+ms.topic: "include"
+ms.date: 03/08/2023
+---
+
+**APPLIES TO:** Yes for Pro GPU SKUAzure Stack Edge Pro - GPUYes for Pro FPGA SKUAzure Stack Edge Pro - FPGA&nbsp;&nbsp;

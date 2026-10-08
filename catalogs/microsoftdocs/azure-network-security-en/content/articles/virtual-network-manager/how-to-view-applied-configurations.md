@@ -1,0 +1,137 @@
+---
+title: 'View configurations applied by Azure Virtual Network Manager '
+description: Learn how to view configurations applied by Azure Virtual Network Manager.
+author: mbender-ms    
+ms.author: mbender
+ms.service: azure-virtual-network-manager
+ms.topic: how-to
+ms.date: 07/29/2026
+ms.custom:
+  - template-how-to
+  - sfi-image-nochange
+---
+# View configurations applied by Azure Virtual Network Manager
+
+Azure Virtual Network Manager provides a few different ways for you to verify if configurations are being applied correctly. In this article, we look at how you can verify configurations applied both at virtual network and virtual machine level. We'll also go over operations you'll see in the activity log.
+
+
+## Virtual network visibility
+Effective network group membership and applied configurations can be viewed on the per virtual network level.
+
+### Network group membership
+All network group memberships are recorded and available for query inside [Azure Resource Graph](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/governance/resource-graph/overview.md). You are using the `networkResources` table for the extension resource type of `Microsoft.Network/networkGroupMemberships` in your query.
+
+Open the [Azure portal](https://portal.azure.com) to find and use the Resource Graph Explorer with the following steps:
+
+1. Select **All services** in the left pane. Search for and select **Resource Graph Explorer**, or connect directly to the [Resource Graph Explorer](https://portal.azure.com/#view/HubsExtension/ArgQueryBlade) 
+
+1. In the **Query 1** portion of the window, enter the following query to find all network groups containing your virtual network:
+    ```kusto
+    networkresources
+    | where type == "microsoft.network/networkgroupmemberships"
+    | where id == "{virtualNetworkId}/providers/Microsoft.Network/networkGroupMemberships/default"
+    | mv-expand properties.GroupMemberships
+    | project properties_GroupMemberships.NetworkGroupId
+    ```
+1. Select **Run query**.
+1. Review the query response in the **Results** tab. Select the **Messages** tab to see details about the query, including the count of results and duration of the query. Errors, if any, are displayed under this tab.
+1. To find all resources inside your network group, repeat steps above with the following query:
+    ```kusto
+    networkresources
+    | where type == "microsoft.network/networkgroupmemberships"
+    | mv-expand properties.GroupMemberships
+    | where properties_GroupMemberships.NetworkGroupId == {networkGroupId}
+    | parse id with virtualNetworkId "/providers/Microsoft.Network/networkGroupMemberships/default"
+    |    project virtualNetworkId
+    ```
+Learn more about [Azure Resource Graph queries using Resource Graph Explorer](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/governance/resource-graph/first-query-portal.md).
+
+> **Note:**
+> Azure Resource Graph will only return networking resources you have read access to at the time of running the query. 
+
+### Applied configurations
+
+Once your configuration has been deployed by Virtual Network Manager, you can view the applied configuration from the virtual network resource. 
+
+1. Go to your virtual network resource and select **Network Manager** under *Settings*. On the Connectivity tab, view all the connectivity configurations the virtual network is associated with. 
+
+    Screenshot of connectivity configuration associated to a virtual network.
+
+2. Select the **Security admin configurations** tab to view all the security rules currently applied to your virtual network.
+
+    Screenshot of security rules associated to a virtual network.
+
+## Virtual machine visibility
+
+At the virtual machine level, you can view security rules applied by Virtual Network Manager and the effective routes for the connectivity configurations.
+
+### Applied security rules
+
+1. Go to a virtual machine in a virtual network that has a configuration applied by Virtual Network Manager. Then select **Networking** under *Settings* on the left menu pane.
+
+2. You see a list of inbound network security groups and also a section for inbound security rules applied by Virtual Network Manager.
+
+    Screenshot of virtual machine outbound security rules.
+
+3. Select the **Outbound port rules** tab to view the outbound security rules for the virtual machine.
+
+    Screenshot of virtual machine inbound security rules.
+
+### Effective routes
+
+1. To view the effective routes for the applied connectivity configuration, select the network interface name under the *Networking* settings of the virtual machine.
+
+    Screenshot of selecting virtual machine network interface card.
+
+1. Then select **Effective routes** under *Support + troubleshooting*.
+
+1. Routes with a next hop type of *ConnectedGroup* are part of a mesh configuration or provide [*direct connectivity*](concept-connectivity-configuration.md#enable-direct-connectivity) between spoke virtual networks in the same network group. Routes between hub and spoke virtual networks have a next hop type of *VNetPeering* or *GlobalVNetPeering*.
+
+    Screenshot of effective routes that shows connected groups and hub routes.
+
+### Effective security rules
+
+1. To see effective security rules for an applied security rule configuration, select the network interface name under the *Networking* settings of the virtual machine.
+
+    Screenshot of selecting virtual machine network interface card for security rules.
+
+1. Then select **Effective security rules** under *Support + troubleshooting*.
+
+1. Select the name of the Azure Virtual Network Manager to see the security admin rules associated to the virtual machine.
+
+    Screenshot of effective security rules associated to the virtual machine.
+
+## Activity Log
+
+You can view the activity log for your Azure Virtual Network Manager resource to see the changes that you or your network administrator have made. To view the activity log, go to your Network Manager resource in the Azure portal. Select **Activity log** in the left pane menu. If necessary, adjust the *Timespan* and add more filters to narrow the list of operations. You can also view the *Activity Log* by searching for the service at the top of the Azure portal.
+
+Screenshot of activity log page for Network Manager.
+
+### List of operations
+
+The following list contains operations you see in the activity log:
+
+| Name | Description |
+| --- | --- |
+| Commit | Deployment of a configuration has been committed to a region or regions. |
+| Delete ConnectivityConfiguration | Deleting a connectivity configuration from Network Manager. |
+| Delete NetworkGroups | Deleting a network group from Network Manager. |
+| Delete StaticMembers | Deleting a member from a network group. |
+| Delete Rules | Deleting a rule from a rule collection. |
+| Delete RuleCollections | Deleting a rule collection from a security admin configuration. |
+| Delete SecurityAdminConfigurations | Deleting a security admin configuration from Network Manager. |
+| ListDeploymentStatus | Viewing the deployment status of a connectivity or security admin configuration. |
+| ListActiveConnectivityConfiguration | Viewing the list of connectivity configurations applied to the virtual network. |
+| ListActiveSecurityAdminRules | Viewing the list of security admin configurations applied to the virtual network. |
+| Write ConnectivityConfiguration | Creating a new connectivity configuration. |
+| Write NetworkGroups | Creating a new network group. |
+| Write StaticMembers | Adding a member to a network group. |
+| Write NetworkManager | Creating a new Azure Virtual Network Manager instance. |
+| Write Rules | Creating a new security rule to add to a rule collection. |
+| Write RuleCollections | Creating a new rule collection to add to a security admin configuration. |
+| Write SecurityAdminConfiguration | Creating a new security admin configuration. |
+
+## Next steps
+
+- Create an [Azure Virtual Network Manager](create-virtual-network-manager-portal.md) instance using the Azure portal.
+- See [Network Manager FAQ](faq.md) for frequently asked questions.

@@ -1,0 +1,91 @@
+---
+title: "GETANSINULL (Transact-SQL)"
+description: "GETANSINULL (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "GETANSINULL"
+  - "GETANSINULL_TSQL"
+helpviewer_keywords:
+  - "null values [SQL Server], default"
+  - "GETANSINULL function"
+  - "default nullability"
+  - "database nullability [SQL Server]"
+dev_langs:
+  - "TSQL"
+---
+# GETANSINULL (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the default nullability for the database for this session.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+GETANSINULL ( [ 'database' ] )  
+```  
+  
+## Arguments
+ '*database*'  
+ Is the name of the database for which to return nullability information. *database is either **char** or **nchar**. If **char**, *database* is implicitly converted to **nchar**.  
+  
+## Return Types  
+ **int**  
+  
+## Remarks  
+GETANSINULL returns 1 if the database's nullability allows for null values. This return value also requires that the column or data type nullability isn't explicitly defined. The ANSI NULL default is 1. 
+  
+ To enable the ANSI NULL default behavior, one of these conditions must be set:  
+  
+-   ALTER DATABASE *database_name* SET ANSI_NULL_DEFAULT ON  
+  
+-   SET ANSI_NULL_DFLT_ON ON  
+  
+-   SET ANSI_NULL_DFLT_OFF OFF  
+  
+## Examples  
+ The following example returns the default nullability for the  `AdventureWorks2025`  database.  
+  
+```sql  
+USE AdventureWorks2022;  
+GO  
+SELECT GETANSINULL('AdventureWorks2022')  
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+ ```
+ ------  
+1  
+
+(1 row(s) affected)
+ ```  
+  
+## Related content
+
+- [System Functions by category for Transact-SQL](../../relational-databases/system-functions/system-functions-category-transact-sql.md)

@@ -1,0 +1,31 @@
+# Source code: aspnetcore/fundamentals/file-providers/samples/2.x/FileProviderSample/Pages/Index.cshtml.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.FileProviders;
+
+namespace FileProviderSample.Pages
+{
+    #region snippet1
+    public class IndexModel : PageModel
+    {
+        private readonly IFileProvider _fileProvider;
+
+        public IndexModel(IFileProvider fileProvider)
+        {
+            _fileProvider = fileProvider;
+        }
+
+        public IDirectoryContents DirectoryContents { get; private set; }
+
+        public void OnGet()
+        {
+            DirectoryContents = _fileProvider.GetDirectoryContents(string.Empty);
+        }
+    }
+    #endregion
+}
+
+```

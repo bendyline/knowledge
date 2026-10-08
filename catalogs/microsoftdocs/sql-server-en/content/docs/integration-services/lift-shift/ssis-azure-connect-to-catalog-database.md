@@ -1,0 +1,72 @@
+---
+title: "Connect to the SSIS Catalog  (SSISDB) in Azure"
+description: Find the connection information you need to connect to the SSIS Catalog (SSISDB) hosted on an Azure SQL Database server.
+ms.reviewer: 
+ms.date: "09/23/2018"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+ms.custom: sfi-image-nochange
+---
+# Connect to the SSIS Catalog (SSISDB) in Azure
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+
+Find the connection information you need to connect to the SSIS Catalog (SSISDB) hosted on an Azure SQL Database server. You need the following items to connect:
+- fully qualified server name
+- database name
+- login information 
+
+> **Important:**
+> You can't create the SSISDB Catalog database on Azure SQL Database at this time independently of creating the Azure-SSIS Integration Runtime in Azure Data Factory. The Azure-SSIS IR is the runtime environment that runs SSIS packages on Azure. For a walkthrough of the process, see [Deploy and run an SSIS package in Azure](https://learn.microsoft.com/azure/data-factory/tutorial-create-azure-ssis-runtime-portal). 
+
+## Prerequisites
+Install the latest version of [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/install/install).
+
+## Get the connection info from the Azure portal
+1. Log in to the [Azure portal](https://portal.azure.com/).
+2. In the Azure portal, select **SQL Databases** from the left-hand menu, and then select the `SSISDB` database on the **SQL databases** page. 
+3. On the **Overview** page for the `SSISDB` database, find the fully qualified server name. Hover over the server name to bring up the **Click to copy** option.
+
+4. If you have forgotten the login information for the SQL Database server, navigate to the SQL Database server page. There you can view the server admin name and, if necessary, reset the password.
+
+## Connect with SSMS
+1. Open SQL Server Management Studio.
+
+2. **Connect to the server**. In the **Connect to Server** dialog box, enter the following information:
+
+   | Setting | Suggested value | Description |
+   | --- | --- | --- |
+   | **Server type** | Database Engine | This value is required. |
+   | **Server name** | The fully qualified server name | The name should be in this format: **mysqldbserver.database.windows.net**. |
+   | **Authentication** | SQL Server Authentication |  |
+   | **Login** | The server admin account | This is the account that you specified when you created the server. |
+   | **Password** | The password for your server admin account | This is the password that you specified when you created the server. |
+
+3. **Connect to the SSISDB database**. Select **Options** to expand the **Connect to Server** dialog box. In the expanded **Connect to Server** dialog box, select the **Connection Properties** tab. In the **Connect to database** field, select or enter `SSISDB`.
+
+    > **Important:**
+    > If you don't select `SSISDB` when you connect, you may not see the SSIS Catalog in Object Explorer.
+
+    Select the SSISDB database for the connection
+
+4. Then select **Connect**.
+
+5. In Object Explorer, expand **Integration Services Catalogs** and then expand **SSISDB** to view the objects in the SSIS Catalog database.
+
+    Find the SSISDB database in Object Explorer in SSMS
+
+## Related content
+
+- [Deploy an SSIS project with SQL Server Management Studio (SSMS)](../ssis-quickstart-deploy-ssms.md)
+- [Run an SSIS package with SQL Server Management Studio (SSMS)](../ssis-quickstart-run-ssms.md)
+- [Schedule the execution of SQL Server Integration Services (SSIS) packages deployed in Azure](ssis-azure-schedule-packages.md)

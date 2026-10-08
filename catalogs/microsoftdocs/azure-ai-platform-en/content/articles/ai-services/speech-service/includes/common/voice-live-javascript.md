@@ -1,0 +1,11 @@
+---
+manager: mcleans
+author: PatrickFarley
+ms.author: pafarley
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 2/20/2026
+ai-usage: ai-assisted
+---
+
+[Reference documentation](https://learn.microsoft.com/javascript/api/overview/azure/ai-voicelive-readme) | [Package (npm)](https://www.npmjs.com/package/@azure/ai-voicelive) | [Additional samples on GitHub](https://aka.ms/voicelive/github-javascript)

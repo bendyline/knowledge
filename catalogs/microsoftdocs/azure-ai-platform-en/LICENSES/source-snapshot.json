@@ -1,0 +1,78 @@
+{
+  "repository": "MicrosoftDocs/azure-ai-docs",
+  "branch": "main",
+  "revision": "766e4b444667054247ad440e9c5a418efa71c050",
+  "tree": "1ea4f41410418a43fc76ab2c8012ac17c726f80b",
+  "licenseFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+        "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE-CODE",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices.md",
+      "sha256": "dd2a53262bfad067bab98b0c26934558c19d3512c9fc33bc189d1ed1e5f646ed"
+    }
+  ],
+  "selection": {
+    "roots": [
+      "articles",
+      "agent-framework"
+    ],
+    "shared": [],
+    "markdownGlobs": [
+      "articles/**/*.md",
+      "agent-framework/**/*.md"
+    ],
+    "codeGlobs": [
+      "articles/**/*.cs",
+      "articles/**/*.ps1",
+      "articles/**/*.sh",
+      "articles/**/*.py",
+      "articles/**/*.js",
+      "articles/**/*.ts",
+      "articles/**/*.java",
+      "articles/**/*.sql",
+      "articles/**/*.json",
+      "articles/**/*.xml",
+      "articles/**/*.config",
+      "articles/**/*.csproj",
+      "articles/**/*.bicep",
+      "articles/**/*.tf",
+      "articles/**/*.cpp",
+      "articles/**/*.h"
+    ],
+    "exclude": [
+      "**/node_modules/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json",
+      "**/AGENTS.md",
+      "**/CLAUDE.md"
+    ]
+  }
+}

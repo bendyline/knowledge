@@ -1,0 +1,113 @@
+---
+title: "Reporting Services report server (native mode)"
+description: Learn about report server configured for native mode, including managing content, managing a resource, and referencing an image resource from a report.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "administering Reporting Services"
+  - "administering [Reporting Services]"
+  - "Reporting Services, administration"
+---
+# Reporting Services report server (native mode)
+  A report server configured for native mode runs as an application server that provides all processing and management capability exclusively through  Reporting Services 
+ components.  
+  
+ You can use either  SQL Server 
+  Management Studio
+ or the web portal to manage  Reporting Services 
+ reports. Use the  Reporting Services 
+ configuration manager to manage a report server in native mode.  
+  
+ If the report server is configured for SharePoint mode, you must use the content management pages on the SharePoint site to manage reports, shared data sources, and other report server items.  
+  
+ This article contains the following information:  
+  
+-   [Summary of native mode](#bkmk_sum)  
+  
+-   [Managing content](#bkmk_managecontent)  
+  
+-   [Securing and managing a resource](#bkmk_manageresources)  
+  
+-   [Referencing an image resource from a report](#bkmk_referenceimage)  
+  
+##  <a name="bkmk_sum"></a> Summary of native mode  
+ A  Reporting Services 
+ native mode installation consists of several server-side features that you need to manage and maintain. The server includes the following features:  
+  
+-   The Report Server web service, which runs within the Report Server service.  
+  
+-   The background processing applications, which handle scheduled operations and report delivery.  
+  
+-   The report server database.  
+  
+ To fully administer a  Reporting Services 
+ installation, you must have the following permissions:  
+  
+-   Membership in the local Administrator group on the report server computer. If your installation includes server features that run on remote computers, you must have administrator permissions on those computers. Specifically, you must have those permissions if you want to manage those servers over a remote connection.  
+  
+-   Database administrator permissions for the  SQL Server 
+ instance that hosts the database.  
+
+##  <a name="bkmk_managecontent"></a> Managing content  
+ In  Reporting Services 
+, content management refers to the management of reports, models, folders, resources, and shared data sources. All these items can be managed independently of each other through properties and security settings. Any item can be moved to a different location in the report server folder namespace. To manage items effectively, you need to know which tasks a content manager performs.  
+  
+> **Note:**  
+>  Content management is different from report server administration. For more information about how to manage the environment in which a report server runs, see [Configuration and administration of a report server (Reporting Services SharePoint mode)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/reporting-services/report-server-sharepoint/configuration-and-administration-of-a-report-server.md).  
+  
+ Content management includes the following tasks:  
+  
+-   Securing the report server site and items by applying the role-based security provided with  Reporting Services 
+.  
+  
+-   Structuring the report server folder hierarchy by adding, modifying, and deleting folders.  
+  
+-   Setting defaults and properties that apply to items managed by the report server. For example, you can set baseline maximum values that determine report history storage policies.  
+  
+-   Creating shared data source items that can be used in place of report-specific data source connections. A publisher or content manager can select a data source that is different from the one originally defined for a report. For example, select a source to replace a reference to a test database with a reference to a production database.  
+  
+-   Creating shared schedules that can be used in place of report-specific and subscription-specific schedules, making it easier to maintain schedule information over time.  
+  
+-   Creating data-driven subscriptions that generate recipient lists by retrieving data from a data store.  
+  
+-   Balancing the server's report-processing demands by scheduling report processing and specifying which ones can be run on demand and which ones are loaded from cache.  
+  
+ Permission to perform management tasks are provided through two predefined roles: **System Administrator** and **Content Manager**. Effective management of report server content requires that you're assigned to both roles. For more information about these predefined roles, see [Roles and permissions (Reporting Services)](../security/roles-and-permissions-reporting-services.md).  
+  
+ Tools for managing report server content include  Management Studio
+ or the web portal.  Management Studio
+ allows you to set defaults and enable features. The web portal is used to grant user access to report server items and operations. You can also use the web portal to view and use reports and other content types, and view and use all shared items and report distribution features.  
+  
+##  <a name="bkmk_manageresources"></a> Securing and managing a resource  
+ A resource is a managed item that is stored on a report server, but that the report server doesn't process. Typically, a resource provides external content to report users. Examples include an image in a .jpg file or an HTML file that describes the business rules used in a report. The JPG or HTML file is stored on the report server, but the report server passes the file directly to the browser rather than processing it first.  
+  
+ To add a resource to a report server, you upload or publish a file:  
+  
+| Operation | File type |
+| --- | --- |
+| Upload | All files are uploaded as resources except report definition (.rdl) and report model (.smdl) files.<br /><br /> To upload a resource, you must use the web portal if the report server runs in native mode or an application page on a SharePoint site if the server runs in SharePoint integrated mode. For more information, see [Upload a file or report in the report server](../reports/upload-a-file-or-report-report-manager.md) or [Upload documents to a SharePoint library (Reporting Services in SharePoint mode)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/reporting-services/report-server-sharepoint/upload-documents-to-a-sharepoint-library-reporting-services-in-sharepoint-mode.md). |
+| Publish | All files in a project are uploaded as resources except for .rdl, .smdl, and .rds data source files. To publish a resource, add an existing item to a project in Report Designer and then publish the project to a report server. |
+  
+ All resources originate as files on a file system, which are then uploaded to a report server. There are no restrictions on the kinds of files you can upload, file sizes up to 1 GB. However, when published to a report server as a resource, file types that have equivalent MIME types are more optimal than others. For example, resources that are based on HTML and JPG files open in a browser window when the user selects the resource. This action renders the HTML as a web page and the JPG as an image that the user can see. In contrast, resources that don't have equivalent MIME types, such as desktop application files, for example, might not be rendered in the browser window.  
+  
+ Whether report users can view a resource depends on the viewing capabilities of the browser. Because the report server isn't processing resources, the browser must provide the viewing capability to render a specific MIME type. If the browser can't render the content, users who view the resource see only the general properties of the resource.  
+  
+ Resources exist alongside reports, shared data sources, shared schedules, and folders as named items in the report server folder hierarchy. You can search for, view, secure, and set properties on resources just as you would any item stored on a report server. To view or manage a resource, you must have the View resources or Manage resources tasks in your role assignment.  
+  
+##  <a name="bkmk_referenceimage"></a> Referencing an image resource from a report  
+ Resources can contain an image that you reference in a report. If report requirements include the use of external images, consider the following advantages to storing the image as a resource:  
+  
+-   Centralized storage in the report server database. If you move the report server database and its contents to another computer, the external image stays with the report. You don't have to keep track of image files that are stored on disk on different computers.  
+  
+-   Secured through role assignments rather than file system security. The same permissions used to view a report can be applied to the resource. In contrast, if you store the image on disk, you must ensure that either the Anonymous user account or the unattended execution account has permission to access the file.  
+  
+ To use an image resource in a report, add the image file to the project and publish it along with the report. Once the image is published, you can update the image reference in the report. You update the reference so that it points to the resource on the report server, and then republish just the report to save your changes. You can now update the image independently of the report by republishing the resource. The report uses the most current version of the image available on the report server.  
+  
+## Related content
+
+- [Configure and administer a report server (SSRS native mode)](configure-and-administer-a-report-server-ssrs-native-mode.md)
+- [Troubleshoot a Reporting Services installation](../install-windows/troubleshoot-a-reporting-services-installation.md)

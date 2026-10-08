@@ -1,0 +1,71 @@
+---
+title: "InstanceOf (geometry Data Type)"
+description: "InstanceOf (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "InstanceOf"
+  - "InstanceOf_TSQL"
+helpviewer_keywords:
+  - "InstanceOf (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# InstanceOf (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+A method that tests if the **geometry** instance is the same as the specified type. Returns 1 if the type of a **geometry** instance is the same as the specified type. This method also returns 1 if the specified type is an ancestor of the instance type. Otherwise, this method returns 0.
+  
+## Syntax  
+  
+```  
+  
+.InstanceOf (geometry_type )  
+```  
+  
+## Arguments
+*geometry_type*  
+**nvarchar(4000)** string specifying one of 15 types exposed in the **geometry** type hierarchy.  
+  
+## Return Types  
+  SQL Server 
+ return type: **bit**  
+  
+ CLR return type: **SqlBoolean**  
+  
+## Remarks  
+ The input for the method must be one of the following types: **Geometry**, **Point**, **Curve**, **LineString**, **CircularString**, **CompoundCurve**, **Surface**, **Polygon**, **CurvePolygon**, **GeometryCollection**, **MultiSurface**, **MultiPolygon**, **MultiCurve**, **MultiLineString**, and **MultiPoint**. This method throws an **ArgumentException** if any other strings are used for the input.  
+  
+## Examples  
+ The following example creates a `MultiPoint` instance and uses `InstanceOf()` to see if the instance is a `GeometryCollection`.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('MULTIPOINT(0 0, 13.5 2, 7 19)', 0);  
+SELECT @g.InstanceOf('GEOMETRYCOLLECTION');  
+```  
+  
+## Related content
+
+- [Extended methods on geometry instances](extended-methods-on-geometry-instances.md)

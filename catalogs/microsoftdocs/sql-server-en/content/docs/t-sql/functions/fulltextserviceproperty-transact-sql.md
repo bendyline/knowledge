@@ -1,0 +1,99 @@
+---
+title: "FULLTEXTSERVICEPROPERTY (Transact-SQL)"
+description: "FULLTEXTSERVICEPROPERTY (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "FULLTEXTSERVICEPROPERTY_TSQL"
+  - "FULLTEXTSERVICEPROPERTY"
+helpviewer_keywords:
+  - "full-text search [SQL Server], properties"
+  - "FULLTEXTSERVICEPROPERTY function"
+  - "services [SQL Server], full-text search properties"
+  - "test"
+dev_langs:
+  - "TSQL"
+---
+# FULLTEXTSERVICEPROPERTY (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+  Returns information related to the properties of the Full-Text Engine. These properties can be set and retrieved by using **sp_fulltext_service**.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+FULLTEXTSERVICEPROPERTY ('property')  
+```  
+  
+## Arguments
+ *property*  
+ Is an expression containing the name of the full-text service-level property. The table lists the properties and provides descriptions of the information returned.  
+  
+> **Note:**
+>  The following properties will be removed in a future release of  Microsoft 
+  SQL Server 
+: **ConnectTimeout**, **DataTimeout**, and **ResourceUsage**. Avoid using these properties in new development work, and plan to modify applications that currently use any of them.  
+  
+| Property | Value |
+| --- | --- |
+| **ResourceUsage** | Returns 0. Supported for backward compatibility only. |
+| **ConnectTimeout** | Returns 0. Supported for backward compatibility only. |
+| **IsFulltextInstalled** | The full-text component is installed with the current instance of  SQL Server |
+| .<br /><br /> 0 = Full-text is not installed.<br /><br /> 1 = Full-text is installed.<br /><br /> NULL = Invalid input, or error. |
+| **DataTimeout** | Returns 0. Supported for backward compatibility only. |
+| **LoadOSResources** | Indicates whether operating system word breakers and filters are registered and used with this instance of  SQL Server |
+| . By default, this property is disabled to prevent inadvertent behavior changes by updates made to the operating system (OS). Enabling use of OS resources provides access to resources for languages and document types registered with  Microsoft |
+ | Indexing Service, but that do not have an instance-specific resource installed. If you enable the loading of OS resources, ensure that the OS resources are trusted signed binaries; otherwise, they cannot be loaded when **VerifySignature** is set to 1.<br /><br /> 0 = Use only filters and word breakers specific to this instance of  SQL Server |
+| .<br /><br /> 1 = Load OS filters and word breakers. |
+| **VerifySignature** | Specifies whether only signed binaries are loaded by the  Microsoft |
+ | Search Service. By default, only trusted, signed binaries are loaded.<br /><br /> 0 = Do not verify whether or not binaries are signed.<br /><br /> 1 = Verify that only trusted, signed binaries are loaded. |
+  
+## Return Types  
+ **int**  
+  
+## Examples  
+ The following example checks whether only signed binaries are loaded, and the return value indicates that this verification is not occurring.  
+  
+```sql  
+SELECT fulltextserviceproperty('VerifySignature');  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+-----------   
+0  
+```  
+  
+ Note that to set signature verification back to its default value, 1, you can use the following `sp_fulltext_service` statement:  
+  
+```sql  
+EXEC sp_fulltext_service @action='verify_signature', @value=1;  
+GO  
+```  
+  
+## Related content
+
+- [FULLTEXTCATALOGPROPERTY (Transact-SQL)](fulltextcatalogproperty-transact-sql.md)
+- [Metadata functions (Transact-SQL)](metadata-functions-transact-sql.md)
+- [sys.sp_fulltext_service (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-fulltext-service-transact-sql.md)

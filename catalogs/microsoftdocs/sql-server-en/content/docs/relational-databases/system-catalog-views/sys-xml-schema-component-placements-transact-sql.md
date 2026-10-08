@@ -1,0 +1,47 @@
+---
+title: "sys.xml_schema_component_placements (Transact-SQL)"
+description: sys.xml_schema_component_placements (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.xml_schema_component_placements"
+  - "xml_schema_component_placements_TSQL"
+  - "xml_schema_component_placements"
+  - "sys.xml_schema_component_placements_TSQL"
+helpviewer_keywords:
+  - "sys.xml_schema_component_placements catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.xml_schema_component_placements (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row per placement for XML schema components.  
+   
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **xml_component_id** | **int** | ID of the XML schema component that owns this placement. |
+| **placement_id** | **int** | ID of the placement. This is unique within the owning XML schema component. |
+| **placed_xml_component_id** | **int** | ID of the placed XML schema component. |
+| **is_default_fixed** | **bit** | 1 = The default value is a fixed value. This value cannot be overridden in an XML instance.<br /><br /> 0 = The value can be overridden.(default) |
+| **min_occurrences** | **int** | Minimum number of placed component occurs. |
+| **max_occurrences** | **int** | Maximum number of placed component occurs. |
+| **default_value** | **nvarchar (4000)** | Default value if one is supplied. Is NULL if a default value is not supplied. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [XML Schemas (XML Type System) Catalog Views (Transact-SQL)](xml-schemas-xml-type-system-catalog-views-transact-sql.md)

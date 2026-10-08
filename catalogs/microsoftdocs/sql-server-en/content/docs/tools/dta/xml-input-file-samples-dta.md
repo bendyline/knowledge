@@ -1,0 +1,35 @@
+---
+title: "XML Input File Samples (DTA)"
+description: There are several sample XML input files that you can use with the dta command line tool to tune databases for improved query performance.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/14/2017
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: reference
+ms.collection:
+  - data-tools
+---
+
+# XML Input File Samples (DTA)
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This section contains sample XML input files that you can use with the **dta** command line tool. This tool is one of the user interfaces to the Database Engine Tuning Advisor, a tool you can use to tune databases for improved query performance. Database Engine Tuning Advisor analyzes the effects of a workload against a database or multiple databases. A workload is a set of  Transact-SQL  statements that execute against databases that you want to tune. After Database Engine Tuning Advisor finishes analyzing the effects of the workload, it creates a recommendation for adding indexes, indexed views, or partitioning strategies that will improve query performance on your databases.
+
+## In This Section
+
+- [Simple XML Input File Sample (DTA)](simple-xml-input-file-sample-dta.md)  
+
+- [XML Input File Sample with Inline Workload (DTA)](xml-input-file-sample-with-inline-workload-dta.md)  
+
+- [XML Input File Sample with User-specified Configuration (DTA)](xml-input-file-sample-with-user-specified-configuration-dta.md)  
+
+## Related content
+
+- [Database Engine Tuning Advisor](../../relational-databases/performance/database-engine-tuning-advisor.md)

@@ -1,0 +1,29 @@
+---
+title: "MDX Data Manipulation Statements (MDX)"
+description: "MDX Data Manipulation Statements (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# MDX Data Manipulation Statements (MDX)
+
+
+  In Multidimensional Expressions (MDX), data manipulation statements retrieve and manipulate data from multidimensional objects. The following table lists the data manipulation statements in MDX.  
+  
+## In This Section  
+  
+| Topic | Description |
+| --- | --- |
+| [CALL Statement (MDX)](mdx-data-manipulation-call.md) | Runs a stored procedure that returns a void either in the current scope or optionally on a specified cube. |
+| [CLEAR CALCULATIONS Statement (MDX)](mdx-data-manipulation-clear-calculations.md) | Removes all calculations from the cube and returns the cube to calculation pass 0. |
+| [DRILLTHROUGH Statement (MDX)](mdx-data-manipulation-drillthrough.md) | Retrieves the rowsets that were used to create a specified cell in a cube. |
+| [SELECT Statement (MDX)](mdx-data-manipulation-select.md) | Retrieves data from a specified cube. |
+| [UPDATE CUBE Statement (MDX)](mdx-data-manipulation-update-cube.md) | Updates the value of a specified leaf or nonleaf cell in a cube, optionally allocating the value for a specified non-leaf cell across dependent leaf cells. |
+  
+## Related content
+
+- [MDX Statement Reference (MDX)](mdx-statement-reference-mdx.md)
+- [MDX Data Definition Statements (MDX)](mdx-data-definition-statements-mdx.md)
+- [MDX Scripting Statements (MDX)](mdx-scripting-statements-mdx.md)

@@ -1,0 +1,38 @@
+---
+title: "DMX Tutorials (Analysis Services - Data Mining)"
+description: "DMX Tutorials (Analysis Services - Data Mining)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: dmx
+---
+# DMX Tutorials (Analysis Services - Data Mining)
+
+**Applies to:**
+ 
+
+  Analysis Services 
+
+
+
+  The following tutorials introduce you to the use of Data Mining Extensions (DMX) statements with data mining structures and models.  
+  
+## In This Section  
+ [Bike Buyer DMX Tutorial](https://learn.microsoft.com/previous-versions/sql/sql-server-2016/ms345287\(v=sql.130\))  
+  
+ In this tutorial, you will learn how to create, train, and explore mining models by using the DMX query language. You will then use these mining models to create predictions about whether a customer is likely to purchase a specific product.  
+  
+ [Market Basket DMX Tutorial](https://learn.microsoft.com/previous-versions/sql/sql-server-2016/ms345326\(v=sql.130\))  
+  
+ In this tutorial, you will learn how to create a mining model that predicts which products tend to be purchased at the same time. This tutorial also demonstrates the use of nested tables in data mining.  
+  
+## Related content
+
+- [Data Mining Extensions (DMX) Syntax Elements](data-mining-extensions-dmx-syntax-elements.md)
+- [DMX Statements - Data Definition](dmx-statements-data-definition.md)
+- [DMX Statements - Data Manipulation](dmx-statements-data-manipulation.md)
+- [Understanding the DMX Select Statement](understanding-the-dmx-select-statement.md)
+- [Multidimensional Model Data Access (Analysis Services - Multidimensional Data)](https://learn.microsoft.com/analysis-services/multidimensional-models/mdx/multidimensional-model-data-access-analysis-services-multidimensional-data)
+- [Structure and Usage of DMX Prediction Queries](structure-and-usage-of-dmx-prediction-queries.md)
+- [Basic Data Mining Tutorial](https://learn.microsoft.com/previous-versions/sql/sql-server-2016/ms167167\(v=sql.130\))

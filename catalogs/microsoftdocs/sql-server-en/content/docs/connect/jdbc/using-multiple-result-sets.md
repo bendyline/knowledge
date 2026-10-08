@@ -1,0 +1,39 @@
+---
+title: "Using multiple result sets"
+description: "Learn how to query and retrieve multiple result sets from a single execute using the JDBC Driver for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "08/12/2019"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+---
+
+# Using multiple result sets
+
+
+
+When working with inline SQL or  SQL Server 
+ stored procedures that return more than one result set, the  Microsoft JDBC Driver for SQL Server 
+ provides the [getResultSet](reference/getresultset-method-sqlserverstatement.md) method in the [SQLServerStatement](reference/sqlserverstatement-class.md) class for retrieving each set of data returned. In addition, when running a statement that returns more than one result set, you can use the [execute](reference/execute-method-sqlserverstatement.md) method of the SQLServerStatement class, because it will return a **boolean** value that indicates if the value returned is a result set or an update count.
+
+If the execute method returns **true**, the statement that was run has returned one or more result sets. You can access the first result set by calling the getResultSet method. To determine if more result sets are available, you can call the [getMoreResults](reference/getmoreresults-method-sqlserverstatement.md) method, which returns a **boolean** value of **true** if more result sets are available. If more result sets are available, you can call the getResultSet method again to access them, continuing the process until all result sets have been processed. If the getMoreResults method returns **false**, there are no more result sets to process.
+
+If the execute method returns **false**, the statement that was run has returned an update count value, which you can retrieve by calling the [getUpdateCount](reference/getupdatecount-method-sqlserverstatement.md) method.
+
+> **Note:**  
+> For more information about update counts, see [Using a stored procedure with an update count](using-a-stored-procedure-with-an-update-count.md).
+
+In the following example, an open connection to the  AdventureWorks2025  sample database is passed in to the function, and a SQL statement is constructed that, when run, returns two result sets:
+
+[!code[JDBC#UsingMultipleResultSets1](../../../_code/docs/connect/jdbc/codesnippet/Java/using-multiple-result-sets_1.java.md)]
+
+In this case, the number of result sets returned is known to be two. However, the code is written so that if an unknown number of result sets were returned, such as when calling a stored procedure, they would all be processed. To see an example of calling a stored procedure that returns multiple result sets along with update values, see [Handling complex statements](handling-complex-statements.md).
+
+> **Note:**  
+> When you make the call to the getMoreResults method of the SQLServerStatement class, the previously returned result set is implicitly closed.
+
+## Related content
+
+- [Using statements with the JDBC driver](using-statements-with-the-jdbc-driver.md)

@@ -1,0 +1,117 @@
+---
+title: "View or Change the Compatibility Level of a Database"
+description: Learn how to view or change the compatibility level of a database in SQL Server or Azure SQL by using SQL Server Management Studio or Transact-SQL.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 04/22/2025
+ms.service: sql
+ms.subservice: supportability
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "compatibility levels [SQL Server], viewing"
+  - "compatibility [SQL Server], databases"
+  - "compatibility levels [SQL Server], changing"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# View or change the compatibility level of a database
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This article describes how to view or change the compatibility level of a database in  SQL Server 
+, Azure SQL Database, or Azure SQL Managed Instance by using  SQL Server Management Studio 
+ or  Transact-SQL .
+
+Before you change the compatibility level of a database, you should understand the effect of the change on your applications. For more information, see [ALTER DATABASE compatibility level](../../t-sql/statements/alter-database-transact-sql-compatibility-level.md).
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+## Permissions
+
+Requires `ALTER` permission on the database.
+
+<a id="SSMSProcedure"></a>
+
+## Use SQL Server Management Studio
+
+To view or change the compatibility level of a database using [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/sql-server-management-studio-ssms)
+
+1. Connect to the appropriate server or instance hosting your database.
+
+1. Select the server name in **Object Explorer**.
+
+1. Expand **Databases**, and, depending on the database, either select a user database or expand **System Databases** and select a system database.
+
+   > **Note:**  
+   > You can't modify the compatibility level of system databases in Azure SQL Database.
+
+1. Right-click the database, and then select **Properties**.
+
+   The **Database Properties** dialog box opens.
+
+1. In the **Select a page** pane, select **Options**.
+
+1. The current compatibility level is displayed in the **Compatibility level** list box.
+
+   To change the compatibility level, select a different option from the list. The available options for different  Database Engine 
+ versions are listed in the [ALTER DATABASE Compatibility Level (Transact-SQL)](../../t-sql/statements/alter-database-transact-sql-compatibility-level.md#supported-dbcompats) page.
+
+<a id="TsqlProcedure"></a>
+
+## Use Transact-SQL
+
+You can use Transact-SQL to view or change the compatibility level of a database using SSMS.
+
+### View the compatibility level of a database
+
+1. Connect to the appropriate server or instance hosting your database.
+
+1. Open a **New Query**.
+
+1. Copy and paste the following example into the query window and select **Execute**. This example returns the compatibility level of the  `AdventureWorks2025`  [sample database](../../samples/adventureworks-install-configure.md).
+
+   ```sql
+   SELECT compatibility_level
+   FROM sys.databases
+   WHERE [name] = 'AdventureWorks2022';
+   GO
+   ```
+
+### Change the compatibility level of a database
+
+1. Connect to the appropriate server or instance hosting your database.
+
+1. From the Standard bar, select **New Query**.
+
+1. Copy and paste the following example into the query window and select **Execute**. This example changes the compatibility level of the  `AdventureWorks2025`  database to `160`, which is the compatibility level for  SQL Server 2022 (16.x) 
+.
+
+   ```sql
+   ALTER DATABASE AdventureWorks2022
+   SET COMPATIBILITY_LEVEL = 160;
+   GO
+   ```
+
+> **Note:**  
+> The compatibility level of a [SQL database in Fabric](https://learn.microsoft.com/fabric/database/sql/overview) cannot be changed, and always uses the latest version.
+
+## Related content
+
+- [ALTER DATABASE (Transact-SQL) compatibility level](../../t-sql/statements/alter-database-transact-sql-compatibility-level.md)

@@ -1,0 +1,59 @@
+---
+title: "PDO::beginTransaction"
+description: "API reference for the PDO::beginTransaction function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDO::beginTransaction
+
+
+
+Turns off auto commit mode and begins a transaction.  
+  
+## Syntax  
+  
+```php  
+  
+bool PDO::beginTransaction();  
+```  
+  
+## Return Value  
+true if the method call succeeded, false otherwise.  
+  
+## Remarks  
+The transaction begun with PDO::beginTransaction ends when [PDO::commit](pdo-commit.md) or [PDO::rollback](pdo-rollback.md) is called.  
+  
+PDO::beginTransaction is not affected by (and does not affect) the value of PDO::ATTR_AUTOCOMMIT.  
+  
+You are not allowed to call PDO::beginTransaction before the previous PDO::beginTransaction is ended with PDO::rollback or PDO::commit.  
+  
+The connection returns to auto commit mode if this method fails.  
+  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+The following example uses a database called Test and a table called Table1. It starts a transaction and then issues commands to add two rows and then delete one row. The commands are sent to the database and the transaction is explicitly ended with `PDO::commit`.  
+  
+```php  
+<?php  
+   $conn = new PDO( "sqlsrv:server=(local); Database = Test", "", "");  
+   $conn->beginTransaction();  
+   $ret = $conn->exec("insert into Table1(col1, col2) values('a', 'b') ");  
+   $ret = $conn->exec("insert into Table1(col1, col2) values('a', 'c') ");  
+   $ret = $conn->exec("delete from Table1 where col1 = 'a' and col2 = 'b'");  
+   $conn->commit();  
+   // $conn->rollback();  
+   echo $ret;  
+?>  
+```  
+  
+## Related content
+
+- [PDO Class](pdo-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

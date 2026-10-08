@@ -1,0 +1,79 @@
+---
+title: "sys.certificates (Transact-SQL)"
+description: sys.certificates returns a row for each certificate in the database.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 12/21/2022
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "certificates"
+  - "certificates_TSQL"
+  - "sys.certificates_TSQL"
+  - "sys.certificates"
+helpviewer_keywords:
+  - "sys.certificates catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.certificates (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a row for each certificate in the database.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **name** | **sysname** | Name of the certificate. Is unique within the database. |
+| **certificate_id** | **int** | ID of the certificate. Is unique within the database. |
+| **principal_id** | **int** | ID of the database principal that owns this certificate. |
+| **pvt_key_encryption_type** | **char(2)** | How the private key is encrypted.<br /><br />NA = There is no private key for the certificate<br /><br />MK = Private key is encrypted by the master key<br /><br />PW = Private key is encrypted by a user-defined password<br /><br />SK = Private key is encrypted by the service master key. |
+| **pvt_key_encryption_type_desc** | **nvarchar(60)** | Description of how the private key is encrypted.<br /><br />NO_PRIVATE_KEY<br /><br />ENCRYPTED_BY_MASTER_KEY<br /><br />ENCRYPTED_BY_PASSWORD<br /><br />ENCRYPTED_BY_SERVICE_MASTER_KEY |
+| **is_active_for_begin_dialog** | **bit** | If 1, this certificate is used to initiate encrypted service dialogs. |
+| **issuer_name** | **nvarchar(442)** | Name of certificate issuer. |
+| **cert_serial_number** | **nvarchar(64)** | Serial number of certificate. |
+| **sid** | **varbinary(85)** | Login SID for this certificate. |
+| **string_sid** | **nvarchar(128)** | String representation of the login SID for this certificate |
+| **subject** | **nvarchar(4000)** | Subject of this certificate. |
+| **expiry_date** | **datetime** | Date and time when certificate expires. |
+| **start_date** | **datetime** | Date and time when certificate becomes valid. |
+| **thumbprint** | **varbinary(32)** | SHA-1 hash of the certificate. The SHA-1 hash is globally unique. |
+| **attested_by** | **nvarchar(260)** | System use only. |
+| **pvt_key_last_backup_date** | **datetime** | The date and time the certificate's private key was last exported. |
+| **key_length** | **int** | The certificate's key length.<br /><br />**Applies to:**  SQL Server 2016 (13.x) |
+ | and later versions. |
+
+## Permissions
+
+The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).
+
+## Related content
+
+- [Security Catalog Views (Transact-SQL)](security-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Encryption hierarchy](../security/encryption/encryption-hierarchy.md)
+- [CREATE CERTIFICATE (Transact-SQL)](../../t-sql/statements/create-certificate-transact-sql.md)

@@ -1,0 +1,100 @@
+---
+title: "Creating a Custom Task"
+description: "Creating a Custom Task"
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: "reference"
+helpviewer_keywords:
+  - "custom tasks [Integration Services], creating"
+---
+# Creating a Custom Task
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  The steps involved in creating a custom task are similar to the steps for creating any other custom object for  Integration Services 
+:  
+  
+-   Create a new class that inherits from the base class. For a task, the base class is [Microsoft.SqlServer.Dts.Runtime.Task](https://learn.microsoft.com/dotnet/api/microsoft.sqlserver.dts.runtime.task).  
+  
+-   Apply the attribute that identifies the type of object to the class. For a task, the attribute is [Microsoft.SqlServer.Dts.Runtime.DtsTaskAttribute](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.DtsTaskAttribute).  
+  
+-   Override the implementation of the base class's methods and properties. For a task, these include the [Microsoft.SqlServer.Dts.Runtime.Task.Validate%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.Task.Validate%252A) and [Microsoft.SqlServer.Dts.Runtime.Task.Execute%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.Task.Execute%252A) methods.  
+  
+-   Optionally, develop a custom user interface. For a task, this requires a class that implements the [Microsoft.SqlServer.Dts.Runtime.Design.IDtsTaskUI](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.Design.IDtsTaskUI) interface.  
+  
+## Getting Started with a Custom Task  
+  
+### Creating Projects and Classes  
+ Because all managed tasks derive from the [Microsoft.SqlServer.Dts.Runtime.Task](https://learn.microsoft.com/dotnet/api/microsoft.sqlserver.dts.runtime.task) base class, the first step when you create a custom task is to create a class library project in your preferred managed programming language and create a class that inherits from the base class. In this derived class you will override the methods and properties of the base class to implement your custom functionality.  
+  
+ In the same solution, create a second class library project for the custom user interface. A separate assembly for the user interface is recommended for ease of deployment because it allows you to update and redeploy the connection manager or its user interface independently.  
+  
+ Configure both projects to sign the assemblies that will be generated at build time by using a strong name key file.  
+  
+### Applying the DtsTask Attribute  
+ Apply the [Microsoft.SqlServer.Dts.Runtime.DtsTaskAttribute](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.DtsTaskAttribute) attribute to the class that you have created to identify it as a task. This attribute provides design-time information such as the name, description, and task type of the task.  
+  
+ Use the [Microsoft.SqlServer.Dts.Runtime.DtsTaskAttribute.UITypeName%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.DtsTaskAttribute.UITypeName%252A) property to link the task to its custom user interface. To obtain the public key token that is required for this property, you an use **sn.exe -t** to display the public key token from the key pair (.snk) file that you intend to use to sign the user interface assembly.  
+  
+```csharp  
+using System;  
+using Microsoft.SqlServer.Dts.Runtime;  
+namespace Microsoft.SSIS.Samples  
+{  
+  [DtsTask  
+  (  
+   DisplayName = "MyTask",  
+   IconResource = "MyTask.MyTaskIcon.ico",  
+   UITypeName = "My Custom Task," +  
+   "Version=1.0.0.0," +  
+   "Culture = Neutral," +  
+   "PublicKeyToken = 12345abc6789de01",  
+   TaskType = "PackageMaintenance",  
+   TaskContact = "MyTask; company name; any other information",  
+   RequiredProductLevel = DTSProductLevel.None  
+   )]  
+  public class MyTask : Task  
+  {  
+    // Your code here.  
+  }  
+}  
+```  
+  
+```vb  
+Imports System  
+Imports Microsoft.SqlServer.Dts.Runtime  
+  
+<DtsTask(DisplayName:="MyTask", _  
+ IconResource:="MyTask.MyTaskIcon.ico", _  
+ UITypeName:="My Custom Task," & _  
+ "Version=1.0.0.0,Culture=Neutral," & _  
+ "PublicKeyToken=12345abc6789de01", _  
+ TaskType:="PackageMaintenance", _  
+ TaskContact:="MyTask; company name; any other information", _  
+ RequiredProductLevel:=DTSProductLevel.None)> _  
+Public Class MyTask  
+  Inherits Task  
+  
+  ' Your code here.  
+  
+End Class 'MyTask  
+```  
+  
+## Building, Deploying, and Debugging a Custom Task  
+ The steps for building, deploying, and debugging a custom task in  Integration Services 
+ are similar to the steps required for other types of custom objects. For more information, see [Building, Deploying, and Debugging Custom Objects](../building-deploying-and-debugging-custom-objects.md).  
+  
+## Related content
+
+- [Creating a Custom Task](#creating-a-custom-task)
+- [Coding a Custom Task](coding-a-custom-task.md)
+- [Developing a User Interface for a Custom Task](developing-a-user-interface-for-a-custom-task.md)

@@ -1,0 +1,159 @@
+---
+title: "sysmail_add_account_sp (Transact-SQL)"
+description: "Creates a new Database Mail account holding information about an SMTP account."
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sysmail_add_account_sp"
+  - "sysmail_add_account_sp_TSQL"
+helpviewer_keywords:
+  - "sysmail_add_account_sp"
+dev_langs:
+  - "TSQL"
+---
+# sysmail_add_account_sp (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Creates a new Database Mail account holding information about an SMTP account.
+
+
+
+## Syntax
+
+```syntaxsql
+dbo.sysmail_add_account_sp
+    [ @account_name = ] N'account_name'
+    , [ @email_address = ] N'email_address'
+    [ , [ @display_name = ] N'display_name' ]
+    [ , [ @replyto_address = ] N'replyto_address' ]
+    [ , [ @description = ] N'description' ]
+    [ , [ @mailserver_name = ] N'mailserver_name' ]
+    [ , [ @mailserver_type = ] N'mailserver_type' ]
+    [ , [ @port = ] port ]
+    [ , [ @username = ] N'username' ]
+    [ , [ @password = ] N'password' ]
+    [ , [ @use_default_credentials = ] use_default_credentials ]
+    [ , [ @enable_ssl = ] enable_ssl ]
+    [ , [ @account_id = ] account_id OUTPUT ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @account_name = ] N'*account_name*'
+
+The name of the account to add. *@account_name* is **sysname**, with no default.
+
+#### [ @email_address = ] N'*email_address*'
+
+The e-mail address to send the message from. This address must be an internet e-mail address. *@email_address* is **nvarchar(128)**, with no default. For example, an account for  SQL Server 
+ Agent might send e-mail from the address `SqlAgent@adventure-works.com`.
+
+#### [ @display_name = ] N'*display_name*'
+
+The display name to use on e-mail messages from this account. *@display_name* is **nvarchar(128)**, with a default of `NULL`. For example, an account for  SQL Server 
+ Agent might display the name `SQL Server Agent Automated Mailer` on e-mail messages.
+
+#### [ @replyto_address = ] N'*replyto_address*'
+
+The address that responses to messages from this account are sent to. *@replyto_address* is **nvarchar(128)**, with a default of `NULL`. For example, replies to an account for  SQL Server 
+ Agent might go to the database administrator, `danw@adventure-works.com`.
+
+#### [ @description = ] N'*description*'
+
+A description for the account. *@description* is **nvarchar(256)**, with a default of `NULL`.
+
+#### [ @mailserver_name = ] N'*mailserver_name*'
+
+The name or IP address of the SMTP mail server to use for this account. The computer that runs  SQL Server 
+ must be able to resolve the *@mailserver_name* to an IP address. *@mailserver_name* is **sysname**, with no default.
+
+#### [ @mailserver_type = ] N'*mailserver_type*'
+
+The type of e-mail server. *@mailserver_type* is **sysname**, with a default of `SMTP`.
+
+#### [ @port = ] *port*
+
+The port number for the e-mail server. *@port* is **int**, with a default of `25`.
+
+#### [ @username = ] N'*username*'
+
+The user name to use to log on to the e-mail server. *@username* is **nvarchar(128)**, with a default of `NULL`. When this parameter is `NULL`, Database Mail doesn't use authentication for this account. If the mail server doesn't require authentication, use `NULL` for the username.
+
+#### [ @password = ] N'*password*'
+
+The password to use to log on to the e-mail server. *@password* is **nvarchar(128)**, with a default of `NULL`. There's no need to provide a password unless a username is specified.
+
+#### [ @use_default_credentials = ] *use_default_credentials*
+
+Specifies whether to send the mail to the SMTP server using the credentials of the  SQL Server Database Engine 
+. *@use_default_credentials* is **bit**, with a default of `0`. When this parameter is `1`, Database Mail uses the credentials of the  Database Engine 
+. When this parameter is `0`, Database Mail sends the *@username* and *@password* parameters if present, otherwise sends mail without *@username* and *@password* parameters.
+
+#### [ @enable_ssl = ] *enable_ssl*
+
+Specifies whether Database Mail encrypts communication using Secure Sockets Layer. *@enable_ssl* is **bit**, with a default of `0`.
+
+#### [ @account_id = ] *account_id* OUTPUT
+
+Returns the account ID for the new account. *@account_id* is **int**, with a default of `NULL`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+Database Mail provides separate parameters for *@email_address*, *@display_name*, and *@replyto_address*. The *@email_address* parameter is the address from which the message is sent. The *@display_name* parameter is the name shown in the `From:` field of the e-mail message. The *@replyto_address* parameter is the address where replies to the e-mail message will be sent. For example, an account used for  SQL Server 
+ Agent might send e-mail messages from an e-mail address that is only used for  SQL Server 
+ Agent. Messages from that address should display a friendly name, so recipients can easily determine that  SQL Server 
+ Agent sent the message. If a recipient replies to the message, the reply should go to the database administrator rather than the address used by  SQL Server 
+ Agent. For this scenario, the account uses `SqlAgent@adventure-works.com` as the e-mail address. The display name is set to `SQL Server Agent Automated Mailer`. The account uses `danw@adventure-works.com` as the reply to address, so replies to messages sent from this account go to the database administrator rather than the e-mail address for  SQL Server 
+ Agent. By providing independent settings for these three parameters, Database Mail allows you to configure messages to suit your needs.
+
+The *@mailserver_type* parameter supports the value `SMTP`.
+
+When *@use_default_credentials* is `1`, mail is sent to the SMTP server using the credentials of the  SQL Server Database Engine 
+. When *@use_default_credentials* is `0` and a *@username* and *@password* are specified for an account, the account uses SMTP authentication. The *@username* and *@password* are the credentials the account uses for the SMTP server, not credentials for  SQL Server 
+ or the network that the computer is on.
+
+The stored procedure `sysmail_add_account_sp` is in the `msdb` database and is owned by the `dbo` schema. The procedure must be executed with a three-part name if the current database isn't `msdb`.
+
+## Permissions
+
+You can grant `EXECUTE` permissions on this procedure, but these permissions might be overridden during a SQL Server upgrade.
+
+
+## Examples
+
+The following example creates an account named `AdventureWorks Administrator`. The account uses the e-mail address `dba@adventure-works.com` and sends mail to the SMTP mail server `smtp.adventure-works.com`. E-mail messages sent from this account show `AdventureWorks Automated Mailer` on the `From:` line of the message. Replies to the messages are directed to `danw@adventure-works.com`.
+
+```sql
+EXECUTE msdb.dbo.sysmail_add_account_sp
+    @account_name = 'AdventureWorks Administrator',
+    @description = 'Mail account for administrative e-mail.',
+    @email_address = 'dba@adventure-works.com',
+    @display_name = 'AdventureWorks Automated Mailer',
+    @mailserver_name = 'smtp.adventure-works.com';
+```
+
+## Related content
+
+- [Database Mail](../database-mail/database-mail.md)
+- [Create a Database Mail account](../database-mail/create-a-database-mail-account.md)
+- [Database Mail stored procedures (Transact-SQL)](database-mail-stored-procedures-transact-sql.md)

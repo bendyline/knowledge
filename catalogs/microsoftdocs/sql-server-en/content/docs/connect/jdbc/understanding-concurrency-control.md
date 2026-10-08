@@ -1,0 +1,50 @@
+---
+title: "Understanding concurrency control"
+description: "Learn about concurrency control and how to preserve database integrity when developing a multi-user application with the JDBC Driver for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "12/08/2020"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Understanding concurrency control
+
+
+  Concurrency control refers to the various techniques that are used to preserve the integrity of the database when multiple users are updating rows at the same time. Incorrect concurrency can lead to problems such as dirty reads, phantom reads, and non-repeatable reads. The  Microsoft JDBC Driver for SQL Server 
+ provides interfaces to all the concurrency techniques used by  SQL Server 
+ to resolve these issues.  
+  
+> **Note:**  
+>  For more information about  SQL Server 
+ concurrency, see ["Managing Concurrent Data Access"](../../relational-databases/sql-server-transaction-locking-and-row-versioning-guide.md#managing-concurrent-data-access).  
+  
+## Remarks  
+ The JDBC driver supports the following concurrency types:  
+  
+| Concurrency Type | Characteristics | Row Locks | Description |
+| --- | --- | --- | --- |
+| CONCUR_READ_ONLY | Read Only | No | Updates through the cursor are not allowed, and no locks are held on the rows that make up the result set. |
+| CONCUR_UPDATABLE | Optimistic Read Write | No | Database assumes row contention is unlikely, but possible. Row integrity is checked with a timestamp comparison. |
+| CONCUR_SS_SCROLL_LOCKS | Pessimistic Read Write | Yes | Database assumes row contention is likely. Row integrity is ensured with row locking. |
+| CONCUR_SS_OPTIMISTIC_CC | Optimistic Read Write | No | Database assumes row contention is unlikely, but possible. Row integrity is verified with a timestamp comparison.<br /><br /> For  SQL Server 2005 (9.x) |
+ | and later, the server will change this to CONCUR_SS_OPTIMISTIC_CCVAL if the table does not contain a timestamp column.<br /><br /> For  SQL Server 2000 (8.x) |
+| , if the underlying table has a timestamp column, OPTIMISTIC WITH ROW VERSIONING is used even if OPTIMISTIC WITH VALUES is specified. If OPTIMISTIC WITH ROW VERSIONING is specified and the table does not have timestamps, OPTIMISTIC WITH VALUES is used. |
+| CONCUR_SS_OPTIMISTIC_CCVAL | Optimistic Read Write | No | Database assumes row contention is unlikely, but possible. Row integrity is checked with a row data comparison. |
+  
+## Result sets that are not updateable  
+ An updatable result set is a result set in which rows can be inserted, updated, and deleted. In the following cases,  SQL Server 
+ cannot create an updatable cursor. The exception generated is, "Result set is not updatable."  
+  
+| Cause | Description | Remedy |
+| --- | --- | --- |
+| Statement is not created by using JDBC 2.0 (or later) syntax | JDBC 2.0 introduced new methods to create statements. If JDBC 1.0 syntax is used, the result set defaults to read-only. | Specify result set type and concurrency when creating the statement. |
+| Statement is created by using TYPE_SCROLL_INSENSITIVE | SQL Server |
+ | creates a static snapshot cursor. This is disconnected from the underlying table rows to help protect the cursor from row updates by other users. | Use TYPE_SCROLL_SENSITIVE, TYPE_SS_SCROLL_KEYSET, TYPE_SS_SCROLL_DYNAMIC, or TYPE_FORWARD_ONLY with CONCUR_UPDATABLE to avoid creating a static cursor. |
+| Table design precludes a KEYSET or DYNAMIC cursor | The underlying table does not have unique keys to enable  SQL Server |
+ | to uniquely identify a row. | Add unique keys to the table to provide unique identification of each row. |
+  
+## Related content
+
+- [Managing result sets with the JDBC driver](managing-result-sets-with-the-jdbc-driver.md)

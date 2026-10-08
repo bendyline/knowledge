@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Microsoft 365 admin center",
+    "expectedDocumentIds": [
+      "microsoft-365/admin/admin-overview/admin-center-overview"
+    ]
+  }
+]

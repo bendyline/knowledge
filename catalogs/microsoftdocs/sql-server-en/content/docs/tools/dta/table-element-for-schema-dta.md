@@ -1,0 +1,67 @@
+---
+title: "Table Element for Schema (DTA)"
+description: In the dta utility, the Table element for Schema specifies the table for tuning. This article describes that element.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/01/2017
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: reference
+ms.collection:
+  - data-tools
+helpviewer_keywords:
+  - "Table element [DTA]"
+dev_langs:
+  - "XML"
+---
+
+# Table Element for Schema (DTA)
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Specifies the table for tuning.  
+  
+## Syntax  
+  
+```  
+  
+<Schema>  
+...code removed here...  
+    <Table>...</Table>  
+```  
+  
+## Element Attributes  
+  
+| Attribute | Description |
+| --- | --- |
+| **NumberOfRows** | Optional. Integer that allows you to simulate tables of different sizes. |
+  
+## Element Characteristics  
+  
+| Characteristic | Description |
+| --- | --- |
+| **Data type and length** | **string**, between 1 and 255 characters. |
+| **Default value** | None. |
+| **Occurrence** | Optional. List as many tables as appropriate for your workload. |
+  
+## Element Relationships  
+  
+| Relationship | Elements |
+| --- | --- |
+| **Parent element** | [Schema Element for Database (DTA)](schema-element-for-database-dta.md) |
+| **Child elements** | [Name Element for Table (DTA)](name-element-for-table-dta.md) |
+  
+## Remarks  
+ If you do not specify a **Table** element, Database Engine Tuning Advisor will assume all tables on the specified database can be tuned.  
+  
+## Example  
+ For a usage example, see [Server Element (DTA)](server-element-dta.md).  
+  
+## Related content
+
+- [XML Input File Reference (Database Engine Tuning Advisor)](xml-input-file-reference-database-engine-tuning-advisor.md)

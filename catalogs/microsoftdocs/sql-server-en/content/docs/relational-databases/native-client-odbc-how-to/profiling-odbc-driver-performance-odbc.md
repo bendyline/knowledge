@@ -1,0 +1,46 @@
+---
+title: "Profiling ODBC Driver Performance"
+description: "Profiling ODBC Driver Performance (ODBC)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+---
+# Profiling ODBC Driver Performance (ODBC)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The  SQL Server 
+ ODBC driver has two driver-specific options for profiling the performance of the driver.  
+  
+ The  SQL Server 
+ ODBC driver can log performance statistics in file. The log file is a tab-delimited file that can be analyzed in any spreadsheet supporting tab-delimited files, such as Microsoft Excel.  
+  
+ The driver can also log long-running queries (queries that do not get a response from the server in a specified length of time). These queries can later be analyzed by programmers and database administrators.  
+  
+## In This Section  
+  
+-   [Profile Driver Performance Data (ODBC)](profiling-odbc-driver-performance-data.md)  
+  
+-   [Log Long-Running Queries (ODBC)](profiling-odbc-driver-performance-data-log-long-running-queries.md)  
+  
+## Related content
+
+- [ODBC How-to Topics](odbc-how-to-topics.md)

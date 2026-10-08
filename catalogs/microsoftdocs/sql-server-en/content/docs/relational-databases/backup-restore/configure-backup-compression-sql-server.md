@@ -1,0 +1,63 @@
+---
+title: "Configure Backup Compression (SQL Server)"
+description: This article describes how to over override the server-level default when creating a single backup or scheduling a series of routine backups in SQL Server.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+---
+# Configure Backup Compression (SQL Server)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+ At installation, backup compression is off by default. The **backup compression default** server-level configuration option sets the default behavior for backup compression. However, you can override the server-level default when creating a single backup or scheduling a series of routine backups. To change the server-level default, see [View or Configure the backup compression default Server Configuration Option](../../database-engine/configure-windows/view-or-configure-the-backup-compression-default-server-configuration-option.md).  
+
+## Use integrated acceleration and offloading
+
+Beginning with  SQL Server 2022 (16.x) 
+, use [Integrated acceleration and offloading](../integrated-acceleration/overview.md) to compress backups with Intel&reg; QuickAssist Technology.
+  
+## Override the Backup Compression Default  
+ You can change the backup compression behavior for an individual backup, backup job, or log shipping configuration.  
+  
+-   ** Transact-SQL **  
+  
+     To override the server backup-compression default when creating a backup, use either WITH NO_COMPRESSION or WITH COMPRESSION in your [BACKUP](../../t-sql/statements/backup-transact-sql.md) statement.  
+  
+     For a log shipping configuration, you can control the backup compression behavior of log backups by using [sp_add_log_shipping_primary_database](../system-stored-procedures/sp-add-log-shipping-primary-database-transact-sql.md)[sp_change_log_shipping_primary_database (Transact-SQL)](../system-stored-procedures/sp-change-log-shipping-primary-database-transact-sql.md).  
+  
+-   ** SQL Server Management Studio 
+**  
+  
+     For information about how to view or configure the backup compression default option for an instance of  SQL Server 
+, see [View or Configure the backup compression default Server Configuration Option](../../database-engine/configure-windows/view-or-configure-the-backup-compression-default-server-configuration-option.md).  
+  
+     You can override the server backup-compression default when creating a backup by specifying **Compress backup** or **Do not compress backup** in any of the following dialog boxes:  
+  
+    -   [Back Up Database (Options Page)](back-up-database-backup-options-page.md)  
+  
+         When backing up a database, you can control backup compression for an individual database, file, or log backup.  
+  
+    -   [Use the Maintenance Plan Wizard](../maintenance-plans/use-the-maintenance-plan-wizard.md)  
+  
+         The Maintenance Plan Wizard enables you to control backup compression for each set full or differential database backups or log backups that you schedule.  
+  
+    -   Integration Services (SSIS) [Back Up Database task](../../integration-services/control-flow/back-up-database-task.md)  
+  
+         You can control the backup compression behavior when creating a package for backing up a single database or multiple databases.  
+  
+    -   [Log Shipping Transaction Log Backup Settings](../databases/log-shipping-transaction-log-backup-settings.md)  
+  
+         You can control the backup compression behavior of log backups.  
+  
+  
+## Related content
+
+- [Backup compression (SQL Server)](backup-compression-sql-server.md)

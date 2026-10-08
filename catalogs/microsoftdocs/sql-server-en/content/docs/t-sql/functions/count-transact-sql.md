@@ -1,0 +1,349 @@
+---
+title: "COUNT (Transact-SQL)"
+description: "COUNT (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 01/19/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "COUNT_TSQL"
+  - "COUNT"
+helpviewer_keywords:
+  - "totals [SQL Server], COUNT function"
+  - "totals [SQL Server]"
+  - "counting items in group"
+  - "groups [SQL Server], number of items in"
+  - "number of group items"
+  - "COUNT function [Transact-SQL]"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# COUNT (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This function returns the number of items found in a group. `COUNT` operates like the [COUNT_BIG](count-big-transact-sql.md) function. These functions differ only in the data types of their return values. `COUNT` always returns an **int** data type value. `COUNT_BIG` always returns a **bigint** data type value.
+
+
+
+## Syntax
+
+Aggregation function syntax:
+
+```syntaxsql
+COUNT ( { [ [ ALL | DISTINCT ] expression ] | * } )
+```
+
+Analytic function syntax:
+
+```syntaxsql
+COUNT ( { [ ALL ] expression | * } ) OVER ( [ <partition_by_clause> ] )
+```
+
+## Arguments
+
+#### ALL
+
+Applies the aggregate function to all values. `ALL` serves as the default.
+
+#### DISTINCT
+
+Specifies that `COUNT` returns the number of unique non-null values.
+
+#### *expression*
+
+An [expression](../language-elements/expressions-transact-sql.md) of any type, except **image**, **ntext**, or **text**. `COUNT` doesn't support aggregate functions or subqueries in an expression.
+
+#### \*
+
+Specifies that `COUNT` should count all rows to determine the total table row count to return. `COUNT(*)` takes no parameters and doesn't support the use of `DISTINCT`. `COUNT(*)` doesn't require an *expression* parameter because by definition, it doesn't use information about any particular column. `COUNT(*)` returns the number of rows in a specified table, and it preserves duplicate rows. It counts each row separately, including rows that contain null values.
+
+#### OVER ( [ *partition_by_clause* ] [ *order_by_clause* ] [ *ROW_or_RANGE_clause* ] )
+
+The *partition_by_clause* divides the result set produced by the `FROM` clause into partitions to which the `COUNT` function is applied. If not specified, the function treats all rows of the query result set as a single group. The *order_by_clause* determines the logical order of the operation. For more information, see [OVER clause](../queries/select-over-clause-transact-sql.md).
+
+## Return types
+
+- Returns **int NOT NULL** when `ANSI_WARNINGS` is `ON`. However, SQL Server always treats `COUNT` expressions as **int NULL** in metadata, unless wrapped in `ISNULL`.
+
+- Returns **int NULL** when `ANSI_WARNINGS` is `OFF`.
+
+## Remarks
+
+`COUNT(*)` without `GROUP BY` returns the cardinality (number of rows) in the result set. This count includes rows that have all `NULL` values and duplicates.
+
+`COUNT(*)` with `GROUP BY` returns the number of rows in each group. This count includes `NULL` values and duplicates.
+
+`COUNT(ALL <expression>)` evaluates *expression* for each row in a group, and returns the number of non-null values.
+
+`COUNT(DISTINCT <expression>)` evaluates *expression* for each row in a group, and returns the number of unique, non-null values.
+
+### Deterministic and nondeterministic usage
+
+`COUNT_BIG` is a *deterministic* function when used *without* the `OVER` and `ORDER BY` clauses.
+
+`COUNT_BIG` is *nondeterministic* when used *with* the `OVER` and `ORDER BY` clauses.
+
+| Uses `OVER` and `ORDER BY` clauses | Deterministic |
+| --- | --- |
+| No | Yes |
+| Yes | No |
+
+For more information, see [Deterministic and nondeterministic functions](../../relational-databases/user-defined-functions/deterministic-and-nondeterministic-functions.md).
+
+### ARITHABORT and ANSI_WARNINGS
+
+- When `COUNT` returns a value that exceeds the maximum value of **int** (2<sup>31</sup>-1 or 2,147,483,647), the function fails due to an integer overflow.
+
+- If `COUNT` overflows and *both* the `ARITHABORT` and `ANSI_WARNINGS` options are `OFF`, `COUNT` returns `NULL`. Otherwise, if *either* `ARITHABORT` or `ANSI_WARNINGS` is `ON`, the query aborts and raises the arithmetic overflow error:
+
+  ```output
+  Msg 8115, Level 16, State 2; Arithmetic overflow error converting expression to data type int.
+  ```
+
+  To correctly handle these large results, use [COUNT_BIG](count-big-transact-sql.md) instead, which returns **bigint**.
+
+- When both ``ARITHABORT`` and `ANSI_WARNINGS` are `ON`, you can safely wrap `COUNT` call-sites in `ISNULL( <count-expr>, 0)` to coerce the expression's type to **int NOT NULL** instead of **int NULL**. Wrapping `COUNT` in `ISNULL` means any overflow error is silently suppressed, which should be considered for correctness.
+
+## Examples
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+### A. Use COUNT and DISTINCT
+
+This example returns the number of different job titles in the `HumanResources.Employee` table that an employee can hold.
+
+```sql
+SELECT COUNT(DISTINCT JobTitle)
+FROM HumanResources.Employee;
+GO
+```
+
+ Here's the result set. 
+
+
+```output
+-----------
+67
+```
+
+### B. Use COUNT(*)
+
+This example returns the total number of employees in the `HumanResources.Employee` table.
+
+```sql
+SELECT COUNT(*)
+FROM HumanResources.Employee;
+GO
+```
+
+ Here's the result set. 
+
+
+```output
+-----------
+290
+```
+
+### C. Use COUNT(*) with other aggregates
+
+This example shows that `COUNT(*)` works with other aggregate functions in the `SELECT` list.
+
+```sql
+SELECT COUNT(*), AVG(Bonus)
+FROM Sales.SalesPerson
+WHERE SalesQuota > 25000;
+GO
+```
+
+ Here's the result set. 
+
+
+```output
+------ ---------------------
+14     3472.1428
+```
+
+### D. Use the OVER clause
+
+This example uses the `MIN`, `MAX`, `AVG`, and `COUNT` functions with the `OVER` clause to return aggregated values for each department in the `HumanResources.Department` table.
+
+```sql
+SELECT DISTINCT d.Name,
+                MIN(eph.Rate) OVER (PARTITION BY edh.DepartmentID) AS MinSalary,
+                MAX(eph.Rate) OVER (PARTITION BY edh.DepartmentID) AS MaxSalary,
+                AVG(eph.Rate) OVER (PARTITION BY edh.DepartmentID) AS AvgSalary,
+                COUNT(edh.BusinessEntityID) OVER (PARTITION BY edh.DepartmentID) AS EmployeesPerDept
+FROM HumanResources.EmployeePayHistory AS eph
+     INNER JOIN HumanResources.EmployeeDepartmentHistory AS edh
+         ON eph.BusinessEntityID = edh.BusinessEntityID
+     INNER JOIN HumanResources.Department AS d
+         ON d.DepartmentID = edh.DepartmentID
+WHERE edh.EndDate IS NULL
+ORDER BY d.Name;
+```
+
+ Here's the result set. 
+
+
+```output
+Name                         MinSalary   MaxSalary   AvgSalary   EmployeesPerDept
+---------------------------- ----------- ----------- ----------- -----------------
+Document Control             10.25       17.7885     14.3884     5
+Engineering                  32.6923     63.4615     40.1442     6
+Executive                    39.06       125.50      68.3034     4
+Facilities and Maintenance   9.25        24.0385     13.0316     7
+Finance                      13.4615     43.2692     23.935      10
+Human Resources              13.9423     27.1394     18.0248     6
+Information Services         27.4038     50.4808     34.1586     10
+Marketing                    13.4615     37.50       18.4318     11
+Production                   6.50        84.1346     13.5537     195
+Production Control           8.62        24.5192     16.7746     8
+Purchasing                   9.86        30.00       18.0202     14
+Quality Assurance            10.5769     28.8462     15.4647     6
+Research and Development     40.8654     50.4808     43.6731     4
+Sales                        23.0769     72.1154     29.9719     18
+Shipping and Receiving       9.00        19.2308     10.8718     6
+Tool Design                  8.62        29.8462     23.5054     6
+```
+
+## Examples: Azure Synapse Analytics
+
+### E. Use COUNT and DISTINCT
+
+This example returns the number of different titles that an employee of a specific company can hold.
+
+```sql
+USE ssawPDW;
+SELECT COUNT(DISTINCT Title)
+FROM dbo.DimEmployee;
+```
+
+ Here's the result set. 
+
+
+```output
+-----------
+67
+```
+
+### F. Use COUNT(*)
+
+This example returns the total number of rows in the `dbo.DimEmployee` table.
+
+```sql
+USE ssawPDW;
+SELECT COUNT(*)
+FROM dbo.DimEmployee;
+```
+
+ Here's the result set. 
+
+
+```output
+-------------
+296
+```
+
+### G. Use COUNT(*) with other aggregates
+
+This example combines `COUNT(*)` with other aggregate functions in the `SELECT` list. It returns the number of sales representatives with an annual sales quota greater than $500,000, and the average sales quota of those sales representatives.
+
+```sql
+USE ssawPDW;
+SELECT COUNT(EmployeeKey) AS TotalCount,
+       AVG(SalesAmountQuota) AS [Average Sales Quota]
+FROM dbo.FactSalesQuota
+WHERE SalesAmountQuota > 500000
+      AND CalendarYear = 2001;
+```
+
+ Here's the result set. 
+
+
+```output
+TotalCount  Average Sales Quota
+----------  -------------------
+10          683800.0000
+```
+
+### H. Use COUNT with HAVING
+
+This example uses `COUNT` with the `HAVING` clause to return the departments of a company, each of which has more than 15 employees.
+
+```sql
+USE ssawPDW;
+SELECT DepartmentName,
+       COUNT(EmployeeKey) AS EmployeesInDept
+FROM dbo.DimEmployee
+GROUP BY DepartmentName
+HAVING COUNT(EmployeeKey) > 15;
+```
+
+ Here's the result set. 
+
+
+```output
+DepartmentName  EmployeesInDept
+--------------  ---------------
+Sales           18
+Production      179
+```
+
+### I. Use COUNT with OVER
+
+This example uses `COUNT` with the `OVER` clause, to return the number of products contained in each of the specified sales orders.
+
+```sql
+USE ssawPDW;
+SELECT DISTINCT COUNT(ProductKey) OVER (PARTITION BY SalesOrderNumber) AS ProductCount,
+                SalesOrderNumber
+FROM dbo.FactInternetSales
+WHERE SalesOrderNumber IN (N'SO53115', N'SO55981');
+```
+
+ Here's the result set. 
+
+
+```output
+ProductCount   SalesOrderID
+------------   -----------------
+3              SO53115
+1              SO55981
+```
+
+## Related content
+
+- [Aggregate functions (Transact-SQL)](aggregate-functions-transact-sql.md)
+- [COUNT_BIG (Transact-SQL)](count-big-transact-sql.md)
+- [SELECT - OVER clause (Transact-SQL)](../queries/select-over-clause-transact-sql.md)

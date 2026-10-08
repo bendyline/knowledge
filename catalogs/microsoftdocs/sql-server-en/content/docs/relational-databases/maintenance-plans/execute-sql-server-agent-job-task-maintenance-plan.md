@@ -1,0 +1,95 @@
+---
+title: "Execute SQL Server Agent Job Task (Maintenance Plan)"
+description: Execute SQL Server Agent Job Task (Maintenance Plan)
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 03/27/2023
+ms.service: sql
+ms.subservice: supportability
+ms.topic: how-to
+f1_keywords:
+  - "sql13.swb.maint.executejob.f1"
+helpviewer_keywords:
+  - "Execute SQL Server Agent Job Task dialog box"
+---
+# Execute SQL Server Agent Job Task (Maintenance Plan)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Use the **Execute SQL Server Agent Job Task** dialog to execute Microsoft SQL Server Agent jobs within a maintenance plan. This option isn't available if you have no SQL Server Agent jobs on the selected connection.
+
+This task uses the **.`sp_start_job` statement.
+
+## UI element list
+
+- **Connection**
+
+  Select the server connection to use when performing this task.
+
+- **New**
+
+  Create a new server connection to use when performing this task. The **New Connection** dialog box is described below.
+
+- **Available SQL Agent jobs**
+
+  Select the job to execute. The grid provides the **Job name** and **Description** to identify the jobs.
+
+- **View T-SQL**
+
+  View the  Transact-SQL  statements performed against the server for this task, based on the selected options.
+
+  > **Note:**  
+  > When the number of objects affected is large, this display can take a considerable amount of time.
+
+## New Connection dialog box
+
+- **Connection name**
+
+  Enter a name for the new connection.
+
+- **Select or enter a server name**
+
+  Select a server to connect to when performing this task.
+
+- **Refresh**
+
+  Refresh the list of available servers.
+
+- **Enter information to log on to the server**
+
+  Specify how to authenticate against the server.
+
+- **Use Windows integrated security**
+
+  Connect to an instance of the  SQL Server 
+  Database Engine 
+ with  Microsoft 
+ Windows Authentication.
+
+- **Use a specific user name and password**
+
+  Connect to an instance of the  SQL Server 
+  Database Engine 
+ using  SQL Server 
+ Authentication. This option isn't available.
+
+- **User name**
+
+  Provide a  SQL Server 
+ login to use when authenticating. This option isn't available.
+
+- **Password**
+
+  Provide a password to use when authenticating. This option isn't available.
+
+## Related content
+
+- [sp_add_job (Transact-SQL)](../system-stored-procedures/sp-add-job-transact-sql.md)
+- [Create a Job](https://learn.microsoft.com/ssms/agent/create-a-job)
+- [sp_start_job (Transact-SQL)](../system-stored-procedures/sp-start-job-transact-sql.md)

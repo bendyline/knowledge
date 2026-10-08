@@ -1,0 +1,52 @@
+---
+title: "syspolicy_conditions (Transact-SQL)"
+description: syspolicy_conditions (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "syspolicy_conditions"
+  - "syspolicy_conditions_TSQL"
+helpviewer_keywords:
+  - "syspolicy_conditions view"
+dev_langs:
+  - "TSQL"
+---
+# syspolicy_conditions (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Displays one row for each Policy-Based Management condition in the instance of  SQL Server 
+. syspolicy_conditions belongs to the dbo schema in the msdb database. The following table describes the columns in the syspolicy_conditions view.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| condition_id | **int** | Identifier of this condition. Each condition represents a collection of one or more condition expressions. |
+| name | **sysname** | Name of the condition. |
+| date_created | **datetime** | Date and time the condition was created. |
+| description | **nvarchar(max)** | Description of the condition. The description column is optional and can be NULL. |
+| created_by | **sysname** | Login that created the condition. |
+| modified_by | **sysname** | Login that most recently modified the condition. Is NULL if never modified. |
+| date_modified | **datetime** | Date and time the condition was created. Is NULL if never modified. |
+| is_name_condition | **smallint** | Specifies whether the condition is a naming condition.<br /><br /> 0 = The condition expression does not contain the @Name variable.<br /><br /> 1 = The condition expression contains the @Name variable. |
+| facet | **nvarchar(max)** | Name of the facet that the condition is based on. |
+| Expression | **nvarchar(max)** | Expression of the facet states. |
+| obj_name | **sysname** | The object name assigned to @Name if the condition expression contains this variable. |
+  
+## Remarks  
+ When you are troubleshooting Policy-Based Management, query the syspolicy_conditions view to determine who created or last changed the condition.  
+  
+## Permissions  
+ Requires membership in the PolicyAdministratorRole role in the msdb database.  
+  
+## Related content
+
+- [Administer Servers by Using Policy-Based Management](../policy-based-management/administer-servers-by-using-policy-based-management.md)
+- [Policy-Based Management Views (Transact-SQL)](policy-based-management-views-transact-sql.md)

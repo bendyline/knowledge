@@ -1,0 +1,40 @@
+---
+title: "storesUpperCaseQuotedIdentifiers Method"
+description: "storesUpperCaseQuotedIdentifiers Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.storesUpperCaseQuotedIdentifiers"
+apitype: "Assembly"
+---
+# storesUpperCaseQuotedIdentifiers Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether this database treats mixed-case SQL identifiers that are enclosed in quotation marks as case-insensitive and stores them in uppercase.  
+  
+## Syntax  
+  
+```  
+  
+public boolean storesUpperCaseQuotedIdentifiers()  
+```  
+  
+## Return Value  
+ **true** if the identifiers are stored in uppercase. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This storesUpperCaseQuotedIdentifiers method is specified by the storesUpperCaseQuotedIdentifiers method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

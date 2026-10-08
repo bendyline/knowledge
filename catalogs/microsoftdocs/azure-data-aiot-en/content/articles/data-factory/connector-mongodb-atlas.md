@@ -1,0 +1,309 @@
+---
+title: Copy data from or to MongoDB Atlas
+description: Learn how to copy data from MongoDB Atlas to supported sink data stores, or from supported source data stores to MongoDB Atlas, using a copy activity in an Azure Data Factory or Synapse Analytics pipeline.
+titleSuffix: Azure Data Factory & Azure Synapse
+author: simplywilson
+ms.author: tinglee
+ms.subservice: data-movement
+ms.topic: how-to
+ms.date: 12/25/2025
+ms.custom:
+  - synapse
+  - sfi-image-nochange
+  - sfi-ropc-nochange
+---
+
+# Copy data from or to MongoDB Atlas using Azure Data Factory or Synapse Analytics
+
+**APPLIES TO:** Azure Data Factory Azure Synapse Analytics
+
+
+
+> **Tip:**
+> [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory) is the next generation of Azure Data Factory, with a simpler architecture, built-in AI, and new features. If you're new to data integration, start with Fabric Data Factory. Existing ADF workloads can upgrade to Fabric to access new capabilities across data science, real-time analytics, and reporting.
+>
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Upgrade from Azure Data Factory to Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/migrate-planning-azure-data-factory).
+
+
+This article outlines how to use the Copy Activity in an Azure Data Factory or Synapse Analytics pipeline to copy data from and to a MongoDB Atlas database. It builds on the [copy activity overview](copy-activity-overview.md) article that presents a general overview of copy activity.
+
+> **Note:**
+> This connector is also available in [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/data-factory-overview). For Fabric-specific configuration and features, see the [Fabric MongoDB Atlas connector documentation](https://learn.microsoft.com/fabric/data-factory/connector-mongodb-atlas-overview).
+
+
+## Supported capabilities
+
+This MongoDB Atlas connector is supported for the following capabilities:
+
+| Supported capabilities | IR |
+| --- | --- |
+| [Copy activity](copy-activity-overview.md) (source/sink) | &#9312; &#9313; |
+
+*&#9312; Azure integration runtime &#9313; Self-hosted integration runtime*
+
+For a list of data stores that are supported as sources/sinks, see the [Supported data stores](connector-overview.md#supported-data-stores) table.
+
+## Prerequisites
+
+<!--
+    Separate the generic requirement on Self-hosted Integration Runtime setup from connector articles.
+-->
+If your data store is located inside an on-premises network, an Azure virtual network, or Amazon Virtual Private Cloud, you need to configure a [self-hosted integration runtime](create-self-hosted-integration-runtime.md) to connect to it.
+
+If your data store is a managed cloud data service, you can use the Azure Integration Runtime. If the access is restricted to IPs that are approved in the firewall rules, you can add [Azure Integration Runtime IPs](azure-integration-runtime-ip-addresses.md) to the allow list. 
+
+You can also use the [managed virtual network integration runtime](tutorial-managed-virtual-network-on-premise-sql-server.md) feature in Azure Data Factory to access the on-premises network without installing and configuring a self-hosted integration runtime.
+
+For more information about the network security mechanisms and options supported by Data Factory, see [Data access strategies](data-access-strategies.md).
+
+
+## Getting started
+
+<!--
+    Separate the generic "Get started" paragraph from each connector-* article in azure-docs-pr/ to ease future central update.
+-->
+
+To perform the copy activity with a pipeline, you can use one of the following tools or SDKs:
+
+- [Copy Data tool](quickstart-hello-world-copy-data-tool.md)
+- [Azure portal](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/data-factory/quickstart-create-data-factory-portal.md)
+- [.NET SDK](quickstart-create-data-factory-dot-net.md)
+- [Python SDK](quickstart-create-data-factory-python.md)
+- [Azure PowerShell](quickstart-create-data-factory-powershell.md)
+- [REST API](quickstart-create-data-factory-rest-api.md)
+- [Azure Resource Manager template](quickstart-create-data-factory-resource-manager-template.md)
+
+
+## Create a linked service to MongoDB Atlas using UI
+
+Use the following steps to create a linked service to MongoDB Atlas in the Azure portal UI.
+
+1. Browse to the Manage tab in your Azure Data Factory or Synapse workspace and select Linked Services, then click New:
+
+    # [Azure Data Factory](#tab/data-factory)
+
+    Create a new linked service with Azure Data Factory UI.
+
+    # [Azure Synapse](#tab/synapse-analytics)
+
+    Create a new linked service with Azure Synapse UI.
+
+2. Search for MongoDB Atlas and select the MongoDB Atlas connector.
+
+    Select the MongoDB Atlas connector.
+
+1. Configure the service details, test the connection, and create the new linked service.
+
+    Configure a linked service to MongoDB Atlas.
+
+## Connector configuration details
+
+
+
+The following sections provide details about properties that are used to define Data Factory entities specific to MongoDB Atlas connector.
+
+## Linked service properties
+
+The following properties are supported for MongoDB Atlas linked service:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The type property must be set to: **MongoDbAtlas** | Yes |
+| connectionString | Specify the MongoDB Atlas connection string e.g. `mongodb+srv://<username>:<password>@<clustername>.<randomString>.<hostName>/<dbname>?<otherProperties>`. <br/><br /> You can also put a connection string in Azure Key Vault. Refer to [Store credentials in Azure Key Vault](store-credentials-in-key-vault.md) with more details. | Yes |
+| database | Name of the database that you want to access. | Yes |
+| driverVersion | Specify the driver version to v2 which supports MongoDB version 3.6 and higher. For more information, go to this [article](https://www.mongodb.com/docs/drivers/csharp/current/compatibility/). | No |
+| connectVia | The [Integration Runtime](concepts-integration-runtime.md) to be used to connect to the data store. Learn more from [Prerequisites](#prerequisites) section. If not specified, it uses the default Azure Integration Runtime. | No |
+
+**Example:**
+
+```json
+{
+    "name": "MongoDbAtlasLinkedService",
+    "properties": {
+        "type": "MongoDbAtlas",
+        "typeProperties": {
+            "connectionString": "mongodb+srv://<username>:<password>@<clustername>.<randomString>.<hostName>/<dbname>?<otherProperties>",
+            "database": "myDatabase",
+            "driverVersion": "<driver version>"
+        },
+        "connectVia": {
+            "referenceName": "<name of Integration Runtime>",
+            "type": "IntegrationRuntimeReference"
+        }
+    }
+}
+```
+
+## Dataset properties
+
+For a full list of sections and properties that are available for defining datasets, see [Datasets and linked services](concepts-datasets-linked-services.md). The following properties are supported for MongoDB Atlas dataset:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The type property of the dataset must be set to: **MongoDbAtlasCollection** | Yes |
+| collectionName | Name of the collection in MongoDB Atlas database. | Yes |
+
+**Example:**
+
+```json
+{
+    "name": "MongoDbAtlasDataset",
+    "properties": {
+        "type": "MongoDbAtlasCollection",
+        "typeProperties": {
+            "collectionName": "<Collection name>"
+        },
+        "schema": [],
+        "linkedServiceName": {
+            "referenceName": "<MongoDB Atlas linked service name>",
+            "type": "LinkedServiceReference"
+        }
+    }
+}
+```
+
+## Copy activity properties
+
+For a full list of sections and properties available for defining activities, see the [Pipelines](concepts-pipelines-activities.md) article. This section provides a list of properties supported by MongoDB Atlas source and sink.
+
+### MongoDB Atlas as source
+
+The following properties are supported in the copy activity **source** section:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The type property of the copy activity source must be set to: **MongoDbAtlasSource** | Yes |
+| filter | Specifies selection filter using query operators. To return all documents in a collection, omit this parameter or pass an empty document ({}). | No |
+| cursorMethods.project | Specifies the fields to return in the documents for projection. To return all fields in the matching documents, omit this parameter. | No |
+| cursorMethods.sort | Specifies the order in which the query returns matching documents. Refer to [cursor.sort()](https://docs.mongodb.com/manual/reference/method/cursor.sort/#cursor.sort). | No |
+| cursorMethods.limit | Specifies the maximum number of documents the server returns. Refer to [cursor.limit()](https://docs.mongodb.com/manual/reference/method/cursor.limit/#cursor.limit). | No |
+| cursorMethods.skip | Specifies the number of documents to skip and from where MongoDB Atlas begins to return results. Refer to [cursor.skip()](https://docs.mongodb.com/manual/reference/method/cursor.skip/#cursor.skip). | No |
+| batchSize | Specifies the number of documents to return in each batch of the response from MongoDB Atlas instance. In most cases, modifying the batch size will not affect the user or the application. Azure Cosmos DB limits each batch cannot exceed 40MB in size, which is the sum of the batchSize number of documents' size, so decrease this value if your document size being large. | No<br/>(the default is **100**) |
+
+>**Tip:**
+>The service supports consuming BSON documents in **Strict mode**. Ensure your filter query is in Strict mode instead of Shell mode. For more information, see [MongoDB manual](https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/).
+
+**Example:**
+
+```json
+"activities":[
+    {
+        "name": "CopyFromMongoDbAtlas",
+        "type": "Copy",
+        "inputs": [
+            {
+                "referenceName": "<MongoDB Atlas input dataset name>",
+                "type": "DatasetReference"
+            }
+        ],
+        "outputs": [
+            {
+                "referenceName": "<output dataset name>",
+                "type": "DatasetReference"
+            }
+        ],
+        "typeProperties": {
+            "source": {
+                "type": "MongoDbAtlasSource",
+                "filter": "{datetimeData: {$gte: ISODate(\"2018-12-11T00:00:00.000Z\"),$lt: ISODate(\"2018-12-12T00:00:00.000Z\")}, _id: ObjectId(\"5acd7c3d0000000000000000\") }",
+                "cursorMethods": {
+                    "project": "{ _id : 1, name : 1, age: 1, datetimeData: 1 }",
+                    "sort": "{ age : 1 }",
+                    "skip": 3,
+                    "limit": 3
+                }
+            },
+            "sink": {
+                "type": "<sink type>"
+            }
+        }
+    }
+]
+```
+
+### MongoDB Atlas as sink
+
+The following properties are supported in the Copy Activity **sink** section:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The **type** property of the Copy Activity sink must be set to **MongoDbAtlasSink**. | Yes |
+| writeBehavior | Describes how to write data to MongoDB Atlas. Allowed values: **insert** and **upsert**.<br/><br/>The behavior of **upsert** is to replace the document if a document with the same `_id` already exists; otherwise, insert the document.<br /><br />**Note**: The service automatically generates an `_id` for a document if an `_id` isn't specified either in the original document or by column mapping. This means that you must ensure that, for **upsert** to work as expected, your document has an ID. | No<br />(the default is **insert**) |
+| writeBatchSize | The **writeBatchSize** property controls the size of documents to write in each batch. You can try increasing the value for **writeBatchSize** to improve performance and decreasing the value if your document size being large. | No<br />(the default is **10,000**) |
+| writeBatchTimeout | The wait time for the batch insert operation to finish before it times out. The allowed value is timespan. | No<br/>(the default is **00:30:00** - 30 minutes) |
+
+>**Tip:**
+>To import JSON documents as-is, refer to [Import or export JSON documents](#import-and-export-json-documents) section; to copy from tabular-shaped data, refer to [Schema mapping](#schema-mapping).
+
+**Example**
+
+```json
+"activities":[
+    {
+        "name": "CopyToMongoDBAtlas",
+        "type": "Copy",
+        "inputs": [
+            {
+                "referenceName": "<input dataset name>",
+                "type": "DatasetReference"
+            }
+        ],
+        "outputs": [
+            {
+                "referenceName": "<Document DB output dataset name>",
+                "type": "DatasetReference"
+            }
+        ],
+        "typeProperties": {
+            "source": {
+                "type": "<source type>"
+            },
+            "sink": {
+                "type": "MongoDbAtlasSink",
+                "writeBehavior": "upsert"
+            }
+        }
+    }
+]
+```
+
+## Import and Export JSON documents
+
+You can use this MongoDB Atlas connector to easily:
+
+* Copy documents between two MongoDB Atlas collections as-is.
+* Import JSON documents from various sources to MongoDB Atlas, including from Azure Cosmos DB, Azure Blob storage, Azure Data Lake Store, and other supported file-based stores.
+* Export JSON documents from a MongoDB Atlas collection to various file-based stores.
+
+To achieve such schema-agnostic copy, skip the "structure" (also called *schema*) section in dataset and schema mapping in copy activity.
+
+
+## Schema mapping
+
+To copy data from MongoDB Atlas to tabular sink or reversed, refer to [schema mapping](copy-activity-schema-and-type-mapping.md#schema-mapping).
+
+## Data type mapping for MongoDB Atlas
+
+When copying data from MongoDB Atlas, the following mappings are used from MongoDB Atlas data types to interim data types used by the service internally. See [Schema and data type mappings](copy-activity-schema-and-type-mapping.md) to learn about how copy activity maps the source schema and data type to the sink.
+
+| MongoDB Atlas data type | Interim service data type |
+| --- | --- |
+| Date | String |
+| ObjectId | String |
+| Decimal128 | String |
+| TimeStamp | The most significant 32 bits -> Int64<br>The least significant 32 bits -> Int64 |
+| String | String |
+| Double | String |
+| Int32 | String |
+| Int64 | String |
+| Boolean | Boolean |
+| Null | Null |
+| JavaScript | String |
+| Regular Expression | String |
+| Min key | Int64 |
+| Max key | Int64 |
+| Binary | String |
+
+## Related content
+For a list of data stores supported as sources and sinks by the copy activity, see [supported data stores](copy-activity-overview.md#supported-data-stores-and-formats).

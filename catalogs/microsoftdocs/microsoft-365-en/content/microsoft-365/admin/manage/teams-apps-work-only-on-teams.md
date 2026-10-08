@@ -1,0 +1,66 @@
+---
+title: "Teams apps that only work on Teams"
+f1.keywords:
+- NOCSH
+ms.author: dansimp
+author: dansimp
+manager: dansimp
+ms.date: 08/26/2025
+audience: Admin
+ms.topic: article
+ms.service: microsoft-365-business
+ms.localizationpriority: medium
+ms.collection:
+- Tier2
+- scotvorg
+- Adm_TOC
+- operations-pod
+ms.custom:
+- AdminSurgePortfolio
+- integrated-apps
+search.appverid: MET150
+ROBOTS: NOINDEX, NOFOLLOW
+description: "How to block and unblock apps Teams apps that only work on Teams through controls in the integrated apps portal."
+---
+
+# Teams apps that only work on Teams
+
+Some Teams apps cannot be surfaced in Outlook or the Microsoft 365 Copilot application, either because the app wouldn't make sense in those hosts or because they use a manifest version less than 1.13. These apps, which are sometimes called "pure Teams apps" or "Teams only apps" to distinguish them from [cross application apps](teams-apps-work-on-outlook-and-m365.md), can be identified in the integrated apps portal by the availability status **Some or all users in the organization can install** in the **Available Apps** list. Admins cannot preinstall or remove these apps, but they can block or unblock them.
+
+## Before you begin
+
+- These apps only show up on the Available Apps list based on your settings in Teams admin center. Verify if your settings in the Teams admin center are for non-Microsoft apps.
+    - If access to non-Microsoft apps on Teams admin center is turned on, admins can start seeing these apps on the integrated apps portal in the **Available apps** and **Blocked apps** lists based on their setting in Teams admin center.
+    - If access to non-Microsoft apps on Teams admin center is turned off, no such apps are visible on the integrated apps portal.
+- These apps always have the availability status of **Some or all users in the organization can install**. These apps always have only Teams as the host product. To know more about which users can access this app on Teams, visit the Teams admin center.
+
+
+> **Important:**
+>
+> Microsoft recommends that you use roles with the fewest permissions. Using roles with the fewest permissions helps improve security for your organization. Global Administrator is a highly privileged role that should be limited to emergency scenarios when you can't use an existing role. For more information, see [About administrator roles in the Microsoft 365 admin center](https://learn.microsoft.com/microsoft-365/admin/add-users/about-admin-roles).
+
+## How to block a Teams app on Teams
+
+1. Sign into Microsoft 365 admin center as a global administrator.
+2. Select **Settings**, and then select **Integrated Apps**.
+3. Select the **Available Apps** list.
+4. Select an app with the status **Some or all users in the organization can install** from the **Available Apps** list to open the overview pane. These apps will always have only Teams listed as host product.
+5. Select **Block app**.
+6. Consent to blocking the app by selecting **Yes, I'm sure I want to block this app**.
+7. Select **Block**. You can now see this app in the **Blocked Apps** list.
+When the admin blocks such an app, it's blocked for all users in the organization on the Teams client.
+
+## How to unblock a Teams app on Teams?
+
+1. Sign into Microsoft 365 admin center as a global administrator.
+2. Select **Settings**, and then select **Integrated Apps**.
+3. Select the **Blocked Apps** list.
+4. Select an app from the **Blocked Apps** list to open the overview pane.
+5. Select **Unblock app**.
+6. Read the availability and deployment status that the app will revert to after unblocking. These statutes are the last saved ones of the app before it was blocked.
+7. Select **Unblock**. You can now see this app in the **Available Apps** list and/or the **Deployed Apps** list based on the last saved setting.
+
+When the admin unblocks such an app, it's reverted to the last saved setting as set by the admin in Teams admin center. Visit Teams admin center to know the latest status of the app on Teams.
+
+> **Note:**
+> Teams apps with availability status as **Some or all users in the organization can install** can only be blocked on unblocked on the integrated apps portal for the Teams client. For any other management actions on these apps or to view how these apps show up on Teams to users in your organization, please visit the Teams admin center.

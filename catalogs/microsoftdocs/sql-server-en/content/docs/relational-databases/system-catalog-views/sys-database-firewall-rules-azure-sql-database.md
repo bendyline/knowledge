@@ -1,0 +1,69 @@
+---
+title: "sys.database_firewall_rules"
+description: Returns information about the database-level firewall settings associated with your Azure SQL Database and SQL database in Fabric.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 07/29/2025
+ms.service: azure-sql-database
+ms.topic: "reference"
+f1_keywords:
+  - "sys.database_firewall_rules_TSQL"
+  - "database_firewall_rules_TSQL"
+  - "sys.database_firewall_rules"
+  - "database_firewall_rules"
+helpviewer_keywords:
+  - "database_firewall_rules"
+  - "sys.database_firewall_rules"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current"
+---
+# sys.database_firewall_rules
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+Returns information about the database-level firewall settings associated with your  Azure SQL Database 
+ and SQL database in Microsoft Fabric
+. Database-level firewall settings are useful when using contained database users. For more information, see [Contained Database Users - Making Your Database Portable](../security/contained-database-users-making-your-database-portable.md).
+
+The `sys.database_firewall_rules` view contains the following columns:
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `id` | **int** | The identifier of the database-level firewall setting. |
+| `name` | **nvarchar(128)** | The name you chose to describe and distinguish the database-level firewall setting. |
+| `start_ip_address` | **varchar(45)** | The lowest IP address in the range of the database-level firewall setting. IP addresses equal to or greater than this can attempt to connect to the  SQL Database |
+ | instance. The lowest possible IP address is `0.0.0.0`. |
+| `end_ip_address` | **varchar(45)** | The highest IP address in the range of the firewall setting. IP addresses equal to or less than this can attempt to connect to the  SQL Database |
+ | instance. The highest possible IP address is `255.255.255.255`.<br /><br />**Note:** Azure connection attempts are allowed when both this field and the `start_ip_address` field equals `0.0.0.0`. |
+| `create_date` | **datetime** | UTC date and time when the database-level firewall setting was created. |
+| `modify_date` | **datetime** | UTC date and time when the database-level firewall setting was last modified. |
+
+## Remarks
+
+To return information about the server-level firewall settings associated with your  Azure SQL Database 
+, use [sys.firewall_rules (Azure SQL Database)](sys-firewall-rules-azure-sql-database.md).
+
+## Permissions
+
+ This view is available in the `master` database and in each user database. Read-only access to this view is available to all users with permission to connect to the database.
+
+## Related content
+
+- [sp_set_database_firewall_rule (Azure SQL Database)](../system-stored-procedures/sp-set-database-firewall-rule-azure-sql-database.md)
+- [sp_delete_database_firewall_rule (Azure SQL Database)](../system-stored-procedures/sp-delete-database-firewall-rule-azure-sql-database.md)
+- [sp_set_firewall_rule (Azure SQL Database)](../system-stored-procedures/sp-set-firewall-rule-azure-sql-database.md)
+- [sp_delete_firewall_rule (Azure SQL Database)](../system-stored-procedures/sp-delete-firewall-rule-azure-sql-database.md)
+- [sys.firewall_rules (Azure SQL Database)](sys-firewall-rules-azure-sql-database.md)
+- [Configure Windows Firewall for Database Engine access](../../database-engine/configure-windows/configure-a-windows-firewall-for-database-engine-access.md)
+- [Configure a Firewall for FILESTREAM Access](../blob/configure-a-firewall-for-filestream-access.md)
+- [Configure a firewall for report server access](../../reporting-services/report-server/configure-a-firewall-for-report-server-access.md)

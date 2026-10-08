@@ -1,0 +1,42 @@
+---
+title: "Working with data types (JDBC)"
+description: "Learn how to work with data types in the JDBC Driver for SQL Server through these sample applications."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "08/12/2019"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+---
+# Working with data types (JDBC)
+
+
+
+The primary function of the  Microsoft JDBC Driver for SQL Server 
+ is to allow Java developers to access data contained in  SQL Server 
+ databases. To accomplish this, the JDBC driver mediates the conversion between  SQL Server 
+ data types and Java language types and objects.
+
+> **Note:**
+> For a detailed discussion of the  SQL Server 
+ and JDBC driver data types, including their differences and how they are converted to Java language data types, see [Understanding the JDBC driver data types](understanding-the-jdbc-driver-data-types.md).
+
+In order to work with SQL Server data types, the JDBC driver provides get\<Type> and set\<Type> methods for the [SQLServerPreparedStatement](reference/sqlserverpreparedstatement-class.md) and [SQLServerCallableStatement](reference/sqlservercallablestatement-class.md) classes, and it provides get\<Type> and update\<Type> methods for the [SQLServerResultSet](reference/sqlserverresultset-class.md) class. Which method you use depends on the type of data that you are working with, and whether you are using result sets or queries.
+
+The topics in this section describe how to use the JDBC driver data types to access  SQL Server 
+ data in your Java applications.
+
+## In this section
+
+| Topic | Description |
+| --- | --- |
+| [Basic data types sample](basic-data-types-sample.md) | Describes how to use result set getter methods to retrieve basic  SQL Server |
+ | data type values, and how to use result set update methods to update those values. |
+| [SQLXML data type sample](sqlxml-data-type-sample.md) | Describes how to store an XML data in a relational database, how to retrieve an XML data from a database, and how to parse an XML data with the **SQLXML** Java data type. |
+| [Spatial data types sample](spatial-data-types-sample.md) | Describes how to store and retrieve data with Spatial Datatypes 'Geometry' and 'Geography' of  SQL Server |
+ | database with **Geometry** and **Geography** Java types defined by Microsoft JDBC Driver. |
+
+## Related content
+
+- [Sample JDBC driver applications](sample-jdbc-driver-applications.md)

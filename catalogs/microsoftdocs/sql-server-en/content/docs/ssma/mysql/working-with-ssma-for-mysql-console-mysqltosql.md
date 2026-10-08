@@ -1,0 +1,37 @@
+---
+title: "Working with SSMA for MySQL Console (MySQLToSQL)"
+description: "Working with SSMA for MySQL Console (MySQLToSQL)"
+author: nilabjaball
+ms.author: niball
+ms.date: "08/15/2017"
+ms.service: sql
+ms.subservice: ssma
+ms.topic: concept-article
+ms.collection:
+  - sql-migration-content
+---
+# Working with SSMA for MySQL Console (MySQLToSQL)
+ Microsoft 
+  SQL Server 
+ Migration Assistant (SSMA) for MySQL is now accessible through a console application at command line. The script files form the input to the application for executing the commands. As a console application, SSMA enables script-level interfacing, reduces the migration cycle, and scales the migration effort.  
+  
+This section explains the procedure to migrate the MySQL database using the SSMA Console application.  
+  
+Topics covered in this section include:  
+  
+| Topic | Description |
+| --- | --- |
+| [Getting Started with SSMA for MySQL Console (MySQLToSQL)](getting-started-with-ssma-for-mysql-console-mysqltosql.md) | Explains the procedure to execute the console application. |
+| [Command Line Options in SSMA Console (MySQLToSQL)](command-line-options-in-ssma-console-mysqltosql.md) | Describes the command line options and parameters to operate the SSMA console application. |
+| [Creating Script Files (MySQLToSQL)](creating-script-files-mysqltosql.md) | Explains how to create a script file. |
+| [Creating Variable Value Files (MySQLToSQL)](creating-variable-value-files-mysqltosql.md) | Explains how to create a variable value file. |
+| [Creating the Server Connection Files (MySQLToSQL)](creating-the-server-connection-files-mysqltosql.md) | Explains how to create a server connection file. |
+| [Executing the SSMA Console (MySQLToSQL)](executing-the-ssma-console-mysqltosql.md) | Describes the script file commands to operate the SSMA console application. |
+| [Working with the Sample Console Script Files (MySQLToSQL)](working-with-the-sample-console-script-files-mysqltosql.md) | Describes the way to easily customize the scripts that have been provided in the sample files along with the product |
+| [Managing Passwords (MySQLToSQL)](managing-passwords-mysqltosql.md) | Describes about password encryption and decryption, and importing/ exporting password information. |
+| [Generating Reports (MySQLToSQL)](generating-reports-mysqltosql.md) | Lists the commands to generate reports. |
+| [Troubleshooting (MySQLToSQL)](troubleshooting-mysqltosql.md) | Provides brief information about fixing migration issues. |
+  
+## Related content
+
+- [Getting Started with SSMA for MySQL Console](getting-started-with-ssma-for-mysql-console-mysqltosql.md)

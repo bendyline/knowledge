@@ -1,0 +1,39 @@
+---
+title: "Image device information settings"
+description: Learn about the various device information settings you can use to render in an image format in Reporting Services.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "images [Reporting Services], rendering"
+  - "device information settings [Reporting Services], IMAGE rendering"
+---
+# Image device information settings
+  The following table lists the device information settings for rendering in IMAGE format.  
+  
+| Setting | Value |
+| --- | --- |
+| **Columns** | The number of columns to set for the report. This value overrides the report's original settings. |
+| **ColumnSpacing** | The column spacing to set for the report. This value overrides the report's original settings. |
+| **DpiX** | The horizontal resolution of the output image. The default value is **96**. Applies to **BMP**, **GIF**, **PNG**, and **TIFF** output formats. |
+| **DpiY** | The vertical resolution of the output image. The default value is **96**. Applies to **BMP**, **GIF**, **PNG**, and **TIFF** output formats. |
+| **EndPage** | The last page of the report to render. The default value is the value for **StartPage**. |
+| **MarginBottom** | The bottom margin value, in inches, to set for the report. You must include an integer or decimal value followed by "in" (for example, **1in**). This value overrides the report's original settings. |
+| **MarginLeft** | The left margin value, in inches, to set for the report. You must include an integer or decimal value followed by "in" (for example, **1in**). This value overrides the report's original settings. |
+| **MarginRight** | The right margin value, in inches, to set for the report. You must include an integer or decimal value followed by "in" (for example, **1in**). This value overrides the report's original settings. |
+| **MarginTop** | The top margin value, in inches, to set for the report. You must include an integer or decimal value followed by "in" (for example, **1in**). This value overrides the report's original settings. |
+| **OutputFormat** | One of the Graphics Device Interface (GDI) supported output formats: **BMP**, **EMF**, **GIF**, **JPEG**, **PNG**, or **TIFF**. |
+| **PageHeight** | The page height, in inches, to set for the report. You must include an integer or decimal value followed by "in" (for example, **11in**). This value overrides the report's original settings. |
+| **PageWidth** | The page width, in inches, to set for the report. You must include an integer or decimal value followed by "in" (for example, **8.5in**). This value overrides the report's original settings. |
+| **PrintDpiX** | The horizontal resolution of the output image. The default value is **300**. Applies to the Enhanced MetaFile (**EMF**) output format. |
+| **PrintDpiY** | The vertical resolution of the output image. The default value is **300**. Applies to the Enhanced MetaFile (**EMF**) output format. |
+| **StartPage** | The first page of the report to render. A value of **0** indicates that all pages are rendered. The default value is **1**. |
+  
+## Related content
+
+- [Passing Device Information Settings to Rendering Extensions](report-server-web-service/net-framework/passing-device-information-settings-to-rendering-extensions.md)
+- [Customize rendering extension parameters in RSReportServer.Config](customize-rendering-extension-parameters-in-rsreportserver-config.md)
+- [Technical reference (SSRS)](technical-reference-ssrs.md)

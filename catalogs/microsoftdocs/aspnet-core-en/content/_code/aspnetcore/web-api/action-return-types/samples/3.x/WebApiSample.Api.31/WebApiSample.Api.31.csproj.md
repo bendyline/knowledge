@@ -1,0 +1,28 @@
+# Source code: aspnetcore/web-api/action-return-types/samples/3.x/WebApiSample.Api.31/WebApiSample.Api.31.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>WebApiSample.Api._31</RootNamespace>
+    <ProjectUISubcaption>ASP.NET Core 3.1</ProjectUISubcaption>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebApiSample.DataAccess\WebApiSample.DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
+
+```

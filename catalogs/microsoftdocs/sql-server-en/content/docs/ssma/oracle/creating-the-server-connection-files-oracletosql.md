@@ -1,0 +1,101 @@
+---
+title: "Creating the Server Connection Files (OracleToSQL)"
+description: "Creating the Server Connection Files (OracleToSQL)"
+author: nilabjaball
+ms.author: niball
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: ssma
+ms.topic: concept-article
+ms.collection:
+  - sql-migration-content
+helpviewer_keywords:
+  - "Server Connection File Creation"
+  - "Server Connection File, Server Connection File Validation"
+ms.custom: sfi-ropc-blocked
+---
+# Creating the Server Connection Files (OracleToSQL)
+Server information can be specified either in the servers section of the script file or in a separate server connection file. The command line parameter for the server connection file is, `-c <serverconnectionfile>`. If the same server id is present in both the script file and server connection file, then the server definition in the script file is considered.  
+  
+**Example:1**  
+  
+```  
+<!--Sample of server connection file commands -->  
+  
+<oracle name="<source-server-unique-name>">  
+  
+  <tns-name-mode>  
+  
+    <connection-provider value="OracleClient"/>  
+  
+    <service-name value="(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = <host-name>)(PORT = 1521)))(CONNECT_DATA =(SERVICE_NAME = <service-name>)))"/>  
+  
+    <user-id value="<user-name>"/>  
+  
+    <password value="<password>"/>  
+  
+  </tns-name-mode>  
+  
+</oracle>  
+```  
+  
+```  
+<sql-server name="<target-server-unique-name>">  
+  
+  <sql-server-authentication>  
+  
+    <server value="<server-name>"/>  
+  
+    <database value="<database-name>"/>  
+  
+    <user-id value="<user-name>"/>  
+  
+    <password value="<password>"/>  
+  
+    <encrypt value="<true/false>"/>  
+  
+    <trust-server-certificate value="<true/false>"/>  
+  
+  </sql-server-authentication>  
+  
+</sql-server>  
+```  
+**Example: 2**  
+  
+```  
+<!--Sample of server connection file commands -->  
+  
+<oracle name="<source-server-unique-name>">  
+  
+  <connection-string-mode>  
+  
+    <connection-provider value="OleDB Provider"/>  
+  
+    <custom-connection-string value="Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=<host-name>)(PORT=1521))(CONNECT_DATA=(SID=<instance-name>)));User ID=<user-name>;Password=<password>"/>  
+  
+  </connection-string-mode>  
+  
+</oracle>  
+```  
+  
+```  
+<sql-server name="<target-server-unique-name>">  
+  
+  <sql-server-authentication>  
+  
+    <server value="<server-name>"/>  
+  
+    <database value="<database-name>"/>  
+  
+    <user-id value="<user-name>"/>  
+  
+    <password value="<password>"/>  
+  
+  </sql-server-authentication>  
+  
+</sql-server>  
+```  
+  
+## Related content
+
+- [Executing the SSMA console](executing-the-ssma-console-oracletosql.md)

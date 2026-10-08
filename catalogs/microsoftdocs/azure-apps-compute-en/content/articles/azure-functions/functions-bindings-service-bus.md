@@ -1,0 +1,389 @@
+---
+title: Azure Service Bus bindings for Azure Functions
+description: Learn to send Azure Service Bus triggers and bindings in Azure Functions.
+ms.assetid: daedacf0-6546-4355-a65c-50873e74f66b
+ms.topic: reference
+ms.date: 09/15/2026
+ms.custom:
+  - fasttrack-edit
+  - devx-track-extended-java
+  - devx-track-js
+  - devx-track-python
+  - devx-track-ts
+  - build-2025
+zone_pivot_groups: programming-languages-set-functions
+---
+
+# Azure Service Bus bindings for Azure Functions
+
+Azure Functions integrates with [Azure Service Bus](https://azure.microsoft.com/services/service-bus) via [triggers and bindings](functions-triggers-bindings.md). Integrating with Service Bus allows you to build functions that react to and send queue or topic messages.
+
+| Action | Type |
+| --- | --- |
+| Run a function when a Service Bus queue or topic message is created | [Trigger](functions-bindings-service-bus-trigger.md) |
+| Send Azure Service Bus messages | [Output binding](functions-bindings-service-bus-output.md) |
+
+**Applies to: programming-language-csharp**
+
+
+## Install extension
+
+The extension NuGet package you install depends on the C# mode you're using in your function app: 
+
+# [Isolated worker model](#tab/isolated-process)
+
+Functions execute in an isolated C# worker process. To learn more, see [Guide for running C# Azure Functions in an isolated worker process](dotnet-isolated-process-guide.md).
+
+Add the extension to your project installing this [NuGet package](https://www.nuget.org/packages/Microsoft.Azure.Functions.Worker.Extensions.servicebus).
+
+# [In-process model](#tab/in-process)
+
+
+> **Important:**
+> [Support will end for the in-process model on November 10, 2026](https://aka.ms/azure-functions-retirements/in-process-model). We highly recommend that you [migrate your apps to the isolated worker model](https://learn.microsoft.com/azure/azure-functions/migrate-dotnet-to-isolated-model?tabs=net8) for full support.
+
+_This section describes using a [class library](functions-dotnet-class-library.md). For [C# scripting], you would need to instead [install the extension bundle][Update your extensions], version 2.x or later._ 
+
+Functions execute in the same process as the Functions host. To learn more, see [Develop C# class library functions using Azure Functions](functions-dotnet-class-library.md).
+
+Add the extension to your project installing this [NuGet package](https://www.nuget.org/packages/Microsoft.Azure.WebJobs.Extensions.ServiceBus).
+
+---
+
+The functionality of the extension varies depending on the extension version:
+
+# [Extension 5.x+](#tab/extensionv5/in-process)
+
+
+This version introduces the ability to [connect using an identity instead of a secret](manage-connections.md?tabs=identity#define-connections). For a tutorial on configuring your function apps with managed identities, see the [creating a function app with identity-based connections tutorial](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-identity-based-connections-tutorial.md). 
+
+This version allows you to bind to types from [Azure.Messaging.ServiceBus](https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus).
+
+This extension version is available by installing the [NuGet package], version 5.x or later.
+
+# [Extension 4.x and earlier](#tab/functionsv2/in-process)
+
+Working with the trigger and bindings requires that you reference the appropriate NuGet package. Install NuGet package, versions < 5.x. 
+
+# [Extension 5.x+](#tab/extensionv5/isolated-process)
+
+
+This version introduces the ability to [connect using an identity instead of a secret](manage-connections.md?tabs=identity#define-connections). For a tutorial on configuring your function apps with managed identities, see the [creating a function app with identity-based connections tutorial](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-identity-based-connections-tutorial.md). 
+
+This version allows you to bind to types from [Azure.Messaging.ServiceBus](https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus).
+
+This version supports configuration of triggers and bindings through [Aspire integration](aspire-integration.md#connection-configuration-with-aspire).
+
+Add the extension to your project by installing the [NuGet package](https://www.nuget.org/packages/Microsoft.Azure.Functions.Worker.Extensions.ServiceBus), version 5.x.
+
+# [Extension 4.x](#tab/functionsv2/isolated-process)
+
+Add the extension to your project by installing the [NuGet package](https://www.nuget.org/packages/Microsoft.Azure.Functions.Worker.Extensions.ServiceBus), version 4.x.
+
+---
+
+
+**Applies to: programming-language-go,programming-language-javascript,programming-language-typescript,programming-language-python,programming-language-java,programming-language-powershell**
+
+
+ 
+## Install bundle
+
+To be able to use this binding extension in your app, make sure that the *host.json* file in the root of your project contains this `extensionBundle` reference:
+
+
+```json
+{
+    "version": "2.0",
+    "extensionBundle": {
+        "id": "Microsoft.Azure.Functions.ExtensionBundle",
+        "version": "[4.0.0, 5.0.0)"
+    }
+}
+```
+
+In this example, the `version` value of `[4.0.0, 5.0.0)` instructs the Functions host to use a bundle version that is at least `4.0.0` but less than `5.0.0`, which includes all potential versions of 4.x. This notation effectively maintains your app on the latest available minor version of the v4.x extension bundle. 
+
+When possible, you should use the latest extension bundle major version and allow the runtime to automatically maintain the latest minor version. You can view the contents of the latest bundle on the [extension bundles release page](https://github.com/Azure/azure-functions-extension-bundles/releases/latest). For more information, see [Azure Functions extension bundles](extension-bundles.md).
+
+
+
+
+**Applies to: programming-language-go**
+
+Register Service Bus queue triggers with `app.ServiceBusQueue()` and topic triggers with `app.ServiceBusTopic()`. Service Bus output bindings aren't currently supported by the Go worker; use the Azure SDK for Go directly when you need to send messages.
+
+
+**Applies to: programming-language-csharp**
+
+
+## Binding types
+
+The binding types supported for .NET depend on both the extension version and C# execution mode, which can be one of the following: 
+   
+# [Isolated worker model](#tab/isolated-process)
+
+An isolated worker process class library compiled C# function runs in a process isolated from the runtime.  
+
+# [In-process class library](#tab/in-process)
+
+An in-process class library is a compiled C# function runs in the same process as the Functions runtime.
+ 
+---
+
+Choose a version to see binding type details for the mode and version.
+
+# [Extension 5.x+](#tab/extensionv5/in-process)
+
+The Service Bus extension supports parameter types according to the table below.
+
+| Binding scenario | Parameter types |
+| --- | --- |
+| Service Bus trigger (single message) | [ServiceBusReceivedMessage]<br/>`string`<br/>`byte[]`<br/>JSON serializable types<sup>1</sup> |
+| Service Bus trigger (message batch) | `ServiceBusReceivedMessage[]`<br/>`string[]` |
+| Service Bus trigger advanced scenarios<sup>2</sup> | [ServiceBusClient]<br/>[ServiceBusMessageActions]<br/>[ServiceBusSessionMessageActions]<br/>[ServiceBusReceiveActions]<br/> |
+| Service Bus output (single message) | [ServiceBusMessage]<br/>`string`<br/>`byte[]`<br/>JSON serializable types<sup>1</sup> |
+| Service Bus output (multiple messages) | `ICollector<T>` or `IAsyncCollector<T>` where `T` is one of the single message types<br/>[ServiceBusSender] |
+
+<sup>1</sup> Messages containing JSON data can be deserialized into known plain-old CLR object (POCO) types.
+
+<sup>2</sup> Advanced scenarios include message settlement, sessions, and transactions. These types are available as separate parameters in addition to the normal trigger parameter.
+
+# [Extension 4.x and earlier](#tab/functionsv2/in-process)
+
+Earlier versions of the extension exposed types from the now deprecated [Microsoft.Azure.ServiceBus] namespace. Newer types from [Azure.Messaging.ServiceBus] are exclusive to **Extension 5.x+**.
+
+
+> On 30 September 2026, we'll retire the Azure Service Bus SDK libraries WindowsAzure.ServiceBus, Microsoft.Azure.ServiceBus, and com.microsoft.azure.servicebus, which don't conform to Azure SDK guidelines. We'll also end support of the SBMP protocol, so you'll no longer be able to use this protocol after 30 September 2026. Migrate to the latest Azure SDK libraries, which offer critical security updates and improved capabilities, before that date.
+>
+>Although the older libraries can still be used beyond 30 September 2026, they'll no longer receive official support and updates from Microsoft. For more information, see the [support retirement announcement](https://azure.microsoft.com/updates/retirement-notice-update-your-azure-service-bus-sdk-libraries-by-30-september-2026/).
+
+This version of the extension supports parameter types according to the table below.
+
+The Service Bus extension supports parameter types according to the table below.
+
+| Binding scenario | Parameter types |
+| --- | --- |
+| Service Bus trigger (single message) | [Microsoft.Azure.ServiceBus.Message]<br/>`string`<br/>`byte[]`<br/>JSON serializable types<sup>1</sup> |
+| Service Bus trigger (message batch) | `ServiceBusReceivedMessage[]`<br/>`string[]` |
+| Service Bus trigger advanced scenarios<sup>2</sup> | [IMessageReceiver]<br/>[MessageReceiver]<br/>[IMessageSession]<br/> |
+| Service Bus output (single message) | [Message]<br/>`string`<br/>`byte[]`<br/>JSON serializable types<sup>1</sup> |
+| Service Bus output (multiple messages) | `ICollector<T>` or `IAsyncCollector<T>` where `T` is one of the single message types<br/>[MessageSender] |
+
+<sup>1</sup> Messages containing JSON data can be deserialized into known plain-old CLR object (POCO) types.
+
+<sup>2</sup> Advanced scenarios include message settlement, sessions, and transactions. These types are available as separate parameters in addition to the normal trigger parameter.
+
+# [Extension 5.x+](#tab/extensionv5/isolated-process)
+
+The isolated worker process supports parameter types according to the tables below.
+
+**Service Bus trigger**
+
+
+When you want the function to process a single message, the Service Bus trigger can bind to the following types:
+
+| Type | Description |
+| --- | --- |
+| `string` | The message as a string. Use when the message is simple text. |
+| `byte[]` | The bytes of the message. |
+| JSON serializable types | When an event contains JSON data, Functions tries to deserialize the JSON data into a plain-old CLR object (POCO) type. |
+| [ServiceBusReceivedMessage]<sup>1</sup> | The message object.<br/><br/>When binding to `ServiceBusReceivedMessage`, you can optionally also include a parameter of type [ServiceBusMessageActions]<sup>1,2</sup> to perform [message settlement] actions. |
+
+When you want the function to process a batch of messages, the Service Bus trigger can bind to the following types:
+
+| Type | Description |
+| --- | --- |
+| `T[]` where `T` is one of the single message types | An array of events from the batch. Each entry represents one event.<br/><br/>When binding to `ServiceBusReceivedMessage[]`, you can optionally also include a parameter of type [ServiceBusMessageActions]<sup>1,2</sup> to perform [message settlement] actions. |
+
+<sup>1</sup> To use these types, you need to reference [Microsoft.Azure.Functions.Worker.Extensions.ServiceBus 5.14.1 or later](https://www.nuget.org/packages/Microsoft.Azure.Functions.Worker.Extensions.ServiceBus/5.14.1) and the [common dependencies for SDK type bindings](dotnet-isolated-process-guide.md#sdk-types).
+
+<sup>2</sup> When using `ServiceBusMessageActions`, set the [`AutoCompleteMessages` property of the trigger attribute](functions-bindings-service-bus-trigger.md#attributes) to `false`. This prevents the runtime from attempting to complete messages after a successful function invocation.
+
+[ServiceBusReceivedMessage]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceivedmessage
+[ServiceBusMessageActions]: https://github.com/Azure/azure-functions-dotnet-worker/blob/main/extensions/Worker.Extensions.ServiceBus/src/ServiceBusMessageActions.cs
+[message settlement]: ../service-bus-messaging/message-transfers-locks-settlement.md#peeklock
+
+
+**Service Bus output binding**
+
+
+When you want the function to write a single message, the Service Bus output binding can bind to the following types:
+
+| Type | Description |
+| --- | --- |
+| `string` | The message as a string. Use when the message is simple text. |
+| `byte[]` | The bytes of the message. |
+| JSON serializable types | An object representing the message. Functions attempts to serialize a plain-old CLR object (POCO) type into JSON data. |
+
+When you want the function to write multiple messages, the Service Bus output binding can bind to the following types:
+
+| Type | Description |
+| --- | --- |
+| `T[]` where `T` is one of the single message types | An array containing multiple message. Each entry represents one message. |
+
+For other output scenarios, create and use a [ServiceBusClient] with other types from [Azure.Messaging.ServiceBus] directly. See [Register Azure clients](dotnet-isolated-process-guide.md#register-azure-clients) for an example of using dependency injection to create a client type from the Azure SDK.
+
+[Azure.Messaging.ServiceBus]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus
+[ServiceBusClient]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusclient
+
+
+# [Extension 4.x](#tab/functionsv2/isolated-process)
+
+Earlier versions of extensions in the isolated worker process only support binding to `string`, `byte[]`, and JSON serializable types. Additional options are available to **Extension 5.x+**.
+
+---
+
+[Azure.Messaging.ServiceBus]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus
+[ServiceBusReceivedMessage]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceivedmessage
+[ServiceBusMessage]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusmessage
+[ServiceBusClient]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusclient
+[ServiceBusSender]: https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussender
+
+[ServiceBusMessageActions]: https://learn.microsoft.com/dotnet/api/microsoft.azure.webjobs.servicebus.servicebusmessageactions
+[ServiceBusSessionMessageActions]: https://learn.microsoft.com/dotnet/api/microsoft.azure.webjobs.servicebus.servicebussessionmessageactions
+[ServiceBusReceiveActions]: https://learn.microsoft.com/dotnet/api/microsoft.azure.webjobs.servicebus.servicebusreceiveactions
+
+[Microsoft.Azure.ServiceBus]: https://learn.microsoft.com/dotnet/api/microsoft.azure.servicebus
+[Message]: https://learn.microsoft.com/dotnet/api/microsoft.azure.servicebus.message
+[IMessageReceiver]: https://learn.microsoft.com/dotnet/api/microsoft.azure.servicebus.core.imessagereceiver
+[MessageReceiver]: https://learn.microsoft.com/dotnet/api/microsoft.azure.servicebus.core.messagereceiver
+[IMessageSession]: https://learn.microsoft.com/dotnet/api/microsoft.azure.servicebus.imessagesession
+[MessageSender]: https://learn.microsoft.com/dotnet/api/microsoft.azure.servicebus.core.messagesender
+
+
+
+
+**Applies to: programming-language-python**
+
+
+## SDK Binding Types
+
+SDK Types for Azure Service Bus are in Preview. Follow the [Python SDK Bindings for Service Bus Sample](https://github.com/Azure/azure-functions-python-extensions/blob/dev/azurefunctions-extensions-bindings-servicebus/samples/README.md) to get started with SDK Types for Service Bus in Python. 
+> **Important:**  
+> Using SDK type bindings requires the [Python v2 programming model](functions-reference-python.md?pivots=python-mode-decorators#sdk-type-bindings).
+
+---
+| Binding | Parameter types | Samples |
+| --- | --- | --- |
+| ServiceBus trigger | [ServiceBusReceivedMessage] | [`ServiceBusReceivedMessage`](https://github.com/Azure/azure-functions-python-extensions/blob/dev/azurefunctions-extensions-bindings-servicebus/samples/servicebus_samples_single/function_app.py) |
+
+---
+
+[ServiceBusReceivedMessage]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusreceivedmessage?view=azure-python
+
+
+
+<a name="host-json"></a>  
+
+## host.json settings
+
+This section describes the configuration settings available for this binding, which depends on the runtime and extension version.
+
+# [Extension 5.x+](#tab/extensionv5)
+
+```json
+{
+    "version": "2.0",
+    "extensions": {
+        "serviceBus": {
+            "clientRetryOptions":{
+                "mode": "exponential",
+                "tryTimeout": "00:01:00",
+                "delay": "00:00:00.80",
+                "maxDelay": "00:01:00",
+                "maxRetries": 3
+            },
+            "prefetchCount": 0,
+            "transportType": "amqpWebSockets",
+            "webProxy": "https://proxyserver:8080",
+            "autoCompleteMessages": true,
+            "maxAutoLockRenewalDuration": "00:05:00",
+            "maxConcurrentCalls": 16,
+            "maxConcurrentSessions": 8,
+            "maxMessageBatchSize": 1000,
+            "minMessageBatchSize": 1,
+            "maxBatchWaitTime": "00:00:30",
+            "sessionIdleTimeout": "00:01:00",
+            "enableCrossEntityTransactions": false
+        }
+    }
+}
+```
+
+The `clientRetryOptions` settings only apply to interactions with the Service Bus service. They don't affect retries of function executions. For more information, see [Retries](functions-bindings-error-pages.md#retries).
+
+
+| Property | Default | Description |
+| --- | --- | --- |
+| **mode** | `Exponential` | The approach to use for calculating retry delays. The default exponential mode retries attempts with a delay based on a back-off strategy where each attempt increases the wait duration before retrying. The `Fixed` mode retries attempts at fixed intervals with each delay having a consistent duration. |
+| **tryTimeout** | `00:01:00` | The maximum duration to wait for an operation per attempt. |
+| **delay** | `00:00:00.80` | The delay or back-off factor to apply between retry attempts. |
+| **maxDelay** | `00:01:00` | The maximum delay to allow between retry attempts |
+| **maxRetries** | `3` | The maximum number of retry attempts before considering the associated operation to have failed. |
+| **prefetchCount** | `0` | Gets or sets the number of messages that the message receiver can simultaneously request. |
+| **transportType** | amqpTcp | The protocol and transport that is used for communicating with Service Bus. Available options: `amqpTcp`, `amqpWebSockets` |
+| **webProxy** | n/a | The proxy to use for communicating with Service Bus over web sockets. A proxy cannot be used with the `amqpTcp` transport. |
+| **autoCompleteMessages** | `true` | Determines whether or not to automatically complete messages after successful execution of the function. |
+| **maxAutoLockRenewalDuration** | `00:05:00` | The maximum duration within which the message lock will be renewed automatically. This setting only applies for functions that receive a single message at a time and doesn't apply to functions receiving a batch of messages. For batches, the maximum duration is set [in Service Bus at the queue or subscription level](https://learn.microsoft.com/azure/service-bus-messaging/message-transfers-locks-settlement#renew-locks). |
+| **maxConcurrentCalls** | `16` | By default, the Functions runtime processes multiple messages concurrently. This setting limits the maximum number of concurrent calls to the callback that can be initiated per-scaled-instance. When your hosting plan has more than one core per instance, the maximum number of calls is effectively multiplied by the number of cores. For example, in a plan that runs on hardware with two cores, the default setting of `16` means that the maximum number of concurrent calls per instance is really `32` (or `2 * 16`). This setting is used only when the `isSessionsEnabled` property or attribute on [the trigger](functions-bindings-service-bus-trigger.md) is set to `false`. This setting only applies for functions that receive a single message at a time as opposed to in a batch. |
+| **maxConcurrentSessions** | `8` | The maximum number of sessions that can be handled concurrently per scaled instance. This setting is used only when the `isSessionsEnabled` property or attribute on [the trigger](functions-bindings-service-bus-trigger.md) is set to `true`. This setting only applies for functions that receive a single message at a time. |
+| **maxMessageBatchSize** | `1000` | The maximum number of messages that will be passed to each function call. This setting only applies for functions that receive a batch of messages. |
+| **minMessageBatchSize**<sup>1</sup> | `1` | The minimum number of messages desired in a batch. The minimum applies only when the function is receiving multiple messages and must be less than `maxMessageBatchSize`. <br/> The minimum size isn't strictly guaranteed. A partial batch is dispatched when a full batch can't be prepared before the `maxBatchWaitTime` has elapsed. |
+| **maxBatchWaitTime**<sup>1</sup> | `00:00:30` | The maximum interval that the trigger should wait to fill a batch before invoking the function. The wait time is only considered when `minMessageBatchSize` is larger than 1 and is ignored otherwise. If less than `minMessageBatchSize` messages were available before the wait time elapses, the function is invoked with a partial batch. The longest allowed wait time is 50% of the entity message lock duration, meaning the maximum allowed is 2 minutes and 30 seconds. Otherwise, you may get lock exceptions. <br/><br/>**NOTE:** This interval is not a strict guarantee for the exact timing on which the function is invoked. There is a small margin of error due to timer precision. |
+| **sessionIdleTimeout** | `tryTimeout` (`00:01:00`) | The maximum amount of time to wait for the next message in the currently active session. The wait starts after the previous function invocation completes, so a long-running invocation doesn't consume this timeout. After this time has elapsed, the session is closed and the function attempts to process another session. When this setting isn't specified, the value of `tryTimeout` in `clientRetryOptions` is used. |
+| **enableCrossEntityTransactions** | `false` | Whether or not to enable transactions that span multiple entities on a Service Bus namespace. |
+
+<sup>1</sup> Using `minMessageBatchSize` and `maxBatchWaitTime` requires [v5.10.0](https://www.nuget.org/packages/Microsoft.Azure.WebJobs.Extensions.ServiceBus/5.10.0) of the `Microsoft.Azure.WebJobs.Extensions.ServiceBus` package, or a later version.
+
+# [Extension 4.x and earlier](#tab/functionsv2)
+
+```json
+{
+    "version": "2.0",
+    "extensions": {
+        "serviceBus": {
+            "prefetchCount": 100,
+            "messageHandlerOptions": {
+                "autoComplete": true,
+                "maxConcurrentCalls": 32,
+                "maxAutoRenewDuration": "00:05:00"
+            },
+            "sessionHandlerOptions": {
+                "autoComplete": false,
+                "messageWaitTimeout": "00:00:30",
+                "maxAutoRenewDuration": "00:55:00",
+                "maxConcurrentSessions": 16
+            },
+            "batchOptions": {
+                "maxMessageCount": 1000,
+                "operationTimeout": "00:01:00",
+                "autoComplete": true
+            }
+        }
+    }
+}
+```
+When you set the `isSessionsEnabled` property or attribute on [the trigger](functions-bindings-service-bus-trigger.md) to `true`, the `sessionHandlerOptions` is honored.  When you set the `isSessionsEnabled` property or attribute on [the trigger](functions-bindings-service-bus-trigger.md) to `false`, the `messageHandlerOptions` is honored.
+
+| Property | Default | Description |
+| --- | --- | --- |
+| **prefetchCount** | `0` | Gets or sets the number of messages that the message receiver can simultaneously request. |
+| **maxAutoRenewDuration** | `00:05:00` | The maximum duration within which the message lock will be renewed automatically. |
+| **autoComplete** | `true` | Whether the trigger should automatically call complete after processing, or if the function code manually calls complete.<br><br>Setting to `false` is only supported in C#.<br><br>When set to `true`, the trigger completes the message, session, or batch automatically when the function execution completes successfully, and abandons the message otherwise.<br><br>When set to `false`, you are responsible for calling [ServiceBusReceiver](https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceiver) methods to complete, abandon, or deadletter the message, session, or batch. When an exception is thrown (and none of the `ServiceBusReceiver` methods are called), then the lock remains. Once the lock expires, the message is re-queued with the `DeliveryCount` incremented and the lock is automatically renewed.<br><br>In non-C# functions, exceptions in the function results in the runtime calls `abandonAsync` in the background. If no exception occurs, then `completeAsync` is called in the background. |
+| **maxConcurrentCalls** | `16` | The maximum number of concurrent calls to the callback that the message pump should initiate per scaled instance. By default, the Functions runtime processes multiple messages concurrently. |
+| **maxConcurrentSessions** | `2000` | The maximum number of sessions that can be handled concurrently per scaled instance. |
+| **maxMessageCount** | `1000` | The maximum number of messages sent to the function when triggered. |
+| **operationTimeout** | `00:01:00` | A time span value expressed in `hh:mm:ss`. |
+
+---
+
+## Next steps
+
+- [Run a function when a Service Bus queue or topic message is created (Trigger)](functions-bindings-service-bus-trigger.md)
+- [Send Azure Service Bus messages from Azure Functions (Output binding)](functions-bindings-service-bus-output.md)
+
+[NuGet package]: https://www.nuget.org/packages/Microsoft.Azure.WebJobs.Extensions.ServiceBus/
+[Update your extensions]: functions-bindings-register.md
+
+[C# scripting]: functions-reference-csharp.md

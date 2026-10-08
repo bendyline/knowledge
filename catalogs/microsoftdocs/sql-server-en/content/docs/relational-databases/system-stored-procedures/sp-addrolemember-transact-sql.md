@@ -1,0 +1,132 @@
+---
+title: "sys.sp_addrolemember (Transact-SQL)"
+description: Adds a database user, database role, Windows login, or Windows group to a database role in the current database.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sp_addrolemember_TSQL"
+  - "sp_addrolemember"
+helpviewer_keywords:
+  - "sp_addrolemember"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.sp_addrolemember (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Adds a database user, database role, Windows login, or Windows group to a database role in the current database.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use [ALTER ROLE](../../t-sql/statements/alter-role-transact-sql.md) instead.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_addrolemember
+    [ @rolename = ] N'rolename'
+    , [ @membername = ] N'membername'
+[ ; ]
+```
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+## Arguments
+
+#### [ @rolename = ] N'*rolename*'
+
+The name of the database role in the current database. *@rolename* is **sysname**, with no default.
+
+#### [ @membername = ] N'*membername*'
+
+The security account being added to the role. *@membername* is **sysname**, with no default. *@membername* can be a database user, database role, Windows login, or Windows group.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+A member added to a role by using `sp_addrolemember` inherits the permissions of the role. If the new member is a Windows-level principal without a corresponding database user, a database user is created, but might not be fully mapped to the login. Always check that the login exists and has access to the database.
+
+A role can't include itself as a member. Such *circular* definitions aren't valid, even when membership is indirectly implied by one or more intermediate memberships.
+
+`sp_addrolemember` can't add a fixed database role, fixed server role, or **dbo** to a role.
+
+Only use `sp_addrolemember` to add a member to a database role. To add a member to a server role, use [sp_addsrvrolemember](sp-addsrvrolemember-transact-sql.md).
+
+## Permissions
+
+Adding members to flexible database roles requires one of the following permissions:
+
+- Membership in the **db_securityadmin** or **db_owner** fixed database role.
+
+- Membership in the role that owns the role.
+
+- `ALTER ANY ROLE` permission or `ALTER` permission on the role.
+
+Adding members to fixed database roles requires membership in the **db_owner** fixed database role.
+
+## Examples
+
+### A. Add a Windows login
+
+The following example adds the Windows login `Contoso\Mary5` to the  `AdventureWorks2025`  database as user `Mary5`. The user `Mary5` is then added to the `Production` role.
+
+Because `Contoso\Mary5` is known as the database user `Mary5` in the  `AdventureWorks2025`  database, the user name `Mary5` must be specified. The statement fails unless a `Contoso\Mary5` login exists. Test by using a login from your domain.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+CREATE USER Mary5 FOR LOGIN [Contoso\Mary5];
+GO
+```
+
+### B. Add a database user
+
+The following example adds the database user `Mary5` to the `Production` database role in the current database.
+
+```sql
+EXECUTE sp_addrolemember 'Production', 'Mary5';
+```
+
+## Related content
+
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [sys.sp_addsrvrolemember (Transact-SQL)](sp-addsrvrolemember-transact-sql.md)
+- [sys.sp_droprolemember (Transact-SQL)](sp-droprolemember-transact-sql.md)
+- [sys.sp_grantdbaccess (Transact-SQL)](sp-grantdbaccess-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [Database-level roles](../security/authentication-access/database-level-roles.md)

@@ -1,0 +1,68 @@
+---
+title: "STGeometryType (geometry Data Type)"
+description: "STGeometryType (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STGeometryType_TSQL"
+  - "STGeometryType (geometry Data Type)"
+helpviewer_keywords:
+  - "STGeometryType (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STGeometryType (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns the Open Geospatial Consortium (OGC) type name represented by a **geometry** instance.
+  
+## Syntax  
+  
+```  
+  
+.STGeometryType ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **nvarchar(4000)**  
+  
+ CLR return type: **SqlString**  
+  
+## Remarks  
+ The OGC type names that can be returned by `STGeometryType()` are **Point**, **LineString**, **CircularString**, **CompoundCurve**, **Polygon, CurvePolygon**, **GeometryCollection**, **MultiPoint**, **MultiLineString**, and **MultiPolygon**.  
+  
+## Examples  
+ The following example creates a `Polygon` instance and uses `STGeometryType()` to confirm that it is a polygon.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POLYGON((0 0, 3 0, 3 3, 0 3, 0 0))', 0);  
+SELECT @g.STGeometryType();  
+```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

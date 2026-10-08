@@ -1,0 +1,48 @@
+---
+title: "Evaluate Policy-Based Management policy from an object"
+description: Learn how to evaluate a policy from a SQL Server instance, database, or database object using SQL Server Management Studio (SSMS).
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: security
+ms.topic: how-to
+helpviewer_keywords:
+  - "Policy-Based Management, evaluate policy"
+---
+# Evaluate a Policy-Based Management Policy from an Object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to evaluate a policy from a server instance, database, or database object in  SQL Server 
+ by using  SQL Server Management Studio 
+.  
+
+<a id="BeforeYouBegin"></a>
+
+##  <a name="Restrictions"></a> Limitations and Restrictions
+  
+-   The execution mode is defined as part of the policy and cannot be changed in the **Evaluate Policies** dialog box.  
+  
+-   The **Evaluate Policies** dialog box only shows policies appropriate for the database object.  
+
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the PolicyAdministratorRole role in the msdb database.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To evaluate a policy from an object  
+  
+1.  In Object Explorer, right-click a server instance, a database, or a database object, point to **Policies**, and select **Evaluate**.  
+  
+2.  In the **Evaluate Policies** dialog box, select one or more policies and click **Evaluate** to run the policy in evaluation mode. This generates a compliance report for the target set but does not reconfigure  SQL Server 
+ or enforce future compliance. For targets that do not comply with the selected policies and have properties that can be reconfigured by Policy-Based Management, you can enforce policy compliance by clicking **Apply**. For more information on the available options in the **Evaluate Policies** dialog box, see [Evaluate Policies Dialog Box, Policy Selection Page](evaluate-policies-dialog-box-policy-selection-page.md), [Evaluate Policies Dialog Box, Evaluation Results Page](evaluate-policies-dialog-box-evaluation-results-page.md), and [Results Detailed View Dialog Box](results-detailed-view-dialog-box.md).  
+  
+3.  When finished, click **Close**.

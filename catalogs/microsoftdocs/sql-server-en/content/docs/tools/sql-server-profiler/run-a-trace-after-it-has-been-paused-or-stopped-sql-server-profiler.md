@@ -1,0 +1,40 @@
+---
+title: Run a Trace After It Has Been Paused or Stopped
+titleSuffix: SQL Server Profiler
+description: Find out how to start capturing event data again after a trace has been paused or stopped in SQL Server Profiler.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 06/05/2025
+ms.service: sql
+ms.subservice: profiler
+ms.topic: how-to
+ms.collection:
+  - data-tools
+---
+
+# Run a trace after it has been paused or stopped (SQL Server Profiler)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+This article describes how to start a trace again after it has been paused or stopped by using  SQL Server Profiler 
+.
+
+## Run a trace after it has been paused or stopped
+
+1. Select the window that contains the stopped or paused trace.
+
+1. On the **File** menu, select **Run Trace**.
+
+## Related content
+
+- [SQL Server Profiler](sql-server-profiler.md)
+- [Start a trace (SQL Server Profiler)](start-a-trace.md)

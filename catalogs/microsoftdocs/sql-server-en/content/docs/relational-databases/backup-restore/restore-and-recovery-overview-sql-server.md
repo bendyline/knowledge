@@ -1,0 +1,249 @@
+---
+title: "Restore and Recovery Overview (SQL Server)"
+description: Learn about the operations involved in recovering a SQL Server database from a failure by restoring a set of SQL Server backups in sequence.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: randolphwest
+ms.date: 12/04/2024
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: concept-article
+helpviewer_keywords:
+  - "restoring tables [SQL Server]"
+  - "backups [SQL Server], restore scenarios"
+  - "database backups [SQL Server], restore scenarios"
+  - "database restores [SQL Server]"
+  - "restoring [SQL Server]"
+  - "restores [SQL Server]"
+  - "table restores [SQL Server]"
+  - "restoring databases [SQL Server], about restoring databases"
+  - "database restores [SQL Server], scenarios"
+  - "accelerated database recovery"
+---
+# Restore and recovery overview (SQL Server)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This article provides an overview of the database restore and recovery process for SQL Server. 
+
+## Overview
+
+To recover a  SQL Server 
+ database from a failure, a database administrator has to restore a set of  SQL Server 
+ backups in a logically correct and meaningful restore sequence. The  SQL Server 
+ restore and recovery process supports restoring data from backups of a whole database, a data file, or a data page, as follows:
+
+- The database (a *complete database restore*)
+
+  The whole database is restored and recovered, and the database is offline during the restore and recovery operations.
+
+- The data file (a *file restore*)
+
+  A data file or a set of files is restored and recovered. During a file restore, the filegroups that contain the files are automatically offline during the restore. Any attempt to access an offline filegroup causes an error.
+
+- The data page (a *page restore*)
+
+  Under the full recovery model or bulk-logged recovery model, you can restore individual pages. Page restores can be performed on any database, regardless of the number of filegroups.
+
+ SQL Server 
+ backup and restore work across all supported operating systems. For information about the supported operating systems, see [Hardware and software requirements for SQL Server 2025](../../sql-server/install/hardware-and-software-requirements-for-installing-sql-server-2025.md). For information about support for backups from earlier versions of  SQL Server 
+, see the [Compatibility Support](../../t-sql/statements/restore-statements-transact-sql.md#compatibility-support) section of [RESTORE](../../t-sql/statements/restore-statements-transact-sql.md).
+
+## <a id="RestoreScenariosOv"></a> Restore scenarios
+
+A *restore scenario* in  SQL Server 
+ is the process of restoring data from one or more backups and then recovering the database. The supported restore scenarios depend on the recovery model of the database and the edition of  SQL Server 
+.
+
+The following table introduces the possible restore scenarios that are supported for different recovery models.
+
+| Restore scenario | Under simple recovery model | Under full/bulk-logged recovery models |
+| --- | --- | --- |
+| Complete database restore | The basic restore strategy. A complete database restore might involve simply restoring and recovering a full database backup. Alternatively, a complete database restore might involve restoring a full database backup followed by restoring and recovering a differential backup.<br /><br />For more information, see [Complete Database Restores (Simple Recovery Model)](complete-database-restores-simple-recovery-model.md). | The basic restore strategy. A complete database restore involves restoring a full database backup and, optionally, a differential backup (if any), followed by restoring all subsequent log backups (in sequence). The complete database restore is finished by recovering the last log backup and also restoring it (RESTORE WITH RECOVERY).<br />For more information, see [Complete Database Restores (Full Recovery Model)](complete-database-restores-full-recovery-model.md) |
+| File restore <sup>1</sup> | Restore one or more damaged read-only files, without restoring the entire database. File restore is available only if the database has at least one read-only filegroup. | Restores one or more files, without restoring the entire database. File restore can be performed while the database is offline or, for some editions of  SQL Server |
+| , while the database remains online. During a file restore, the filegroups that contain the files that are being restored are always offline. |
+| Page restore | Not applicable | Restores one or more damaged pages. Page restore can be performed while the database is offline or, for some editions of  SQL Server |
+| , while the database remains online. During a page restore, the pages that are being restored are always offline.<br /><br />An unbroken chain of log backups must be available, up to the current log file, and they must all be applied to bring the page up-to-date with the current log file.<br />For more information, see [Restore Pages (SQL Server)](restore-pages-sql-server.md). |
+| Piecemeal restore <sup>1</sup> | Restore and recover the database in stages at the filegroup level, starting with the primary and all read/write, secondary filegroups. | Restore and recover the database in stages at the filegroup level, starting with the primary filegroup.<br /><br />For more information, see [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md) |
+
+<sup>1</sup> Online restore is supported only in Enterprise edition.
+
+### Steps to restore a database
+
+To perform a file restore, the  Database Engine 
+ executes two steps:
+
+- Creates any missing database files.
+
+- Copies the data from the backup devices to the database files.
+
+To perform a database restore, the  Database Engine 
+ executes three steps:
+
+- Creates the database and transaction log files if they don't already exist.
+
+- Copies all the data, log, and index pages from the backup media of a database to the database files.
+
+- Applies the transaction log, in what is known as the [recovery process](#TlogAndRecovery).
+
+Regardless of how data is restored, before a database can be recovered, the  SQL Server Database Engine 
+ guarantees that the whole database is logically consistent. For example, if you restore a file, you can't recover it and bring it online until it rolls forward far enough to be consistent with the database.
+
+### Advantages of a file or page restore
+
+Restoring and recovering files or pages, instead of the whole database, provides the following advantages:
+
+- Restoring less data reduces the time required to copy and recover it.
+
+- On  SQL Server 
+ restoring files or pages might allow other data in the database to remain online during the restore operation.
+
+## <a id="TlogAndRecovery"></a> Recovery and the transaction log
+
+For most restore scenarios, it is necessary to apply a transaction log backup and allow the  SQL Server Database Engine 
+ to run the **recovery process** for the database to be brought online. Recovery is the process used by  SQL Server 
+ for each database to start in a transactionally consistent - or clean - state.
+
+If there's a failover or other non-clean shutdown, the databases might be left in a state where some modifications were never written from the buffer cache to the data files, and there might be some modifications from incomplete transactions in the data files. When an instance of  SQL Server 
+ is started, it runs a recovery of each database, which consists of three phases, based on the last [database checkpoint](../logs/database-checkpoints-sql-server.md):
+
+- **Phase 1** is the **Analysis Phase** that analyzes the transaction log to determine what is the last checkpoint, and creates the *Dirty Page Table* (DPT) and the *Active Transaction Table* (ATT). The DPT contains records of pages that were dirty at the time the database was shut down. The ATT contains records of transactions that were active at the time the database wasn't cleanly shut down.
+
+- **Phase 2** is the **Redo Phase** that rolls forward every modification recorded in the log that might not have been written to the data files at the time the database was shut down. The [minimum log sequence number](../sql-server-transaction-log-architecture-and-management-guide.md#minlsn) (minLSN) required for a successful database-wide recovery is found in the DPT, and marks the start of the redo operations needed on all dirty pages. At this phase, the  SQL Server Database Engine 
+ writes to disk all dirty pages belonging to committed transactions.
+
+- **Phase 3** is the **Undo Phase** that rolls back incomplete transactions found in the ATT to make sure the integrity of the database is preserved. After rollback, the database goes online, and no more transaction log backups can be applied to the database.
+
+Information about the progress of each database recovery stage is logged in the  SQL Server 
+ [error log](../../tools/configuration-manager/viewing-the-sql-server-error-log.md). The database recovery progress can also be tracked using Extended Events. For more information, see the blog post [New extended events for database recovery progress](https://learn.microsoft.com/archive/blogs/sql_server_team/new-extended-events-for-database-recovery-progress).
+
+> **Note:**  
+> For a Piecemeal restore scenario, if a read-only filegroup has been read-only since before the file backup was created, applying log backups to the filegroup is unnecessary and is skipped by file restore.
+
+<a id="FastRecovery"></a>
+
+> **Note:**  
+> To maximize the availability of databases in an enterprise environment after the  SQL Server 
+ service is started, such as after a failover of an [Always On failover cluster instance](../../sql-server/failover-clusters/windows/always-on-failover-cluster-instances-sql-server.md) or in-place restart,  SQL Server 
+ Enterprise Edition can bring a database online after the Redo Phase, while the Undo Phase is still executing. This is known as Fast Recovery.  However, Fast Recovery is not available when the database transitions to an online state but the  SQL Server 
+ service has not been restarted. For example, executing `ALTER DATABASE AdventureWorks SET ONLINE;` will not allow the database to be in read-write state until all three phases of recovery have completed.
+
+## <a id="RMsAndSupportedRestoreOps"></a> Recovery models and supported restore operations
+
+The restore operations that are available for a database depend on its recovery model. The following table summarizes whether and to what extent each of the recovery models supports a given restore scenario.
+
+| Restore operation | Full recovery model | Bulk-logged recovery model | Simple recovery model |
+| --- | --- | --- | --- |
+| Data recovery | Complete recovery (if the log is available). | Some data-loss exposure. | Any data since last full or differential backup is lost. |
+| Point-in-time restore | Any time covered by the log backups. | Disallowed if the log backup contains any bulk-logged changes. | Not supported. |
+| File restore <sup>1</sup> | Full support. | Sometimes. <sup>2</sup> | Available only for read-only secondary files. |
+| Page restore <sup>1</sup> | Full support. | Sometimes. <sup>2</sup> | None. |
+| Piecemeal (filegroup-level) restore <sup>1</sup> | Full support. | Sometimes. <sup>2</sup> | Available only for read-only secondary files. |
+
+<sup>1</sup> Available only in the Enterprise edition of  SQL Server 
+
+
+<sup>2</sup> For the required conditions, see [Restore Restrictions Under the Simple Recovery Model](#RMsimpleScenarios), later in this article.
+
+> **Important:**  
+> Regardless of the recovery model of a database, a  SQL Server 
+ backup cannot be restored to a  SQL Server Database Engine 
+ version that is older than the version that created the backup.
+
+## <a id="RMsimpleScenarios"></a> Restore scenarios under the simple recovery model
+
+The simple recovery model imposes the following restrictions on restore operations:
+
+- File restore and piecemeal restore are available only for read-only secondary filegroups. For information about these restore scenarios, see [File Restores (Simple Recovery Model)](file-restores-simple-recovery-model.md) and [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md).
+
+- Page restore isn't allowed.
+
+- Point-in-time restore isn't allowed.
+
+If any of these restrictions are inappropriate for your recovery needs, we recommend that you consider using the full recovery model. For more information, see [Backup overview (SQL Server)](backup-overview-sql-server.md).
+
+> **Important:**  
+> Regardless of the recovery model of a database, a  SQL Server 
+ backup cannot be restored by a version of  SQL Server 
+ that is older than the version that created the backup.
+
+## <a id="RMblogRestore"></a> Restore under the bulk-logged recovery model
+
+This section discusses restore considerations that are unique to bulk-logged recovery model, which is intended exclusively as a supplement to the full recovery model.
+
+> **Note:**  
+> For an introduction to the bulk-logged recovery model, see [The transaction log](../logs/the-transaction-log-sql-server.md).
+
+Generally, the bulk-logged recovery model is similar to the full recovery model, and the information described for the full recovery model also applies to both. However, point-in-time recovery and online restore are affected by the bulk-logged recovery model.
+
+### Restrictions for point-in-time recovery
+
+If a log backup taken under the bulk-logged recovery model contains bulk-logged changes, point-in-time recovery isn't allowed. Trying to perform point-in-time recovery on a log backup that contains bulk changes, causes the restore operation to fail.
+
+### Restrictions for online restore
+
+An online restore sequence works only if the following conditions are met:
+
+- All required log backups must have been taken before the restore sequence starts.
+
+- Bulk changes must be backed before starting the online restore sequence.
+
+- If bulk changes exist in the database, all files must be either online or [defunct](remove-defunct-filegroups-sql-server.md) (that is, no longer part of the database).
+
+If these conditions aren't met, the online restore sequence fails.
+
+> **Note:**  
+> We recommend switching to the full recovery model before starting an online restore. For more information, see [Recovery models (SQL Server)](recovery-models-sql-server.md).
+
+For information about how to perform an online restore, see [Online Restore (SQL Server)](online-restore-sql-server.md).
+
+## <a id="DRA"></a> Database Recovery Advisor (SQL Server Management Studio)
+
+The Database Recovery Advisor facilitates constructing restore plans that implement optimal correct restore sequences. Many known database restore issues and enhancements requested by customers have been addressed. Major enhancements introduced by the Database Recovery Advisor include:
+
+- **Restore-plan algorithm:** The algorithm used to construct restore plans has improved significantly, particularly for complex restore scenarios. Many edge cases, including forking scenarios in point-in-time restores, are handled more efficiently than in previous versions of  SQL Server 
+.
+
+- **Point-in-time restores:** The Database Recovery Advisor greatly simplifies restoring a database to a given point in time. A visual backup timeline significantly enhances support for point-in-time restores. This visual timeline allows you to identify a feasible point in time as the target recovery point for restoring a database. The timeline facilitates traversing a forked recovery path (a path that spans recovery forks). A given point-in-time restore plan automatically includes the backups that are relevant to the restoring to your target point in time (date and time). For more information, see [Restore a SQL Server Database to a Point in Time (Full Recovery Model)](restore-a-sql-server-database-to-a-point-in-time-full-recovery-model.md).
+
+For more information, see about the Database Recovery Advisor, see the following  SQL Server 
+ Manageability blogs:
+
+- [Recovery Advisor: An Introduction](https://learn.microsoft.com/archive/blogs/managingsql/recovery-advisor-an-introduction)
+
+- [Recovery Advisor: Using SSMS to create/restore split backups](https://learn.microsoft.com/archive/blogs/managingsql/recovery-advisor-using-ssms-to-createrestore-split-backups)
+
+## <a id="adr"></a> Accelerated database recovery
+
+[Accelerated database recovery (ADR)](../accelerated-database-recovery-concepts.md) is available beginning in  SQL Server 2019 (15.x) 
+. ADR is also available in  Azure SQL Database 
+, Azure SQL Managed Instance, 
+Azure Synapse Analytics (dedicated SQL pool only), and SQL database in Microsoft Fabric
+. Accelerated database recovery greatly improves database availability, especially in the presence of long-running transactions, by redesigning the  SQL Server Database Engine 
+ [recovery process](#TlogAndRecovery). A database with ADR enabled completes the recovery process significantly faster after a failover or other unexpected shutdown. When ADR is enabled, rollback of canceled long-running transactions completes instantaneously.
+
+You can enable ADR per-database in  SQL Server 2019 (15.x) 
+ and later versions using the following syntax:
+
+```sql
+ALTER DATABASE [<db_name>] SET ACCELERATED_DATABASE_RECOVERY = ON;
+```
+
+> **Note:**
+> ADR is always enabled in  Azure SQL Database 
+, Azure SQL Managed Instance, 
+Azure Synapse Analytics (dedicated SQL pool only), and SQL database in Microsoft Fabric
+.
+
+## Related content
+
+- [Backup overview (SQL Server)](backup-overview-sql-server.md)
+- [The transaction log](../logs/the-transaction-log-sql-server.md)
+- [SQL Server transaction log architecture and management guide](../sql-server-transaction-log-architecture-and-management-guide.md)
+- [Back up and restore of SQL Server databases](back-up-and-restore-of-sql-server-databases.md)
+- [Apply Transaction Log Backups (SQL Server)](apply-transaction-log-backups-sql-server.md)

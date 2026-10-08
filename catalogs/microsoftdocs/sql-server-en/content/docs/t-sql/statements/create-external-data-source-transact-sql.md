@@ -1,0 +1,3323 @@
+---
+title: "CREATE EXTERNAL DATA SOURCE (Transact-SQL)"
+description: CREATE EXTERNAL DATA SOURCE creates an external data source used to establish connectivity and data virtualization from SQL Server and Azure SQL platforms.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest, hudequei, wiassaf, jovanpop
+ms.date: 03/17/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "CREATE EXTERNAL DATA SOURCE"
+  - "CREATE_EXTERNAL_DATA_SOURCE"
+helpviewer_keywords:
+  - "External"
+  - "External, data source"
+  - "PolyBase, create data source"
+dev_langs:
+  - TSQL
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# CREATE EXTERNAL DATA SOURCE (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+Creates an external data source for querying external data, used for PolyBase and data virtualization features.
+
+This article provides the syntax, arguments, remarks, permissions, and examples for whichever SQL product you choose.
+
+## Select a product
+
+In the following row, select the product name you're interested in, and only that product's information is displayed.
+
+
+<!-- In addition to moniker ranges for SQL Server, SQL DB, APS, Synapse, and SQL MI, Fabric,  
+     this article has version moniker ranges for SQL Server 2016, 2017 (Windows and Linux), 2019, and 2022 due to the syntax differences between each.  
+     Use of the version selector above the TOC is important for this document.
+     The Fabric moniker is for Fabric Data Warehouse. The fabric-sqldb moniker is for SQL database in Fabric.
+     Pay attention to each ::: moniker range.-->
+
+**Applies to: \>=sql-server-2017 || >=sql-server-linux-2017**
+
+
+
+        **_\* SQL Server \*_** &nbsp;
+
+
+        [Azure SQL Database](create-external-data-source-transact-sql.md?view=azuresqldb-current&preserve-view=true)
+
+
+        [SQL Managed<br />Instance](create-external-data-source-transact-sql.md?view=azuresqldb-mi-current&preserve-view=true)
+
+
+        [Azure Synapse<br />Analytics](create-external-data-source-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+
+
+        [Microsoft Fabric Data Warehouse](create-external-data-source-transact-sql.md?view=fabric&preserve-view=true)
+
+
+        [Microsoft Fabric SQL database](create-external-data-source-transact-sql.md?view=fabric-sqldb&preserve-view=true)
+
+
+
+&nbsp;
+
+
+
+**Applies to: \=sql-server-2017 || =sql-server-linux-2017**
+
+## Overview: SQL Server 2017
+
+**Applies to**:  SQL Server 2017 (14.x) 
+
+
+Creates an external data source for PolyBase queries. External data sources are used to establish connectivity and support these primary use cases:
+
+- Data virtualization and data load using [PolyBase in SQL Server](../../relational-databases/polybase/overview.md)
+- Bulk load operations using `BULK INSERT` or `OPENROWSET`
+
+
+
+**Applies to: \=sql-server-linux-2017**
+
+> **Note:**  
+> The syntax of `CREATE EXTERNAL DATA SOURCE` varies in different versions of SQL Server on Linux. Use the version selector dropdown list to choose the appropriate version.  
+> To view the features of  SQL Server 2019 (15.x) 
+, visit [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md?view=sql-server-linux-ver15&preserve-view=true#syntax).
+> To view the features of  SQL Server 2022 (16.x) 
+, visit [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md?view=sql-server-linux-ver16&preserve-view=true#syntax).
+
+
+
+**Applies to: \=sql-server-2017**
+
+> **Note:**  
+> The syntax of `CREATE EXTERNAL DATA SOURCE` varies in different versions of the [SQL Database Engine](../../database-engine/sql-database-engine.md). Use the version selector dropdown list to [choose the appropriate product version](../../sql-server/sql-docs-navigation-guide.md#what-the-applies-to-options-mean).    
+> To view the features of  SQL Server 2019 (15.x) 
+, visit [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md?view=sql-server-ver15&preserve-view=true#syntax).
+> To view the features of  SQL Server 2022 (16.x) 
+, visit [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md?view=sql-server-ver16&preserve-view=true#syntax).
+
+
+
+**Applies to: \=sql-server-2017 || =sql-server-linux-2017**
+
+
+
+## Syntax for SQL Server 2017
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+    [ [ , ] CREDENTIAL = <credential_name> ]
+    [ [ , ] TYPE = { HADOOP | BLOB_STORAGE } ]
+    [ [ , ] RESOURCE_MANAGER_LOCATION = '<resource_manager>[:<port>]' )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database in  SQL Server 
+.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Connector location prefix | Location path | Supported locations by product / service | Authentication |
+| --- | --- | --- | --- | ---: |
+| Cloudera CDH or Hortonworks HDP | `hdfs` | `<Namenode>[:port]` | SQL Server 2016 (13.x) |
+ | to  SQL Server 2019 (15.x) |
+ | only | Anonymous or basic authentication |
+| Azure Storage account(V2) | `wasb[s]` | `<container>@<storage_account>.blob.core.windows.net` | Starting with  SQL Server 2016 (13.x) |
+| <br />Hierarchical Namespace **not** supported | Azure Storage account key |
+| Bulk Operations | `https` | `<storage_account>.blob.core.windows.net/<container>` | Starting with  SQL Server 2017 (14.x) |
+ | Shared access signature (SAS) |
+
+Location path:
+
+- `<`Namenode`>` = the machine name, name service URI, or IP address of the `Namenode` in the Hadoop cluster. PolyBase must resolve any DNS names used by the Hadoop cluster. <!-- For highly available Hadoop configurations, provide the Nameservice ID as the `LOCATION`. -->
+- `port` = The port that the external data source is listening on. In Hadoop, the port can be found using the `fs.defaultFS` configuration parameter. The default is 8020.
+- `<container>` = the container of the storage account holding the data. Root containers are read-only, data can't be written back to the container.
+- `<storage_account>` = the storage account name of the Azure resource.
+- `<server_name>` = the host name.
+- `<instance_name>` = the name of the SQL Server named instance. Used if you have SQL Server Browser Service running on the target instance.
+
+Additional notes and guidance when setting the location:
+
+- The  SQL Server Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+- Use the same external data source for all tables when querying Hadoop to ensure consistent querying semantics.
+- Specify the `Driver={<Name of Driver>}` when connecting via `ODBC`.
+- `wasbs` is optional but recommended in  SQL Server 2017 (14.x) 
+ for accessing Azure Storage Accounts as data will be sent using a secure TLS/SSL connection.
+- To ensure successful PolyBase queries during a Hadoop `Namenode` fail-over, consider using a virtual IP address for the `Namenode` of the Hadoop cluster. If you don't, execute [ALTER EXTERNAL DATA SOURCE](alter-external-data-source-transact-sql.md) to point to the new location.
+
+#### CREDENTIAL = *credential_name*
+
+Specifies a database-scoped credential for authenticating to the external data source.
+
+Additional notes and guidance when creating a credential:
+
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+- When the `TYPE` = `BLOB_STORAGE`, the credential must be created using `SHARED ACCESS SIGNATURE` as the identity.
+- `TYPE` = `BLOB_STORAGE` is only permitted for bulk operations; you can't create external tables for an external data source with `TYPE` = `BLOB_STORAGE`.
+- When connecting to the Azure Storage via `wasb` or `wasbs`, authentication must be done with a storage account key, not with a shared access signature (SAS).
+- When `TYPE` = `HADOOP` the credential must be created using the storage account key as the `SECRET`.
+
+There are multiple ways to create a shared access signature:
+
+- You can create a SAS token by navigating to the **Azure portal -> <Your_Storage_Account> -> Shared access signature -> Configure permissions -> Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+- You can [create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+- You can create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+- The SAS token should be configured as follows:
+  - When a SAS token is generated, it includes a question mark ('?') at the beginning of the token. Exclude the leading `?` when configured as the SECRET.
+  - Use a valid expiration period (all dates are in UTC time).
+- Grant at least read permission on the file that should be loaded (for example `srt=o&sp=r`). Multiple shared access signatures can be created for different use cases. Permissions should be granted as follows:
+
+  | Action | Permission |
+  | --- | --- |
+  | Read data from a file | Read |
+  | Read data from multiple files and subfolders | Read and List |
+
+For an example of using a `CREDENTIAL` with `SHARED ACCESS SIGNATURE` and `TYPE` = `BLOB_STORAGE`, see [Create an external data source to execute bulk operations and retrieve data from Azure Storage into SQL Database](#c-create-an-external-data-source-for-bulk-operations-retrieving-data-from-azure-storage)
+
+To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+#### TYPE = * [ HADOOP | BLOB_STORAGE ] *
+
+Specifies the type of the external data source being configured. This parameter isn't always required, and should only be specified when connecting to Cloudera CDH, Hortonworks HDP, an Azure Storage account, or an Azure Data Lake Storage Gen2.
+
+- Use `HADOOP` when the external data source is Cloudera CDH, Hortonworks HDP, an Azure Storage account, or an Azure Data Lake Storage Gen2.
+- Use `BLOB_STORAGE` when executing bulk operations from Azure Storage account using [BULK INSERT](bulk-insert-transact-sql.md) or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md). Introduced with  SQL Server 2017 (14.x) 
+. Use `HADOOP` when intending to `CREATE EXTERNAL TABLE` against Azure Storage.
+
+> **Note:**  
+> `TYPE` should be set to `HADOOP` even when accessing Azure Storage.
+
+For an example of using `TYPE` = `HADOOP` to load data from an Azure Storage account, see [Create external data source to access data in Azure Storage using the wasb:// interface](#e-create-external-data-source-to-access-data-in-azure-storage-using-the-wasb-interface)
+
+#### RESOURCE_MANAGER_LOCATION = '*ResourceManager_URI*[:port]'
+
+Configure this optional value when connecting to Cloudera CDH, Hortonworks HDP, or an Azure Storage account only. For a complete list of supported Hadoop versions, see [PolyBase connectivity configuration](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md).
+
+When the `RESOURCE_MANAGER_LOCATION` is defined, the query optimizer will make a cost-based decision to improve performance. A MapReduce job can be used to push down the computation to Hadoop. Specifying the `RESOURCE_MANAGER_LOCATION` can significantly reduce the volume of data transferred between Hadoop and  SQL Server 
+, which can lead to improved query performance.
+
+If the Resource Manager isn't specified, pushing compute to Hadoop is disabled for PolyBase queries. [Create external data source to reference Hadoop with push-down enabled](#c-create-external-data-source-to-reference-hadoop-with-push-down-enabled) provides a concrete example and further guidance.
+
+The `RESOURCE_MANAGER_LOCATION` value isn't validated when you create the external data source. Entering an incorrect value might cause query failure at execution time whenever push-down is attempted as the provided value wouldn't be able to resolve.
+
+In order for PolyBase to function correctly with a Hadoop external data source, the ports for the following Hadoop cluster components must be open:
+
+- HDFS ports
+  - Namenode
+  - Datanode
+- Resource Manager
+  - Job submission
+- Job history
+
+If the port isn't specified, the default value is chosen using the current setting for 'hadoop connectivity' configuration.
+
+| Hadoop Connectivity | Default Resource Manager Port |
+| --- | --- |
+| `1` | 50300 |
+| `2` | 50300 |
+| `3` | 8021 |
+| `4` | 8032 |
+| `5` | 8050 |
+| `6` | 8032 |
+| `7` | 8050 |
+| `8` | 8032 |
+
+The following table shows the default ports for these components. There's Hadoop version dependency as well as the possibility of custom configuration that doesn't use the default port assignment.
+
+| **Hadoop cluster component** | **Default Port** |
+| --- | --- |
+| NameNode | 8020 |
+| DataNode (Data transfer, non-privilege IPC port) | 50010 |
+| DataNode (Data transfer, privilege IPC port) | 1019 |
+| Resource Manager Job Submission (Hortonworks 1.3) | 50300 |
+| Resource Manager Job Submission (Cloudera 4.3) | 8021 |
+| Resource Manager Job Submission (Hortonworks 2.0 on Windows, Cloudera 5.x on Linux) | 8032 |
+| Resource Manager Job Submission (Hortonworks 2.x, 3.0 on Linux, Hortonworks 2.1-3 on Windows) | 8050 |
+| Resource Manager Job History | 10020 |
+
+## Permissions
+
+Requires `CONTROL` permission on database in  SQL Server 
+.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Security
+
+PolyBase supports proxy based authentication for most external data sources. Create a database scoped credential to create the proxy account.
+
+A SAS token with type `HADOOP` is unsupported. It's only supported with type = `BLOB_STORAGE` when a storage account access key is used instead. Attempting to create an external data source with type `HADOOP` and a SAS credential fails with the following error:
+
+`Msg 105019, Level 16, State 1 - EXTERNAL TABLE access failed due to internal error: 'Java exception raised on call to HdfsBridge_Connect. Java exception message: Parameters provided to connect to the Azure storage account aren't valid.: Error [Parameters provided to connect to the Azure storage account aren't valid.] occurred while accessing external file.'`
+
+## Examples
+
+> **Important:**  
+> For information on how to install and enable PolyBase, see [Install PolyBase on Windows](../../relational-databases/polybase/polybase-installation.md)
+
+### A. Create external data source to reference Hadoop
+
+To create an external data source to reference your Hortonworks HDP or Cloudera CDH Hadoop cluster, specify the machine name, or IP address of the Hadoop `Namenode` and port. <!-- Provide the Nameservice ID as the `LOCATION` for highly available configurations. -->
+
+```sql
+CREATE EXTERNAL DATA SOURCE MyHadoopCluster
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'hdfs://10.10.10.10:8050'
+);
+```
+
+### B. Create external data source to reference Hadoop with push-down enabled
+
+Specify the `RESOURCE_MANAGER_LOCATION` option to enable push-down computation to Hadoop for PolyBase queries. Once enabled, PolyBase makes a cost-based decision to determine whether the query computation should be pushed to Hadoop.
+
+```sql
+CREATE EXTERNAL DATA SOURCE MyHadoopCluster
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'hdfs://10.10.10.10:8020',
+    RESOURCE_MANAGER_LOCATION = '10.10.10.10:8050'
+);
+```
+
+### C. Create external data source to reference Kerberos-secured Hadoop
+
+To verify if the Hadoop cluster is Kerberos-secured, check the value of `hadoop.security.authentication` property in Hadoop core-site.xml. To reference a Kerberos-secured Hadoop cluster, you must specify a database scoped credential that contains your Kerberos username and password. The database master key is used to encrypt the database scoped credential secret.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Kerberos user name and password.
+CREATE DATABASE SCOPED CREDENTIAL HadoopUser1
+WITH IDENTITY = '<hadoop_user_name>',
+     SECRET = '<hadoop_password>';
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyHadoopCluster
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'hdfs://10.10.10.10:8050',
+    CREDENTIAL = HadoopUser1,
+    RESOURCE_MANAGER_LOCATION = '10.10.10.10:8050'
+);
+```
+
+### D. Create external data source to access data in Azure Storage using the wasb:// interface
+
+In this example, the external data source is an Azure V2 Storage account named `logs`. The storage container is named `daily`. The Azure Storage external data source is for data transfer only. It doesn't support predicate push-down. Hierarchical namespaces aren't supported when accessing data via the `wasb://` interface. When connecting to the Azure Storage via `wasb` or `wasbs`, authentication must be done with a storage account key, not with a shared access signature (SAS).
+
+This example shows how to create the database scoped credential for authentication to an Azure V2 Storage account. Specify the Azure Storage account key in the database credential secret. You can specify any string in database scoped credential identity as it isn't used during authentication to Azure Storage.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredential
+WITH IDENTITY = '<my_account>',
+     SECRET = '<azure_storage_account_key>';
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyAzureStorage
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'wasbs://daily@logs.blob.core.windows.net/',
+    CREDENTIAL = AzureStorageCredential
+);
+```
+
+## Examples: Bulk operations
+
+> **Important:**  
+> Don't add a trailing **/**, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+### E. Create an external data source for bulk operations retrieving data from Azure Storage
+
+**Applies to:**  SQL Server 2017 (14.x) 
+ and later versions.
+
+Use the following data source for bulk operations using [BULK INSERT](bulk-insert-transact-sql.md) or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md). The credential must set `SHARED ACCESS SIGNATURE` as the identity, mustn't have the leading `?` in the SAS token, must have at least read permission on the file that should be loaded (for example `srt=o&sp=r`), and the expiration period should be valid (all dates are in UTC time). For more information on shared access signatures, see [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview).
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL AccessAzureInvoices
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+     SECRET = -- Remove ? from the beginning of the SAS token'<azure_storage_account_key>';
+
+CREATE EXTERNAL DATA SOURCE MyAzureInvoices
+WITH (
+    TYPE = BLOB_STORAGE,
+    LOCATION = 'https://newinvoices.blob.core.windows.net/week3',
+    CREDENTIAL = AccessAzureInvoices
+);
+```
+
+To see this example in use, see [BULK INSERT](bulk-insert-transact-sql.md#f-import-data-from-a-file-in-azure-blob-storage).
+
+## Related content
+
+- [ALTER EXTERNAL DATA SOURCE (Transact-SQL)](alter-external-data-source-transact-sql.md)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL FILE FORMAT (Transact-SQL)](create-external-file-format-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+- [PolyBase connectivity configuration (Transact-SQL)](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md)
+
+
+
+**Applies to: \=sql-server-ver15 || =sql-server-linux-ver15**
+
+## Overview: SQL Server 2019
+
+**Applies to**:  SQL Server 2019 (15.x) 
+
+
+Creates an external data source for PolyBase queries. External data sources are used to establish connectivity and support these primary use cases:
+
+- Data virtualization and data load using [PolyBase in SQL Server](../../relational-databases/polybase/overview.md)
+- Bulk load operations using `BULK INSERT` or `OPENROWSET`
+
+
+
+**Applies to: \=sql-server-linux-ver15**
+
+> **Note:**  
+> The syntax of `CREATE EXTERNAL DATA SOURCE` varies in different versions of the [SQL Database Engine](../../database-engine/sql-database-engine.md). Use the version selector dropdown list to [choose the appropriate product version](../../sql-server/sql-docs-navigation-guide.md#what-the-applies-to-options-mean).    
+> To view the features of  SQL Server 2022 (16.x) 
+, visit [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md?view=sql-server-linux-ver16&preserve-view=true#syntax).
+
+
+
+**Applies to: \=sql-server-ver15**
+
+> **Note:**  
+> The syntax of `CREATE EXTERNAL DATA SOURCE` varies in different versions of the [SQL Database Engine](../../database-engine/sql-database-engine.md). Use the version selector dropdown list to [choose the appropriate product version](../../sql-server/sql-docs-navigation-guide.md#what-the-applies-to-options-mean).    
+> To view the features of  SQL Server 2022 (16.x) 
+, visit [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md?view=sql-server-ver16&preserve-view=true#syntax).
+
+
+
+**Applies to: \=sql-server-ver15 || =sql-server-linux-ver15**
+
+
+
+## Syntax for SQL Server 2019
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+    [ [ , ] CONNECTION_OPTIONS = '<key_value_pairs>'[,...]]
+    [ [ , ] CREDENTIAL = <credential_name> ]
+    [ [ , ] PUSHDOWN = { ON | OFF } ]
+    [ [ , ] TYPE = { HADOOP | BLOB_STORAGE } ]
+    [ [ , ] RESOURCE_MANAGER_LOCATION = '<resource_manager>[:<port>]' ]
+  )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database in  SQL Server 
+.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Connector location prefix | Location path | Supported locations by product / service | Authentication |
+| --- | --- | --- | --- | ---: |
+| Cloudera CDH or Hortonworks HDP | `hdfs` | `<Namenode>[:port]` | SQL Server 2016 (13.x) |
+ | to  SQL Server 2019 (15.x) |
+ | Anonymous or basic authentication |
+| Azure Storage account(V2) | `wasb[s]` | `<container>@<storage_account>.blob.core.windows.net` | Starting with  SQL Server 2016 (13.x) |
+| <br />Hierarchical Namespace **not** supported | Azure Storage account key |
+| SQL Server |
+ | `sqlserver` | `<server_name>[\<instance_name>][:port]` | Starting with  SQL Server 2019 (15.x) |
+ | SQL authentication only |
+| Oracle | `oracle` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| Teradata | `teradata` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| MongoDB or Cosmos DB API for MongoDB | `mongodb` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| Generic ODBC | `odbc` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ - Windows only | Basic authentication only |
+| Bulk Operations | `https` | `<storage_account>.blob.core.windows.net/<container>` | Starting with  SQL Server 2017 (14.x) 
+ | Shared access signature (SAS) |
+| Azure Data Lake Storage Gen2 | `abfs[s]` | `abfss://<container>@<storage_account>.dfs.core.windows.net` | Starting with  SQL Server 2019 (15.x) 
+ CU11+. | Storage Access Key |
+| SQL Server Big Data Clusters
+ data pool | `sqldatapool` | `sqldatapool://controller-svc/default` | Only supported in  SQL Server 2019 Big Data Clusters
+ | Basic authentication only |
+| SQL Server Big Data Clusters
+ storage pool | `sqlhdfs` | `sqlhdfs://controller-svc/default` | Only supported in  SQL Server 2019 Big Data Clusters
+ | Basic authentication only |
+
+Location path:
+
+- `<Namenode>` = the machine name, name service URI, or IP address of the `Namenode` in the Hadoop cluster. PolyBase must resolve any DNS names used by the Hadoop cluster.
+- `port` = The port that the external data source is listening on. In Hadoop, the port can be found using the `fs.defaultFS` configuration parameter. The default is 8020.
+- `<container>` = the container of the storage account holding the data. Root containers are read-only, data can't be written back to the container.
+- `<storage_account>` = the storage account name of the Azure resource.
+- `<server_name>` = the host name.
+- `<instance_name>` = the name of the SQL Server named instance. Used if you have SQL Server Browser Service running on the target instance.
+
+Additional notes and guidance when setting the location:
+
+- The  SQL Server Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+- Use the same external data source for all tables when querying Hadoop to ensure consistent querying semantics.
+- You can use the `sqlserver` connector to connect  SQL Server 2019 (15.x) 
+ to another  SQL Server 
+, or to  Azure SQL Database 
+.
+- Specify the `Driver={<Name of Driver>}` when connecting via `ODBC`.
+- Using `wasbs` or `abfss` is optional but recommended in  SQL Server 2019 (15.x) 
+ for accessing Azure Storage Accounts as data will be sent using a secure TLS/SSL connection.
+- The `abfs` or `abfss` APIs are supported when accessing Azure Storage Accounts starting with  SQL Server 2019 (15.x) 
+ CU11. For more information, see [the Azure Blob Filesystem driver (ABFS)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-abfs-driver).
+- The Hierarchical Namespace option for Azure Storage Accounts(V2) using `abfs[s]` is supported via Azure Data Lake Storage Gen2 starting with  SQL Server 2019 (15.x) 
+ CU11+. The Hierarchical Namespace option is otherwise not supported, and this option should remain **disabled**.
+- To ensure successful PolyBase queries during a Hadoop `Namenode` fail-over, consider using a virtual IP address for the `Namenode` of the Hadoop cluster. If you don't, execute [ALTER EXTERNAL DATA SOURCE](alter-external-data-source-transact-sql.md) to point to the new location.
+- The `sqlhdfs` and `sqldatapool` types are supported for connecting between the master instance and storage pool of a big data cluster. For Cloudera CDH or Hortonworks HDP, use `hdfs`. For more information on using `sqlhdfs` for querying SQL Server Big Data Clusters
+ storage pools, see [Query HDFS in SQL Server 2019 Big Data Cluster](https://learn.microsoft.com/previous-versions/sql/big-data-cluster/tutorial-query-hdfs-storage-pool).
+- 
+SQL Server support for HDFS Cloudera (CDP) and Hortonworks (HDP) external data sources has been retired, and isn't included in  SQL Server 2022 (16.x) 
+ and later versions. For more information, see [Big data options on the Microsoft SQL Server platform](../../big-data-cluster/big-data-options.md).
+
+
+#### CONNECTION_OPTIONS = *key_value_pair*
+
+<!-- See also docs\t-sql\statements\create-external-data-source-connection-options.md -->
+
+Specified for  SQL Server 2019 (15.x) 
+ and later versions. Specifies additional options when connecting over `ODBC` to an external data source. To use multiple connection options, separate them by a semi-colon.
+
+Applies to generic `ODBC` connections, as well as built-in `ODBC` connectors for  SQL Server 
+, Oracle, Teradata, MongoDB, and Azure Cosmos DB API for MongoDB.
+
+The `key_value_pair` is the keyword and the value for a specific connection option. The available keywords and values depend on the external data source type. The name of the driver is required as a minimum, but there are other options such as `APP='<your_application_name>'` or `ApplicationIntent= ReadOnly|ReadWrite` that are also useful to set and can assist with troubleshooting.
+
+Possible key value pairs are specific to the provider for the external data source vendor. For more information for each provider, see [CREATE EXTERNAL DATA SOURCE (Transact-SQL) CONNECTION_OPTIONS](create-external-data-source-connection-options.md).
+
+ SQL Server 2019 (15.x) 
+ Cumulative Update 19 and later versions introduce additional keywords to support Oracle TNS files:
+
+- The keyword `TNSNamesFile` specifies the filepath to the `tnsnames.ora` file located on the Oracle server.
+- The keyword `ServerName` specifies the alias used inside the `tnsnames.ora` that will be used to replace the host name and the port.
+
+#### Pushdown = ON | OFF
+
+Specified for  SQL Server 2019 (15.x) 
+ only. States whether computation can be pushed down to the external data source. It's **ON** by default.
+
+`PUSHDOWN` is supported when connecting to  SQL Server 
+, Oracle, Teradata, MongoDB, the Azure Cosmos DB API for MongoDB, or ODBC at the external data source level.
+
+Enabling or disabling push-down at the query level is achieved through the [EXTERNALPUSHDOWN hint](../../relational-databases/polybase/polybase-pushdown-computation.md#force-pushdown).
+
+#### CREDENTIAL = *credential_name*
+
+Specifies a database-scoped credential for authenticating to the external data source.
+
+Additional notes and guidance when creating a credential:
+
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+- When the `TYPE` = `BLOB_STORAGE`, the credential must be created using `SHARED ACCESS SIGNATURE` as the identity.
+- `TYPE` = `BLOB_STORAGE` is only permitted for bulk operations; you can't create external tables for an external data source with `TYPE` = `BLOB_STORAGE`.
+
+There are multiple ways to create a shared access signature:
+
+- You can create a SAS token by navigating to the **Azure portal -> <Your_Storage_Account> -> Shared access signature -> Configure permissions -> Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+- You can [create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+- You can create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+- The SAS token should be configured as follows:
+  - When a SAS token is generated, it includes a question mark ('?') at the beginning of the token. Exclude the leading `?` when configured as the SECRET.
+  - Use a valid expiration period (all dates are in UTC time).
+- Grant at least read permission on the file that should be loaded (for example `srt=o&sp=r`). Multiple shared access signatures can be created for different use cases. Permissions should be granted as follows:
+
+  | Action | Permission |
+  | --- | --- |
+  | Read data from a file | Read |
+  | Read data from multiple files and subfolders | Read and List |
+
+For an example of using a `CREDENTIAL` with `SHARED ACCESS SIGNATURE` and `TYPE` = `BLOB_STORAGE`, see [Create an external data source to execute bulk operations and retrieve data from Azure Storage into SQL Database](#h-create-an-external-data-source-for-bulk-operations-retrieving-data-from-azure-storage)
+
+To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+#### TYPE = * [ HADOOP | BLOB_STORAGE ] *
+
+Specifies the type of the external data source being configured. This parameter isn't always required, and should only be specified when connecting to Cloudera CDH, Hortonworks HDP, an Azure Storage account, or an Azure Data Lake Storage Gen2.
+
+- In  SQL Server 2019 (15.x) 
+, don't specify TYPE unless connecting to Cloudera CDH, Hortonworks HDP, an Azure Storage account.
+- Use `HADOOP` when the external data source is Cloudera CDH, Hortonworks HDP, an Azure Storage account, or an Azure Data Lake Storage Gen2.
+- Use `BLOB_STORAGE` when executing bulk operations from Azure Storage account using [BULK INSERT](bulk-insert-transact-sql.md), or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md) with  SQL Server 2017 (14.x) 
+. Use `HADOOP` when intending to CREATE EXTERNAL TABLE against Azure Storage.
+- 
+SQL Server support for HDFS Cloudera (CDP) and Hortonworks (HDP) external data sources has been retired, and isn't included in  SQL Server 2022 (16.x) 
+ and later versions. For more information, see [Big data options on the Microsoft SQL Server platform](../../big-data-cluster/big-data-options.md).
+
+
+For an example of using `TYPE` = `HADOOP` to load data from an Azure Storage account, see [Create external data source to access data in Azure Storage using the wasb:// interface](#e-create-external-data-source-to-access-data-in-azure-storage-using-the-wasb-interface).
+
+#### RESOURCE_MANAGER_LOCATION = '*ResourceManager_URI*[:port]'
+
+In  SQL Server 2019 (15.x) 
+, don't specify RESOURCE_MANAGER_LOCATION unless connecting to Cloudera CDH, Hortonworks HDP, an Azure Storage account.
+
+Configure this optional value when connecting to Cloudera CDH, Hortonworks HDP, or an Azure Storage account only. For a complete list of supported Hadoop versions, see [PolyBase connectivity configuration](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md).
+
+When the `RESOURCE_MANAGER_LOCATION` is defined, the query optimizer makes a cost-based decision to improve performance. A MapReduce job can be used to push down the computation to Hadoop. Specifying the `RESOURCE_MANAGER_LOCATION` can significantly reduce the volume of data transferred between Hadoop and  SQL Server 
+, which can lead to improved query performance.
+
+If the Resource Manager isn't specified, pushing compute to Hadoop is disabled for PolyBase queries. [Create external data source to reference Hadoop with push-down enabled](#c-create-external-data-source-to-reference-hadoop-with-push-down-enabled) provides a concrete example and further guidance.
+
+The RESOURCE_MANAGER_LOCATION value isn't validated when you create the external data source. Entering an incorrect value might cause query failure at execution time whenever push-down is attempted as the provided value wouldn't be able to resolve.
+
+In order for PolyBase to function correctly with a Hadoop external data source, the ports for the following Hadoop cluster components must be open:
+
+- HDFS ports
+  - Namenode
+  - Datanode
+- Resource Manager
+  - Job submission
+- Job history
+
+If the port isn't specified, the default value is chosen using the current setting for 'hadoop connectivity' configuration.
+
+| Hadoop Connectivity | Default Resource Manager Port |
+| --- | --- |
+| `1` | 50300 |
+| `2` | 50300 |
+| `3` | 8021 |
+| `4` | 8032 |
+| `5` | 8050 |
+| `6` | 8032 |
+| `7` | 8050 |
+| `8` | 8032 |
+
+The following table shows the default ports for these components. There's Hadoop version dependency as well as the possibility of custom configuration that doesn't use the default port assignment.
+
+| **Hadoop cluster component** | **Default Port** |
+| --- | --- |
+| NameNode | 8020 |
+| DataNode (Data transfer, non-privilege IPC port) | 50010 |
+| DataNode (Data transfer, privilege IPC port) | 1019 |
+| Resource Manager Job Submission (Hortonworks 1.3) | 50300 |
+| Resource Manager Job Submission (Cloudera 4.3) | 8021 |
+| Resource Manager Job Submission (Hortonworks 2.0 on Windows, Cloudera 5.x on Linux) | 8032 |
+| Resource Manager Job Submission (Hortonworks 2.x, 3.0 on Linux, Hortonworks 2.1-3 on Windows) | 8050 |
+| Resource Manager Job History | 10020 |
+
+## Permissions
+
+Requires `CONTROL` permission on database in  SQL Server 
+.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Security
+
+PolyBase supports proxy based authentication for most external data sources. Create a database scoped credential to create the proxy account.
+
+When you connect to the storage or data pool in SQL Server 2019 Big Data Cluster, the user's credentials are passed through to the back-end system. Create logins in the data pool itself to enable pass through authentication.
+
+A SAS token with type `HADOOP` is unsupported. It's only supported with type = `BLOB_STORAGE` when a storage account access key is used instead. Attempting to create an external data source with type `HADOOP` and a SAS credential fails with the following error:
+
+`Msg 105019, Level 16, State 1 - EXTERNAL TABLE access failed due to internal error: 'Java exception raised on call to HdfsBridge_Connect. Java exception message: Parameters provided to connect to the Azure storage account aren't valid.: Error [Parameters provided to connect to the Azure storage account aren't valid.] occurred while accessing external file.'`
+
+## Examples
+
+> **Important:**  
+> For information on how to install and enable PolyBase, see [Install PolyBase on Windows](../../relational-databases/polybase/polybase-installation.md)
+
+### A. Create external data source in SQL Server 2019 to reference Oracle
+
+To create an external data source that references Oracle, ensure you have a database scoped credential. You might optionally also enable or disable push-down of computation against this data source.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL OracleProxyAccount
+WITH IDENTITY = 'oracle_username',
+     SECRET = 'oracle_password';
+
+CREATE EXTERNAL DATA SOURCE MyOracleServer
+WITH (
+    LOCATION = 'oracle://145.145.145.145:1521',
+    PUSHDOWN = ON,
+    CREDENTIAL = OracleProxyAccount
+);
+```
+
+Optionally, the external data source to Oracle can use proxy authentication to provide fine-grained access control. A proxy user can be configured to have limited access compared to the user being impersonated.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL [OracleProxyCredential]
+WITH IDENTITY = 'oracle_username',
+     SECRET = 'oracle_password';
+
+CREATE EXTERNAL DATA SOURCE [OracleSalesSrvr]
+WITH (
+    LOCATION = 'oracle://145.145.145.145:1521',
+    CONNECTION_OPTIONS = 'ImpersonateUser=%CURRENT_USER',
+    CREDENTIAL = [OracleProxyCredential]
+);
+```
+
+Alternatively, you can use TNS authentication.
+
+Starting in  SQL Server 2019 (15.x) 
+ Cumulative Update 19, `CREATE EXTERNAL DATA SOURCE` now supports the use of TNS files when connecting to Oracle.
+
+The `CONNECTION_OPTIONS` parameter was expanded and now uses `TNSNamesFile` and `ServerName` as variables to browse the `tnsnames.ora` file and establish connection with the server.
+
+In the example below, during runtime SQL Server will search for the `tnsnames.ora` file location specified by `TNSNamesFile` and search for the host and network port specified by `ServerName`.
+
+```sql
+CREATE EXTERNAL DATA SOURCE [external_data_source_name]
+WITH (
+    LOCATION = N'oracle://XE',
+    CREDENTIAL = [OracleCredentialTest],
+    CONNECTION_OPTIONS = N'TNSNamesFile=C:\Temp\tnsnames.ora;ServerName=XE'
+);
+```
+
+For additional examples to other data sources such as MongoDB, see [Configure PolyBase to access external data in MongoDB](../../relational-databases/polybase/polybase-configure-mongodb.md).
+
+### B. Create external data source to reference Hadoop
+
+To create an external data source to reference your Hortonworks HDP or Cloudera CDH Hadoop cluster, specify the machine name, or IP address of the Hadoop `Namenode` and port. <!-- Provide the Nameservice ID as the `LOCATION` for highly available configurations. -->
+
+```sql
+CREATE EXTERNAL DATA SOURCE MyHadoopCluster
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'hdfs://10.10.10.10:8050'
+);
+```
+
+### C. Create external data source to reference Hadoop with push-down enabled
+
+Specify the `RESOURCE_MANAGER_LOCATION` option to enable push-down computation to Hadoop for PolyBase queries. Once enabled, PolyBase makes a cost-based decision to determine whether the query computation should be pushed to Hadoop.
+
+```sql
+CREATE EXTERNAL DATA SOURCE MyHadoopCluster
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'hdfs://10.10.10.10:8020',
+    RESOURCE_MANAGER_LOCATION = '10.10.10.10:8050'
+);
+```
+
+### D. Create external data source to reference Kerberos-secured Hadoop
+
+To verify if the Hadoop cluster is Kerberos-secured, check the value of `hadoop.security.authentication` property in Hadoop core-site.xml. To reference a Kerberos-secured Hadoop cluster, you must specify a database scoped credential that contains your Kerberos username and password. The database master key is used to encrypt the database scoped credential secret.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Kerberos user name and password.
+CREATE DATABASE SCOPED CREDENTIAL HadoopUser1
+WITH IDENTITY = '<hadoop_user_name>',
+     SECRET = '<hadoop_password>';
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyHadoopCluster
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'hdfs://10.10.10.10:8050',
+    CREDENTIAL = HadoopUser1,
+    RESOURCE_MANAGER_LOCATION = '10.10.10.10:8050'
+);
+```
+
+### E. Create external data source to access data in Azure Storage using the wasb:// interface
+
+In this example, the external data source is an Azure V2 Storage account named `logs`. The storage container is named `daily`. The Azure Storage external data source is for data transfer only. It doesn't support predicate push-down. Hierarchical namespaces aren't supported when accessing data via the `wasb://` interface. When connecting to the Azure Storage via `wasb` or `wasbs`, authentication must be done with a storage account key, not with a shared access signature (SAS).
+
+This example shows how to create the database scoped credential for authentication to an Azure V2 Storage account. Specify the Azure Storage account key in the database credential secret. You can specify any string in database scoped credential identity as it isn't used during authentication to Azure Storage.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredential
+WITH IDENTITY = '<my_account>',
+     SECRET = '<azure_storage_account_key>';
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyAzureStorage
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'wasbs://daily@logs.blob.core.windows.net/',
+    CREDENTIAL = AzureStorageCredential
+);
+```
+
+### F. Create external data source to reference a SQL Server named instance via PolyBase connectivity
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ and later
+
+To create an external data source that references a named instance of  SQL Server 
+, use `CONNECTION_OPTIONS` to specify the instance name.
+
+In the following example, `WINSQL2019` is the host name and `SQL2019` is the instance name. `'Server=%s\SQL2019'` is the key value pair.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019',
+    CONNECTION_OPTIONS = 'Server=%s\SQL2019',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+Alternatively, you can use a port to connect to a  SQL Server 
+ default instance.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019:58137',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+### G. Create external data source to reference a readable secondary replica of Always On availability group
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ and later
+
+To create an external data source that references a readable secondary replica of  SQL Server 
+, use `CONNECTION_OPTIONS` to specify the `ApplicationIntent=ReadOnly`. Also, you need to either set the availability database as `Database={dbname}` in `CONNECTION_OPTIONS`, or set the availability database as the default database of the login used for the database scoped credential. You need to do this on all availability replicas of the availability group.
+
+First, create the database scoped credential, storing credentials for a SQL authenticated login. The SQL ODBC Connector for PolyBase only supports basic authentication. Before you create a database scoped credential, the database must have a master key to protect the credential. For more information, see [CREATE MASTER KEY](create-master-key-transact-sql.md). The following sample creates a database scoped credential, provide your own login and password.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL SQLServerCredentials
+WITH IDENTITY = 'username',
+     SECRET = 'password';
+```
+
+Next, create the new external data source.
+
+Whether you included `Database=dbname` in the `CONNECTION_OPTIONS` or set the availability database as the default database for the login in the database scoped credential, you must still provide the database name via a three-part name in the CREATE EXTERNAL TABLE statement, within the LOCATION parameter. For an example, see [CREATE EXTERNAL TABLE](create-external-table-transact-sql.md?view=sql-server-ver15&preserve-view=true#g-create-an-external-table-for-sql-server).
+
+In the following example, `WINSQL2019AGL` is the availability group listener name and `dbname` is the name of the database to be the target of the CREATE EXTERNAL TABLE statement.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadOnly; Database=dbname',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+You can demonstrate the redirection behavior of the availability group by specifying `ApplicationIntent` and creating an external table on the system view `sys.servers`. In the following sample script, two external data sources are created, and one external table is created for each. Use the views to test which server is responding to the connection. Similar outcomes can also be achieved via the read-only routing feature. For more information, see [Configure read-only routing for an Always On availability group](../../database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server.md).
+
+```sql
+CREATE EXTERNAL DATA SOURCE [DataSource_SQLInstanceListener_ReadOnlyIntent]
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadOnly; Database=dbname',
+    CREDENTIAL = [SQLServerCredentials]
+);
+GO
+
+CREATE EXTERNAL DATA SOURCE [DataSource_SQLInstanceListener_ReadWriteIntent]
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadWrite',
+    CREDENTIAL = [SQLServerCredentials]
+);
+GO
+```
+
+Inside the database in the availability group, create a view to return `sys.servers` and the name of the local instance, which helps you identify which replica is responding to the query. For more information, see [sys.servers](../../relational-databases/system-catalog-views/sys-servers-transact-sql.md).
+
+```sql
+CREATE VIEW vw_sys_servers
+AS
+SELECT [name]
+FROM sys.servers
+WHERE server_id = 0;
+GO
+```
+
+Then, create an external table on the source instance:
+
+```sql
+CREATE EXTERNAL TABLE vw_sys_servers_ro (name SYSNAME NOT NULL)
+WITH (
+    DATA_SOURCE = [DataSource_SQLInstanceListener_ReadOnlyIntent],
+    LOCATION = N'dbname.dbo.vw_sys_servers'
+);
+GO
+
+CREATE EXTERNAL TABLE vw_sys_servers_rw (name SYSNAME NOT NULL)
+WITH (
+    DATA_SOURCE = [DataSource_SQLInstanceListener_ReadWriteIntent],
+    LOCATION = N'dbname.dbo.vw_sys_servers'
+);
+GO
+
+SELECT [name]
+FROM dbo.vw_sys_servers_ro;--should return secondary replica instance
+
+SELECT [name]
+FROM dbo.vw_sys_servers_rw;--should return primary replica instance
+GO
+```
+
+## Examples: Bulk operations
+
+> **Important:**  
+> Don't add a trailing **/**, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+### H. Create an external data source for bulk operations retrieving data from Azure Storage
+
+**Applies to:**  SQL Server 2017 (14.x) 
+ and  SQL Server 2019 (15.x) 
+
+
+Use the following data source for bulk operations using [BULK INSERT](bulk-insert-transact-sql.md) or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md). The credential must set `SHARED ACCESS SIGNATURE` as the identity, mustn't have the leading `?` in the SAS token, must have at least read permission on the file that should be loaded (for example `srt=o&sp=r`), and the expiration period should be valid (all dates are in UTC time). For more information on shared access signatures, see [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview).
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL AccessAzureInvoices
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+     SECRET = -- Remove ? from the beginning of the SAS token'<azure_shared_access_signature>';
+
+CREATE EXTERNAL DATA SOURCE MyAzureInvoices
+WITH (
+    TYPE = BLOB_STORAGE,
+    LOCATION = 'https://newinvoices.blob.core.windows.net/week3',
+    CREDENTIAL = AccessAzureInvoices
+);
+```
+
+To see this example in use, see [BULK INSERT](bulk-insert-transact-sql.md#f-import-data-from-a-file-in-azure-blob-storage).
+
+### I. Create external data source to access data in Azure Storage using the abfs:// interface
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ CU11 and later
+
+In this example, the external data source is an Azure Data Lake Storage Gen2 account `logs`, using [the Azure Blob Filesystem driver (ABFS)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-abfs-driver). The storage container is named `daily`. The Azure Data Lake Storage Gen2 external data source is for data transfer only, as predicate push-down isn't supported.
+
+This example shows how to create the database scoped credential for authentication to an Azure Data Lake Storage Gen2 account. Specify the Azure Storage account key in the database credential secret. You can specify any string in database scoped credential identity as it isn't used during authentication to Azure Storage.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredential
+WITH IDENTITY = '<my_account>',
+     SECRET = '<azure_storage_account_key>';
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyAzureStorage
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'abfss://daily@logs.dfs.core.windows.net/',
+    CREDENTIAL = AzureStorageCredential
+);
+```
+
+### J. Create external data source using generic ODBC to PostgreSQL
+
+As in previous examples, first create a database master key and database scoped credential. The database scoped credential will be used for the external data source. This example also assumes that a generic ODBC data provider for PostgreSQL is installed on the server.
+
+In this example, the generic ODBC data provider is used to connect to a PostgreSQL database server in the same network, where the fully qualified domain name of the PostgreSQL server is `POSTGRES1`, using the default port of TCP 5432.
+
+```sql
+CREATE EXTERNAL DATA SOURCE POSTGRES1
+WITH (
+    LOCATION = 'odbc://POSTGRES1.domain:5432',
+    CONNECTION_OPTIONS = 'Driver={PostgreSQL Unicode(x64)};',
+    CREDENTIAL = postgres_credential
+);
+```
+
+## Related content
+
+- [ALTER EXTERNAL DATA SOURCE (Transact-SQL)](alter-external-data-source-transact-sql.md)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL FILE FORMAT (Transact-SQL)](create-external-file-format-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+- [PolyBase connectivity configuration (Transact-SQL)](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md)
+
+
+
+**Applies to: \=sql-server-ver16 || =sql-server-linux-ver16**
+
+## Overview: SQL Server 2022
+
+**Applies to**:  SQL Server 2022 (16.x) 
+ and later versions
+
+Creates an external data source for PolyBase queries. External data sources are used to establish connectivity and support these primary use cases:
+
+- Data virtualization and data load using [PolyBase in SQL Server](../../relational-databases/polybase/overview.md)
+- Bulk load operations using `BULK INSERT` or `OPENROWSET`
+
+> **Note:**  
+> The syntax of `CREATE EXTERNAL DATA SOURCE` varies in different versions of the [SQL Database Engine](../../database-engine/sql-database-engine.md). Use the version selector dropdown list to [choose the appropriate product version](../../sql-server/sql-docs-navigation-guide.md#what-the-applies-to-options-mean).   This content applies to  SQL Server 2022 (16.x) 
+ and later versions.
+
+<a id="syntax"></a>
+
+## Syntax for SQL Server 2022
+
+## Syntax for SQL Server 2022 and later versions
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+    [ [ , ] CONNECTION_OPTIONS = '<key_value_pairs>'[,...]]
+    [ [ , ] CREDENTIAL = <credential_name> ]
+    [ [ , ] PUSHDOWN = { ON | OFF } ]
+  )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database in  SQL Server 
+.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Connector location prefix | Location path | Supported locations by product / service | Authentication |
+| --- | --- | --- | --- | ---: |
+| Azure Storage Account(V2) | `abs` | `abs://<container_name>@<storage_account_name>.blob.core.windows.net/`<br />or<br />`abs://<storage_account_name>.blob.core.windows.net/<container_name>` | Starting with  SQL Server 2022 (16.x) |
+| <br />Hierarchical Namespace is supported. | Shared access signature (SAS) |
+| Azure Data Lake Storage Gen2 | `adls` | `adls://<container_name>@<storage_account_name>.dfs.core.windows.net/`<br />or<br />`adls://<storage_account_name>.dfs.core.windows.net/<container_name>` | Starting with  SQL Server 2022 (16.x) |
+ | Shared access signature (SAS) |
+| SQL Server |
+ | `sqlserver` | `<server_name>[\<instance_name>][:port]` | Starting with  SQL Server 2019 (15.x) |
+ | SQL authentication only |
+| Oracle | `oracle` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| Teradata | `teradata` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| MongoDB or Cosmos DB API for MongoDB | `mongodb` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| Generic ODBC | `odbc` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ - Windows only | Basic authentication only |
+| Bulk Operations | `https` | `<storage_account>.blob.core.windows.net/<container>` | Starting with  SQL Server 2017 (14.x) 
+ | Shared access signature (SAS) |
+| S3-compatible object storage | `s3` | - S3-compatible: `s3://<server_name>:<port>/`<br />- AWS S3: `s3://<bucket_name>.S3.amazonaws.com[:port]/<folder>`<br />or `s3://s3.amazonaws.com[:port]/<bucket_name>/<folder>` | Starting with  SQL Server 2022 (16.x) 
+ | Basic or pass-through (STS) \* |
+
+\* Must be a [database scoped credential](create-database-scoped-credential-transact-sql.md), where the IDENTITY is hard-coded to `IDENTITY = 'S3 Access Key'` and the SECRET argument is in the format `= '<AccessKeyID>:<SecretKeyID>'` or use pass-through (STS) authorization. For more information, see [Configure PolyBase to access external data in S3-compatible object storage](../../relational-databases/polybase/polybase-configure-s3-compatible.md).
+
+Location path:
+
+- `port` = The port that the external data source is listening on. Optional in many cases, depending on network configuration.
+- `<container_name>` = the container of the storage account holding the data. Root containers are read-only, data can't be written back to the container.
+- `<storage_account>` = the storage account name of the Azure resource.
+- `<server_name>` = the host name.
+- `<instance_name>` = the name of the SQL Server named instance. Used if you have SQL Server Browser Service running on the target instance.
+- `<ip_address>:<port>` = For S3-compatible object storage only (starting with  SQL Server 2022 (16.x) 
+), the endpoint and port used to connect to the S3-compatible storage.
+- `<bucket_name>` = For S3-compatible object storage only (starting with  SQL Server 2022 (16.x) 
+), specific to the storage platform.
+- `<region>` = For S3-compatible object storage only (starting with  SQL Server 2022 (16.x) 
+), specific to the storage platform.
+- `<folder>` = Part of the storage path within the storage URL.
+
+Additional notes and guidance when setting the location:
+
+- The  SQL Server Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+- You can use the `sqlserver` connector to connect  SQL Server 2019 (15.x) 
+ to another  SQL Server 
+ or to  Azure SQL Database 
+.
+- Specify the `Driver={<Name of Driver>}` when connecting via `ODBC`.
+- The Hierarchical Namespace option for Azure Storage Accounts(V2) using the prefix `adls` is supported via Azure Data Lake Storage Gen2 in  SQL Server 2022 (16.x) 
+.
+<!--- - The `sqlhdfs` and `sqldatapool` types are supported for connecting between the master instance and storage pool of SQL Server 2019 Big Data Cluster. For Cloudera CDH or Hortonworks HDP, use `hdfs`. For more information on using `sqlhdfs` for querying SQL Server Big Data Clusters
+ storage pools, see [Query HDFS in SQL Server 2019 Big Data Cluster](/previous-versions/sql/big-data-cluster/tutorial-query-hdfs-storage-pool).
+- 
+SQL Server support for HDFS Cloudera (CDP) and Hortonworks (HDP) external data sources has been retired, and isn't included in  SQL Server 2022 (16.x) 
+ and later versions. For more information, see [Big data options on the Microsoft SQL Server platform](../../big-data-cluster/big-data-options.md).
+ -->
+- SQL Server support for HDFS Cloudera (CDP) and Hortonworks (HDP) external data sources are retired and not included in  SQL Server 2022 (16.x) 
+. There's no need to use the TYPE argument in  SQL Server 2022 (16.x) 
+.
+- For more information on S3-compatible object storage and PolyBase starting with  SQL Server 2022 (16.x) 
+, see [Configure PolyBase to access external data in S3-compatible object storage](../../relational-databases/polybase/polybase-configure-s3-compatible.md). For an example of querying a parquet file within S3-compatible object storage, see [Virtualize parquet file in a S3-compatible object storage with PolyBase](../../relational-databases/polybase/polybase-virtualize-parquet-file.md).
+- Differing from previous versions, in  SQL Server 2022 (16.x) 
+, the prefix used for Azure Storage Account (v2) changed from `wasb[s]` to `abs`.
+- Differing from previous versions, in  SQL Server 2022 (16.x) 
+, the prefix used for Azure Data Lake Storage Gen2 changed from `abfs[s]` to `adls`.
+- For an example using PolyBase to virtualize a CSV file in Azure Storage, see [Virtualize CSV file with PolyBase](../../relational-databases/polybase/virtualize-csv.md).
+- For an example using PolyBase to virtualize a delta table in ADLS Gen2, see [Virtualize delta table with PolyBase](../../relational-databases/polybase/virtualize-delta.md).
+-  SQL Server 2022 (16.x) 
+ fully supports two URL formats for both Azure Storage Account v2 (`abs`) and Azure Data Lake Gen2 (`adls`).
+  - The LOCATION path can use the formats: `<container>@<storage_account_name>..` (recommended) or `<storage_account_name>../<container>`. For example:
+    - Azure Storage Account v2: `abs://<container>@<storage_account_name>.blob.core.windows.net` (recommended) or `abs://<storage_account_name>.blob.core.windows.net/<container>`.
+- Azure Data Lake Gen2 supports: `adls://<container>@<storage_account_name>.blob.core.windows.net` (recommended) or `adls://<storage_account_name>.dfs.core.windows.net/<container>`.
+
+#### CONNECTION_OPTIONS = *key_value_pair*
+
+<!-- See also docs\t-sql\statements\create-external-data-source-connection-options.md -->
+
+Specified for  SQL Server 2019 (15.x) 
+ and later versions. Specifies additional options when connecting over `ODBC` to an external data source. To use multiple connection options, separate them by a semi-colon.
+
+Applies to generic `ODBC` connections, as well as built-in `ODBC` connectors for  SQL Server 
+, Oracle, Teradata, MongoDB, and Azure Cosmos DB API for MongoDB.
+
+The `key_value_pair` is the keyword and the value for a specific connection option. The available keywords and values depend on the external data source type. The name of the driver is required as a minimum, but there are other options such as `APP='<your_application_name>'` or `ApplicationIntent= ReadOnly|ReadWrite` that are also useful to set and can assist with troubleshooting.
+
+Possible key value pairs are specific to the driver. For more information for each provider, see [CREATE EXTERNAL DATA SOURCE (Transact-SQL) CONNECTION_OPTIONS](create-external-data-source-connection-options.md).
+
+Starting in  SQL Server 2022 (16.x) 
+ Cumulative Update 2, additional keywords were introduced to support Oracle TNS files:
+
+- The keyword `TNSNamesFile` specifies the filepath to the `tnsnames.ora` file located on the Oracle server.
+- The keyword `ServerName` specifies the alias used inside the `tnsnames.ora` that will be used to replace the host name and the port.
+
+#### PUSHDOWN = ON | OFF
+
+**Applies to:  SQL Server 2019 (15.x) 
+ and later versions.** States whether computation can be pushed down to the external data source. It's on by default.
+
+`PUSHDOWN` is supported when connecting to  SQL Server 
+, Oracle, Teradata, MongoDB, the Azure Cosmos DB API for MongoDB, or ODBC at the external data source level.
+
+Enabling or disabling push-down at the query level is achieved through the [EXTERNALPUSHDOWN hint](../../relational-databases/polybase/polybase-pushdown-computation.md#force-pushdown).
+
+#### CREDENTIAL = *credential_name*
+
+Specifies a database-scoped credential for authenticating to the external data source.
+
+Additional notes and guidance when creating a credential:
+
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+- When accessing Azure Storage Account (V2) or Azure Data Lake Storage Gen2, the `IDENTITY` must be `SHARED ACCESS SIGNATURE`.
+- For an example, see [Create an external data source to execute bulk operations and retrieve data from Azure Storage into SQL Database](#h-create-an-external-data-source-for-bulk-operations-retrieving-data-from-azure-storage-1).
+
+There are multiple ways to create a shared access signature:
+
+- You can create a SAS token by navigating to the **Azure portal -> <Your_Storage_Account> -> Shared access signature -> Configure permissions -> Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+- You can [create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+- You can create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+- The SAS token should be configured as follows:
+  - When a SAS token is generated, it includes a question mark ('?') at the beginning of the token. Exclude the leading `?` when configured as the SECRET.
+  - Use a valid expiration period (all dates are in UTC time).
+- Grant at least read permission on the file that should be loaded (for example `srt=o&sp=r`). Multiple shared access signatures can be created for different use cases. Permissions should be granted as follows:
+
+  | Action | Permission |
+  | --- | --- |
+  | Read data from a file | Read |
+  | Read data from multiple files and subfolders | Read and List |
+  | Use Create External Table as Select (CETAS) | Read, Create, List and Write |
+
+- For Azure Blob Storage and Azure Data Lake Gen 2:
+  - Allowed services: `Blob` must be selected to generate the SAS token
+- Allowed resource types: `Container` and `Object` must be selected to generate the SAS token
+
+For an example of using a `CREDENTIAL` with S3-compatible object storage and PolyBase, see [Configure PolyBase to access external data in S3-compatible object storage](../../relational-databases/polybase/polybase-configure-s3-compatible.md).
+
+To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+<!---
+
+#### TYPE = * [ HADOOP | BLOB_STORAGE ] *
+
+Specifies the type of the external data source being configured. This parameter isn't always required, and should only be specified when connecting to Cloudera CDH, Hortonworks HDP, an Azure Storage account, or an Azure Data Lake Storage Gen2.
+
+- In  SQL Server 2019 (15.x) 
+, don't specify TYPE unless connecting to Cloudera CDH, Hortonworks HDP, an Azure Storage account.
+- Use `HADOOP` when the external data source is Cloudera CDH, Hortonworks HDP, an Azure Storage account, or an Azure Data Lake Storage Gen2.
+- Use `BLOB_STORAGE` when executing bulk operations from Azure Storage account using [BULK INSERT](bulk-insert-transact-sql.md), or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md) with  SQL Server 2017 (14.x) 
+. Use `HADOOP` when intending to CREATE EXTERNAL TABLE against Azure Storage.
+- 
+SQL Server support for HDFS Cloudera (CDP) and Hortonworks (HDP) external data sources has been retired, and isn't included in  SQL Server 2022 (16.x) 
+ and later versions. For more information, see [Big data options on the Microsoft SQL Server platform](../../big-data-cluster/big-data-options.md).
+
+- Don't specify a `TYPE` for S3-compatible object storage.
+
+#### RESOURCE_MANAGER_LOCATION = *'*ResourceManager_URI[:port]'*
+
+Configure this optional value when connecting to Cloudera CDH, Hortonworks HDP, or an Azure Storage account only. For a complete list of supported Hadoop versions, see [PolyBase connectivity configuration](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md).
+
+When the `RESOURCE_MANAGER_LOCATION` is defined, the query optimizer will make a cost-based decision to improve performance. A MapReduce job can be used to push down the computation to Hadoop. Specifying the `RESOURCE_MANAGER_LOCATION` can significantly reduce the volume of data transferred between Hadoop and  SQL Server 
+, which can lead to improved query performance.
+
+If the Resource Manager isn't specified, pushing compute to Hadoop is disabled for PolyBase queries. [Create external data source to reference Hadoop with push-down enabled](#c-create-external-data-source-to-reference-hadoop-with-push-down-enabled) provides a concrete example and further guidance.
+
+The RESOURCE_MANAGER_LOCATION value isn't validated when you create the external data source. Entering an incorrect value might cause query failure at execution time whenever push-down is attempted as the provided value wouldn't be able to resolve.
+
+In order for PolyBase to function correctly with a Hadoop external data source, the ports for the following Hadoop cluster components must be open:
+
+- HDFS ports
+    - Namenode
+    - Datanode
+- Resource manager
+    - Job submission
+- Job history
+
+If the port isn't specified, the default value is chosen using the current setting for 'hadoop connectivity' configuration.
+
+| Hadoop Connectivity | Default Resource Manager Port |
+| --- | --- |
+| `1` | 50300 |
+| `2` | 50300 |
+| `3` | 8021 |
+| `4` | 8032 |
+| `5` | 8050 |
+| `6` | 8032 |
+| `7` | 8050 |
+| `8` | 8032 |
+
+The following table shows the default ports for these components. There's Hadoop version dependency as well as the possibility of custom configuration that doesn't use the default port assignment.
+
+| **Hadoop cluster component** | **Default Port** |
+| --- | --- |
+| `NameNode` | 8020 |
+| `DataNode (Data transfer, non-privilege IPC port)` | 50010 |
+| `DataNode (Data transfer, privilege IPC port)` | 1019 |
+| `Resource Manager Job Submission (Hortonworks 1.3)` | 50300 |
+| `Resource Manager Job Submission (Cloudera 4.3)` | 8021 |
+| `Resource Manager Job Submission (Hortonworks 2.0 on Windows, Cloudera 5.x on Linux)` | 8032 |
+| `Resource Manager Job Submission (Hortonworks 2.x, 3.0 on Linux, Hortonworks 2.1-3 on Windows)` | 8050 |
+| `Resource Manager Job History` | 10020 |
+
+> [!IMPORTANT]  
+> The RESOURCE_MANAGER_LOCATION value isn't validated when you create the external data source. Entering an incorrect value might cause query failure at execution time whenever push-down is attempted as the provided value wouldn't be able to resolve.
+
+#### [ Create external data source to reference Hadoop with push-down enabled ] *(#c-create-external-data-source-to-reference-hadoop-with-push-down-enabled) provides a concrete example and further guidance.*
+
+-->
+
+## Permissions
+
+Requires `CONTROL` permission on database in  SQL Server 
+.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Security
+
+PolyBase supports proxy based authentication for most external data sources. Create a database scoped credential to create the proxy account.
+
+## Upgrade to SQL Server 2022
+
+Starting in  SQL Server 2022 (16.x) 
+, Hadoop external data sources are no longer supported. It's required to manually recreate external data sources previously created with `TYPE = HADOOP`, and any external table that uses this external data source.
+
+Users will also need to configure their external data sources to use new connectors when connecting to Azure Storage.
+
+| External Data Source | From | To |
+| --- | --- | --- |
+| Azure Blob Storage | `wasb[s]` | `abs` |
+| ADLS Gen2 | `abfs[s]` | `adls` |
+
+## Examples
+
+> **Important:**  
+> For information on how to install and enable PolyBase, see [Install PolyBase on Windows](../../relational-databases/polybase/polybase-installation.md)
+
+### A. Create external data source in SQL Server to reference Oracle
+
+To create an external data source that references Oracle, ensure you have a database scoped credential. You might optionally also enable or disable push-down of computation against this data source.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL OracleProxyAccount
+WITH IDENTITY = 'oracle_username',
+     SECRET = 'oracle_password';
+
+CREATE EXTERNAL DATA SOURCE MyOracleServer
+WITH (
+    LOCATION = 'oracle://145.145.145.145:1521',
+    PUSHDOWN = ON,
+    CREDENTIAL = OracleProxyAccount
+);
+```
+
+Optionally, the external data source to Oracle can use proxy authentication to provide fine-grained access control. A proxy user can be configured to have limited access compared to the user being impersonated.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL [OracleProxyCredential]
+WITH IDENTITY = 'oracle_username',
+     SECRET = 'oracle_password';
+
+CREATE EXTERNAL DATA SOURCE [OracleSalesSrvr]
+WITH (
+    LOCATION = 'oracle://145.145.145.145:1521',
+    CONNECTION_OPTIONS = 'ImpersonateUser=%CURRENT_USER',
+    CREDENTIAL = [OracleProxyCredential]
+);
+```
+
+Alternatively, you can authenticate using TNS.
+
+Starting in  SQL Server 2022 (16.x) 
+ Cumulative Update 2, `CREATE EXTERNAL DATA SOURCE` now supports the use of TNS files when connecting to Oracle.
+
+The `CONNECTION_OPTIONS` parameter was expanded and now uses `TNSNamesFile` and `ServerName` as variables to browse the `tnsnames.ora` file and establish connection with the server.
+
+In the example below, during runtime SQL Server will search for the `tnsnames.ora` file location specified by `TNSNamesFile` and search for the host and network port specified by `ServerName`.
+
+```sql
+CREATE EXTERNAL DATA SOURCE [external_data_source_name]
+WITH (
+    LOCATION = N'oracle://XE',
+    CREDENTIAL = [OracleCredentialTest],
+    CONNECTION_OPTIONS = N'TNSNamesFile=C:\Temp\tnsnames.ora;ServerName=XE'
+);
+```
+
+### B. Create external data source to reference a SQL Server named instance via PolyBase connectivity
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ and later
+
+To create an external data source that references a named instance of  SQL Server 
+, use `CONNECTION_OPTIONS` to specify the instance name.
+
+First, create the database scoped credential, storing credentials for a SQL authenticated login. The SQL ODBC Connector for PolyBase only supports basic authentication. Before you create a database scoped credential, the database must have a master key to protect the credential. For more information, see [CREATE MASTER KEY](create-master-key-transact-sql.md). The following sample creates a database scoped credential, provide your own login and password.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL SQLServerCredentials
+WITH IDENTITY = 'username',
+     SECRET = 'password';
+```
+
+In the following example, `WINSQL2019` is the host name and `SQL2019` is the instance name. `'Server=%s\SQL2019'` is the key value pair.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019',
+    CONNECTION_OPTIONS = 'Server=%s\SQL2019',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+Alternatively, you can use a port to connect to a  SQL Server 
+ default instance.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019:58137',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+### C. Create external data source to reference a readable secondary replica of Always On availability group
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ and later
+
+To create an external data source that references a readable secondary replica of  SQL Server 
+, use `CONNECTION_OPTIONS` to specify the `ApplicationIntent=ReadOnly`. Also, you need to either set the availability database as `Database={dbname}` in `CONNECTION_OPTIONS`, or set the availability database as the default database of the login used for the database scoped credential. You need to do this on all availability replicas of the availability group.
+
+First, create the database scoped credential, storing credentials for a SQL authenticated login. The SQL ODBC Connector for PolyBase only supports basic authentication. Before you create a database scoped credential, the database must have a master key to protect the credential. For more information, see [CREATE MASTER KEY](create-master-key-transact-sql.md). The following sample creates a database scoped credential, provide your own login and password.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL SQLServerCredentials
+WITH IDENTITY = 'username',
+     SECRET = 'password';
+```
+
+Next, create the new external data source.
+
+Whether you included `Database=dbname` in the `CONNECTION_OPTIONS` or set the availability database as the default database for the login in the database scoped credential, you must still provide the database name via a three-part name in the CREATE EXTERNAL TABLE statement, within the LOCATION parameter. For an example, see [CREATE EXTERNAL TABLE](create-external-table-transact-sql.md?view=sql-server-ver15&preserve-view=true#g-create-an-external-table-for-sql-server).
+
+In the following example, `WINSQL2019AGL` is the availability group listener name and `dbname` is the name of the database to be the target of the CREATE EXTERNAL TABLE statement.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadOnly; Database=dbname',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+You can demonstrate the redirection behavior of the availability group by specifying `ApplicationIntent` and creating an external table on the system view `sys.servers`. In the following sample script, two external data sources are created, and one external table is created for each. Use the views to test which server is responding to the connection. Similar outcomes can also be achieved via the read-only routing feature. For more information, see [Configure read-only routing for an Always On availability group](../../database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server.md).
+
+```sql
+CREATE EXTERNAL DATA SOURCE [DataSource_SQLInstanceListener_ReadOnlyIntent]
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadOnly; Database=dbname',
+    CREDENTIAL = [SQLServerCredentials]
+);
+GO
+
+CREATE EXTERNAL DATA SOURCE [DataSource_SQLInstanceListener_ReadWriteIntent]
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadWrite',
+    CREDENTIAL = [SQLServerCredentials]
+);
+GO
+```
+
+Inside the database in the availability group, create a view to return `sys.servers` and the name of the local instance, which helps you identify which replica is responding to the query. For more information, see [sys.servers](../../relational-databases/system-catalog-views/sys-servers-transact-sql.md).
+
+```sql
+CREATE VIEW vw_sys_servers
+AS
+SELECT [name]
+FROM sys.servers
+WHERE server_id = 0;
+GO
+```
+
+Then, create an external table on the source instance:
+
+```sql
+CREATE EXTERNAL TABLE vw_sys_servers_ro (name SYSNAME NOT NULL)
+WITH (
+    DATA_SOURCE = [DataSource_SQLInstanceListener_ReadOnlyIntent],
+    LOCATION = N'dbname.dbo.vw_sys_servers'
+);
+GO
+
+CREATE EXTERNAL TABLE vw_sys_servers_rw (name SYSNAME NOT NULL)
+WITH (
+    DATA_SOURCE = [DataSource_SQLInstanceListener_ReadWriteIntent],
+    LOCATION = N'dbname.dbo.vw_sys_servers'
+);
+GO
+
+SELECT [name]
+FROM dbo.vw_sys_servers_ro;--should return secondary replica instance
+
+SELECT [name]
+FROM dbo.vw_sys_servers_rw;--should return primary replica instance
+GO
+```
+
+### D. Create external data source to query a parquet file in S3-compatible object storage via PolyBase
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later
+
+The following sample script creates an external data source `s3_ds` in the source user database in SQL Server. The external data source references the `s3_dc` database scoped credential.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL s3_dc
+WITH IDENTITY = 'S3 Access Key', -- for S3-compatible object storage the identity must always be S3 Access Key
+    SECRET = '<access_key_id>:<secret_key_id>' -- provided by the S3-compatible object storage
+GO
+
+CREATE EXTERNAL DATA SOURCE s3_ds
+WITH (
+    LOCATION = 's3://<ip_address>:<port>/',
+    CREDENTIAL = s3_dc
+);
+GO
+```
+
+Verify the new external data source with [sys.external_data_sources](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md).
+
+```sql
+SELECT *
+FROM sys.external_data_sources;
+```
+
+Then, the following example demonstrates using T-SQL to query a parquet file stored in S3-compatible object storage via OPENROWSET query. For more information, see [Virtualize parquet file in a S3-compatible object storage with PolyBase](../../relational-databases/polybase/polybase-virtualize-parquet-file.md).
+
+```sql
+SELECT *
+FROM OPENROWSET (
+    BULK '/<bucket>/<parquet_folder>',
+    FORMAT = 'PARQUET',
+    DATA_SOURCE = 's3_ds'
+) AS [cc];
+```
+
+### E. Create external data source using generic ODBC to PostgreSQL
+
+As in previous examples, first create a database master key and database scoped credential. The database scoped credential will be used for the external data source. This example also assumes that a generic ODBC data provider for PostgreSQL is installed on the server.
+
+In this example, the generic ODBC data provider is used to connect to a PostgreSQL database server in the same network, where the fully qualified domain name of the PostgreSQL server is `POSTGRES1`, using the default port of TCP 5432.
+
+```sql
+CREATE EXTERNAL DATA SOURCE POSTGRES1
+WITH (
+    LOCATION = 'odbc://POSTGRES1.domain:5432',
+    CONNECTION_OPTIONS = 'Driver={PostgreSQL Unicode(x64)};',
+    CREDENTIAL = postgres_credential
+);
+```
+
+### Azure Storage
+
+#### Create a shared access signature
+
+For both Azure Blob Storage and Azure Data Lake Storage (ADLS) Gen2, the supported authentication method is shared access signature (SAS). One simple way to generate a shared access signature token follow the steps that follow. For more information, see [CREDENTIAL](#credential--credential_name-3).
+
+1. Navigate to the Azure portal, and the desired Storage Account.
+1. Navigate to your desired Container under **Data Storage** menu.
+1. Select **Shared access tokens**.
+1. Choose the appropriate permission based on the desired action:
+
+   | Action | Permission |
+   | --- | --- |
+   | Read data from a file | Read |
+   | Read data from multiple files and subfolders | Read and List |
+   | Use Create External Table as Select (CETAS) | Read, Create and Write |
+
+1. Choose the token expiration date.
+1. Generate SAS token and URL.
+1. Copy the SAS token.
+
+### F. Create external data source to access data in Azure Blob Storage using the abs:// interface
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later
+
+Starting in  SQL Server 2022 (16.x) 
+, use a new prefix `abs` for Azure Storage Account v2. The `abs` prefix supports authentication using `SHARED ACCESS SIGNATURE`. The `abs` prefix replaces `wasb`, used in previous versions. HADOOP isn't longer supported, there's no more need to use `TYPE = BLOB_STORAGE`.
+
+The Azure storage account key is no longer needed, instead using SAS Token as we can see in the following example:
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+GO
+
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredentialv2
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE', -- to use SAS the identity must be fixed as-is
+    SECRET = '<Blob_SAS_Token>';
+GO
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyAzureStorage
+WITH (
+    LOCATION = 'abs://<container>@<storage_account_name>.blob.core.windows.net/',
+    CREDENTIAL = AzureStorageCredentialv2
+);
+```
+
+For a more detailed example on how to access CSV files stored in Azure Blob Storage, see [Virtualize CSV file with PolyBase](../../relational-databases/polybase/virtualize-csv.md).
+
+### G. Create external data source to access data in Azure Data Lake Gen2
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions
+
+Starting in  SQL Server 2022 (16.x) 
+, use a new prefix `adls` for Azure Data Lake Gen2, replacing `abfs` used in previous versions. The `adls` prefix also supports SAS token as authentication method as shown in this example:
+
+```sql
+--Create a database scoped credential using SAS Token
+CREATE DATABASE SCOPED CREDENTIAL datalakegen2
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+     SECRET = '<DataLakeGen2_SAS_Token>';
+GO
+
+CREATE EXTERNAL DATA SOURCE data_lake_gen2_dfs
+WITH (
+    LOCATION = 'adls://<container>@<storage_account>.dfs.core.windows.net',
+    CREDENTIAL = datalakegen2
+);
+```
+
+For a more detailed example on how to access delta files stored on Azure Data Lake Gen2, see [Virtualize delta table with PolyBase](../../relational-databases/polybase/virtualize-delta.md).
+
+## Examples: Bulk Operations
+
+> **Important:**  
+> Don't add a trailing **/**, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+### H. Create an external data source for bulk operations retrieving data from Azure Storage
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions.
+
+Use the following data source for bulk operations using [BULK INSERT](bulk-insert-transact-sql.md) or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md). The credential must set `SHARED ACCESS SIGNATURE` as the identity, mustn't have the leading `?` in the SAS token, must have at least read permission on the file that should be loaded (for example `srt=o&sp=r`), and the expiration period should be valid (all dates are in UTC time). For more information on shared access signatures, see [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview).
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL AccessAzureInvoices
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+    -- Remove ? from the beginning of the SAS token
+    SECRET = '<azure_shared_access_signature>';
+
+CREATE EXTERNAL DATA SOURCE MyAzureInvoices
+WITH (
+    LOCATION = 'abs://<container>@<storage_account_name>.blob.core.windows.net/',
+    CREDENTIAL = AccessAzureInvoices,
+);
+```
+
+## Related content
+
+- [ALTER EXTERNAL DATA SOURCE (Transact-SQL)](alter-external-data-source-transact-sql.md)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL FILE FORMAT (Transact-SQL)](create-external-file-format-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+- [PolyBase connectivity configuration (Transact-SQL)](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md)
+
+
+
+**Applies to: \>=sql-server-ver17 || >=sql-server-linux-ver17**
+
+## Overview: SQL Server 2025
+
+**Applies to**:  SQL Server 2025 (17.x) 
+
+
+Creates an external data source for PolyBase queries. External data sources are used to establish connectivity and support these primary use cases:
+
+- Data virtualization and data load using [PolyBase in SQL Server](../../relational-databases/polybase/overview.md)
+- Bulk load operations using `BULK INSERT` or `OPENROWSET`
+
+Supports Managed Identity connections for instances enabled by Azure Arc. For details, review [Connect to Azure Storage with managed identity from PolyBase](../../relational-databases/polybase/managed-identity.md).
+
+> **Note:**  
+> The syntax of `CREATE EXTERNAL DATA SOURCE` varies in different versions of the [SQL Database Engine](../../database-engine/sql-database-engine.md). Use the version selector dropdown list to [choose the appropriate product version](../../sql-server/sql-docs-navigation-guide.md#what-the-applies-to-options-mean).   This content applies to  SQL Server 2025 (17.x) 
+ and later versions.
+
+<a id="syntax"></a>
+
+## Syntax for SQL Server 2025 and later versions
+
+For more information about the syntax conventions, see [Transact-SQL syntax conventions](../language-elements/transact-sql-syntax-conventions-transact-sql.md).
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+    [ [ , ] CONNECTION_OPTIONS = '<key_value_pairs>'[,...]]
+    [ [ , ] CREDENTIAL = <credential_name> ]
+    [ [ , ] PUSHDOWN = { ON | OFF } ]
+  )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database in  SQL Server 
+.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External data source | Connector location prefix | Location path | Supported locations by product / service | Authentication |
+| --- | --- | --- | --- | ---: |
+| Azure Storage Account(V2) | `abs` | `abs://<container_name>@<storage_account_name>.blob.core.windows.net/`<br />or<br />`abs://<storage_account_name>.blob.core.windows.net/<container_name>` | Starting with  SQL Server 2022 (16.x) |
+| <br />Hierarchical Namespace is supported. | Shared access signature (SAS)<br />or<br />[PolyBase support for Managed Identity to Azure Storage](../../relational-databases/polybase/managed-identity.md) <sup>1</sup> |
+| Azure Data Lake Storage Gen2 | `adls` | `adls://<container_name>@<storage_account_name>.dfs.core.windows.net/`<br />or<br />`adls://<storage_account_name>.dfs.core.windows.net/<container_name>` | Starting with  SQL Server 2022 (16.x) |
+ | Shared access signature (SAS)<br />or<br />[PolyBase support for Managed Identity to Azure Storage](../../relational-databases/polybase/managed-identity.md) <sup>1</sup> |
+| SQL Server |
+ | `sqlserver` | `<server_name>[\<instance_name>][:port]` | Starting with  SQL Server 2019 (15.x) |
+ | SQL authentication only |
+| Oracle | `oracle` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| Teradata | `teradata` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| MongoDB or Cosmos DB API for MongoDB | `mongodb` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ | Basic authentication only |
+| Generic ODBC | `odbc` | `<server_name>[:port]` | Starting with  SQL Server 2019 (15.x) |
+ - Windows only | Basic authentication only |
+| Bulk Operations | `https` | `<storage_account>.blob.core.windows.net/<container>` | Starting with  SQL Server 2017 (14.x) 
+ | Shared access signature (SAS) |
+| S3-compatible object storage | `s3` | - S3-compatible: `s3://<server_name>:<port>/`<br />- AWS S3: `s3://<bucket_name>.S3.amazonaws.com[:port]/<folder>`<br />or `s3://s3.amazonaws.com[:port]/<bucket_name>/<folder>` | Starting with  SQL Server 2022 (16.x) 
+ | Basic or pass-through (STS) <sup>2</sup> |
+
+<sup>1</sup> Requires  SQL Server 2025 (17.x) 
+ instance enabled by Azure Arc. For details, review [Connect to Azure Storage with managed identity from PolyBase](../../relational-databases/polybase/managed-identity.md).
+
+<sup>2</sup> Must be a [database scoped credential](create-database-scoped-credential-transact-sql.md), where the `IDENTITY` is hard-coded to `IDENTITY = 'S3 Access Key'` and the `SECRET` argument is in the format `= '<AccessKeyID>:<SecretKeyID>'` or use pass-through (STS) authorization. For more information, see [Configure PolyBase to access external data in S3-compatible object storage](../../relational-databases/polybase/polybase-configure-s3-compatible.md).
+
+Location path:
+
+| Location path | Description |
+| --- | --- |
+| `port` | The port that the external data source is listening on. Optional in many cases, depending on network configuration. |
+| `<container_name>` | The container of the storage account holding the data. Root containers are read-only, data can't be written back to the container. |
+| `<storage_account>` | The storage account name of the Azure resource. |
+| `<server_name>` | The host name. |
+| `<instance_name>` | The name of the SQL Server named instance. Used if you have SQL Server Browser Service running on the target instance. |
+| `<ip_address>:<port>` <sup>1</sup> | For S3-compatible object storage only, the endpoint and port used to connect to the S3-compatible storage. |
+| `<bucket_name>` <sup>1</sup> | For S3-compatible object storage only, specific to the storage platform. |
+| `<region>` <sup>1</sup> | For S3-compatible object storage only, specific to the storage platform. |
+| `<folder>` | Part of the storage path within the storage URL. |
+
+<sup>1</sup>  SQL Server 2022 (16.x) 
+ and later versions.
+
+Additional notes and guidance when setting the location:
+
+- The  SQL Server Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+
+- You can use the `sqlserver` connector to connect  SQL Server 2019 (15.x) 
+ to another  SQL Server 
+ or to  Azure SQL Database 
+.
+
+- Specify the `Driver={<Name of Driver>}` when connecting via `ODBC`.
+
+- The Hierarchical Namespace option for Azure Storage Accounts(V2) using the prefix `adls` is supported via Azure Data Lake Storage Gen2 in  SQL Server 2022 (16.x) 
+ and later versions.
+
+- SQL Server support for HDFS Cloudera (CDP) and Hortonworks (HDP) external data sources are retired and not included in  SQL Server 2022 (16.x) 
+ and later versions. There's no need to use the `TYPE` argument in  SQL Server 2025 (17.x) 
+.
+
+- For more information on S3-compatible object storage and PolyBase in  SQL Server 2022 (16.x) 
+ and later versions, see [Configure PolyBase to access external data in S3-compatible object storage](../../relational-databases/polybase/polybase-configure-s3-compatible.md). For an example of querying a parquet file within S3-compatible object storage, see [Virtualize parquet file in a S3-compatible object storage with PolyBase](../../relational-databases/polybase/polybase-virtualize-parquet-file.md).
+
+In  SQL Server 2022 (16.x) 
+ and later versions:
+
+- the prefix used for Azure Storage Account (v2) changed from `wasb[s]` to `abs`
+- the prefix used for Azure Data Lake Storage Gen2 changed from `abfs[s]` to `adls`
+
+- For an example using PolyBase to virtualize a CSV file in Azure Storage, see [Virtualize CSV file with PolyBase](../../relational-databases/polybase/virtualize-csv.md).
+
+- For an example using PolyBase to virtualize a delta table in ADLS Gen2, see [Virtualize delta table with PolyBase](../../relational-databases/polybase/virtualize-delta.md).
+
+-  SQL Server 2022 (16.x) 
+ and later versions fully support two URL formats for both Azure Storage Account v2 (`abs`) and Azure Data Lake Gen2 (`adls`).
+
+  - The `LOCATION` path can use the formats: `<container>@<storage_account_name>..` (recommended) or `<storage_account_name>../<container>`. For example:
+
+    - Azure Storage Account v2: `abs://<container>@<storage_account_name>.blob.core.windows.net` (recommended) or `abs://<storage_account_name>.blob.core.windows.net/<container>`.
+
+- Azure Data Lake Gen2 supports: `adls://<container>@<storage_account_name>.blob.core.windows.net` (recommended) or `adls://<storage_account_name>.dfs.core.windows.net/<container>`.
+
+#### CONNECTION_OPTIONS = *key_value_pair*
+
+<!-- See also docs\t-sql\statements\create-external-data-source-connection-options.md -->
+
+**Applies to**:  SQL Server 2019 (15.x) 
+ and later versions.
+
+Specifies additional options when connecting over `ODBC` to an external data source. To use multiple connection options, separate them by a semi-colon.
+
+Applies to generic `ODBC` connections, as well as built-in `ODBC` connectors for  SQL Server 
+, Oracle, Teradata, MongoDB, and Azure Cosmos DB API for MongoDB.
+
+The `key_value_pair` is the keyword and the value for a specific connection option. The available keywords and values depend on the external data source type. The name of the driver is required as a minimum, but there are other options such as `APP='<your_application_name>'` or `ApplicationIntent= ReadOnly|ReadWrite` that are also useful to set and can assist with troubleshooting.
+
+Possible key value pairs are specific to the driver. For more information for each provider, see [CREATE EXTERNAL DATA SOURCE (Transact-SQL) CONNECTION_OPTIONS](create-external-data-source-connection-options.md).
+
+Starting in  SQL Server 2022 (16.x) 
+ Cumulative Update 2, additional keywords were introduced to support Oracle TNS files:
+
+- The keyword `TNSNamesFile` specifies the filepath to the `tnsnames.ora` file located on the Oracle server.
+- The keyword `ServerName` specifies the alias used inside the `tnsnames.ora` that will be used to replace the host name and the port.
+
+**Encryption options in  SQL Server 2025 (17.x) 
+**
+
+Starting in  SQL Server 2025 (17.x) 
+, when using `sqlserver` as the data source, the Microsoft ODBC Driver version 18 for SQL Server is the default driver. The `Encryption` option is required (`Yes`, `No`, or `Strict`), and `TrustServerCertificate` is available (`Yes` or `No`). If `Encryption` isn't specified, the default behavior is `Encrypt=Yes;TrustServerCertificate=No;`, and requires a server certificate.
+
+To connect using the TDS 8.0 protocol, the strict mode (`Encrypt=Strict`) has been added. In this mode, a trusted server certificate is required to be installed and is always verified (TrustServerCertificate is ignored). A new keyword, `HostnameInCertificate`, can be used to specify the expected hostname found in the certificate if it differs from the specified server. `HostnameInCertificate` is usable in all encryption modes and is also applicable if the server-side **Force Encryption** option is enabled, which will cause the driver to verify the certificate in **Optional** or **Mandatory** modes unless disabled using `TrustServerCertificate`.
+
+For more information about `Encryption` options, server certificates, and `TrustServerCertificate`, see [Features of the Microsoft ODBC Driver for SQL Server on Windows](../../connect/odbc/windows/features-of-the-microsoft-odbc-driver-for-sql-server-on-windows.md).
+
+You should always use the latest driver. However,  SQL Server 2025 (17.x) 
+ also supports Microsoft ODBC Driver version 17 for SQL Server for backward compatibility. For more information on how to change the driver version used by PolyBase, see [Change the SQL Server driver version for PolyBase](../../relational-databases/polybase/polybase-change-odbc-driver.md).
+
+#### PUSHDOWN = ON | OFF
+
+**Applies to**:  SQL Server 2019 (15.x) 
+ and later versions.
+
+States whether computation can be pushed down to the external data source. Enabled by default.
+
+`PUSHDOWN` is supported when connecting to  SQL Server 
+, Oracle, Teradata, MongoDB, the Azure Cosmos DB API for MongoDB, or ODBC at the external data source level.
+
+Enabling or disabling push-down at the query level is achieved through a [hint](../../relational-databases/polybase/polybase-pushdown-computation.md#force-pushdown).
+
+#### CREDENTIAL = *credential_name*
+
+Specifies a database-scoped credential for authenticating to the external data source.
+
+Additional notes and guidance when creating a credential:
+
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+
+- When accessing Azure Storage Account (V2) or Azure Data Lake Storage Gen2, the `IDENTITY` must be `SHARED ACCESS SIGNATURE`.
+
+- For an example, see [Create an external data source to execute bulk operations and retrieve data from Azure Storage into SQL Database](#g-create-external-data-source-to-access-data-in-azure-data-lake-gen2).
+
+There are multiple ways to create a shared access signature:
+
+- You can create a SAS token by navigating to the **Azure portal** > **\<Your_Storage_Account>** > **Shared access signature** > **Configure permissions** > **Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+
+- You can [create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+
+- You can create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+
+- The SAS token should be configured as follows:
+
+  - When a SAS token is generated, it includes a question mark ('?') at the beginning of the token. Exclude the leading `?` when configured as the `SECRET`.
+
+  - Use a valid expiration period (all dates are in UTC time).
+
+- Grant at least read permission on the file that should be loaded (for example `srt=o&sp=r`). Multiple shared access signatures can be created for different use cases. Permissions should be granted as follows:
+
+  | Action | Permission |
+  | --- | --- |
+  | Read data from a file | Read |
+  | Read data from multiple files and subfolders | Read and List |
+  | Use Create External Table as Select (CETAS) | Read, Create, List and Write |
+
+- For Azure Blob Storage and Azure Data Lake Gen 2:
+
+  - Allowed services: `Blob` must be selected to generate the SAS token
+
+- Allowed resource types: `Container` and `Object` must be selected to generate the SAS token
+
+For an example of using a `CREDENTIAL` with S3-compatible object storage and PolyBase, see [Configure PolyBase to access external data in S3-compatible object storage](../../relational-databases/polybase/polybase-configure-s3-compatible.md).
+
+To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+## Permissions
+
+Requires `CONTROL` permission on database in  SQL Server 
+.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Security
+
+PolyBase supports proxy based authentication for most external data sources. Create a database scoped credential to create the proxy account.
+
+## Upgrade to SQL Server 2025
+
+In  SQL Server 2022 (16.x) 
+ and later versions, Hadoop external data sources aren't supported. It's required to manually recreate external data sources previously created with `TYPE = HADOOP`, and any external table that uses this external data source.
+
+Users will also need to configure their external data sources to use new connectors when connecting to Azure Storage.
+
+| External data source | From | To |
+| --- | --- | --- |
+| Azure Blob Storage | wasb[s] | abs |
+| ADLS Gen2 | abfs[s] | adls |
+
+## Examples
+
+> **Important:**  
+> For information on how to install and enable PolyBase, see [Install PolyBase on Windows](../../relational-databases/polybase/polybase-installation.md).
+
+### A. Create external data source in SQL Server to reference Oracle
+
+To create an external data source that references Oracle, ensure you have a database scoped credential. You might optionally also enable or disable push-down of computation against this data source.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL OracleProxyAccount
+WITH IDENTITY = 'oracle_username',
+     SECRET = 'oracle_password';
+
+CREATE EXTERNAL DATA SOURCE MyOracleServer
+WITH (
+    LOCATION = 'oracle://145.145.145.145:1521',
+    PUSHDOWN = ON,
+    CREDENTIAL = OracleProxyAccount
+);
+```
+
+Optionally, the external data source to Oracle can use proxy authentication to provide fine-grained access control. A proxy user can be configured to have limited access compared to the user being impersonated.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL [OracleProxyCredential]
+WITH IDENTITY = 'oracle_username',
+     SECRET = 'oracle_password';
+
+CREATE EXTERNAL DATA SOURCE [OracleSalesSrvr]
+WITH (
+    LOCATION = 'oracle://145.145.145.145:1521',
+    CONNECTION_OPTIONS = 'ImpersonateUser=%CURRENT_USER',
+    CREDENTIAL = [OracleProxyCredential]
+);
+```
+
+Alternatively, you can authenticate using TNS.
+
+Starting in  SQL Server 2022 (16.x) 
+ Cumulative Update 2, `CREATE EXTERNAL DATA SOURCE` now supports the use of TNS files when connecting to Oracle.
+
+The `CONNECTION_OPTIONS` parameter was expanded and now uses `TNSNamesFile` and `ServerName` as variables to browse the `tnsnames.ora` file and establish connection with the server.
+
+In the example below, during runtime SQL Server will search for the `tnsnames.ora` file location specified by `TNSNamesFile` and search for the host and network port specified by `ServerName`.
+
+```sql
+CREATE EXTERNAL DATA SOURCE [external_data_source_name]
+WITH (
+    LOCATION = N'oracle://XE',
+    CREDENTIAL = [OracleCredentialTest],
+    CONNECTION_OPTIONS = N'TNSNamesFile=C:\Temp\tnsnames.ora;ServerName=XE'
+);
+```
+
+### B. Create external data source to reference a SQL Server named instance via PolyBase connectivity
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ and later versions.
+
+To create an external data source that references a named instance of  SQL Server 
+, use `CONNECTION_OPTIONS` to specify the instance name.
+
+First, create the database scoped credential, storing credentials for a SQL authenticated login. The SQL ODBC Connector for PolyBase only supports basic authentication. Before you create a database scoped credential, the database must have a master key to protect the credential. For more information, see [CREATE MASTER KEY](create-master-key-transact-sql.md). The following sample creates a database scoped credential, provide your own login and password.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL SQLServerCredentials
+WITH IDENTITY = 'username',
+     SECRET = 'password';
+```
+
+In the following example, `WINSQL2019` is the host name and `SQL2019` is the instance name. `'Server=%s\SQL2019'` is the key value pair.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019',
+    CONNECTION_OPTIONS = 'Server=%s\SQL2019',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+Alternatively, you can use a port to connect to a  SQL Server 
+ default instance.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019:58137',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+### C. Create external data source to reference a readable secondary replica of Always On availability group
+
+**Applies to:**  SQL Server 2019 (15.x) 
+ and later versions.
+
+To create an external data source that references a readable secondary replica of  SQL Server 
+, use `CONNECTION_OPTIONS` to specify the `ApplicationIntent=ReadOnly`. In addition, you'll need to either set the availability database as `Database={dbname}` in `CONNECTION_OPTIONS`, or set the availability database as the default database of the login used for the database scoped credential. You'll need to do this on all availability replicas of the availability group.
+
+First, create the database scoped credential, storing credentials for a SQL authenticated login. The SQL ODBC Connector for PolyBase only supports basic authentication. Before you create a database scoped credential, the database must have a master key to protect the credential. For more information, see [CREATE MASTER KEY](create-master-key-transact-sql.md). The following sample creates a database scoped credential, provide your own login and password.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL SQLServerCredentials
+WITH IDENTITY = 'username',
+     SECRET = 'password';
+```
+
+Next, create the new external data source.
+
+Whether you included `Database=dbname` in the `CONNECTION_OPTIONS` or set the availability database as the default database for the login in the database scoped credential, you must still provide the database name via a three-part name in the CREATE EXTERNAL TABLE statement, within the LOCATION parameter. For an example, see [CREATE EXTERNAL TABLE](create-external-table-transact-sql.md?view=sql-server-ver15&preserve-view=true#g-create-an-external-table-for-sql-server).
+
+In the following example, `WINSQL2019AGL` is the availability group listener name and `dbname` is the name of the database to be the target of the CREATE EXTERNAL TABLE statement.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadOnly; Database=dbname',
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+You can demonstrate the redirection behavior of the availability group by specifying `ApplicationIntent` and creating an external table on the system view `sys.servers`. In the following sample script, two external data sources are created, and one external table is created for each. Use the views to test which server is responding to the connection. Similar outcomes can also be achieved via the read-only routing feature. For more information, see [Configure read-only routing for an Always On availability group](../../database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server.md).
+
+```sql
+CREATE EXTERNAL DATA SOURCE [DataSource_SQLInstanceListener_ReadOnlyIntent]
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadOnly; Database=dbname',
+    CREDENTIAL = [SQLServerCredentials]
+);
+GO
+
+CREATE EXTERNAL DATA SOURCE [DataSource_SQLInstanceListener_ReadWriteIntent]
+WITH (
+    LOCATION = 'sqlserver://WINSQL2019AGL',
+    CONNECTION_OPTIONS = 'ApplicationIntent=ReadWrite',
+    CREDENTIAL = [SQLServerCredentials]
+);
+GO
+```
+
+Inside the database in the availability group, create a view to return `sys.servers` and the name of the local instance, which helps you identify which replica is responding to the query. For more information, see [sys.servers](../../relational-databases/system-catalog-views/sys-servers-transact-sql.md).
+
+```sql
+CREATE VIEW vw_sys_servers AS
+    SELECT [name]
+    FROM sys.servers
+    WHERE server_id = 0;
+GO
+```
+
+Then, create an external table on the source instance:
+
+```sql
+CREATE EXTERNAL TABLE vw_sys_servers_ro
+(
+    name SYSNAME NOT NULL
+)
+WITH (
+    DATA_SOURCE = [DataSource_SQLInstanceListener_ReadOnlyIntent],
+    LOCATION = N'dbname.dbo.vw_sys_servers'
+);
+GO
+
+CREATE EXTERNAL TABLE vw_sys_servers_rw
+(
+    name SYSNAME NOT NULL
+)
+WITH (
+    DATA_SOURCE = [DataSource_SQLInstanceListener_ReadWriteIntent],
+    LOCATION = N'dbname.dbo.vw_sys_servers'
+);
+GO
+
+SELECT [name]
+FROM dbo.vw_sys_servers_ro;
+--should return secondary replica instance
+
+SELECT [name]
+FROM dbo.vw_sys_servers_rw;
+--should return primary replica instance
+GO
+```
+
+### D. Create external data source to query a parquet file in S3-compatible object storage via PolyBase
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions.
+
+The following sample script creates an external data source `s3_ds` in the source user database in SQL Server. The external data source references the `s3_dc` database scoped credential.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL s3_dc
+WITH IDENTITY = 'S3 Access Key', -- for S3-compatible object storage the identity must always be S3 Access Key
+    SECRET = '<access_key_id>:<secret_key_id>'; -- provided by the S3-compatible object storage
+GO
+
+CREATE EXTERNAL DATA SOURCE s3_ds
+WITH (
+    LOCATION = 's3://<ip_address>:<port>/',
+    CREDENTIAL = s3_dc
+);
+GO
+```
+
+Verify the new external data source with [sys.external_data_sources](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md).
+
+```sql
+SELECT *
+FROM sys.external_data_sources;
+```
+
+Then, the following example demonstrates using T-SQL to query a parquet file stored in S3-compatible object storage via OPENROWSET query. For more information, see [Virtualize parquet file in a S3-compatible object storage with PolyBase](../../relational-databases/polybase/polybase-virtualize-parquet-file.md).
+
+```sql
+SELECT *
+FROM OPENROWSET (
+    BULK '/<bucket>/<parquet_folder>',
+    FORMAT = 'PARQUET',
+    DATA_SOURCE = 's3_ds'
+) AS [cc];
+```
+
+### E. Create external data source using generic ODBC to PostgreSQL
+
+As in previous examples, first create a database master key and database scoped credential. The database scoped credential will be used for the external data source. This example also assumes that a generic ODBC data provider for PostgreSQL is installed on the server.
+
+In this example, the generic ODBC data provider is used to connect to a PostgreSQL database server in the same network, where the fully qualified domain name of the PostgreSQL server is `POSTGRES1`, using the default port of TCP 5432.
+
+```sql
+CREATE EXTERNAL DATA SOURCE POSTGRES1
+WITH (
+    LOCATION = 'odbc://POSTGRES1.domain:5432',
+    CONNECTION_OPTIONS = 'Driver={PostgreSQL Unicode(x64)};',
+    CREDENTIAL = postgres_credential
+);
+```
+
+### Azure Storage
+
+#### Create a shared access signature
+
+For both Azure Blob Storage and Azure Data Lake Gen2, the supported authentication method is shared access signature (SAS). One simple way to generate a shared access signature token follow the steps that follow. For more information, see [CREDENTIAL](#credential--credential_name-3).
+
+1. Navigate to the Azure portal, and the desired Storage Account.
+1. Navigate to your desired Container under **Data Storage** menu.
+1. Select **Shared access tokens**.
+1. Choose the appropriate permission based on the desired action. For reference, use the following table:
+
+| Action | Permission |
+| --- | --- |
+| Read data from a file | Read |
+| Read data from multiple files and subfolders | Read and List |
+| Use Create External Table as Select (CETAS) | Read, Create and Write |
+
+1. Choose the token expiration date.
+1. Generate SAS token and URL.
+1. Copy the SAS token.
+
+### F. Create external data source to access data in Azure Blob Storage using the abs:// interface
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions.
+
+Use a new prefix `abs` for Azure Storage Account v2. The `abs` prefix supports authentication using `SHARED ACCESS SIGNATURE`. The `abs` prefix replaces `wasb`, used in previous versions. HADOOP isn't longer supported, there's no more need to use `TYPE = BLOB_STORAGE`.
+
+The Azure storage account key is no longer needed, instead using SAS Token as we can see in the following example:
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD= '<password>';
+GO
+
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredentialv2
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE', -- to use SAS the identity must be fixed as-is
+    SECRET = '<Blob_SAS_Token>';
+GO
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyAzureStorage
+WITH (
+    LOCATION = 'abs://<container>@<storage_account_name>.blob.core.windows.net/',
+    CREDENTIAL = AzureStorageCredentialv2
+);
+```
+
+For a more detailed example on how to access CSV files stored in Azure Blob Storage, see [Virtualize CSV file with PolyBase](../../relational-databases/polybase/virtualize-csv.md).
+
+### G. Create external data source to access data in Azure Data Lake Gen2
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions.
+
+Use a new prefix `adls` for Azure Data Lake Gen2, replacing `abfs` used in previous versions. The `adls` prefix also supports SAS token as authentication method as shown in this example:
+
+```sql
+--Create a database scoped credential using SAS Token
+CREATE DATABASE SCOPED CREDENTIAL datalakegen2
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+     SECRET = '<DataLakeGen2_SAS_Token>';
+GO
+
+CREATE EXTERNAL DATA SOURCE data_lake_gen2_dfs
+WITH (
+    LOCATION = 'adls://<container>@<storage_account>.dfs.core.windows.net',
+    CREDENTIAL = datalakegen2
+);
+```
+
+For a more detailed example on how to access delta files stored on Azure Data Lake Gen2, see [Virtualize delta table with PolyBase](../../relational-databases/polybase/virtualize-delta.md).
+
+## Examples: Bulk Operations
+
+> **Important:**  
+> Don't add a trailing `/`, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+### H. Create an external data source for bulk operations retrieving data from Azure Storage
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions.
+
+Use the following data source for bulk operations using [BULK INSERT](bulk-insert-transact-sql.md) or [OPENROWSET](../functions/openrowset-transact-sql.md). The credential must set `SHARED ACCESS SIGNATURE` as the identity, mustn't have the leading `?` in the SAS token, must have at least read permission on the file that should be loaded (for example `srt=o&sp=r`), and the expiration period should be valid (all dates are in UTC time). For more information on shared access signatures, see [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/storage-dotnet-shared-access-signature-part-1).
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL AccessAzureInvoices
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+    -- Remove ? from the beginning of the SAS token
+    SECRET = '<azure_shared_access_signature>';
+
+CREATE EXTERNAL DATA SOURCE MyAzureInvoices
+WITH (
+    LOCATION = 'abs://<container>@<storage_account_name>.blob.core.windows.net/',
+    CREDENTIAL = AccessAzureInvoices,
+);
+```
+
+### I. Create external data source using TDS 8.0 to connect with another SQL Server
+
+**Applies to**:  SQL Server 2025 (17.x) 
+ and later versions.
+
+When using the latest Microsoft ODBC Driver 18 for SQL Server, you must use the `Encryption` option under `CONNECTION_OPTIONS`, and `TrustServerCertificate` is also supported. If `Encryption` isn't specified, the default behavior is `Encrypt=Yes;TrustServerCertificate=No;`, and you require a server certificate.
+
+In this example, SQL Authentication is used. To protect the credential, you need a database master key (DMK). For more information, see [CREATE MASTER KEY](create-master-key-transact-sql.md). The following sample creates a database scoped credential, with a custom login and password.
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL SQLServerCredentials
+WITH IDENTITY = '<username>',
+     SECRET = '<password>';
+```
+
+The target server name is `WINSQL2022`, port `58137`, and it's a default instance. By specifying `Encrypt=Strict`, the connection uses TDS 8.0, and the server certificate is always verified. In this example, the `HostnameinCertificate` used is `WINSQL2022`:
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2022:58137',
+    CONNECTION_OPTIONS = 'Encrypt=Strict;HostnameInCertificate=WINSQL2022;'
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+### J. Create external data source using encryption and TrustServerCertificate option
+
+Following the previous example here are two code samples. The first snippet has `Encryption` and `TrustServerCertificate` set.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2022:58137',
+    CONNECTION_OPTIONS = 'Encrypt=Yes;HostnameInCertificate=WINSQL2022;TrustServerCertificate=Yes;'
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+The following snippet doesn't have `Encryption` enabled.
+
+```sql
+CREATE EXTERNAL DATA SOURCE SQLServerInstance2
+WITH (
+    LOCATION = 'sqlserver://WINSQL2022:58137',
+    CONNECTION_OPTIONS = 'Encrypt=no;'
+    CREDENTIAL = SQLServerCredentials
+);
+```
+
+## Related content
+
+- [ALTER EXTERNAL DATA SOURCE (Transact-SQL)](alter-external-data-source-transact-sql.md)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL FILE FORMAT (Transact-SQL)](create-external-file-format-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/storage-dotnet-shared-access-signature-part-1)
+- [PolyBase connectivity configuration (Transact-SQL)](../../database-engine/configure-windows/polybase-connectivity-configuration-transact-sql.md)
+
+
+
+**Applies to: \=azuresqldb-current**
+
+
+
+        [SQL Server](create-external-data-source-transact-sql.md?view=sql-server-ver15&preserve-view=true)
+
+
+        **_\* SQL Database \*_** &nbsp;
+
+
+        [SQL Managed<br />Instance](create-external-data-source-transact-sql.md?view=azuresqldb-mi-current&preserve-view=true)
+
+
+        [Azure Synapse<br />Analytics](create-external-data-source-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+
+
+        [Microsoft Fabric Data Warehouse](create-external-data-source-transact-sql.md?view=fabric&preserve-view=true)
+
+
+        [Microsoft Fabric SQL database](create-external-data-source-transact-sql.md?view=fabric-sqldb&preserve-view=true)
+
+
+
+&nbsp;
+
+## Overview: Azure SQL Database
+
+**Applies to**:  Azure SQL Database 
+
+
+Creates an external data source for elastic queries. External data sources are used to establish connectivity and support these primary use cases:
+
+- [Data virtualization (preview)](https://learn.microsoft.com/azure/azure-sql/database/data-virtualization-overview?view=azuresql-db\&preserve-view=true)
+- Bulk load operations using `BULK INSERT` or `OPENROWSET`
+- Query remote SQL Database or Azure Synapse instances using SQL Database with [elastic query](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-getting-started-vertical?view=azuresql-db\&preserve-view=true)
+- Query a sharded SQL Database using [elastic query](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-getting-started?view=azuresql-db\&preserve-view=true)
+
+
+
+## Syntax
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+    [ [ , ] CREDENTIAL = <credential_name> ]
+    [ [ , ] TYPE = { BLOB_STORAGE | RDBMS | SHARD_MAP_MANAGER } ]
+    [ [ , ] DATABASE_NAME = '<database_name>' ]
+    [ [ , ] SHARD_MAP_NAME = '<shard_map_manager>' ] )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database in SQL Database.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Connector location prefix | Location path | Availability |
+| --- | --- | --- | --- |
+| Bulk Operations | `https` | `<storage_account>.blob.core.windows.net/<container>` |  |
+| Elastic Query (shard) | Not required | `<shard_map_server_name>.database.windows.net` |  |
+| Elastic Query (remote) | Not required | `<remote_server_name>.database.windows.net` |  |
+| EdgeHub | `edgehub` | `edgehub://` | Available in [Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/overview) *only*. EdgeHub is always local to the instance of [Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/overview). As such there's no need to specify a path or port value. |
+| Kafka | `kafka` | `kafka://<kafka_bootstrap_server_name_ip>:<port_number>` | Available in [Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/overview) *only*. |
+| Azure Storage Account (v2) | `abs` | `abs://<container_name>@<storage_account_name>.blob.core.windows.net/`<br /><br />or<br />`abs://<storage_account_name>.blob.core.windows.net/`\<container_name> |  |
+| Azure Data Lake Storage Gen2 | `adls` | `adls://<container_name>@<storage_account_name>.dfs.core.windows.net/`<br /><br />or<br />`adls://<storage_account_name>.dfs.core.windows.net/<container_name>` |  |
+
+Location path:
+
+- `<shard_map_server_name>` = The logical server name in Azure that is hosting the shard map manager. The `DATABASE_NAME` argument provides the database used to host the shard map and `SHARD_MAP_NAME` is used for the shard map itself.
+- `<remote_server_name>` = The target logical server name for the elastic query. The database name is specified using the `DATABASE_NAME` argument.
+
+Additional notes and guidance when setting the location:
+
+- The  Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+
+#### CREDENTIAL = *credential_name*
+
+Specifies a database-scoped credential for authenticating to the external data source.
+
+Additional notes and guidance when creating a credential:
+
+- To load data from Azure Storage into  Azure SQL Database 
+, use a Shared Access Signature (SAS token).
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+- When the `TYPE` = `BLOB_STORAGE`, the credential must be created using `SHARED ACCESS SIGNATURE` as the identity.
+- When the connection to Azure Storage uses the WASB[s] connector, authentication must be done with a storage account key, not with a shared access signature (SAS).
+- When `TYPE` = `HADOOP` the credential must be created using the storage account key as the `SECRET`.
+- `TYPE` = `BLOB_STORAGE` is only permitted for bulk operations; you can't create external tables for an external data source with `TYPE` = `BLOB_STORAGE`.
+
+There are multiple ways to create a shared access signature:
+
+- You can create a SAS token by navigating to the **Azure portal -> <Your_Storage_Account> -> Shared access signature -> Configure permissions -> Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+- You can [create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+- You can create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+- The SAS token should be configured as follows:
+  - When a SAS token is generated, it includes a question mark ('?') at the beginning of the token. Exclude the leading `?` when configured as the SECRET.
+  - Use a valid expiration period (all dates are in UTC time).
+- Grant at least read permission on the file that should be loaded (for example `srt=o&sp=r`). Multiple shared access signatures can be created for different use cases. Permissions should be granted as follows:
+
+  | Action | Permission |
+  | --- | --- |
+  | Read data from a file | Read |
+  | Read data from multiple files and subfolders | Read and List |
+  | Use Create External Table as Select (CETAS) | Read, Create and Write |
+
+For an example of using a `CREDENTIAL` with `SHARED ACCESS SIGNATURE` and `TYPE` = `BLOB_STORAGE`, see [Create an external data source to execute bulk operations and retrieve data from Azure Storage into SQL Database](#c-create-an-external-data-source-for-bulk-operations-retrieving-data-from-azure-storage)
+
+To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+#### TYPE = * [ BLOB_STORAGE | RDBMS | SHARD_MAP_MANAGER ] *
+
+Specifies the type of the external data source being configured. This parameter isn't always required, and should only be provided for certain external data sources.
+
+- Use `RDBMS` for cross-database queries using elastic query from SQL Database.
+- Use `SHARD_MAP_MANAGER` when creating an external data source when connecting to a sharded SQL Database.
+
+> **Important:**
+> Elastic query in shard map manager mode (horizontal partitioning), using `EXTERNAL DATA SOURCE` type `SHARD_MAP_MANAGER`, is reaching end of support on March 31, 2027. After this date, existing workloads will continue to function but will no longer receive support, and creation of new external data sources of type `SHARD_MAP_MANAGER` will no longer be possible. For migration options, see [Migration guide from elastic query shard map manager mode](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-horizontal-partitioning-migration).
+
+- Use `BLOB_STORAGE` is for use with the `https` prefix only. For `abd` and `adls` prefixes, don't provide `TYPE`.
+
+> **Important:**  
+> Don't set `TYPE` if using any other external data source.
+
+#### DATABASE_NAME = *database_name*
+
+Configure this argument when the `TYPE` is set to `RDBMS` or `SHARD_MAP_MANAGER`.
+
+| TYPE | Value of DATABASE_NAME |
+| --- | --- |
+| `RDBMS` | The name of the remote database on the server provided using `LOCATION` |
+| `SHARD_MAP_MANAGER` | Name of the database operating as the shard map manager |
+
+For an example showing how to create an external data source where `TYPE = RDBMS`, refer to [Create an RDBMS external data source](#b-create-an-rdbms-external-data-source).
+
+#### SHARD_MAP_NAME = *shard_map_name*
+
+Used when the `TYPE` argument is set to `SHARD_MAP_MANAGER` only to set the name of the shard map.
+
+For an example showing how to create an external data source where `TYPE` = `SHARD_MAP_MANAGER` refer to [Create a shard map manager external data source](#a-create-a-shard-map-manager-external-data-source)
+
+## Permissions
+
+Requires `CONTROL` permission on database in  Azure SQL Database 
+.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Examples
+
+### A. Create a shard map manager external data source
+
+> **Important:**
+> Elastic query in shard map manager mode (horizontal partitioning), using `EXTERNAL DATA SOURCE` type `SHARD_MAP_MANAGER`, is reaching end of support on March 31, 2027. After this date, existing workloads will continue to function but will no longer receive support, and creation of new external data sources of type `SHARD_MAP_MANAGER` will no longer be possible. For migration options, see [Migration guide from elastic query shard map manager mode](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-horizontal-partitioning-migration).
+
+To create an external data source to reference a `SHARD_MAP_MANAGER`, specify the SQL Database server name that hosts the shard map manager in SQL Database or a SQL Server database on a virtual machine.
+
+```sql
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+CREATE DATABASE SCOPED CREDENTIAL ElasticDBQueryCred
+WITH IDENTITY = '<username>',
+     SECRET = '<password>';
+
+CREATE EXTERNAL DATA SOURCE MyElasticDBQueryDataSrc
+WITH (
+    TYPE = SHARD_MAP_MANAGER,
+    LOCATION = '<server_name>.database.windows.net',
+    DATABASE_NAME = 'ElasticScaleStarterKit_ShardMapManagerDb',
+    CREDENTIAL = ElasticDBQueryCred,
+    SHARD_MAP_NAME = 'CustomerIDShardMap'
+);
+```
+
+For a step-by-step tutorial, see [Getting started with elastic queries for sharding (horizontal partitioning)](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-getting-started?view=azuresql-db\&preserve-view=true).
+
+### B. Create an RDBMS external data source
+
+To create an external data source to reference an RDBMS, specifies the SQL Database server name of the remote database in SQL Database.
+
+```sql
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+CREATE DATABASE SCOPED CREDENTIAL SQL_Credential
+WITH IDENTITY = '<username>',
+     SECRET = '<password>';
+
+CREATE EXTERNAL DATA SOURCE MyElasticDBQueryDataSrc
+WITH (
+    TYPE = RDBMS,
+    LOCATION = '<server_name>.database.windows.net',
+    DATABASE_NAME = 'Customers',
+    CREDENTIAL = SQL_Credential
+);
+```
+
+For a step-by-step tutorial on RDBMS, see [Getting started with cross-database queries (vertical partitioning)](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-getting-started-vertical?view=azuresql-db\&preserve-view=true).
+
+## Examples: Bulk operations
+
+> **Important:**  
+> Don't add a trailing `/`, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+### C. Create an external data source for bulk operations retrieving data from Azure Storage
+
+Use the following data source for bulk operations using [BULK INSERT](bulk-insert-transact-sql.md) or [OPENROWSET BULK](../functions/openrowset-bulk-transact-sql.md). The credential must set `SHARED ACCESS SIGNATURE` as the identity, mustn't have the leading `?` in the SAS token, must have at least read permission on the file that should be loaded (for example `srt=o&sp=r`), and the expiration period should be valid (all dates are in UTC time). For more information on shared access signatures, see [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview).
+
+Create external data source for Azure Blob Storage (ABS) using Managed Identity:
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL DSC_MI
+WITH IDENTITY = 'Managed Identity';
+
+--Create external data source pointing to the file path, and referencing database-scoped credential:
+CREATE EXTERNAL DATA SOURCE PrivateABS
+WITH (
+    LOCATION = 'abs://<container>@<storage_account_name>.blob.core.windows.net/',
+    CREDENTIAL = [DSC_MI]
+);
+```
+
+Create external data source for Azure Data Lake Gen2 (ADLS) using User Identity:
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL DSC_ADLS
+WITH IDENTITY = 'User Identity';
+
+--Create external data source pointing to the file path, and referencing database-scoped credential:
+CREATE EXTERNAL DATA SOURCE PrivateADLS
+WITH (
+    LOCATION = 'adls://<container>@<storage_account_name>.dfs.core.windows.net/',
+    CREDENTIAL = [DSC_ADLS]
+);
+```
+
+To see this example in use, see [BULK INSERT](bulk-insert-transact-sql.md?view=azuresqldb-current&preserve-view=true#f-import-data-from-a-file-in-azure-blob-storage).
+
+## Examples: Azure SQL Edge
+
+> **Important:**  
+> For information on configuring external data for Azure SQL Edge, see [Data streaming in Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/stream-data).
+
+### A. Create external data source to reference Kafka
+
+**Applies to:** [Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/overview) *only*
+
+In this example, the external data source is a Kafka server with IP address xxx.xxx.xxx.xxx and listening on port 1900. The Kafka external data source is only for data streaming and doesn't support predicate push down.
+
+```sql
+-- Create an External Data Source for Kafka
+CREATE EXTERNAL DATA SOURCE MyKafkaServer
+WITH (
+    LOCATION = 'kafka://xxx.xxx.xxx.xxx:1900'
+);
+```
+
+### B. Create external data source to reference EdgeHub
+
+**Applies to:** [Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/overview) *only*
+
+In this example, the external data source is a EdgeHub running on the same edge device as Azure SQL Edge. The edgeHub external data source is only for data streaming and doesn't support predicate push down.
+
+```sql
+-- Create an External Data Source for Kafka
+CREATE EXTERNAL DATA SOURCE MyEdgeHub
+WITH (
+    LOCATION = 'edgehub://'
+);
+```
+
+## Related content
+
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+- [Introduction to elastic query](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview?view=azuresql-db\&preserve-view=true)
+
+
+
+**Applies to: \=azure-sqldw-latest**
+
+
+
+        [SQL Server](create-external-data-source-transact-sql.md?view=sql-server-ver15&preserve-view=true)
+
+
+        [SQL Database](create-external-data-source-transact-sql.md?view=azuresqldb-current&preserve-view=true)
+
+
+        [SQL Managed<br />Instance](create-external-data-source-transact-sql.md?view=azuresqldb-mi-current&preserve-view=true)
+
+
+        **_\* Azure Synapse<br />Analytics \*_** &nbsp;
+
+
+        [Microsoft Fabric Data Warehouse](create-external-data-source-transact-sql.md?view=fabric&preserve-view=true)
+
+
+        [Microsoft Fabric SQL database](create-external-data-source-transact-sql.md?view=fabric-sqldb&preserve-view=true)
+
+
+
+&nbsp;
+
+## Overview: Azure Synapse Analytics
+
+**Applies to**:  Azure Synapse Analytics 
+
+> **Tip:**
+> [Microsoft Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse) is an enterprise scale relational warehouse on a data lake foundation, with a future-ready architecture, built-in AI, and new features. If you're new to data warehousing, start with Fabric Data Warehouse. Existing [dedicated SQL pool workloads can upgrade to Fabric](https://learn.microsoft.com/fabric/data-warehouse/migration-synapse-dedicated-sql-pool-warehouse) to access new capabilities across data science, real-time analytics, and reporting.
+> 
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Migration Assistant for Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse/migration-assistant).
+
+Creates an external data source for data virtualization. External data sources are used to establish connectivity and support the primary use case of data virtualization and data loading from external data sources. For more information, see [Use external tables with Synapse SQL](https://learn.microsoft.com/azure/synapse-analytics/sql/develop-tables-external-tables).
+
+> **Important:**  
+> To create an external data source to query a  Azure Synapse Analytics  resource using Azure SQL Database with [elastic query](https://learn.microsoft.com/azure/azure-sql/database/elastic-query-getting-started-vertical), see [CREATE EXTERNAL DATA SOURCE for Azure SQL Database](create-external-data-source-transact-sql.md?view=azuresqldb-current&preserve-view=true).
+
+
+
+## Syntax
+
+### [Dedicated SQL pool
+](#tab/dedicated)
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+  [ [ , ] CREDENTIAL = <credential_name> ]
+  [ [ , ] TYPE = HADOOP ]
+)
+[ ; ]
+```
+
+### [Serverless SQL pool
+](#tab/serverless)
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+(   LOCATION = '<prefix>://<path>'
+)
+[;]
+```
+
+---
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the  Azure SQL Database 
+ in  Azure Synapse Analytics .
+
+#### LOCATION = '*\<prefix>://\<path>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Connector location prefix | Location path |
+| --- | --- | --- |
+| Data Lake Storage\* Gen1 | `adl` | `<storage_account>.azuredatalake.net` |
+| Data Lake Storage Gen2 | `abfs[s]` | `<container>@<storage_account>.dfs.core.windows.net` |
+| Azure Blob Storage | `wasbs` | `<container>@<storage_account>.blob.core.windows.net` |
+| Azure Blob Storage | `https` | `<storage_account>.blob.core.windows.net/<container>/subfolders` |
+| Data Lake Storage Gen1 | `http[s]` | `<storage_account>.azuredatalakestore.net/webhdfs/v1` |
+| Data Lake Storage Gen2 | `http[s]` | `<storage_account>.dfs.core.windows.net/<container>/subfolders` |
+| Data Lake Storage Gen2 | `wasb[s]` | `<container>@<storage_account>.blob.core.windows.net` |
+
+\* Microsoft Azure Data Lake Storage Gen1 has limited support, Gen2 is recommended for all new development.
+
+| External Data Source | Connector location prefix | Dedicated SQL pools: PolyBase | Dedicated SQL pools: native\* | Serverless SQL pools |
+| --- | --- | --- | --- | --- |
+| Data Lake Storage\*\* Gen1 | `adl` | No | No | Yes |
+| Data Lake Storage Gen2 | `abfs[s]` | Yes | Yes | Yes |
+| Azure Blob Storage | `wasbs` | Yes | Yes\*\*\* | Yes |
+| Azure Blob Storage | `https` | No | Yes | Yes |
+| Data Lake Storage Gen1 | `http[s]` | No | No | Yes |
+| Data Lake Storage Gen2 | `http[s]` | Yes | Yes | Yes |
+| Data Lake Storage Gen2 | `wasb[s]` | Yes | Yes | Yes |
+
+\* Serverless and dedicated SQL pools in Azure Synapse Analytics use different code bases for data virtualization. Serverless SQL pools support a native data virtualization technology. Dedicated SQL pools support both native and PolyBase data virtualization. PolyBase data virtualization is used when the EXTERNAL DATA SOURCE is created with `TYPE=HADOOP`.
+
+\*\* Microsoft Azure Data Lake Storage Gen1 has limited support, Gen2 is recommended for all new development.
+
+\*\*\* The more secure `wasbs` connector is recommended over `wasb`. Only native data virtualization in dedicated SQL pools (where TYPE doesn't equal HADOOP) support `wasb`.
+
+Location path:
+
+- `<container>` = the container of the storage account holding the data. Root containers are read-only, data can't be written back to the container.
+- `<storage_account>` = the storage account name of the Azure resource.
+
+Additional notes and guidance when setting the location:
+
+- The default option is to use `enable secure SSL connections` when provisioning Azure Data Lake Storage Gen2. When this is enabled, you must use `abfss` when a secure TLS/SSL connection is selected, although `abfss` works for unsecure TLS connections as well. For more information, see [the Azure Blob Filesystem driver (ABFS)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-abfs-driver).
+- Azure Synapse doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+- Use the same external data source for all tables when querying Hadoop to ensure consistent querying semantics.
+- `https:` prefix enables you to use subfolder in the path. `https` isn't available for all data access methods.
+- `wasbs` is recommended as data will be sent using a secure TLS connection.
+- Hierarchical Namespaces aren't supported with Azure V2 Storage Accounts when accessing data using the legacy `wasb://` interface, but using `wasbs://` supports Hierarchical Namespaces.
+
+#### CREDENTIAL = *credential_name*
+
+Optional. Specifies a database scoped credential for authenticating to the external data source. External data source without credential can access public storage account or use the caller's Microsoft Entra identity to access files on Azure storage.
+
+Additional notes and guidance when creating a credential:
+
+- To load data from Azure Storage or Azure Data Lake Store (ADLS) Gen2 into  Azure Synapse Analytics , use an Azure Storage Key.
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+
+To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+- In serverless SQL pool, database-scoped credentials can specify workspace managed identity, service principal name, or shared access signature (SAS) token. Access via a user identity, also known as *Microsoft Entra passthrough*, is also possible in the databased-scoped credential, as is anonymous access to publicly available storage. For more information, see [Supported storage authorization types](https://learn.microsoft.com/azure/synapse-analytics/sql/develop-storage-files-storage-access-control?tabs=user-identity#supported-storage-authorization-types).
+
+- In dedicated SQL pool, database scoped credentials can specify shared access signature (SAS) token, storage access key, service principal, workspace managed identity, or *Microsoft Entra passthrough*.
+
+#### TYPE = *HADOOP*
+
+Optional, not recommended.
+
+You can only specify TYPE with dedicated SQL pools. `HADOOP` is the only allowed value when specified. External data sources with `TYPE=HADOOP` are available only in dedicated SQL pools.
+
+Use HADOOP for legacy implementations, otherwise it's recommended to use the newer native data access. Don't specify the TYPE argument to use the newer native data access.
+
+For an example of using `TYPE = HADOOP` to load data from Azure Storage, see [Create external data source to reference Azure Data Lake Store Gen 1 or 2 using a service principal](#b-create-external-data-source-to-reference-azure-data-lake-store-gen-1-or-2-using-a-service-principal).
+
+Serverless and dedicated SQL pools in Azure Synapse Analytics use different code bases for data virtualization. Serverless SQL pools support a native data virtualization technology. Dedicated SQL pools support both native and PolyBase data virtualization. PolyBase data virtualization is used when the EXTERNAL DATA SOURCE is created with `TYPE=HADOOP`.
+
+## Permissions
+
+Requires `CONTROL` permission on the database.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Security
+
+Most external data sources support proxy based authentication, using a database-scoped credential to create the proxy account.
+
+Shared Access Signature (SAS) keys are supported for authenticating to Azure Data Lake Store Gen 2 Storage Accounts. Customers who want to authenticate by using a Shared Access Signature must create a database scoped credential where `IDENTITY = "Shared Access Signature"` and enter a SAS token as the secret.
+
+If you create a database scoped credential where `IDENTITY = "Shared Access Signature"` and use a storage key value as the secret, you'll get the following error message:
+
+`'HdfsBridge::isDirExist - Unexpected error encountered checking whether directory exists or not: AbfsRestOperationException: Operation failed: "Server failed to authenticate the request. Please refer to the information in the www-authenticate header.", 401, HEAD, [Storage path URL]'`
+
+## Examples
+
+### A. Create external data source to access data in Azure Storage using the wasb:// interface
+
+In this example, the external data source is an Azure Storage account V2 named `logs`. The storage container is named `daily`. The Azure Storage external data source is for data transfer only. It doesn't support predicate push-down. Hierarchical namespaces aren't supported when accessing data via the `wasb://` interface. When connecting to the Azure Storage via `wasb` or `wasbs`, authentication must be done with a storage account key, not with a shared access signature (SAS).
+
+This example uses the legacy HADOOP Java-based access method. The following sample shows how to create the database scoped credential for authentication to Azure Storage. Specify the Azure Storage account key in the database credential secret. You can specify any string in database scoped credential identity as it isn't used during authentication to Azure storage.
+
+```sql
+-- Create a database master key if one does not already exist, using your own password.
+-- This key is used to encrypt the credential secret in next step.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- Create a database scoped credential with Azure storage account key as the secret.
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredential
+WITH IDENTITY = '<my_account>',
+     SECRET = '<azure_storage_account_key>';
+
+-- Create an external data source with CREDENTIAL option.
+CREATE EXTERNAL DATA SOURCE MyAzureStorage
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'wasbs://daily@logs.blob.core.windows.net/',
+    CREDENTIAL = AzureStorageCredential
+);
+```
+
+### B. Create external data source to reference Azure Data Lake Store Gen 1 or 2 using a service principal
+
+Azure Data Lake Store connectivity can be based on your ADLS URI and your Microsoft Entra application's service principal. Documentation for creating this application can be found at [Data lake store authentication using Microsoft Entra ID](https://learn.microsoft.com/azure/data-lake-store/data-lake-store-authenticate-using-active-directory).
+
+```sql
+-- If you do not have a Master Key on your DW you will need to create one.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+-- These values come from your Microsoft Entra application used to authenticate to ADLS
+CREATE DATABASE SCOPED CREDENTIAL ADLS_credential
+WITH
+    -- IDENTITY = '<clientID>@<OAuth2.0TokenEndPoint>' ,
+    IDENTITY = '536540b4-4239-45fe-b9a3-629f97591c0c@https://login.microsoftonline.com/42f988bf-85f1-41af-91ab-2d2cd011da47/oauth2/token',
+    -- SECRET = '<KEY>'
+    SECRET = 'BjdIlmtKp4Fpyh9hIvr8HJlUida/seM5kQ3EpLAmeDI=';
+
+-- For Gen 1 - Create an external data source
+-- TYPE: HADOOP - PolyBase uses Hadoop APIs to access data in Azure Data Lake Storage.
+-- LOCATION: Provide Data Lake Storage Gen 1 account name and URI
+-- CREDENTIAL: Provide the credential created in the previous step
+CREATE EXTERNAL DATA SOURCE AzureDataLakeStore
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'adl://newyorktaxidataset.azuredatalakestore.net',
+    CREDENTIAL = ADLS_credential
+);
+
+-- For Gen2 - Create an external data source
+-- TYPE: HADOOP - PolyBase uses Hadoop APIs to access data in Azure Data Lake Storage.
+-- LOCATION: Provide Data Lake Storage Gen2 account name and URI
+-- CREDENTIAL: Provide the credential created in the previous step
+CREATE EXTERNAL DATA SOURCE AzureDataLakeStore
+WITH (
+    -- Note the abfss endpoint when your account has secure transfer enabled
+    TYPE = HADOOP,
+    LOCATION = 'abfss://data@newyorktaxidataset.dfs.core.windows.net',
+    CREDENTIAL = ADLS_credential
+);
+```
+
+### C. Create external data source to reference Azure Data Lake Store Gen2 using the storage account key
+
+```sql
+-- If you do not have a Master Key on your DW you will need to create one.
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+CREATE DATABASE SCOPED CREDENTIAL ADLS_credential
+WITH
+    -- IDENTITY = '<storage_account_name>' ,
+    IDENTITY = 'newyorktaxidata',
+    -- SECRET = '<storage_account_key>'
+    SECRET = 'yz5N4+bxSb89McdiysJAzo+9hgEHcJRJuXbF/uC3mhbezES/oe00vXnZEl14U0lN3vxrFKsphKov16C0w6aiTQ==';
+
+-- Note this example uses a Gen2 secured endpoint (abfss)
+CREATE EXTERNAL DATA SOURCE < data_source_name >
+WITH (
+    LOCATION = 'abfss://2013@newyorktaxidataset.dfs.core.windows.net',
+    CREDENTIAL = ADLS_credential,
+    TYPE = HADOOP
+);
+```
+
+### D. Create external data source to Azure Data Lake Store Gen2 using abfs://
+
+There's no need to specify `SECRET` when connecting to Azure Data Lake Store Gen2 account with [managed identities](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview).
+
+```sql
+-- If you do not have a Master Key on your DW you will need to create one
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+--Create database scoped credential with **IDENTITY = 'Managed Service Identity'**
+CREATE DATABASE SCOPED CREDENTIAL msi_cred
+WITH IDENTITY = 'Managed Service Identity';
+
+--Create external data source with abfss:// scheme for connecting to your Azure Data Lake Store Gen2 account
+CREATE EXTERNAL DATA SOURCE ext_datasource_with_abfss
+WITH (
+    TYPE = HADOOP,
+    LOCATION = 'abfss://myfile@mystorageaccount.dfs.core.windows.net',
+    CREDENTIAL = msi_cred
+);
+```
+
+## Related content
+
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL FILE FORMAT (Transact-SQL)](create-external-file-format-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [CREATE EXTERNAL TABLE AS SELECT (CETAS) (Transact-SQL)](create-external-table-as-select-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [CREATE TABLE AS SELECT](create-table-as-select-azure-sql-data-warehouse.md?view=azure-sqldw-latest&preserve-view=true)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+
+
+
+**Applies to: \=azuresqldb-mi-current**
+
+
+
+        [SQL Server](create-external-data-source-transact-sql.md?view=sql-server-ver15&preserve-view=true)
+
+
+        [SQL Database](create-external-data-source-transact-sql.md?view=azuresqldb-current&preserve-view=true)
+
+
+        **_\* SQL Managed Instance \*_** &nbsp;
+
+
+        [Azure Synapse<br />Analytics](create-external-data-source-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+
+
+        [Microsoft Fabric Data Warehouse](create-external-data-source-transact-sql.md?view=fabric&preserve-view=true)
+
+
+        [Microsoft Fabric SQL database](create-external-data-source-transact-sql.md?view=fabric-sqldb&preserve-view=true)
+
+
+
+## Overview: Azure SQL Managed Instance
+
+**Applies to**: Azure SQL Managed Instance
+
+Creates an external data source in Azure SQL Managed Instance. For complete information, see [Data virtualization with Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/data-virtualization-overview?view=azuresql-mi\&preserve-view=true).
+
+Data virtualization in Azure SQL Managed Instance provides access to external data in a variety of file formats via [OPENROWSET](https://learn.microsoft.com/azure/azure-sql/managed-instance/data-virtualization-overview?view=azuresql-mi\&preserve-view=true#query-data-sources-using-openrowset) or [CREATE EXTERNAL TABLE](create-external-table-transact-sql.md).
+
+
+
+## Syntax
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+    [ [ , ] CREDENTIAL = <credential_name> ]
+  )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Location prefix | Location path |
+| --- | --- | --- |
+| Azure Blob Storage | `abs` | `abs://<container>@<storage_account>.blob.core.windows.net/<path>/<file_name>` |
+| Azure Data Lake Service Gen2 | `adls` | `adls://<container>@<storage_account>.dfs.core.windows.net/<path>/<file_name>` |
+
+The  Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+
+Don't add a trailing **/**, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+#### CREDENTIAL = *credential_name*
+
+Specifies a database-scoped credential for authenticating to the external data source.
+
+Additional notes and guidance when creating a credential:
+
+- To load data from Azure Storage into Azure SQL Managed Instance, use a Shared Access Signature (SAS token).
+- `CREDENTIAL` is only required if the data has been secured. `CREDENTIAL` isn't required for data sets that allow anonymous access.
+- If a credential is required, the credential must be created using `Managed Identity` or `SHARED ACCESS SIGNATURE` as the IDENTITY. To create a database scoped credential, see [CREATE DATABASE SCOPED CREDENTIAL](create-database-scoped-credential-transact-sql.md).
+
+To use the managed service identity for the database scoped credential:
+
+- Specify `WITH IDENTITY = 'Managed Identity'`
+- Use the system-assigned managed service identity of the Azure SQL Managed Instance, which must be enabled if it's to be used for this purpose.
+
+  - Grant the **Reader** Azure RBAC role to the system assigned managed service identity of the Azure SQL Managed Instance to the necessary Azure Blob Storage containers. For example, via the Azure portal, see [Assign Azure roles using the Azure portal](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-portal).
+
+To create a shared access signature (SAS) for the database scoped credential:
+
+- Specify `WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = ...`
+- There are multiple ways to create a shared access signature:
+  - You can get a SAS token by navigating to the **Azure portal -> <Your_Storage_Account> -> Shared access signature -> Configure permissions -> Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+  - You can [create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+  - You can create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+- The SAS token should be configured as follows:
+  - When a SAS token is generated, it includes a question mark ('?') at the beginning of the token. Exclude the leading `?` when configured as the SECRET.
+  - Use a valid expiration period (all dates are in UTC time).
+- Grant at least read permission on the file that should be loaded (for example `srt=o&sp=r`). Multiple shared access signatures can be created for different use cases. Permissions should be granted as follows:
+
+  | Action | Permission |
+  | --- | --- |
+  | Read data from a file | Read |
+  | Read data from multiple files and subfolders | Read and List |
+  | Use Create External Table as Select (CETAS) | Read, Create and Write |
+
+## Permissions
+
+Requires `CONTROL` permission on database in Azure SQL Managed Instance.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Examples
+
+For more examples, see [Data virtualization with Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/data-virtualization-overview?view=azuresql-mi\&preserve-view=true).
+
+### A. Query external data from Azure SQL Managed Instance with OPENROWSET or an external table
+
+For more examples, see [CREATE EXTERNAL DATA SOURCE](create-external-data-source-transact-sql.md) or see [Data virtualization with Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/data-virtualization-overview?view=azuresql-mi\&preserve-view=true).
+
+1. Create the database master key, if it doesn't exist.
+
+   ```sql
+   -- Optional: Create MASTER KEY if it doesn't exist in the database:
+   CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>'
+   GO
+   ```
+
+1. Create the database scoped credential using a SAS token. You can also use a managed identity.
+
+   ```sql
+   CREATE DATABASE SCOPED CREDENTIAL MyCredential
+   WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+   SECRET = '<KEY>' ; --Removing leading '?'
+   GO
+   ```
+
+1. Create the external data source using the credential.
+
+   ```sql
+   --Create external data source pointing to the file path, and referencing database-scoped credential:
+   CREATE EXTERNAL DATA SOURCE MyPrivateExternalDataSource
+   WITH (
+       LOCATION = 'abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest',
+       CREDENTIAL = [MyCredential]
+   );
+   ```
+
+1. Query parquet data file in the external data source using the OPENROWSET T-SQL syntax, relying on schema inference to quickly explore data without knowing the schema.
+
+   ```sql
+   --Query data with OPENROWSET, relying on schema inference.
+   SELECT TOP 10 *
+   FROM OPENROWSET (
+       BULK 'bing_covid-19_data.parquet',
+       DATA_SOURCE = 'MyExternalDataSource',
+       FORMAT = 'parquet'
+   ) AS filerows;
+   ```
+
+1. Or, query data using OPENROWSET the WITH clause, instead of relying on schema inference, which might query execution cost. On a CSV, schema inference isn't supported.
+
+   ```sql
+   --Or, query data using the WITH clause on a CSV, where schema inference is not supported
+   SELECT TOP 10 id,
+                 updated,
+                 confirmed,
+                 confirmed_change
+   FROM OPENROWSET (
+       BULK 'bing_covid-19_data.csv',
+       DATA_SOURCE = 'MyExternalDataSource',
+       FORMAT = 'CSV', FIRSTROW = 2
+   ) WITH (
+       id INT,
+       updated DATE,
+       confirmed INT,
+       confirmed_change INT
+   ) AS filerows;
+   ```
+
+1. Or, create an EXTERNAL FILE FORMAT and an EXTERNAL TABLE, to query the data as a local table.
+
+   ```sql
+   -- Or, create an EXTERNAL FILE FORMAT and an EXTERNAL TABLE
+   --Create external file format
+   CREATE EXTERNAL FILE FORMAT DemoFileFormat
+   WITH (FORMAT_TYPE = PARQUET)
+   GO
+
+   --Create external table:
+   CREATE EXTERNAL TABLE tbl_TaxiRides (
+       vendorID VARCHAR(100) COLLATE Latin1_General_BIN2,
+       tpepPickupDateTime DATETIME2,
+       tpepDropoffDateTime DATETIME2,
+       passengerCount INT,
+       tripDistance FLOAT,
+       puLocationId VARCHAR(8000),
+       doLocationId VARCHAR(8000),
+       startLon FLOAT,
+       startLat FLOAT,
+       endLon FLOAT,
+       endLat FLOAT,
+       rateCodeId SMALLINT,
+       storeAndFwdFlag VARCHAR(8000),
+       paymentType VARCHAR(8000),
+       fareAmount FLOAT,
+       extra FLOAT,
+       mtaTax FLOAT,
+       improvementSurcharge VARCHAR(8000),
+       tipAmount FLOAT,
+       tollsAmount FLOAT,
+       totalAmount FLOAT
+   )
+   WITH (
+       LOCATION = 'yellow/puYear=*/puMonth=*/*.parquet',
+       DATA_SOURCE = NYCTaxiExternalDataSource,
+       FILE_FORMAT = MyFileFormat\.\./\.\./\.\./azure-sql/
+   );
+   GO
+
+   --Then, query the data via an external table with T-SQL:
+   SELECT TOP 10 *
+   FROM tbl_TaxiRides;
+   GO
+   ```
+
+## Related content
+
+- [Data virtualization with Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/data-virtualization-overview?view=azuresql-mi\&preserve-view=true)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+
+
+
+**Applies to: \=fabric**
+
+
+
+        [SQL Server](create-external-data-source-transact-sql.md?view=sql-server-ver15&preserve-view=true)
+
+
+        [Azure SQL Database](create-external-data-source-transact-sql.md?view=azuresqldb-current&preserve-view=true)
+
+
+        [SQL Managed<br />Instance](create-external-data-source-transact-sql.md?view=azuresqldb-mi-current&preserve-view=true)
+
+
+        [Azure Synapse<br />Analytics](create-external-data-source-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+
+
+        **_\*Microsoft Fabric Data Warehouse \*_**
+
+
+        [Microsoft Fabric SQL database](create-external-data-source-transact-sql.md?view=fabric-sqldb&preserve-view=true)
+
+
+
+## Overview: Microsoft Fabric Data Warehouse
+
+**Applies to**: Fabric Data Warehouse
+
+Creates an external data source.
+
+
+
+## Syntax
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( LOCATION = '<prefix>://<path>[:<port>]' )
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+| External Data Source | Location prefix | Location path |
+| --- | --- | --- |
+| Azure Blob Storage | `https` | `https://<storage_account>.blob.core.windows.net/<container>/<path>` |
+| Azure Data Lake Service Gen2 | `abfss` | `abfss://<container>@<storage_account>.dfs.core.windows.net/<path>` |
+
+The  Database Engine 
+ doesn't verify the existence of the external data source when the object is created.
+
+Don't add a trailing `/`, file name, or shared access signature parameters at the end of the `LOCATION` URL when configuring an external data source for bulk operations.
+
+## Permissions
+
+If the target storage account is private, the principal must also have the permission the read referenced files.
+- For Azure Data Lake Storage and Azure Blob Storage, the principal must have **Storage Blob Data Reader** role (or higher) assigned at the container or storage account level.
+- For Fabric One Lake storage, the principal must have "ReadAll" permissions.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Examples
+
+### A. Query external data with OPENROWSET or an external table
+
+1. Create the external data source.
+
+   ```sql
+   --Create external data source pointing to the file path, and referencing database-scoped credential:
+   CREATE EXTERNAL DATA SOURCE MyPrivateExternalDataSource
+   WITH (
+       LOCATION = 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/bing_covid-19_data/latest'
+   );
+   ```
+
+1. Query parquet data file in the external data source using the OPENROWSET T-SQL syntax, relying on schema inference to quickly explore data without knowing the schema.
+
+   ```sql
+   --Query data with OPENROWSET, relying on schema inference.
+   SELECT TOP 10 *
+   FROM OPENROWSET (
+       BULK 'bing_covid-19_data.parquet',
+       DATA_SOURCE = 'MyPrivateExternalDataSource'
+   );
+   ```
+
+1. Or, query data using OPENROWSET the WITH clause, instead of relying on schema inference, which might query execution cost.
+
+   ```sql
+   --Or, query data using the WITH clause on a CSV, where schema inference is not supported
+   SELECT TOP 10 id,
+       updated,
+       confirmed,
+       confirmed_change
+   FROM OPENROWSET (
+       BULK 'bing_covid-19_data.csv', DATA_SOURCE = 'MyPrivateExternalDataSource'
+       FIRSTROW = 2
+   ) WITH (
+       id INT,
+       updated DATE,
+       confirmed INT,
+       confirmed_change INT
+   ) AS filerows;
+   ```
+
+## Related content
+
+- [OPENROWSET BULK (Transact-SQL)](../functions/openrowset-bulk-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)
+- [Using Shared Access Signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview)
+
+
+
+**Applies to: \=fabric-sqldb**
+
+
+
+        [SQL Server](create-external-data-source-transact-sql.md?view=sql-server-ver15&preserve-view=true)
+
+
+        [Azure SQL Database](create-external-data-source-transact-sql.md?view=azuresqldb-current&preserve-view=true)
+
+
+        [SQL Managed<br />Instance](create-external-data-source-transact-sql.md?view=azuresqldb-mi-current&preserve-view=true)
+
+
+        [Azure Synapse<br />Analytics](create-external-data-source-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+
+
+        [Microsoft Fabric Data Warehouse](create-external-data-source-transact-sql.md?view=fabric&preserve-view=true)
+
+
+        **_\* Fabric SQL database \*_** &nbsp;
+
+
+
+&nbsp;
+
+## Overview: SQL database in Microsoft Fabric
+
+**Applies to**: [SQL database in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+Creates an external data source for [Data virtualization in SQL database in Fabric](https://learn.microsoft.com/fabric/database/sql/data-virtualization).
+
+
+
+## Syntax
+
+```syntaxsql
+CREATE EXTERNAL DATA SOURCE <data_source_name>
+WITH
+  ( [ LOCATION = '<prefix>://<path>[:<port>]' ]
+[ ; ]
+```
+
+## Arguments
+
+#### data_source_name
+
+Specifies the user-defined name for the data source. The name must be unique within the database.
+
+#### LOCATION = '*\<prefix>://\<path[:port]>*'
+
+Provides the connectivity protocol and path to the external data source.
+
+Fabric SQL database only supports OneLake (`abfss`) as a data source.
+
+| External Data Source | Connector location prefix | Location path | Availability |
+| --- | --- | --- | --- |
+| OneLake | `abfss` | `abfss://<workspaceid>@<tenant>.dfs.fabric.microsoft.com/` | Fabric SQL database |
+
+Additional notes and guidance when setting the location:
+
+- The  Database Engine 
+ doesn't verify the existence of the external data source when the object is created. To validate, create an external table using the external data source.
+
+## Permissions
+
+Requires `CONTROL` permission on database in  Azure SQL Database 
+.
+
+## Locking
+
+Takes a shared lock on the `EXTERNAL DATA SOURCE` object.
+
+## Examples
+
+### A. Create an external data source to a Lakehouse file folder 
+
+This example involves connecting an external data source named `MyLakeHouse` to a Lakehouse in order to access Parquet and CSV files that have been uploaded. These files in this sample are located within the `Files` directory under the `Contoso` folder.  
+
+To create a Fabric Lakehouse data source, you need to provide workspace ID, tenant, and lakehouse ID. To find the ABFSS file location of a lakehouse, go to the Fabric portal. Navigate to your Lakehouse, navigate to the desired folder location, select `...`, **Properties**. Copy the **ABFS path**, which looks something like this: `abfss://<WorkSpaceID>@<Tenant>.dfs.fabric.microsoft.com/<LakehouseID>/Files/Contoso`.
+
+Because Fabric SQL database only supports Microsoft Entra ID Passthrough authentication, no database scoped credential needs to be provided, the connection will always use the user's login credentials to access the location.  
+
+```sql
+CREATE EXTERNAL DATA SOURCE MyLakeHouse 
+WITH (
+ LOCATION = 'abfss://<workspace id>@<tenant>.dfs.fabric.microsoft.com/<lakehouseid>/Files/Contoso'
+);
+```
+
+## Related content
+
+- [Data virtualization in SQL database in Fabric](https://learn.microsoft.com/fabric/database/sql/data-virtualization)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](create-database-scoped-credential-transact-sql.md)
+- [CREATE EXTERNAL TABLE (Transact-SQL)](create-external-table-transact-sql.md)
+- [CREATE EXTERNAL FILE FORMAT (Transact-SQL)](create-external-file-format-transact-sql.md)
+- [sys.external_data_sources (Transact-SQL)](../../relational-databases/system-catalog-views/sys-external-data-sources-transact-sql.md)

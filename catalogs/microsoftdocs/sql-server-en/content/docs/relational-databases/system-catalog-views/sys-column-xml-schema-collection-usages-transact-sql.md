@@ -1,0 +1,43 @@
+---
+title: "sys.column_xml_schema_collection_usages (Transact-SQL)"
+description: sys.column_xml_schema_collection_usages (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "column_xml_schema_collection_usages_TSQL"
+  - "sys.column_xml_schema_collection_usages"
+  - "column_xml_schema_collection_usages"
+  - "sys.column_xml_schema_collection_usages_TSQL"
+helpviewer_keywords:
+  - "sys.column_xml_schema_collection_usages catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.column_xml_schema_collection_usages (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row for each column that is validated by an XML schema.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **object_id** | **int** | The ID of the object to which this column belongs. |
+| **column_id** | **int** | The ID of the column. Is unique within the object. |
+| **xml_collection_id** | **int** | The ID of the collection that contains the validating XML schema namespace of the column. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [XML Schemas (XML Type System) Catalog Views (Transact-SQL)](xml-schemas-xml-type-system-catalog-views-transact-sql.md)

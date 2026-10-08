@@ -1,0 +1,233 @@
+---
+manager: mcleans
+author: PatrickFarley
+ms.author: pafarley
+reviewer: patrickfarley
+ms.reviewer: pafarley
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 2/20/2026
+ai-usage: ai-assisted
+---
+
+Learn how to use Voice Live with [Microsoft Foundry Agent Service](https://learn.microsoft.com/azure/ai-foundry/agents/overview) by using the VoiceLive SDK for Python. This article builds on the [Quickstart: Voice Live with Foundry Agent Service](../../../voice-live-agents-quickstart.md) with advanced features and integration options.
+
+
+[Reference documentation](https://learn.microsoft.com/python/api/overview/azure/ai-voicelive-readme) | [Package (PyPi)](https://pypi.org/project/azure-ai-voicelive/) | [Additional samples on GitHub](https://aka.ms/voicelive/github-python)
+ 
+
+
+Create and run applications to use Voice Live with agents for real-time conversations.
+
+Agents provide several advantages:
+
+- Use centralized configuration in the agent itself instead of session code.
+- Handle complex logic and conversational behaviors for easier updates.
+- Connect automatically by using your agent ID.
+- Support multiple variations without changing client code.
+
+To use Voice Live without Foundry agents, see the [Voice Live API quickstart](https://learn.microsoft.com/azure/ai-services/speech-service/voice-live-quickstart).
+
+> **Tip:**
+> You don't need to deploy an audio model with Microsoft Foundry to use Voice Live. Voice Live is fully managed and automatically deploys the model for you. For model availability, see the [Voice Live overview documentation](../../../voice-live.md).
+
+
+## Prerequisites
+
+> **Note:**
+> This document refers to the [Microsoft Foundry (new)](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/what-is-foundry.md#microsoft-foundry-portals) portal and the latest Foundry Agent Service version.
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- <a href="https://www.python.org/" target="_blank">Python 3.10 or later version</a>. If you don't have a suitable version of Python installed, you can follow the instructions in the [VS Code Python Tutorial](https://code.visualstudio.com/docs/python/python-tutorial#_install-a-python-interpreter) for the easiest way of installing Python on your operating system.
+- The required language runtimes, global tools, and Visual Studio Code extensions as described in [Prepare your development environment](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/how-to/develop/install-cli-sdk.md).
+- A [Microsoft Foundry resource](../../../../multi-service-resource.md) created in one of the supported regions. For more information about region availability, see the [Voice Live overview documentation](../../../voice-live.md).
+- A model deployed in Microsoft Foundry. If you don't have a model, first complete [Quickstart: Set up Microsoft Foundry resources](../../../../../foundry/tutorials/quickstart-create-foundry-resources.md).
+<!-- - A Microsoft Foundry agent created in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs). For more information about creating an agent, see the [Create an agent quickstart](../../../../../ai-foundry/quickstarts/get-started-code.md). -->
+- Assign the `Foundry User` role to your user account. You can assign roles in the Azure portal under **Access control (IAM)** > **Add role assignment**.
+
+  
+> **Important:**
+> The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+
+## Prepare the environment and create the agent
+
+Complete the [Quickstart: Voice Live with Foundry Agent Service](../../../voice-live-agents-quickstart.md) to set up your environment, configure the agent with Voice Live settings, and test your first conversation.
+
+## Agent integration concepts
+
+Use these concepts to understand how Voice Live and Foundry Agent Service work together in the Python sample.
+
+### Agent configuration contract
+
+Pass `agent_name` and `project_name` as keyword arguments to `connect()` to identify the target agent and project. Add `agent_version` when you want to pin behavior to a specific version.
+
+### Authentication model for agent mode
+
+Use Microsoft Entra ID credentials for agent mode. Agent invocation in this flow doesn't support key-based authentication, so configure `AzureCliCredential` (or another Entra token credential) for local development and deployment.
+
+### API version pinning
+
+Pin a supported `api_version` in the client to keep behavior predictable across preview updates. Use the same version consistently across quickstart and how-to samples to avoid schema drift.
+
+### Conversation and trace alignment
+
+Treat agent thread and trace records as text-turn history, not exact playback history. If your app allows interruption or truncation, enable truncation-aware handling so persisted history better matches what the user actually heard.
+
+## Connect to a specific agent version
+
+Pin your agent to a specific version to enable controlled deployments. This lets production use stable versions while development tests newer iterations.
+
+Set the `AGENT_VERSION` environment variable or pass the `agent_version` parameter when initializing the assistant:
+
+In `main()`, read `AGENT_VERSION` from the environment and pass it to the `BasicVoiceAssistant(...)` constructor:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The constructor stores the value on the assistant:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The `start()` method passes the stored value to `connect()`:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The `agent_version` value corresponds to the version string returned when you create or update an agent using the Foundry Agent SDK. If not specified, Voice Live connects to the latest version of the agent.
+
+## Connect to an agent on a different Foundry resource
+
+Configure Voice Live to connect to an agent on a different Foundry resource for audio processing. This is useful when:
+- The agent is deployed in a region that has different feature availability
+- You want to separate development/staging environments from production
+- Your organization uses different resources for different workloads
+
+To connect to an agent on a different resource, configure two additional environment variables:
+
+- `FOUNDRY_RESOURCE_OVERRIDE`: The Foundry resource name hosting the agent project (for example, `my-agent-resource`).
+- `AGENT_AUTHENTICATION_IDENTITY_CLIENT_ID`: The managed identity client ID of the Voice Live resource, required for cross-resource authentication.
+
+In `main()`, read both environment variables and pass their values to the `BasicVoiceAssistant(...)` constructor:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The constructor stores both values on the assistant:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The `start()` method passes them to `connect()` as `foundry_resource_override` and `authentication_identity_client_id`:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+> **Important:**
+> Cross-resource connections require proper role assignments. Ensure the Voice Live resource's managed identity has the `Foundry User` role on the target agent resource.
+
+## Add a proactive message at session start
+
+Send a proactive message to initiate conversations as soon as the session is ready. This sample checks a one-time flag in the `SESSION_UPDATED` event handler, sends a greeting prompt, and triggers a response.
+
+Initialize the greeting flag in `BasicVoiceAssistant.__init__`:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+Handle the `SESSION_UPDATED` event in `_handle_event()`:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+In this sample, proactive messaging is applied in three steps:
+
+- `self.greeting_sent = False` initializes one-time greeting state.
+- In the `SESSION_UPDATED` branch, `if not self.greeting_sent:` gates proactive execution to run once per session.
+- `conn.conversation.item.create(...)` adds the greeting instruction to conversation context, and `conn.response.create()` generates spoken output.
+
+## Improve tool calling and latency wait times
+
+Use Voice Live's `interim_response` feature to bridge wait times during tool calling or when generating agent responses with high latency.
+
+Voice Live offers two interim response modes:
+
+- **LLM-generated interim response** (`llm_interim_response`): Uses a lightweight LLM to generate context-aware filler text dynamically. Best for adaptive, natural-sounding responses.
+- **Static interim response** (`static_interim_response`): Randomly selects from a predefined list of texts you provide. Best for deterministic or branded messaging.
+
+For more information, see [Improve tool calling and latency wait times with interim responses](../../../how-to-voice-live-interim-response.md).
+
+The `voice-live-agents-quickstart.py` created with the quickstart shows the required code additions to configure this feature as follows:
+
+Import the session and interim response types:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+Configure and send the session options in `_setup_session()`:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+In this sample, the interim response setup is applied inside `BasicVoiceAssistant._setup_session()`:
+
+- `LlmInterimResponseConfig(...)` defines when interim responses trigger and what style they use.
+- `RequestSession(...)` attaches that config through the `interim_response` field.
+- `conn.session.update(session=session_config)` sends the session configuration to Voice Live.
+
+## Use auto truncation for interrupted responses
+
+When users interrupt agent audio, conversation text can drift from what users actually heard. Auto truncation helps keep session context aligned with delivered audio, which improves follow-up response quality after barge-in and keeps voice conversation history logging more accurate.
+
+This sample doesn't configure `auto_truncate` in `turn_detection`.
+
+> **Note:**
+> In Foundry Agent Service, thread messages and tracing agent threads are based on text content in the thread. Without auto truncation, those records can differ from the exact portion of audio the user actually heard before interruption.
+
+For setup details and supported options, see [Handle voice interruptions in chat history (preview)](../../../how-to-voice-live-auto-truncation.md).
+
+## Reconnect to a previous agent conversation
+
+Reconnect to a previous conversation by specifying the conversation ID. This preserves history and context, allowing users to continue where they left off.
+
+Voice Live returns session metadata in the `SESSION_UPDATED` event when a session connects successfully:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+In this event handler, session and agent metadata is logged when the session is ready.
+
+The sample code automatically writes session details to a conversation log file in the `logs/` folder (for example, `logs/2026-02-19_14-30-00_conversation.log`). You can retrieve the session ID from this file after running a session.
+
+To reconnect to that conversation, pass the conversation ID as the `CONVERSATION_ID` environment variable (or the `conversation_id` parameter):
+
+In `main()`, read `CONVERSATION_ID` and pass it to the `BasicVoiceAssistant(...)` constructor:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The constructor stores the conversation ID:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+The `start()` method passes it to `connect()` as `conversation_id`:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+When a valid `conversation_id` is provided, the agent retrieves the previous conversation context and can reference earlier exchanges in its responses.
+
+> **Note:**
+> Conversation IDs are tied to the agent and project. Attempting to use a conversation ID with a different agent results in a new conversation being created.
+
+## Log session metadata for continuity and diagnostics
+
+Log key session metadata, including the session ID, to a timestamped conversation log file under `logs/`. This helps you:
+
+- Identify the session for debugging and support scenarios.
+- Correlate user-reported behavior with session metadata.
+- Track runs over time by preserving per-session log files.
+
+The following code creates the log filename and defines the helper that appends entries:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+In `_handle_event()`, call the helper when `SESSION_UPDATED` is received:
+
+[Code reference unavailable in this source snapshot: ~/voice-live-samples-code/python/voice-live-quickstarts/AgentsNewQuickstart/voice-live-with-agent-v2.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/includes/how-to/voice-live-agents/python.md)
+
+In this sample, session metadata logging is applied in three places:
+
+- A timestamped conversation log file is created per run.
+- On `SESSION_UPDATED`, metadata including session ID, agent name, and voice configuration is appended.
+- `write_conversation_log(...)` appends entries to the same file throughout the conversation lifecycle.
+
+Use the logged session metadata with `CONVERSATION_ID` to resume the same agent conversation in a later session.

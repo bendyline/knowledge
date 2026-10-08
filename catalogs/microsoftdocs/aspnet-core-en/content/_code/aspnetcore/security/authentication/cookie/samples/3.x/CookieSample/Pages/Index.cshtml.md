@@ -1,0 +1,25 @@
+# Source code: aspnetcore/security/authentication/cookie/samples/3.x/CookieSample/Pages/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model IndexModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor;
+@{
+    ViewData["Title"] = "Cookie Sample";
+}
+
+@if (HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Hello @HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value!</h1>
+            <p>Username: @HttpContextAccessor.HttpContext.User.Identity.Name</p>
+        </div>
+    </div>
+}
+
+<h1>Cookie Sample</h1>
+
+```

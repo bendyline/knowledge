@@ -1,0 +1,48 @@
+---
+title: "Replication Monitor, Main Page"
+description: "Replication Monitor, Main Page"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.monitor.main.f1"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Replication Monitor, Main Page
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  Replication Monitor allows you to track the status and performance of publications and subscriptions across a replication topology. The following topics provide more information:  
+  
+-   For an overview of Replication Monitor, see [Monitoring Replication](monitor/monitoring-replication.md).  
+  
+-   The left pane of Replication Monitor is focused on Publishers and groups of Publishers. Add one or more Publishers to Replication Monitor to display publication and subscription information. For more information, see [Add and Remove Publishers from Replication Monitor](monitor/add-and-remove-publishers-from-replication-monitor.md).  
+  
+-   For information about tasks that can be performed in Replication Monitor, see the following topics:  
+  
+    -   [Refresh Data in Replication Monitor](monitor/refresh-data-in-replication-monitor.md)  
+  
+    -   [View Information and Perform Tasks using Replication Monitor;](monitor/view-information-and-perform-tasks-replication-monitor.md)    
+  
+    -   [Measure Latency and Validate Connections for Transactional Replication](monitor/measure-latency-and-validate-connections-for-transactional-replication.md)  
+  
+    -   [Set Thresholds and Warnings in Replication Monitor](monitor/set-thresholds-and-warnings-in-replication-monitor.md)  
+  
+    -   [Allow Non-Administrators to Use Replication Monitor](monitor/allow-non-administrators-to-use-replication-monitor.md)  
+  
+## Related content
+
+- [Start the Replication Monitor](monitor/start-the-replication-monitor.md)
+- [Monitoring (Replication)](monitor/monitoring-replication.md)

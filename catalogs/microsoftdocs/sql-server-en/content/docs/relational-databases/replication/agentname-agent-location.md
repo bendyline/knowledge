@@ -1,0 +1,36 @@
+---
+title: "&lt;AgentName&gt; Agent Location"
+description: "&lt;AgentName&gt; Agent Location"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.newsubwizard.agentlocation.f1"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# &lt;AgentName&gt; Agent Location
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  The Merge Agent (for merge subscriptions) and the Distribution Agent (for transactional and snapshot subscriptions) run at the Distributor or at the Subscriber. If the agent runs at the Distributor, the subscription is referred to as a push subscription; if the agent runs at the Subscriber, it is referred to as a pull subscription. For more information about push and pull subscriptions, see [Subscribe to Publications](subscribe-to-publications.md). All subscriptions created in this pass through the wizard will be of the selected type. To create subscriptions of both types, you must run the wizard twice.  
+  
+> **Note:**  
+>  Subscription type cannot be changed after a subscription is created.  
+  
+## Related content
+
+- [Create a Pull Subscription](create-a-pull-subscription.md)
+- [Create a push subscription](create-a-push-subscription.md)
+- [Replication Agents Overview](agents/replication-agents-overview.md)

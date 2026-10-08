@@ -1,0 +1,18 @@
+# Source code: aspnetcore/mvc/views/tag-helpers/built-in/link-tag-helper/sample/HtmlPage2.html
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
+        crossorigin="anonymous"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+</script>
+<script>  (window.jQuery || document.write(
+        "\u003Cscript src=\u0022\/lib\/jquery\/dist\/jquery.js\u0022 " +
+        "crossorigin =\u0022anonymous\u0022 integrity =\u0022sha256 - " +
+        "FgpCb\/KJQ32o\/NM<snip>u8=\u0022\u003E\u003C\/script\u003E"));
+</script>
+
+
+
+```

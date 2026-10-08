@@ -1,0 +1,41 @@
+---
+title: "IServerVirtualDeviceSet2::EndConfiguration"
+titleSuffix: SQL Server VDI reference
+description: "This article provides reference for the IServerVirtualDeviceSet2::EndConfiguration command."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 08/30/2019
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: reference
+---
+
+# IServerVirtualDeviceSet2::EndConfiguration (VDI)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **EndConfiguration** function informs the VDI that the server is finished with its configuration.
+
+## Syntax
+
+```c
+HRESULT IServerVirtualDeviceSet2::EndConfiguration ();
+```
+
+## Return Value
+
+| Return Value | Explanation |
+| --- | --- |
+| NOERROR | The function succeeded. |
+| VD_E_ABORT | Abort was requested. |
+| VD_E_PROTOCOL | The set is not in the Configurable state. |
+| VD_E_MEMORY | The memory required via the 'RequestBuffers' calls could not be obtained. The set remains in the configurable state with no buffer space available. The server can either reduce its buffer requirements or abort the operation. |
+
+## Related content
+
+- [Virtual device interface (VDI) reference](reference-virtual-device-interface.md)

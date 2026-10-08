@@ -1,0 +1,554 @@
+---
+title: Data Virtualization
+titleSuffix: Azure SQL Managed Instance
+description: Learn about data virtualization capabilities of Azure SQL Managed Instance.
+author: MladjoA
+ms.author: mlandzic
+ms.reviewer: mathoma, wiassaf, nzagorac
+ms.date: 09/11/2025
+ms.service: azure-sql-managed-instance
+ms.subservice: service-overview
+ms.topic: concept-article
+---
+
+# Data virtualization with Azure SQL Managed Instance
+
+
+
+  **Applies to:**    [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+> 
+> * [Azure SQL Database](../database/data-virtualization-overview.md?view=azuresql-db&preserve-view=true)
+> * [Azure SQL Managed Instance](data-virtualization-overview.md?view=azuresql-mi&preserve-view=true)
+
+This article describes the data virtualization feature of Azure SQL Managed Instance. Data virtualization allows you to execute Transact-SQL (T-SQL) queries on files that store data in common data formats in Azure Data Lake Storage Gen2 or Azure Blob Storage. You can combine this data with locally stored relational data by using joins. With data virtualization, you can transparently access external data in read-only mode, while keeping it in its original format and location.
+
+## Overview
+
+Data virtualization provides two ways to query files intended for different sets of scenarios:
+
+- [OPENROWSET syntax](#query-data-sources-using-openrowset): Optimized for ad hoc querying of files. Typically used to quickly explore the content and structure of a new set of files.
+- [CREATE EXTERNAL TABLE syntax](#external-tables): Optimized for repetitive querying of files using identical syntax as if data were stored locally in the database. External tables require several preparation steps compared to the OPENROWSET syntax, but allow for more control over data access. Use external tables for analytical workloads and reporting.
+
+In either case, create an [external data source](#external-data-source) by using the [CREATE EXTERNAL DATA SOURCE](https://learn.microsoft.com/sql/t-sql/statements/create-external-data-source-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) T-SQL syntax, as demonstrated in this article.
+
+[CREATE EXTERNAL TABLE AS SELECT syntax](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-as-select-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) is also available for Azure SQL Managed Instance. This is to export the results of a T-SQL `SELECT` statement into the Parquet or CSV files in Azure Blob Storage or Azure Data Lake Storage (ADLS) Gen 2 and create an external table on top of those files.
+
+### File formats
+
+Parquet and delimited text (CSV) file formats are directly supported. The JSON file format is indirectly supported by specifying the CSV file format where queries return every document as a separate row. You can parse rows further using `JSON_VALUE` and `OPENJSON`.
+
+### Storage types
+
+Store files in Azure Data Lake Storage Gen2 or Azure Blob Storage. To query files, provide the location in a specific format and use the location type prefix that corresponds to the type of external source and endpoint or protocol, such as the following examples:
+
+```sql
+--Blob Storage endpoint
+abs://<container>@<storage_account>.blob.core.windows.net/<path>/<file_name>.parquet
+
+--Data Lake endpoint
+adls://<container>@<storage_account>.dfs.core.windows.net/<path>/<file_name>.parquet
+```
+
+> **Important:**  
+> The provided Location type prefix is used to choose the optimal protocol for communication and to use any advanced capabilities offered by the particular storage type.
+> Using the generic `https://` prefix is disabled. Always use endpoint-specific prefixes.
+
+## Get started
+
+If you're new to data virtualization and want to quickly test functionality, start by querying public data sets available in [Azure Open Datasets](https://learn.microsoft.com/azure/open-datasets/dataset-catalog), like the [Bing COVID-19 dataset](https://learn.microsoft.com/azure/open-datasets/dataset-bing-covid-19?tabs=azure-storage) that allows anonymous access.
+
+Use the following endpoints to query the Bing COVID-19 data sets:
+
+- Parquet:
+   `abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest/bing_covid-19_data.parquet`
+- CSV:
+   `abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest/bing_covid-19_data.csv`
+
+For a quick start, run a T-SQL query to get first insights into the data set. This query uses [OPENROWSET](https://learn.microsoft.com/sql/t-sql/functions/openrowset-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) to query a file stored in a publicly available storage account:
+
+```sql
+--Quick query on a file stored in a publicly available storage account:
+SELECT TOP 10 *
+FROM OPENROWSET(
+ BULK 'abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest/bing_covid-19_data.parquet',
+ FORMAT = 'parquet'
+) AS filerows
+```
+
+You can continue data set exploration by appending `WHERE`, `GROUP BY`, and other clauses based on the result set of the first query.
+
+If the first query fails on your SQL managed instance, that instance likely has restricted access to Azure storage accounts. Talk to your networking expert to enable access before you proceed with querying.
+
+When you're familiar with querying public data sets, consider switching to nonpublic data sets that require providing credentials, granting access rights, and configuring firewall rules. In many real-world scenarios, you operate primarily with private data sets.
+
+## Access to nonpublic storage accounts
+
+A user who signs in to a SQL managed instance must be authorized to access and query files stored in a nonpublic storage account. The authorization steps depend on how the SQL managed instance authenticates to the storage account. The type of authentication and any related parameters aren't provided directly with each query. The database scoped credential object stored in the user database encapsulates this information. The database uses the credential to access the storage account any time the query executes. 
+
+Azure SQL Managed Instance supports the following authentication types:
+- Managed identity
+- Shared access signature (SAS)
+
+### [Managed identity](#tab/managed-identity)
+
+A **managed identity** is a feature of Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)) that provides Azure services - like Azure SQL Managed Instance - with an identity managed in Microsoft Entra ID. You can use this identity to authorize requests for data access in nonpublic storage accounts. Services like Azure SQL Managed Instance have a system-assigned managed identity, and can also have one or more user-assigned managed identities. You can use either system-assigned managed identities or user-assigned managed identities for data virtualization with Azure SQL Managed Instance.
+
+The Azure storage administrator must first grant permissions to the managed identity to access the data. Grant permissions to the system-assigned managed identity of the SQL managed instance the same way you grant permissions to any other Microsoft Entra user. For example:
+
+1. In the Azure portal, in the **Access Control (IAM)** page of a storage account, select **Add role assignment**.
+1. Choose the **Storage Blob Data Reader** built-in Azure RBAC role. This role provides read access to the managed identity for the necessary Azure Blob Storage containers.
+   - Instead of granting the managed identity the **Storage Blob Data Reader** Azure RBAC role, you can also grant more granular permissions on a subset of files. All users who need access to **Read** individual files in this data must also have **Execute** permission on all parent folders up to the root (the container). For more information, see [Set ACLs in Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-explorer-acl).
+1. On the next page, select **Assign access to** **Managed identity**. Select **+ Select members**, and under the **Managed identity** dropdown list, select the desired managed identity. For more information, see [Assign Azure roles using the Azure portal](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-portal).
+1. Then, create the database scoped credential for managed identity authentication. Note in the following example that `'Managed Identity'` is a hard-coded string.
+
+```sql
+-- Optional: Create MASTER KEY if it doesn't exist in the database:
+-- CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>'
+GO
+CREATE DATABASE SCOPED CREDENTIAL MyCredential
+WITH IDENTITY = 'Managed Identity'
+```
+
+### [Shared access signature](#tab/shared-access-signature)
+
+**Shared access signature (SAS)** provides delegated access to files in a storage account. SAS gives you granular control over the type of access you grant, including a validity interval, granted permissions, and an acceptable IP address range. Once created, the SAS token can't be revoked or deleted. A SAS token allows access until its validity period expires.
+
+You can get a SAS token multiple ways:
+   - Navigate to the **Azure portal -> <Your_Storage_Account> -> Shared access signature -> Configure permissions -> Generate SAS and connection string**. For more information, see [Generate a shared access signature](https://learn.microsoft.com/azure/storage/blobs/blob-containers-portal#generate-a-shared-access-signature).
+   - [Create and configure a SAS with Azure Storage Explorer](https://learn.microsoft.com/azure/vs-azure-tools-storage-explorer-blobs#get-the-sas-for-a-blob-container).
+   - Create a SAS token programmatically via PowerShell, Azure CLI, .NET, and REST API. For more information, see [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://learn.microsoft.com/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json).
+
+Grant **Read** and **List** permissions via the SAS to access external data. Currently, data virtualization with Azure SQL Managed Instance is read-only.
+
+When you generate a SAS token, it includes a question mark (`?`) at the beginning of the token. To use the token, remove the question mark (`?`) when creating a credential. For example:
+
+```sql
+-- Optional: Create MASTER KEY if it doesn't exist in the database:
+-- CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>'
+GO
+CREATE DATABASE SCOPED CREDENTIAL MyCredential
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+SECRET = 'sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-04-18T20:42:12Z&st=2019-04-18T12:42:12Z&spr=https&sig=lQHczNvrk1Ko3VYEIq78%3D'
+```
+
+---
+
+## External data source
+
+An external data source is an abstraction that provides an easy reference to a file location across multiple queries. To query public locations, specify the file location when you create an external data source:
+
+```sql
+CREATE EXTERNAL DATA SOURCE MyExternalDataSource
+WITH (
+    LOCATION = 'abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest'
+)
+```
+
+To access nonpublic storage accounts, specify the location and reference a database scoped credential with encapsulated authentication parameters. The following script creates an external data source that points to the file path and references a database-scoped credential:
+
+```sql
+-- Create external data source that points to the file path, and that references a database scoped credential:
+CREATE EXTERNAL DATA SOURCE MyPrivateExternalDataSource
+WITH (
+    LOCATION = 'abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest'
+        CREDENTIAL = [MyCredential];
+)
+```
+
+## Query data sources using OPENROWSET
+
+The [OPENROWSET](https://learn.microsoft.com/sql/t-sql/functions/openrowset-transact-sql) syntax enables instant ad hoc querying while only creating the minimal number of database objects necessary.
+
+`OPENROWSET` only requires creating the external data source (and possibly the credential) as opposed to the external table approach, which requires an [external file format](https://learn.microsoft.com/sql/t-sql/statements/create-external-file-format-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) and the [external table](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) itself.
+
+The `DATA_SOURCE` parameter value is automatically prepended to the BULK parameter to form the full path to the file.
+
+When using `OPENROWSET`, provide the format of the file such as the following example, which queries a single file:
+
+```sql
+SELECT TOP 10 *
+FROM OPENROWSET(
+ BULK 'bing_covid-19_data.parquet',
+ DATA_SOURCE = 'MyExternalDataSource',
+ FORMAT = 'parquet'
+) AS filerows;
+```
+
+### Query multiple files and folders
+
+The `OPENROWSET` command also allows querying multiple files or folders by using wildcards in the BULK path.
+
+The following example uses the [NYC yellow taxi trip records open data set](https://learn.microsoft.com/azure/open-datasets/dataset-taxi-yellow).
+
+First, create the external data source:
+
+```sql
+--Create the data source first:
+CREATE EXTERNAL DATA SOURCE NYCTaxiExternalDataSource
+WITH (LOCATION = 'abs://nyctlc@azureopendatastorage.blob.core.windows.net');
+```
+
+Now, you can query all files with `.parquet` extension in folders. For example, the following query is only for those files matching a name pattern:
+
+```sql
+--Query all files with .parquet extension in folders matching name pattern:
+SELECT TOP 10 *
+FROM OPENROWSET(
+ BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = 'NYCTaxiExternalDataSource',
+ FORMAT = 'parquet'
+) AS filerows;
+ ```
+
+When querying multiple files or folders, all files accessed with the single `OPENROWSET` must have the same structure (such as the same number of columns and data types). Folders can't be traversed recursively.
+
+### Schema inference
+
+Automatic schema inference helps you quickly write queries and explore data when you don't know file schemas. Schema inference only works with parquet files.
+
+While convenient, inferred data types might be larger than the actual data types because there might not be enough information in the source files to ensure the appropriate data type is used. This can lead to poor query performance. For example, parquet files don't contain metadata about maximum character column length so the instance infers it as varchar(8000).
+
+Use the [sp_describe_first_results_set](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-describe-first-result-set-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) stored procedure to check the resulting data types of your query, such as the following example:
+
+```sql
+EXEC sp_describe_first_result_set N'
+ SELECT
+ vendorID, tpepPickupDateTime, passengerCount
+ FROM
+ OPENROWSET(
+  BULK ''yellow/*/*/*.parquet'',
+  DATA_SOURCE = ''NYCTaxiExternalDataSource'',
+  FORMAT=''parquet''
+ ) AS nyc';
+ ```
+
+Once you know the data types, specify them using the `WITH` clause to improve performance:
+
+```sql
+SELECT TOP 100
+ vendorID, tpepPickupDateTime, passengerCount
+FROM
+OPENROWSET(
+ BULK 'yellow/*/*/*.parquet',
+ DATA_SOURCE = 'NYCTaxiExternalDataSource',
+ FORMAT='PARQUET'
+ )
+WITH (
+vendorID varchar(4), -- we're using length of 4 instead of the inferred 8000
+tpepPickupDateTime datetime2,
+passengerCount int
+) AS nyc;
+```
+
+Since the schema of CSV files can't be automatically determined, always specify columns using the `WITH` clause:
+
+```sql
+SELECT TOP 10 id, updated, confirmed, confirmed_change
+FROM OPENROWSET(
+ BULK 'bing_covid-19_data.csv',
+ DATA_SOURCE = 'MyExternalDataSource',
+ FORMAT = 'CSV',
+ FIRSTROW = 2
+)
+WITH (
+ id int,
+ updated date,
+ confirmed int,
+ confirmed_change int
+) AS filerows;
+```
+
+### File metadata functions
+
+When querying multiple files or folders, you can use `filepath()` and `filename()` functions to read file metadata and get part of the path or full path and name of the file that the row in the result set originates from:
+
+```sql
+--Query all files and project file path and file name information for each row:
+SELECT TOP 10 filerows.filepath(1) as [Year_Folder], filerows.filepath(2) as [Month_Folder],
+filerows.filename() as [File_name], filerows.filepath() as [Full_Path], *
+FROM OPENROWSET(
+ BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = 'NYCTaxiExternalDataSource',
+ FORMAT = 'parquet') AS filerows;
+--List all paths:
+SELECT DISTINCT filerows.filepath(1) as [Year_Folder], filerows.filepath(2) as [Month_Folder]
+FROM OPENROWSET(
+ BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = 'NYCTaxiExternalDataSource',
+ FORMAT = 'parquet') AS filerows;
+```
+
+When called without a parameter, the `filepath()` function returns the file path that the row originates from. When `DATA_SOURCE` is used in `OPENROWSET`, it returns the path relative to the `DATA_SOURCE`, otherwise it returns full file path.
+
+When called with a parameter, it returns part of the path that matches the wildcard on the position specified in the parameter. For example, parameter value 1 returns part of the path that matches the first wildcard.
+
+The `filepath()` function can also be used for filtering and aggregating rows:
+
+```sql
+SELECT
+ r.filepath() AS filepath
+ ,r.filepath(1) AS [year]
+ ,r.filepath(2) AS [month]
+ ,COUNT_BIG(*) AS [rows]
+FROM OPENROWSET(
+ BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+DATA_SOURCE = 'NYCTaxiExternalDataSource',
+FORMAT = 'parquet'
+ ) AS r
+WHERE
+ r.filepath(1) IN ('2017')
+ AND r.filepath(2) IN ('10', '11', '12')
+GROUP BY
+ r.filepath()
+ ,r.filepath(1)
+ ,r.filepath(2)
+ORDER BY
+ filepath;
+```
+
+### Create view on top of OPENROWSET
+
+You can create and use views to wrap OPENROWSET queries so that you can easily reuse the underlying query:
+
+```sql
+CREATE VIEW TaxiRides AS
+SELECT *
+FROM OPENROWSET(
+ BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = 'NYCTaxiExternalDataSource',
+ FORMAT = 'parquet'
+) AS filerows
+```
+
+It's also convenient to add columns with the file location data to a view using the `filepath()` function for easier and more performant filtering. Using views can reduce the number of files, and the amount of data, the query on top of the view needs to read and process when filtered by any of those columns:
+
+```sql
+CREATE VIEW TaxiRides AS
+SELECT *
+ , filerows.filepath(1) AS [year]
+ , filerows.filepath(2) AS [month]
+FROM OPENROWSET(
+ BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = 'NYCTaxiExternalDataSource',
+ FORMAT = 'parquet'
+) AS filerows
+```
+
+Views also enable reporting and analytic tools like Power BI to consume results of `OPENROWSET`.
+
+## External tables
+
+External tables encapsulate access to files, so querying them feels almost the same as querying local relational data stored in user tables. To create an external table, you need to have an external data source and external file format objects in place:
+
+```sql
+--Create external file format
+CREATE EXTERNAL FILE FORMAT DemoFileFormat
+WITH (
+ FORMAT_TYPE=PARQUET
+)
+GO
+
+--Create external table:
+CREATE EXTERNAL TABLE tbl_TaxiRides(
+ vendorID VARCHAR(100) COLLATE Latin1_General_BIN2,
+ tpepPickupDateTime DATETIME2,
+ tpepDropoffDateTime DATETIME2,
+ passengerCount INT,
+ tripDistance FLOAT,
+ puLocationId VARCHAR(8000),
+ doLocationId VARCHAR(8000),
+ startLon FLOAT,
+ startLat FLOAT,
+ endLon FLOAT,
+ endLat FLOAT,
+ rateCodeId SMALLINT,
+ storeAndFwdFlag VARCHAR(8000),
+ paymentType VARCHAR(8000),
+ fareAmount FLOAT,
+ extra FLOAT,
+ mtaTax FLOAT,
+ improvementSurcharge VARCHAR(8000),
+ tipAmount FLOAT,
+ tollsAmount FLOAT,
+ totalAmount FLOAT
+)
+WITH (
+ LOCATION = 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = NYCTaxiExternalDataSource,
+ FILE_FORMAT = DemoFileFormat
+);
+GO
+```
+
+After you create the external table, you can query it just like any other table:
+
+```sql
+SELECT TOP 10 *
+FROM tbl_TaxiRides;
+```
+
+Like `OPENROWSET`, external tables support querying multiple files and folders with wildcards. However, external tables don't support schema inference.
+
+## Performance considerations
+
+There's no hard limit to the number of files or the amount of data that you can query, but query performance depends on the amount of data, data format, the way data is organized, and the complexity of queries and joins.
+
+### Query partitioned data
+
+Data is often organized in subfolders, also called partitions. You can instruct SQL managed instance to query only particular folders and files. Doing so reduces the number of files and the amount of data the query needs to read and process, resulting in better performance. This type of query optimization is known as partition pruning or partition elimination. You can eliminate partitions from query execution by using metadata function `filepath()` in the `WHERE` clause of the query.
+
+The following sample query reads NYC Yellow Taxi data files only for the last three months of 2017:
+
+```sql
+SELECT
+    r.filepath() AS filepath
+    ,r.filepath(1) AS [year]
+    ,r.filepath(2) AS [month]
+    ,COUNT_BIG(*) AS [rows]
+FROM OPENROWSET(
+        BULK 'yellow/puYear=*/puMonth=*/*.parquet',
+        DATA_SOURCE = 'NYCTaxiExternalDataSource',
+        FORMAT = 'parquet'
+    )
+WITH (
+    vendorID INT
+) AS [r]
+WHERE
+    r.filepath(1) IN ('2017')
+    AND r.filepath(2) IN ('10', '11', '12')
+GROUP BY
+    r.filepath()
+    ,r.filepath(1)
+    ,r.filepath(2)
+ORDER BY
+    filepath;
+```
+
+If your stored data isn't partitioned, consider partitioning it to improve query performance.
+
+If you're using external tables, `filepath()` and `filename()` functions are supported but not in the `WHERE` clause. You can still filter by `filename` or `filepath` if you use them in computed columns, such as the following example demonstrates:
+
+```sql
+CREATE EXTERNAL TABLE tbl_TaxiRides (
+ vendorID VARCHAR(100) COLLATE Latin1_General_BIN2,
+ tpepPickupDateTime DATETIME2,
+ tpepDropoffDateTime DATETIME2,
+ passengerCount INT,
+ tripDistance FLOAT,
+ puLocationId VARCHAR(8000),
+ doLocationId VARCHAR(8000),
+ startLon FLOAT,
+ startLat FLOAT,
+ endLon FLOAT,
+ endLat FLOAT,
+ rateCodeId SMALLINT,
+ storeAndFwdFlag VARCHAR(8000),
+ paymentType VARCHAR(8000),
+ fareAmount FLOAT,
+ extra FLOAT,
+ mtaTax FLOAT,
+ improvementSurcharge VARCHAR(8000),
+ tipAmount FLOAT,
+ tollsAmount FLOAT,
+ totalAmount FLOAT,
+ [Year]  AS CAST(filepath(1) AS INT), --use filepath() for partitioning
+ [Month]  AS CAST(filepath(2) AS INT) --use filepath() for partitioning
+)
+WITH (
+ LOCATION = 'yellow/puYear=*/puMonth=*/*.parquet',
+ DATA_SOURCE = NYCTaxiExternalDataSource,
+ FILE_FORMAT = DemoFileFormat
+);
+GO
+
+SELECT *
+      FROM tbl_TaxiRides
+WHERE
+      [year]=2017
+      AND [month] in (10,11,12);
+```
+
+If your stored data isn't partitioned, consider partitioning it to improve query performance.
+
+### Statistics
+
+Collecting statistics on your external data is one of the most important things you can do for query optimization. The more the instance knows about your data, the faster it can execute queries. The SQL engine query optimizer is a cost-based optimizer. It compares the cost of various query plans, and then chooses the plan with the lowest cost. In most cases, it chooses the plan that executes the fastest.
+
+### Automatic creation of statistics
+
+Azure SQL Managed Instance analyzes incoming user queries for missing statistics. If statistics are missing, the query optimizer automatically creates statistics on individual columns in the query predicate or join condition in order to improve cardinality estimates for the query plan. Automatic creation of statistics is done synchronously so you might incur slightly degraded query performance if your columns are missing statistics. The time to create statistics for a single column depends on the size of the files targeted.
+
+### OPENROWSET manual statistics
+
+Single-column statistics for the `OPENROWSET` path can be created using the [sys.sp_create_openrowset_statistics](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-create-openrowset-statistics) stored procedure, by passing the select query with a single column as a parameter:
+
+```sql
+EXEC sys.sp_create_openrowset_statistics N'
+SELECT pickup_datetime
+FROM OPENROWSET(
+ BULK ''abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest/*.parquet'',
+ FORMAT = ''parquet'') AS filerows
+';
+```
+
+By default, the  instance uses 100% of the data provided in the dataset to create statistics. You can optionally specify the sample size as a percentage using the `TABLESAMPLE` options. To create single-column statistics for multiple columns, execute `sys.sp_create_openrowset_statistics` for each of the columns. You can't create multi-column statistics for the `OPENROWSET` path.
+
+To update existing statistics, drop them first using the `sys.sp_drop_openrowset_statistics` stored procedure, and then recreate them using the `sys.sp_create_openrowset_statistics`:
+
+```sql
+EXEC sys.sp_drop_openrowset_statistics N'
+SELECT pickup_datetime
+FROM OPENROWSET(
+ BULK ''abs://public@pandemicdatalake.blob.core.windows.net/curated/covid-19/bing_covid-19_data/latest/*.parquet'',
+ FORMAT = ''parquet'') AS filerows
+';
+```
+
+### External table manual statistics
+
+The syntax for creating statistics on external tables resembles the one used for ordinary user tables. To create statistics on a column, provide a name for the statistics object and the name of the column:
+
+```sql
+CREATE STATISTICS sVendor
+ON tbl_TaxiRides (vendorID)
+WITH FULLSCAN, NORECOMPUTE;
+```
+
+The `WITH` options are mandatory, and for the sample size, the allowed options are `FULLSCAN` and `SAMPLE n` percent.
+
+- To create single-column statistics for multiple columns, execute `CREATE STATISTICS` for each of the columns.
+- Multi-column statistics aren't supported.
+
+## Troubleshoot
+
+Issues with query execution typically happen when the SQL managed instance can't access the file location. Related error messages might report insufficient access rights, a location that doesn't exist, file being used by another process, or that directory can't be listed. In most cases, these errors indicate that network traffic control policies block access to files or the user lacks access rights. Check the following items:
+
+- Wrong or mistyped location path.
+- SAS key validity. It could be expired, contains a typo, or starts with a question mark.
+- SAS key permissions allowed. **Read** at minimum, and **List** if wildcards are used.
+- Blocked inbound traffic on the storage account. Check [Managing virtual network rules for Azure Storage](https://learn.microsoft.com/azure/storage/common/storage-network-security?tabs=azure-portal#managing-virtual-network-rules) for details and make sure that access from the SQL managed instance VNet is allowed.
+- Blocked outbound traffic on the SQL managed instance using [storage endpoint policy](service-endpoint-policies-configure.md#configure-policies). Allow outbound traffic to the storage account.
+- Managed identity access rights. Make sure the managed identity of the instance has access rights to the storage account.
+- Compatibility level of the database must be 130 or higher for data virtualization queries to work.
+
+## CREATE EXTERNAL TABLE AS SELECT (CETAS)
+
+`CREATE EXTERNAL TABLE AS SELECT` (CETAS) allows you to export data from your SQL managed instance into an external storage account. You can use CETAS to create an external table on top of Parquet or CSV files in Azure Blob storage or Azure Data Lake Storage (ADLS) Gen2. CETAS can also export, in parallel, the results of a T-SQL `SELECT` statement into the created external table. There's potential for data exfiltration risk with these capabilities, so Azure SQL Managed Instance disables CETAS by default. To enable, see [CREATE EXTERNAL TABLE AS SELECT (CETAS)](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-as-select-transact-sql?view=azuresqldb-mi-current\&preserve-view=true#enable-cetas-via-azure-powershell).
+
+## Limitations
+
+- [Row level security](https://learn.microsoft.com/sql/relational-databases/security/row-level-security?view=azuresqldb-mi-current\&preserve-view=true) feature isn't supported with external tables.
+- [Dynamic data masking](https://learn.microsoft.com/sql/relational-databases/security/dynamic-data-masking?view=azuresqldb-mi-current\&preserve-view=true) rule can't be defined for a column in an external table.
+
+## Known issues
+
+- When [parameterization for Always Encrypted](https://learn.microsoft.com/sql/relational-databases/security/encryption/always-encrypted-query-columns-ssms?view=azuresqldb-mi-current\&preserve-view=true#param) is enabled in SQL Server Management Studio (SSMS), data virtualization queries fail with `Incorrect syntax near 'PUSHDOWN'` error message.
+
+## Related content
+
+- [OPENROWSET T-SQL](https://learn.microsoft.com/sql/t-sql/functions/openrowset-transact-sql?view=azuresqldb-mi-current\&preserve-view=true)
+- [CREATE EXTERNAL TABLE](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-transact-sql?view=azuresqldb-mi-current\&preserve-view=true)
+- [CREATE EXTERNAL FILE FORMAT](https://learn.microsoft.com/sql/t-sql/statements/create-external-file-format-transact-sql?view=azuresqldb-mi-current\&preserve-view=true)
+- [CREATE EXTERNAL DATA SOURCE](https://learn.microsoft.com/sql/t-sql/statements/create-external-data-source-transact-sql?view=azuresqldb-mi-current\&preserve-view=true)
+- [CREATE EXTERNAL TABLE AS SELECT](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-as-select-transact-sql?view=azuresqldb-mi-current\&preserve-view=true)

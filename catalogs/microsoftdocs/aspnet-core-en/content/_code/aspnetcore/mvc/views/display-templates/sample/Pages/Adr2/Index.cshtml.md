@@ -1,0 +1,34 @@
+# Source code: aspnetcore/mvc/views/display-templates/sample/Pages/Adr2/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model WebAddress.Pages.Adr2.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+@foreach (var item in Model.Address) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> <br>
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> <br>
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+  
+</table>
+
+```

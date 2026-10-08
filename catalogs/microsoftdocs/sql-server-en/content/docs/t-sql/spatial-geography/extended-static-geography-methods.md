@@ -1,0 +1,62 @@
+---
+title: "Extended Static Geography Methods"
+description: "Extended Static Geography Methods"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "Extended Static Geography Methods"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Extended Static Geography Methods
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+   SQL Server 
+ supports several extensions to the static geography methods of the Open Geospatial Consortium (OGC).  
+  
+ For more information on OGC specifications, see the following resources:  
+  
+ [OGC Specifications, Simple Feature Access Part 1 - Common Architecture](https://go.microsoft.com/fwlink/?LinkId=93627)  
+  
+ [OGC Specifications, Simple Feature Access Part 2 - SQL Options](https://go.microsoft.com/fwlink/?LinkId=93628)  
+  
+ [OGC Specifications, Geography Markup Language](https://go.microsoft.com/fwlink/?LinkId=93629)  
+  
+## In This Section  
+  
+-   [GeomFromGML](geomfromgml-geography-data-type.md)  
+  
+-   [Null](null-geography-data-type.md)  
+  
+-   [Parse](parse-geography-data-type.md)  
+  
+-   [Point](point-geography-data-type.md)  
+  
+## Related content
+
+- [Static Aggregate Geography Methods](static-aggregate-geography-methods.md)
+- [OGC methods on geography instances](ogc-methods-on-geography-instances.md)
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)
+- [OGC Static Geography Methods](ogc-static-geography-methods.md)

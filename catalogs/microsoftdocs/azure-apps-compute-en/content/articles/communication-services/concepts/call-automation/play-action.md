@@ -1,0 +1,63 @@
+---
+title: Playing audio in call
+titleSuffix: An Azure Communication Services concept document
+description: Conceptual information about playing audio in call using Call Automation.
+author: Kunaal
+ms.service: azure-communication-services
+ms.topic: concept-article
+ms.date: 08/11/2023
+ms.author: kpunjabi
+---
+
+# Playing audio in call
+
+
+> **Warning:**
+> **Azure Communication Services is introducing breaking changes, and some services are being retired. Learn more in the [retirement and breaking changes guide](https://aka.ms/acs-retirement-and-breaking-changes-guide).**
+
+
+The play action provided through the Azure Communication Services Call Automation SDK allows you to play audio prompts to participants in the call. This action can be accessed through the server-side implementation of your application. You can play audio to call participants through one of two methods;
+- Providing Azure Communication Services access to prerecorded audio files in WAV format, which Azure Communication Services can access with support for authentication.
+- Regular text that can be converted into speech output through the integration with Foundry Tools.
+
+You can use the newly announced integration between [Azure Communication Services and Foundry Tools](azure-communication-services-azure-cognitive-services-integration.md) to play personalized responses using Azure [Text-To-Speech](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cognitive-services/Speech-Service/text-to-speech.md). You can use human like prebuilt neural voices out of the box or create custom neural voices that are unique to your product or brand. For more information on supported voices, languages and locales see [Language and voice support for the Speech service](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cognitive-services/Speech-Service/language-support.md).
+> **Note:**
+> Azure Communication Services currently supports two file formats, MP3 files with ID3V2TAG and WAV files formatted as 16-bit Pulse Code Modulation (PCM) mono channel audio recorded at 16 KHz. You can create your own audio files using [Speech synthesis with Audio Content Creation tool](https://learn.microsoft.com/azure/ai-services/speech-service/how-to-audio-content-creation). 
+
+## Prebuilt Neural Text to Speech voices
+Microsoft uses advanced machine learning to overcome the limitations of traditional speech synthesis in handling stress and intonation in spoken language. Prosody prediction and voice synthesis occur simultaneously, resulting in a more fluid and natural sounding output. You can use these neural voices to make interactions with your chatbots and voice assistants more natural and engaging. There are over 100 prebuilt voices to choose from. Learn more about [Azure Text-to-Speech voices](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cognitive-services/Speech-Service/language-support.md).
+
+## Common use cases 
+
+The play action can be used in many ways, some examples of how developers may wish to use the play action in their applications are listed here. 
+
+### Announcements
+Your application might want to play some sort of announcement when a participant joins or leaves the call, to notify other users.
+
+### Self-serve customers
+
+In scenarios with Interactive Voice Response (IVR) systems and virtual assistants, you can use your application or bots to play audio prompts to callers, this prompt can be in the form of a menu to guide the caller through their interaction.
+
+### Hold music
+The play action can also be used to play hold music for callers. This action can be set up in a loop so that the music keeps playing until an agent is available to assist the caller.
+
+### Playing compliance messages
+As part of compliance requirements in various industries, vendors are expected to play legal or compliance messages to callers, for example, "This call is recorded for quality purposes."
+
+## Sample architecture for playing audio in call using Text-To-Speech
+
+Diagram showing sample architecture for Play with AI.
+
+## Sample architecture for playing audio in a call
+
+Screenshot of flow for play action.
+
+## Known limitations
+- Text-to-Speech prompts support a maximum of 4,000 characters. If your prompt is longer than this limit, we suggest using Speech Synthesis Markup Language (SSML) for Text-to-Speech based play actions.
+- HD Voices from Microsoft Foundry aren't officially supported. Using these voices results in timeouts.
+- For scenarios where you exceed your Speech service quota limit, you can request to increase this limit by following the steps outlined [here](https://learn.microsoft.com/azure/ai-services/speech-service/speech-services-quotas-and-limits).
+
+## Next Steps
+- Check out our how-to guide to learn [how-to play custom voice prompts](../../how-tos/call-automation/play-action.md) to users.
+- Learn about [usage and operational logs](../analytics/logs/call-automation-logs.md) published by call automation.
+- Learn about [gathering customer input](recognize-action.md).

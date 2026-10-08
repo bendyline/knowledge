@@ -1,0 +1,32 @@
+---
+title: "SET UNIQUE Command"
+description: "SET UNIQUE Command"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "SET UNIQUE command [ODBC]"
+---
+# SET UNIQUE Command
+Specifies whether records with duplicate index key values are maintained in an index file.  
+  
+## Syntax  
+  
+```  
+  
+SET UNIQUE ON | OFF  
+```  
+  
+## Arguments  
+ ON  
+ Specifies that any record with a duplicate index key value not be included in the index file. Only the first record with the original index key value is included in the index file.  
+  
+ OFF  
+ (Default.) Specifies that records with duplicate index key values be included in the index file.  
+  
+## Remarks  
+ An index file retains its SET UNIQUE setting when you issue REINDEX. For more information, see [INDEX](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/odbc/microsoft/index-command.md).

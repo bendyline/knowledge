@@ -1,0 +1,50 @@
+---
+title: "SQLSTATE (ODBC Error Codes)"
+description: When SQL Server ODBC driver runs stored procedures as remote stored procedures, the procedure can have integer return codes and output parameters.
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQL Server Native Client ODBC driver, errors"
+  - "ODBC error handling, cause information"
+  - "messages [ODBC], cause information"
+  - "SQLSTATEs"
+  - "errors [ODBC], cause information"
+---
+# SQLSTATE (ODBC Error Codes)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  SQLSTATE provides detailed information about the cause of a warning or error. For errors that occur in the data source detected and returned by  SQL Server 
+, the  SQL Server 
+ Native Client ODBC driver maps the returned native error number to the appropriate SQLSTATE. If a native error number does not have an ODBC error code to map to, the  SQL Server 
+ Native Client ODBC driver returns SQLSTATE 42000 ("syntax error or access violation"). For errors that are detected by the driver, the  SQL Server 
+ Native Client ODBC driver generates the appropriate SQLSTATE.  
+  
+ For more information about the state error codes, see the following topics:  
+  
+-   [Appendix A: ODBC Error Codes](../../odbc/reference/appendixes/appendix-a-odbc-error-codes.md)  
+  
+-   [SQLSTATE Mappings](../../odbc/reference/develop-app/sqlstate-mappings.md)  
+  
+## Related content
+
+- [Handling Errors and Messages](handling-errors-and-messages.md)

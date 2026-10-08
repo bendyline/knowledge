@@ -1,0 +1,68 @@
+---
+title: URL Redirect
+titleSuffix: Azure Front Door
+description: This article helps you understand how Azure Front Door supports URL redirection for their routing rules.
+author: halkazwini
+ms.author: halkazwini
+ms.service: azure-frontdoor
+ms.topic: concept-article
+ms.date: 04/30/2026
+zone_pivot_groups: front-door-tiers
+---
+
+# URL redirect
+
+Azure Front Door can redirect traffic at each of the following levels: protocol, hostname, path, and query string. You can configure these functionalities for individual microservices since the redirection is path-based. This setup simplifies application configuration by optimizing resource usage, and supports new redirection scenarios including global and path-based redirection.
+
+**Applies to: front-door-standard-premium**
+
+
+In Azure Front Door Standard/Premium tier, you can configure URL redirect using a Rule Set.
+
+Screenshot of creating url redirect with Rule Set.
+
+
+
+**Applies to: front-door-classic**
+
+
+> **Important:**
+> Azure Front Door (classic) retires on **March 31, 2027**. Because the service is retiring, it no longer supports profile creation, new domain onboarding, or managed certificates. To avoid service disruption, ⁠[**migrate to Azure Front Door Standard or Premium**](migrate-tier.md). For more information, see ⁠[**Azure Front Door (classic) retirement**](https://azure.microsoft.com/updates?id=azure-front-door-classic-will-be-retired-on-31-march-2027).
+
+Azure Front Door URL Redirect
+
+
+
+## Redirection types
+
+A redirect type sets the response status code so clients understand the purpose of the redirect. Azure Front Door supports the following types of redirection:
+
+- **301 (Moved permanently)**: Indicates that the target resource has a new permanent URI. Any future references to this resource use one of the enclosed URIs. Use the 301 status code for HTTP to HTTPS redirection. 
+- **302 (Found)**: Indicates that the target resource is temporarily under a different URI. Since the redirection can change on occasion, the client should continue to use the effective request URI for future requests.
+- **307 (Temporary redirect)**: Indicates that the target resource is temporarily under a different URI. The user agent **must not** change the request method if it does an automatic redirection to that URI. Since the redirection can change over time, the client ought to continue using the original effective request URI for future requests.
+- **308 (Permanent redirect)**: Indicates that the target resource has a new permanent URI. Any future references to this resource should use one of the enclosed URIs.
+
+## Redirection protocol
+Set the protocol for redirection. The most common use case for the redirect feature is to set HTTP to HTTPS redirection.
+
+- **HTTPS only**: Set the protocol to HTTPS only if you want to redirect the traffic from HTTP to HTTPS. Azure Front Door recommends that you always set the redirection to HTTPS only.
+- **HTTP only**: Redirects the incoming request to HTTP. Use this value only if you want to keep your traffic HTTP, which is nonencrypted.
+- **Match request**: This option keeps the protocol used by the incoming request. So, an HTTP request remains HTTP and an HTTPS request remains HTTPS after redirection.
+
+## Destination host
+As part of configuring a redirect routing, you can also change the hostname or domain for the redirect request. You can set this field to change the hostname in the URL for the redirection or otherwise preserve the hostname from the incoming request. So, using this field you can redirect all requests sent on `https://www.contoso.com/*` to `https://www.fabrikam.com/*`.
+
+## Destination path
+If you want to replace the path segment of a URL as part of redirection, set this field with the new path value. Otherwise, choose to preserve the path value as part of redirect. By using this field, you can redirect all requests sent to `https://www.contoso.com/*` to  `https://www.contoso.com/redirected-site`.
+
+## Query string parameters
+The set of query strings to use in the redirect URL. The value of this field overwrites the incoming query strings. Leaving this field empty preserves the incoming query string. Query string must be in `<key>=<value>` format, separated by `&`.
+
+## Destination fragment
+The destination fragment is the portion of URL after `#`, which the browser uses to land on a specific section of a web page. Set this field to add a fragment to the redirect URL.
+
+## Related content
+
+* Learn how to [create a Front Door](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/frontdoor/quickstart-create-front-door.md).
+* Learn more about [Azure Front Door Rule Set](front-door-rules-engine.md).
+* Learn [how Front Door works](front-door-routing-architecture.md).

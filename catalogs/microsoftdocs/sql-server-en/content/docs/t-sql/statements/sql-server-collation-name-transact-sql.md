@@ -1,0 +1,111 @@
+---
+title: "SQL Server Collation Name (Transact-SQL)"
+description: SQL Server Collation Name (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "02/21/2019"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "collations [SQL Server], SQL collations"
+  - "SQL collations"
+  - "names [SQL Server], collations"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# SQL Server Collation Name (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Is a single string that specifies the collation name for a  SQL Server 
+ collation.
+
+ SQL Server 
+ supports Windows collations.  SQL Server 
+ also supports a limited number (<80) of collations called  SQL Server 
+ collations which were developed before  SQL Server 
+ supported Windows collations.  SQL Server 
+ collations are still supported for backward compatibility, but should not be used for new development work. For more information about Windows collations, see [Windows Collation Name](windows-collation-name-transact-sql.md).
+
+
+
+## Syntax
+
+```syntaxsql
+<SQL_collation_name> :: =
+SQL_SortRules[_Pref]_CPCodepage_<ComparisonStyle>
+
+<ComparisonStyle> ::=
+_CaseSensitivity_AccentSensitivity | _BIN
+```
+
+## Arguments
+
+*SortRules*
+A string identifying the alphabet or language whose sorting rules are applied when dictionary sorting is specified. Examples are Latin1_General or Polish.
+
+**Pref**
+Specifies uppercase preference. Even if comparison is case-insensitive, the uppercase version of a letter sorts before the lowercase version, when there is no other distinction.
+
+*Codepage*
+Specifies a one- to four-digit number that identifies the code page used by the collation. **CP1** specifies code page 1252, for all other code pages the complete code page number is specified. For example, **CP1251** specifies code page 1251 and **CP850** specifies code page 850.
+
+*CaseSensitivity*
+**CI** specifies case-insensitive, **CS** specifies case-sensitive.
+
+*AccentSensitivity*
+**AI** specifies accent-insensitive, **AS** specifies accent-sensitive.
+
+**BIN**
+Specifies the binary sort order to be used.
+
+## Remarks
+
+To list the  SQL Server 
+ collations supported by your server, execute the following query.
+
+```sql
+SELECT * FROM sys.fn_helpcollations()
+WHERE name LIKE 'SQL%';
+```
+
+> **Note:**
+> For Sort Order ID 80, use any of the Window collations with the code page of 1250, and binary order. For example: Albanian_BIN, Croatian_BIN, Czech_BIN, Romanian_BIN, Slovak_BIN, Slovenian_BIN.
+
+## Related content
+
+- [ALTER TABLE (Transact-SQL)](alter-table-transact-sql.md)
+- [Constants (Transact-SQL)](../data-types/constants-transact-sql.md)
+- [CREATE DATABASE](create-database-transact-sql.md)
+- [CREATE TABLE (Transact-SQL)](create-table-transact-sql.md)
+- [DECLARE @local_variable (Transact-SQL)](../language-elements/declare-local-variable-transact-sql.md)
+- [table (Transact-SQL)](../data-types/table-transact-sql.md)
+- [sys.fn_helpcollations (Transact-SQL)](../../relational-databases/system-functions/sys-fn-helpcollations-transact-sql.md)

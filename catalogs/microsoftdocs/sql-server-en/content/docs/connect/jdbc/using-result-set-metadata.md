@@ -1,0 +1,28 @@
+---
+title: "Using result set metadata"
+description: "Using result set metadata"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "08/12/2019"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+
+# Using result set metadata
+
+
+
+To query a result set for information about the columns that it contains, the  Microsoft JDBC Driver for SQL Server 
+ implements the [SQLServerResultSetMetaData](reference/sqlserverresultsetmetadata-class.md) class. This class contains numerous methods that return information in the form of a single value.
+
+To create a SQLServerResultSetMetaData object, you can use the [getMetaData](reference/getmetadata-method-sqlserverresultset.md) method of the [SQLServerResultSet](reference/sqlserverresultset-class.md) class.
+
+In the following example, an open connection to the  AdventureWorks2025  sample database is passed in to the function, the getMetaData method of the SQLServerResultSet class is used to return a SQLServerResultSetMetaData object, and then various methods of the SQLServerResultSetMetaData object are used to display information about the name and data type of the columns contained within the result set.
+
+[!code[JDBC#UsingResultSetMetaData1](../../../_code/docs/connect/jdbc/codesnippet/Java/using-result-set-metadata_1.java.md)]
+
+## Related content
+
+- [Handling metadata with the JDBC driver](handling-metadata-with-the-jdbc-driver.md)

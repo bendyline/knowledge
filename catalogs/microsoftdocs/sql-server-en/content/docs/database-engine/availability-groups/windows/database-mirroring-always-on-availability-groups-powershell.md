@@ -1,0 +1,83 @@
+---
+title: "Powershell: Availability group database mirroring endpoint"
+description: "Describes how to create a database mirroring endpoint for an Always On availability group using PowerShell."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: how-to
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], server instance"
+  - "Availability Groups [SQL Server], deploying"
+  - "Availability Groups [SQL Server], endpoint"
+---
+# Create a database mirroring endpoint for an availability group using PowerShell
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This topic describes how to create a database mirroring endpoint for use by  Always On availability groups 
+ in  SQL Server 
+ by using PowerShell.  
+  
+
+  
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires CREATE ENDPOINT permission, or membership in the sysadmin fixed server role. For more information, see [GRANT Endpoint Permissions &#40;Transact-SQL&#41;](../../../t-sql/statements/grant-endpoint-permissions-transact-sql.md).  
+
+> **Important:**  
+>  The RC4 algorithm is deprecated. This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  We recommend that you use AES.  
+  
+##  <a name="PowerShellProcedure"></a> Using PowerShell  
+ **To create a database mirroring endpoint**  
+  
+1.  Change directory (**cd**) to the server instance for which you want to create the database mirroring endpoint.  
+  
+2.  Use the **New-SqlHadrEndpoint** cmdlet to create the endpoint and then use the **Set-SqlHadrEndpoint** to start the endpoint.  
+  
+###  <a name="PShellExample"></a> Example (PowerShell)  
+ The following PowerShell commands create a database mirroring endpoint on an instance of SQL Server (*Machine*\\*Instance*). The endpoint uses port 5022.  
+  
+> **Important:**  
+>  This example works only on a server instance that currently lack a database mirroring endpoint.  
+  
+```  
+# Create the endpoint.  
+$endpoint = New-SqlHadrEndpoint MyMirroringEndpoint -Port 5022 -Path SQLSERVER:\SQL\Machine\Instance  
+  
+# Start the endpoint  
+Set-SqlHadrEndpoint -InputObject $endpoint -State "Started"  
+  
+```  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+ **To Configure a Database Mirroring Endpoint**  
+  
+-   [Create a Database Mirroring Endpoint for Windows Authentication (Transact-SQL)](../../database-mirroring/create-a-database-mirroring-endpoint-for-windows-authentication-transact-sql.md)  
+  
+-   [Use Certificates for a Database Mirroring Endpoint (Transact-SQL)](../../database-mirroring/use-certificates-for-a-database-mirroring-endpoint-transact-sql.md)  
+  
+    -   [Allow a Database Mirroring Endpoint to Use Certificates for Outbound Connections (Transact-SQL)](../../database-mirroring/database-mirroring-use-certificates-for-outbound-connections.md)  
+  
+    -   [Allow a Database Mirroring Endpoint to Use Certificates for Inbound Connections (Transact-SQL)](../../database-mirroring/database-mirroring-use-certificates-for-inbound-connections.md)  
+  
+-   [Specify a Server Network Address (Database Mirroring)](../../database-mirroring/specify-a-server-network-address-database-mirroring.md)  
+  
+-   [Specify the Endpoint URL When Adding or Modifying an Availability Replica (SQL Server)](specify-endpoint-url-adding-or-modifying-availability-replica.md)  
+  
+ **To View Information About the Database Mirroring Endpoint**  
+  
+-   [sys.database_mirroring_endpoints &#40;Transact-SQL&#41;](../../../relational-databases/system-catalog-views/sys-database-mirroring-endpoints-transact-sql.md)  
+  
+## Related content
+
+- [Create an Always On availability group using Transact-SQL (T-SQL)](create-an-availability-group-transact-sql.md)
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)

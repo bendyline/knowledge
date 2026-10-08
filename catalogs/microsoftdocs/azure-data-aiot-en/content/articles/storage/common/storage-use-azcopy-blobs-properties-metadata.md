@@ -1,0 +1,136 @@
+---
+title: Replace Azure Blob Storage properties & metadata with AzCopy
+description: This article contains a collection of AzCopy example commands that help you set properties and metadata. 
+author: normesta
+ms.service: azure-storage
+ms.topic: how-to
+ms.date: 10/28/2025
+ms.author: normesta
+ms.subservice: storage-common-concepts
+
+# Customer intent: As a cloud storage administrator, I want to use AzCopy to change blob properties and metadata, so that I can efficiently manage and optimize storage access and organization.
+---
+
+# Replace blob properties and metadata by using AzCopy v10
+
+You can use AzCopy to change the [access tier](../blobs/access-tiers-overview.md) of one or more blobs and replace (_overwrite_) the metadata and index tags of one or more blobs. 
+
+## Get started
+
+See the [Get started with AzCopy](storage-use-azcopy-v10.md) article to download AzCopy and learn about the ways that you can provide authorization credentials to the storage service.
+
+> **Note:**
+> The examples in this article assume that you provide authorization credentials by using Microsoft Entra ID.
+>
+> If you want to use a SAS token to authorize access to blob data, append that token to the resource URL in each AzCopy command. For example: `'https://<storage-account-name>.blob.core.windows.net/<container-name><SAS-token>'`.
+
+## Change the access tier
+
+To change the access tier of a blob, use the [azcopy set-properties](https://github.com/Azure/azure-storage-azcopy/wiki/azcopy_set-properties) command and set the `-block-blob-tier` parameter to the name of the access tier. 
+
+> **Tip:**
+> This example encloses path arguments with single quotes (''). Use single quotes in all command shells except for the Windows Command Shell (cmd.exe). If you're using a Windows Command Shell (cmd.exe), enclose path arguments with double quotes ("") instead of single quotes ('').
+
+**Syntax**
+
+`azcopy set-properties 'https://<storage-account-name>.blob.core.windows.net/<container-name>/<blob-name>' --block-blob-tier=<access-tier>`
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myTextFile.txt' --block-blob-tier=hot
+
+```
+
+To change the access tier for all blobs in a virtual directory, refer to the virtual directory name instead of the blob name, and then append `--recursive=true` to the command.
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myvirtualdirectory' --block-blob-tier=hot --recursive=true
+```
+
+To _rehydrate_ a blob from the archive tier to an online tier, set the `--rehydrate-priority` to `standard` or `high`. By default, this parameter is set to `standard`. To learn more about the trade offs of each option, see [Rehydration priority](../blobs/archive-rehydrate-overview.md#rehydration-priority). 
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myTextFile.txt' --block-blob-tier=hot --rehydrate-priority=high
+```
+
+## Replace metadata
+
+To replace the metadata of a blob, use the [azcopy set-properties](https://github.com/Azure/azure-storage-azcopy/wiki/azcopy_set-properties) command and set the `--metadata` parameter to one or more key-value pairs.
+
+> **Tip:**
+> This example encloses path arguments with single quotes (''). Use single quotes in all command shells except for the Windows Command Shell (cmd.exe). If you're using a Windows Command Shell (cmd.exe), enclose path arguments with double quotes ("") instead of single quotes ('').
+
+**Syntax**
+
+`azcopy set-properties 'https://<storage-account-name>.blob.core.windows.net/<container-name>/<blob-name>' --metadata=<key>=<value>;<key>=<value>`
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myTextFile.txt' --metadata=mykey1=myvalue1;mykey2=myvalue2
+```
+
+To replace the metadata for all blobs in a virtual directory, refer to the virtual directory name instead of the blob name, and then append `--recursive=true` to the command.
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myvirtualdirectory' --metadata=mykey1=myvalue1;mykey2=myvalue2 --recursive=true
+```
+
+To clear metadata, omit the tags and append `--metadata=clear` to the end of the command.
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myTextFile.txt' --metadata=clear
+```
+
+## Replace index tags
+
+To replace the index tags of a blob, use the [azcopy set-properties](https://github.com/Azure/azure-storage-azcopy/wiki/azcopy_set-properties) command and set the `--blob-tags` parameter to one or more key-value pairs. The [Storage Blob Data Owner](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/built-in-roles.md#storage-blob-data-owner) role and anyone with a Shared Access Signature that has permission to access the blob's tags (the `t` SAS permission) can set blob index tags. In addition, RBAC users with the `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write` permission can perform this operation.
+
+> **Tip:**
+> This example encloses path arguments with single quotes (''). Use single quotes in all command shells except for the Windows Command Shell (cmd.exe). If you're using a Windows Command Shell (cmd.exe), enclose path arguments with double quotes ("") instead of single quotes ('').
+
+**Syntax**
+
+`azcopy set-properties 'https://<storage-account-name>.blob.core.windows.net/<container-name>/<blob-name>' --blob-tags=<tag>=<value>;<tag>=<value>`
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myTextFile.txt' --blob-tags=mytag1=mytag1value;mytag2=mytag2value
+```
+
+To replace the index tags for all blobs in a virtual directory, refer to the virtual directory name instead of the blob name, and then append `--recursive=true` to the command.
+
+**Example**
+
+```azcopy
+azcopy set-properties 'https://mystorageaccount.blob.core.windows.net/mycontainer/myvirtualdirectory' --blob-tags=mytag1=mytag1value;mytag2=mytag2value
+```
+
+## Next steps
+
+Find more examples in these articles:
+
+- [Examples: Upload](storage-use-azcopy-blobs-upload.md)
+- [Examples: Download](storage-use-azcopy-blobs-download.md)
+- [Examples: Copy between accounts](storage-use-azcopy-blobs-copy.md)
+- [Examples: Synchronize](storage-use-azcopy-blobs-synchronize.md)
+- [Examples: Amazon S3 buckets](storage-use-azcopy-s3.md)
+- [Examples: Google Cloud Storage](storage-use-azcopy-google-cloud.md)
+- [Examples: Azure Files](storage-use-azcopy-files.md)
+
+See these articles to configure settings, optimize performance, and troubleshoot issues:
+
+- [AzCopy configuration settings](storage-ref-azcopy-configuration-settings.md)
+- [Optimize the performance of AzCopy](storage-use-azcopy-optimize.md)
+- [Find errors and resume jobs by using log and plan files in AzCopy](storage-use-azcopy-configure.md)
+- [Troubleshoot problems with AzCopy v10](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-use-azcopy-troubleshoot.md)

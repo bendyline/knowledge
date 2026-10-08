@@ -1,0 +1,45 @@
+---
+title: "Add an expression to a paginated report"
+description: Find out about how to use expressions to define report item properties, filters, and parameter values in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Add an expression to a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+  Expressions are used throughout paginated reports for defining report item properties, filters, groups, sort order, connection strings, and parameter values. Expressions begin with an equal sign (=) and are written in  Microsoft 
+  Visual Basic . They're evaluated at run time by the report processor, which combines the evaluation result with report layout elements.  
+  
+ Expressions can be simple or complex. Simple expressions refer to a single item in a built-in collection. Complex expressions can contain constants, operators, global collection items, and function calls. For more information, see [Expressions (Report Builder)](expressions-report-builder-and-ssrs.md).  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+### Add an expression to a text box  
+  
+-   In **Design** view, select the text box on the design surface to which you want to add an expression.  
+  
+    -   For a simple expression, enter the display text for the expression in the text box. For example, for the dataset field Sales, enter `[Sales]`.  
+  
+    -   For a complex expression, right-click the text box, and select **Expression**. The **Expression** dialog opens. Enter or interactively create your expression after the '=' in the expression pane, and then select OK.  
+  
+         The expression appears on the design surface as `<<Expr>>`.  
+  
+## Related content
+
+- [Format text and placeholders in paginated reports (Report Builder)](formatting-text-and-placeholders-report-builder-and-ssrs.md)
+- [Text boxes in paginated reports (Report Builder)](text-boxes-report-builder-and-ssrs.md)
+- [Expression uses in paginated reports (Report Builder)](expression-uses-in-reports-report-builder-and-ssrs.md)
+- [Filter equation examples in a paginated report (Report Builder)](filter-equation-examples-report-builder-and-ssrs.md)
+- [Group expression examples in paginated reports (Report Builder)](group-expression-examples-report-builder-and-ssrs.md)
+- [Expressions in a paginated report (Report Builder)](expressions-report-builder-and-ssrs.md)
+- [Expression examples in Report Builder paginated reports](expression-examples-report-builder-and-ssrs.md)
+- [Add code to a paginated report (Report Builder)](add-code-to-a-report-ssrs.md)

@@ -1,0 +1,111 @@
+---
+title: "DROP FUNCTION (Transact-SQL)"
+description: DROP FUNCTION (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "02/11/2020"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "DROP_FUNCTION_TSQL"
+  - "DROP FUNCTION"
+helpviewer_keywords:
+  - "user-defined functions [SQL Server], removing"
+  - "removing user-defined functions"
+  - "DROP FUNCTION statement"
+  - "dropping user-defined functions"
+  - "deleting user-defined functions"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# DROP FUNCTION (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Removes one or more user-defined functions from the current database. User-defined functions are created by using [CREATE FUNCTION](create-function-transact-sql.md) and modified by using [ALTER FUNCTION](alter-function-transact-sql.md).  
+  
+ The DROP function supports natively compiled, scalar user-defined functions. For more information, see [Scalar User-Defined Functions for In-Memory OLTP](../../relational-databases/in-memory-oltp/scalar-user-defined-functions-for-in-memory-oltp.md).  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+ -- SQL Server, Azure SQL Database 
+
+DROP FUNCTION [ IF EXISTS ] { [ schema_name. ] function_name } [ ,...n ]   
+[;]
+```
+
+```syntaxsql
+ -- Azure Synapse Analytics and Microsoft Fabric
+
+DROP FUNCTION [IF EXISTS] [ schema_name. ] function_name
+[;] 
+```  
+   
+  
+## Arguments
+ *IF EXISTS*    
+ Conditionally drops the function only if it already exists. Available beginning with  SQL Server 
+ 2016 and in  SQL Database
+.
+  
+ *schema_name*  
+ Is the name of the schema to which the user-defined function belongs.  
+  
+ *function_name*  
+ Is the name of the user-defined function or functions to be removed. Specifying the schema name is optional. The server name and database name cannot be specified.  
+  
+## Remarks  
+ DROP FUNCTION will fail if there are  Transact-SQL  functions or views in the database that reference this function and were created by using SCHEMABINDING, or if there are computed columns, CHECK constraints, or DEFAULT constraints that reference the function.  
+  
+ DROP FUNCTION will fail if there are computed columns that reference this function and have been indexed.  
+  
+## Permissions  
+ To execute DROP FUNCTION, at a minimum, a user must have ALTER permission on the schema to which the function belongs, or CONTROL permission on the function.  
+  
+## Examples  
+  
+### A. Dropping a function  
+ The following example drops the `fn_SalesByStore` user-defined function from the `Sales` schema in the  AdventureWorks2025  sample database. To create this function, see Example B in [CREATE FUNCTION (Transact-SQL)](create-function-transact-sql.md).  
+  
+```sql  
+DROP FUNCTION Sales.fn_SalesByStore;  
+```  
+  
+## Related content
+
+- [ALTER FUNCTION (Transact-SQL)](alter-function-transact-sql.md)
+- [CREATE FUNCTION (Transact-SQL)](create-function-transact-sql.md)
+- [OBJECT_ID (Transact-SQL)](../functions/object-id-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../functions/eventdata-transact-sql.md)
+- [sys.sql_modules (Transact-SQL)](../../relational-databases/system-catalog-views/sys-sql-modules-transact-sql.md)
+- [sys.parameters (Transact-SQL)](../../relational-databases/system-catalog-views/sys-parameters-transact-sql.md)

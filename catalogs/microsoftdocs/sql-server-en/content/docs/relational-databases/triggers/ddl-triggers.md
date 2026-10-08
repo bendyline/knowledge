@@ -1,0 +1,145 @@
+---
+title: "DDL Triggers"
+description: DDL triggers fire in response to various Data Definition Language (DDL) events.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 07/16/2025
+ms.service: sql
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "DDL triggers, about DDL triggers"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# DDL triggers
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+DDL triggers fire in response to various Data Definition Language (DDL) events. These events primarily correspond to  Transact-SQL  statements that start with the keywords `CREATE`, `ALTER`, `DROP`, `GRANT`, `DENY`, `REVOKE`, or `UPDATE STATISTICS`. Certain system stored procedures that perform DDL-like operations can also fire DDL triggers.
+
+Use DDL triggers when you want to do the following tasks:
+
+- Prevent certain changes to your database schema.
+- Have something occur in the database in response to a change in your database schema.
+- Record changes or events in the database schema.
+
+> **Important:**  
+> Test your DDL triggers to determine their responses to system stored procedures that are run. For example, the `CREATE TYPE` statement and the `sp_addtype` stored procedure both fire a DDL trigger that is created on a `CREATE_TYPE` event.
+
+## Types of DDL trigger
+
+### Transact-SQL trigger
+
+A special type of  Transact-SQL  stored procedure that executes one or more  Transact-SQL  statements in response to a server-scoped or database-scoped event. For example, a DDL trigger might fire if a statement such as `ALTER SERVER CONFIGURATION` is executed or if a table is deleted by using `DROP TABLE`.
+
+### CLR trigger
+
+Instead of executing a  Transact-SQL  stored procedure, a common language runtime (CLR) trigger executes one or more methods written in managed code that are members of an assembly created in the .NET Framework and uploaded in  SQL Server 
+.
+
+DDL triggers fire only after the DDL statements that trigger them are run. DDL triggers can't be used as `INSTEAD OF` triggers. DDL triggers don't fire in response to events that affect local or global temporary tables and stored procedures.
+
+DDL triggers don't create the special `inserted` and `deleted` tables.
+
+The information about an event that fires a DDL trigger, and the subsequent changes caused by the trigger, is captured by using the `EVENTDATA` function.
+
+Multiple triggers to be created for each DDL event.
+
+Unlike Data Manipulation Language (DML) triggers, DDL triggers aren't scoped to schemas. Therefore, functions such as `OBJECT_ID`, `OBJECT_NAME`, `OBJECTPROPERTY`, and `OBJECTPROPERTYEX` can't be used for querying metadata about DDL triggers. Use the catalog views instead.
+
+Server-scoped DDL triggers appear in the SQL Server Management Studio Object Explorer in the **Triggers** folder. This folder is located under the **Server Objects** folder. Database-scoped DDL triggers appear in the **Database Triggers** folder. This folder is located under the **Programmability** folder of the corresponding database.
+
+> **Important:**  
+> Malicious code inside triggers can run under escalated privileges. For more information about how to help reduce this threat, see [Manage trigger security](manage-trigger-security.md).
+
+## DDL trigger scope
+
+DDL triggers can fire in response to a  Transact-SQL  event processed in the current database, or on the current server. The scope of the trigger depends on the event. For example, a DDL trigger created to fire in response to a `CREATE_TABLE` event can do so whenever a `CREATE_TABLE` event occurs in the database, or on the server instance. A DDL trigger created to fire in response to a `CREATE_LOGIN` event can do so only when a `CREATE_LOGIN` event occurs in the server instance.
+
+In the following example, DDL trigger `safety` fires whenever a `DROP_TABLE` or `ALTER_TABLE` event occurs in the database.
+
+```sql
+CREATE TRIGGER safety
+ON DATABASE
+FOR DROP_TABLE, ALTER_TABLE
+AS PRINT 'You must disable trigger "safety" to drop or alter tables!';
+    ROLLBACK;
+```
+
+In the following example, a DDL trigger prints a message if any `CREATE_DATABASE` event occurs on the current server instance. The example uses the `EVENTDATA` function to retrieve the text of the corresponding  Transact-SQL  statement. For more information about how to use `EVENTDATA` with DDL triggers, see [Use the EVENTDATA Function](use-the-eventdata-function.md).
+
+```sql
+IF EXISTS (SELECT *
+    FROM sys.server_triggers
+    WHERE name = 'ddl_trig_database')
+DROP TRIGGER ddl_trig_database
+    ON ALL SERVER;
+GO
+
+CREATE TRIGGER ddl_trig_database
+ON ALL SERVER
+FOR CREATE_DATABASE
+AS PRINT 'Database Created.';
+    SELECT EVENTDATA().value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]', 'nvarchar(max)');
+GO
+
+DROP TRIGGER ddl_trig_database
+    ON ALL SERVER;
+```
+
+The lists that map the  Transact-SQL  statements to the scopes that can be specified for them are available through the links provided in the section [Select a particular DDL statement to fire a DDL trigger](#select-a-particular-ddl-statement-to-fire-a-ddl-trigger) later in this article.
+
+Database-scoped DDL triggers are stored as objects in the database in which they're created. DDL triggers can be created in the `master` database and behave just like those created in user-designed databases. You can obtain information about DDL triggers by querying the `sys.triggers` catalog view. You can query `sys.triggers` within the database context in which the triggers are created or by specifying the database name as an identifier, such as `master.sys.triggers`.
+
+Server-scoped DDL triggers are stored as objects in the `master` database. However, you can obtain information about server-scoped DDL triggers by querying the `sys.server_triggers` catalog view in any database context.
+
+## Specify a Transact-SQL statement or group of statements
+
+### Select a particular DDL statement to fire a DDL trigger
+
+DDL triggers can be designed to fire after one or more particular  Transact-SQL  statements are run. In the previous example, trigger `safety` fires after any `DROP_TABLE` or `ALTER_TABLE` event. For lists of the  Transact-SQL  statements that can be specified to fire a DDL trigger, and the scope at which the trigger can fire, see [DDL Events](ddl-events.md).
+
+### Select a predefined group of DDL statements to fire a DDL trigger
+
+A DDL trigger can fire after execution of any  Transact-SQL  event that belongs to a predefined grouping of similar events. For example, if you want a DDL trigger to fire after any `CREATE TABLE`, `ALTER TABLE`, or `DROP TABLE` statement is run, you can specify `FOR DDL_TABLE_EVENTS` in the `CREATE TRIGGER` statement. After `CREATE TRIGGER` is run, the events that are covered by an event group are added to the `sys.trigger_events` catalog view.
+
+In  SQL Server 2005 (9.x) 
+, if a trigger is created on an event group, `sys.trigger_events` doesn't include information about the event group, `sys.trigger_events` includes information only about the individual events covered by that group. `sys.trigger_events` persists metadata about the event group on which the trigger is created, and also about the individual events that the event group covers. Therefore, changes to the events that are covered by event groups don't apply to DDL triggers in recent versions of  SQL Server 
+ that are created on those event groups in  SQL Server 2005 (9.x) 
+.
+
+For a list of the predefined groups of DDL statements that are available for DDL triggers, the particular statements the event groups cover, and the scopes at which these event groups can be programmed, see [DDL Event Groups](ddl-event-groups.md).
+
+## Related tasks
+
+| Task | Article |
+| --- | --- |
+| Describes how to create, modify, delete, or disable DDL triggers. | [Implement DDL Triggers](implement-ddl-triggers.md) |
+| Describes how to create a CLR DDL trigger. | [Create CLR triggers](create-clr-triggers.md) |
+| Describes how to return information about DDL triggers. | [Get Information About DDL Triggers](get-information-about-ddl-triggers.md) |
+| Describes how to return information about an event that fires a DDL trigger by using the `EVENTDATA` function. | [Use the EVENTDATA Function](use-the-eventdata-function.md) |
+| Describes how to manage trigger security. | [Manage trigger security](manage-trigger-security.md) |
+
+## Related content
+
+- [DML triggers](dml-triggers.md)
+- [Logon triggers](logon-triggers.md)
+- [CREATE TRIGGER (Transact-SQL)](../../t-sql/statements/create-trigger-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../../t-sql/functions/eventdata-transact-sql.md)

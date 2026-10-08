@@ -1,0 +1,27 @@
+# Source code: docs/core/diagnostics/ambient-metadata/snippets/buildmetadata-msbuild-azure/buildmetadata-msbuild-azure.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <BuildMetadataAzureBuildId>12345</BuildMetadataAzureBuildId>
+    <BuildMetadataAzureBuildNumber>1.0.0-local.1</BuildMetadataAzureBuildNumber>
+    <BuildMetadataAzureSourceBranchName>feature/my-feature</BuildMetadataAzureSourceBranchName>
+    <BuildMetadataAzureSourceVersion>a1b2c3d4e5f6789012345678901234567890abcd</BuildMetadataAzureSourceVersion>
+    <BuildMetadataIsAzureDevOps>true</BuildMetadataIsAzureDevOps>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.AmbientMetadata.Build" Version="10.10.0" />
+  </ItemGroup>
+
+</Project>
+
+```

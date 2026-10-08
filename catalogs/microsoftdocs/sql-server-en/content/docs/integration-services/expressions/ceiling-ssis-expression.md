@@ -1,0 +1,67 @@
+---
+title: "CEILING (SSIS Expression)"
+description: "CEILING (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "smallest integer great than or equal to expression"
+  - "CEILING function [SSIS]"
+---
+# CEILING (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns the smallest integer that is greater than or equal to a numeric expression.  
+  
+## Syntax  
+  
+```  
+  
+CEILING(numeric_expression)  
+```  
+  
+## Arguments  
+ *numeric_expression*  
+ Is a valid numeric expression.  
+  
+## Result Types  
+ The data type of the numeric expression submitted to the function.  
+  
+## Remarks  
+ CEILING returns a null result if the argument is null.  
+  
+## Expression Examples  
+ These examples apply the CEILING function to positive, negative, and zero values.  
+  
+```  
+CEILING(123.74)  
+```  
+  
+ Returns 124.00  
+  
+```  
+CEILING(-124.27)  
+```  
+  
+ Returns -124.00  
+  
+```  
+CEILING(0.00)  
+```  
+  
+ Returns 0.00  
+  
+## Related content
+
+- [FLOOR (SSIS Expression)](floor-ssis-expression.md)
+- [Functions (SSIS Expression)](functions-ssis-expression.md)

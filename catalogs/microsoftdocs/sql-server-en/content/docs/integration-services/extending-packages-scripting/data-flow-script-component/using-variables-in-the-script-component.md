@@ -1,0 +1,40 @@
+---
+title: "Using Variables in the Script Component"
+description: "Using Variables in the Script Component"
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: "reference"
+helpviewer_keywords:
+  - "Script component [Integration Services], using variables"
+---
+# Using Variables in the Script Component
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Variables store values that a package and its containers, tasks, and event handlers can use at run time. For more information, see [Integration Services (SSIS) Variables](../../integration-services-ssis-variables.md).  
+  
+ You can make existing variables available for read-only or read/write access by your custom script by entering comma-delimited lists of variables in the **ReadOnlyVariables** and **ReadWriteVariables** fields on the **Script** page of the **Script Transformation Editor**. Keep in mind that variable names are case-sensitive. Use the **Value** property to read from and write to individual variables. The Script component handles any required locking behind the scenes as your script manipulates the variables at run time.  
+  
+> **Important:**  
+>  The collection of **ReadWriteVariables** is only available in the **PostExecute** method to maximize performance and minimize the risk of locking conflicts. Therefore you cannot directly increment the value of a package variable as you process each row of data. Increment the value of a local variable instead, and set the value of the package variable to the value of the local variable in the **PostExecute** method after all data has been processed. You can also use the [Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%252A) property to work around this limitation, as described later in this topic. However, writing directly to a package variable as each row is processed will negatively affect performance and increase the risk of locking conflicts.  
+  
+ For more information about the **Script** page of the **Script Transformation Editor**, see [Configuring the Script Component in the Script Component Editor](configuring-the-script-component-in-the-script-component-editor.md) and [Script Transformation Editor &#40;Script Page&#41;](../../data-flow/transformations/script-component.md).  
+  
+ The Script component creates a **Variables** collection class in the **ComponentWrapper** project item with a strongly-typed accessor property for the value of each preconfigured variable where the property has the same name as the variable itself. This collection is exposed through the **Variables** property of the **ScriptMain** class. The accessor property provides read-only or read/write permission to the value of the variable as appropriate. For example, if you have added an integer variable named `MyIntegerVariable` to the **ReadOnlyVariables** list, you can retrieve its value in your script by using the following code:  
+  
+ `Dim myIntegerVariableValue As Integer = Me.Variables.MyIntegerVariable`  
+  
+ You can also use the [Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%252A) property, accessed by calling `Me.VariableDispenser`, to work with variables in the Script component. In this case you are not using the typed and named accessor properties for variables, but accessing the variables directly. When using the [Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%252A), you must handle both the locking semantics and the casting of data types for variable values in your own code. You have to use the [Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Pipeline.ScriptComponent.VariableDispenser%252A) property instead of the named and typed accessor properties if you want to work with a variable that is not available at design time but is created programmatically at run time.  
+  
+## Related content
+
+- [Integration Services (SSIS) Variables](../../integration-services-ssis-variables.md)

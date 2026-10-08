@@ -1,0 +1,604 @@
+---
+title: Understand the Azure IoT Hub Query Language
+description: Learn how the SQL-like IoT Hub query language can be used to retrieve information about device/module twins and jobs from your IoT hub.
+author: sethmanheim
+
+ms.service: azure-iot-hub
+ms.topic: concept-article
+ms.date: 09/29/2026
+ms.author: sethm
+ms.custom: devx-track-csharp
+---
+
+# IoT Hub query language for device and module twins, jobs, and message routing
+
+IoT Hub provides a powerful SQL-like language to retrieve information regarding [device twins](iot-hub-devguide-device-twins.md), [module twins](iot-hub-devguide-module-twins.md), [jobs](iot-hub-devguide-jobs.md), and [message routing](iot-hub-devguide-messages-d2c.md). This article presents:
+
+* An introduction to the major features of the IoT Hub query language.
+* A detailed description of the language. For more information about query language for message routing, see [IoT Hub message routing query syntax](iot-hub-devguide-routing-query-syntax.md).
+
+For specific examples, see [Queries for IoT Hub device and module twins](#queries-for-iot-hub-device-and-module-twins) or [Queries for IoT Hub jobs](#queries-for-iot-hub-jobs).
+
+
+> **Note:**
+> Some of the features mentioned in this article, like cloud-to-device messaging, device twins, and device management, are only available in the standard tier of IoT Hub. For more information about the basic and standard/free IoT Hub tiers, see [Choose the right IoT Hub tier and size for your solution](https://learn.microsoft.com/azure/iot-hub/iot-hub-scaling).
+
+## Run IoT Hub queries
+
+You can run queries against your IoT hub directly in the Azure portal.
+
+1. Sign in to the [Azure portal](https://portal.azure.com) and navigate to your IoT hub.
+1. Select **Queries** from the **Device management** section of the navigation menu.
+1. Keep the prefilled `SELECT * FROM devices` query to retrieve device twins, or replace it with your own query.
+1. Select **Run query** to display the results.
+
+> **Important:**
+> Searches and filters on the **Devices** page and queries on the **Queries** page use eventually consistent data. Newly created devices and recent twin changes might not appear immediately, and deleted devices might remain in results temporarily. To check the current twin values for a known device, use a direct [Get Twin](https://learn.microsoft.com/rest/api/iothub/service/devices/get-twin) request instead of a query. For more information, see [Twin query limitations](#twin-query-limitations).
+
+You also can run queries within your applications using the Azure IoT service SDKs and service APIs.
+
+For example code implementing IoT Hub queries, see the [Query examples with the service SDKs](#query-examples-with-the-service-sdks) section.
+
+For links to SDK reference pages and samples, see [Azure IoT Hub SDKs](iot-hub-devguide-sdks.md).
+
+## Basics of an IoT Hub query
+
+Every IoT Hub query consists of SELECT and FROM clauses, with optional WHERE and GROUP BY clauses.
+
+Queries are run on a collection of JSON documents, for example device twins. The FROM clause indicates the document collection to be iterated on (either **devices**, **devices.modules**, or **devices.jobs**).
+
+Then, the filter in the WHERE clause is applied. With aggregations, the results of this step are grouped as specified in the GROUP BY clause. For each group, a row is generated as specified in the SELECT clause.
+
+```sql
+SELECT <select_list>
+  FROM <from_specification>
+  [WHERE <filter_condition>]
+  [GROUP BY <group_specification>]
+```
+
+### SELECT clause
+
+The `SELECT <select_list>` clause is required in every IoT Hub query. It specifies what values are retrieved from the query. It specifies the JSON values to be used to generate new JSON objects.
+For each element of the filtered (and optionally grouped) subset of the FROM collection, the projection phase generates a new JSON object. This object is constructed with the values specified in the SELECT clause.
+
+For example:
+
+* Return all values
+
+  ```sql
+  SELECT *
+  ```
+
+* Return specific properties
+
+  ```sql
+  SELECT DeviceID, LastActivityTime
+  ```
+
+* Aggregate the results of a query to return a count
+
+  ```sql
+  SELECT COUNT() as TotalNumber
+  ```
+
+Currently, selection clauses different than SELECT are only supported in aggregate queries on device twins.
+
+The following syntax is the grammar of the SELECT clause:
+
+```query syntax
+SELECT [TOP <max number>] <projection list>
+
+<projection_list> ::=
+    '*'
+    | <projection_element> AS alias [, <projection_element> AS alias]+
+
+<projection_element> :==
+    attribute_name
+    | <projection_element> '.' attribute_name
+    | <aggregate>
+
+<aggregate> :==
+    count()
+    | avg(<projection_element>)
+    | sum(<projection_element>)
+    | min(<projection_element>)
+    | max(<projection_element>)
+```
+
+`Attribute_name` refers to any property of the JSON document in the FROM collection.
+
+### FROM clause
+
+The `FROM <from_specification>` clause is required in every ioT Hub query. It must be one of three values:
+
+* **devices** to query device twins
+* **devices.modules** to query module twins
+* **devices.jobs** to query job per-device details
+
+For example:
+
+* Retrieve all device twins
+
+  ```sql
+  SELECT * FROM devices
+  ```
+
+### WHERE clause
+
+The `WHERE <filter_condition>` clause is optional. It specifies one or more conditions that the JSON documents in the FROM collection must satisfy to be included as part of the result. Any JSON document must evaluate the specified conditions to *true* to be included in the result.
+
+For example:
+
+* Retrieve all jobs that target a specific device
+
+  ```sql
+  SELECT * FROM devices.jobs
+    WHERE devices.jobs.deviceId = 'myDeviceId'
+  ```
+
+The allowed conditions are described in the [Expressions and conditions](#expressions-and-conditions) section.
+
+### GROUP BY clause
+
+The `GROUP BY <group_specification>` clause is optional. This clause executes after the filter specified in the WHERE clause, and before the projection specified in the SELECT. It groups documents based on the value of an attribute. These groups are used to generate aggregated values as specified in the SELECT clause.
+
+For example:
+
+* Return the count of devices that are reporting each telemetry configuration status
+
+  ```sql
+  SELECT properties.reported.telemetryConfig.status AS status,
+    COUNT() AS numberOfDevices
+  FROM devices
+  GROUP BY properties.reported.telemetryConfig.status
+  ```
+
+Currently, the GROUP BY clause is only supported when querying device twins.
+
+> **Caution:**
+> The term *group* is currently treated as a special keyword in queries. In case, you use `group` as your property name, consider surrounding it with double brackets to avoid errors, as shown in this example: `SELECT * FROM devices WHERE tags.[[group]].name = 'some_value'`.
+
+The formal syntax for GROUP BY is:
+
+```query syntax
+GROUP BY <group_by_element>
+<group_by_element> :==
+    attribute_name
+    | < group_by_element > '.' attribute_name
+```
+
+`Attribute_name` refers to any property of the JSON document in the FROM collection.
+
+### Query results pagination
+
+Query-result pagination is separate from the default **Devices** list in the Azure portal, which displays up to 15 devices and doesn't provide pagination through the complete device inventory. When using a service SDK to enumerate query results, continue requesting pages until no more results are available.
+
+A query object is instantiated with a max page size of **less than** or **equal to** 100 records. To obtain multiple pages, call the [nextAsTwin](how-to-device-twins.md?pivots=programming-language-node#create-a-device-twin-query) on Node.js SDK or [GetNextAsTwinAsync](how-to-device-twins.md?pivots=programming-language-csharp#create-a-device-twin-query) on .NET SDK method multiple times.
+A query object can expose multiple Next values, depending on the deserialization option required by the query. For example, a query object can return device twin or job objects, or plain JSON when using projections.
+
+## Expressions and conditions
+
+At a high level, an *expression*:
+
+* Evaluates to an instance of a JSON type (such as Boolean, number, string, array, or object).
+* Is defined by manipulating data coming from the device JSON document and constants using built-in operators and functions.
+
+*Conditions* are expressions that evaluate to a Boolean. Any constant different than Boolean **true** is considered as **false**. This rule includes **null**, **undefined**, any object or array instance, any string, and the Boolean **false**.
+
+The syntax for expressions is:
+
+```query syntax
+<expression> ::=
+    <constant> |
+    attribute_name |
+    <function_call> |
+    <expression> binary_operator <expression> |
+    <create_array_expression> |
+    '(' <expression> ')'
+
+<function_call> ::=
+    <function_name> '(' expression ')'
+
+<constant> ::=
+    <undefined_constant>
+    | <null_constant>
+    | <number_constant>
+    | <string_constant>
+    | <array_constant>
+
+<undefined_constant> ::= undefined
+<null_constant> ::= null
+<number_constant> ::= decimal_literal | hexadecimal_literal
+<string_constant> ::= string_literal
+<array_constant> ::= '[' <constant> [, <constant>]+ ']'
+```
+
+To understand what each symbol in the expressions syntax stands for, refer to the following table:
+
+| Symbol | Definition |
+| --- | --- |
+| attribute_name | Any property of the JSON document in the **FROM** collection. |
+| binary_operator | Any binary operator listed in the [Operators](#operators) section. |
+| function_name | Any function listed in the [Functions](#functions) section. |
+| decimal_literal | A float expressed in decimal notation. |
+| hexadecimal_literal | A number expressed by the string '0x' followed by a string of hexadecimal digits. |
+| string_literal | Unicode strings represented by a sequence of zero or more Unicode characters or escape sequences. String literals are enclosed in single quotes or double quotes. Allowed escapes: `\'`, `\"`, `\\`, `\uXXXX` for Unicode characters defined by four hexadecimal digits. |
+
+### Operators
+
+The following operators are supported:
+
+| Family | Operators |
+| --- | --- |
+| Arithmetic | +, -, *, /, % |
+| Logical | AND, OR, NOT |
+| Comparison | =, !=, <, >, <=, >=, <> |
+
+### Functions
+
+When querying twins and jobs the only supported function is:
+
+| Function | Description |
+| --- | --- |
+| IS_DEFINED(property) | Returns a Boolean indicating if the property is assigned a value (including `null`). |
+
+In routes conditions, the following math functions are supported:
+
+| Function | Description |
+| --- | --- |
+| ABS(x) | Returns the absolute (positive) value of the specified numeric expression. |
+| EXP(x) | Returns the exponential value of the specified numeric expression (e^x). |
+| POWER(x,y) | Returns the value of the specified expression to the specified power (x^y). |
+| SQUARE(x) | Returns the square of the specified numeric value. |
+| CEILING(x) | Returns the smallest integer value greater than, or equal to, the specified numeric expression. |
+| FLOOR(x) | Returns the largest integer less than or equal to the specified numeric expression. |
+| SIGN(x) | Returns the positive (+1), zero (0), or negative (-1) sign of the specified numeric expression. |
+| SQRT(x) | Returns the square root of the specified numeric value. |
+
+In routes conditions, the following type checking and casting functions are supported:
+
+| Function | Description |
+| --- | --- |
+| AS_NUMBER | Converts the input string to a number. `noop` if input is a number; `Undefined` if string doesn't represent a number. |
+| IS_ARRAY | Returns a Boolean value indicating if the type of the specified expression is an array. |
+| IS_BOOL | Returns a Boolean value indicating if the type of the specified expression is a Boolean. |
+| IS_DEFINED | Returns a Boolean indicating if the property is a value. This function is supported only when the value is a primitive type. Primitive types include string, Boolean, numeric, or `null`. DateTime, object types, and arrays aren't supported. |
+| IS_NULL | Returns a Boolean value indicating if the type of the specified expression is null. |
+| IS_NUMBER | Returns a Boolean value indicating if the type of the specified expression is a number. |
+| IS_OBJECT | Returns a Boolean value indicating if the type of the specified expression is a JSON object. |
+| IS_PRIMITIVE | Returns a Boolean value indicating if the type of the specified expression is a primitive (string, Boolean, numeric, or `null`). |
+| IS_STRING | Returns a Boolean value indicating if the type of the specified expression is a string. |
+
+In routes conditions, the following string functions are supported:
+
+| Function | Description |
+| --- | --- |
+| CONCAT(x, y, …) | Returns a string that is the result of concatenating two or more string values. |
+| LENGTH(x) | Returns the number of characters of the specified string expression. |
+| LOWER(x) | Returns a string expression after converting uppercase character data to lowercase. |
+| UPPER(x) | Returns a string expression after converting lowercase character data to uppercase. |
+| SUBSTRING(string, start [, length]) | Returns part of a string expression starting at the specified character zero-based position and continues to the specified length, or to the end of the string. |
+| INDEX_OF(string, fragment) | Returns the starting position of the first occurrence of the second string expression within the first specified string expression, or -1 if the string isn't found. |
+| STARTS_WITH(x, y) | Returns a Boolean indicating whether the first string expression starts with the second. |
+| ENDS_WITH(x, y) | Returns a Boolean indicating whether the first string expression ends with the second. |
+| CONTAINS(x,y) | Returns a Boolean indicating whether the first string expression contains the second. |
+
+## Query examples with the service SDKs
+
+### C# example
+
+The query functionality is exposed by the [Azure IoT Hub service SDK for .NET](iot-hub-devguide-sdks.md#azure-iot-hub-service-sdks) in the `RegistryManager` class.
+
+Here's an example of a simple query:
+
+```csharp
+var query = registryManager.CreateQuery("SELECT * FROM devices", 100);
+while (query.HasMoreResults)
+{
+    var page = await query.GetNextAsTwinAsync();
+    foreach (var twin in page)
+    {
+        // do work on twin object
+    }
+}
+```
+
+The query object is instantiated with the parameters mentioned in the [Query results pagination](#query-results-pagination) section. Multiple pages are retrieved by calling the `GetNextAsTwinAsync` methods multiple times.
+
+### Node.js example
+
+The query functionality is exposed by the [Azure IoT Hub service SDK for Node.js](iot-hub-devguide-sdks.md#azure-iot-hub-service-sdks) in the `Registry` object.
+
+Here's an example of a simple query:
+
+```javascript
+var query = registry.createQuery('SELECT * FROM devices', 100);
+var onResults = function(err, results) {
+    if (err) {
+        console.error('Failed to fetch the results: ' + err.message);
+    } else {
+        // Do something with the results
+        results.forEach(function(twin) {
+            console.log(twin.deviceId);
+        });
+
+        if (query.hasMoreResults) {
+            query.nextAsTwin(onResults);
+        }
+    }
+};
+query.nextAsTwin(onResults);
+```
+
+The query object is instantiated with the parameters mentioned in the [Query results pagination](#query-results-pagination) section. Multiple pages are retrieved by calling the `nextAsTwin` method multiple times.  
+
+## Queries for IoT Hub device and module twins
+
+[Device twins](iot-hub-devguide-device-twins.md) and [module twins](iot-hub-devguide-module-twins.md) can contain arbitrary JSON objects as both tags and properties. IoT Hub enables you to query device twins and module twins as a single JSON document containing all twin information.
+
+Here's a sample IoT hub device twin (module twin would be similar just with a parameter for moduleId):
+
+```json
+{
+    "deviceId": "myDeviceId",
+    "etag": "AAAAAAAAAAc=",
+    "status": "enabled",
+    "statusUpdateTime": "0001-01-01T00:00:00",
+    "connectionState": "Disconnected",
+    "lastActivityTime": "0001-01-01T00:00:00",
+    "cloudToDeviceMessageCount": 0,
+    "authenticationType": "sas",
+    "x509Thumbprint": {
+        "primaryThumbprint": null,
+        "secondaryThumbprint": null
+    },
+    "version": 2,
+    "tags": {
+        "location": {
+            "region": "US",
+            "plant": "Redmond43"
+        }
+    },
+    "properties": {
+        "desired": {
+            "telemetryConfig": {
+                "configId": "db00ebf5-eeeb-42be-86a1-458cccb69e57",
+                "sendFrequencyInSecs": 300
+            },
+            "$metadata": {
+            ...
+            },
+            "$version": 4
+        },
+        "reported": {
+            "connectivity": {
+                "type": "cellular"
+            },
+            "telemetryConfig": {
+                "configId": "db00ebf5-eeeb-42be-86a1-458cccb69e57",
+                "sendFrequencyInSecs": 300,
+                "status": "Success"
+            },
+            "$metadata": {
+            ...
+            },
+            "$version": 7
+        }
+    }
+}
+```
+
+### Device twin queries
+
+IoT Hub exposes the device twins as a document collection called **devices**. For example, the most basic query retrieves the whole set of device twins:
+
+```sql
+SELECT * FROM devices
+```
+
+> **Note:**
+> [Azure IoT SDKs](iot-hub-devguide-sdks.md) support paging of large results.
+
+You can aggregate the results of a query using the SELECT clause. For example, the following query gets a count of the total number of devices in an IoT hub:
+
+```sql
+SELECT COUNT() as totalNumberOfDevices FROM devices
+```
+
+Filter query results using the WHERE clause. For example, to receive device twins where the `location.region` tag is set to **US** use the following query:
+
+```sql
+SELECT * FROM devices
+WHERE tags.location.region = 'US'
+```
+
+Create complex WHERE clauses by using Boolean operators and arithmetic comparisons. For example, the following query retrieves device twins located in the US and configured to send telemetry less than every minute:
+
+```sql
+SELECT * FROM devices
+  WHERE tags.location.region = 'US'
+    AND properties.reported.telemetryConfig.sendFrequencyInSecs >= 60
+```
+
+You can also use array constants with the `IN` and `NIN` (not in) operators. For example, the following query retrieves device twins that report either WiFi or wired connectivity:
+
+```sql
+SELECT * FROM devices
+  WHERE properties.reported.connectivity IN ['wired', 'wifi']
+```
+
+It's often necessary to identify all device twins that contain a specific property. IoT Hub supports the function `is_defined()` for this purpose. For example, the following query retrieves device twins that define the `connectivity` property:
+
+```SQL
+SELECT * FROM devices
+  WHERE is_defined(properties.reported.connectivity)
+```
+
+Refer to the [WHERE clause](iot-hub-devguide-query-language.md#where-clause) section for the full reference of the filtering capabilities.
+
+Grouping is also supported. For example, the following query returns the count of devices in each telemetry configuration status:
+
+```sql
+SELECT properties.reported.telemetryConfig.status AS status,
+    COUNT() AS numberOfDevices
+  FROM devices
+  GROUP BY properties.reported.telemetryConfig.status
+```
+
+This grouping query would return a result similar to the following example:
+
+```json
+[
+    {
+        "numberOfDevices": 3,
+        "status": "Success"
+    },
+    {
+        "numberOfDevices": 2,
+        "status": "Pending"
+    },
+    {
+        "numberOfDevices": 1,
+        "status": "Error"
+    }
+]
+```
+
+In this example, three devices reported successful configuration, two are still applying the configuration, and one reported an error.
+
+Projection queries allow developers to return only the properties they care about. For example, to retrieve the last activity time along with the device ID of all enabled devices that are disconnected, use the following query:
+
+```sql
+SELECT DeviceId, LastActivityTime FROM devices WHERE status = 'enabled' AND connectionState = 'Disconnected'
+```
+
+The result of that query would look like the following example:
+
+```json
+[
+  {
+    "deviceId": "AZ3166Device",
+    "lastActivityTime": "2021-05-07T00:50:38.0543092Z"
+  }
+]
+```
+
+### Module twin queries
+
+Querying on module twins is similar to querying on device twins, but using a different collection/namespace; instead of from `devices`, you query from `devices.modules`:
+
+```sql
+SELECT * FROM devices.modules
+```
+
+We don't allow join between the devices and devices.modules collections. If you want to query module twins across devices, you do it based on tags. The following query returns all module twins across all devices with the scanning status:
+
+```sql
+SELECT * FROM devices.modules WHERE properties.reported.status = 'scanning'
+```
+
+The following query returns all module twins with the scanning status, but only on the specified subset of devices:
+
+```sql
+SELECT * FROM devices.modules
+  WHERE properties.reported.status = 'scanning'
+  AND deviceId IN ['device1', 'device2']
+```
+
+### Twin query limitations
+
+> **Important:**
+> Query results are eventually consistent operations and delays of up to 30 minutes should be tolerated. In most instances, twin query returns results in the order of a few seconds. IoT Hub strives to provide low latency for all operations. However, due to network conditions and other unpredictable factors it can't guarantee a certain latency. 
+
+An alternative to twin queries is to query individual device twins by ID by using the [get twin REST API](https://learn.microsoft.com/rest/api/iothub/service/devices/get-twin). This API always returns the latest values and has higher throttling limits. You can issue the REST API directly or use the equivalent functionality in one of the [Azure IoT Hub Service SDKs](iot-hub-devguide-sdks.md#azure-iot-hub-service-sdks).
+
+Query expressions can have a maximum length of 8,192 characters.
+
+Currently, comparisons are supported only between primitive types (no objects), for instance `... WHERE properties.desired.config = properties.reported.config` is supported only if those properties have primitive values.
+
+We recommend to not take a dependency on `lastActivityTime` found in Device Identity Properties for Twin Queries for any scenario. This field doesn't guarantee an accurate gauge of device status. Instead, use IoT Device Lifecycle events to manage device state and activities. For information on how to use IoT Hub Lifecycle events in your solution, see [React to IoT Hub events by using Event Grid to trigger actions](iot-hub-event-grid.md).
+
+> **Note:**
+> Avoid making any assumptions about the maximum latency of this operation. See [Latency Solutions](iot-hub-devguide-quotas-throttling.md) for more information on how to build your solution taking latency into account.
+
+## Queries for IoT Hub jobs
+
+[Jobs](iot-hub-devguide-jobs.md) provide a way to execute operations on sets of devices. Each device twin contains the information of the jobs that target it in a collection called *jobs*. IoT Hub enables you to query jobs as a single JSON document containing all twin information.
+
+Here's a sample IoT hub device twin that is part of a job called *myJobId*:
+
+```json
+{
+    "deviceId": "myDeviceId",
+    "etag": "AAAAAAAAAAc=",
+    "tags": {
+        ...
+    },
+    "properties": {
+        ...
+    },
+    "jobs": [
+        {
+            "deviceId": "myDeviceId",
+            "jobId": "myJobId",
+            "jobType": "scheduleUpdateTwin",
+            "status": "completed",
+            "startTimeUtc": "2016-09-29T18:18:52.7418462",
+            "endTimeUtc": "2016-09-29T18:20:52.7418462",
+            "createdDateTimeUtc": "2016-09-29T18:18:56.7787107Z",
+            "lastUpdatedDateTimeUtc": "2016-09-29T18:18:56.8894408Z",
+            "outcome": {
+                "deviceMethodResponse": null
+            }
+        },
+        ...
+    ]
+}
+```
+
+Currently, this collection is queryable as `devices.jobs` in the IoT Hub query language.
+
+> **Important:**
+> Currently, the jobs property isn't returned when querying device twins. That is, queries that contain `FROM devices`. The jobs property can only be accessed directly with queries using `FROM devices.jobs`.
+
+For example, the following query returns all jobs (past and scheduled) that affect a single device:
+
+```sql
+SELECT * FROM devices.jobs
+  WHERE devices.jobs.deviceId = 'myDeviceId'
+```
+
+Note how this query provides the device-specific status (and possibly the direct method response) of each job returned.
+
+It's also possible to filter with arbitrary Boolean conditions on all object properties in the `devices.jobs` collection.
+
+For example, the following query retrieves all completed device twin update jobs that were created after September 2016 for a specific device:
+
+```sql
+SELECT * FROM devices.jobs
+  WHERE devices.jobs.deviceId = 'myDeviceId'
+    AND devices.jobs.jobType = 'scheduleUpdateTwin'
+    AND devices.jobs.status = 'completed'
+    AND devices.jobs.createdTimeUtc > '2016-09-01'
+```
+
+You can also retrieve the per-device outcomes of a single job.
+
+```sql
+SELECT * FROM devices.jobs
+  WHERE devices.jobs.jobId = 'myJobId'
+```
+
+### Jobs query limitations
+
+Query expressions can have a maximum length of 8,192 characters.
+
+Currently, queries on `devices.jobs` don't support:
+
+* Projections, therefore only `SELECT *` is possible.
+* Conditions that refer to the device twin in addition to job properties (see the preceding section).
+* Aggregations, such as *count*, *avg*, and *group by*.
+
+## Related content
+
+* Learn about routing messages based on message properties or message body with the [IoT Hub message routing query syntax](iot-hub-devguide-routing-query-syntax.md).

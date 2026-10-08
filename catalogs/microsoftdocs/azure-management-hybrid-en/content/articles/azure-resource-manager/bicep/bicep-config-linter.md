@@ -1,0 +1,248 @@
+---
+title: Linter settings for Bicep config
+description: Describes how to customize configuration values for the Bicep linter
+ms.topic: article
+ms.custom: devx-track-bicep
+ms.date: 06/15/2026
+---
+
+# Add linter settings in the Bicep config file
+
+In a **bicepconfig.json** file, you can customize validation settings for the
+[Bicep linter](linter.md). The linter uses these settings when evaluating your Bicep files for best
+practices.
+
+This article describes the settings that are available for working with the Bicep linter.
+
+## Customize linter
+
+Find the linter settings under the `analyzers` element. Use these settings to enable or disable the
+linter, supply rule-specific values, and set the level of rules.
+
+The following example shows the rules that you can configure.
+
+```json
+{
+  "analyzers": {
+    "core": {
+      "enabled": true,
+      "rules": {
+        "adminusername-should-not-be-literal": {
+          "level": "warning"
+        },
+        "artifacts-parameters": {
+          "level": "warning"
+        },
+        "decompiler-cleanup": {
+          "level": "warning"
+        },
+        "explicit-values-for-loc-params": {
+          "level": "off"
+        },
+        "max-asserts": {
+          "level": "error"
+        },
+        "max-outputs": {
+          "level": "error"
+        },
+        "max-params": {
+          "level": "error"
+        },
+        "max-resources": {
+          "level": "error"
+        },
+        "max-variables": {
+          "level": "error"
+        },
+        "nested-deployment-template-scoping": {
+          "level": "error"
+        },
+        "no-conflicting-metadata" : {
+          "level": "warning"
+        },
+        "no-deployments-resources" : {
+          "level": "warning"
+        },
+        "no-explicit-any": {
+          "level": "warning"
+        },
+        "no-hardcoded-env-urls": {
+          "level": "warning"
+        },
+        "no-hardcoded-location": {
+          "level": "off"
+        },
+        "no-hardcoded-outputs": {
+          "level": "off"
+        },
+        "no-loc-expr-outside-params": {
+          "level": "off"
+        },
+        "no-module-name": {
+          "level": "off"
+        },
+        "no-unnecessary-dependson": {
+          "level": "warning"
+        },
+        "no-unused-existing-resources": {
+          "level": "warning"
+        },
+        "no-unused-imports": {
+          "level": "warning"
+        },
+        "no-unused-params": {
+          "level": "warning"
+        },
+        "no-unused-types": {
+          "level": "warning"
+        },
+        "no-unused-vars": {
+          "level": "warning"
+        },
+        "outputs-should-not-contain-secrets": {
+          "level": "warning"
+        },
+        "prefer-interpolation": {
+          "level": "warning"
+        },
+        "prefer-unquoted-property-names": {
+          "level": "warning"
+        },
+        "protect-commandtoexecute-secrets": {
+          "level": "warning"
+        },
+        "secure-parameter-default": {
+          "level": "warning"
+        },
+        "secure-params-in-nested-deploy": {
+          "level": "warning"
+        },
+        "secure-params-in-parameters-file": {
+          "level": "warning"
+        },
+        "secure-secrets-in-params": {
+          "level": "warning"
+        },
+        "simplify-interpolation": {
+          "level": "warning"
+        },
+        "simplify-json-null": {
+          "level": "warning"
+        },
+        "use-description-outputs": {
+          "level": "off"
+        },
+        "use-description-params": {
+          "level": "off"
+        },
+        "use-description-type-properties": {
+          "level": "off"
+        },
+        "use-description-types": {
+          "level": "off"
+        },
+        "use-description-vars": {
+          "level": "off"
+        },
+        "use-parent-property": {
+          "level": "warning"
+        },
+        "use-recent-api-versions": {
+          "level": "off",
+          "maxAgeInDays": 730,
+          "gracePeriodInDays": 90
+        },
+        "use-recent-module-versions": {
+          "level": "off"
+        },
+        "use-recognized-resource-type": {
+          "level": "warning"
+        },
+        "use-resource-id-functions": {
+          "level": "off"
+        },
+        "use-resource-symbol-reference": {
+          "level": "warning"
+        },
+        "use-safe-access": {
+          "level": "warning"
+        },
+        "use-secure-value-for-secure-inputs": {
+          "level": "error"
+        },
+        "use-stable-resource-identifiers": {
+          "level": "warning"
+        },
+        "use-stable-vm-image": {
+          "level": "warning"
+        },
+        "use-user-defined-types": {
+          "level": "off"
+        },
+        "what-if-short-circuiting": {
+          "level": "off"
+        }
+      }
+    }
+  }
+}
+```
+
+The properties are:
+
+- **enabled**: specify **true** to enable the linter, **false** to disable it.
+- **verbose**: specify **true** to show the bicepconfig.json file used by Visual Studio Code.
+- **rules**: specify rule-specific values. Each rule has a level that determines how the linter
+  responds when it finds a violation.
+
+The available values for **level** are:
+
+| **level** | **Build-time behavior** | **Editor behavior** |
+| --- | --- | --- |
+| `Error` | Violations appear as errors in command-line build output, and cause the build to fail. | Offending code is underlined with a red squiggle and appears in Problems tab. |
+| `Warning` | Violations appear as Warnings in command-line build output, but they don't cause the build to fail. | Offending code is underlined with a yellow squiggle and appears in Problems tab. |
+| `Info` | Violations don't appear in the command-line build output. | Offending code is underlined with a blue squiggle and appears in Problems tab. |
+| `Off` | Suppressed completely. | Suppressed completely. |
+
+## Environment URLs
+
+For the rule about hardcoded environment URLs, customize which URLs are checked. By default,
+the following settings are applied:
+
+```json
+{
+  "analyzers": {
+    "core": {
+      "enabled": true,
+      "rules": {
+        "no-hardcoded-env-urls": {
+          "level": "warning",
+          "disallowedhosts": [
+            "azuredatalakeanalytics.net",
+            "azuredatalakestore.net",
+            "batch.core.windows.net",
+            "core.windows.net",
+            "database.windows.net",
+            "datalake.azure.net",
+            "gallery.azure.com",
+            "graph.windows.net",
+            "login.microsoftonline.com",
+            "management.azure.com",
+            "management.core.windows.net",
+            "vault.azure.net"
+          ],
+          "excludedhosts": [
+            "schema.management.azure.com"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## Next steps
+
+- [Configure your Bicep environment](bicep-config.md)
+- [Add module settings in Bicep config](bicep-config-modules.md)
+- Learn about the [Bicep linter](linter.md)

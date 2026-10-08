@@ -1,0 +1,43 @@
+---
+title: "SystemStore Property (SecurityCertificate)"
+description: "SystemStore Property (SecurityCertificate Class)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: wmi
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SystemStore property"
+apilocation: "sqlmgmproviderxpsp2up.mof"
+apiname: "SystemStore Property (SecurityCertificate Class)"
+apitype: "MOFDef"
+---
+# SystemStore Property (SecurityCertificate Class)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Gets the system store for the security certificate.  
+  
+## Syntax  
+  
+```  
+  
+object.SystemStore [= value]  
+```  
+  
+## Parts  
+ *object*  
+ A [SecurityCertificate Class](securitycertificate-class.md) object that represents a security certificate.  
+  
+## Property Value/Return Value  
+ A string value that specifies the system store for the security certificate.  
+  
+## Remarks  
+  
+## Related content
+
+- [Configuring Server Network Protocols and Net-Libraries](https://msdn.microsoft.com/library/ms177485\(v=sql.100\).aspx)

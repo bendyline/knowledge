@@ -1,0 +1,168 @@
+---
+title: CREATE DATABASE ENCRYPTION KEY (Transact-SQL)
+description: CREATE DATABASE ENCRYPTION KEY (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: 02/27/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "DATABASE_ENCRYPTION_KEY_TSQL"
+  - "ENCRYPTION_KEY_TSQL"
+  - "sql13.swb.dbencryptionkeyo.f1"
+  - "ENCRYPTION KEY"
+  - "DATABASE ENCRYPTION KEY"
+  - "CREATE_DATABASE_ENCRYPTION_KEY_TSQL"
+  - "CREATE DATABASE ENCRYPTION KEY"
+  - "sql13.swb.dbencryptionkeyg.f1"
+  - "CREATE DATABASE ENCRYPTION"
+  - "CREATE_DATABASE_ENCRYPTION_TSQL"
+helpviewer_keywords:
+  - "database encryption key"
+  - "CREATE DATABASE ENCRYPTION KEY statement"
+  - "database encryption key, create"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+
+# CREATE DATABASE ENCRYPTION KEY (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Creates an encryption key for transparently encrypting a database. For more information about transparent data encryption (TDE), see [Transparent Data Encryption (TDE)](../../relational-databases/security/encryption/transparent-data-encryption.md).  
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+-- Syntax for SQL Server  
+
+CREATE DATABASE ENCRYPTION KEY  
+       WITH ALGORITHM = { AES_128 | AES_192 | AES_256 | TRIPLE_DES_3KEY }  
+   ENCRYPTION BY SERVER   
+    {  
+        CERTIFICATE Encryptor_Name |  
+        ASYMMETRIC KEY Encryptor_Name  
+    }  
+[ ; ]  
+```  
+  
+  
+## Arguments
+
+WITH ALGORITHM = { AES_128 \| AES_192 \| AES_256 \| TRIPLE_DES_3KEY  }  
+Specifies the encryption algorithm for the encryption key.
+
+> **Warning:**
+> Beginning with SQL Server 2016, all algorithms other than AES_128, AES_192, and AES_256 are deprecated. 
+> To use older algorithms (not recommended) you must set the database to database compatibility level 120 or lower.  
+  
+ENCRYPTION BY SERVER CERTIFICATE Encryptor_Name  
+Specifies the name of the encryptor used to encrypt the database encryption key.  
+  
+ENCRYPTION BY SERVER ASYMMETRIC KEY Encryptor_Name
+Specifies the name of the asymmetric key used to encrypt the database encryption key. To encrypt the database encryption key with an asymmetric key, the asymmetric key must reside on an extensible key management provider.  
+  
+## Remarks
+
+A database encryption key is required before a database can be encrypted by using transparent data encryption (TDE). When a database is transparently encrypted, the whole database is encrypted at the file level, without any special code modifications. The certificate or asymmetric key that encrypts the database encryption key must be located in the `master` system database.
+
+Certificates or asymmetric keys used for TDE are limited to a private key size of 3072 bits.
+
+Database encryption statements are allowed only on user databases.
+
+The database encryption key can't be exported from the database. It's available only to the system, to users who have debugging permissions on the server, and to users who have access to the certificates that encrypt and decrypt the database encryption key.
+
+The database encryption key doesn't have to be regenerated when a database owner (dbo) is changed.
+
+A database encryption key is automatically created for a  SQL Database
+ database. You don't need to create a key using the `CREATE DATABASE ENCRYPTION KEY` statement.  
+  
+## Permissions  
+Requires CONTROL permission on the database and VIEW DEFINITION permission on the certificate or asymmetric key that is used to encrypt the database encryption key.  
+  
+## Examples
+
+For additional examples using TDE, see [Transparent Data Encryption (TDE)](../../relational-databases/security/encryption/transparent-data-encryption.md), [Enable TDE on SQL Server Using EKM](../../relational-databases/security/encryption/enable-tde-on-sql-server-using-ekm.md), and [Extensible Key Management Using Azure Key Vault (SQL Server)](../../relational-databases/security/encryption/extensible-key-management-using-azure-key-vault-sql-server.md).
+
+### A. Create a database encryption key
+
+The following example creates a database encryption key by using the `AES_256` algorithm, and protects the private key with a certificate named `MyServerCert`.
+
+```sql
+USE AdventureWorks2022;
+GO
+CREATE DATABASE ENCRYPTION KEY
+WITH ALGORITHM = AES_256
+ENCRYPTION BY SERVER CERTIFICATE MyServerCert;
+GO
+```
+
+### B. Restore a TDE-encrypted database to a different instance
+
+To restore a TDE-encrypted database to a different SQL Server instance, you must first import the certificate that protects the database encryption key. Back up the certificate and its private key from the source server, then create the certificate on the target instance before you restore the database.
+
+On the source server, back up the certificate. Replace `<password>` with a strong password:
+
+```sql
+-- On the SOURCE server
+USE master;
+GO
+BACKUP CERTIFICATE MyServerCert
+TO FILE = 'C:\Backup\MyServerCert.cer'
+WITH PRIVATE KEY (
+    FILE = 'C:\Backup\MyServerCert.pvk',
+    ENCRYPTION BY PASSWORD = '<password>'
+);
+GO
+```
+
+On the target server, create the certificate from the backup files, then restore the database. Use the same password that you used to back up the certificate:
+
+```sql
+-- On the TARGET server
+USE master;
+GO
+CREATE CERTIFICATE MyServerCert
+FROM FILE = 'C:\Backup\MyServerCert.cer'
+WITH PRIVATE KEY (
+    FILE = 'C:\Backup\MyServerCert.pvk',
+    DECRYPTION BY PASSWORD = '<password>'
+);
+GO
+
+-- Now you can restore the TDE-encrypted database
+RESTORE DATABASE AdventureWorks2022
+FROM DISK = 'C:\Backup\AdventureWorks2022.bak'
+WITH MOVE 'AdventureWorks2022_Data' TO 'D:\Data\AdventureWorks2022.mdf',
+     MOVE 'AdventureWorks2022_Log' TO 'D:\Data\AdventureWorks2022.ldf';
+GO
+```
+
+> **Important:**
+> The certificate must have the same name and be created from the same backup files. If the certificate doesn't match, the restore fails with an encryption key error.
+
+## Related content
+
+- [Transparent data encryption (TDE)](../../relational-databases/security/encryption/transparent-data-encryption.md)
+- [SQL Server encryption](../../relational-databases/security/encryption/sql-server-encryption.md)
+- [SQL Server and Database Encryption Keys (Database Engine)](../../relational-databases/security/encryption/sql-server-and-database-encryption-keys-database-engine.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)
+- [ALTER DATABASE SET options (Transact-SQL)](alter-database-transact-sql-set-options.md)
+- [ALTER DATABASE ENCRYPTION KEY (Transact-SQL)](alter-database-encryption-key-transact-sql.md)
+- [DROP DATABASE ENCRYPTION KEY (Transact-SQL)](drop-database-encryption-key-transact-sql.md)
+- [sys.dm_database_encryption_keys (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-database-encryption-keys-transact-sql.md)
+- [BACKUP CERTIFICATE (Transact-SQL)](backup-certificate-transact-sql.md)
+- [CREATE CERTIFICATE (Transact-SQL)](create-certificate-transact-sql.md)

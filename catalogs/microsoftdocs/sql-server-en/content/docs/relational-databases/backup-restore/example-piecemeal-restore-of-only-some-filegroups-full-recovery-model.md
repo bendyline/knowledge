@@ -1,0 +1,103 @@
+---
+title: "Piecemeal restore: some filegroups (full recovery model)"
+description: This example shows a piecemeal restore of only some filegroups in SQL Server of a database using the full recovery model.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "12/17/2019"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "full recovery model [SQL Server], RESTORE example"
+  - "piecemeal restores [SQL Server], full recovery model"
+  - "restore sequences [SQL Server], piecemeal"
+---
+# Example: Piecemeal Restore of Only Some Filegroups (Full Recovery Model)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This topic is relevant for  SQL Server 
+ databases under the full recovery model that contain multiple files or filegroups.  
+  
+ A piecemeal restore sequence restores and recovers a database in stages at the filegroup level, starting with the primary and all read/write, secondary filegroups.  
+  
+ In this example, a database named `adb`, which uses the full recovery model, contains three filegroups. Filegroup `A` is read/write, and filegroup `B` and filegroup `C` are read-only. Initially, all of the filegroups are online.  
+  
+ The primary and filegroup `B` of database `adb` appear to be damaged. The primary filegroup is fairly small and can be restored quickly. The database administrator decides to restore them by using a piecemeal restore sequence. First, the primary filegroup and the subsequent transaction logs are restored the database is recovered.  
+  
+ The intact filegroups `A` and `C` contain critical data. Therefore, they will be recovered next to bring them online as quickly as possible. Finally, the damaged secondary filegroup, `B`, is restored and recovered.  
+  
+## Restore Sequences:  
+  
+> **Note:**  
+>  The syntax for an online restore sequence is the same as for an offline restore sequence.  
+  
+1.  Create a tail log backup of database `adb`. This step is essential to make the intact filegroups `A` and `C` current with the recovery point of the database.  
+  
+    ```  
+    BACKUP LOG adb TO tailLogBackup WITH NORECOVERY  
+    ```  
+  
+2.  Partial restore of the primary filegroup.  
+  
+    ```  
+    RESTORE DATABASE adb FILEGROUP='Primary' FROM backup   
+    WITH PARTIAL, NORECOVERY  
+    RESTORE LOG adb FROM log_backup1 WITH NORECOVERY  
+    RESTORE LOG adb FROM log_backup2 WITH NORECOVERY  
+    RESTORE LOG adb FROM log_backup3 WITH NORECOVERY  
+    RESTORE LOG adb FROM tailLogBackup WITH RECOVERY  
+    ```  
+  
+     At this point the primary is online. Files in filegroups `A`, `B`, and `C` are recovery pending, and the filegroups are offline.  
+  
+3.  Online restore of filegroups `A` and `C`.  
+  
+     Because their data is undamaged, these filegroups do not have to be restored from a backup, but they do have to be recovered to bring them online.  
+  
+     The database administrator recovers `A` and `C` immediately.  
+  
+    ```  
+    RESTORE DATABASE adb FILEGROUP='A', FILEGROUP='C' WITH RECOVERY  
+    ```  
+  
+     At this point the primary and filegroups `A` and `C` are online. Files in filegroup `B` remain recovery pending, with the filegroup offline.  
+  
+4.  Online restore of filegroup `B`.  
+
+   Files in filegroup `B` are restored any time thereafter.  
+  
+   > **Note:**  
+   >  The backup of filegroup `B` was taken after the filegroup became read-only; therefore, these files do not have to be rolled forward.  
+  
+   ```sql  
+   RESTORE DATABASE adb FILEGROUP='B' FROM backup WITH RECOVERY  
+   ```  
+  
+   All filegroups are now online.  
+  
+## Additional Examples  
+  
+-   [Example: Piecemeal Restore of Database (Simple Recovery Model)](example-piecemeal-restore-of-database-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Simple Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-simple-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Only File (Simple Recovery Model)](example-online-restore-of-a-read-only-file-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Database (Full Recovery Model)](example-piecemeal-restore-of-database-full-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Write File (Full Recovery Model)](example-online-restore-of-a-read-write-file-full-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Only File (Full Recovery Model)](example-online-restore-of-a-read-only-file-full-recovery-model.md)  
+  
+## Related content
+
+- [BACKUP (Transact-SQL)](../../t-sql/statements/backup-transact-sql.md)
+- [Online Restore (SQL Server)](online-restore-sql-server.md)
+- [Apply Transaction Log Backups (SQL Server)](apply-transaction-log-backups-sql-server.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)
+- [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)

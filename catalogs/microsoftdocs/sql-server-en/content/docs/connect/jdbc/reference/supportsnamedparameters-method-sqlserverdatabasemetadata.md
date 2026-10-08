@@ -1,0 +1,40 @@
+---
+title: "supportsNamedParameters Method (SQLServerDatabaseMetaData)"
+description: "supportsNamedParameters Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.supportsNamedParameters"
+apitype: "Assembly"
+---
+# supportsNamedParameters Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether this database supports named parameters in callable statements.  
+  
+## Syntax  
+  
+```  
+  
+public boolean supportsNamedParameters()  
+```  
+  
+## Return Value  
+ **true** if supported. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This supportsNamedParameters method is specified by the supportsNamedParameters method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

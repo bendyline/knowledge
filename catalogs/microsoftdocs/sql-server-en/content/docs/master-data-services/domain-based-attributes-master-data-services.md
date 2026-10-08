@@ -1,0 +1,63 @@
+---
+title: Domain-Based Attributes
+description: Learn about domain-based attributes in Master Data Services, which have values populated from another entity. Users must pick a value from a list.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "domain-based attributes [Master Data Services], about domain-based attributes"
+  - "domain-based attributes [Master Data Services]"
+  - "attributes [Master Data Services], domain-based attributes"
+---
+# Domain-Based Attributes (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, a domain-based attribute is an attribute with values that are populated by members from another entity. You can think of a domain-based attribute as a constrained list; domain-based attributes prevent users from entering attribute values that are not valid. To select an attribute value, the user must pick from a list.  
+  
+## Domain-Based Attribute Example  
+ In the following image, the Product entity has a domain-based attribute called Subcategory. The Subcategory attribute is populated by values from the Subcategory entity.  
+  
+ The Subcategory entity has a domain-based attribute called Category. The Category attribute is populated by values from the Category entity.  
+  
+ Domain-Based Attributes in an Entity  
+  
+## Use Same Entity for Multiple Domain-Based Attributes  
+ You can use the same entity as a domain-based attribute of multiple entities. For example, you can create an entity called YesNoIndicator with the members: Yes, No, and Maybe. You can create a domain-based attribute named InStock and use the YesNoIndicator entity as the source. You can also create another domain-based attribute named Approved and use the YesNoIndicator entity as a source. Any time you want users to choose from a list of the YesNoIndicator entity's members, you can use the entity as a domain-based attribute.  
+  
+## Domain-Based Attributes Form Derived Hierarchies  
+ Domain-based attribute relationships are the basis for derived hierarchies. For more information, see [Derived Hierarchies (Master Data Services)](derived-hierarchies-master-data-services.md).  
+  
+## Related Tasks  
+  
+| Task Description | Topic |
+| --- | --- |
+| Create a new domain-based attribute that is sourced from an existing entity. | [Create a Domain-Based Attribute (Master Data Services)](create-a-domain-based-attribute-master-data-services.md) |
+| Create a new entity. | [Create an Entity (Master Data Services)](create-an-entity-master-data-services.md) |
+  
+## Related content
+
+- [Derived Hierarchies (Master Data Services)](derived-hierarchies-master-data-services.md)
+- [Attributes (Master Data Services)](attributes-master-data-services.md)
+- [Entities (Master Data Services)](entities-master-data-services.md)

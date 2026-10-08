@@ -1,0 +1,66 @@
+---
+title: "SAP BW Destination Editor (Advanced Page)"
+description: "SAP BW Destination Editor (Advanced Page)"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: ui-reference
+f1_keywords:
+  - "sql13.dts.designer.sapbwdestination.advanced.f1"
+---
+# SAP BW Destination Editor (Advanced Page)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Use the **Advanced** page of the **SAP BW Destination Editor** to set advanced settings such as package size and time-out information.  
+  
+ To learn more about the SAP BW destination of the  Microsoft 
+ Connector 1.1 for SAP BW, see [SAP BW Destination](sap-bw-destination.md).  
+  
+> **Important:**  
+>  The documentation for the Microsoft Connector 1.1 for SAP BW assumes familiarity with the SAP Netweaver BW environment. For more information about SAP Netweaver BW, or for information about how to configure SAP Netweaver BW objects and processes, see your SAP documentation.  
+  
+ **To open the Advanced page**  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ package that contains the SAP BW destination.  
+  
+2.  On the **Data Flow** tab, double-click the SAP BW destination.  
+  
+3.  In the **SAP BW Destination Editor**, click **Advanced** to open the **Advanced** page of the editor.  
+  
+## Options  
+  
+> **Note:**  
+>  If you do not know all the values that are required to configure the destination, you might have to ask your SAP administrator.  
+  
+ **Package size**  
+ Specify how many rows of data will be transferred at a time. The optimal value for this parameter depends on the SAP Netweaver BW system and on additional processing of the data that might occur. Typically, values between 2000 and 20000 offer the best performance.  
+  
+ **Trigger process chain**  
+ (Optional) Specify the name of a process chain to be triggered after the loading of data is completed.  
+  
+ **Timeout for waiting InfoPackage**  
+ Specify the maximum number of seconds that the destination should wait for the InfoPackage to finish.  
+  
+ **Wait for data transfer to finish**  
+ Specify whether the destination should wait until the SAP Netweaver BW system has finished loading the data.  
+  
+ **No InfoPackage Start (Only Wait)**  
+ Specify that the destination does not trigger an InfoPackage, but just waits for notification that the SAP Netweaver BW system has started loading the data.  
+  
+## Related content
+
+- [SAP BW Destination Editor (Connection Manager Page)](sap-bw-destination-editor-connection-manager-page.md)
+- [SAP BW Destination Editor (Mappings Page)](sap-bw-destination-editor-mappings-page.md)
+- [SAP BW Destination Editor (Error Output Page)](sap-bw-destination-editor-error-output-page.md)
+- [Microsoft Connector for SAP BW F1 Help](../microsoft-connector-for-sap-bw-f1-help.md)

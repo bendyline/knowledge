@@ -1,0 +1,36 @@
+---
+title: "Quickstart: Speech SDK for JavaScript (NodeJS) platform setup - Speech service"
+titleSuffix: Foundry Tools
+description: Use this guide to set up your platform for using JavaScript (NodeJS) with the Speech SDK.
+author: PatrickFarley
+manager: mcleans
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 09/05/2023
+ms.author: pafarley
+ms.custom: devx-track-js
+---
+
+
+This guide shows how to install the [Speech SDK](../../../speech-sdk.md) for JavaScript for use with Node.js. If you just want the package name to get started on your own, run `npm install microsoft-cognitiveservices-speech-sdk` from your existing project.
+
+## Prerequisites
+
+This quickstart requires [Node.js](https://nodejs.org/).
+
+## Create an npm project
+
+1. Create a new directory.
+1. In a console, run the following command and respond to the prompts:
+
+   ```console
+   npm init
+   ```
+
+## Add the Speech SDK package
+
+- Run the following command:
+
+   ```console
+   npm install microsoft-cognitiveservices-speech-sdk
+   ```

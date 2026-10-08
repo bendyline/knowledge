@@ -1,0 +1,47 @@
+---
+title: "Hierarchy (MDX)"
+description: "Hierarchy (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Hierarchy (MDX)
+
+
+  Returns the hierarchy that contains a specified member or level.  
+  
+## Syntax  
+  
+```  
+  
+Member expression syntax  
+Member_Expression.Hierarchy  
+  
+Level expression syntax  
+Level_Expression.Hierarchy  
+```  
+  
+## Arguments  
+ *Member_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a member.  
+  
+ *Level_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a level.  
+  
+### Examples  
+ The following example returns the name of the Calendar hierarchy in the Date dimension in the AdventureWorks cube.  
+  
+```  
+WITH  
+MEMBER Measures.HierarchyName as  
+[Date].[Calendar].Currentmember.Hierarchy.Name  
+SELECT {Measures.HierarchyName}  ON 0,  
+{[Date].[Calendar].[All Periods]} ON 1  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

@@ -1,0 +1,45 @@
+---
+title: "prepare Method (SQLServerXAResource)"
+description: "prepare Method (SQLServerXAResource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerXAResource.prepare"
+apitype: "Assembly"
+---
+# prepare Method (SQLServerXAResource)
+
+
+  Requests that the resource manager prepare for a transaction commit of the transaction specified by the given Xid object.  
+  
+## Syntax  
+  
+```  
+  
+public int prepare(javax.transaction.xa.Xid xid)  
+```  
+  
+#### Parameters  
+ *xid*  
+  
+ An Xid object.  
+  
+## Return Value  
+ An **int** value.  
+  
+## Exceptions  
+ javax.transaction.xa.XAException  
+  
+## Remarks  
+ This prepare method is specified by the prepare method in the javax.transaction.xa.XAResource interface.  
+  
+## Related content
+
+- [SQLServerXAResource Methods](sqlserverxaresource-methods.md)
+- [SQLServerXAResource Members](sqlserverxaresource-members.md)
+- [SQLServerXAResource Class](sqlserverxaresource-class.md)

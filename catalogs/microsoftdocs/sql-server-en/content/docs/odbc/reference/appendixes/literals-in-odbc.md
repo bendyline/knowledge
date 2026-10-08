@@ -1,0 +1,24 @@
+---
+title: "Literals in ODBC"
+description: "Literals in ODBC"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "literals [ODBC]"
+  - "ODBC literals [ODBC], about literals"
+  - "ODBC literals [ODBC]"
+  - "literals [ODBC], about literals"
+---
+# Literals in ODBC
+The syntax in the following sections is used for interval and numeric literals in ODBC. This syntax is provided here as an aid to driver writers when conversions are performed from a character string type to a numeric or interval type, or from a numeric or interval type to a character string type. For more information, see [Interval Literals](interval-literals.md) and [Numeric Literals](numeric-literals.md) in Appendix D: Data Types.  
+  
+ This appendix contains the following topics.  
+  
+-   [Interval Literal Syntax](interval-literal-syntax.md)  
+  
+-   [Numeric Literal Syntax](numeric-literal-syntax.md)

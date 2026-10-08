@@ -1,0 +1,163 @@
+---
+title: "Quickstart: Analyze image content with JavaScript"
+description: In this quickstart, get started using the Azure AI Content Safety JavaScript SDK to analyze image content for objectionable material.
+author: ssalgadodev
+manager: mcleans
+ms.service: azure-ai-content-safety
+ms.custom:
+ms.topic: include
+ms.date: 10/10/2023
+ms.author: ssalgado
+---
+
+[Reference documentation](https://www.npmjs.com/package/@azure-rest/ai-content-safety/v/1.0.0) | [Library source code](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/contentsafety/ai-content-safety-rest) | [Package (npm)](https://www.npmjs.com/package/@azure-rest/ai-content-safety) | [Samples](https://github.com/Azure-Samples/AzureAIContentSafety/tree/main/js/1.0.0) |
+
+
+## Prerequisites
+
+* An Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) 
+* The current version of [Node.js](https://nodejs.org/)
+* Once you have your Azure subscription, <a href="https://aka.ms/acs-create"  title="Create a Content Safety resource"  target="_blank">create a Content Safety resource </a> in the Azure portal to get your key and endpoint. Enter a unique name for your resource, select your subscription, and select a resource group, supported region (see [Region availability](https://learn.microsoft.com/azure/ai-services/content-safety/overview#region-availability)), and supported pricing tier. Then select **Create**.
+  * The resource takes a few minutes to deploy. After it finishes, Select **go to resource**. In the left pane, under **Resource Management**, select **Subscription Key and Endpoint**. The endpoint and either of the keys are used to call APIs.
+* **Cognitive Services User** role or higher on the Content Safety resource
+
+## Set up application
+
+Create a new Node.js application. In a console window (such as cmd, PowerShell, or Bash), create a new directory for your app, and navigate to it.
+
+```console
+mkdir myapp && cd myapp
+```
+
+Run the `npm init` command to create a node application with a `package.json` file.
+
+```console
+npm init
+```
+
+### Install the client SDK 
+
+Install the `@azure-rest/ai-content-safety` npm package:
+
+```console
+npm install @azure-rest/ai-content-safety
+```
+
+Also install the `dotenv` module to use environment variables:
+
+```console
+npm install dotenv
+```
+
+Your app's `package.json` file will be updated with the dependencies.
+
+
+## Create environment variables 
+
+In this example, you'll write your credentials to environment variables on the local machine running the application.
+
+To set the environment variable for your key and endpoint, open a console window and follow the instructions for your operating system and development environment.
+
+- To set the `CONTENT_SAFETY_KEY` environment variable, replace `YOUR_CONTENT_SAFETY_KEY` with one of the keys for your resource.
+- To set the `CONTENT_SAFETY_ENDPOINT` environment variable, replace `YOUR_CONTENT_SAFETY_ENDPOINT` with the endpoint for your resource.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/azure-key-vault.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/content-safety/includes/quickstarts/javascript-quickstart-text.md)
+
+#### [Windows](#tab/windows)
+
+```console
+setx CONTENT_SAFETY_KEY 'YOUR_CONTENT_SAFETY_KEY'
+```
+
+```console
+setx CONTENT_SAFETY_ENDPOINT 'YOUR_CONTENT_SAFETY_ENDPOINT'
+```
+
+After you add the environment variables, you might need to restart any running programs that will read the environment variables, including the console window.
+
+#### [Linux](#tab/linux)
+
+```bash
+export CONTENT_SAFETY_KEY='YOUR_CONTENT_SAFETY_KEY'
+```
+
+```bash
+export CONTENT_SAFETY_ENDPOINT='YOUR_CONTENT_SAFETY_ENDPOINT'
+```
+
+After you add the environment variables, run `source ~/.bashrc` from your console window to make the changes effective.
+
+---
+
+
+## Analyze text content
+
+Create a new file in your directory, *index.js*. Open it in your preferred editor or IDE and paste in the following code. Replace `<your text sample>` with the text content you'd like to use.
+
+> **Tip:**
+> Text size and granularity
+>
+> See [Input requirements](../../overview.md#input-requirements) for maximum text length limitations.
+
+```JavaScript
+const ContentSafetyClient = require("@azure-rest/ai-content-safety").default,
+  { isUnexpected } = require("@azure-rest/ai-content-safety");
+const { AzureKeyCredential } = require("@azure/core-auth");
+
+// Load the .env file if it exists
+require("dotenv").config();
+
+async function main() {
+    // get endpoint and key from environment variables
+    const endpoint = process.env["CONTENT_SAFETY_ENDPOINT"];
+    const key = process.env["CONTENT_SAFETY_KEY"];
+    
+    const credential = new AzureKeyCredential(key);
+    const client = ContentSafetyClient(endpoint, credential);
+    
+    // replace with your own sample text string 
+    const text = "<your sample text>";
+    const analyzeTextOption = { text: text };
+    const analyzeTextParameters = { body: analyzeTextOption };
+    
+    const result = await client.path("/text:analyze").post(analyzeTextParameters);
+    
+    if (isUnexpected(result)) {
+        throw result;
+    }
+    
+    for (let i = 0; i < result.body.categoriesAnalysis.length; i++) {
+    const textCategoriesAnalysisOutput = result.body.categoriesAnalysis[i];
+    console.log(
+      textCategoriesAnalysisOutput.category,
+      " severity: ",
+      textCategoriesAnalysisOutput.severity
+    );
+  }
+}
+
+main().catch((err) => {
+    console.error("The sample encountered an error:", err);
+});
+```
+
+Run the application with the `node` command on your quickstart file.
+
+```console
+node index.js
+```
+
+## Output
+
+The application outputs severity scores for each content category:
+
+```console
+Hate severity:  0
+SelfHarm severity:  0
+Sexual severity:  0
+Violence severity:  0
+```
+
+Severity levels range from 0 (safe) to 6 (high risk).
+
+**References**: [Content Safety REST Client](https://www.npmjs.com/package/@azure-rest/ai-content-safety), [Text Analysis API](https://www.npmjs.com/package/@azure-rest/ai-content-safety)

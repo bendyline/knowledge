@@ -1,0 +1,1 @@
+`UseHsts` is recommended but not required. For more information, see [HTTP Strict Transport Security (HSTS) protocol](https://learn.microsoft.com/search/?terms=security%2Fenforcing-ssl%23http-strict-transport-security-hsts-protocol).

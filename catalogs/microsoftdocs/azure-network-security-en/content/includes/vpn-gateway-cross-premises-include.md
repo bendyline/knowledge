@@ -1,0 +1,19 @@
+---
+ services: vpn-gateway
+ author: duongau
+ ms.topic: include
+ ms.date: 07/23/2024
+ ms.author: duau
+---
+|  | **Point-to-Site** | **Site-to-Site** |
+| --- | --- | --- |
+| **Azure Supported Services** | Cloud Services and Virtual Machines | Cloud Services and Virtual Machines |
+| **Typical Bandwidths** | Based on the gateway SKU | Typically < 10 Gbps aggregate |
+| **Protocols Supported** | Secure Sockets Tunneling Protocol (SSTP), OpenVPN, and IPsec | IPsec |
+| **Routing** | RouteBased (dynamic) | We support PolicyBased (static routing) and RouteBased (dynamic routing VPN) |
+| **Connection resiliency** | active-passive or active-active | active-passive or active-active |
+| **Typical use case** | Secure access to Azure virtual networks for remote users | Dev, test, and lab scenarios and small to medium scale production workloads for cloud services and virtual machines |
+| **SLA** | [SLA](https://azure.microsoft.com/support/legal/sla/) | [SLA](https://azure.microsoft.com/support/legal/sla/) |
+| **Pricing** | [Pricing](https://azure.microsoft.com/pricing/details/vpn-gateway/) | [Pricing](https://azure.microsoft.com/pricing/details/vpn-gateway/) |
+| **Technical Documentation** | [VPN Gateway](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/vpn-gateway/index.yml) | [VPN Gateway](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/vpn-gateway/index.yml) |
+| **FAQ** | [VPN Gateway FAQ](../articles/vpn-gateway/vpn-gateway-vpn-faq.md) | [VPN Gateway FAQ](../articles/vpn-gateway/vpn-gateway-vpn-faq.md) |

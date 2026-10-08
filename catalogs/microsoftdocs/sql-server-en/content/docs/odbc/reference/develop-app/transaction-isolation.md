@@ -1,0 +1,26 @@
+---
+title: "Transaction Isolation"
+description: "Transaction Isolation"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "transaction isolation [ODBC]"
+  - "transactions [ODBC], isolation"
+---
+# Transaction Isolation
+*Transaction isolation* refers to the degree of interaction between multiple concurrent transactions. To see why this is important, you'll need to first look at the idea of serializability.  
+  
+ This section contains the following topics.  
+  
+-   [Serializability](serializability.md)  
+  
+-   [Transaction Isolation Levels](transaction-isolation-levels.md)  
+  
+-   [Setting the Transaction Isolation Level](setting-the-transaction-isolation-level.md)  
+  
+-   [Scrollable Cursors and Transaction Isolation](scrollable-cursors-and-transaction-isolation.md)

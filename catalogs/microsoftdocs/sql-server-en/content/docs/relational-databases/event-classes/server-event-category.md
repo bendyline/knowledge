@@ -1,0 +1,41 @@
+---
+title: "Server Event Category"
+description: "Server Event Category"
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: reference
+helpviewer_keywords:
+  - "SQL Server event classes, Server event category"
+  - "event classes [SQL Server], Server event category"
+  - "Server event category [SQL Server]"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Server Event Category
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+  The **Server** event category contains general server events.  
+  
+## In This Section  
+  
+| Topic | Description |
+| --- | --- |
+| [Mount Tape Event Class](mount-tape-event-class.md) | Indicates that a tape mount request has been received. |
+| [Server Memory Change Event Class](server-memory-change-event-class.md) | Indicates that  Microsoft |
+  | SQL Server |
+ | memory usage has changed. |
+| [Trace File Close Event Class](trace-file-close-event-class.md) | Indicates that a trace file has been closed during a trace file rollover. |

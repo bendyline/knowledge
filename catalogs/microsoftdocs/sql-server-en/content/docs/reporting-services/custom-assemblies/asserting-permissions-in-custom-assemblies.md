@@ -1,0 +1,87 @@
+---
+title: "Asserting permissions in custom assemblies"
+description: Learn how to assert permissions so you can implement a custom assembly that makes secured calls to protected resources within your security system.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: custom-assemblies
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "secure calls [Reporting Services]"
+  - "custom assemblies [Reporting Services], permissions"
+  - "permission sets [Reporting Services]"
+  - "asserting permissions"
+  - "permissions [Reporting Services], custom assemblies"
+  - "limited permission sets"
+  - "security configuration files [Reporting Services]"
+---
+# Asserting permissions in custom assemblies
+  By default, custom assembly code runs with the limited **Execution** permission set. In some cases, you might wish to implement a custom assembly that makes secured calls to protected resources within your security system (such as a file or the registry). In order to accomplish this, you must take the following actions:  
+  
+1.  Identify the exact permissions that your code needs in order to make the secured call. If this method is part of a  Microsoft 
+  .NET Framework 
+ library, this information should be included in the method documentation.  
+  
+2.  Modify the report server policy configuration files in order to grant the custom assembly the required permissions. For more information about the security policy configuration files, see [Using Reporting Services Security Policy Files](../extensions/secure-development/using-reporting-services-security-policy-files.md).  
+  
+3.  Assert the required permissions as part of the method in which the secure call is made. This is required because the custom assembly code that is called by the report server is part of the report expression host assembly, which runs with **Execution** permission by default. The **Execution** permission set enables code to run, but not to use protected resources.  
+  
+4.  Mark the custom assembly with **AllowPartiallyTrustedCallersAttribute** if it's signed with a strong name. This is required because custom assemblies are called from a report expression that is part of the report expression host assembly, which, by default, isn't granted **FullTrust**; thus it's a "partially trusted" caller. For more information, see [Using Strong-Named Custom Assemblies](using-strong-named-custom-assemblies.md).  
+  
+## Implement a Secure Call  
+ You can modify the policy configuration files to grant your assembly specific permissions. For example, if you were writing a custom assembly to handle currency conversion, you might need to read the current currency exchange rates from a file. To retrieve the rate information, you would need to add an extra security permission, **FileIOPermission**, to your permission set for the assembly. You can make the following additional entry in the policy configuration file:  
+  
+```  
+<PermissionSet class="NamedPermissionSet"  
+   version="1"  
+   Name="CurrencyRatesFilePermissionSet"  
+   Description="A special permission set that grants read access to my currency rates file.">  
+      <IPermission class="FileIOPermission"  
+         version="1"  
+         Read="C:\CurrencyRates.xml"/>  
+      <IPermission class="SecurityPermission"  
+         version="1"  
+         Flags="Execution, Assertion"/>  
+</PermissionSet>  
+```  
+  
+ You then add a code group that references that permission set:  
+  
+```  
+<CodeGroup class="UnionCodeGroup"  
+   version="1"  
+   PermissionSetName="CurrencyRatesFilePermissionSet"  
+   Name="MyNewCodeGroup"  
+   Description="A special code group for my custom assembly.">  
+   <IMembershipCondition class="UrlMembershipCondition"  
+      version="1"  
+      Url="C:\Program Files\Microsoft SQL Server\MSRS10_50.MSSQLSERVER\MSSQL\Reporting Services\ReportServer\bin\CurrencyConversion.dll"/>  
+</CodeGroup>  
+```  
+  
+ In order for your code to acquire the appropriate permission, you must assert the permission within your custom assembly code. For example, if you want to add read-only access to an XML file, C:\CurrencyRates.xml, you must add the following code to your method:  
+  
+```  
+// C#  
+FileIOPermission permission = new FileIOPermission(FileIOPermissionAccess.Read, @"C:\CurrencyRates.xml");  
+try  
+{  
+   permission.Assert();  
+   // Load the XML currency rates file  
+   XmlDocument doc = new XmlDocument();  
+   doc.Load(@"C:\CurrencyRates.xml");  
+...  
+```  
+  
+ You can also add the assertion as a method attribute:  
+  
+```  
+[FileIOPermissionAttribute(SecurityAction.Assert, Read=@"C:\CurrencyRates.xml")]  
+```  
+  
+ For more information, see ".NET Framework Security" in the .NET Framework Developer's Guide.  
+  
+## Related content
+
+- [Using custom assemblies with reports](using-custom-assemblies-with-reports.md)

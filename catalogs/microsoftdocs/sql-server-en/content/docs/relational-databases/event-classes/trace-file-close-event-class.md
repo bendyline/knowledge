@@ -1,0 +1,53 @@
+---
+title: "Trace File Close Event Class"
+description: "Trace File Close Event Class"
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: reference
+helpviewer_keywords:
+  - "Trace File Close event class"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Trace File Close Event Class
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+  The **Trace File Close** event class indicates that a trace file has been closed during a trace file rollover.  
+  
+## Trace File Close Event Class Data Columns  
+  
+| Data column name | Data type | Description | Column ID | Filterable |
+| --- | --- | --- | --- | --- |
+| **EventClass** | **int** | Type of event = 150. | 27 | No |
+| **EventSequence** | **int** | The unique timestamp of this event fired in this trace. This number increases monotonically for each event fired. | 51 | No |
+| **FileName** | **nvarchar** | The logical name of the trace file being closed. | 36 | Yes |
+| **IsSystem** | **int** | Indicates whether the event occurred on a system process or a user process. 1 = system, NULL = user. The value is always 1 for this event class. | 60 | Yes |
+| **LoginName** | **nvarchar** | Name of the login of the user (either  SQL Server |
+ | security login or the  Microsoft |
+ | Windows login credentials in the form of DOMAIN\username). The value is always "sa" for this event class. | 11 | Yes |
+| **ObjectID** | **int** | System-assigned ID of the trace. | 22 | Yes |
+| **ServerName** | **nvarchar** | Name of the instance of  SQL Server |
+ | being traced. | 26 | No |
+| **SessionLoginName** | **nvarchar** | Login name of the user who originated the session. For example, if you connect to  SQL Server |
+ | using Login1 and execute a statement as Login2, **SessionLoginName** shows Login1 and **LoginName** shows Login2. This column displays both  SQL Server |
+ | and Windows logins. | 64 | Yes |
+| **SPID** | **int** | ID of the session on which the event occurred. | 12 | Yes |
+| **StartTime** | **datetime** | Time at which the event started, if available. | 14 | Yes |
+  
+## Related content
+
+- [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md)

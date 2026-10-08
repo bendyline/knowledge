@@ -1,0 +1,41 @@
+---
+title: "SMTPServer property (WMI MSReportServer_ConfigurationSetting)"
+description: "SMTPServer property (WMI MSReportServer_ConfigurationSetting)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "SMTPServer property"
+apilocation: "reportingservices.mof"
+apiname: "SMTPServer"
+apitype: MOFDef
+---
+# ConfigurationSetting property - SMTPServer
+  Gets the *SMTPServer* property from the report server configuration file. Read-only.  
+  
+## Syntax  
+  
+```vb  
+Public Dim SMTPServer As String  
+```  
+  
+```csharp  
+public string SMTPServer;  
+```  
+  
+## Property Values  
+ A read-only **String** object containing the value of the *SMTPServer* property from the `RSReportServer.config` file.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting Class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

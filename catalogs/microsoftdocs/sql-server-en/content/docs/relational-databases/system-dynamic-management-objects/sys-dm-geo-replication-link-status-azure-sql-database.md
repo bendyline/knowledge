@@ -1,0 +1,85 @@
+---
+title: "sys.dm_geo_replication_link_status"
+titleSuffix: Azure SQL Database and Azure SQL Managed Instance
+description: Contains a row for each replication link between primary and secondary databases in a geo-replication partnership for Azure SQL Database and Azure SQL Managed Instance.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: wiassaf
+ms.date: 02/26/2026
+ms.service: azure-sql-database
+ms.topic: reference
+f1_keywords:
+  - "dm_geo_replication_link_status"
+  - "dm_geo_replication_link_status_TSQL"
+  - "sys.dm_geo_replication_link_status"
+  - "sys.dm_geo_replication_link_status_TSQL"
+helpviewer_keywords:
+  - "dm_geo_replication_link_status dynamic management view"
+  - "sys.dm_geo_replication_link_status dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azuresqldb-mi-current"
+---
+# sys.dm_geo_replication_link_status (Azure SQL Database and Azure SQL Managed Instance)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+Contains a row for each replication link between primary and secondary databases in a geo-replication partnership. This includes both primary and secondary databases. If more than one continuous replication link exists for a given primary database, this table contains a row for each of the relationships. 
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `link_guid` | **uniqueidentifier** | Unique ID of the replication link. |
+| `partner_server` | **sysname** | Name of the Azure SQL Database logical server containing the linked database. |
+| `partner_database` | **sysname** | Name of the linked database on the linked SQL Database logical server. |
+| `last_replication` | **datetimeoffset** | The time when the primary received the acknowledgment that the last log block has been hardened by the secondary, based on the primary database clock. Log blocks are sent to the geo-secondary continuously, without waiting for transactions to commit on the primary.  This value is available on the primary database only. |
+| `replication_lag_sec` | **int** | Time difference in seconds between the last_replication value and the timestamp of that transaction's commit on the primary based on the primary database clock.  This value is available on the primary database only. |
+| `replication_state` | **tinyint** | The state of geo-replication for this database, one of:<br /><br />`1` = Seeding. The geo-replication target is being seeded but the two databases are not yet synchronized. Until seeding completes, you cannot connect to the secondary database. Removing secondary database from the primary will cancel the seeding operation.<br /><br />`2` = Catch-up. The secondary database is in a transactionally consistent state and is being constantly synchronized with the primary database.<br /><br />`4` = Suspended. This is not an active continuous-copy relationship. This state usually indicates that the bandwidth available for the interlink is insufficient for the level of transaction activity on the primary database. However, the continuous-copy relationship is still intact. |
+| `replication_state_desc` | **nvarchar(256)** | `PENDING`<br /><br />`SEEDING`<br /><br />`CATCH_UP`<br /><br />`SUSPENDED` |
+| `role` | **tinyint** | Geo-replication role, one of:<br /><br /> 0 = Primary. The `database_id` refers to the primary database in the geo-replication partnership.<br /><br /> 1 = Secondary. The `database_id` refers to the primary database in the geo-replication partnership. |
+| `role_desc` | **nvarchar(256)** | PRIMARY<br /><br /> SECONDARY |
+| `secondary_allow_connections` | **tinyint** | The secondary type, one of:<br /><br /> `0` = No direct connections are allowed to the secondary database and the database is not available for read access.<br /><br /> `2` = All connections are allowed to the database in the secondary replication for read-only access. |
+| `secondary_allow_connections_desc` | **nvarchar(256)** | No<br /><br /> All |
+| `last_commit` | **datetimeoffset** | The time of last transaction committed to the database. If retrieved on the primary database, it indicates the last commit time on the primary database. If retrieved on the secondary database, it indicates the last commit time on the secondary database. If retrieved on the secondary database when the primary of the replication link is down, it indicates until what point the secondary has caught up. |
+
+## Permissions
+
+Requires the `VIEW DATABASE STATE` permission in the database.  
+
+## Remarks
+
+If the replication relationship is terminated by removing the secondary database, the row for that database in the `sys.dm_geo_replication_link_status` view disappears.
+
+The view is created in all databases, including the `master` database. However, querying this view in the `master` database returns an empty set.
+
+For more information on troubleshooting geo-replication redo lag in Azure SQL Database, see [Troubleshoot geo-replication redo lag](https://learn.microsoft.com/azure/azure-sql/database/troubleshoot-geo-replication-redo?view=azuresql-db\&preserve-view=true).
+
+## Examples
+
+This Transact-SQL query shows replication lags and last replication time of secondary databases.  
+
+```sql
+SELECT   
+     link_guid  
+   , partner_server  
+   , last_replication  
+   , replication_lag_sec   
+FROM sys.dm_geo_replication_link_status;  
+```  
+
+## Related content
+
+- [sys.dm_database_replica_states (Azure SQL Database)](sys-dm-database-replica-states-azure-sql-database.md)
+- [sys.geo_replication_links (Azure SQL Database)](../system-views/sys-geo-replication-links-azure-sql-database.md)
+- [sys.dm_operation_status](sys-dm-operation-status-azure-sql-database.md)
+- [sp_wait_for_database_copy_sync (Active geo-replication)](../system-stored-procedures/sp-wait-for-database-copy-sync-transact-sql.md)
+- [Active geo-replication](https://learn.microsoft.com/azure/azure-sql/database/active-geo-replication-overview)
+- [Failover groups overview & best practices (Azure SQL Database)](https://learn.microsoft.com/azure/azure-sql/database/failover-group-sql-db)

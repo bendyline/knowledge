@@ -1,0 +1,49 @@
+---
+title: "The &lt;xsd:redefine&gt; Element"
+description: Learn about support for the W3C XSD redefine element and how to update an XML schema or its components.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 05/05/2022
+ms.service: sql
+ms.subservice: xml
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "xsd:redefine element"
+---
+# The &lt;xsd:redefine&gt; element
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The W3C XSD **redefine** element provides support for redefining schema components. However, support for this directive is potentially costly to performance and also requires that  SQL Server 
+ revalidate all instances of the **xml** data type associated with the redefined schema. Therefore,  SQL Server 
+ doesn't support this element. XML schemas that include the **\<xsd:redefine>** element are rejected by the server.
+
+To update a schema or its components, you can do the following instead:
+
+1. Create a new XML Schema collection with the modified schema components.
+
+1. Retype all **xml** data types (XML DT) that use the XML Schema collection to be redefined to use the new XML Schema collection instead. To do this, use the ALTER COLUMN option of the ALTER TABLE command for retyping columns, or change the XML Schema collection constraints on variables or parameters.
+
+1. Drop the old version of the XML Schema collection.
+
+## Related content
+
+- [Requirements and limitations for XML schema collections on the server](requirements-and-limitations-for-xml-schema-collections-on-the-server.md)

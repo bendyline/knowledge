@@ -1,0 +1,78 @@
+---
+title: "Information in Error Interfaces"
+description: "The OLE DB Driver for SQL Server reports some error and status information in the OLE DB-defined error interfaces IErrorInfo, IErrorRecords, and ISQLErrorInfo."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "05/06/2020"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "OLE DB Driver for SQL Server, errors"
+  - "IErrorRecords interface"
+  - "IErrorInfo interface"
+  - "OLE DB error handling, error interfaces"
+  - "ISQLErrorInfo interface"
+  - "errors [OLE DB], error interfaces"
+---
+# Information in Error Interfaces
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  The OLE DB Driver for SQL Server reports some error and status information in the OLE DB-defined error interfaces **IErrorInfo**, **IErrorRecords**, and **ISQLErrorInfo**.  
+  
+ The OLE DB Driver for SQL Server supports **IErrorInfo** member functions as follows.  
+  
+| Member function | Description |
+| --- | --- |
+| **GetDescription** | Descriptive error message string. |
+| **GetGUID** | GUID of the interface that defined the error. |
+| **GetHelpContext** | Not supported. Always returns zero. |
+| **GetHelpFile** | Not supported. Always returns NULL. |
+| **GetSource** | String "Microsoft OLE DB Driver for SQL Server". |
+  
+ The OLE DB Driver for SQL Server supports consumer-available **IErrorRecords** member functions as follows.  
+  
+| Member function | Description |
+| --- | --- |
+| **GetBasicErrorInfo** | Fills an ERRORINFO structure with basic information about an error. An ERRORINFO structure contains members that identify the HRESULT return value for the error, and the provider and interface to which the error applies. |
+| **GetCustomErrorObject** | Returns a reference on interfaces **ISQLErrorInfo,** and [ISQLServerErrorInfo](../ole-db-interfaces/isqlservererrorinfo-geterrorinfo-ole-db.md). |
+| **GetErrorInfo** | Returns a reference on an **IErrorInfo** interface. |
+| **GetErrorParameters** | The OLE DB Driver for SQL Server does not return parameters to the consumer through **GetErrorParameters**. |
+| **GetRecordCount** | Count of error records available. |
+  
+ The OLE DB Driver for SQL Server supports **ISQLErrorInfo::GetSQLInfo** parameters as follows.  
+  
+| Parameter | Description |
+| --- | --- |
+| *pbstrSQLState* | Returns a SQLSTATE value for the error. SQLSTATE values are defined in the SQL-92, ODBC and ISO SQL, and API specifications. Neither  SQL Server |
+ | nor the OLE DB Driver for SQL Server defined implementation-specific SQLSTATE values. |
+| *plNativeError* | Returns the  SQL Server |
+ | error number from **master.dbo.sysmessages** when available. Native errors are available after a successful attempt to initialize a OLE DB Driver for SQL Server data source. Prior to the attempt, the OLE DB Driver for SQL Server always returns zero. |
+  
+## Related content
+
+- [Errors](errors.md)

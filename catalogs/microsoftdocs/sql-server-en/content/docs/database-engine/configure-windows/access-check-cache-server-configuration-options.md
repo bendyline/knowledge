@@ -1,0 +1,75 @@
+---
+title: "Server Configuration: access check cache"
+description: "Learn about the access check result cache and the options that control the cache's behavior. See when to change these options in SQL Server."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/26/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+helpviewer_keywords:
+  - "access check cache option"
+  - "access check cache bucket count"
+  - "access check cache quota"
+---
+# Server configuration: access check cache
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+When database objects are accessed by  SQL Server 
+, the access check is cached in an internal structure called the *access check result cache*. On an instance of  SQL Server 
+ that has a high rate of ad hoc query execution, you might notice many access check token entries that have a class of 65535 in the `sys.dm_os_memory_cache_entries` view. Access check token entries that have a class of 65535 represent special cache entries. These cache entries are used for cumulative permission checks for queries.
+
+For example, you might run the following query:
+
+```sql
+SELECT *
+FROM t1
+INNER JOIN t2
+INNER JOIN t3;
+```
+
+In this case,  SQL Server 
+ computes a cumulative permission check for this query. This check determines whether a user has `SELECT` permissions on `t1`, `t2`, and `t3`. These cumulative permission check results are embedded into an access check token entry and are inserted into the access check cache store with an ID of 65535. If the same user reuses or executes this query multiple times,  SQL Server 
+ reuses the access check token cache entry one time.
+
+To optimize the use of this cache, you should consider using various query parameterization techniques, or convert frequent query patterns to use stored procedures.
+
+The `access check cache bucket count` option controls the number of hash buckets that are used for the access check result cache.
+
+The `access check cache quota` option controls the number of entries that are stored in the access check result cache. When the maximum number of entries is reached, the oldest entries are removed from the access check result cache.
+
+## Remarks
+
+The default values of `0` indicate that  SQL Server 
+ is managing these options. The default values translate to the following internal configurations.
+
+### SQL Server 2016 (13.x) and later versions
+
+| Configuration setting | Server architecture | Default number of entries |
+| --- | --- | --- |
+| `access check cache quota` | x64 | 1,024 |
+| `access check cache bucket count` | x64 | 256 |
+
+### SQL Server 2008 (10.x) to SQL Server 2014 (12.x)
+
+| Configuration setting | Server architecture | Default number of entries |
+| --- | --- | --- |
+| `access check cache quota` | x86 | 1,024 |
+|  | x64 and IA-64 | 28,192,048 |
+| `access check cache bucket count` | x86 | 256 |
+|  | x64 and IA-64 | 2,048 |
+
+In rare circumstances, performance might be improved by changing these options. For example, you might want to reduce the size of the access check result cache if too much memory is used. Or, increase the size of the access check result cache if you experience high CPU usage when permissions are recalculated.
+
+We recommend only changing these options when directed by Microsoft Customer Support Services. If you want to change the `access check cache bucket count` and `access check cache quota` values, use a ratio of 1:4. For example, if you change the `access check cache bucket count` value to `512`, you should change the `access check cache quota` value to `2048`.
+
+## Related content
+
+- [Server configuration options](server-configuration-options-sql-server.md)
+- [sys.sp_configure (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-configure-transact-sql.md)

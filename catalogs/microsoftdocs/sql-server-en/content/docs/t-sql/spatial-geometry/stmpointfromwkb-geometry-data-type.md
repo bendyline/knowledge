@@ -1,0 +1,76 @@
+---
+title: "STMPointFromWKB (geometry Data Type)"
+description: "STMPointFromWKB (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STMPointFromWKB (geometry Data Type)"
+  - "STMPointFromWKB_TSQL"
+helpviewer_keywords:
+  - "STMPointFromWKB (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# STMPointFromWKB (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **geometryMultiPoint** instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.
+  
+## Syntax  
+  
+```  
+  
+STMPointFromWKB ( 'WKB_multipoint' , SRID )  
+```  
+  
+## Arguments
+ *WKB_multipoint*  
+ Is the WKB representation of the **geometryMultiPoint** instance you wish to return. *WKB_multipoint* is a **varbinary(max)** expression.  
+  
+ *SRID*  
+ Is an **int** expression representing the spatial reference ID (SRID) of the **geometryMultiPoint** instance you wish to return.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+ OGC type: **MultiPoint**  
+  
+## Remarks  
+ This method will throw a **FormatException** if the input is not well-formatted.  
+  
+## Examples  
+ The following example uses `STMPointFromWKB()` to create a `geometry` instance.  
+  
+```sql
+DECLARE @g geometry;   
+SET @g = geometry::STMPointFromWKB(0x010400000002000000010100000000000000000059400000000000005940010100000000000000000069400000000000006940, 0);  
+SELECT @g.STAsText();  
+```  
+  
+## Related content
+
+- [OGC Static Geometry Methods](ogc-static-geometry-methods.md)

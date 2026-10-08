@@ -1,0 +1,67 @@
+---
+title: SQL Server Replication on Linux
+description: Learn how SQL Server 2017 (14.x) (CU18) and later support SQL Server Replication for instances of SQL Server on Linux.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: amitkh, atsingh
+ms.date: 05/07/2026
+ms.service: sql
+ms.subservice: linux
+ms.topic: overview
+ms.custom:
+  - linux-related-content
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017"
+---
+# SQL Server replication on Linux
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Linux
+
+
+ SQL Server 2017 (14.x) 
+ ([CU18](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2017/cumulativeupdate18)) and later support SQL Server replication for instances of SQL Server on Linux.
+
+Configure replication on Linux with SQL Server Management Studio (SSMS) [replication stored procedures](../../relational-databases/system-stored-procedures/replication-stored-procedures-transact-sql.md).
+
+An instance of SQL Server can participate in any replication role:
+
+- Publisher
+- Distributor
+- Subscriber
+
+A replication schema can mix and match operating system platforms. For example, a replication schema might include an instance of SQL Server on Linux as Publisher and Distributor, with Subscribers that include instances of SQL Server on Windows and Linux.
+
+SQL Server instances on Linux can participate in the following types of replication:
+
+- Transactional
+- Snapshot
+
+For detailed information about replication, see [SQL Server replication](../../relational-databases/replication/sql-server-replication.md).
+
+## Supported features
+
+The following replication features are supported:
+
+- Snapshot replication
+- Transactional replication
+- Replication with non-default ports
+- Replication with Active Directory authentication
+- Replication configurations across Windows and Linux
+- Immediate updates for transactional replication
+
+## Limitations
+
+The following features aren't supported:
+
+- Merge replication
+- Peer-to-Peer replication
+- Oracle publishing
+
+## Related content
+
+- [Configure replication with Transact-SQL](tutorial-tsql.md)
+- [Configure SQL Server replication on Linux](configure.md)

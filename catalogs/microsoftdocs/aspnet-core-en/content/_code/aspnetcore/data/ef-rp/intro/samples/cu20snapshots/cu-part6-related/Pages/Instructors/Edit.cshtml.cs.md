@@ -1,0 +1,70 @@
+# Source code: aspnetcore/data/ef-rp/intro/samples/cu20snapshots/cu-part6-related/Pages/Instructors/Edit.cshtml.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ContosoUniversity.Data;
+using ContosoUniversity.Models;
+
+namespace ContosoUniversity.Pages.Instructors
+{
+    public class EditModel : PageModel
+    {
+        private readonly ContosoUniversity.Data.SchoolContext _context;
+
+        public EditModel(ContosoUniversity.Data.SchoolContext context)
+        {
+            _context = context;
+        }
+
+        [BindProperty]
+        public Instructor Instructor { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Instructor = await _context.Instructors.SingleOrDefaultAsync(m => m.ID == id);
+
+            if (Instructor == null)
+            {
+                return NotFound();
+            }
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            _context.Attach(Instructor).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                
+            }
+
+            return RedirectToPage("./Index");
+        }
+    }
+}
+
+```

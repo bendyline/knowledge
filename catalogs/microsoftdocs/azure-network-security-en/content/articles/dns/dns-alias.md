@@ -1,0 +1,91 @@
+---
+title: Alias records overview - Azure DNS
+description: In this article, learn about support for alias records in Microsoft Azure DNS.
+services: dns
+author: asudbring
+ms.service: azure-dns
+ms.topic: concept-article
+ms.date: 06/01/2026
+ms.author: allensu
+# Customer intent: "As a DNS administrator, I want to use alias records in Azure DNS, so that I can dynamically reference Azure resources and prevent dangling DNS records while ensuring quick updates to DNS entries when underlying resources change."
+---
+
+# Azure DNS alias records overview
+
+Azure DNS alias records are qualifications on a DNS record set. They can reference other Azure resources from within your DNS zone. For example, you can create an alias record set that references an Azure public IP address instead of an A record. Your alias record set points to an Azure public IP address service instance dynamically. As a result, the alias record set seamlessly updates itself during DNS resolution.
+
+> **Note:**
+> To create alias records, you must register the **Microsoft.Network** resource provider. If the DNS zone and the alias target resource are in different subscriptions, both subscriptions must be registered. For more information, see [Resolve errors for resource provider registration](https://learn.microsoft.com/azure/azure-resource-manager/troubleshooting/error-register-resource-provider?tabs=azure-portal#solution).
+
+An alias record set is supported for the following record types in an Azure DNS zone: 
+
+- A
+- AAAA
+- CNAME
+
+To create an alias record set in your DNS zone using the Azure portal, add a record set and choose **Yes** under **Alias record set**. You must also specify the **Alias type** as either an **Azure resource** or **Zone record set**. If the record set is for an Azure resource, also **Choose a subscription** and then choose the **Azure resource**. 
+
+In the following example, an alias named **vm1** is added that points to the public IP address of a virtual machine:
+
+   <br>A screenshot showing how to add an alias record set.
+
+> **Tip:**
+> For new Traffic Manager-backed DNS configurations, consider using [Traffic Manager Linked Records](dns-traffic-manager-linked-records.md) instead of alias records. Traffic Manager Linked Records return endpoint IP addresses directly to clients without an intermediate CNAME hop and provide stronger endpoint type enforcement through [Strictly Typed Profiles](../traffic-manager/traffic-manager-strictly-typed-profiles.md). Both features are currently in PREVIEW.
+
+## Capabilities
+
+- **Point to a Standard SKU public IP resource from a DNS A/AAAA record set.** You can create an A/AAAA record set and make it an alias record set to point to a Standard SKU public IP resource. The DNS record set changes automatically if the public IP address changes or is deleted. Dangling DNS records that point to incorrect IP addresses are avoided.
+
+   > **Note:**
+   > There's a current limit of 50 alias records sets per resource.
+
+- **Point to a Traffic Manager profile from a DNS A/AAAA/CNAME record set** - For new configurations, use [Traffic Manager Linked Records](dns-traffic-manager-linked-records.md), which return endpoint IP addresses directly without an intermediate CNAME hop and provide stronger type enforcement through [Strictly Typed Profiles](../traffic-manager/traffic-manager-strictly-typed-profiles.md). Alias records pointing to Traffic Manager profiles remain supported for backward compatibility.
+- **Point to an Azure Content Delivery Network (CDN) endpoint** - This alias type is useful when you create static websites using Azure storage and Azure CDN.
+- **Point to another DNS record set within the same zone** - Alias records can reference other record sets of the same type. For example, a DNS CNAME record set can be an alias to another CNAME record set. This arrangement is useful if you want some but not all record sets to be aliases.
+- **Point to an Azure Front Door endpoint** - This allows you to create a custom domain and enable your endpoint to use this domain in the end-user request. Having a visible domain name can be convenient for your customers and useful for branding purposes.
+
+## Scenarios
+
+The following are a few common scenarios for using Alias records.
+
+### Prevent dangling DNS records
+
+A common problem with traditional DNS records is dangling records. For example, DNS records that haven't been updated to reflect changes to IP addresses. The issue occurs especially with A/AAAA or CNAME record types.
+
+With a traditional DNS zone record, when the target IP or CNAME no longer exists, the DNS record associated with it has been updated manually. In some organizations, a manual update may not happen quickly because of process issues or the separation of roles and associated permission levels. For example, a role might have the authority to delete a CNAME or IP address that belongs to an application. But they don't have sufficient authority to update the DNS record that points to those targets. A delay in updating the DNS record can potentially cause an extended outage for the users.
+
+Alias records prevent dangling references by tightly coupling the life cycle of a DNS record with an Azure resource. For example, consider a DNS record that's qualified as an alias record to point to a public IP address or a Traffic Manager profile. If you delete those underlying resources, the DNS alias record becomes an empty record set. It no longer references the deleted resource.
+
+### Update DNS record-set automatically when application IP addresses change
+
+This scenario is similar to the previous one. Perhaps an application gets moved, or the underlying virtual machine gets restarted. The alias record then updates automatically when the IP address changes for the underlying public IP resource. This update can potentially avoid the security risks of directing the users to another application that has been assigned the old public IP address.
+
+### Host load-balanced applications at the zone apex
+
+The DNS protocol prevents the assignment of CNAME records at the zone apex. For example if your domain is contoso.com. You can create CNAME records for somelabel.contoso.com but you can't create a CNAME for contoso.com itself.
+
+This restriction presents a problem for application owners who have load-balanced applications behind [Azure Traffic Manager](../traffic-manager/traffic-manager-overview.md). Since using a Traffic Manager profile requires creation of a CNAME record, it's not possible to point to Traffic Manager profile from the zone apex.
+
+To resolve this issue, you can use alias records. Unlike CNAME records, alias records are created at the zone apex. Application owners can use it to point their zone apex record to a Traffic Manager profile that has external endpoints. Application owners point to the same Traffic Manager profile used for any other domain within their DNS zone.
+
+For example, contoso.com and www\.contoso.com can point to the same Traffic Manager profile. To learn more about using alias records with Azure Traffic Manager profiles, see the Next steps section.
+
+### Point zone apex to Azure CDN endpoints
+
+Just like a Traffic Manager profile, you can also use alias records to point your DNS zone apex to Azure CDN endpoints. This alias is useful when you create static websites using Azure storage and Azure CDN. You can then access the website without prepending "www" to your DNS name.
+
+For example, if your static website is named `www.contoso.com`, your users can access your site using `contoso.com` without the need to prepend www to the DNS name.
+
+As described previously, CNAME records aren't supported at the zone apex. You can’t use a CNAME record to point contoso.com to your CDN endpoint. Instead, you can use an alias record to point the zone apex to a CDN endpoint directly.
+
+> **Note:**
+> Pointing a zone apex to CDN endpoints for Azure CDN from Akamai is currently not supported.
+
+## Next steps
+
+To learn more about alias records, see the following articles:
+
+- [Tutorial: Configure an alias record to refer to an Azure public IP address](tutorial-alias-pip.md)
+- [Tutorial: Configure an alias record to support apex domain names with Traffic Manager](tutorial-alias-tm.md)
+- [Traffic Manager Linked Records overview](dns-traffic-manager-linked-records.md)
+- [DNS FAQ](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/dns/dns-faq.yml)

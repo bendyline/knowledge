@@ -1,0 +1,117 @@
+---
+title: SQL Server Docs Navigation Tips
+description: Tips and tricks for navigating the SQL Server technical documentation - explains such things as the hub page, the table of contents, the header, as well as how to use the breadcrumbs and how to use the version filter.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: randolphwest, wiassaf
+ms.date: 06/16/2026
+ms.service: sql
+ms.subservice: release-landing
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+---
+# SQL Server docs navigation guide
+
+This article provides some tips and tricks for navigating the SQL Server technical documentation space.
+
+<a id="applies-to"></a>
+
+## What the "Applies to" options mean
+
+At the top of every article in SQL Docs, you'll see a section after the heading to explain which products the article applies to.
+
+The SQL Docs content covers several product lines that share the [SQL Database Engine](../database-engine/sql-database-engine.md). It can be confusing to differentiate between products. The following table describes several common options, but isn't exhaustive. 
+
+> **Tip:**
+> Always double-check the **Applies to:** information on top of articles and use the [Version filter](#version-filter) dropdown list to select your desired product.
+
+| Product | Deployment model | Description |
+| --- | --- | --- |
+| **SQL Server** | On-premises <sup>1</sup>, Azure Virtual Machines <sup>3</sup>, Linux containers <sup>1</sup> | This is  SQL Server |
+ | that you have full control over. You can install SQL Server on Windows or [Linux](../linux/sql-server-linux-overview.md), deploy it in [a Linux container](../linux/sql-server-linux-overview.md#container-images), or deploy it on an [Azure Virtual Machine](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/sql-server-on-azure-vm-iaas-what-is-overview) or other virtual machine platform. You might previously have referred to this as the *boxed product*.  SQL Server |
+ | is one of many products and platforms that runs the [Microsoft SQL Database Engine](../database-engine/sql-database-engine.md).<br /><br />Supported versions of  SQL Server |
+ | depend on your license agreement, but for the purposes of this documentation, we mean  SQL Server 2016 (13.x) |
+ | and later versions. Documentation for  SQL Server 2014 (12.x) |
+ | and previous versions is available at [Previous versions of SQL Server documentation](previous-versions-sql-server.md). To find out which versions of  SQL Server |
+ | are currently supported, see [SQL Server end of support options](end-of-support/sql-server-end-of-support-overview.md).<br /><br />**Important:** Doesn't include Azure SQL support. If an article relates to [Azure SQL products](https://learn.microsoft.com/azure/azure-sql/azure-sql-iaas-vs-paas-what-is-overview), those products are listed separately in the "Applies to" section. |
+| **Azure SQL Database** | Fully managed <sup>2</sup> | [Azure SQL Database](https://learn.microsoft.com/azure/azure-sql/database/) is a single database, or part of an elastic pool. SQL Database is a fully managed platform as a service (PaaS) [SQL Database Engine](../database-engine/sql-database-engine.md) that handles most database management functions such as upgrading, patching, backups, and monitoring, without user involvement. An Azure SQL logical server provides server-level principals such as logins to multiple Azure SQL databases. |
+| **Azure SQL Managed Instance** | Fully managed <sup>2</sup> | [Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/) is a fully managed database instance. SQL Managed Instance combines the broadest [SQL Database Engine](../database-engine/sql-database-engine.md) compatibility with all the benefits of a fully managed and evergreen platform as a service (PaaS). SQL Managed Instance has near 100 percent compatibility with the latest SQL Server (Enterprise Edition) database engine.<br /><br />**Important:** Although SQL Managed Instance shares many features with  SQL Server |
+| , there are [some incompatibilities](https://learn.microsoft.com/azure/azure-sql/managed-instance/transact-sql-tsql-differences-sql-server), especially before  SQL Server 2022 (16.x) |
+ | was released. |
+| **Azure Database for MySQL** | Fully managed <sup>2</sup> | [Azure Database for MySQL](https://learn.microsoft.com/azure/mysql/) is a relational database service based on the MySQL open-source database engine. A fully managed database-as-a-service (DBaaS) that can handle mission-critical workloads with predictable performance, security, high availability, and dynamic scalability. |
+| **Azure Database for PostgreSQL** | Fully managed <sup>2</sup> | [Azure Database for PostgreSQL](https://learn.microsoft.com/azure/postgresql/) is a relational database service based on the PostgreSQL open-source database engine. A fully managed database-as-a-service (DBaaS) that can handle mission-critical workloads with predictable performance, security, high availability, and dynamic scalability. |
+| **Microsoft Fabric** | Fully managed <sup>4</sup> | [Microsoft Fabric](https://learn.microsoft.com/fabric/get-started/microsoft-fabric-overview) is an all-in-one, Software-as-a-Service analytics solution for enterprises that covers everything from data movement to data science, real-time analytics, data warehousing, and business intelligence. [Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse/data-warehousing) provides multiple database and data warehousing experiences.<br />- Each Microsoft Fabric Lakehouse automatically includes a **SQL analytics endpoint |
+ | in Microsoft Fabric |
+| ** to enable data engineers to access a relational layer on top of physical data in the Lakehouse, thanks to automatic schema discovery.<br />- A warehouse in Microsoft Fabric provides a "traditional" data warehouse and supports the full transactional T-SQL capabilities you would expect from an enterprise data warehouse. Either data warehousing experience exposes data to analysis and reporting tools using T-SQL/TDS endpoint.<br />- You can mirror an existing [Azure SQL Database into Fabric](https://learn.microsoft.com/fabric/database/mirrored-database/azure-sql-database).<br />- SQL databases in Fabric are listed separately in the "Applies to" section. |
+| **SQL database in Microsoft Fabric** | Fully managed <sup>4</sup> | [SQL database in Fabric](https://learn.microsoft.com/fabric/database/sql/overview) is a developer-friendly, AI-ready, operational database based on the same [SQL Database Engine](../database-engine/sql-database-engine.md) as found in Azure SQL Database. For more information, see [Features comparison: Azure SQL Database and SQL database in Fabric](https://learn.microsoft.com/fabric/database/sql/limitations#features-of-azure-sql-database-and-fabric-sql-database). |
+
+<sup>1</sup> Can be Azure Arc-enabled  
+<sup>2</sup> Platform as a service (PaaS)  
+<sup>3</sup> Infrastructure as a service (IaaS)  
+<sup>4</sup> Software as a service (SaaS)
+
+### Older products
+
+| Product | Deployment model | Description |
+| --- | --- | --- |
+| **Azure Database for MariaDB** | Fully managed <sup>2</sup> | [Azure Database for MariaDB](https://learn.microsoft.com/azure/mariadb) is a relational database service based on the MariaDB open-source database engine. A fully managed database-as-a-service (DBaaS) that can handle mission-critical workloads with predictable performance, security, high availability, and dynamic scalability. |
+| **Azure SQL Edge** | *Connected* mode using Azure IoT Edge, or *disconnected* mode in a Linux container | [Azure SQL Edge](https://learn.microsoft.com/azure/azure-sql-edge/overview) is an optimized relational database engine geared for IoT and IoT Edge deployments. It provides capabilities to create a high-performance data storage and processing layer for IoT applications and solutions. It shares the same database engine as  SQL Server |
+| , and includes additional time-series and analytics features. |
+| **Azure Synapse Analytics** | Fully managed <sup>1</sup> | [Azure Synapse Analytics](https://learn.microsoft.com/azure/synapse-analytics/overview-what-is) is an enterprise analytics service that accelerates time to insight across data warehouses and big data systems. Azure Synapse Analytics brings together the best of SQL technologies used in enterprise data warehousing, Spark technologies used for big data, Data Explorer for log and time series analytics, Pipelines for data integration and ETL/ELT, and deep integration with other Azure services such as Power BI, Cosmos DB, and Azure Machine Learning. The [Azure Synapse SQL](https://learn.microsoft.com/azure/synapse-analytics/sql/overview-architecture) features provide scale-out architecture for data processing in the form of dedicated SQL pools (formerly SQL DW) and serverless SQL pools.<br /><br />The behavior and Azure portal experience can differ between a dedicated SQL pool in Azure Synapse workspaces, or a standalone dedicated SQL pool (formerly SQL DW) in a logical SQL server. |
+
+<sup>1</sup> Platform as a service (PaaS)
+
+## TOC search
+
+You can search the entries in the table of contents using the filter search box at the top:
+
+Screenshot showing the option to use the filter box.
+
+## Version filter
+
+The SQL Server technical documentation provides content for several supported versions and flavors of SQL Server. Features can vary between versions and flavors of SQL Server, and as such, sometimes the content itself can vary.
+
+You can use the [version filter](versioning-system-monikers-ui-sql-server.md) to ensure that you're seeing content for the appropriate version and flavor of SQL Server:
+
+Screenshot showing the SQL Docs version filter.
+
+## Hub page
+
+The SQL Server hub page can be found at [https://aka.ms/sqldocs](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/index.yml?WT.mc_id=akams) and is the entry point for finding relevant SQL Server content.
+
+You can always navigate back to this page by selecting **SQL Docs** from the header at the top of every page within the SQL Server technical documentation set:
+
+Screenshot of the SQL Docs menu option in the header.
+
+## Offline documentation
+
+If you would like to view the SQL Server documentation on an offline system, you have two options to do so. You can either create a PDF wherever you're in the SQL Server technical documentation, or you can download the offline content using [SQL Server offline Help Viewer](sql-server-offline-documentation.md).
+
+If you'd like to create a PDF, select the **Download PDF** link found at the bottom of every table of contents.
+
+Screenshot showing the option to download content as a PDF.
+
+## TOC symbols
+
+Entries in the table of contents (TOC) that have a `>` at the end of the entry indicate that you're taken to technical documentation with a different table of contents.
+
+Screenshot showing a single chevron item in table of contents.
+
+Entries in the TOC marked with `>>` indicate that you're taken to a different website.
+
+Screenshot showing double-chevron table of contents navigation markers.
+
+If you navigate to one of these pages, you can come back to the main SQL Server technical page, and table of contents, by selecting the **Welcome to SQL Server >** entry found at the top of each of the table of contents.
+
+## Article section navigation
+
+The right-hand navigation pane allows you to quickly navigate to sections within an article, and identify your location within the article.
+
+Screenshot showing right-hand navigation.
+
+## Related content
+
+- [SQL Server technical documentation](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/sql-server/index.yml)
+- [SQL Server help and feedback](sql-server-get-help.md)
+- [Educational SQL resources](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/sql-server/educational-sql-resources.yml)

@@ -1,0 +1,121 @@
+---
+title: "DROP VIEW (Transact-SQL)"
+description: DROP VIEW (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "01/19/2021"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "DROP_VIEW_TSQL"
+  - "DROP VIEW"
+helpviewer_keywords:
+  - "dropping views"
+  - "DROP VIEW statement"
+  - "deleting views"
+  - "indexed views [SQL Server], removing"
+  - "views [SQL Server], removing"
+  - "removing views"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# DROP VIEW (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Removes one or more views from the current database. DROP VIEW can be executed against indexed views.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+-- Syntax for SQL Server and Azure SQL Database
+  
+DROP VIEW [ IF EXISTS ] [ schema_name . ] view_name [ ...,n ] [ ; ]  
+```  
+
+```syntaxsql
+-- Syntax for Azure Synapse Analytics and Microsoft Fabric
+  
+DROP VIEW [ IF EXISTS ] [ schema_name . ] view_name [ ; ]  
+```  
+
+## Arguments
+ *IF EXISTS*  
+ **Applies to**:  SQL Server 
+ (  SQL Server 2016 (13.x) 
+ through [current version](https://learn.microsoft.com/troubleshoot/sql/general/determine-version-edition-update-level),  SQL Database
+).  
+  
+ Conditionally drops the view only if it already exists.  
+  
+ *schema_name*  
+ Is the name of the schema to which the view belongs.  
+  
+ *view_name*  
+ Is the name of the view to remove.  
+  
+## Remarks  
+ When you drop a view, the definition of the view and other information about the view is deleted from the system catalog. All permissions for the view are also deleted.  
+  
+ Any view on a table that is dropped by using DROP TABLE must be dropped explicitly by using DROP VIEW.  
+  
+ When executed against an indexed view, DROP VIEW automatically drops all indexes on a view. To display all indexes on a view, use [sp_helpindex](../../relational-databases/system-stored-procedures/sp-helpindex-transact-sql.md).  
+  
+ When querying through a view, the  Database Engine 
+ checks to make sure that all the database objects referenced in the statement exist and that they are valid in the context of the statement, and that data modification statements do not violate any data integrity rules. A check that fails returns an error message. A successful check translates the action into an action against the underlying table or tables. If the underlying tables or views have changed since the view was originally created, it may be useful to drop and re-create the view.  
+  
+ For more information about determining dependencies for a specific view, see [sys.sql_dependencies &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-sql-dependencies-transact-sql.md).  
+  
+ For more information about viewing the text of the view, see [sp_helptext &#40;Transact-SQL&#41;](../../relational-databases/system-stored-procedures/sp-helptext-transact-sql.md).  
+  
+## Permissions  
+ Requires **CONTROL** permission on the view, **ALTER** permission on the schema containing the view, or membership in the **db_ddladmin** fixed server role.  
+  
+## Examples  
+  
+### A. Drop a view  
+ The following example removes the view `Reorder`.  
+  
+```sql
+DROP VIEW IF EXISTS dbo.Reorder ;  
+GO  
+```  
+  
+## Related content
+
+- [ALTER VIEW (Transact-SQL)](alter-view-transact-sql.md)
+- [CREATE VIEW (Transact-SQL)](create-view-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../functions/eventdata-transact-sql.md)
+- [sys.columns (Transact-SQL)](../../relational-databases/system-catalog-views/sys-columns-transact-sql.md)
+- [sys.objects (Transact-SQL)](../../relational-databases/system-catalog-views/sys-objects-transact-sql.md)
+- [USE (Transact-SQL)](../language-elements/use-transact-sql.md)
+- [sys.sql_expression_dependencies (Transact-SQL)](../../relational-databases/system-catalog-views/sys-sql-expression-dependencies-transact-sql.md)

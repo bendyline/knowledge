@@ -1,0 +1,55 @@
+---
+title: "prepareStatement Method (java.lang.String, int, int)"
+description: "prepareStatement Method (java.lang.String, int, int)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.prepareStatement (java.lang.String, int, int)"
+apitype: "Assembly"
+---
+# prepareStatement Method (java.lang.String, int, int)
+
+
+  Creates a [SQLServerPreparedStatement](sqlserverpreparedstatement-class.md) object that generates [SQLServerResultSet](sqlserverresultset-class.md) objects with the given type and concurrency.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.PreparedStatement prepareStatement(java.lang.String sSql,  
+                                                   int resultSetType,  
+                                                   int resultSetConcurrency)  
+```  
+  
+#### Parameters  
+ *sSql*  
+  
+ A **String** containing a SQL statement.  
+  
+ *resultSetType*  
+  
+ An **int** that indicates the result set type.  
+  
+ *resultSetConcurrency*  
+  
+ An **int** that indicates the result set concurrency type.  
+  
+## Return Value  
+ A PreparedStatement object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This prepareStatement method is specified by the prepareStatement method in the java.sql.Connection interface.  
+  
+## Related content
+
+- [SQLServerConnection Methods](sqlserverconnection-methods.md)
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

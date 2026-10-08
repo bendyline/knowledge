@@ -1,0 +1,301 @@
+---
+title: "Create and Apply the Initial Snapshot"
+description: Learn how to create and apply the initial snapshot in SQL Server by using SQL Server Management Studio, Transact-SQL, or Replication Management Objects.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "snapshots [SQL Server replication], creating"
+  - "snapshot replication [SQL Server], initial snapshots"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Create and apply the initial snapshot
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+This article describes how to create and apply the initial snapshot in  SQL Server 
+ by using  SQL Server Management Studio 
+,  Transact-SQL , or Replication Management Objects (RMO). Merge publications that use parameterized filters require a two-part snapshot. For more information, see [Create a Snapshot for a Merge Publication with Parameterized Filters](create-a-snapshot-for-a-merge-publication-with-parameterized-filters.md).  
+  The Snapshot Agent generates snapshots after a publication is created. You can generate snapshots:  
+  
+-   Immediately. By default, the New Publication Wizard generates a snapshot for a merge publication immediately after you create the publication.    
+-   At a scheduled time. Specify a schedule on the **Snapshot Agent** page of the New Publication Wizard or when using stored procedures or Replication Management Objects (RMO).    
+-   Manually. Run the Snapshot Agent from the command prompt or from  SQL Server Management Studio 
+. For more information about running agents, see [Replication Agent Executables Concepts](concepts/replication-agent-executables-concepts.md) and [Start and Stop a Replication Agent (SQL Server Management Studio)](agents/start-and-stop-a-replication-agent-sql-server-management-studio.md).  
+  
+For merge replication, the Snapshot Agent generates a snapshot every time it runs. For Transactional Replication, snapshot generation depends on the setting of the publication property **immediate_sync**. If the property is set to TRUE (the default when using the New Publication Wizard), the Snapshot Agent generates a snapshot every time it runs, and it can apply the snapshot to a Subscriber at any time. If the property is set to FALSE (the default when using **sp_addpublication**), the Snapshot Agent generates a snapshot only if a new subscription is added since the last Snapshot Agent run; Subscribers must wait for the Snapshot Agent to complete before they can synchronize.  
+  
+By default, the Snapshot Agent saves generated snapshots in the default snapshot folder located on the Distributor. You can also save snapshot files on removable media such as removable disks, CD-ROMs, or in locations other than the default snapshot folder. You can also compress the files to make them easier to store and transfer, and execute scripts before or after the Snapshot Agent applies the snapshot at the Subscriber. For more information about these options, see [Snapshot Options](snapshot-options.md).  
+  
+If the snapshot is for a merge publication that uses parameterized filters, the Snapshot Agent creates the snapshot by using a two-part process. First, it creates a schema snapshot that contains the replication scripts and the schema of the published objects, but not the data. Each subscription then initializes with a snapshot that includes the scripts and schema copied from the schema snapshot and the data that belongs to the subscription's partition. For more information, see [Snapshots for Merge Publications with Parameterized Filters](create-a-snapshot-for-a-merge-publication-with-parameterized-filters.md).  
+  
+After the Snapshot Agent creates the snapshot at the Publisher and stores it in a default or alternate snapshot location, you can transfer the snapshot to the Subscriber and apply it. The Distribution Agent (for snapshot or Transactional Replication) or Merge Agent (for merge replication) transfers the snapshot and applies the schema and data files to the subscription database on the Subscriber during the initial synchronization. By default, the initial synchronization occurs immediately after you create a subscription if you use the New Subscription Wizard. The **Initialize When** option on the **Initialize Subscriptions** page of the wizard controls this behavior. When the Snapshot Agent generates snapshots after a subscription is initialized, it doesn't apply them to a Subscriber unless you mark a subscription for reinitialization. For more information, see [Reinitialize Subscriptions](reinitialize-subscriptions.md).  
+  
+After the Distribution Agent or Merge Agent applies the initial snapshot, the agent propagates subsequent updates and other data modifications. When snapshots are distributed and applied to Subscribers, only those Subscribers waiting for initial or new snapshots are affected. Other Subscribers to that publication (those that are already receiving inserts, updates, deletes, or other modifications to the published data) aren't affected.  
+
+To view or modify the default snapshot folder location, see  
+  
+-    SQL Server Management Studio 
+: [Modify snapshot options](snapshot-options.md)  
+  
+-   Replication Programming and RMO programming: [Configure Publishing and Distribution](configure-publishing-and-distribution.md)  
+
+## Default snapshot location
+
+ Specify the default snapshot location on the **Snapshot Folder** page of the Configure Distribution Wizard. For more information about using this wizard, see [Configure Publishing and Distribution](configure-publishing-and-distribution.md). If you create a publication on a server that is not configured as a Distributor, specify a default snapshot location on the **Snapshot Folder** page of the New Publication Wizard. For more information about using this wizard, see [Create a Publication](publish/create-a-publication.md).  
+  
+ Modify the default snapshot location on the **Publishers** page of the **Distributor Properties - \<Distributor>** dialog box. For more information, see [View and Modify Distributor and Publisher Properties](view-and-modify-distributor-and-publisher-properties.md). Set the snapshot folder for each publication in the **Publication Properties - \<Publication>** dialog box. For more information, see [View and Modify Publication Properties](publish/view-and-modify-publication-properties.md).  
+  
+### Modify the default snapshot location  
+  
+1.  On the **Publishers** page of the **Distributor Properties - \<Distributor>** dialog box, select the properties button (**...**) for the Publisher for which you want to change the default snapshot location.  
+  
+1.  In the **Publisher Properties - \<Publisher>** dialog box, enter a value for the **Default Snapshot Folder** property.  
+  
+    > **Note:**  
+    >  The Snapshot Agent needs write permissions for the directory you specify, and the Distribution Agent or Merge Agent needs read permissions. If you use pull subscriptions, you must specify a shared directory as a universal naming convention (UNC) path, such as \\\computername\snapshot. For more information, see [Secure the Snapshot Folder](security/secure-the-snapshot-folder.md).  
+  
+1.  Select **OK**.
+
+## Create snapshot
+By default, if SQL Server Agent is running, the Snapshot Agent generates a snapshot immediately after you create a publication by using the New Publication Wizard. By default, the Distribution Agent (for snapshot and Transactional Replication) or Merge Agent (for merge subscriptions) then applies the snapshot for all subscriptions. You can also generate a snapshot by using  SQL Server Management Studio 
+ and Replication Monitor. For information about starting Replication Monitor, see [Start the Replication Monitor](monitor/start-the-replication-monitor.md).  
+
+### Using SQL Server Management Studio
+
+1.  Connect to the Publisher in  Management Studio
+, and then expand the server node.    
+1.  Expand the **Replication** folder, and then expand the **Local Publications** folder.    
+1.  Right-click the publication for which you want to create a snapshot, and then select **View Snapshot Agent Status**.    
+1.  In the **View Snapshot Agent Status - \<Publication>** dialog box, select **Start**.    
+ When the Snapshot Agent finishes generating the snapshot, it displays a message, such as "[100%] A snapshot of 17 article(s) was generated."  
+  
+### In Replication Monitor  
+  
+1.  In Replication Monitor, expand a Publisher group in the left pane, and then expand a Publisher.    
+1.  Right-click the publication for which you want to generate a snapshot, and then select **Generate Snapshot**.    
+1.  To view the status of the Snapshot Agent, select the **Agents** tab. For more detailed information, right-click the Snapshot Agent in the grid, and then select **View Details**.
+
+### Using Transact-SQL
+You can create initial snapshots programmatically by creating and running a Snapshot Agent job or by running the Snapshot Agent executable file from a batch file. After an initial snapshot has been generated, it is transferred to and applied at the Subscriber when the subscription is first synchronized. If you run the Snapshot Agent from a command prompt or a batch file, you need to rerun the agent whenever the existing snapshot becomes invalid.  
+  
+> **Important:**  
+>  When possible, prompt users to enter security credentials at runtime. If you must store credentials in a script file, secure the file to prevent unauthorized access.  
+
+1.  Create a snapshot, transactional, or merge publication. For more information, see [Create a Publication](publish/create-a-publication.md).  
+  
+1.  Execute [sp_addpublication_snapshot (Transact-SQL)](../system-stored-procedures/sp-addpublication-snapshot-transact-sql.md). Specify **\@publication** and the following parameters:  
+  
+    -   **The \@job_login, which specifies** the Windows Authentication credentials under which the Snapshot Agent runs at the Distributor.  
+  
+    -   **The \@job_password**, which is the password for the supplied Windows credentials.  
+  
+    -   (Optional) A value of **0** for **\@publisher_security_mode** if the agent uses SQL Server Authentication when connecting to the Publisher. In this case, you must also specify the SQL Server Authentication login information for **\@publisher_login** and **\@publisher_password**.  
+  
+    -   (Optional) A synchronization schedule for the Snapshot Agent job. For more information, see [Specify Synchronization Schedules](specify-synchronization-schedules.md).  
+  
+    > **Important:**  
+    >  When you configure a Publisher with a remote Distributor, the values you supply for all parameters, including *job_login* and *job_password*, are sent to the Distributor as plain text. Encrypt the connection between the Publisher and its remote Distributor before you execute this stored procedure. For more information, see [Enable Encrypted Connections to the Database Engine &#40;SQL Server Configuration Manager&#41;](../../database-engine/configure-windows/configure-sql-server-encryption.md).  
+  
+1.  Add articles to the publication. For more information, see [Define an Article](publish/define-an-article.md).  
+  
+1.  At the Publisher on the publication database, execute [sp_startpublication_snapshot (Transact-SQL)](../system-stored-procedures/sp-startpublication-snapshot-transact-sql.md), specifying the value of **\@publication** from step 1.  
+  
+## Apply a snapshot  
+
+### Using SQL Server Management Studio
+  
+After the snapshot is generated, synchronize the subscription with the Distribution Agent or the Merge Agent to apply it:
+
+- If the agent runs continuously (the default for transactional replication), it automatically applies the snapshot after it generates it.   
+- If the agent runs on a schedule, it applies the snapshot the next time it runs.    
+- If the agent runs on demand, it applies the snapshot the next time you run it.  
+  
+     For more information about synchronizing subscriptions, see [Synchronize a Push Subscription](synchronize-a-push-subscription.md) and [Synchronize a Pull Subscription](synchronize-a-pull-subscription.md).  
+  
+###   Use Transact-SQL  
+ 
+1.  Create a snapshot, transactional, or merge publication. For more information, see [Create a Publication](publish/create-a-publication.md).  
+  
+1.  Add articles to the publication. For more information, see [Define an Article](publish/define-an-article.md).  
+  
+1.  From the command prompt or in a batch file, start the [Replication Snapshot Agent](agents/replication-snapshot-agent.md) by running **snapshot.exe**, specifying the following command-line arguments:  
+  
+    -   **-Publication**  
+    -   **-Publisher**  
+    -   **-Distributor**   
+    -   **-PublisherDB**   
+    -   **-ReplicationType**  
+  
+     If you're using SQL Server Authentication, also specify the following arguments:  
+  
+    -   **-DistributorLogin**    
+    -   **-DistributorPassword**   
+    -   **-DistributorSecurityMode** = **0**    
+    -   **-PublisherLogin**    
+    -   **-PublisherPassword**    
+    -   **-PublisherSecurityMode** = **0**  
+  
+####  <a name="TsqlExample"></a> Examples (Transact-SQL)  
+ This example shows how to create a transactional publication and add a Snapshot Agent job for the new publication (using **sqlcmd** scripting variables). The example also starts the job.  
+  
+ [language="sql" source="codesnippet/tsql/create-and-apply-the-ini_1.sql"::: (complete source file; reference: codesnippet/tsql/create-and-apply-the-ini_1.sql)](../../../_code/docs/relational-databases/replication/codesnippet/tsql/create-and-apply-the-ini_1.sql.md)
+  
+ This example creates a merge publication and adds a Snapshot Agent job (using **sqlcmd** variables) for the publication. This example also starts the job.  
+  
+ [language="sql" source="codesnippet/tsql/create-and-apply-the-ini_2.sql"::: (complete source file; reference: codesnippet/tsql/create-and-apply-the-ini_2.sql)](../../../_code/docs/relational-databases/replication/codesnippet/tsql/create-and-apply-the-ini_2.sql.md)
+  
+ The following command-line arguments start the Snapshot Agent to generate the snapshot for a merge publication.  
+  
+> **Note:**  
+>  Line breaks were added to improve readability. In a batch file, you must make commands in a single line.  
+  
+```  
+  
+REM -- Declare variables  
+SET Publisher=%InstanceName%  
+SET PublicationDB=AdventureWorks2022   
+SET Publication=AdvWorksSalesOrdersMerge   
+  
+REM --Start the Snapshot Agent to generate the snapshot for AdvWorksSalesOrdersMerge.  
+"C:\Program Files\Microsoft SQL Server\120\COM\SNAPSHOT.EXE" -Publication %Publication%   
+-Publisher %Publisher% -Distributor %Publisher% -PublisherDB %PublicationDB%   
+-ReplicationType 2 -OutputVerboseLevel 1 -DistributorSecurityMode 1  
+  
+```  
+  
+###  <a name="RMOProcedure"></a> Using Replication Management Objects (RMO)  
+ The Snapshot Agent generates snapshots after you create a publication. You can programmatically generate these snapshots by using Replication Management Objects (RMO) and direct managed code access to replication agent functionalities. The objects you use depend on the type of replication. You can start the Snapshot Agent synchronously by using the [Microsoft.SqlServer.Replication.SnapshotGenerationAgent](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent) object or asynchronously by using the agent job. After the initial snapshot is generated, the Snapshot Agent transfers it to the Subscriber and applies it when the subscription is first synchronized. You need to rerun the agent whenever the existing snapshot no longer contains valid, up-to-date data. For more information, see [Maintain Publications](publish/maintain-publications.md).  
+  
+> **Important:**  
+>  When possible, prompt users to enter security credentials at runtime. If you must store credentials, use the [cryptographic services](https://learn.microsoft.com/previous-versions/aa719848\(v=vs.71\)) provided by the  Microsoft 
+ Windows .NET Framework.  
+  
+#### To generate the initial snapshot for a snapshot or transactional publication by starting the Snapshot Agent job (asynchronous)  
+  
+1.  Create a connection to the Publisher by using the [Microsoft.SqlServer.Management.Common.ServerConnection](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Common.ServerConnection) class.  
+  
+1.  Create an instance of the [Microsoft.SqlServer.Replication.TransPublication](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.TransPublication) class. Set the [Microsoft.SqlServer.Replication.Publication.Name%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.Name%252A) and [Microsoft.SqlServer.Replication.Publication.DatabaseName%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.DatabaseName%252A) properties for the publication, and set the [Microsoft.SqlServer.Replication.ReplicationObject.ConnectionContext%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationObject.ConnectionContext%252A) property to the connection created in step 1.  
+  
+1.  Call the [Microsoft.SqlServer.Replication.ReplicationObject.LoadProperties%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationObject.LoadProperties%252A) method to load the remaining properties of the object. If this method returns **false**, either the publication properties in step 2 are defined incorrectly or the publication doesn't exist.  
+  
+1.  If the value of [Microsoft.SqlServer.Replication.Publication.SnapshotAgentExists%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.SnapshotAgentExists%252A) is **false**, call [Microsoft.SqlServer.Replication.Publication.CreateSnapshotAgent%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.CreateSnapshotAgent%252A) to create the snapshot agent job for this publication.  
+  
+1.  Call the [Microsoft.SqlServer.Replication.Publication.StartSnapshotGenerationAgentJob%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.StartSnapshotGenerationAgentJob%252A) method to start the agent job that generates the snapshot for this publication.  
+  
+1.  (Optional) When the value of [Microsoft.SqlServer.Replication.TransPublication.SnapshotAvailable%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.TransPublication.SnapshotAvailable%252A) is **true**, the snapshot is available to Subscribers.  
+  
+#### To generate the initial snapshot for a snapshot or transactional publication by running the Snapshot Agent (synchronous)  
+  
+1.  Create an instance of the [Microsoft.SqlServer.Replication.SnapshotGenerationAgent](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent) class, and set the following required properties:  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publisher%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publisher%252A) - name of the Publisher  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherDatabase%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherDatabase%252A) - name of the publication database  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publication%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publication%252A) - name of the publication  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Distributor%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Distributor%252A) - name of the Distributor  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherSecurityMode%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherSecurityMode%252A) - a value of [Microsoft.SqlServer.Replication.SecurityMode.Integrated](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Integrated) to use Windows Authentication when connecting to the Publisher or a value of [Microsoft.SqlServer.Replication.SecurityMode.Standard](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Standard) and values for [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherLogin%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherLogin%252A) and [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherPassword%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherPassword%252A) to use  SQL Server 
+ Authentication when connecting to the Publisher. Windows Authentication is recommended.  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorSecurityMode%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorSecurityMode%252A) - a value of [Microsoft.SqlServer.Replication.SecurityMode.Integrated](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Integrated) to use Windows Authentication when connecting to the Distributor or a value of [Microsoft.SqlServer.Replication.SecurityMode.Standard](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Standard) and values for [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorLogin%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorLogin%252A) and [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorPassword%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorPassword%252A) to use  SQL Server 
+ Authentication when connecting to the Distributor. Windows Authentication is recommended.  
+  
+1.  Set a value of [Microsoft.SqlServer.Replication.ReplicationType.Transactional](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationType.Transactional) or [Microsoft.SqlServer.Replication.ReplicationType.Snapshot](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationType.Snapshot) for [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.ReplicationType%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.ReplicationType%252A).  
+  
+1.  Call the [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.GenerateSnapshot%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.GenerateSnapshot%252A) method.  
+  
+#### To generate the initial snapshot for a merge publication by starting the Snapshot Agent job (asynchronous)  
+  
+1.  Create a connection to the Publisher by using the [Microsoft.SqlServer.Management.Common.ServerConnection](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Common.ServerConnection) class.  
+  
+1.  Create an instance of the [Microsoft.SqlServer.Replication.MergePublication](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.MergePublication) class. Set the [Microsoft.SqlServer.Replication.Publication.Name%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.Name%252A) and [Microsoft.SqlServer.Replication.Publication.DatabaseName%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.DatabaseName%252A) properties for the publication, and set the [Microsoft.SqlServer.Replication.ReplicationObject.ConnectionContext%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationObject.ConnectionContext%252A) property to the connection created in step 1.  
+  
+1.  Call the [Microsoft.SqlServer.Replication.ReplicationObject.LoadProperties%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationObject.LoadProperties%252A) method to load the remaining properties of the object. If this method returns **false**, either the publication properties in step 2 are defined incorrectly or the publication doesn't exist.  
+  
+1.  If the value of [Microsoft.SqlServer.Replication.Publication.SnapshotAgentExists%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.SnapshotAgentExists%252A) is **false**, call [Microsoft.SqlServer.Replication.Publication.CreateSnapshotAgent%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.CreateSnapshotAgent%252A) to create the snapshot agent job for this publication.  
+  
+1.  Call the [Microsoft.SqlServer.Replication.Publication.StartSnapshotGenerationAgentJob%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.Publication.StartSnapshotGenerationAgentJob%252A) method to start the agent job that generates the snapshot for this publication.  
+  
+1.  (Optional) When the value of [Microsoft.SqlServer.Replication.MergePublication.SnapshotAvailable%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.MergePublication.SnapshotAvailable%252A) is **true**, the snapshot is available to Subscribers.  
+  
+#### To generate the initial snapshot for a merge publication by running the Snapshot Agent (synchronous)  
+  
+1.  Create an instance of the [Microsoft.SqlServer.Replication.SnapshotGenerationAgent](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent) class, and set the following required properties:  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publisher%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publisher%252A) - name of the Publisher  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherDatabase%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherDatabase%252A) - name of the publication database  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publication%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Publication%252A) - name of the publication  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Distributor%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.Distributor%252A) - name of the Distributor  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherSecurityMode%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherSecurityMode%252A) - a value of [Microsoft.SqlServer.Replication.SecurityMode.Integrated](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Integrated) to use Windows Authentication when connecting to the Publisher or a value of [Microsoft.SqlServer.Replication.SecurityMode.Standard](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Standard) and values for [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherLogin%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherLogin%252A) and [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherPassword%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.PublisherPassword%252A) to use  SQL Server 
+ Authentication when connecting to the Publisher. Windows Authentication is recommended.  
+  
+    -   [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorSecurityMode%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorSecurityMode%252A) - a value of [Microsoft.SqlServer.Replication.SecurityMode.Integrated](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Integrated) to use Windows Authentication when connecting to the Distributor or a value of [Microsoft.SqlServer.Replication.SecurityMode.Standard](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SecurityMode.Standard) and values for [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorLogin%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorLogin%252A) and [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorPassword%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.DistributorPassword%252A) to use  SQL Server 
+ Authentication when connecting to the Distributor. Windows Authentication is recommended.  
+  
+1.  Set a value of [Microsoft.SqlServer.Replication.ReplicationType.Merge](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.ReplicationType.Merge) for [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.ReplicationType%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.ReplicationType%252A).  
+  
+1.  Call the [Microsoft.SqlServer.Replication.SnapshotGenerationAgent.GenerateSnapshot%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Replication.SnapshotGenerationAgent.GenerateSnapshot%252A) method.  
+  
+####  <a name="PShellExample"></a> Examples (RMO)  
+ This example synchronously runs the Snapshot Agent to generate the initial snapshot for a transactional publication.  
+  
+ [HowTo#rmo_GenerateSnapshot (complete source file; reference: ../../relational-databases/replication/codesnippet/csharp/rmohowto/rmotestevelope.cs#rmo_generatesnapshot)](../../../_code/docs/relational-databases/replication/codesnippet/csharp/rmohowto/rmotestevelope.cs.md)  
+  
+ [HowTo#rmo_vb_GenerateSnapshot (complete source file; reference: ../../relational-databases/replication/codesnippet/visualbasic/rmohowtovb/rmotestenv.vb#rmo_vb_generatesnapshot)](../../../_code/docs/relational-databases/replication/codesnippet/visualbasic/rmohowtovb/rmotestenv.vb.md)  
+  
+ This example asynchronously starts the agent job to generate the initial snapshot for a transactional publication.  
+  
+ [HowTo#rmo_GenerateSnapshot_WithJob (complete source file; reference: ../../relational-databases/replication/codesnippet/csharp/rmohowto/rmotestevelope.cs#rmo_generatesnapshot_withjob)](../../../_code/docs/relational-databases/replication/codesnippet/csharp/rmohowto/rmotestevelope.cs.md)  
+  
+ [HowTo#rmo_vb_GenerateSnapshot_WithJob (complete source file; reference: ../../relational-databases/replication/codesnippet/visualbasic/rmohowtovb/rmotestenv.vb#rmo_vb_generatesnapshot_withjob)](../../../_code/docs/relational-databases/replication/codesnippet/visualbasic/rmohowtovb/rmotestenv.vb.md)  
+  
+## Blocking when applying initial snapshot
+
+If you have multiple publications that publish data into one database at the subscribers, you notice that only one publication can apply its snapshot at a time while applying the initial snapshots.
+
+You might see a wait resource similar to the following when reviewing SQL activity:
+
+*APP: 18:16384:[snapshot_delivery_in_progress_Tr]:(9bcdaf92)  
+APP: 5:16384:[snapshot_delivery_in_progress_Er]:(3c3b7db9*)  
+
+Querying for locking behavior might show resources similar to the following:
+
+*APP 16384:[appname]:(fbe42d68)  XAPP 16384:[snapshot_del]:(9bcdaf92)  X*
+
+
+This behavior is by design.  It occurs because an application lock is used to prevent multiple replication agents from concurrently applying snapshots of different publications to the same subscriber database.  Because the application lock contains the name of the subscriber database, any publications that publish into the same subscriber database will be affected.  The result is that only one snapshot can be inserted into the subscriber database at a given time.
+
+Exclusive locks are used in this situation to help avoid the possibility of replication agents becoming deadlocked with each other. 
+
+To work around this issue, specify a different subscriber database for each publication.
+
+## Related content
+
+- [Create a publication](publish/create-a-publication.md)
+- [Create a Pull Subscription](create-a-pull-subscription.md)
+- [Create a push subscription](create-a-push-subscription.md)
+- [Specify Synchronization Schedules](specify-synchronization-schedules.md)
+- [Initialize a Subscription with a Snapshot for a New Publication](initialize-a-subscription-with-a-snapshot.md)
+- [Replication Management Objects Concepts](concepts/replication-management-objects-concepts.md)
+- [Replication Security Best Practices](security/replication-security-best-practices.md)
+- [Replication System Stored Procedures Concepts](concepts/replication-system-stored-procedures-concepts.md)
+- [Use sqlcmd with scripting variables](../../tools/sqlcmd/sqlcmd-use-scripting-variables.md)

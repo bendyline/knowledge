@@ -1,0 +1,85 @@
+---
+title: Service Connector Region Support
+description: Find which Azure regions support Service Connector for App Service, Azure Functions, AKS, and Azure Spring Apps before creating service connections.
+author: maud-lv
+ms.author: malev
+ms.service: service-connector
+ms.date: 09/18/2025
+ms.topic: concept-article
+ms.custom: references_regions
+#customer intent: As a developer supporting Azure services, I want to know which regions are supported for Service Connector.
+---
+
+# Service Connector region support
+
+When you connect Cloud services together with Service Connector, the conceptual connection resource is provisioned into the same region as your compute service instance by default. This page shows the region support information.
+
+## Supported regions with regional endpoints
+
+If your compute service instance is located in one of the regions that Service Connector supports, you can use Service Connector to create and manage service connections.
+
+| Region | App Service, Azure Functions, <br>Azure Spring Apps | AKS |
+| --- | :---: | :---: |
+| Australia Central | Yes | Yes |
+| Australia Central 2 | Yes | Yes |
+| Australia East | Yes | Yes |
+| Australia Southeast | Yes | Yes |
+| Brazil South | Yes | Yes |
+| Brazil Southeast | Yes | Yes |
+| Canada Central | Yes | Yes |
+| Canada East | Yes | Yes |
+| Central India | Yes | Yes |
+| Central US | Yes | Yes |
+| Central US EUAP | Yes | Yes |
+| East Asia | Yes | Yes |
+| East US | Yes | Yes |
+| East US 2 | Yes | Yes |
+| East US 2 EUAP | Yes | Yes |
+| France Central | Yes | Yes |
+| France South | Yes | Yes |
+| Germany North | Yes | Yes |
+| Germany West Central | Yes | Yes |
+| Japan East | Yes | Yes |
+| Japan West | Yes | Yes |
+| Jio India Central | Yes | Yes |
+| Jio India West | Yes | Yes |
+| Korea Central | Yes | Yes |
+| Korea South | Yes | Yes |
+| North Central US | Yes | Yes |
+| North Europe | Yes | Yes |
+| Norway East | Yes | Yes |
+| Norway West | Yes | Yes |
+| Qatar Central | Yes | No |
+| South Africa North | Yes | Yes |
+| South Africa West | Yes | Yes |
+| South Central US | Yes | Yes |
+| Southeast Asia | Yes | Yes |
+| South India | Yes | Yes |
+| Sweden Central | Yes | Yes |
+| Sweden South | Yes | No |
+| Switzerland North | Yes | Yes |
+| Switzerland West | Yes | Yes |
+| UAE Central | Yes | No |
+| UAE North | Yes | Yes |
+| UK South | Yes | Yes |
+| UK West | Yes | Yes |
+| West Central US | Yes | Yes |
+| West Europe | Yes | Yes |
+| West India | Yes | Yes |
+| West US | Yes | Yes |
+| West US 2 | Yes | Yes |
+| West US 3 | Yes | Yes |
+
+## Regions not supported
+
+In regions where Service Connector isn't supported, you still find **Service Connector** in the Azure portal and the Service Connector commands appear in the Azure CLI. You can't create or manage service connections. The product team is working actively to enable more regions.
+
+## Next steps
+
+Learn about how Service Connector works and about service availability.
+
+> 
+> [Service internals](concept-service-connector-internals.md)
+
+> 
+> [High availability](concept-availability.md)

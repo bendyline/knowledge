@@ -1,0 +1,75 @@
+---
+title: "PDOStatement::execute"
+description: "API reference for the PDOStatement::execute function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDOStatement::execute
+
+
+
+Executes a statement.  
+  
+## Syntax  
+  
+```php  
+  
+bool PDOStatement::execute ([ $input ] );  
+```  
+  
+#### Parameters  
+*$input*: (Optional) An associative array containing the values for parameter markers.  
+  
+## Return Value  
+true on success, false otherwise.  
+  
+## Remarks  
+Statements executed with PDOStatement::execute must first be prepared with [PDO::prepare](pdo-prepare.md). See [Direct Statement Execution and Prepared Statement Execution in the PDO_SQLSRV Driver](direct-statement-execution-prepared-statement-execution-pdo-sqlsrv-driver.md) for information on how to specify direct or prepared statement execution.  
+  
+All values of the input parameters array are treated as PDO::PARAM_STR values.  
+  
+If the prepared statement includes parameter markers, you must either call PDOStatement::bindParam to bind the PHP variables to the parameter markers or pass an array of input-only parameter values.  
+  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+  
+```php  
+<?php  
+$database = "AdventureWorks";  
+$server = "(local)";  
+$conn = new PDO( "sqlsrv:server=$server ; Database = $database", "", "");  
+  
+$query = "select * from Person.ContactType";  
+$stmt = $conn->prepare( $query );  
+$stmt->execute();  
+  
+while ( $row = $stmt->fetch( PDO::FETCH_ASSOC ) ){  
+   print "$row[Name]\n";  
+}  
+  
+echo "\n";  
+$param = "Owner";  
+$query = "select * from Person.ContactType where name = ?";  
+$stmt = $conn->prepare( $query );  
+$stmt->execute(array($param));  
+  
+while ( $row = $stmt->fetch( PDO::FETCH_ASSOC ) ){  
+   print "$row[Name]\n";  
+}  
+?>  
+```  
+  
+> **Note:**
+> It is recommended to use strings as inputs when binding values to a [decimal or numeric column](../../t-sql/data-types/decimal-and-numeric-transact-sql.md) to ensure precision and accuracy as PHP has limited precision for [floating point numbers](https://php.net/manual/en/language.types.float.php). The same applies to bigint columns, especially when the values are outside the range of an [integer](../../t-sql/data-types/int-bigint-smallint-and-tinyint-transact-sql.md).
+
+## Related content
+
+- [PDOStatement Class](pdostatement-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

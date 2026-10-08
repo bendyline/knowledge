@@ -1,0 +1,160 @@
+---
+title: 'Record Bastion sessions'
+titleSuffix: Azure Bastion
+description: Learn how to configure and record Bastion sessions.
+author: aatsang
+ms.service: azure-bastion
+ms.topic: how-to
+ms.date: 04/10/2026
+ms.author: aarontsang
+
+# Customer intent: As a cloud administrator, I want to configure and enable session recording for Bastion, so that I can ensure all remote sessions are captured for auditing and compliance purposes.
+---
+# Configure Bastion session recording
+
+This article helps you configure Bastion session recording. When the Azure Bastion **Session recording** feature is enabled, you can record the graphical sessions for connections made to virtual machines (RDP and SSH) via the bastion host. After the session is closed or disconnected, recorded sessions are stored in a blob container within your storage account (via SAS URL). When a session is disconnected, you can access and view your recorded sessions in the Azure portal on the Session Recording page. Session recording requires the Bastion Premium SKU.
+
+> **Note:**
+> Bastion graphical session recording supports [managed identities](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) to authenticate to your storage account, eliminating the need to manage SAS tokens. You can use either a system-assigned or user-assigned managed identity. For general information about managed identities, see [What are managed identities for Azure resources?](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview).
+
+## Considerations
+
+* The Premium SKU is required for this feature.
+* Entra ID support for RDP sessions in portal can't be used concurrently with graphical session recording at this time.
+* Session recording isn't available via native client at this time.
+* Immutable storage policies must not be present.
+* Session recording supports one container/storage account at a time.
+* Changing storage containers while a session is active might cause disruptions to the session.
+* Blob versioning on the recordings must not be present.
+* When session recording is enabled on a Bastion deployment, Bastion records ALL sessions that go through the recording-enabled bastion host.
+
+## Prerequisites
+
+* Azure Bastion is deployed to your virtual network. See [Quickstart: Deploy Azure Bastion from the Azure portal](quickstart-host-portal.md) for steps.
+* Bastion must be configured to use the **Premium SKU** for this feature. You can update to the Premium SKU from a lower SKU when you configure the session recording feature. To check your SKU and upgrade, if necessary, see [View or upgrade a SKU](upgrade-sku.md).
+* The virtual machine that you connect to must either be deployed to the virtual network that contains the bastion host, or to a virtual network that is directly peered to the Bastion virtual network.
+* To view/list the session recordings, user must have the **Storage Blob Data Reader** role.
+
+## Enable session recording
+
+You can enable session recording when you create a new bastion host resource, or you can configure it later, after deploying Bastion.
+
+Screenshot shows the configuration page for the bastion host.
+
+### Steps for new Bastion deployments
+
+When you manually configure and deploy a bastion host, you can specify the SKU and features at the time of deployment. For comprehensive steps to deploy Bastion, see [Deploy Bastion from the Azure portal](quickstart-host-portal.md).
+
+1. In the Azure portal, select **Create a Resource**.
+1. Search for **Azure Bastion** and select **Create**.  
+1. Fill in the values using manual settings, being sure to select the **Premium SKU**.
+1. In the **Advanced** tab, select **Session Recording** to enable the session recording feature.
+1. Review your details and select **Create**. Bastion immediately begins creating your bastion host. This process takes about 10 minutes to complete.
+
+### Steps for existing Bastion deployments
+
+If you've already deployed Bastion, use the following steps to enable session recording.
+
+1. In the Azure portal, go to your Bastion resource.
+1. On your Bastion page, in the left pane, select **Configuration**.
+1. On the Configuration page, for Tier, select **Premium** if it isn't already selected. This feature requires the Premium SKU.
+1. Select **Session Recording** from the listed features.
+1. Select **Apply**. Bastion immediately begins updating the settings for your bastion host. Updates take about 10 minutes.
+
+## Configure storage account container
+
+In this section, you set up and specify the container for session recordings.
+
+1. Create a storage account in your resource group. For steps, see [Create a storage account](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-account-create.md) and [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-sas-overview.md).
+
+1. Within the storage account, create a **Container**. This is the container you'll use to store your Bastion session recordings. We recommend that you create an exclusive container for session recordings. For steps, see [Create a container](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/blobs/storage-quickstart-blobs-portal.md#create-a-container).
+1. On the page for your storage account, in the left pane, expand **Settings**. Select **Resource sharing (CORS)**.
+1. Create a new policy under Blob service with the following values and save your changes at the top of the page.
+
+   | Name | Value |
+   | --- | --- |
+   | Allowed origins | `https://` followed by the full DNS name of your bastion, starting with `bst-`. Keep in mind, these values are case-sensitive. |
+   | Allowed methods | GET |
+   | Allowed headers | * |
+   | Exposed headers | * |
+   | Max age | 86400 |
+
+### <a name="config-storage"></a>Configure storage access and viewing recordings
+
+### [Managed Service/User Identity (Recommended) - Preview](#tab/msi)
+
+> **Note:**
+> The following steps are for setting up a System-assigned Managed Identity. User-assigned Identities follow similar steps.
+
+The following steps help you configure the required settings to use managed identity. Managed identity is the recommended authentication method.
+
+1. Select your Bastion resource and go to the **Identity** blade.
+1. Turn the Status to **On** and wait for the configuration to finish.
+1. Select **Azure role assignments** and select **Add role assignment (Preview)**.
+
+   | Scope | Subscription | Resource | Role |
+   | --- | --- | --- | --- |
+   | Storage | Your storage account subscription | Your storage account name | Storage Blob Data Contributor |
+
+1. Select **Save** to save the role assignment.
+1. Go back to your Bastion resource and select **Configuration** in the left pane.
+1. Under **Session Recording Configuration**, select **System Assigned Managed Identity** and enter the **Blob Container URI** for your storage container.
+
+#### View a recording
+
+Sessions are automatically recorded when Session Recording is enabled on the bastion host. You can view recordings in the Azure portal via an integrated web player.
+
+1. In the Azure portal, go to your **Bastion** host.
+2. In the left pane, under **Settings**, select **Session recordings**.
+3. Select the VM and recording link that you want to view, then select **View recording**.
+
+### [SAS URL](#tab/sas)
+
+The following steps help you configure the required settings directly on the **Generate SAS** page. However, you can optionally configure some of the settings by creating a stored access policy. You can then link the stored access policy to the SAS token on the **Generate SAS** page. If you want to create a stored access policy, either select Permissions and Start/expiry date and time in the access policy, or on the **Generate SAS** page.
+
+1. On your storage account page, go to **Data storage -> Containers**.
+1. Locate the container you created to store Bastion session recordings, then select the 3 dots (ellipses) to the right of your container and select **Generate SAS** from the dropdown list.
+1. On the **Generate SAS** page, for **Permissions**, select **READ, CREATE, WRITE, LIST**.
+1. For **Start and expiry date/time**, use the following recommendations:
+   * Set **Start time** to be at least 15 minutes before the present time.
+   * Set **Expiry time** to be long into the future.
+1. Under **Allowed IP addresses**, select the IP address or the IP range to accept requests from. For more information, see [Specify an IP address or IP range](https://learn.microsoft.com/rest/api/storageservices/create-account-sas#specify-an-ip-address-or-ip-range).
+1. Under **Allowed Protocols**, select **HTTPS** only.
+1. Select **Generate SAS token and URL**. You'll see the Blob SAS token and Blob SAS URL generated at the bottom of the page.
+1. Copy the **Blob SAS URL**.
+1. Go to your bastion host. In the left pane, select **Session recordings**.
+1. At the top of the page, select **Add or update SAS URL**. Paste your SAS URL, then select **Upload**.
+
+#### Add or update the SAS URL
+
+The following steps help you configure the required settings directly on the **Generate SAS** page. However, you can optionally configure some of the settings by creating a stored access policy. You can then link the stored access policy to the SAS token on the **Generate SAS** page. If you want to create a stored access policy, either select Permissions and Start/expiry date and time in the access policy, or on the **Generate SAS** page.
+
+1. On your storage account page, go to **Data storage -> Containers**.
+1. Locate the container you created to store Bastion session recordings, then select the 3 dots (ellipses) to the right of your container and select **Generate SAS** from the dropdown list.
+1. On the **Generate SAS** page, for **Permissions**, select **READ, CREATE, WRITE, LIST**.
+1. For **Start and expiry date/time**, use the following recommendations:
+   * Set **Start time** to be at least 15 minutes before the present time.
+   * Set **Expiry time** to be long into the future.
+1. Under **Allowed IP addresses**, select the IP address or the IP range to accept requests from. For more information, see [Specify an IP address or IP range](https://learn.microsoft.com/rest/api/storageservices/create-account-sas#specify-an-ip-address-or-ip-range).
+1. Under **Allowed Protocols**, select **HTTPS** only.
+1. Select **Generate SAS token and URL**. You'll see the Blob SAS token and Blob SAS URL generated at the bottom of the page.
+1. Copy the **Blob SAS URL**.
+1. Go to your bastion host. In the left pane, select **Session recordings**.
+1. At the top of the page, select **Add or update SAS URL**. Paste your SAS URL, then select **Upload**.
+
+#### View a recording
+
+Sessions are automatically recorded when Session Recording is enabled on the bastion host. You can view recordings in the Azure portal via an integrated web player.
+
+1. In the Azure portal, go to your **Bastion** host.
+1. In the left pane, under **Settings**, select **Session recordings**.
+1. The SAS URL should already be configured (earlier in this exercise). However, if your SAS URL expired or you need to add the SAS URL, use the previous steps to acquire and upload the Blob SAS URL.
+1. Select the VM and recording link that you want to view, then select **View recording**.
+
+---
+
+## Next steps
+
+* Learn about [managed identities for Azure resources](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) and how they eliminate the need to manage credentials for authenticating to Azure services.
+* Learn about [Azure Bastion](bastion-overview.md), a fully managed service that provides secure and seamless RDP/SSH connectivity to virtual machines without exposing RDP/SSH ports externally.
+* Learn about [frequently asked questions for Azure Bastion](bastion-faq.md).

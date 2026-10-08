@@ -1,0 +1,74 @@
+---
+title: Da Vinci Plan Net for the FHIR service in Azure Health Data Services
+description: Set up Da Vinci Plan Net tests for the FHIR service in Azure Health Data Services by defining search parameters and loading profiles.
+services: healthcare-apis
+ms.service: azure-health-data-services
+ms.subservice: fhir
+ms.topic: tutorial
+ms.author: kesheth
+author: expekesheth
+ms.date: 06/19/2026
+ms.custom: sfi-image-nochange
+ai-usage: ai-assisted
+---
+
+# Da Vinci Plan Net
+
+In this tutorial, you set up the FHIR&reg; service in Azure Health Data Services to pass the [Touchstone](https://touchstone.aegis.net/touchstone/) tests for the [Da Vinci PDex Payer Network (Plan-Net) Implementation Guide](https://build.fhir.org/ig/HL7/davinci-pdex-plan-net/).
+
+## Touchstone capability statement
+
+First, test the FHIR service against the [Da Vinci Plan-Net capability statement](https://touchstone.aegis.net/touchstone/testdefinitions?selectedTestGrp=/FHIRSandbox/DaVinci/FHIR4-0-1-Test/PDEX/PlanNet/00-Capability&activeOnly=false&contentEntry=TEST_SCRIPTS). If you run this test without any updates, the test fails due to missing search parameters and missing profiles.
+
+## Define search parameters
+
+Next, define [new search parameters](how-to-do-custom-search.md) for the Healthcare Service, Insurance Plan, Practitioner Role, Organization, and Organization Affiliation resources. All of these parameters are tested in the capability statement:
+
+- [Healthcare Service Coverage Area](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/SearchParameter-healthcareservice-coverage-area.html)
+- [Insurance Plan Coverage Area](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/SearchParameter-insuranceplan-coverage-area.html)
+- [Insurance Plan Plan Type](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/SearchParameter-insuranceplan-plan-type.html)
+- [Organization Coverage Area](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/SearchParameter-organization-coverage-area.html)
+- [Organization Affiliation Network](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/SearchParameter-organizationaffiliation-network.html)
+- [Practitioner Role Network](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/SearchParameter-practitionerrole-network.html)
+
+> **Note:**
+> In the raw JSON for these search parameters, the name is set to `Plannet_sp_<Resource Name>_<SearchParameter Name>`. The Touchstone test expects the name to be only the `SearchParameter Name` (coverage-area, plan-type, or network).
+
+The rest of the search parameters needed for the Da Vinci Plan Net Implementation Guide are defined by the base specification, and are already available in the FHIR service without other updates.
+
+## Store profiles
+
+After defining search parameters, load the [required profiles and extensions](store-profiles-in-fhir.md#accessing-profiles-and-storing-profiles) to pass this test. The Da Vinci Plan-Net Implementation Guide uses nine profiles:
+
+- [Plan-Net Endpoint](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-Endpoint.html)
+- [Plan-Net Healthcare Service](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-HealthcareService.html)
+- [Plan-Net InsurancePlan](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-InsurancePlan.html) 
+- [Plan-Net Location](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-Location.html)
+- [Plan-Net Network](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-Network.html)
+- [Plan-Net Organization](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-Organization.html)
+- [Plan-Net OrganizationAffiliation](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-OrganizationAffiliation.html)
+- [Plan-Net Practitioner](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-Practitioner.html)
+- [Plan-Net PractitionerRole](http://hl7.org/fhir/us/davinci-pdex-plan-net/STU1/StructureDefinition-plannet-PractitionerRole.html)
+
+## Sample REST file
+
+To help you create the search parameters and profiles, there's a sample HTTP file on the open-source site that includes all the steps described in this article in a single file. After you upload the necessary profiles and search parameters, run the capability statement test in Touchstone.
+
+Screenshot of a passed Da Vinci Plan Net sample REST test script execution.
+
+## Touchstone error handling test
+
+The second test evaluates [error handling](https://touchstone.aegis.net/touchstone/testdefinitions?selectedTestGrp=/FHIRSandbox/DaVinci/FHIR4-0-1-Test/PDEX/PlanNet/01-Error-Codes&activeOnly=false&contentEntry=TEST_SCRIPTS). To complete this test, delete a `HealthcareService` resource from your database and use the ID of the deleted HealthcareService resource in the test. The sample [DaVinci_PlanNet.http](https://github.com/microsoft/fhir-server/blob/main/docs/rest/DaVinciPlanNet/DaVinci_PlanNet.http) file on the open-source site provides an example `HealthcareService` to post and delete for this step.
+
+Screenshot of a passed Da Vinci Plan Net Touchstone error test script execution.
+
+## Touchstone query test
+
+The next test is the [query capabilities test](https://touchstone.aegis.net/touchstone/testdefinitions?selectedTestGrp=/FHIRSandbox/DaVinci/FHIR4-0-1-Test/PDEX/PlanNet/03-Query&activeOnly=false&contentEntry=TEST_SCRIPTS). This test checks conformance against the profiles you loaded in the first test. You need to load resources that conform to the profiles. The best path is to test against resources already in your database. However, you can also use the [DaVinci_PlanNet_Sample_Resources.http](https://github.com/microsoft/fhir-server/blob/main/docs/rest/DaVinciPlanNet/DaVinci_PlanNet_Sample_Resources.http) file with sample resources pulled from the examples in the Implementation Guide to create the resources and test against.  
+
+
+Screenshot of Da Vinci Plan Net query test results in Touchstone.
+
+
+> **Note:**
+> FHIR&reg; is a registered trademark of [HL7](https://hl7.org/fhir/) and is used with the permission of HL7.

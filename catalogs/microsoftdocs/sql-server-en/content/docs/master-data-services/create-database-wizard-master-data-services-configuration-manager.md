@@ -1,0 +1,93 @@
+---
+title: Create Database Wizard
+description: Create Database Wizard (Master Data Services Configuration Manager)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+f1_keywords:
+  - "sql13.mds.configmanager.createdbwiz.f1"
+---
+# Create Database Wizard (Master Data Services Configuration Manager)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Use the **Create Database** wizard to create a  Master Data Services 
+ database.  
+  
+## Database Server  
+ Specify information to connect to a local or remote  SQL Server Database Engine 
+ instance to host the  Master Data Services 
+ database. To connect to a remote instance, it must be enabled for remote connections.  
+  
+| Control Name | Description |
+| --- | --- |
+| **SQL Server instance** | Specify the name of the  SQL Server Database Engine |
+ | instance that you want to host the  Master Data Services |
+ | database. This can be a default or named instance on either a local or a remote computer. Specify the information by typing:<br /><br /> A period (.) to connect to the default instance on your local computer.<br /><br /> The server name or IP address to connect to the default instance on the specified local or remote computer.<br /><br /> The server name or IP address, and the instance name to connect to the named instance on the specified local or remote computer. Specify this information in the format *server_name*\\*instance_name*. |
+| **Authentication type** | Select the type of authentication to use when connecting to the specified SQL Server instance. The credentials you use to connect must be part of the **sysadmin** server role for the specified  SQL Server |
+ | instance. For more information about the sysadmin role, see [Server-Level Roles](../relational-databases/security/authentication-access/server-level-roles.md).<br /><br /> The authentication types include:<br /><br /> **Current User - Integrated Security**: Uses Integrated Windows Authentication to connect by using the credentials of the current Windows user account.  Master Data Services Configuration Manager |
+ | uses the Windows credentials of the user who logged on to the computer and opened the application. You cannot specify different Windows credentials in the application. If you want to connect with different Windows credentials, you must log on to the computer as that user and then open  Master Data Services Configuration Manager |
+| .<br /><br /> **SQL Server Account**: Uses a SQL Server account to connect. When you select this option, the **User name** and **Password** fields are enabled and you must specify credentials for a  SQL Server |
+ | account on the specified  SQL Server |
+ | instance. |
+| **User name** | Specify the name of the user account that will be used to connect to the specified  SQL Server |
+ | instance. The account must be part of the **sysadmin** role on the specified  SQL Server |
+ | instance.<br /><br /> When the **Authentication type** is **Current User - Integrated Security**, the **User name** box is read-only and it displays the name of the Windows user account that is logged on to the computer.<br /><br /> When the **Authentication type** is **SQL Server Account**, the **User name** box is enabled and you must specify credentials for a  SQL Server |
+ | account on the specified  SQL Server |
+ | instance. |
+| **Password** | Specify the password associated with the user account:<br /><br /> When the **Authentication type** is **Current User - Integrated Security**, the **Password** box is read-only and credentials of the specified Windows user account are used to connect.<br /><br /> When the **Authentication type** is **SQL Server Account**, the **Password** box is enabled and you must specify the password associated with the specified user account. |
+| **Test Connection** | Verify that the specified user account can connect to the  SQL Server |
+ | instance and that the account has permission to create a  Master Data Services |
+ | database for that instance. If you do not click **Test Connection**, the connection will be tested when you click **Next**. |
+  
+## Database  
+ Specify a database name and collation options for the new database. Collations in  SQL Server 
+ provide sorting rules, case, and accent sensitivity properties for your data. Collations that are used with character data types such as char and varchar dictate the code page and corresponding characters that can be represented for that data type. For more information about database collation, see [Collation and Unicode Support](../relational-databases/collations/collation-and-unicode-support.md).  
+  
+| Control Name | Description |
+| --- | --- |
+| **Database name** | Specify a name for the  Master Data Services |
+ | database. |
+| **SQL Server default collation** | Select to use the current database collation setting of the specified  SQL Server |
+ | instance for the new database. |
+| **Windows collation** | Specify the Windows collation settings to use for the new database. Windows collations define rules for storing character data based on an associated Windows locale. For more information about Windows collations and the associated options, see [Windows Collation Name &#40;Transact-SQL&#41;](../t-sql/statements/windows-collation-name-transact-sql.md).<br /><br /> Note: The **Windows collation** list and associated options enable only after you clear the **SQL Server default collation** box. |
+  
+## Administrator Account  
+  
+| Control Name | Description |
+| --- | --- |
+| **User name** | Specify the default Super User for  Master Data Services |
+| . A Super User has access to all functional areas and can add, delete, and update all models. For information about the Super User permission and the other types of administrators in  Master Data Manager |
+ | , see [Administrators (Master Data Services)](administrators-master-data-services.md). |
+  
+## Summary  
+ Displays a summary of the selected options. Review your selections, and then click **Next** to begin creating the database with the specified settings.  
+  
+## Progress and Finish  
+ Displays the progress of the creation process. After the database is created, click **Finish** to close the database wizard and return to the **Databases** page. The new database is selected and you can view and modify its system settings.  
+  
+## Related content
+
+- [Database Configuration Page (Master Data Services Configuration Manager)](database-configuration-page-master-data-services-configuration-manager.md)
+- [Master Data Services Installation and Configuration](master-data-services-installation-and-configuration.md)
+- [Database Requirements (Master Data Services)](install-windows/database-requirements-master-data-services.md)

@@ -1,0 +1,45 @@
+---
+title: "sys.parameter_type_usages (Transact-SQL)"
+description: sys.parameter_type_usages (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.parameter_type_usages"
+  - "sys.parameter_type_usages_TSQL"
+  - "parameter_type_usages_TSQL"
+  - "parameter_type_usages"
+helpviewer_keywords:
+  - "sys.parameter_type_usages catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.parameter_type_usages (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns one row for each parameter that is of user-defined type.  
+  
+> **Note:**  
+>  This view does not return rows for parameters of numbered procedures.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **object_id** | **int** | ID of the object to which this parameter belongs. |
+| **parameter_id** | **int** | ID of the parameter. Is unique within the object. |
+| **user_type_id** | **int** | ID of the user-defined type.<br /><br /> To return the name of the type, join to the [sys.types](sys-types-transact-sql.md) catalog view on this column. |
+  
+## Permissions  
+ Requires membership in the **public** role. For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Scalar Types Catalog Views (Transact-SQL)](scalar-types-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

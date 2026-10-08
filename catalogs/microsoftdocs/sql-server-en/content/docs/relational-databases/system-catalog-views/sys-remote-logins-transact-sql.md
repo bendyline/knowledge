@@ -1,0 +1,49 @@
+---
+title: "sys.remote_logins (Transact-SQL)"
+description: sys.remote_logins returns a row per remote-login mapping for mapping incoming local logins to an actual local login.
+author: VanMSFT
+ms.author: vanto
+ms.date: 02/05/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.remote_logins_TSQL"
+  - "remote_logins"
+  - "remote_logins_TSQL"
+  - "sys.remote_logins"
+helpviewer_keywords:
+  - "sys.remote_logins catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.remote_logins (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Returns a row per remote-login mapping. This catalog view is used to map incoming local logins that claim to be coming from a corresponding server to an actual local login.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `server_id` | **int** | ID of the server in `sys.servers`. This name is supplied by the connection from the "remote" server. |
+| `remote_name` | **sysname** | Login name that the connection will supply to be mapped. If NULL, the login name that is specified in the connection is used. |
+| `local_principal_id` | **int** | ID of the server principal to whom the login is mapped. If 0, the remote login is mapped to the login with the same name. |
+| `modify_date` | **datetime** | Date the linked login was last changed. |
+  
+## Permissions
+
+The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).
+
+ SQL Server 2022 (16.x) 
+ and later versions require VIEW SERVER SECURITY STATE permission on the server.
+
+## Related content
+
+- [Linked Servers Catalog Views (Transact-SQL)](linked-servers-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

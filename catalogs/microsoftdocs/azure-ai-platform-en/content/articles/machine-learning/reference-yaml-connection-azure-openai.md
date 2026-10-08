@@ -1,0 +1,79 @@
+---
+title: 'CLI (v2) Azure OpenAI connection YAML schema'
+titleSuffix: Azure Machine Learning
+description: Reference documentation for the CLI (v2) Azure OpenAI connections YAML schema.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: core
+ms.custom:
+  - build-2024
+ms.topic: reference
+
+author: s-polly
+ms.author: scottpolly
+ms.date: 08/29/2024
+ms.reviewer: ambadal
+---
+
+# CLI (v2) Azure OpenAI connection YAML schema
+
+
+**APPLIES TO:**  [Azure CLI ml extension **v2 (current)**](how-to-configure-cli.md) 
+
+
+
+> **Note:**
+> The YAML syntax detailed in this document is based on the JSON schema for the latest version of the ML CLI v2 extension. This syntax is guaranteed only to work with the latest version of the ML CLI v2 extension.
+> You can find the schemas for older extension versions at [https://azuremlschemasprod.azureedge.net/](https://azuremlschemasprod.azureedge.net/).
+
+
+## YAML syntax
+
+| Key | Type | Description | Allowed values | Default value |
+| --- | --- | --- | --- | --- |
+| `$schema` | string | The YAML schema. If you use the Azure Machine Learning Visual Studio Code extension to author the YAML file, include `$schema` at the top of your file to invoke schema and resource completions. |  |  |
+| `name` | string | **Required.** The connection name. |  |  |
+| `description` | string | The connection description. |  |  |
+| `tags` | object | The connection tag dictionary. |  |  |
+| `type` | string | **Required.** The connection type. | `azure_open_ai` | `azure_open_ai` |
+| `is_shared` | boolean | `true` if the connection is shared across other projects in the hub; otherwise, `false`. |  | `true` |
+| `endpoint` | string | **Required.** The URL of the endpoint. |  |  |
+| `api_key` | string | The API key used to authenticate the connection. If not provided, the connection is authenticated via Microsoft Entra ID (credential-less authentication). |  |  |
+| `open_ai_resource_id` | string | **Required.** The fully qualified Azure resource ID of the Azure OpenAI resource. |  |  |
+
+
+## Remarks
+
+The schema described in this article is used to create a connection to Azure OpenAI only. If you would rather create a single connection for Foundry Tools, see the [Foundry Tools connection schema](reference-yaml-connection-ai-services.md). If you need to create a connection to the non-Microsoft OpenAI service, see the [OpenAI connection schema](reference-yaml-connection-openai.md).
+
+While the `az ml connection` commands can be used to manage both Azure Machine Learning and Microsoft Foundry connections, the Foundry Tools connection is specific to Foundry.
+
+## Examples
+
+These examples would be in the form of YAML files and used from the CLI. For example, `az ml connection create -f <file-name>.yaml`. 
+
+### YAML: API key
+
+```yml
+#AzureOpenAIConnection.yml
+
+name: myazopenai_apk
+type: azure_open_ai
+azure_endpoint: https://contoso.openai.azure.com/
+api_key: XXXXXXXXXXXXXXX
+```
+
+
+### YAML: Microsoft Entra ID
+
+```yml
+#AzureOpenAIConnection.yml
+
+name: myazopenai_apk
+type: azure_open_ai
+azure_endpoint: https://contoso.openai.azure.com/
+```
+
+## Next steps
+
+- [Install and use the CLI (v2)](how-to-configure-cli.md)

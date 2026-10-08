@@ -1,0 +1,68 @@
+---
+title: "Fundamental Windows Workflow Concepts"
+description: This article describes some of the concepts in workflow development in the .NET Framework 4.6.1 that may be unfamiliar to some developers.
+ms.date: "03/30/2017"
+ms.assetid: 0e930e80-5060-45d2-8a7a-95c0690105d4
+---
+# Fundamental Windows Workflow Concepts
+
+Workflow development in the .NET Framework 4.6.1
+ uses concepts that may be new to some developers. This topic describes some of the concepts and how they are implemented.  
+  
+## Workflows and Activities  
+
+ A workflow is a structured collection of actions that models a process. Each action in the workflow is modeled as an activity. A host interacts with a workflow by using [System.Activities.WorkflowInvoker](https://learn.microsoft.com/search/?terms=System.Activities.WorkflowInvoker) for invoking a workflow as if it were a method,  [System.Activities.WorkflowApplication](https://learn.microsoft.com/search/?terms=System.Activities.WorkflowApplication) for explicit control over the execution of a single workflow instance, and [System.ServiceModel.WorkflowServiceHost](https://learn.microsoft.com/search/?terms=System.ServiceModel.WorkflowServiceHost) for message-based interactions in multi-instance scenarios. Because steps of the workflow are defined as a hierarchy of activities, the topmost activity in the hierarchy can be said to define the workflow itself. This hierarchy model takes the place of the explicit `SequentialWorkflow` and `StateMachineWorkflow` classes from previous versions. Activities themselves are developed as collections of other activities (using the [System.Activities.Activity](https://learn.microsoft.com/search/?terms=System.Activities.Activity) class as a base, usually defined by using XAML) or are custom created by using the [System.Activities.CodeActivity](https://learn.microsoft.com/search/?terms=System.Activities.CodeActivity) class, which can use the runtime for data access, or by using the [System.Activities.NativeActivity](https://learn.microsoft.com/search/?terms=System.Activities.NativeActivity) class, which exposes the breadth of the workflow runtime to the activity author. Activities developed by using [System.Activities.CodeActivity](https://learn.microsoft.com/search/?terms=System.Activities.CodeActivity) and [System.Activities.NativeActivity](https://learn.microsoft.com/search/?terms=System.Activities.NativeActivity) are created by using CLR-compliant languages such as C#.  
+  
+## Activity Data Model  
+
+ Activities store and share data by using the types shown in the following table.  
+  
+| Type | Description |
+| --- | --- |
+| Variable | Stores data in an activity. |
+| Argument | Moves data into and out of an activity. |
+| Expression | An activity with an elevated return value used in argument bindings. |
+  
+## Workflow Runtime  
+
+ The workflow runtime is the environment in which workflows execute. [System.Activities.WorkflowInvoker](https://learn.microsoft.com/search/?terms=System.Activities.WorkflowInvoker) is the simplest way to execute a workflow. The host uses [System.Activities.WorkflowInvoker](https://learn.microsoft.com/search/?terms=System.Activities.WorkflowInvoker) for the following:  
+  
+- To synchronously invoke a workflow.  
+  
+- To provide input to, or retrieve output from a workflow.  
+  
+- To add extensions to be used by activities.  
+  
+ [System.Activities.ActivityInstance](https://learn.microsoft.com/search/?terms=System.Activities.ActivityInstance) is the thread-safe proxy that hosts can use to interact with the runtime. The host uses [System.Activities.ActivityInstance](https://learn.microsoft.com/search/?terms=System.Activities.ActivityInstance) for the following:  
+  
+- To acquire an instance by creating it or loading it from an instance store.  
+  
+- To be notified of instance life-cycle events.  
+  
+- To control workflow execution.  
+  
+- To provide input to, or retrieve output from a workflow.  
+  
+- To signal a workflow continuation and pass values into the workflow.  
+  
+- To persist workflow data.  
+  
+- To add extensions to be used by activities.  
+  
+ Activities gain access to the workflow runtime environment by using the appropriate [System.Activities.ActivityContext](https://learn.microsoft.com/search/?terms=System.Activities.ActivityContext) derived class, such as [System.Activities.NativeActivityContext](https://learn.microsoft.com/search/?terms=System.Activities.NativeActivityContext) or [System.Activities.CodeActivityContext](https://learn.microsoft.com/search/?terms=System.Activities.CodeActivityContext). They use this for resolving arguments and variables, for scheduling child activities, and for many other purposes.  
+  
+## Services  
+
+ Workflows provide a natural way to implement and access loosely-coupled services, using messaging activities. Messaging activities are built on WCF and are the primary mechanism used to get data into and out of a workflow. You can compose messaging activities together to model any kind of message exchange pattern you wish. For more information, see [Messaging Activities](../wcf/feature-details/messaging-activities.md). Workflow services are hosted using the [System.ServiceModel.Activities.WorkflowServiceHost](https://learn.microsoft.com/search/?terms=System.ServiceModel.Activities.WorkflowServiceHost) class. For more information, see [Hosting Workflow Services Overview](../wcf/feature-details/hosting-workflow-services-overview.md). For more information about workflow services see [Workflow Services](../wcf/feature-details/workflow-services.md)  
+  
+## Persistence, Unloading, and Long-Running Workflows  
+
+ Windows Workflow simplifies the authoring of long-running reactive programs by providing:  
+  
+- Activities that access external input.  
+  
+- The ability to create [System.Activities.Bookmark](https://learn.microsoft.com/search/?terms=System.Activities.Bookmark) objects that can be resumed by a host listener.  
+  
+- The ability to persist a workflow’s data and unload the workflow, and then reload and reactivate the workflow in response to the resumption of [System.Activities.Bookmark](https://learn.microsoft.com/search/?terms=System.Activities.Bookmark) objects in a particular workflow.  
+  
+ A workflow continuously executes activities until there are no more activities to execute or until all currently executing activities are waiting for input. In this latter state, the workflow is idle. It is common for a host to unload workflows that have gone idle and to reload them to continue execution when a message arrives. [System.ServiceModel.Activities.WorkflowServiceHost](https://learn.microsoft.com/search/?terms=System.ServiceModel.Activities.WorkflowServiceHost) provides functionality for this feature and provides an extensible unload policy. For blocks of execution that use volatile state data or other data that cannot be persisted, an activity can indicate to a host that it should not be persisted by using the [System.Activities.NoPersistHandle](https://learn.microsoft.com/search/?terms=System.Activities.NoPersistHandle). A workflow can also explicitly persist its data to a durable storage medium by using the [System.Activities.Statements.Persist](https://learn.microsoft.com/search/?terms=System.Activities.Statements.Persist) activity.

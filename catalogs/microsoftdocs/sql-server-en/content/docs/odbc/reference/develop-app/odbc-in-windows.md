@@ -1,0 +1,23 @@
+---
+title: "ODBC in Windows"
+description: "ODBC in Windows"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# ODBC in Windows
+The following items apply only to ODBC running in Microsoft Windows NT/Windows 2000 and Microsoft Windows 95/98 operating systems.  
+  
+ This section contains the following topics.  
+  
+-   [Standards-Compliant Applications and Drivers](standards-compliant-applications-and-drivers.md)  
+  
+-   [Header Files](header-files.md)  
+  
+-   [Passing CString Objects to ODBC Functions](cstring-class.md)  
+  
+-   [Creating and Terminating Threads](creating-and-terminating-threads.md)

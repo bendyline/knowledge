@@ -1,0 +1,81 @@
+---
+title: "managed_backup.fn_get_parameter (Transact-SQL)"
+description: "managed_backup.fn_get_parameter (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "10/03/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "smart_admin.fn_get_parameter_TSQL"
+  - "smart_admin.fn_get_parameter"
+  - "fn_get_parameter_TSQL"
+  - "fn_get_parameter"
+helpviewer_keywords:
+  - "fn_get_parameter"
+  - "smart_admin.fn_get_parameter"
+dev_langs:
+  - "TSQL"
+---
+# managed_backup.fn_get_parameter (Transact-SQL)
+
+**Applies to:**
+ 
+
+ and later versions
+
+  Returns a table of 0, 1, or more rows of parameter and value pairs.  
+  
+ Use this stored procedure to review all or a specific configuration settings for Smart Admin.  
+  
+ If the parameter has never been configured, the function returns 0 rows.  
+  
+ 
+  
+## Syntax  
+  
+```sql  
+managed_backup.fn_get_parameter ('parameter_name' | '' | NULL )  
+```  
+  
+##  <a name="Arguments"></a> Arguments  
+ parameter_name  
+ Name of the parameter. parameter_name is **NVARCHAR(128)**. If NULL or an empty string is supplied as an argument to the function, name-values pairs for all configured Smart Admin parameters are returned.  
+  
+## Table Returned  
+  
+| Column Name | Data Type | Description |
+| --- | --- | --- |
+| parameter_name | NVARCHAR(128) | Name of the parameter. The following is a current list of parameters returned:<br/><br/>**FileRetentionDebugXevent**<br/><br/>**SSMBackup2WADebugXevent**<br/><br/>**SSMBackup2WANotificationEmailIds**<br/><br/>**SSMBackup2WAEnableUserDefinedPolicy**<br/><br/>**SSMBackup2WAEverConfigured**<br/><br/>**StorageOperationDebugXevent** |
+| parameter_value | NVARCHAR(128) | Current set value of the parameter. |
+  
+## Security  
+  
+### Permissions  
+ Requires SELECT permissions on the function.  
+  
+## Examples  
+ The following example returns all the parameters which have been configured at least once, and their current values.  
+  
+```  
+USE MSDB  
+GO  
+SELECT *   
+FROM managed_backup.fn_get_parameter (NULL)  
+  
+```  
+  
+ The following example returns the email ID specified to receive the error notifications. If no rows are returns, then it means that this email notification option has not been enabled.  
+  
+```  
+USE MSDB  
+GO  
+SELECT *  
+FROM managed_backup.fn_get_parameter ('SSMBackup2WANotificationEmailIds')  
+  
+```  
+  
+## Related content
+
+- [SQL Server managed backup to Microsoft Azure](../backup-restore/sql-server-managed-backup-to-microsoft-azure.md)

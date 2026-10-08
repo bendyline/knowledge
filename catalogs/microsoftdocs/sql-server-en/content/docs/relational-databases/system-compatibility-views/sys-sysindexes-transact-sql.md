@@ -1,0 +1,101 @@
+---
+title: "sys.sysindexes (Transact-SQL)"
+description: "sys.sysindexes (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sysindexes"
+  - "sysindexes_TSQL"
+  - "sys.sysindexes"
+  - "sys.sysindexes_TSQL"
+helpviewer_keywords:
+  - "sysindexes system table"
+  - "sys.sysindexes compatibility view"
+dev_langs:
+  - "TSQL"
+---
+# sys.sysindexes (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains one row for each index and table in the current database. XML indexes are not supported in this view. Partitioned tables and indexes are not fully supported in this view; use the [sys.indexes](../system-catalog-views/sys-indexes-transact-sql.md) catalog view instead.  
+  
+> **Important:**  
+>    This SQL Server 2000 system table is included as a view for backward compatibility. We  recommend that you use the current SQL Server system views instead. To find the equivalent system view or views, see [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md). This feature will be removed in a future version of Microsoft SQL Server. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.
+   
+  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **id** | **int** | ID of the table to which the index belongs. |
+| **status** | **int** | System-status information.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **first** | **binary(6)** | Pointer to the first or root page.<br /><br /> Unused when **indid** = 0.<br /><br /> NULL = Index is partitioned when **indid** > 1.<br /><br /> NULL = Table is partitioned when **indid** is 0 or 1. |
+| **indid** | **smallint** | ID of the index:<br /><br /> 0 = Heap<br /><br /> 1 = Clustered index<br /><br /> >1 = Nonclustered index |
+| **root** | **binary(6)** | For **indid** >= 1, **root** is the pointer to the root page.<br /><br /> Unused when **indid** = 0.<br /><br /> NULL = Index is partitioned when **indid** > 1.<br /><br /> NULL = Table is partitioned when **indid** is 0 or 1. |
+| **minlen** | **smallint** | Minimum size of a row. |
+| **keycnt** | **smallint** | Number of keys. |
+| **groupid** | **smallint** | Filegroup ID on which the object was created.<br /><br /> NULL = Index is partitioned when **indid** > 1.<br /><br /> NULL = Table is partitioned when **indid** is 0 or 1. |
+| **dpages** | **int** | For **indid** = 0 or **indid** = 1, **dpages** is the count of data pages used.<br /><br /> For **indid** > 1, **dpages** is the count of index pages used.<br /><br /> 0 = Index is partitioned when **indid** > 1.<br /><br /> 0 = Table is partitioned when **indid** is 0 or 1.<br /><br /> Does not yield accurate results if row-overflow occurs. |
+| **reserved** | **int** | For **indid** = 0 or **indid** = 1, **reserved** is the count of pages allocated for all indexes and table data.<br /><br /> For **indid** > 1, **reserved** is the count of pages allocated for the index.<br /><br /> 0 = Index is partitioned when **indid** > 1.<br /><br /> 0 = Table is partitioned when **indid** is 0 or 1.<br /><br /> Does not yield accurate results if row-overflow occurs. |
+| **used** | **int** | For **indid** = 0 or **indid** = 1, **used** is the count of the total pages used for all index and table data.<br /><br /> For **indid** > 1, **used** is the count of pages used for the index.<br /><br /> 0 = Index is partitioned when **indid** > 1.<br /><br /> 0 = Table is partitioned when **indid** is 0 or 1.<br /><br /> Does not yield accurate results if row-overflow occurs. |
+| **rowcnt** | **bigint** | Data-level row count based on **indid** = 0 and **indid** = 1.<br /><br /> 0 = Index is partitioned when **indid** > 1.<br /><br /> 0 = Table is partitioned when **indid** is 0 or 1. |
+| **rowmodctr** | **int** | Counts the total number of inserted, deleted, or updated rows since the last time statistics were updated for the table.<br /><br /> 0 = Index is partitioned when **indid** > 1.<br /><br /> 0 = Table is partitioned when **indid** is 0 or 1.<br /><br /> In  SQL Server 2005 (9.x) |
+ | and later, **rowmodctr** is not fully compatible with earlier versions. For more information, see Remarks. |
+| **reserved3** | **int** | Returns 0.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **reserved4** | **int** | Returns 0.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **xmaxlen** | **smallint** | Maximum size of a row |
+| **maxirow** | **smallint** | Maximum size of a nonleaf index row.<br /><br /> In  SQL Server 2005 (9.x) |
+ | and later, **maxirow** is not fully compatible with earlier versions. |
+| **OrigFillFactor** | **tinyint** | Original fill factor value used when the index was created. This value is not maintained; however, it can be helpful if you have to re-create an index and do not remember the fill factor value that was used. |
+| **StatVersion** | **tinyint** | Returns 0.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **reserved2** | **int** | Returns 0.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **FirstIAM** | **binary(6)** | NULL = Index is partitioned.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **impid** | **smallint** | Index implementation flag.<br /><br /> Returns 0.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **lockflags** | **smallint** | Used to constrain the considered lock granularities for an index. For example, to minimize locking cost, a lookup table that is essentially read-only could be set up to do only table-level locking. |
+| **pgmodctr** | **int** | Returns 0.<br /><br />  Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **keys** | **varbinary(816)** | List of the column IDs of the columns that make up the index key.<br /><br /> Returns NULL.<br /><br /> To display the index key columns, use [sys.sysindexkeys](sys-sysindexkeys-transact-sql.md). |
+| **name** | **sysname** | Name of the index or statistic. Returns NULL when **indid** = 0. Modify your application to look for a NULL heap name. |
+| **statblob** | **image** | Statistics binary large object (BLOB).<br /><br /> Returns NULL. |
+| **maxlen** | **int** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **rows** | **int** | Data-level row count based on **indid** = 0 and **indid** = 1, and the value is repeated for **indid** >1. |
+  
+## Remarks  
+ Columns defined as reserved should not be used.  
+  
+ The columns **dpages**, **reserved**, and **used** will not return accurate results if the table or index contains data in the ROW_OVERFLOW allocation unit. In addition, the page counts for each index are tracked separately and are not aggregated for the base table. To view page counts, use the [sys.allocation_units](../system-catalog-views/sys-allocation-units-transact-sql.md) or [sys.partitions](../system-catalog-views/sys-partitions-transact-sql.md) catalog views, or the [sys.dm_db_partition_stats](../system-dynamic-management-objects/sys-dm-db-partition-stats-transact-sql.md) dynamic management view.  
+  
+ In SQL Server 2000 and earlier, the  Database Engine 
+ maintained row-level modification counters. Such counters are now maintained at the column level. Therefore, the **rowmodctr** column is calculated and produces results that are similar to the results in earlier versions, but are not exact.  
+  
+ If you use the value in **rowmodctr** to determine when to update statistics, consider the following solutions:  
+  
+-   Do nothing. The new **rowmodctr** value will frequently help you determine when to update statistics because the behavior is reasonably close to the results of earlier versions.  
+  
+-   Use AUTO_UPDATE_STATISTICS. For more information see, [Statistics](../statistics/statistics.md).  
+  
+-   Use a time limit to determine when to update statistics. For example, every hour, every day, or every week.  
+  
+-   Use application-level information to determine when to update statistics. For example, every time the maximum value of an **identity** column changes by more than 10,000, or every time a bulk insert operation is performed.  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](../system-catalog-views/catalog-views-transact-sql.md)
+- [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md)
+- [sys.indexes (Transact-SQL)](../system-catalog-views/sys-indexes-transact-sql.md)

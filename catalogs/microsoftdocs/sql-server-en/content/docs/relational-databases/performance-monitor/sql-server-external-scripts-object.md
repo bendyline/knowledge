@@ -1,0 +1,55 @@
+---
+title: "SQL Server, External Scripts object"
+description: "Learn about the SQLServer:External Scripts object, which provides counters to monitor the actions associated with executing external scripts."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "External Scripts object"
+  - "SQLServer:External Scripts"
+dev_langs:
+  - "TSQL"
+---
+# SQL Server, External Scripts object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **SQLServer:External Scripts** object in  SQL Server 
+ provides counters to monitor the actions associated with executing external scripts. For information about executing external scripts, see [sp_execute_external_script (Transact-SQL)](../system-stored-procedures/sp-execute-external-script-transact-sql.md).  
+  
+ This table describes the  SQL Server 
+ **External Scripts** counters.  
+  
+| SQL Server External Scripts counters | Description |
+| --- | --- |
+| **Execution Errors** | The number of errors in executing external scripts. |
+| **Implied Auth. Logins** | The number of logins from satellite processes authenticated by using implied authentication. |
+| **Parallel Executions** | The number of external scripts executed with @parallel = 1. |
+| **Partition By Executions** | Number of external scripts executed with @input_data_1_partition_by_columns parameter. |
+| **SQL CC Executions** | The number of external scripts executed using SQL Compute Context. |
+| **Streaming Executions** | The number of external scripts executed with the @r_rowsPerRead parameter. |
+| **Total Execution Time (ms)** | The total time spent in executing external scripts. |
+| **Total Executions** | The number of external scripts executed. |
+
+
+## Example
+
+You begin to explore the query performance counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT * FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%External Scripts%';
+```  
+  
+## Related content
+
+- [Monitor Resource Usage (Performance Monitor)](monitor-resource-usage-system-monitor.md)
+- [sys.resource_governor_external_resource_pools (Transact-SQL)](../system-catalog-views/sys-resource-governor-external-resource-pools-transact-sql.md)
+- [sys.dm_resource_governor_external_resource_pool_affinity (Transact-SQL)](../system-dynamic-management-objects/sys-dm-resource-governor-external-resource-pool-affinity-transact-sql.md)

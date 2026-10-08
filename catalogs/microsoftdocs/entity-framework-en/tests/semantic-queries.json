@@ -1,0 +1,8 @@
+[
+  {
+    "query": "When should I use AsNoTracking for read-only Entity Framework Core queries?",
+    "expectedDocumentIds": [
+      "entity-framework/core/querying/tracking"
+    ]
+  }
+]

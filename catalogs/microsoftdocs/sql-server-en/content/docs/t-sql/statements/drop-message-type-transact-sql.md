@@ -1,0 +1,66 @@
+---
+title: "DROP MESSAGE TYPE (Transact-SQL)"
+description: DROP MESSAGE TYPE (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "DROP_MESSAGE_TYPE_TSQL"
+  - "DROP MESSAGE TYPE"
+helpviewer_keywords:
+  - "message types [Service Broker], removing"
+  - "deleting message types"
+  - "dropping message types"
+  - "DROP MESSAGE TYPE statement"
+  - "removing message types"
+dev_langs:
+  - "TSQL"
+---
+# DROP MESSAGE TYPE (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Drops an existing message type.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+DROP MESSAGE TYPE message_type_name  
+[ ; ]  
+```  
+  
+## Arguments
+ *message_type_name*  
+ The name of the message type to delete. Server, database, and schema names cannot be specified.  
+  
+## Permissions  
+ Permission for dropping a message type defaults to the owner of the message type, members of the db_ddladmin or db_owner fixed database roles, and members of the sysadmin fixed server role.  
+  
+## Remarks  
+ You cannot drop a message type if any contracts refer to the message type.  
+  
+## Examples  
+ The following example deletes the `//Adventure-Works.com/Expenses/SubmitExpense` message type from the database.  
+  
+```sql  
+DROP MESSAGE TYPE [//Adventure-Works.com/Expenses/SubmitExpense] ;  
+```  
+  
+## Related content
+
+- [ALTER MESSAGE TYPE (Transact-SQL)](alter-message-type-transact-sql.md)
+- [CREATE MESSAGE TYPE (Transact-SQL)](create-message-type-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../functions/eventdata-transact-sql.md)

@@ -1,0 +1,57 @@
+---
+title: "PDOStatement::columnCount"
+description: "API reference for the PDOStatement::columnCount function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDOStatement::columnCount
+
+
+
+Returns the number of columns in a result set.  
+  
+## Syntax  
+  
+```php  
+  
+int PDOStatement::columnCount ();  
+```  
+  
+## Return Value  
+Returns the number of columns in a result set. Returns zero if the result set is empty.  
+  
+## Remarks  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+  
+```php  
+<?php  
+$database = "AdventureWorks";  
+$server = "(local)";  
+$conn = new PDO( "sqlsrv:server=$server ; Database = $database", "", "");  
+  
+$query = "select * from Person.ContactType";  
+$stmt = $conn->prepare( $query );  
+print $stmt->columnCount();   // 0  
+  
+echo "\n";  
+$stmt->execute();  
+print $stmt->columnCount();  
+  
+echo "\n";  
+$stmt = $conn->query("select * from HumanResources.Department");  
+print $stmt->columnCount();  
+?>  
+```  
+  
+## Related content
+
+- [PDOStatement Class](pdostatement-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

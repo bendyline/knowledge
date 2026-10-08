@@ -1,0 +1,8 @@
+[
+  {
+    "query": "What is Active Directory Domain Services and how does it store information about network objects and user accounts?",
+    "expectedDocumentIds": [
+      "WindowsServerDocs/identity/ad-ds/get-started/virtual-dc/Active-Directory-Domain-Services-Overview"
+    ]
+  }
+]

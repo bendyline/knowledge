@@ -1,0 +1,117 @@
+---
+description: "Learn more about: Channel Factory and Caching"
+title: "Channel Factory and Caching"
+ms.date: "03/30/2017"
+ms.assetid: 954f030e-091c-4c0e-a7a2-10f9a6b1f529
+---
+# Channel Factory and Caching
+
+WCF client applications use the [System.ServiceModel.ChannelFactory`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ChannelFactory%601) class to create a communication channel with a WCF service.  Creating [System.ServiceModel.ChannelFactory`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ChannelFactory%601) instances incurs some overhead because it involves the following operations:
+
+- Constructing the [System.ServiceModel.Description.ContractDescription](https://learn.microsoft.com/search/?terms=System.ServiceModel.Description.ContractDescription) tree
+
+- Reflecting all of the required CLR types
+
+- Constructing the channel stack
+
+- Disposing of resources
+
+To help minimize this overhead, WCF can cache channel factories when you are using a WCF client proxy.
+
+> **Tip:**
+> You have direct control over channel factory creation when you use the [System.ServiceModel.ChannelFactory`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ChannelFactory%601) class directly.
+
+WCF client proxies generated with [ServiceModel Metadata Utility Tool (Svcutil.exe)](../servicemodel-metadata-utility-tool-svcutil-exe.md) are derived from [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601). [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) defines a static [System.ServiceModel.ClientBase`1.CacheSetting](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601.CacheSetting) property that defines channel factory caching behavior. Cache settings are made for a specific type. For example, setting  `ClientBase<ITest>.CacheSettings` to one of the values defined below will affect only those proxy/ClientBase of type `ITest`. The cache setting for a particular [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) is immutable as soon as the first proxy/ClientBase instance is created.
+
+## Specifying Caching Behavior
+
+Caching behavior is specified by setting the [System.ServiceModel.ClientBase`1.CacheSetting](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601.CacheSetting) property to one of the following values.
+
+| Cache Setting Value | Description |
+| --- | --- |
+| [System.ServiceModel.CacheSetting.AlwaysOn](https://learn.microsoft.com/search/?terms=System.ServiceModel.CacheSetting.AlwaysOn) | All instances of [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) within the app-domain can participate in caching. The developer has determined that there are no adverse security implications to caching. Caching will not be turned off even if "security-sensitive" properties on [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) are accessed. The "security-sensitive" properties of [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) are [System.ServiceModel.ClientBase`1.ClientCredentials*](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601.ClientCredentials*), [System.ServiceModel.ClientBase`1.Endpoint](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601.Endpoint) and [System.ServiceModel.ClientBase`1.ChannelFactory*](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601.ChannelFactory*). |
+| [System.ServiceModel.CacheSetting.Default](https://learn.microsoft.com/search/?terms=System.ServiceModel.CacheSetting.Default) | Only instances of [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) created from endpoints defined in configuration files participate in caching within the app-domain. Any instances of [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) created programmatically within that app-domain will not participate in caching. Also, caching will be disabled for an instance of [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) once any of its "security-sensitive" properties is accessed. |
+| [System.ServiceModel.CacheSetting.AlwaysOff](https://learn.microsoft.com/search/?terms=System.ServiceModel.CacheSetting.AlwaysOff) | Caching is turned off for all instances of [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601) of a particular type within the app-domain in question. |
+
+The following code snippets illustrate how to use the [System.ServiceModel.ClientBase`1.CacheSetting](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601.CacheSetting) property.
+
+```csharp
+class Program
+{
+   static void Main(string[] args)
+   {
+      ClientBase<ITest>.CacheSettings = CacheSettings.AlwaysOn;
+      foreach (string msg in messages)
+      {
+         using (TestClient proxy = new TestClient (new BasicHttpBinding(), new EndpointAddress(address)))
+         {
+            // ...
+            proxy.Test(msg);
+            // ...
+         }
+      }
+   }
+}
+// Generated by SvcUtil.exe
+public partial class TestClient : System.ServiceModel.ClientBase, ITest { }
+```
+
+In the above code, all instances of `TestClient` will use the same channel factory.
+
+```csharp
+class Program
+{
+   static void Main(string[] args)
+   {
+      ClientBase<ITest>.CacheSettings = CacheSettings.Default;
+      int i = 1;
+      foreach (string msg in messages)
+      {
+         using (TestClient proxy = new TestClient ("MyEndpoint", new EndpointAddress(address)))
+         {
+            if (i == 4)
+            {
+               ServiceEndpoint endpoint = proxy.Endpoint;
+               ... // use endpoint in some way
+            }
+            proxy.Test(msg);
+         }
+         i++;
+   }
+}
+
+// Generated by SvcUtil.exe
+public partial class TestClient : System.ServiceModel.ClientBase, ITest {}
+```
+
+In the example above, all instances of `TestClient` would use the same channel factory except instance #4. Instance #4 would use a channel factory that is created specifically for its use. This setting would work for scenarios where a particular endpoint needs different security settings from the other endpoints of the same channel factory type (in this case `ITest`).
+
+```csharp
+class Program
+{
+   static void Main(string[] args)
+   {
+      ClientBase<ITest>.CacheSettings = CacheSettings.AlwaysOff;
+      foreach (string msg in messages)
+      {
+         using (TestClient proxy = new TestClient ("MyEndpoint", new EndpointAddress(address)))
+         {
+            proxy.Test(msg);
+         }
+      }
+   }
+}
+
+// Generated by SvcUtil.exe
+public partial class TestClient : System.ServiceModel.ClientBase, ITest {}
+```
+
+In the example above, all instances of `TestClient` would use different channel factories. This is useful when each endpoint has different security requirements and it makes no sense to cache.
+
+## See also
+
+- [System.ServiceModel.ClientBase`1](https://learn.microsoft.com/search/?terms=System.ServiceModel.ClientBase%601)
+- [Building Clients](../building-clients.md)
+- [Clients](clients.md)
+- [Accessing Services Using a WCF Client](../accessing-services-using-a-wcf-client.md)
+- [How to: Use the ChannelFactory](how-to-use-the-channelfactory.md)

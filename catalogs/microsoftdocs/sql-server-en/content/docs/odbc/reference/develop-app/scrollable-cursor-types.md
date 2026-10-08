@@ -1,0 +1,40 @@
+---
+title: "Scrollable Cursor Types"
+description: "Scrollable Cursor Types"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "scrollable cursors [ODBC]"
+  - "cursors [ODBC], scrollable"
+---
+# Scrollable Cursor Types
+The four types of scrollable cursors are static, dynamic, keyset-driven, and mixed. Static cursors detect few or no changes but are relatively cheap to implement. Dynamic cursors detect all changes but are expensive to implement. Keyset-driven and mixed cursors lie in between, detecting most changes but at less expense than dynamic cursors.  
+  
+ The following terms are used to define the characteristics of each type of scrollable cursor:  
+  
+-   **Own updates, deletes, and inserts.** Updates, deletes, and inserts made through the cursor, either with a call to **SQLBulkOperations** or **SQLSetPos** or with a positioned update or delete statement.  
+  
+-   **Other updates, deletes, and inserts.** Updates, deletes, and inserts not made by the cursor, including those made by other operations in the same transaction, those made through other transactions, and those made by other applications.  
+  
+-   **Membership.** The set of rows in the result set.  
+  
+-   **Order.** The order in which rows are returned by the cursor.  
+  
+-   **Values.** The values in each row in the result set.  
+  
+ For information about how to update, delete, and insert data, see [Updating Data Overview](updating-data-overview.md).  
+  
+ This section contains the following topics.  
+  
+-   [ODBC Static Cursors](odbc-static-cursors.md)  
+  
+-   [ODBC Dynamic Cursors](odbc-dynamic-cursors.md)  
+  
+-   [Keyset-Driven Cursors](keyset-driven-cursors.md)  
+  
+-   [Mixed Cursors](mixed-cursors.md)

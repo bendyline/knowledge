@@ -1,0 +1,34 @@
+---
+title: Order hints for bulk copy operations
+description: Describes how to use order hints in bulk copy operations.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, paulmedynski, cmalhotra
+ms.date: 06/01/2022
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+dev_langs:
+  - "csharp"
+---
+# Order hints for bulk copy operations
+
+ **Applies to**:  .NET Framework  .NET  .NET Standard 
+
+
+
+
+Bulk copy operations offer significant performance advantages over other methods for loading data into a SQL Server table. Performance can be further enhanced by using order hints. Specifying order hints for your bulk copy operations can lower the insertion time of sorted data into tables with clustered indexes.
+
+By default, the bulk insert operation assumes the incoming data is unordered. SQL Server forces an intermediate sort of this data before bulk loading it. If you know your incoming data is already sorted, you can use order hints to tell the bulk copy operation about the sort order of any destination columns that are part of a clustered index.
+  
+## Adding order hints to a bulk copy operation
+
+The following example bulk copies data from a source table in the **AdventureWorks** sample database to a destination table in the same database.
+A SqlBulkCopyColumnOrderHint object is created to define the sort order for the **ProductNumber** column in the destination table. The order hint is then added to the SqlBulkCopy instance, which will append the appropriate order hint argument to the resulting `INSERT BULK` query.
+
+[Code reference unavailable in this source snapshot: ~/../sqlclient/doc/samples/SqlBulkCopy_ColumnOrderHint.cs#1](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/connect/ado-net/sql/bulk-copy-order-hints.md)
+
+## Related content
+
+- [Bulk copy operations in SQL Server](bulk-copy-operations-sql-server.md)

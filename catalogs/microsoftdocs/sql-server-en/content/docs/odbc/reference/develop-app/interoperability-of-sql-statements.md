@@ -1,0 +1,23 @@
+---
+title: "Interoperability of SQL Statements"
+description: "Interoperability of SQL Statements"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "SQL statements [ODBC], interoperability"
+  - "interoperability of SQL statements [ODBC]"
+  - "interoperability of SQL statements [ODBC], about interoperability"
+---
+# Interoperability of SQL Statements
+Like the rest of an application, SQL statements can be interoperable or DBMS-specific. And like the rest of the application, the choice of how interoperable SQL statements need to be depends on the type of application. Custom applications are less likely to use interoperable SQL statements because they are usually designed to exploit the capabilities of one or possibly two DBMSs. Generic applications use interoperable SQL statements because they are designed to work with a variety of DBMSs. And vertical applications usually fall somewhere in between, demanding a certain level of functionality but otherwise using interoperable SQL statements.  
+  
+ This section contains the following topics.  
+  
+-   [Choosing a SQL Grammar](choosing-an-sql-grammar.md)  
+  
+-   [Constructing Interoperable SQL Statements](constructing-interoperable-sql-statements.md)

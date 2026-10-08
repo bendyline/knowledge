@@ -1,0 +1,244 @@
+---
+title: "Step 7: Host Your Agent"
+description: "Deploy your agent so users and other agents can interact with it."
+zone_pivot_groups: programming-languages
+author: eavanvalkenburg
+ms.topic: tutorial
+ms.author: edvan
+ms.date: 10/07/2026
+ms.service: agent-framework
+ai-usage: ai-assisted
+ms.custom: update-code2
+---
+
+# Step 7: Host Your Agent
+
+For a comparison of Microsoft-managed Foundry Hosted Agents, self-hosting, and durable Azure Functions workloads, see [Hosting Agent Framework applications](../hosting/index.md).
+
+**Applies to: programming-language-csharp**
+
+
+## Hosting in ASP.NET Core
+
+The Agent Framework provides hosting libraries that enable you to integrate AI agents into ASP.NET Core applications. These libraries simplify registering, configuring, and exposing agents through various protocols.
+
+As described in [Agents](../concepts/agents/index.md), `AIAgent` is the fundamental agent abstraction in Agent Framework. It defines an "LLM wrapper" that processes user inputs, makes decisions, calls tools, and performs additional work to execute actions and generate responses. Exposing AI agents from your ASP.NET Core application is not trivial. The hosting libraries solve this by registering AI agents in a dependency injection container, allowing you to resolve and use them in your application services. They also enable you to manage agent dependencies, such as tools and session storage, from the same container. Agents can be hosted alongside your application infrastructure, independent of the protocols they use. Similarly, workflows can be hosted and leverage your application's common infrastructure.
+
+### Core Hosting Library
+
+The `Microsoft.Agents.AI.Hosting` library is the foundation for hosting AI agents in ASP.NET Core. It provides extensions for `IHostApplicationBuilder` to register and configure AI agents and workflows. In ASP.NET Core, `IHostApplicationBuilder` is the fundamental type that represents the builder for hosted applications and services, managing configuration, logging, lifetime, and more.
+
+Before configuring agents or workflows, register an `IChatClient` in the dependency injection container. In the examples below, it is registered as a keyed singleton under the name `chat-model`:
+
+```csharp
+// endpoint is your Microsoft Foundry project endpoint
+// deploymentName is 'gpt-4o-mini' for example
+
+IChatClient chatClient = new AIProjectClient(
+        new Uri(endpoint),
+        new DefaultAzureCredential())
+    .GetProjectOpenAIClient()
+    .GetProjectResponsesClient()
+    .AsIChatClient(deploymentName);
+builder.Services.AddSingleton(chatClient);
+```
+
+> **Warning:**
+> `DefaultAzureCredential` is convenient for development but requires careful consideration in production. In production, consider using a specific credential (e.g., `ManagedIdentityCredential`) to avoid latency issues, unintended credential probing, and potential security risks from fallback mechanisms.
+
+#### AddAIAgent
+
+Register an AI agent with dependency injection:
+
+```csharp
+var pirateAgent = builder.AddAIAgent(
+    "pirate",
+    instructions: "You are a pirate. Speak like a pirate",
+    description: "An agent that speaks like a pirate.",
+    chatClientServiceKey: "chat-model");
+```
+
+The `AddAIAgent()` method returns an `IHostedAgentBuilder`, which provides extension methods for configuring the agent. For example, you can add tools to the agent:
+
+```csharp
+var pirateAgent = builder.AddAIAgent("pirate", instructions: "You are a pirate. Speak like a pirate")
+    .WithAITool(new MyTool()); // MyTool is a custom type derived from AITool
+```
+
+You can also configure the session store (storage for conversation data):
+
+```csharp
+var pirateAgent = builder.AddAIAgent("pirate", instructions: "You are a pirate. Speak like a pirate")
+    .WithInMemorySessionStore();
+```
+
+#### AddWorkflow
+
+Register workflows that coordinate multiple agents. A workflow is essentially a "graph" where each node is an `AIAgent`, and the agents communicate with each other.
+
+In this example, two agents work sequentially. The user input is first sent to `agent-1`, which produces a response and sends it to `agent-2`. The workflow then outputs the final response. There is also a `BuildConcurrent` method that creates a concurrent agent workflow.
+
+```csharp
+builder.AddAIAgent("agent-1", instructions: "you are agent 1!");
+builder.AddAIAgent("agent-2", instructions: "you are agent 2!");
+
+var workflow = builder.AddWorkflow("my-workflow", (sp, key) =>
+{
+    var agent1 = sp.GetRequiredKeyedService<AIAgent>("agent-1");
+    var agent2 = sp.GetRequiredKeyedService<AIAgent>("agent-2");
+    return AgentWorkflowBuilder.BuildSequential(key, [agent1, agent2]);
+});
+```
+
+#### Expose Workflow as AIAgent
+
+To use protocol integrations (such as A2A or OpenAI) with a workflow, convert it into a standalone agent. Currently, workflows do not provide similar integration capabilities on their own, so this conversion step is required:
+
+```csharp
+var workflowAsAgent = builder
+    .AddWorkflow("science-workflow", (sp, key) => { ... })
+    .AddAsAIAgent();  // Now the workflow can be used as an agent
+```
+
+### Implementation Details
+
+The hosting libraries act as protocol adapters that bridge external communication protocols and the Agent Framework's internal `AIAgent` implementation. When you use a hosting integration library, the library retrieves the registered `AIAgent` from dependency injection, wraps it with protocol-specific middleware to translate incoming requests and outgoing responses, and invokes the `AIAgent` to process requests. This architecture keeps your agent implementation protocol-agnostic.
+
+For example, using the ASP.NET Core hosting library with the A2A protocol adapter:
+
+```csharp
+// Register the agent
+var pirateAgent = builder.AddAIAgent("pirate",
+    instructions: "You are a pirate. Speak like a pirate",
+    description: "An agent that speaks like a pirate.");
+
+// Expose via a protocol (e.g. A2A)
+builder.Services.AddA2AServer();
+var app = builder.Build();
+app.MapA2AServer();
+app.Run();
+```
+
+
+
+**Applies to: programming-language-python**
+
+
+Microsoft Foundry Hosted Agents is the primary managed hosting option. Complete the [Foundry Hosted Agents prerequisites](../hosting/foundry-hosted-agent.md#prerequisites), including the Azure Developer CLI AI agent extension and Azure CLI sign-in.
+
+The get-started sample creates an agent with server-side model storage disabled and starts a `ResponsesHostServer`:
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/01-get-started/07_hosting.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/get-started/hosting.md)
+
+Replace the hardcoded project endpoint and model deployment name, then run the PEP 723 sample locally from the Agent Framework repository root:
+
+```bash
+uv run python/samples/01-get-started/07_hosting.py
+```
+
+To deploy a complete hosted-agent project, initialize it from the maintained hosting manifest:
+
+```bash
+mkdir my-hosted-agent && cd my-hosted-agent
+azd ai agent init -m https://github.com/microsoft/agent-framework/blob/main/python/samples/04-hosting/foundry-hosted-agents/responses/basic/agent.manifest.yaml
+```
+
+Run the agent host:
+
+```bash
+azd ai agent run
+```
+
+In another terminal, invoke the local agent:
+
+```bash
+azd ai agent invoke --local "Hello!"
+```
+
+> **Tip:**
+> See the [full get-started sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/01-get-started/07_hosting.py) and the [complete deployment sample](https://github.com/microsoft/agent-framework/tree/main/python/samples/04-hosting/foundry-hosted-agents/responses/basic).
+> For deployment guidance, see [Foundry Hosted Agents](../hosting/foundry-hosted-agent.md?pivots=programming-language-python).
+
+
+
+**Applies to: programming-language-go**
+
+
+## Hosting with A2A Protocol
+
+The Go port provides A2A hosting through `a2aprovider`, which wraps an agent in an HTTP handler compatible with the Agent-to-Agent protocol.
+
+> **Note:**
+> Durable Extension hosting isn't currently available for Go. For the latest Go SDK status, see the [Agent Framework Go repository](https://github.com/microsoft/agent-framework-go).
+
+Create an agent:
+
+```go
+import (
+    "github.com/microsoft/agent-framework-go/agent"
+    "github.com/microsoft/agent-framework-go/provider/a2aprovider"
+    "github.com/microsoft/agent-framework-go/provider/foundryprovider"
+
+    "github.com/a2aproject/a2a-go/v2/a2a"
+    "github.com/a2aproject/a2a-go/v2/a2asrv"
+)
+
+a := foundryprovider.NewAgent(endpoint, token, foundryprovider.ModelDeployment(model), foundryprovider.AgentConfig{
+    Instructions: "You are a helpful assistant.",
+    Config: agent.Config{
+    },
+})
+```
+
+Expose the agent via A2A:
+
+```go
+url := "http://localhost:5000"
+card := &a2a.AgentCard{
+    Name:               "MyAgent",
+    Description:        "A helpful assistant.",
+    Version:            "1.0.0",
+    DefaultInputModes:  []string{"text"},
+    DefaultOutputModes: []string{"text"},
+    Capabilities:       a2a.AgentCapabilities{Streaming: false},
+    SupportedInterfaces: []*a2a.AgentInterface{
+        a2a.NewAgentInterface(url, a2a.TransportProtocolJSONRPC),
+    },
+}
+
+mux := http.NewServeMux()
+requestHandler := a2asrv.NewHandler(
+    a2aprovider.NewExecutor(a, a2aprovider.ExecutorConfig{}),
+    a2asrv.WithExtendedAgentCard(card),
+)
+mux.Handle("/", a2asrv.NewJSONRPCHandler(requestHandler))
+mux.Handle(a2asrv.WellKnownAgentCardPath, a2asrv.NewStaticAgentCardHandler(card))
+
+log.Println("A2A server listening on :5000")
+http.ListenAndServe(":5000", mux)
+```
+
+> **Tip:**
+> See the [full A2A client-server sample](https://github.com/microsoft/agent-framework-go/tree/main/examples/05-end-to-end/a2a_client_server) for a complete runnable example.
+
+
+
+## Next steps
+
+> 
+> [Agents](../concepts/agents/index.md)
+
+**Go deeper:**
+
+- [A2A agent service](../integrations/by-component/agent-services/a2a.md) — consume remote A2A agents
+- [A2A hosting](../hosting/self-hosting/a2a/server.md) — expose Agent Framework agents through A2A
+- [Durable Extension](../hosting/azure-functions.md) — durable C# and Python agent and workflow hosting
+- [AG-UI Protocol](../integrations/by-component/ui/ag-ui/index.md) — web-based agent UIs
+- [Hosting overview](../hosting/index.md) — choose Foundry Hosted Agents, self-hosting, or durable hosting
+- [Foundry Hosted Agents](../hosting/foundry-hosted-agent.md) — deploy Agent Framework agents to managed hosting
+- [Foundry Hosted Agents sample (Python)](https://github.com/microsoft/agent-framework/tree/main/python/samples/04-hosting/foundry-hosted-agents/responses/basic) — run the basic Responses sample
+
+## See also
+
+- [Agents](../concepts/agents/index.md)
+- [Workflows](../concepts/workflows/index.md)

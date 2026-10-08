@@ -1,0 +1,51 @@
+---
+title: "sys.sysfiles (Transact-SQL)"
+description: "sys.sysfiles (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sysfiles"
+  - "sys.sysfiles_TSQL"
+  - "sys.sysfiles"
+  - "sysfiles_TSQL"
+helpviewer_keywords:
+  - "sysfiles system table"
+  - "sys.sysfiles compatibility view"
+dev_langs:
+  - "TSQL"
+---
+# sys.sysfiles (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains one row for each file in a database.  
+  
+> **Important:**  
+>    This SQL Server 2000 system table is included as a view for backward compatibility. We  recommend that you use the current SQL Server system views instead. To find the equivalent system view or views, see [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md). This feature will be removed in a future version of Microsoft SQL Server. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.
+   
+  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **fileid** | **smallint** | File identification number unique for each database. |
+| **groupid** | **smallint** | File group identification number. |
+| **size** | **int** | Size of the file, in 8-KB pages. |
+| **maxsize** | **int** | Maximum file size, in 8-KB pages.<br /><br /> 0 = No growth.<br /><br /> -1 = File will grow until the disk is full.<br /><br /> 268435456 = Log file will grow to a maximum size of 2 TB.<br /><br /> Note: Databases that are upgraded with an unlimited log file size will report -1 for the maximum size of the log file. |
+| **growth** | **int** | Growth size of the database. Can be either the number of pages or the percentage of file size, depending on value of **status**.<br /><br /> 0 = No growth. |
+| **status** | **int** | Status bits for the **growth** value in either megabytes (MB) or kilobytes (KB).<br /><br /> 0x2 = Disk file.<br /><br /> 0x40 = Log file.<br /><br /> 0x100000 = Growth. This value is a percentage and not the number of pages. |
+| **perf** | **int** | Reserved. |
+| **name** | **sysname** | Logical name of the file. |
+| **filename** | **nvarchar(260)** | Name of the physical device. This includes the full path of the file. |
+  
+## Related content
+
+- [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md)
+- [System Compatibility Views (Transact-SQL)](system-compatibility-views-transact-sql.md)

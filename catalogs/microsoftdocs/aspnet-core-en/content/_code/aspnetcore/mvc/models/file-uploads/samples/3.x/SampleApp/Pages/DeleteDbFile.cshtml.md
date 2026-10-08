@@ -1,0 +1,48 @@
+# Source code: aspnetcore/mvc/models/file-uploads/samples/3.x/SampleApp/Pages/DeleteDbFile.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "{id:int}"
+@model DeleteDbFileModel
+@{
+    ViewData["Title"] = "Delete File";
+}
+
+<h1>Delete File</h1>
+
+<p>Are you sure you want to delete this file?</p>
+
+<dl>
+    <dt>
+        @Html.DisplayNameFor(model => model.RemoveFile.UntrustedName)
+    </dt>
+    <dd>
+        @Model.RemoveFile.UntrustedName
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.RemoveFile.Note)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.RemoveFile.Note)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.RemoveFile.Size)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.RemoveFile.Size)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.RemoveFile.UploadDT)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.RemoveFile.UploadDT)
+    </dd>
+</dl>
+
+<form method="post">
+    <input type="hidden" asp-for="RemoveFile.Id" />
+    <input type="submit" value="Delete" class="btn btn-default" />
+</form>
+
+```

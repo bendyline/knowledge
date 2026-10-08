@@ -1,0 +1,31 @@
+---
+title: "MDX Scripting Statements (MDX)"
+description: "MDX Scripting Statements (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# MDX Scripting Statements (MDX)
+
+
+  In Multidimensional Expressions (MDX), the following statements manage context, scope, and control of flow within MDX scripts.  
+  
+## In This Section  
+  
+| Topic | Description |
+| --- | --- |
+| [CALCULATE Statement (MDX)](mdx-scripting-calculate.md) | Calculates a subcube, optionally determining the solve order of dimensions included within the subcube. |
+| [CASE Statement (MDX)](case-statement-mdx.md) | Lets you conditionally return specific values from multiple comparisons. |
+| [EXISTING Keyword (MDX)](https://learn.microsoft.com/analysis-services/multidimensional-models/mdx/mdx-query-existing-keyword) | Forces a specified set to be evaluated within the current context. |
+| [FREEZE Statement (MDX)](mdx-scripting-freeze.md) | Locks the cell values of a specified subcube to their current values. |
+| [IF Statement  (MDX)](mdx-scripting-if.md) | Executes a statement if the condition is true. |
+| [SCOPE Statement (MDX)](mdx-scripting-scope.md) | Limits the scope of specified MDX statements to a specified subcube. |
+  
+## Related content
+
+- [MDX Statement Reference (MDX)](mdx-statement-reference-mdx.md)
+- [MDX Data Definition Statements (MDX)](mdx-data-definition-statements-mdx.md)
+- [MDX Data Manipulation Statements (MDX)](mdx-data-manipulation-statements-mdx.md)
+- [MDX Scripting Fundamentals (Analysis Services)](https://learn.microsoft.com/analysis-services/multidimensional-models/mdx/mdx-scripting-fundamentals-analysis-services)

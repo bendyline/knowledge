@@ -1,0 +1,20 @@
+---
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 01/13/2026
+ms.topic: include
+---
+
+For this script, use Azure CLI locally as it takes too long to run in Cloud Shell. 
+
+### Sign in to Azure
+
+Use the following script to sign in using a specific subscription.
+
+```azurecli-interactive
+subscription="<subscriptionId>" # add subscription here
+
+az account set -s $subscription # ...or use 'az login'
+```
+
+For more information, see [set active subscription](https://learn.microsoft.com/cli/azure/account#az-account-set) or [log in interactively](https://learn.microsoft.com/cli/azure/reference-index#az-login)

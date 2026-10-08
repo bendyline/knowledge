@@ -1,0 +1,197 @@
+---
+title: "sys.sp_dropmergearticle (Transact-SQL)"
+description: "Removes an article from a merge publication. This stored procedure is executed at the Publisher on the publication database."
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "sp_dropmergearticle"
+  - "sp_dropmergearticle_TSQL"
+helpviewer_keywords:
+  - "sp_dropmergearticle"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_dropmergearticle (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Removes an article from a merge publication. This stored procedure is executed at the Publisher on the publication database.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_dropmergearticle
+    [ @publication = ] N'publication'
+    , [ @article = ] N'article'
+    [ , [ @ignore_distributor = ] ignore_distributor ]
+    [ , [ @reserved = ] reserved ]
+    [ , [ @force_invalidate_snapshot = ] force_invalidate_snapshot ]
+    [ , [ @force_reinit_subscription = ] force_reinit_subscription ]
+    [ , [ @ignore_merge_metadata = ] ignore_merge_metadata ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @publication = ] N'*publication*'
+
+The name of the publication from which to drop an article. *@publication* is **sysname**, with no default.
+
+#### [ @article = ] N'*article*'
+
+The name of the article to drop from the given publication. *@article* is **sysname**, with no default. If `all`, all existing articles in the specified merge publication are removed. Even if *@article* is `all`, the publication still must be dropped separately from the article.
+
+#### [ @ignore_distributor = ] *ignore_distributor*
+
+Indicates whether this stored procedure is executed without connecting to the Distributor. *@ignore_distributor* is **bit**, with a default of `0`.
+
+#### [ @reserved = ] *reserved*
+
+Reserved for future use. *@reserved* is **bit**, with a default of `0`.
+
+#### [ @force_invalidate_snapshot = ] *force_invalidate_snapshot*
+
+Enables or disables the ability to have a snapshot invalidated. *@force_invalidate_snapshot* is **bit**, with a default of `0`.
+
+- `0` specifies that changes to the merge article don't cause the snapshot to be invalid.
+
+- `1` means that changes to the merge article might cause the snapshot to be invalid, and if that is the case, a value of `1` gives permission for the new snapshot to occur.
+
+#### [ @force_reinit_subscription = ] *force_reinit_subscription*
+
+Acknowledges that dropping the article requires existing subscriptions to be reinitialized. *@force_reinit_subscription* is **bit**, with a default of `0`.
+
+- `0` specifies that dropping the article doesn't cause the subscription to be reinitialized.
+
+- `1` means that dropping the article causes existing subscriptions to be reinitialized, and gives permission for the subscription reinitialization to occur.
+
+#### [ @ignore_merge_metadata = ] *ignore_merge_metadata*
+
+ Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. 
+
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_dropmergearticle` is used in merge replication. For more information about dropping articles, see [Add Articles to and Drop Articles from Existing Publications](../replication/publish/add-articles-to-and-drop-articles-from-existing-publications.md).
+
+Executing `sp_dropmergearticle` to drop an article from a publication doesn't remove the object from the publication database or the corresponding object from the subscription database. Use `DROP <object>` to remove these objects manually if necessary.
+
+## Permissions
+
+Only members of the **sysadmin** fixed server role or the **db_owner** fixed database role can execute `sp_dropmergearticle`.
+
+## Examples
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+### A. Remove articles from a merge publication
+
+```sql
+USE [AdventureWorks2022];
+GO
+
+DECLARE @publication AS SYSNAME;
+DECLARE @article1 AS SYSNAME;
+DECLARE @article2 AS SYSNAME;
+
+SET @publication = N'AdvWorksSalesOrdersMerge';
+SET @article1 = N'SalesOrderDetail';
+SET @article2 = N'SalesOrderHeader';
+
+EXECUTE sp_dropmergearticle
+    @publication = @publication,
+    @article = @article1,
+    @force_invalidate_snapshot = 1;
+
+EXECUTE sp_dropmergearticle
+    @publication = @publication,
+    @article = @article2,
+    @force_invalidate_snapshot = 1;
+GO
+```
+
+### B. Drop merge join filters and related articles
+
+```sql
+USE [AdventureWorks2022];
+GO
+
+DECLARE @publication AS SYSNAME;
+DECLARE @table1 AS SYSNAME;
+DECLARE @table2 AS SYSNAME;
+DECLARE @table3 AS SYSNAME;
+DECLARE @salesschema AS SYSNAME;
+DECLARE @hrschema AS SYSNAME;
+DECLARE @filterclause AS NVARCHAR (1000);
+
+SET @publication = N'AdvWorksSalesOrdersMerge';
+SET @table1 = N'Employee';
+SET @table2 = N'SalesOrderHeader';
+SET @table3 = N'SalesOrderDetail';
+SET @salesschema = N'Sales';
+SET @hrschema = N'HumanResources';
+SET @filterclause = N'Employee.LoginID = HOST_NAME()';
+
+-- Drop the merge join filter between SalesOrderHeader and SalesOrderDetail.
+EXECUTE sp_dropmergefilter
+    @publication = @publication,
+    @article = @table3,
+    @filtername = N'SalesOrderDetail_SalesOrderHeader',
+    @force_invalidate_snapshot = 1,
+    @force_reinit_subscription = 1;
+
+-- Drop the merge join filter between Employee and SalesOrderHeader.
+EXECUTE sp_dropmergefilter
+    @publication = @publication,
+    @article = @table2,
+    @filtername = N'SalesOrderHeader_Employee',
+    @force_invalidate_snapshot = 1,
+    @force_reinit_subscription = 1;
+
+-- Drop the article for the SalesOrderDetail table.
+EXECUTE sp_dropmergearticle
+    @publication = @publication,
+    @article = @table3,
+    @force_invalidate_snapshot = 1,
+    @force_reinit_subscription = 1;
+
+-- Drop the article for the SalesOrderHeader table.
+EXECUTE sp_dropmergearticle
+    @publication = @publication,
+    @article = @table2,
+    @force_invalidate_snapshot = 1,
+    @force_reinit_subscription = 1;
+
+-- Drop the article for the Employee table.
+EXECUTE sp_dropmergearticle
+    @publication = @publication,
+    @article = @table1,
+    @force_invalidate_snapshot = 1,
+    @force_reinit_subscription = 1;
+GO
+```
+
+## Related content
+
+- [Delete an Article](../replication/publish/delete-an-article.md)
+- [Add Articles to and Drop Articles from Existing Publications](../replication/publish/add-articles-to-and-drop-articles-from-existing-publications.md)
+- [sys.sp_addmergearticle (Transact-SQL)](sp-addmergearticle-transact-sql.md)
+- [sys.sp_changemergearticle (Transact-SQL)](sp-changemergearticle-transact-sql.md)
+- [sys.sp_helpmergearticle (Transact-SQL)](sp-helpmergearticle-transact-sql.md)
+- [Replication stored procedures (Transact-SQL)](replication-stored-procedures-transact-sql.md)

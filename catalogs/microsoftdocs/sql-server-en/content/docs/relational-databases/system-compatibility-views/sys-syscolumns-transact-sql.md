@@ -1,0 +1,96 @@
+---
+title: "sys.syscolumns (Transact-SQL)"
+description: "sys.syscolumns (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.syscolumns"
+  - "sys.syscolumns_TSQL"
+  - "syscolumns_TSQL"
+  - "syscolumns"
+helpviewer_keywords:
+  - "syscolumns system table"
+  - "sys.syscolumns compatibility view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric"
+---
+# sys.syscolumns (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns one row for every column in every table and view, and a row for each parameter in a stored procedure in the database.  
+  
+> **Important:**  
+>    This SQL Server 2000 system table is included as a view for backward compatibility. We  recommend that you use the current SQL Server system views instead. To find the equivalent system view or views, see [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md). This feature will be removed in a future version of Microsoft SQL Server. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.
+   
+  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **name** | **sysname** | Name of the column or procedure parameter. |
+| **id** | **int** | Object ID of the table to which this column belongs, or the ID of the stored procedure with which this parameter is associated. |
+| **xtype** | **tinyint** | Physical storage type from **sys.types**. |
+| **typestat** | **tinyint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **xusertype** | **smallint** | ID of extended user-defined data type. Overflows or returns NULL if the number of data types exceeds 32,767. |
+| **length** | **smallint** | Maximum physical storage length from **sys**.**types**. |
+| **xprec** | **tinyint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **xscale** | **tinyint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **colid** | **smallint** | Column or parameter ID. |
+| **xoffset** | **smallint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **bitpos** | **tinyint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **reserved** | **tinyint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **colstat** | **smallint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **cdefault** | **int** | ID of the default for this column. |
+| **domain** | **int** | ID of the rule or CHECK constraint for this column. |
+| **number** | **smallint** | Subprocedure number when the procedure is grouped.<br /><br /> 0 = Nonprocedure entries |
+| **colorder** | **smallint** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **autoval** | **varbinary(8000)** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **offset** | **smallint** | Offset into the row in which this column appears. |
+| **collationid** | **int** | ID of the collation of the column. NULL for noncharacter-based columns. |
+| **status** | **tinyint** | Bitmap used to describe a property of the column or the parameter:<br /><br /> 0x08 = Column allows null values.<br /><br /> 0x10 = ANSI padding was in effect when **varchar** or **varbinary** columns were added. Trailing blanks are preserved for **varchar** and trailing zeros are preserved for **varbinary** columns.<br /><br /> 0x40 = Parameter is an OUTPUT parameter.<br /><br /> 0x80 = Column is an identity column. |
+| **type** | **tinyint** | Physical storage type from **sys**.**types**. |
+| **usertype** | **smallint** | ID of user-defined data type from **sys.types**. Overflows or returns NULL if the number of data types exceeds 32,767. |
+| **printfmt** | **varchar(255)** | Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. |
+|  |
+| **prec** | **smallint** | Level of precision for this column.<br /><br /> -1 = **xml** or large value type. |
+| **scale** | **int** | Scale for this column.<br /><br /> NULL = Data type is nonnumeric. |
+| **iscomputed** | **int** | Flag indicating whether the column is computed:<br /><br /> 0 = Noncomputed<br /><br /> 1 = Computed |
+| **isoutparam** | **int** | Indicates whether the procedure parameter is an output parameter:<br /><br /> 1 = True<br /><br /> 0 = False |
+| **isnullable** | **int** | Indicates whether the column allows null values:<br /><br /> 1 = True<br /><br /> 0 = False |
+| **collation** | **sysname** | Name of the collation of the column. NULL if not a character-based column. |
+  
+## Related content
+
+- [Mapping System Tables to System Views (Transact-SQL)](../system-tables/mapping-system-tables-to-system-views-transact-sql.md)
+- [System Compatibility Views (Transact-SQL)](system-compatibility-views-transact-sql.md)

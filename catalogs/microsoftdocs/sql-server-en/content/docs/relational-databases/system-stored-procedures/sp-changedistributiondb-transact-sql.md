@@ -1,0 +1,89 @@
+---
+title: "sys.sp_changedistributiondb (Transact-SQL)"
+description: sp_changedistributiondb changes the properties of the distribution database.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "sp_changedistributiondb_TSQL"
+  - "sp_changedistributiondb"
+helpviewer_keywords:
+  - "sp_changedistributiondb"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_changedistributiondb (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Changes the properties of the distribution database. This stored procedure is executed at the Distributor on any database.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_changedistributiondb
+    [ @database = ] N'database'
+    [ , [ @property = ] N'property' ]
+    [ , [ @value = ] N'value' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @database = ] N'*database*'
+
+The name of the distribution database. *@database* is **sysname**, with no default.
+
+#### [ @property = ] N'*property*'
+
+The property to change for the given database. *@property* is **sysname**, and can be one of these values.
+
+| Value | Description |
+| --- | --- |
+| `history_retention` | History table retention period. |
+| `max_distretention` | Maximum distribution retention period. |
+| `min_distretention` | Minimum distribution retention period. |
+| `NULL` (default) | All available *@property* values are printed. |
+
+#### [ @value = ] N'*value*'
+
+The new value for the specified property. *@value* is **nvarchar(255)**, with a default of `NULL`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_changedistributiondb` is used in all types of replication.
+
+## Examples
+
+[language="sql" source="../replication/codesnippet/tsql/sp-changedistributiondb-\_1.sql"::: (complete source file; reference: ../replication/codesnippet/tsql/sp-changedistributiondb-\_1.sql)](../../../_code/docs/relational-databases/replication/codesnippet/tsql/sp-changedistributiondb-_1.sql.md)
+
+## Permissions
+
+Only members of the **sysadmin** fixed server role can execute `sp_changedistributiondb`.
+
+## Related content
+
+- [View and Modify Distributor and Publisher Properties](../replication/view-and-modify-distributor-and-publisher-properties.md)
+- [sys.sp_adddistributiondb (Transact-SQL)](sp-adddistributiondb-transact-sql.md)
+- [sys.sp_dropdistributiondb (Transact-SQL)](sp-dropdistributiondb-transact-sql.md)
+- [sys.sp_helpdistributiondb (Transact-SQL)](sp-helpdistributiondb-transact-sql.md)
+- [Replication stored procedures (Transact-SQL)](replication-stored-procedures-transact-sql.md)

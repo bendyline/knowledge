@@ -1,0 +1,68 @@
+---
+title: "sys.data_spaces (Transact-SQL)"
+description: sys.data_spaces (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/17/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "data_spaces"
+  - "sys.data_spaces_TSQL"
+  - "sys.data_spaces"
+  - "data_spaces_TSQL"
+helpviewer_keywords:
+  - "sys.data_spaces catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric"
+---
+# sys.data_spaces (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Contains a row for each data space. This can be a filegroup, partition scheme, or FILESTREAM data filegroup.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| name | **sysname** | Name of data space, unique within the database. |
+| data_space_id | **int** | Data space ID number, unique within the database. |
+| type | **char(2)** | Data space type:<br /><br /> FG = Filegroup<br /><br /> FD = FILESTREAM data filegroup<br /><br /> FX = Memory-optimized tables filegroup<br /><br /> **Applies to**:  SQL Server 2014 (12.x) |
+ | and later.<br /><br /> PS = Partition scheme |
+| type_desc | **nvarchar(60)** | Description of data space type:<br /><br /> FILESTREAM_DATA_FILEGROUP<br /><br /> MEMORY_OPTIMIZED_DATA_FILEGROUP<br /><br /> **Applies to**:  SQL Server 2014 (12.x) |
+ | and later.<br /><br /> PARTITION_SCHEME<br /><br /> ROWS_FILEGROUP |
+| is_default | **bit** | 1 = This is the default data space. The default data space is used when a filegroup or partition scheme is not specified in a CREATE TABLE or CREATE INDEX statement.<br /><br /> 0 = This is not the default data space. |
+| is_system | **bit** | **Applies to**:  SQL Server 2012 (11.x) |
+ | and later.<br /><br /> 1 = Data space is used for full-text index fragments.<br /><br /> 0 = Data space is not used for full-text index fragments. |
+  
+## Permissions  
+ Requires membership in the public role. For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Data Spaces (Transact-SQL)](data-spaces-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [sys.databases (Transact-SQL)](sys-databases-transact-sql.md)
+- [sys.destination_data_spaces (Transact-SQL)](sys-destination-data-spaces-transact-sql.md)
+- [sys.filegroups (Transact-SQL)](sys-filegroups-transact-sql.md)
+- [sys.partition_schemes (Transact-SQL)](sys-partition-schemes-transact-sql.md)
+- [Querying the SQL Server System Catalog FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/system-catalog-views/querying-the-sql-server-system-catalog-faq.yml)
+- [In-Memory OLTP overview and usage scenarios](../in-memory-oltp/overview-and-usage-scenarios.md)

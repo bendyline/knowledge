@@ -1,0 +1,93 @@
+---
+title: "ALTER MATERIALIZED VIEW (Transact-SQL)"
+description: ALTER MATERIALIZED VIEW (Transact-SQL)
+author: XiaoyuMSFT
+ms.author: xiaoyul
+ms.reviewer: wiassaf
+ms.date: "07/03/2019"
+ms.service: sql
+ms.subservice: data-warehouse
+ms.topic: reference
+f1_keywords:
+  - "ALTER_VIEW_TSQL"
+  - "ALTER VIEW"
+helpviewer_keywords:
+  - "indexed views [SQL Server], modifying"
+  - "views [SQL Server], modifying"
+  - "modifying views"
+  - "ALTER VIEW statement"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# ALTER MATERIALIZED VIEW (Transact-SQL)  
+
+
+**Applies to:**
+ 
+
+
+ 
+
+
+Modifies a previously created materialized view. ALTER VIEW does not affect dependent stored procedures or triggers and does not change permissions.  
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+ALTER MATERIALIZED VIEW [ schema_name . ] view_name
+{
+      REBUILD | DISABLE
+}
+[;]
+```  
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+## Arguments
+
+ *schema_name*     
+ Is the name of the schema to which the view belongs.  
+  
+ *view_name*     
+ Is the materialized view to change.  
+  
+*REBUILD*   
+Resumes the materialized view.
+
+*DISABLE*   
+Suspends maintenance on the materialized view while maintaining metadata and permissions.  All queries against the materialized view while in a disabled state resolve against the underlying tables.
+  
+## Permissions
+
+ALTER permission on the table or view is required.
+  
+## Examples
+
+This example disables a materialized view and puts it in suspended mode.
+  
+```sql
+ALTER MATERIALIZED VIEW My_Indexed_View DISABLE;  
+```  
+  
+This example resumes materialized view by rebuilding it.  
+  
+```sql
+ALTER MATERIALIZED VIEW My_Indexed_View REBUILD;  
+```  
+  
+## Related content
+
+- [Performance tuning with Materialized View](https://learn.microsoft.com/azure/sql-data-warehouse/performance-tuning-materialized-views)
+- [CREATE MATERIALIZED VIEW AS SELECT (Transact-SQL)](create-materialized-view-as-select-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [EXPLAIN (Transact-SQL)](../queries/explain-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [sys.pdw_materialized_view_column_distribution_properties (Transact-SQL)](../../relational-databases/system-catalog-views/sys-pdw-materialized-view-column-distribution-properties-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [sys.pdw_materialized_view_distribution_properties (Transact-SQL) (preview)](../../relational-databases/system-catalog-views/sys-pdw-materialized-view-distribution-properties-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [sys.pdw_materialized_view_mappings (Transact-SQL)](../../relational-databases/system-catalog-views/sys-pdw-materialized-view-mappings-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [DBCC PDW_SHOWMATERIALIZEDVIEWOVERHEAD (Transact-SQL)](../database-console-commands/dbcc-pdw-showmaterializedviewoverhead-transact-sql.md?view=azure-sqldw-latest&preserve-view=true)
+- [Azure Synapse Analytics catalog views](../../relational-databases/system-catalog-views/azure-synapse-analytics-catalog-views.md)
+- [System views supported in  Azure Synapse Analytics ](https://learn.microsoft.com/azure/sql-data-warehouse/sql-data-warehouse-reference-tsql-system-views)
+- [T-SQL statements supported in  Azure Synapse Analytics ](https://learn.microsoft.com/azure/sql-data-warehouse/sql-data-warehouse-reference-tsql-statements)

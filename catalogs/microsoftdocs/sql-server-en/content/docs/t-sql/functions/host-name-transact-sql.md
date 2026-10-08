@@ -1,0 +1,83 @@
+---
+title: HOST_NAME (Transact-SQL)
+description: HOST_NAME returns the name of the current session's client workstation name.
+author: VanMSFT
+ms.author: vanto
+ms.date: 08/19/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "HOST_NAME_TSQL"
+  - "HOST_NAME"
+helpviewer_keywords:
+  - "HOST_NAME function"
+  - "workstation names [SQL Server]"
+dev_langs:
+  - TSQL
+monikerRange: ">=sql-server-2016 || >=sql-server-linux-2017 || =azuresqldb-current || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# HOST_NAME (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The `HOST_NAME` built-in function returns the name of the current session's client workstation name.
+
+
+
+## Syntax
+
+```syntaxsql
+HOST_NAME ()
+```  
+
+## Return types
+
+ **nvarchar(128)**  
+
+## Remarks
+
+ When the parameter to a system function is optional, the current database, host computer, server user, or database user is assumed. Built-in functions must always be followed by parentheses.  
+
+ System functions can be used in the select list, in the `WHERE` clause, and anywhere an expression is allowed.
+
+> **Important:**  
+>  The client application provides the workstation name and can provide inaccurate data. Do not rely upon `HOST_NAME` as a security feature.
+
+The `HOST_NAME` function isn't supported in Fabric Data Warehouse.
+
+## Examples
+
+ The following example creates a table that uses `HOST_NAME()` in a `DEFAULT` definition to record the workstation name of computers that insert rows into a table recording orders.  
+
+```sql  
+CREATE TABLE Orders  
+   (OrderID     INT        PRIMARY KEY,  
+    CustomerID  NCHAR(5)   REFERENCES Customers(CustomerID),  
+    Workstation NCHAR(30)  NOT NULL DEFAULT HOST_NAME(),  
+    OrderDate   DATETIME   NOT NULL,  
+    ShipDate    DATETIME   NULL,  
+    ShipperID   INT        NULL REFERENCES Shippers(ShipperID));  
+GO  
+```  
+
+## Related content
+
+- [Expressions (Transact-SQL)](../language-elements/expressions-transact-sql.md)
+- [System Functions by category for Transact-SQL](../../relational-databases/system-functions/system-functions-category-transact-sql.md)

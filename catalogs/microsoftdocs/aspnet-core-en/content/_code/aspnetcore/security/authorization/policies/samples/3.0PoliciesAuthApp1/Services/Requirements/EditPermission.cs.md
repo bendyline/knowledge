@@ -1,0 +1,15 @@
+# Source code: aspnetcore/security/authorization/policies/samples/3.0PoliciesAuthApp1/Services/Requirements/EditPermission.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.AspNetCore.Authorization;
+
+namespace PoliciesAuthApp1.Services.Requirements
+{
+    public class EditPermission : IAuthorizationRequirement
+    {
+        // Code omitted for brevity
+    }
+}
+```

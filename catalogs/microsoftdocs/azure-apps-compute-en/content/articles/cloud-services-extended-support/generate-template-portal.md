@@ -1,0 +1,38 @@
+---
+title: Generate ARM Template for Cloud Services (extended support) using the Azure portal
+description: Generate and download ARM Template and parameter file for Cloud Services (extended support) using the Azure portal
+ms.topic: how-to
+ms.service: azure-cloud-services-classic
+author: surbhijain
+ms.author: surbhijain
+ms.reviewer: gachandw
+ms.date: 07/24/2024
+ms.update-cycle: 365-days
+ms.custom: devx-track-arm-template, cloud-services-extended-support
+# Customer intent: As an IT administrator, I want to generate and download ARM templates for Cloud Services (extended support) using the Azure portal, so that I can automate deployment and configuration through PowerShell.
+---
+
+# Generate ARM Template for Cloud Services (extended support) using the Azure portal
+
+> **Important:**
+> As of March 31, 2025, cloud Services (extended support) is deprecated and will be fully retired on March 31, 2027. [Learn more](https://aka.ms/csesretirement) about this deprecation and [how to migrate](https://aka.ms/cses-retirement-march-2025).
+
+This article explains how to download the ARM template and parameter file from the [Azure portal](https://portal.azure.com) for your Cloud Service. The ARM template and parameter file can be used in deployments via PowerShell to create or update a cloud service
+
+## Get ARM template via portal
+
+  1. Go to the Azure portal and [create a new cloud service](deploy-portal.md). Add your cloud service configuration, package, and definition files. 
+    Image shows the upload section of the basics tab during creation.
+  
+  2. Once you complete all fields, move to the Review and Create tab to validate your deployment configuration and select on **Download template for automation** your Cloud Service (extended support).
+    Image shows downloading the template under cloud service (extended support) on the Azure portal.
+  
+  3. Download your template and parameter files. 
+    Image shows downloading template file on the Azure portal.
+  
+  4. Copy the Package SAS URI and Configuration SAS URI from the review and create tab and add them to the parameter.json file. These files can now be used to create a new cloud service via PowerShell.
+    Image shows the package SAS URI and configuration SAS URI parameters on the Azure portal.
+  
+## Next steps 
+- Review [frequently asked questions](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/cloud-services-extended-support/faq.yml) for Cloud Services (extended support).
+- Deploy a Cloud Service (extended support) using the [Azure portal](deploy-portal.md)

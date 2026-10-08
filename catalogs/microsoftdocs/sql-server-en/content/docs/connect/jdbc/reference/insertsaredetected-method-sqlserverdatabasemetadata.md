@@ -1,0 +1,67 @@
+---
+title: "insertsAreDetected Method (SQLServerDatabaseMetaData)"
+description: "insertsAreDetected Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.insertsAreDetected"
+apitype: "Assembly"
+---
+# insertsAreDetected Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether or not a visible row insert can be detected by calling the method [rowInserted](rowinserted-method-sqlserverresultset.md) method of the [SQLServerResultSet](sqlserverresultset-class.md) class.  
+  
+## Syntax  
+  
+```  
+  
+public boolean insertsAreDetected(int type)  
+```  
+  
+#### Parameters  
+ *type*  
+  
+ An integer that indicates the result set type, which can be one of the following values as defined in java.sql.ResultSet or SQLServerResultSet:  
+  
+## java.sql.ResultSet Types  
+ TYPE_FORWARD_ONLY  
+  
+ TYPE_SCROLL_SENSITIVE  
+  
+ TYPE_SCROLL_INSENSITIVE  
+  
+## SQLServerResultSet Types  
+ TYPE_SS_SCROLL_STATIC  
+  
+ TYPE_SS_SCROLL_KEYSET  
+  
+ TYPE_SS_DIRECT_FORWARD_ONLY  
+  
+ TYPE_SS_SERVER_CURSOR_FORWARD_ONLY  
+  
+ TYPE_SS_SCROLL_DYNAMIC  
+  
+## Return Value  
+ **true** if the row insert can be detected. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This insertsAreDetected method is specified by the insertsAreDetected method in the java.sql.DatabaseMetaData interface.  
+  
+> **Note:**  
+>   SQL Server 
+ does not detect inserted rows for any cursor type.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

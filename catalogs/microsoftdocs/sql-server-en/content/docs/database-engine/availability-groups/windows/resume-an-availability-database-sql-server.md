@@ -1,0 +1,108 @@
+---
+title: "Resume an availability group database"
+description: Resume a suspended availability database in Always On availability groups by using SQL Server Management Studio, Transact-SQL, or PowerShell in SQL Server.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: how-to
+f1_keywords:
+  - "sql13.swb.availabilitygroup.resumedatamove.f1"
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], resuming a database"
+  - "secondary databases [SQL Server], in availability group"
+  - "primary databases [SQL Server], in availability group"
+  - "Availability Groups [SQL Server], databases"
+---
+# Resume an Availability Database (SQL Server)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  You can resume a suspended availability database in  Always On availability groups 
+ by using  SQL Server Management Studio 
+,  Transact-SQL , or PowerShell in  SQL Server 
+. Resuming a suspended database puts the database into the SYNCHRONIZING state. Resuming the primary database also resumes any of its secondary databases that were suspended as the result of suspending the primary database. If any secondary database was suspended locally, from the server instance that hosts the secondary replica, that secondary database must be resumed locally. Once a given secondary database and the corresponding primary database are in the SYNCHRONIZING state, data synchronization resumes on the secondary database.  
+  
+> **Note:**  
+>  Suspending and resuming an Always On secondary database does not directly affect the availability of the primary database. However, suspending a secondary database can affect redundancy and failover capabilities for the primary database, until the suspended secondary database is resumed. This is in contrast to database mirroring, where the mirroring state is suspended on both the mirror database and the principal database until mirroring is resumed. Suspending an Always On primary database suspends data movement on all the corresponding secondary databases, and redundancy and failover capabilities cease for that database until the primary database is resumed.  
+  
+  
+  
+## Limitations and Restrictions  
+ A RESUME command returns as soon as it has been accepted by the replica that hosts the target database, but actually resuming the database occurs asynchronously.  
+  
+<a id="Prerequisites"></a>
+
+## Prerequisites
+
+-   You must be connected to the server instance that hosts the database to be resumed.    
+-   The availability group must be online.    
+-   The primary database must be online and available.  
+  
+  
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires ALTER permission on the database.  
+  
+ Requires ALTER AVAILABILITY GROUP permission on the availability group, CONTROL AVAILABILITY GROUP permission, ALTER ANY AVAILABILITY GROUP permission, or CONTROL SERVER permission.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+ **To resume a secondary database**  
+  
+1.  In Object Explorer, connect to the server instance that hosts the availability replica on which you want to resume a database, and expand the server tree.  
+  
+2.  Expand the **Always On High Availability** node and the **Availability Groups** node.  
+  
+3.  Expand the availability group.  
+  
+4.  Expand the **Availability Databases** node, right-click the database, and click **Resume Data Movement**.  
+  
+5.  In the **Resume Data Movement** dialog box, click **OK**.  
+  
+> **Note:**  
+>  To resume additional databases on this replica location, repeat steps 4 and 5 for each database.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+ **To resume a secondary database that was suspended locally**  
+  
+1.  Connect to the server instance that hosts the secondary replica whose database you want to resume.  
+  
+2.  Resume the secondary database by using the following [ALTER DATABASE](../../../t-sql/statements/alter-database-transact-sql-set-hadr.md) statement:  
+
+     ALTER DATABASE *database_name* SET HADR RESUME;
+  
+##  <a name="PowerShellProcedure"></a> Using PowerShell  
+ **To resume a secondary database**  
+  
+1.  Change directory (**cd**) to the server instance that hosts the replica whose database you want to resume. For more information, see [Prerequisites](#Prerequisites), earlier in this topic.  
+  
+2.  Use the **Resume-SqlAvailabilityDatabase** cmdlet to resume the availability group.  
+  
+     For example, the following command resumes data synchronization for the availability database `MyDb3` in the availability group `MyAg`.  
+  
+    ```  
+    Resume-SqlAvailabilityDatabase `   
+    -Path SQLSERVER:\Sql\Computer\Instance\AvailabilityGroups\MyAg\Databases\MyDb3  
+    ```  
+  
+    > **Note:**  
+    >  To view the syntax of a cmdlet, use the **Get-Help** cmdlet in the  SQL Server 
+ PowerShell environment. For more information, see [Get Help SQL Server PowerShell](https://learn.microsoft.com/powershell/sql-server/sql-server-powershell).  
+  
+ **To set up and use the SQL Server PowerShell provider**  
+  
+-   [SQL Server PowerShell Provider](https://learn.microsoft.com/powershell/sql-server/sql-server-powershell-provider)  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+  
+-   [Suspend an Availability Database (SQL Server)](suspend-an-availability-database-sql-server.md)  
+  
+## Related content
+
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)

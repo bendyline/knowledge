@@ -1,0 +1,71 @@
+---
+title: "Extract Data by Using the XML Source"
+description: "Extract Data by Using the XML Source"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+helpviewer_keywords:
+  - "extracting data [Integration Services]"
+  - "sources [Integration Services], XML"
+  - "XML source [Integration Services]"
+---
+# Extract Data by Using the XML Source
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  To add and configure an XML source, the package must already include at least one Data Flow task.  
+  
+### To extract data using an XML source  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ project that contains the package you want.  
+  
+2.  In Solution Explorer, double-click the package to open it.  
+  
+3.  Click the **Data Flow** tab, and then, from the **Toolbox**, drag the XML source to the design surface.  
+  
+4.  Double-click the XML source.  
+  
+5.  In the **XML Source Editor**, on the **Connection Manager** page, select a data access mode:  
+  
+    -   For the **XML file location** access mode, click **Browse** and locate the folder that contains the XML file.  
+  
+    -   For the **XML file from variable** access mode, select the user-defined variable that contains the path of the XML file.  
+  
+    -   For the **XML data from variable** access mode, select the user-defined variable that contains the XML data.  
+  
+    > **Note:**  
+    >  The variables must be defined in the scope of the Data Flow task that contains the XML source, or in the scope of the package; additionally, the variable must have a string data type.  
+  
+6.  Optionally, select **Use inline schema** to indicate that the XML document includes schema information.  
+  
+7.  To specify an external XML Schema definition language (XSD) schema for the XML file, do one of the following:  
+  
+    -   Click **Browse** to locate an existing XSD file.  
+  
+    -   Click **Generate XSD** to create an XSD from the XML file.  
+  
+8.  To update the names of output columns, click **Columns** and edit the values in the **Output Column** list.  
+  
+9. To configure the error output, click **Error Output**. For more information, see [Debugging Data Flow](../troubleshooting/debugging-data-flow.md).  
+  
+10. Click **OK**.  
+  
+11. To save the updated package, click **Save Selected Items** on the **File** menu.  
+  
+## Related content
+
+- [XML Source](xml-source.md)
+- [Integration Services Transformations](transformations/integration-services-transformations.md)
+- [Integration Services Paths](integration-services-paths.md)
+- [Data Flow Task](../control-flow/data-flow-task.md)

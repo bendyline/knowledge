@@ -1,0 +1,23 @@
+# Source code: aspnetcore/razor-pages/filter/sample/PageFilter/Pages/subFolder/About.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model AboutModel
+@{
+    ViewData["Title"] = "About";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@Model.Message</h3>
+
+<p> subFolder/ABout .</p>
+
+<div class="col-md-12">
+    <form method="post">
+        <input type="submit" id="send" value="Post" />
+    </form>
+    <p></p>
+    <ul id="messages" style="list-style-type:none;"></ul>
+</div>
+```

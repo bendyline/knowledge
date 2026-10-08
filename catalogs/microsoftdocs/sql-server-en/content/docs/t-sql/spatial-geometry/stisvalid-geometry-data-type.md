@@ -1,0 +1,73 @@
+---
+title: "STIsValid (geometry Data Type)"
+description: "STIsValid (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STIsValid (geometry Data Type)"
+  - "STIsValid_TSQL"
+helpviewer_keywords:
+  - "STIsValid (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STIsValid (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns true if a **geometry** instance is well-formed, based on its Open Geospatial Consortium (OGC) type. Returns false if a **geometry** instance is not well-formed.
+  
+## Syntax  
+  
+```  
+  
+.STIsValid ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **bit**  
+  
+ CLR return type: **SqlBoolean**  
+  
+## Remarks  
+ The OGC type of a **geometry** instance can be determined by invoking [STGeometryType()](stgeometrytype-geometry-data-type.md).  
+  
+  SQL Server 
+ produces only valid **geometry** instances, but allows for the storage and retrieval of invalid instances. A valid instance representing the same point set of any invalid instance can be retrieved using the `MakeValid()` method.  
+  
+## Examples  
+ The following example creates a `geometry` instance and uses `STIsValid()` to test if the instance is valid.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('LINESTRING(0 0, 2 2, 1 0)', 0);  
+SELECT @g.STIsValid();  
+```  
+  
+## Related content
+
+- [STGeometryType (geometry Data Type)](stgeometrytype-geometry-data-type.md)
+- [MakeValid (geometry Data Type)](makevalid-geometry-data-type.md)
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

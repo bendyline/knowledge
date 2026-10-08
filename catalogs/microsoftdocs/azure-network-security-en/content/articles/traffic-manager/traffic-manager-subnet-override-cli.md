@@ -1,0 +1,100 @@
+---
+title: Azure Traffic Manager subnet override using Azure CLI
+description: This article helps you understand the Traffic Manager subnet override feature. This feature is used to override the routing method of a Traffic Manager profile. Traffic is directed to an endpoint based upon the source IP address of the DNS query, usually the caller's DNS resolver, using predefined IP range to endpoint mappings.
+services: traffic-manager
+author: asudbring
+ms.topic: how-to
+ms.service: azure-traffic-manager
+ms.date: 08/10/2026
+ms.author: allensu
+ms.custom: template-how-to, devx-track-azurecli
+# Customer intent: As a network administrator, I want to configure subnet overrides in Traffic Manager profiles using Azure CLI, so that I can control traffic routing based on the end user's IP address for improved performance and reliability.
+---
+
+# Traffic Manager subnet override using Azure CLI
+
+Traffic Manager subnet override allows you to change the routing method of a profile. When you add an override, you direct traffic based on the source IP address of the DNS query—usually the caller's recursive DNS resolver, which often serves as a proxy for the user's location and network—with a predefined IP address range to endpoint mapping.
+
+## How subnet override works
+
+When you add subnet overrides to a Traffic Manager profile, Traffic Manager checks if there's a subnet override for the source IP address of the DNS query (usually the caller's DNS resolver). If it finds one, it directs the user’s DNS query to the corresponding endpoint. If it doesn't find a mapping, Traffic Manager uses the profile’s original routing method.
+
+If the DNS query includes EDNS Client Subnet (ECS) information, Traffic Manager uses that client subnet address instead of the source IP address of the query. Resolvers that support ECS pass along a truncated form of the end user's subnet, which lets Traffic Manager match the user's network more accurately. For more information, see the [Traffic Manager FAQ](traffic-manager-FAQs.md).
+
+The IP address ranges can be specified as either CIDR ranges (for example, 1.2.3.0/24) or as address ranges (for example, 1.2.3.4-5.6.7.8). The IP ranges associated with each endpoint must be unique to that endpoint. Any overlap of IP address ranges among different endpoints causes the profile to be rejected by Traffic Manager.
+
+There are two types of routing profiles that support subnet overrides:
+
+* **Geographic** - If Traffic Manager finds a subnet override for the DNS query's IP address, it routes the query to the endpoint whatever the health of the endpoint is.
+* **Performance** - If Traffic Manager finds a subnet override for the DNS query's IP address, it only routes the traffic to the endpoint if it's healthy. Traffic Manager falls back to the performance routing heuristic if the subnet override endpoint isn't healthy.
+
+> **Note:**
+> Azure Traffic Manager supports IPv6 addresses in subnet overrides for subnet profiles. This capability enables more granular control over traffic routing based on the source IP address of DNS queries, including both IPv4 and IPv6 addresses. 
+
+## Create a Traffic Manager subnet override
+
+To create a Traffic Manager subnet override, you can use Azure CLI to add the subnets for the override to the Traffic Manager endpoint.
+
+[Include unavailable in this source snapshot: ~/reusable-content/azure-cli/azure-cli-prepare-your-environment.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/traffic-manager/traffic-manager-subnet-override-cli.md)
+
+- This article requires version 2.0.28 or later of the Azure CLI. If using Azure Cloud Shell, the latest version is already installed.
+
+## Update the Traffic Manager endpoint with subnet override.
+Use Azure CLI to update your endpoint with [az network traffic-manager endpoint update](https://learn.microsoft.com/cli/azure/network/traffic-manager/endpoint#az-network-traffic-manager-endpoint-update).
+
+```azurecli-interactive
+### Add a range of IPs ###
+az network traffic-manager endpoint update \
+    --name MyEndpoint \
+    --profile-name MyTmProfile \
+    --resource-group MyResourceGroup \
+    --subnets 1.2.3.4-5.6.7.8 \
+    --type AzureEndpoints
+
+### Add a subnet ###
+az network traffic-manager endpoint update \
+    --name MyEndpoint \
+    --profile-name MyTmProfile \
+    --resource-group MyResourceGroup \
+    --subnets 9.10.11.0:24 \
+    --type AzureEndpoints
+```
+
+You can remove the IP address ranges by running the [az network traffic-manager endpoint update](https://learn.microsoft.com/cli/azure/network/traffic-manager/endpoint#az-network-traffic-manager-endpoint-update) with the **--remove** option.
+
+```azurecli-interactive
+az network traffic-manager endpoint update \
+    --name MyEndpoint \
+    --profile-name MyTmProfile \
+    --resource-group MyResourceGroup \
+    --remove subnets \
+    --type AzureEndpoints
+```
+### IPv6 Subnet Mapping Examples ###
+You can also configure subnet mapping using IPv6 address ranges. Use the --type parameter with IPv6 and specify IPv6 addresses in CIDR or range format.
+
+```azurecli-interactive
+### Add an IPv6 Subnet in CIDR Notation ###
+az network traffic-manager endpoint update \
+  --resource-group MyResourceGroup \
+  --profile-name MyTmProfile \
+  --endpoint-name MyEndpoint \
+  --type IPv6 \
+  --subnets 2001:0db8:1234:5678::/64 \
+  --endpoint-type ExternalEndpoints
+
+### Add a range of IPs ###
+az network traffic-manager endpoint update \
+  --resource-group MyResourceGroup \
+  --profile-name MyTmProfile \
+  --endpoint-name MyEndpoint \
+  --type IPv6 \
+  --subnets 2001:0db8:abcd:1234::1-2001:0db8:abcd:1234::ffff \
+  --endpoint-type ExternalEndpoints
+```
+
+## Next Steps
+
+Learn more about Traffic Manager [traffic routing methods](traffic-manager-routing-methods.md).
+
+Learn about the [Subnet traffic-routing method](traffic-manager-routing-methods.md#subnet-traffic-routing-method)

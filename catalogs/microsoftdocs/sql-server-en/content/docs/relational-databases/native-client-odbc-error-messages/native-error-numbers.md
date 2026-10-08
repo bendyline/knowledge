@@ -1,0 +1,47 @@
+---
+title: "Native Error Numbers"
+description: For errors, the SQL Server Native Client ODBC driver returns the native error number from SQL Server or, for errors detected by the driver, 0.
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "ODBC error handling, native error numbers"
+  - "SQL Server Native Client ODBC driver, errors"
+  - "native error numbers [SQL Server Native Client]"
+  - "messages [ODBC], native error numbers"
+  - "errors [ODBC], native error numbers"
+---
+# Native Error Numbers
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  For errors that occur in the data source (returned by  SQL Server 
+), the  SQL Server 
+ Native Client ODBC driver returns the native error number returned to it by  SQL Server 
+. For errors detected by the driver, the  SQL Server 
+ Native Client ODBC driver returns a native error number of 0. For more information about a list of native error numbers, see the error column of the **sysmessages** system table in the **master** database in  SQL Server 
+.  
+  
+ For information about the state error codes, see [SQLSTATE (ODBC Error Codes)](sqlstate-odbc-error-codes.md). For errors returned by the Net-Library, the native error number is from the underlying network software.  
+  
+## Related content
+
+- [Handling Errors and Messages](handling-errors-and-messages.md)

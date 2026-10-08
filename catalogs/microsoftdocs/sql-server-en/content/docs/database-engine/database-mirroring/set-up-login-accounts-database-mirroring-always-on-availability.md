@@ -1,0 +1,66 @@
+---
+title: "Set up login accounts (mirroring & availability groups)"
+description: Configure login accounts to access the database mirroring endpoint of a database mirror or an Always On availability group.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: database-mirroring
+ms.topic: how-to
+helpviewer_keywords:
+  - "database mirroring [SQL Server], deployment"
+  - "logins [SQL Server], database mirroring"
+---
+# Set Up Login Accounts - Database Mirroring Always On Availability
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  For two server instances to connect to each other's [database mirroring endpoint](the-database-mirroring-endpoint-sql-server.md) point, the login account of each instance requires access to the other instance. Also, each login account requires connect permission to the Database Mirroring endpoint of the other instance.  
+  
+ The impact of this requirement depends on whether the server instances run as the same domain user account:  
+  
+-   If the server instances run as the same domain user account, the correct user logins exist automatically in both **master** databases. This simplifies the security configuration for Database Mirroring and Always On Availability Groups.  
+  
+-   If the server instances run as different user accounts, user logins on the server instance that hosts the principal server or primary replica must be manually reproduced on the server instance that hosts the mirror server or on every server instance that hosts a secondary replica. For more information, see [Create a Login for a Different Account](#CreateLogin) and [Grant Connect Permission](#GrantConnect), later in this topic.  
+  
+    > **Important:**  
+    >  To create a more secure environment, consider using separate domain accounts for each server instance.  
+  
+##  <a name="CreateLogin"></a> Create a Login for a Different Account  
+ If two server instances run as different accounts, the system administrator must use the CREATE LOGIN  Transact-SQL  statement to create a login for the startup service account of the remote instance for each server instance. For more information, see [CREATE LOGIN &#40;Transact-SQL&#41;](../../t-sql/statements/create-login-transact-sql.md).  
+  
+> **Important:**  
+>  If you run  SQL Server 
+ under a non-domain account, you must use certificates. For more information, see [Use Certificates for a Database Mirroring Endpoint (Transact-SQL)](use-certificates-for-a-database-mirroring-endpoint-transact-sql.md).  
+  
+ For example, for the server instance sqlA, which runs under loginA, to connect to the server instance sqlB, which runs under loginB, loginA must exist on sqlB, and loginB must exist on sqlA. In addition, for a database mirroring session that includes a witness server instance (sqlC) and in which the three server instances run under different domain accounts, the following logins must be created:  
+  
+| On instance... | Create logins for and grant connection permission to ... |
+| --- | --- |
+| sqlA | sqlB and sqlC |
+| sqlB | sqlA and sqlC |
+| sqlC | sqlA and sqlB |
+  
+> **Note:**  
+>  It is possible to connect with the network service account by using the machine account instead of a domain user. If the machine account is used, it must be added as a user on the other server instance.  
+  
+##  <a name="GrantConnect"></a> Grant Connect Permission  
+ Once a login has been created on a server instance, the login must be granted permission to connect to the database mirroring endpoint of the server instance. The system administrator grants the connect permission using a GRANT  Transact-SQL  statement. For more information, see [GRANT &#40;Transact-SQL&#41;](../../t-sql/statements/grant-transact-sql.md).  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+  
+-   [Create a Login](../../relational-databases/security/authentication-access/create-a-login.md)  
+  
+-   [Allow Network Access to a Database Mirroring Endpoint Using Windows Authentication (SQL Server)](database-mirroring-allow-network-access-windows-authentication.md).  
+  
+-   [Use Certificates for a Database Mirroring Endpoint (Transact-SQL)](use-certificates-for-a-database-mirroring-endpoint-transact-sql.md)  
+  
+## Related content
+
+- [The database mirroring endpoint (SQL Server)](the-database-mirroring-endpoint-sql-server.md)
+- [Troubleshoot Database Mirroring Configuration (SQL Server)](troubleshoot-database-mirroring-configuration-sql-server.md)
+- [Troubleshoot Always On Availability Groups Configuration (SQL Server)](../availability-groups/windows/troubleshoot-always-on-availability-groups-configuration-sql-server.md)

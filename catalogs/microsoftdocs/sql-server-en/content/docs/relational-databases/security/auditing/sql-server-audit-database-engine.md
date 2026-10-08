@@ -1,0 +1,280 @@
+---
+title: SQL Server Audit (Database Engine)
+description: Learn about server audits for the SQL Server Database Engine or an individual database. Server audits contain server and database audit specifications.
+author: sravanisaluru
+ms.author: srsaluru
+ms.reviewer: vanto, randolphwest
+ms.date: 04/15/2026
+ms.service: sql
+ms.subservice: security
+ms.topic: concept-article
+helpviewer_keywords:
+  - "SQL Server Audit"
+  - "audits [SQL Server], SQL Server Audit"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017 || >=sql-server-linux-2017"
+---
+# SQL Server Audit (Database Engine)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+*Auditing* an instance of the  SQL Server Database Engine 
+ or an individual database involves tracking and logging events that occur on the  Database Engine 
+.  SQL Server 
+ audit lets you create server audits, which can contain server audit specifications for server level events, and database audit specifications for database level events. Audited events can be written to the event logs or to audit files.
+
+There are several levels of auditing for  SQL Server 
+, depending on government or standards requirements for your installation.  SQL Server 
+ Audit provides the tools and processes you must have to enable, store, and view audits on various server and database objects.
+
+You can record server audit action groups per-instance, and either database audit action groups or database audit actions per database. The audit event occurs every time that the auditable action is encountered.
+
+This article applies to  SQL Server 
+ and Azure SQL Managed Instance.
+
+- All editions of  SQL Server 
+ support server level audits. In  SQL Server 2016 (13.x) 
+ with Service Pack 1 and later versions, all editions support database level audits. Before  SQL Server 2016 (13.x) 
+, database level auditing was limited to Enterprise, Developer, and Evaluation editions. For more information, see [Editions and supported features of SQL Server 2016](https://learn.microsoft.com/previous-versions/sql/sql-server/editions-and-components-of-sql-server-2016).
+- In Azure SQL Managed Instance, SQL Server Audit is supported and there are [differences between databases in Azure SQL Managed Instance and databases in SQL Server](https://learn.microsoft.com/azure/azure-sql/managed-instance/auditing#audit-differences-between-databases-in-azure-sql-managed-instance-and-databases-in-sql-server).
+- For  SQL Database
+, see [Auditing for Azure SQL Database](https://learn.microsoft.com/azure/azure-sql/database/auditing-overview?view=azuresql-db\&preserve-view=true).
+
+## SQL Server Audit components
+
+An *audit* is the combination of several elements into a single package for a specific group of server actions or database actions. The components of  SQL Server 
+ audit combine to produce an output that is called an audit, just as a report definition combined with graphics and data elements produces a report.
+
+ SQL Server 
+ audit uses *Extended Events* to help create an audit. For more information about Extended Events, see [Extended Events overview](../../extended-events/extended-events.md).
+
+### SQL Server Audit
+
+The *SQL Server Audit* object collects a single instance of server or database-level actions and groups of actions to monitor. The audit is at the  SQL Server 
+ instance level. You can have multiple audits per  SQL Server 
+ instance.
+
+When you define an audit, you specify the location for the output of the results. This is the audit destination. The audit is created in a *disabled* state, and doesn't automatically audit any actions. After the audit is enabled, the audit destination receives data from the audit.
+
+### Server Audit Specification
+
+The *Server Audit Specification* object belongs to an audit. You can create one server audit specification per audit, because both are created at the  SQL Server 
+ instance scope.
+
+The server audit specification collects many server-level action groups raised by the Extended Events feature. You can include *audit action groups* in a server audit specification. Audit action groups are predefined groups of actions, which are atomic events occurring in the  Database Engine 
+. These actions are sent to the audit, which records them in the target.
+
+Server-level audit action groups are described in the article [SQL Server Audit action groups and actions](sql-server-audit-action-groups-and-actions.md).
+
+> **Note:**  
+> Due to performance constraints, `tempdb` and temporary tables aren't audited. While the batch completed action group captures statements against temporary tables, it might not correctly populate the object names. However, the source table is always audited, ensuring that all inserts from the source table to temporary tables are recorded.
+
+### Database Audit Specification
+
+The *Database Audit Specification* object also belongs to a  SQL Server 
+ audit. You can create one database audit specification per  SQL Server 
+ database per audit.
+
+The database audit specification collects database-level audit actions raised by the Extended Events feature. You can add either audit action groups or audit events to a database audit specification. *Audit events* are the atomic actions that can be audited by the  SQL Server 
+ engine. *Audit action groups* are predefined groups of actions. Both are at the  SQL Server 
+ database scope. These actions are sent to the audit, which records them in the target. Don't include server-scoped objects, such as the system views, in a user database audit specification.
+
+Database-level audit action groups and audit actions are described in the article [SQL Server Audit action groups and actions](sql-server-audit-action-groups-and-actions.md).
+
+### Target
+
+The results of an audit are sent to a target, which can be a file, the Windows Security event log, or the Windows Application event log. Logs must be reviewed and archived periodically to make sure that the target has sufficient space to write more records.
+
+> **Important:**  
+> Any authenticated user can read and write to the Windows Application event log. The Application event log requires lower permissions than the Windows Security event log and is less secure than the Windows Security event log.
+
+Writing to the Windows Security log requires the  SQL Server 
+ service account to be added to the **Generate security audits** policy. By default, the Local System, Local Service, and Network Service are part of this policy. This setting can be configured by using the security policy snap-in (secpol.msc). Additionally, the **Audit object access** security policy must be enabled for both **Success** and **Failure**. This setting can be configured by using the security policy snap-in (secpol.msc). In  Windows Vista 
+ or Windows Server 2008 (and higher), you can set the more granular **application generated** policy from the command line by using the audit policy program (`AuditPol.exe`). For more information about the steps to enable writing to the Windows Security log, see [Write SQL Server Audit events to the Security log](write-sql-server-audit-events-to-the-security-log.md). For more information about the Auditpol.exe program, see Knowledge Base article 921469, [How to use Group Policy to configure detailed security auditing](https://www.betaarchive.com/wiki/index.php?title=Microsoft_KB_Archive/921469). The Windows event logs are global to the Windows operating system. For more information about the Windows event logs, see [Event Viewer Overview](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2003/cc737015\(v=ws.10\)). If you need more precise permissions on the audit, use the binary file target.
+
+When you're saving audit information to a file, to help prevent tampering, you can restrict access to the file location in the following ways:
+
+- The  SQL Server 
+ Service Account must have both Read and Write permission.
+
+- Audit Administrators typically require Read and Write permission. This assumes that the Audit Administrators are Windows accounts for administration of audit files, such as: copying them to different shares, backing them up, and so on.
+
+- Audit Readers that are authorized to read audit files must have Read permission.
+
+Even when the  Database Engine 
+ is writing to a file, other Windows users can read the audit file if they have permission. The  Database Engine 
+ doesn't take an exclusive lock that prevents read operations.
+
+Because the  Database Engine 
+ can access the file,  SQL Server 
+ logins that have `CONTROL SERVER` permission can use the  Database Engine 
+ to access the audit files. In  SQL Server 2022 (16.x) 
+ and later versions, the `VIEW SERVER SECURITY AUDIT` permission is sufficient to read audit files using `fn_get_audit_file`. To record any user that is reading the audit file, define an audit on `master.sys.fn_get_audit_file`. This records the logins with `CONTROL SERVER` permission that have accessed the audit file through  SQL Server 
+. For more information about `fn_get_audit_file` permissions, see [sys.fn_get_audit_file](../../system-functions/sys-fn-get-audit-file-transact-sql.md).
+
+If an Audit Administrator copies the file to a different location (for archive purposes, and so on), the access control lists (ACLs) on the new location should be reduced to the following permissions:
+
+- Audit Administrator - Read / Write
+- Audit Reader - Read
+
+We recommend that you generate audit reports from a separate instance of  SQL Server 
+, such as an instance of  SQL Server Express 
+, to which only Audit Administrators or Audit Readers have access. By using a separate instance of the  Database Engine 
+ for reporting, you can help prevent unauthorized users from obtaining access to the audit record.
+
+You can offer extra protection against unauthorized access by encrypting the folder in which the audit file is stored by using Windows BitLocker Drive Encryption or Windows Encrypting File System.
+
+For more information about the audit records that are written to the target, see [SQL Server Audit Records](sql-server-audit-records.md).
+
+## Overview of using SQL Server Audit
+
+You can use  SQL Server Management Studio 
+ or  Transact-SQL  to define an audit. After the audit is created and enabled, the target receives entries.
+
+You can read the Windows event logs by using the **Event Viewer** utility in Windows. For file targets, you can use either the **Log File Viewer** in  SQL Server Management Studio 
+ or the [fn_get_audit_file](../../system-functions/sys-fn-get-audit-file-transact-sql.md) function to read the target file.
+
+The general process for creating and using an audit is as follows.
+
+1. Create an audit and define the target.
+1. Create either a server audit specification or database audit specification that maps to the audit. Enable the audit specification.
+1. Enable the audit.
+1. Read the audit events by using the Windows **Event Viewer**, **Log File Viewer**, or the `fn_get_audit_file` function.
+
+For more information, see [Create a Server Audit and Server Audit Specification](create-a-server-audit-and-server-audit-specification.md) and [Create a server audit and database audit specification](create-a-server-audit-and-database-audit-specification.md).
+
+## Considerations
+
+In the case of a failure during audit initiation, the server doesn't start. In this case, the server can be started by using the `-f` option at the command line.
+
+When an audit failure causes the server to shut down or not to start because `ON_FAILURE = SHUTDOWN` is specified for the audit, the `MSG_AUDIT_FORCED_SHUTDOWN` event is written to the log. Because the shutdown occurs on the first encounter of this setting, the event is written one time. This event is written after the failure message for the audit causing the shutdown. An administrator can bypass audit-induced shutdowns by starting  SQL Server 
+ in Single User mode using the `-m` flag. If you start in Single User mode, you'll downgrade any audit where `ON_FAILURE = SHUTDOWN` is specified to run in that session as `ON_FAILURE = CONTINUE`. When  SQL Server 
+ is started with the `-m` flag, the `MSG_AUDIT_SHUTDOWN_BYPASSED` message is written to the error log.
+
+For more information about service startup options, see [Database Engine Service startup options](../../../database-engine/configure-windows/database-engine-service-startup-options.md).
+
+### Internal operations in Azure SQL Managed Instance
+
+- In Azure SQL Database and Azure SQL Managed Instance, events initiated by `SQLDBControlPlaneFirstPartyApp` are an internal Azure function of the [Azure SQL Database control plane](https://learn.microsoft.com/azure/azure-resource-manager/management/control-plane-and-data-plane#control-plane). Events initiated by `SQLDBControlPlaneFirstPartyApp` are part of an internal synchronization operation between the SQL engine and Azure Resource Manager. These events are a normal part of resource management and are required for correct resource representation and operation in Azure.
+
+<a id="attaching-a-database-with-an-audit-defined"></a>
+
+### Attach a database with an audit defined
+
+Attaching a database that has an audit specification and specifies a GUID that doesn't exist on the server, causes an *orphaned* audit specification. Because an audit with a matching GUID doesn't exist on the server instance, no audit events are recorded. To correct this situation, use the `ALTER DATABASE AUDIT SPECIFICATION` command to connect the orphaned audit specification to an existing server audit. Or, use the `CREATE SERVER AUDIT` command to create a new server audit with the specified GUID.
+
+You can attach a database that has an audit specification defined on it to another edition of  SQL Server 
+ that doesn't support  SQL Server 
+ audit, such as  SQL Server Express 
+ but it doesn't record audit events.
+
+### Database mirroring and SQL Server Audit
+
+A database that has a database audit specification defined, and that uses database mirroring, includes the database audit specification. To work correctly on the mirrored SQL instance, the following items must be configured:
+
+- The mirror server must have an audit with the same GUID to enable the database audit specification to write audit records. This can be configured by using the command `CREATE AUDIT WITH GUID = <guid-from-source-server-audit>`.
+
+- For binary file targets, the mirror server service account must have appropriate permissions to the location where the audit trail is being written.
+
+- For Windows event log targets, the security policy on the computer where the mirror server is located must allow for service account access to the security or Application event log.
+
+<a id="auditing-administrators"></a>
+
+## Audit administrator activity
+
+Members of the **sysadmin** fixed server role are identified as the **dbo** user in each database. To audit actions of the administrators, audit the actions of the **dbo** user.
+
+## Permissions
+
+Each feature and command for  SQL Server 
+ Audit has individual permission requirements.
+
+To create, alter, or drop a Server Audit or Server Audit Specification, server principals require the `ALTER ANY SERVER AUDIT` or the `CONTROL SERVER` permission. To create, alter, or drop a Database Audit Specification, database principals require the `ALTER ANY DATABASE AUDIT` permission or the `ALTER` or `CONTROL` permission on the database. In addition, principals must have permission to connect to the database, or `ALTER ANY SERVER AUDIT` or `CONTROL SERVER` permissions.
+
+The `VIEW ANY DEFINITION` permission provides access to view the server level audit views and `VIEW DEFINITION` provides access to view the database level audit views. Denial of these permissions overrides the ability to view the catalog views, even if the principal has the `ALTER ANY SERVER AUDIT` or `ALTER ANY DATABASE AUDIT` permissions.
+
+To read audit data using `fn_get_audit_file`,  SQL Server 2019 (15.x) 
+ and earlier versions require `CONTROL SERVER` permission on the server, while  SQL Server 2022 (16.x) 
+ and later versions require `VIEW SERVER SECURITY AUDIT` permission. For more information, see [sys.fn_get_audit_file](../../system-functions/sys-fn-get-audit-file-transact-sql.md).
+
+For more information about how to grant rights and permissions, see [GRANT](../../../t-sql/statements/grant-transact-sql.md).
+
+> **Caution:**  
+> Principals in the **sysadmin** role can tamper with any audit component, and principals in the **db_owner** role can tamper with audit specifications in a database.  SQL Server 
+ Audit validates that a logon that creates or alters an audit specification has at least the `ALTER ANY DATABASE AUDIT` permission. However, it does no validation when you attach a database. You should assume all Database Audit Specifications are only as trustworthy as those principals in the **sysadmin** or **db_owner** role.
+
+<a id="creating-and-managing-audits-with-transact-sql"></a>
+
+## Create and manage audits with Transact-SQL
+
+You can use DDL statements, dynamic management views and functions, and catalog views to implement all aspects of  SQL Server 
+ Audit.
+
+### Data Definition Language statements
+
+You can use the following DDL statements to create, alter, and drop audit specifications:
+
+| DDL statements | Description |
+| --- | --- |
+| [ALTER AUTHORIZATION](../../../t-sql/statements/alter-authorization-transact-sql.md) | Changes the ownership of a securable. |
+| [ALTER DATABASE AUDIT SPECIFICATION](../../../t-sql/statements/alter-database-audit-specification-transact-sql.md) | Alters a database audit specification object using the SQL Server Audit feature. |
+| [ALTER SERVER AUDIT](../../../t-sql/statements/alter-server-audit-transact-sql.md) | Alters a server audit object using the SQL Server Audit feature. |
+| [ALTER SERVER AUDIT SPECIFICATION](../../../t-sql/statements/alter-server-audit-specification-transact-sql.md) | Alters a server audit specification object using the SQL Server Audit feature. |
+| [CREATE DATABASE AUDIT SPECIFICATION](../../../t-sql/statements/create-database-audit-specification-transact-sql.md) | Creates a database audit specification object using the SQL Server audit feature. |
+| [CREATE SERVER AUDIT](../../../t-sql/statements/create-server-audit-transact-sql.md) | Creates a server audit object using SQL Server Audit. |
+| [CREATE SERVER AUDIT SPECIFICATION](../../../t-sql/statements/create-server-audit-specification-transact-sql.md) | Creates a server audit specification object using the SQL Server Audit feature. |
+| [DROP DATABASE AUDIT SPECIFICATION](../../../t-sql/statements/drop-database-audit-specification-transact-sql.md) | Drops a database audit specification object using the SQL Server Audit feature. |
+| [DROP SERVER AUDIT](../../../t-sql/statements/drop-server-audit-transact-sql.md) | Drops a Server Audit Object using the SQL Server Audit feature. |
+| [DROP SERVER AUDIT SPECIFICATION](../../../t-sql/statements/drop-server-audit-specification-transact-sql.md) | Drops a server audit specification object using the SQL Server Audit feature. |
+
+### Dynamic views and functions
+
+The following table lists the dynamic views and function that you can use for  SQL Server 
+ Auditing.
+
+| Dynamic views and functions | Description |
+| --- | --- |
+| [sys.dm_audit_actions](../../system-dynamic-management-objects/sys-dm-audit-actions-transact-sql.md) | Returns a row for every audit action that can be reported in the audit log and every audit action group that can be configured as part of  SQL Server |
+ | Audit. |
+| [sys.dm_server_audit_status](../../system-dynamic-management-objects/sys-dm-server-audit-status-transact-sql.md) | Provides information about the current state of the audit. |
+| [sys.dm_audit_class_type_map](../../system-dynamic-management-objects/sys-dm-audit-class-type-map-transact-sql.md) | Returns a table that maps the class_type field in the audit log to the class_desc field in `sys.dm_audit_actions`. |
+| [fn_get_audit_file](../../system-functions/sys-fn-get-audit-file-transact-sql.md) | Returns information from an audit file created by a server audit. |
+
+### Catalog views
+
+The following table lists the catalog views that you can use for  SQL Server 
+ auditing.
+
+| Catalog views | Description |
+| --- | --- |
+| [sys.database_audit_specifications](../../system-catalog-views/sys-database-audit-specifications-transact-sql.md) | Contains information about the database audit specifications in a  SQL Server |
+ | audit on a server instance. |
+| [sys.database_audit_specification_details](../../system-catalog-views/sys-database-audit-specification-details-transact-sql.md) | Contains information about the database audit specifications in a  SQL Server |
+ | audit on a server instance for all databases. |
+| [sys.server_audits](../../system-catalog-views/sys-server-audits-transact-sql.md) | Contains one row for each  SQL Server |
+ | audit in a server instance. |
+| [sys.server_audit_specifications](../../system-catalog-views/sys-server-audit-specifications-transact-sql.md) | Contains information about the server audit specifications in a  SQL Server |
+ | audit on a server instance. |
+| [sys.server_audit_specifications_details](../../system-catalog-views/sys-server-audit-specification-details-transact-sql.md) | Contains information about the server audit specification details (actions) in a  SQL Server |
+ | audit on a server instance. |
+| [sys.server_file_audits](../../system-catalog-views/sys-server-file-audits-transact-sql.md) | Contains stores extended information about the file audit type in a  SQL Server |
+ | audit on a server instance. |
+
+## Next step
+
+> 
+> [Get started: Create a Server Audit](create-a-server-audit-and-server-audit-specification.md)
+
+## Related content
+
+- [Create a server audit and database audit specification](create-a-server-audit-and-database-audit-specification.md)
+- [View a SQL Server Audit Log](view-a-sql-server-audit-log.md)
+- [Write SQL Server Audit events to the Security log](write-sql-server-audit-events-to-the-security-log.md)

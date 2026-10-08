@@ -1,0 +1,42 @@
+---
+title: "restorefilegroup (Transact-SQL)"
+description: restorefilegroup (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "restorefilegroup_TSQL"
+  - "restorefilegroup"
+helpviewer_keywords:
+  - "filegroups [SQL Server], restorefilegroup system table"
+  - "restorefilegroup system table"
+dev_langs:
+  - "TSQL"
+---
+# restorefilegroup (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains one row for each restored filegroup. This table is stored in the **msdb** database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **restore_history_id** | **int** | Unique identification number that identifies the corresponding restore operation. References **restorehistory(restore_history_id)**. |
+| **filegroup_name** | **nvarchar(128)** | Name of the filegroup being restored. Can be NULL.<br /><br /> When a database is reverted to a database snapshot, this value is populated in the same way as for a full restore. |
+  
+## Remarks  
+ To reduce the number of rows in this table and in other backup and history tables, execute the [sp_delete_backuphistory](../system-stored-procedures/sp-delete-backuphistory-transact-sql.md) stored procedure.  
+  
+## Related content
+
+- [Backup and Restore Tables (Transact-SQL)](backup-and-restore-tables-transact-sql.md)
+- [restorefile (Transact-SQL)](restorefile-transact-sql.md)
+- [restorehistory (Transact-SQL)](restorehistory-transact-sql.md)
+- [System Tables (Transact-SQL)](system-tables-transact-sql.md)

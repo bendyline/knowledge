@@ -1,0 +1,114 @@
+---
+title: Identity and security in Azure with SAP RISE
+description: Learn about integration scenarios of Azure security, identity, and monitoring services with SAP RISE managed workloads.
+services: virtual-machines-linux,virtual-machines-windows
+ms.service: sap-on-azure
+ms.subservice: sap-vm-workloads
+ms.topic: concept-article
+ms.tgt_pltfrm: vm-linux
+author: msftrobiro
+manager: juergent
+ms.author: robiro
+ms.date: 03/09/2026
+ms.custom: sfi-image-nochange
+# Customer intent: As an IT security professional, I want to integrate Azure identity and security services with SAP RISE, so that I can enhance the security, monitoring, and user management of our SAP workloads in a cloud environment.
+---
+
+# Azure identity and security services with SAP RISE
+
+This article details integration of Azure identity and security services with an SAP RISE workload. Additionally use of some Azure monitoring services are explained for an SAP RISE landscape.
+
+## Single sign-on for SAP RISE
+
+Single sign-On (SSO) is configured for many SAP environments. With SAP workloads running in ECS/RISE, steps to implement don't differ from a natively run SAP system. The integration steps with Microsoft Entra ID based SSO are available for typical ECS/RISE managed workloads:
+
+- [Tutorial: Microsoft Entra Single sign-on (SSO) integration with SAP NetWeaver](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/saas-apps/sap-netweaver-tutorial.md)
+- [Tutorial: Microsoft Entra single sign-on (SSO) integration with SAP Fiori](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/saas-apps/sap-fiori-tutorial.md)
+- [Tutorial: Microsoft Entra integration with SAP HANA](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/saas-apps/saphana-tutorial.md)
+
+| SSO method | Identity Provider | Typical use case | Implementation |
+| :--- | :---: | :--- | :--- |
+| SAML/OAuth | Microsoft Entra ID | SAP Fiori, Web GUI, Portal, HANA | Configuration by customer |
+| SNC | Microsoft Entra ID | SAP GUI | Configuration by customer |
+| SPNEGO | Active Directory (AD) | Web GUI, SAP Enterprise Portal | Configuration by customer and SAP |
+
+SSO against Active Directory (AD) of your Windows domain for ECS/RISE managed SAP environment, with SAP SSO Secure Login Client requires AD integration for end user devices. With SAP RISE, any Windows systems aren't integrated with the customer's active directory domain. The domain integration isn't necessary for SSO with AD/Kerberos as the domain security token is read on the client device and exchanged securely with SAP system. Contact SAP if you need to make any changes to integrate AD-based SSO. When you use third-party products other than the SAP SSO Secure Login Client may also require configuration changes on RISE-managed systems, so SAP involvement is required.
+
+For more information about SNC, see [Getting started with SAP SNC for RFC integrations - SAP blog](https://community.sap.com/t5/enterprise-resource-planning-blogs-by-members/getting-started-with-sap-snc-for-rfc-integrations/ba-p/13983462).
+
+## Identity and Access Management for SAP RISE
+
+> **Note:**
+> SAP [announced retirement](https://community.sap.com/t5/technology-blogs-by-sap/preparing-for-sap-identity-management-s-end-of-maintenance-in-2027/ba-p/13596101) of SAP Identity Management (SAP IDM) by 2027. [SAP recommends](https://community.sap.com/t5/technology-blogs-by-sap/preparing-for-sap-identity-management-s-end-of-maintenance-in-2027/ba-p/13596101) to customers to migrate to Microsoft Entra.
+
+[Microsoft Entra ID Governance](https://learn.microsoft.com/entra/id-governance/identity-governance-overview) and built-in integrations with SAP Cloud Identity Service are an ideal fit to handle SAP user lifecycle and their authorizations across both eco-systems.
+
+Learn more from this [Microsoft Learn article](https://learn.microsoft.com/entra/id-governance/scenarios/migrate-from-sap-idm) and [our SAP scenarios hub](https://aka.ms/EntraSAPHub).
+
+## Microsoft Security Copilot with SAP RISE
+
+[Security Copilot](https://learn.microsoft.com/copilot/security/microsoft-security-copilot) is a generative AI security product that empowers security and IT professionals respond to cyber threats, process signals, and assess risk exposure at the speed and scale of AI. It has its own [portal](https://securitycopilot.microsoft.com/) and embedded experiences in Microsoft Defender XDR, Microsoft Sentinel, and Intune.
+
+It can be used with any data source that Defender XDR and Microsoft Sentinel support, including SAP RISE/ECS. The following image shows the stand-alone experience.
+
+A screenshot of the Security Copilot experience with SAP RISE/ECS incidents.
+This image shows an example of the Microsoft Security Copilot experience using a prompt to investigate an SAP incident.
+
+
+In addition, the Security Copilot experience is embedded on the Defender XDR portal, with an out-of-the-box AI-generated summary and recommendations for SAP.
+
+A screenshot of the embedded Security Copilot experience in Defender with SAP RISE/ECS incidents.
+This image shows an example of Microsoft Security Copilot analyzing an incident detected on SAP RISE through Defender XDR. Data ingestion is done through the Microsoft Sentinel Solution for SAP applications.
+
+
+## Microsoft Sentinel Solution for SAP with SAP RISE
+
+The [Microsoft Sentinel Solution for SAP](https://learn.microsoft.com/azure/sentinel/sap/deployment-overview?tabs=agentless) applications allows you to monitor, detect, respond, and correlate suspicious activities in SAP with your other enterprise-wide signals. Microsoft Sentinel guards your critical data against sophisticated cyberattacks for SAP systems hosted on Azure, other clouds, or on-premises infrastructure. [Microsoft Sentinel Solution for SAP BTP](https://learn.microsoft.com/azure/sentinel/sap/sap-btp-solution-overview) expands that coverage to SAP Business Technology Platform (BTP).
+
+The solution allows you to gain visibility to user activities on **SAP S/4HANA Cloud private edition** (RISE/ECS) and the SAP business logic layers and apply Microsoft Sentinel’s built-in content.
+-	Use a single console to monitor all your enterprise estate including SAP instances in SAP RISE/ECS on Azure and other clouds, SAP Azure native, and on-premises estate
+-	Detect and automatically respond to threats: detect suspicious activity including privilege escalation, unauthorized changes, sensitive transactions, data exfiltration and more with out-of-the-box detection capabilities
+-	Correlate SAP activity with other signals: more accurately detect SAP threats by cross-correlating across endpoints, Microsoft Entra data and more
+-	Customize based on your needs - monitor sensitive transactions and other business risks by building your own detections
+-	Visualize the data with [built-in workbooks](https://learn.microsoft.com/azure/sentinel/sap/sap-audit-log-workbook)
+
+A diagram that shows how to connect Microsoft Sentinel with SAP RISE/ECS.
+This diagram shows an example of Microsoft Sentinel connected through an intermediary VM or container to SAP managed SAP system. The intermediary VM or container runs in customer's own subscription with configured SAP data connector agent. Connection to SAP Business Technology Platform (BTP) uses SAP's public APIs for the Audit Log Management Service.
+
+
+For SAP RISE/ECS, the Microsoft Sentinel Solution for SAP must be deployed in customer's Azure subscription. Customers manage all parts of the Microsoft Sentinel Solution and not through SAP. In a RISE subscription, SAP hosts the SAP Cloud Connector, or the customer hosts it in their own network if virtual network connectivity is established.
+
+> **Important:**
+> As per the RISE shared responsibility model customers using the Microsoft Sentinel Solution for SAP can only integrate the SAP app layer. SAP RISE infrastructure and operating system logs are only available through the optional **SAP LogServ** solution. It natively supports Microsoft Sentinel integration. To learn more, see [Enterprise Resource Planning Blog Posts](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-members/ultimate-blog-series-sap-logserv-integration-with-microsoft-sentinel/ba-p/14126401).
+
+### Automatic response with Microsoft Sentinel's SOAR capabilities
+
+Use prebuilt playbooks for security, orchestration, automation, and response capabilities (SOAR) to react to threats quickly. A popular first scenario is SAP user blocking with intervention option from Microsoft Teams. The integration pattern can be applied to any incident type and target service spanning towards SAP Business Technology Platform (BTP) or Microsoft Entra ID regarding reducing the attack surface.
+
+To learn more about Microsoft Sentinel and SOAR for SAP, see the blog [From zero to hero security coverage with Microsoft Sentinel for your critical SAP security signals](https://blogs.sap.com/2023/05/22/from-zero-to-hero-security-coverage-with-microsoft-sentinel-for-your-critical-sap-security-signals-blog-series/).
+
+A screenshot of Microsoft Sentinel SOAR capability with SAP RISE/ECS.
+This image shows an SAP incident detected by Microsoft Sentinel offering the option to block the suspicious user on the SAP ERP, SAP Business Technology Platform, or Microsoft Entra ID.
+
+
+For more information on Microsoft Sentinel and SAP, including a deployment guide, see [Microsoft Sentinel product documentation](https://learn.microsoft.com/azure/sentinel/sap/deployment-overview).
+
+## Azure Monitoring for SAP with SAP RISE
+
+[Azure Monitor for SAP solutions](../monitor/about-azure-monitor-sap-solutions.md) is an Azure-native solution for monitoring your SAP system. It extends the Azure monitor platform monitoring capability with support to gather data about SAP NetWeaver, database, and operating system details.
+
+SAP RISE/ECS is a fully managed service for your SAP landscape and thus Azure Monitoring for SAP isn't intended to be utilized for such managed environment. SAP RISE/ECS doesn't support any integration with Azure Monitor for SAP solutions. SAP's own monitoring and reporting is used and provided to the customer as defined by your service description with SAP.
+
+## Azure Center for SAP solutions
+
+As with Azure Monitoring for SAP solutions, SAP RISE/ECS doesn't support any integration with [Azure Center for SAP Solutions](../center-sap-solutions/overview.md) in any capability. SAP deploys all SAP RISE workloads running in SAP's Azure tenant and subscription without any access by customer to the Azure resources.
+
+## Next steps
+
+Check out the documentation:
+
+- [Integrating Azure with SAP RISE overview](rise-integration.md)
+- [Network connectivity options in Azure with SAP RISE](rise-integration-network.md)
+- [Integrating Azure services with SAP RISE](rise-integration-services.md)
+- [Deploy Microsoft Sentinel Solution for SAP® applications](https://learn.microsoft.com/azure/sentinel/sap/deployment-overview)
+- [Deploy Microsoft Sentinel Solution for SAP® BTP](https://learn.microsoft.com/azure/sentinel/sap/deploy-sap-btp-solution)

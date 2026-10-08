@@ -1,0 +1,55 @@
+---
+title: "Generate a smart-cropped thumbnail - Image Analysis 3.2"
+titleSuffix: Foundry Tools
+description: Use the Image Analysis 3.2 REST API to generate a thumbnail with smart cropping.
+author: PatrickFarley
+manager: mcleans
+
+ms.service: azure-vision-foundry-tools
+ms.topic: how-to
+ms.date: 03/31/2026
+ai-usage: ai-assisted
+ms.author: pafarley
+---
+
+# Generate a smart-cropped thumbnail
+
+
+> **Caution:**
+> The Image Analysis 4.0 service in Azure Vision in Foundry Tools is deprecated and will be retired on September 25, 2028, after which calls made to the service will fail. We recommend you switch to one of the available alternatives outlined in the [Migration guide](../migration-options.md).
+
+
+You can use Image Analysis 3.2 to generate a thumbnail with smart cropping. You specify the desired height and width, which can differ in aspect ratio from the input image. Image Analysis uses smart cropping to intelligently identify the area of interest and generate cropping coordinates around that region.
+
+## Call the Generate Thumbnail API
+
+To call the API, do the following steps:
+
+1. Copy the following command into a text editor.
+1. Make the following changes in the command where needed:
+    1. Replace the value of `<subscriptionKey>` with your key.
+    1. Replace the value of `<thumbnailFile>` with the path and name of the file in which to save the returned thumbnail image.
+    1. Replace the `<endpoint>` part of the request URL with your own endpoint URL.
+        
+> **Note:**
+> New resources created after July 1, 2019, will use custom subdomain names. For more information and a complete list of regional endpoints, see [Custom subdomain names for Foundry Tools](https://learn.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains).
+
+    1. Optionally, change the image URL in the request body (`https://learn.microsoft.com/azure/ai-services/computer-vision/media/quickstarts/presentation.png`) to the URL of a different image from which to generate a thumbnail.
+1. Open a command prompt window.
+1. Paste the command from the text editor into the command prompt window.
+1. Press enter to run the program.
+
+    ```bash
+    curl -H "Ocp-Apim-Subscription-Key: <subscriptionKey>" -o <thumbnailFile> -H "Content-Type: application/json" "<endpoint>/vision/v3.2/generateThumbnail?width=100&height=100&smartCropping=true" -d "{\"url\":\"https://learn.microsoft.com/azure/ai-services/computer-vision/media/quickstarts/presentation.png\"}"
+    ```
+
+## Examine the response
+
+A successful response writes the thumbnail image to the file specified in `<thumbnailFile>`. If the request fails, the response contains an error code and a message to help determine what went wrong. If the request seems to succeed but the created thumbnail isn't a valid image file, it's possible that your key is not valid.
+
+## Next step
+
+If you'd like to call Image Analysis APIs using a native SDK in the language of your choice, follow the quickstart to get set up.
+
+> 
+> [Quickstart (Image Analysis)](../quickstarts-sdk/image-analysis-client-library.md)

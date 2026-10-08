@@ -1,0 +1,40 @@
+---
+title: "getSavepointName Method (SQLServerSavepoint)"
+description: "getSavepointName Method (SQLServerSavepoint)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerSavepoint.getSavepointName"
+apitype: "Assembly"
+---
+# getSavepointName Method (SQLServerSavepoint)
+
+
+  Gets the name of the savepoint.  
+  
+## Syntax  
+  
+```  
+  
+public java.lang.String getSavepointName()  
+```  
+  
+## Return Value  
+ A **String** that contains the name of the savepoint.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getSavepointName method is specified by the getSavepointName method in the java.sql.Savepoint interface.  
+  
+## Related content
+
+- [SQLServerSavepoint Methods](sqlserversavepoint-methods.md)
+- [SQLServerSavepoint Members](sqlserversavepoint-members.md)
+- [SQLServerSavepoint Class](sqlserversavepoint-class.md)

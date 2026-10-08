@@ -1,0 +1,50 @@
+---
+title: "dbo.syssubsystems (Transact-SQL)"
+description: dbo.syssubsystems (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "dbo.syssubsystems"
+  - "syssubsystems"
+  - "syssubsystems_TSQL"
+  - "dbo.syssubsystems_TSQL"
+helpviewer_keywords:
+  - "syssubsystems system table"
+dev_langs:
+  - "TSQL"
+---
+# dbo.syssubsystems (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains information about all available  SQL Server 
+ Agent proxy subsystems. The **syssubsystems** table is stored in the **msdb** database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **subsystem_id** | **int** | ID of the subsystem. |
+| **subsystem** | **nvarchar(40)** | Name of the subsystem. |
+| **description_id** | **int** | Message ID of the row in the **sys.messages** catalog view that contains the subsystem description. |
+| **subsystem_dll** | **nvarchar(255)** | Location of the subsystem DLL. |
+| **agent_exe** | **nvarchar(255)** | Full path to the executable that uses the subsystem. |
+| **start_entry_point** | **nvarchar(30)** | Function that is called when the subsystem is initialized. |
+| **event_entry_point** | **nvarchar(30)** | Function that is called when a subsystem step is run. |
+| **stop_entry_point** | **nvarchar(30)** | Function that is called when a subsystem finishes running. |
+| **max_worker_threads** | **int** | Maximum number of concurrent steps for a given subsystem. |
+  
+## Remarks  
+ Only members of the **sysadmin** fixed server role can access this table.  
+  
+## Related content
+
+- [dbo.sysproxysubsystem (Transact-SQL)](dbo-sysproxysubsystem-transact-sql.md)
+- [dbo.sysproxies (Transact-SQL)](dbo-sysproxies-transact-sql.md)
+- [Messages (for errors) catalog views - sys.messages](../system-catalog-views/messages-for-errors-catalog-views-sys-messages.md)

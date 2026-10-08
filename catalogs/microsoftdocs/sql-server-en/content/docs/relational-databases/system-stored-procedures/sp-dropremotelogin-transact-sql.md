@@ -1,0 +1,117 @@
+---
+title: "sys.sp_dropremotelogin (Transact-SQL)"
+description: Removes a remote login mapped to a local login used to execute remote stored procedures against the local server running SQL Server.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_dropremotelogin"
+  - "sp_dropremotelogin_TSQL"
+helpviewer_keywords:
+  - "sp_dropremotelogin"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_dropremotelogin (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Removes a remote login mapped to a local login used to execute remote stored procedures against the local server running  SQL Server 
+.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use linked servers and linked-server stored procedures instead.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_dropremotelogin
+    [ @remoteserver = ] N'remoteserver'
+    [ , [ @loginame = ] N'loginame' ]
+    [ , [ @remotename = ] N'remotename' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @remoteserver = ] N'*remoteserver*'
+
+The name of the remote server mapped to the remote login that is to be removed. *@remotename* is **sysname**, with no default. *@remotename* must already exist.
+
+#### [ @loginame = ] N'*loginame*'
+
+The optional login name on the local server that is associated with the remote server. *@loginame* is **sysname**, with a default of `NULL`. *@loginame* must already exist if specified.
+
+#### [ @remotename = ] N'*remotename*'
+
+The optional name of the remote login that is mapped to *@loginame* when logging in from the remote server. *@remotename* is **sysname**, with a default of `NULL`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+If only *@remotename* is specified, all remote logins for that remote server are removed from the local server. If *@loginame* is also specified, all remote logins from *@remotename* mapped to that specific local login are removed from the local server. If *remote_name* is also specified, only the remote login for that remote user from *@remotename* is removed from the local server.
+
+To add local server users, use `sp_addlogin`. To remove local server users, use `sp_droplogin`.
+
+Remote logins are required only when you use earlier versions of  SQL Server 
+.  SQL Server 
+ 7.0 and later versions use linked server logins instead. Use `sp_addlinkedsrvlogin` and `sp_droplinkedsrvlogin` to add and remove linked server logins.
+
+`sp_dropremotelogin` can't be executed within a user-defined transaction.
+
+## Permissions
+
+Requires membership in the **sysadmin** or **securityadmin** fixed server roles.
+
+## Examples
+
+### A. Drop all remote logins for a remote server
+
+The following example removes the entry for the remote server `ACCOUNTS`, and, therefore, removes all mappings between logins on the local server and remote logins on the remote server.
+
+```sql
+EXECUTE sp_dropremotelogin 'ACCOUNTS';
+```
+
+### B. Drop a login mapping
+
+The following example removes the entry for mapping remote logins from the remote server `ACCOUNTS` to the local login `Albert`.
+
+```sql
+EXECUTE sp_dropremotelogin 'ACCOUNTS', 'Albert';
+```
+
+### C. Drop a remote user
+
+The following example removes the login for the remote login `Chris` on the remote server `ACCOUNTS` that was mapped to the local login `salesmgr`.
+
+```sql
+EXECUTE sp_dropremotelogin 'ACCOUNTS', 'salesmgr', 'Chris';
+```
+
+## Related content
+
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [sys.sp_addlinkedsrvlogin (Transact-SQL)](sp-addlinkedsrvlogin-transact-sql.md)
+- [sys.sp_addlogin (Transact-SQL)](sp-addlogin-transact-sql.md)
+- [sys.sp_addremotelogin (Transact-SQL)](sp-addremotelogin-transact-sql.md)
+- [sys.sp_addserver (Transact-SQL)](sp-addserver-transact-sql.md)
+- [sys.sp_droplinkedsrvlogin (Transact-SQL)](sp-droplinkedsrvlogin-transact-sql.md)
+- [sys.sp_droplogin (Transact-SQL)](sp-droplogin-transact-sql.md)
+- [sys.sp_helpremotelogin (Transact-SQL)](sp-helpremotelogin-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

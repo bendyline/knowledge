@@ -1,0 +1,58 @@
+---
+title: "Create, delete, or modify a folder - Reporting Services"
+description: Learn how to create, modify, and delete folders so that you can organize and manage the items that you publish to a Reporting Services report server.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Create, delete, or modify a folder - Reporting Services
+  You can create folders to organize and manage the items you publish to a report server. Creating folders can help users find reports of interest to them. For content managers, folders provide a framework for applying permissions. You can create role assignments on specific folders to restrict access to reports that are in development or that shouldn't be widely distributed.  
+
+**Applies to: \>=sql-server-2017**
+ 
+## Create a folder  
+  
+1. Open [the web portal of a report server (SSRS Native Mode)](../web-portal-ssrs-native-mode.md).  
+  
+1. Navigate to folder or subfolder where you want to locate the new folder. Select the **Home** folder by selecting the **Browse** button on the toolbar at the top left of the page to create it at the top of the folder hierarchy.  
+  
+1. Select the **New** button on the top right of the report server toolbar, and then select **Folder** from the dropdown list.  
+  
+1. In the **Create a new folder in (current folder name)** dialog box, enter the name of the new folder to be created. A folder name can include spaces, but can't include reserved characters that are used for URL encoding: \; \? \: \@ \& \= \+ \, \$ \/ \* \< \> \|. You also can't type a series of folder names to create several folders at once.  
+  
+1. Select **Create** to complete the action.  
+  
+## Delete a folder  
+  
+1. In the web portal, navigate the folder hierarchy and locate the folder that you want to delete.  
+  
+1. Right-click the folder, and select **Delete** from the menu.  
+  
+1. Select the **Delete** button in the **Delete \<foldername\>** box to confirm the deletion.  
+  
+## Modify a folder's properties  
+  
+1. In the web portal, navigate the folder hierarchy and locate the folder that you want to delete.  
+  
+1. Right-click the folder, and select **Delete** from the menu.  
+  
+1. Select the **Properties** tab. The **Properties** page displays by default.  
+  
+1. You can change the name of the folder in the **Name** text box.  
+  
+1. You can add or change the description of the folder in the **Description** text box.  
+  
+1. You can hide the folder by selecting the **Hide this item** checkbox.  
+  
+1. Select **Apply** to save the properties changes.  
+  
+1. Optionally, you can move or delete the folder by selecting **Move** or **Delete** at the top of the **Properties** page. For more information, see the [Move or delete an item (web portal)](move-or-delete-an-item-report-manager.md).  
+  
+## Related content
+
+- [Create, delete, or modify a folder (web portal)](create-delete-or-modify-a-folder-web-portal.md#create-delete-or-modify-a-folder---reporting-services)
+- [Report server content management (SSRS native mode)](report-server-content-management-ssrs-native-mode.md)
+- [Find, view, and manage reports (Report Builder and SSRS)](../report-builder/finding-viewing-and-managing-reports-report-builder-and-ssrs.md)

@@ -1,0 +1,65 @@
+---
+title: "WITH CHANGE_TRACKING_CONTEXT (Transact-SQL)"
+description: "WITH CHANGE_TRACKING_CONTEXT (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "08/08/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "WITH_CHANGE_TRACKING_CONTEXT_TSQL"
+  - "WITH CHANGE_TRACKING_CONTEXT"
+helpviewer_keywords:
+  - "WITH CHANGE_TRACKING_CONTEXT"
+  - "change tracking [SQL Server], WITH CHANGE_TRACKING_CONTEXT"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# WITH CHANGE_TRACKING_CONTEXT (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Enables the context of a change to be specified, such as an originator ID, when data is changed. For example, when using change tracking, an application might want to differentiate between changes that were made by the application itself and changes that were made to the data outside the application.  
+
+ 
+  
+## Syntax  
+  
+```  
+  
+WITH CHANGE_TRACKING_CONTEXT ( context )  
+```  
+  
+#### Parameters  
+ *context*  
+ Is the contextual information that is supplied by the calling application and stored with the change tracking information for the change. *context* is **varbinary(128)**.  
+  
+ The value can be a constant or a variable, but cannot be NULL.  
+  
+## Examples  
+ The following example sets the change tracking context for a data change.  
+  
+```  
+WITH CHANGE_TRACKING_CONTEXT ( context )  
+```  
+  
+## Related content
+
+- [Change Tracking Functions (Transact-SQL)](change-tracking-functions-transact-sql.md)
+- [CHANGETABLE (Transact-SQL)](changetable-transact-sql.md)
+- [Track data changes (SQL Server)](../track-changes/track-data-changes-sql-server.md)

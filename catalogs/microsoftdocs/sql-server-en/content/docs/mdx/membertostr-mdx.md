@@ -1,0 +1,41 @@
+---
+title: "MemberToStr (MDX)"
+description: "MemberToStr (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# MemberToStr (MDX)
+
+
+  Returns a Multidimensional Expressions (MDX)-formatted string that corresponds to a specified member.  
+  
+## Syntax  
+  
+```  
+  
+MemberToStr(Member_Expression)   
+```  
+  
+## Arguments  
+ *Member_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a member.  
+  
+## Remarks  
+ This function returns a string containing the uniquename of a member. It is usually used to pass a member's uniquename to an external function.  
+  
+## Example  
+ The following example returns the string [Geography].[Geography].[Country].&[United States] :  
+  
+```  
+WITH MEMBER Measures.x AS MemberToStr  
+([Geography].[Geography].[Country].[United States])  
+SELECT Measures.x ON 0  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

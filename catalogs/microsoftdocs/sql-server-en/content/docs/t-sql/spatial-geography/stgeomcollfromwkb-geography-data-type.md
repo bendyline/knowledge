@@ -1,0 +1,76 @@
+---
+title: "STGeomCollFromWKB (geography Data Type)"
+description: "STGeomCollFromWKB (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "07/30/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STGeomCollFromWKB (geography Data Type)"
+  - "STGeomCollFromWKB_TSQL"
+helpviewer_keywords:
+  - "STMGeomCollFromWKB method"
+dev_langs:
+  - "TSQL"
+---
+# STGeomCollFromWKB (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **GeometryCollection** instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.
+  
+## Syntax  
+  
+```  
+  
+STGeomCollFromWKB ( 'WKB_geometrycollection' , SRID )  
+```  
+  
+## Arguments
+ *WKB_geometrycollection*  
+ Is the WKB representation of the **GeometryCollection** instance you wish to return. *WKB_geometrycollection* is a **varbinary(max)** expression.  
+  
+ *SRID*  
+ Is an **int** expression representing the spatial reference ID (SRID) of the **GeometryCollection** instance you wish to return.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geography**  
+  
+ CLR return type: **SqlGeography**  
+  
+## Remarks  
+ The OGC type of the **geography** instance returned by STGeomCollFromWKB() is set to **GeometryCollection**, **MultiPolygon**, **MultiLineString**, or **MultiPoint**, depending on the corresponding WKB input.  
+  
+ This method throws a **FormatException** exception if the input is not well-formatted.  
+  
+## Examples  
+ The following example uses `STGeomCollFromWKB()` to create a `geography` instance.  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STGeomCollFromWKB(0x01070000000200000001010000007593180456965EC017D9CEF753D34740010200000002000000D7A3703D0A975EC08716D9CEF7D34740CBA145B6F3955EC08716D9CEF7D34740, 4326);  
+SELECT @g.ToString();  
+```  
+  
+## Related content
+
+- [OGC Static Geography Methods](ogc-static-geography-methods.md)

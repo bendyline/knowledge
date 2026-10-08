@@ -1,0 +1,51 @@
+---
+title: "Change transaction safety (mirrored database)"
+description: Change the transaction safety attribute for a SQL Server database mirroring session using Transact-SQL.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: database-mirroring
+ms.topic: how-to
+helpviewer_keywords:
+  - "transaction safety [SQL Server database mirroring]"
+---
+# Change Transaction Safety in a Database Mirroring Session (Transact-SQL)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Transaction safety is the attribute that controls the operating mode of the session. At any time, however, the database owner can change the transaction safety. By default, the level of transaction safety is set to FULL (synchronous operating mode).  
+  
+ Turning off transaction safety shifts the session into asynchronous operating mode, which maximizes performance. If the principal becomes unavailable, the mirror stops but is available as a warm standby (failover requires forcing service with possible data loss).  
+  
+### To turn on transaction safety  
+  
+1.  Connect to the principal server.  
+  
+2.  Issue the following Transact-SQL statement:  
+  
+    ```  
+    ALTER DATABASE <database> SET PARTNER SAFETY FULL  
+    ```  
+  
+     where *\<database>* is the name of the mirrored database.  
+  
+### To turn off transaction safety  
+  
+1.  Connect to the principal server.  
+  
+2.  Issue the following statement:  
+  
+    ```  
+    ALTER DATABASE <database> SET PARTNER SAFETY OFF  
+    ```  
+  
+     where *\<database>* is the mirrored database.  
+  
+## Related content
+
+- [ALTER DATABASE (Transact-SQL) Database Mirroring](../../t-sql/statements/alter-database-transact-sql-database-mirroring.md)
+- [Database Mirroring Operating Modes](database-mirroring-operating-modes.md)

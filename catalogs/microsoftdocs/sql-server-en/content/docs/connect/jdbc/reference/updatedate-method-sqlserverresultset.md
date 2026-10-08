@@ -1,0 +1,30 @@
+---
+title: "updateDate Method (SQLServerResultSet)"
+description: "updateDate Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.updateDate"
+apitype: "Assembly"
+---
+# updateDate Method (SQLServerResultSet)
+
+
+  Updates the designated column with a date value.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [updateDate (int, java.sql.Date)](updatedate-method-int-java-sql-date.md) | Updates the designated column with a date value given the column index. |
+| [updateDate (java.lang.String, java.sql.Date)](updatedate-method-java-lang-string-java-sql-date.md) | Updates the designated column with a date value given the column name. |
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

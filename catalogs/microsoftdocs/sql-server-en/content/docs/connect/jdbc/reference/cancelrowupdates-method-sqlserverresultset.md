@@ -1,0 +1,38 @@
+---
+title: "cancelRowUpdates Method (SQLServerResultSet)"
+description: "cancelRowUpdates Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.cancelRowUpdates"
+apitype: "Assembly"
+---
+# cancelRowUpdates Method (SQLServerResultSet)
+
+
+  Cancels the updates made to the current row in this [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public void cancelRowUpdates()  
+```  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This cancelRowUpdates method is specified by the cancelRowUpdates method in the java.sql.ResultSet interface.  
+  
+ This method can be called after calling an updater method and before calling the [updateRow](updaterow-method-sqlserverresultset.md) method to roll back the updates that were made to a row. If no updates have been made or updateRow has already been called, this method has no effect.  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

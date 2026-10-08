@@ -1,0 +1,99 @@
+---
+title: "sys.sp_revokelogin (Transact-SQL)"
+description: sp_revokelogin Removes the login entries from SQL Server for a Windows user or group.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_revokelogin_TSQL"
+  - "sp_revokelogin"
+helpviewer_keywords:
+  - "sp_revokelogin"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_revokelogin (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Removes the login entries from  SQL Server 
+ for a Windows user or group created by using `CREATE LOGIN`, `sp_grantlogin`, or `sp_denylogin`.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use [DROP LOGIN](../../t-sql/statements/drop-login-transact-sql.md) instead.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_revokelogin [ @loginame = ] N'loginame'
+[ ; ]
+```
+
+## Arguments
+
+#### [ @loginame = ] N'*loginame*'
+
+The name of the Windows user or group. *@loginame* is **sysname**, with no default. *@loginame* can be any existing Windows user name or group in the form `<ComputerName>\<User>` or `<Domain>\<User>`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_revokelogin` disables connections using the account specified by *@loginame*. Windows users that are granted access to an instance of  SQL Server 
+ through membership in a Windows group, can still connect as the group after their individual access has been revoked. Similarly, if *@loginame* specifies the name of a Windows group, members of that group that have been separately granted access to the instance of  SQL Server 
+ can still connect.
+
+For example, if Windows user `ADVWORKS\john` is a member of the Windows group `ADVWORKS\Admins`, and `sp_revokelogin` revokes the access of `ADVWORKS\john`:
+
+```sql
+EXECUTE sp_revokelogin [ADVWORKS\john];
+```
+
+User `ADVWORKS\john` can still connect if `ADVWORKS\Admins` is granted access to an instance of  SQL Server 
+. Similarly, if Windows group `ADVWORKS\Admins` has its access revoked but `ADVWORKS\john` is granted access, `ADVWORKS\john` can still connect.
+
+Use `sp_denylogin` to explicitly prevent users from connecting to an instance of  SQL Server 
+, regardless of their Windows group memberships.
+
+`sp_revokelogin` can't be executed within a user-defined transaction.
+
+## Permissions
+
+Requires `ALTER ANY LOGIN` permission on the server.
+
+## Examples
+
+The following example removes the login entries for the Windows user `Corporate\MollyA`.
+
+```sql
+EXECUTE sp_revokelogin 'Corporate\MollyA';
+```
+
+Or
+
+```sql
+EXECUTE sp_revokelogin [Corporate\MollyA];
+```
+
+## Related content
+
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [DROP LOGIN (Transact-SQL)](../../t-sql/statements/drop-login-transact-sql.md)
+- [sys.sp_denylogin (Transact-SQL)](sp-denylogin-transact-sql.md)
+- [sys.sp_droplogin (Transact-SQL)](sp-droplogin-transact-sql.md)
+- [sys.sp_grantlogin (Transact-SQL)](sp-grantlogin-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

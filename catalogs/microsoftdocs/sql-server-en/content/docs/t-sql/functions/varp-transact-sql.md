@@ -1,0 +1,145 @@
+---
+title: "VARP (Transact-SQL)"
+description: "VARP (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/13/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "VARP_TSQL"
+  - "VARP"
+helpviewer_keywords:
+  - "statistical variances"
+  - "expressions [SQL Server], statistical variance"
+  - "VARP function [Transact-SQL]"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# VARP (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the statistical variance for the population for all values in the specified expression.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql  
+-- Aggregate Function Syntax   
+VARP ( [ ALL | DISTINCT ] expression )  
+  
+-- Analytic Function Syntax  
+VARP ([ ALL ] expression) OVER ( [ partition_by_clause ] order_by_clause)  
+```  
+  
+## Arguments
+ **ALL**  
+ Applies the function to all values. ALL is the default.  
+  
+ DISTINCT  
+ Specifies that each unique value is considered.  
+  
+ *expression*  
+ Is an [expression](../language-elements/expressions-transact-sql.md) of the exact numeric or approximate numeric data type category, except for the **bit** data type. Aggregate functions and subqueries are not permitted.  
+  
+ OVER **(** [ _partition\_by\_clause_ ] _order\_by\_clause_**)**  
+ _partition\_by\_clause_ divides the result set produced by the FROM clause into partitions to which the function is applied. If not specified, the function treats all rows of the query result set as a single group. _order\_by\_clause_ determines the logical order in which the operation is performed. _order\_by\_clause_ is required. For more information, see [OVER Clause (Transact-SQL)](../queries/select-over-clause-transact-sql.md).  
+  
+## Return Types  
+ **float**  
+  
+## Remarks  
+ If VARP is used on all items in a SELECT statement, each value in the result set is included in the calculation. VARP can be used with numeric columns only. Null values are ignored.  
+  
+ VARP is a deterministic function when used without the OVER and ORDER BY clauses. It is nondeterministic when specified with the OVER and ORDER BY clauses. For more information, see [Deterministic and Nondeterministic Functions](../../relational-databases/user-defined-functions/deterministic-and-nondeterministic-functions.md).  
+  
+## Examples  
+  
+### A: Using VARP  
+ The following example returns the variance for the population for all bonus values in the `SalesPerson` table in the  AdventureWorks2025  database.  
+  
+```sql  
+SELECT VARP(Bonus)  
+FROM Sales.SalesPerson;  
+GO  
+```  
+  
+## Examples:  Azure Synapse Analytics 
+  
+### B: Using VARP  
+ The following example returns the `VARP` of the sales quota values in the table `dbo.FactSalesQuota`. The first column contains the variance of all distinct values and the second column contains the variance of all values including any duplicates values.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT VARP(DISTINCT SalesAmountQuota)AS Distinct_Values, VARP(SalesAmountQuota) AS All_Values  
+FROM dbo.FactSalesQuota;  
+```  
+  
+  Here's the result set. 
+  
+  
+ ```
+Distinct_Values   All_Values
+----------------  ----------------
+158146830494.18   157788848582.94
+```  
+  
+### C. Using VARP with OVER  
+ The following example returns the `VARP` of the sales quota values for each quarter in a calendar year. Notice that the ORDER BY in the OVER clause orders the statistical variance and the ORDER BY of the SELECT statement orders the result set.  
+  
+```sql 
+-- Uses AdventureWorks  
+  
+SELECT CalendarYear AS Year, CalendarQuarter AS Quarter, SalesAmountQuota AS SalesQuota,  
+       VARP(SalesAmountQuota) OVER (ORDER BY CalendarYear, CalendarQuarter) AS Variance  
+FROM dbo.FactSalesQuota  
+WHERE EmployeeKey = 272 AND CalendarYear = 2002  
+ORDER BY CalendarQuarter;  
+```  
+  
+  Here's the result set. 
+  
+  
+ ```
+Year  Quarter  SalesQuota              Variance
+----  -------  ----------------------  -------------------
+2002  1         91000.0000             0.00
+2002  2        140000.0000             600250000.00
+2002  3         70000.0000             860222222.22
+2002  4        154000.0000             1185187500.00
+```  
+  
+## Related content
+
+- [Aggregate functions (Transact-SQL)](aggregate-functions-transact-sql.md)
+- [SELECT - OVER clause (Transact-SQL)](../queries/select-over-clause-transact-sql.md)

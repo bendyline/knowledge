@@ -209,6 +209,8 @@ wait for the registry rather than issuing a duplicate publication.
 
 Once npm exposes the intended release, dispatch `deploy-site.yml` in
 `bendyline/gilde-pipeline` with `gilde_ref` set to the exact merged Gilde SHA.
+The site's update-manifest generator must include the `knowledge-catalog` kind
+at `data/knowledge-catalogs/index.json`; merge the discovery fix before deployment.
 Verify `https://gezelgilde.com/catalog/v1/latest.json` identifies that version
 and SHA. Fetch each new knowledge-catalog version manifest from its `baseUrl`
 and compare archive SHA-256, size, document count, and immutable Hugging Face

@@ -1,0 +1,45 @@
+---
+title: "Compare and Analyze Execution Plans"
+description: Learn how to compare and analyze execution plans by using SQL Server Management Studio. Execution plans display data retrieval methods of the Query Optimizer.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: "wiassaf"
+ms.date: "11/21/2018"
+ms.service: sql
+ms.subservice: performance
+ms.topic: concept-article
+helpviewer_keywords:
+  - "Showplan results"
+  - "execution plans [SQL Server]"
+  - "queries [SQL Server], tuning"
+  - "execution plans [SQL Server], how-to topics"
+  - "SQL Server Management Studio [SQL Server], execution plans"
+  - "tuning queries [SQL Server]"
+---
+# Compare and Analyze Execution Plans
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+This section explains how to compare and analyze execution plans by using Microsoft  SQL Server Management Studio 
+. This feature is available starting with  SQL Server Management Studio 
+ v17.4.  
+  
+Execution plans graphically display the data retrieval methods chosen by the  SQL Server 
+ Query Optimizer. Execution plans represent the execution cost of specific statements and queries in  SQL Server 
+ using icons rather than the tabular representation produced by the [SET SHOWPLAN_ALL](../../t-sql/statements/set-showplan-all-transact-sql.md) or [SET SHOWPLAN_TEXT](../../t-sql/statements/set-showplan-text-transact-sql.md) statements. This graphical approach is very useful for understanding the performance characteristics of a query. 
+
+ SQL Server Management Studio 
+ includes functionality that allows users compare two execution plans, for example between perceived good and bad plans for the same query, and perform root cause analysis. Also included is the functionality to perform single query plan analysis, allowing insights into scenarios that may be affecting the performance of a query through analysis of its execution plan.
+
+For more information on query execution plans, see [estimated execution plan](display-the-estimated-execution-plan.md), [actual execution plan](display-an-actual-execution-plan.md), and the [Query Processing Architecture Guide](../query-processing-architecture-guide.md).
+  
+## In This Section  
+[Compare Execution Plans](display-the-estimated-execution-plan.md)     
+[Analyze an Actual Execution Plan](display-an-actual-execution-plan.md)

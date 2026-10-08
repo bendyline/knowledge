@@ -1,0 +1,41 @@
+# Source code: uwp/gaming/code/AppRecordingExample/cpp/AppRecordingExample/AppRecordingExampleMain.h
+
+Complete source file; linked examples may select a region or line range.
+
+```
+#pragma once
+
+#include "Common\StepTimer.h"
+#include "Common\DeviceResources.h"
+#include "Content\Sample3DSceneRenderer.h"
+#include "Content\SampleFpsTextRenderer.h"
+
+// Renders Direct2D and 3D content on the screen.
+namespace AppRecordingExample
+{
+	class AppRecordingExampleMain : public DX::IDeviceNotify
+	{
+	public:
+		AppRecordingExampleMain(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+		~AppRecordingExampleMain();
+		void CreateWindowSizeDependentResources();
+		void Update();
+		bool Render();
+
+		// IDeviceNotify
+		virtual void OnDeviceLost();
+		virtual void OnDeviceRestored();
+
+	private:
+		// Cached pointer to device resources.
+		std::shared_ptr<DX::DeviceResources> m_deviceResources;
+
+		// TODO: Replace with your own content renderers.
+		std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer;
+		std::unique_ptr<SampleFpsTextRenderer> m_fpsTextRenderer;
+
+		// Rendering loop timer.
+		DX::StepTimer m_timer;
+	};
+}
+```

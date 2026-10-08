@@ -1,0 +1,39 @@
+---
+title: "SQLServerXAConnection Class"
+description: "SQLServerXAConnection Class"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# SQLServerXAConnection Class
+
+
+  Represents JDBC connections that can participate in distributed (XA) transactions.  
+  
+ **Package:** com.microsoft.sqlserver.jdbc  
+  
+ **Extends:** [SQLServerPooledConnection](sqlserverpooledconnection-class.md)  
+  
+ **Implements:** javax.sql.XAConnection  
+  
+## Syntax  
+  
+```  
+  
+public class SQLServerXAConnection  
+```  
+  
+## Remarks  
+ A SQLServerXAConnection object can be enlisted in a distributed transaction by means of an [SQLServerXAResource](sqlserverxaresource-class.md) object. A transaction manager, usually part of a middle tier server, manages a SQLServerXAConnection object through the SQLServerXAResource object.  
+  
+> **Note:**  
+>  Application programmers typically do not use this interface directly. It is primarily used by a transaction manager working in the middle tier server.  
+  
+## Related content
+
+- [SQLServerXAConnection Members](sqlserverxaconnection-members.md)
+- [JDBC driver API reference](jdbc-driver-api-reference.md)

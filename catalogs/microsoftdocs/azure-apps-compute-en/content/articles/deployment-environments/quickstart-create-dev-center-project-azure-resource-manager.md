@@ -1,0 +1,127 @@
+---
+title: Create a Dev Center and Project by using an ARM template
+description: Learn how to create and configure a dev center and project for Azure Deployment Environments by using an ARM template.
+ms.service: azure-deployment-environments
+author: RoseHJM
+ms.author: rosemalcolm
+ms.topic: quickstart-arm
+ms.custom: subject-armqs, devx-track-arm-template
+ms.date: 05/19/2026
+# Customer intent: As an enterprise admin, I want to use an ARM template to create and configure a dev center and project so that I can evaluate Deployment Environments.
+---
+
+# Quickstart: Create a dev center and project by using an ARM template
+
+
+> **Note:**
+> Transition your [Azure Deployment Environments](deployment-environments-retirement-guide.md) workflows to a Microsoft service, Azure service, or partner solution by 22 February 2027. Azure Deployment Environments retires on this date.
+
+This quickstart describes how to use an Azure Resource Manager template (ARM template) to create and configure an Azure Deployment Environments dev center and project for creating an environment.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/deployment-environments/quickstart-create-dev-center-project-azure-resource-manager.md)
+
+If your environment meets the prerequisites and you're familiar with using ARM templates, select the **Deploy to Azure** button. The template opens in the Azure portal.
+
+Button to deploy the Resource Manager template to Azure.
+
+## Prerequisites
+
+- An Azure subscription. Create a [free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) if you don't have one.
+- Owner or Contributor role on an Azure subscription or resource group.
+- Microsoft Entra ID. Your organization must use Microsoft Entra ID for identity and access management.
+
+## Review the template
+
+The template used in this quickstart is from [Azure quickstart templates](https://learn.microsoft.com/samples/azure/azure-quickstart-templates/deployment-environments/).
+
+To view the template, see [azuredeploy.json](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.devcenter/deployment-environments/azuredeploy.json).
+
+Azure resources defined in the template:
+
+- [Microsoft.DevCenter/devcenters](https://learn.microsoft.com/azure/templates/microsoft.devcenter/devcenters): Create a dev center.
+- [Microsoft.DevCenter/devcenters/catalogs](https://learn.microsoft.com/azure/templates/microsoft.devcenter/devcenters/catalogs): Create a catalog.
+- [Microsoft.DevCenter/devcenters/environmentTypes](https://learn.microsoft.com/azure/templates/microsoft.devcenter/devcenters/environmenttypes): Create a dev center environment type.
+- [Microsoft.DevCenter/projects](https://learn.microsoft.com/azure/templates/microsoft.devcenter/projects): Create a project.
+- [Microsoft.Authorization/roleAssignments](https://learn.microsoft.com/azure/templates/microsoft.authorization/roleassignments): Create a role assignment.
+- [Microsoft.DevCenter/projects/environmentTypes](https://learn.microsoft.com/azure/templates/microsoft.devcenter/projects/environmenttypes): Create a project environment type.
+
+## Deploy the template
+
+1. Select **Open Cloud Shell** in either of the following code blocks, and follow the instructions to sign in to Azure.
+
+1. When you see the prompt from the console, ensure that you're ready to deploy to your chosen subscription.
+
+1. If a **Bash** shell is selected, select **Switch to PowerShell** and follow the prompts.
+
+1. To deploy the template, select **Copy** on the code block, and then right-click the shell console and select **Paste**.
+
+   - If you want to use the default parameter values, use this code:
+
+      ```azurepowershell-interactive
+      $location = Read-Host "Please enter region name, for example, eastus"
+      $templateUri = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.devcenter/deployment-environments/azuredeploy.json"
+
+      Write-Host "Start provisioning..."
+
+      New-AzDeployment -Name (New-Guid) -Location $location -TemplateUri $templateUri
+
+      Write-Host "Provisioning completed."
+
+      ```
+
+   - If you want to input your own values, use this code:
+
+      ```azurepowershell-interactive
+      $resourceGroupName = Read-Host "Please enter resource group name: "
+      $devCenterName = Read-Host "Please enter dev center name: "
+      $projectName = Read-Host "Please enter project name: "
+      $environmentTypeName = Read-Host "Please enter environment type name: "
+      $userObjectId = Read-Host "Please enter your user object ID, for example, xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+      $location = Read-Host "Please enter region name, for example, eastus"
+      $templateUri = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.devcenter/deployment-environments/azuredeploy.json"
+
+      Write-Host "Start provisioning..."
+
+      New-AzDeployment -Name (New-Guid) -Location $location -TemplateUri $templateUri -resourceGroupName $resourceGroupName -devCenterName $devCenterName -projectName $projectName -environmentTypeName $environmentTypeName -userObjectId $userObjectId
+
+      Write-Host "Provisioning completed."
+
+      ```
+
+It takes about five minutes to deploy the template.
+
+Azure PowerShell is used to deploy the template. You can also use the Azure portal and Azure CLI. To learn other deployment methods, see [Deploy resources with ARM templates and Azure portal](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/templates/deploy-portal.md).
+
+### Required parameters
+
+- **Resource group name**: The name of the resource group where the dev center and project will be located.
+- **Dev center name**: The name of the dev center.
+- **Project name**: The name of the project that's associated with the dev center.
+- **Environment type name**: The name of the environment type for both the dev center and the project.
+- **User object ID**: The object ID of a user that's granted the *Deployment Environments User* role.
+
+Alternatively, you can provide access to the deployment environments project in the Azure portal. See [Configure access to Azure Deployment Environments resources](how-to-manage-deployment-environments-access.md).
+
+## Review deployed resources
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+1. Select **Resource groups**. 
+1. Select the resource group that you created in the previous section.  
+
+## Clean up resources
+
+If you no longer need the resources you created, delete them by following these instructions:
+
+1. Delete any environments that are associated with the project by using the Azure portal or the developer portal.
+1. Delete the project resource.
+1. Delete the dev center resource.
+1. Delete the resource group.
+1. Remove role assignments that you don't need anymore from the subscription.
+
+## Next step
+
+In this quickstart, you created and configured a dev center and project. Go to the next quickstart to learn how to create an environment.
+
+> 
+> [Quickstart: Create and access an environment](quickstart-create-access-environments.md)

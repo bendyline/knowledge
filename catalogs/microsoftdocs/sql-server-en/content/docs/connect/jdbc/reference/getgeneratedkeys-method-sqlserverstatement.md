@@ -1,0 +1,41 @@
+---
+title: "getGeneratedKeys Method (SQLServerStatement)"
+description: "getGeneratedKeys Method (SQLServerStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerStatement.getGeneratedKeys"
+apitype: "Assembly"
+---
+# getGeneratedKeys Method (SQLServerStatement)
+
+
+  Retrieves any auto-generated keys that are created as a result of running this [SQLServerStatement](sqlserverstatement-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public final java.sql.ResultSet getGeneratedKeys()  
+```  
+  
+## Return Value  
+ A ResultSet object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getGeneratedKeys method is specified by the getGeneratedKeys method in the java.sql.Statement interface.  
+  
+ For more information about how to use this method, see [Using Auto Generated Keys](../using-auto-generated-keys.md).  
+  
+## Related content
+
+- [SQLServerStatement Members](sqlserverstatement-members.md)
+- [SQLServerStatement Class](sqlserverstatement-class.md)

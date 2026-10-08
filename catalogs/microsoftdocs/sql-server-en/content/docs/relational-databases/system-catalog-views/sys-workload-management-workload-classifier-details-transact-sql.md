@@ -1,0 +1,42 @@
+---
+title: "sys.workload_management_workload_classifier_details (Transact-SQL)"
+description: sys.workload_management_workload_classifier_details (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: "wiassaf"
+ms.date: 11/05/2019
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sys.workload_management_workload_classifier_details (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+
+ 
+
+
+  Returns details for each classifier.  
+  
+| Column Name | Data Type | Description | Range |
+| --- | --- | --- | --- |
+| classifier_id | **int** | ID of the classifier.  Is not nullable. |
+| classifier_type | **sysname** | Joinable to [sys.workload_management_workload_classifiers](sys-workload-management-workload-classifiers-transact-sql.md). | `membername`</br>`wlm_label`</br>`wlm_context`</br>`start_time`</br>`end_time` |
+| classifier_value | **sysname** | The value of the classifier. Is not nullable. |  |
+
+## Permissions
+
+Requires VIEW SERVER STATE permission.
+
+## Related content
+
+- [Azure Synapse Analytics catalog views](azure-synapse-analytics-catalog-views.md)
+- [CREATE WORKLOAD CLASSIFIER (Transact-SQL)](../../t-sql/statements/create-workload-classifier-transact-sql.md)
+- [Workload Classification](https://learn.microsoft.com/azure/sql-data-warehouse/sql-data-warehouse-workload-classification)
+- [Workload Importance](https://learn.microsoft.com/azure/sql-data-warehouse/sql-data-warehouse-workload-classification)

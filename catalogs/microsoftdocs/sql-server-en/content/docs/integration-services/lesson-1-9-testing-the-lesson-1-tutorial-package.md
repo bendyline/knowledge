@@ -1,0 +1,58 @@
+---
+title: "Step 9: Test the Lesson 1 tutorial package"
+description: "Step 9: Test the Lesson 1 tutorial package"
+ms.date: "01/03/2019"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: tutorial
+---
+# Lesson 1-9: Test the Lesson 1 package
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+
+In this tutorial, you've done the following tasks:  
+  
+-   Created a new  SSIS 
+ project.  
+  
+-   Configured the connection managers for the package to connect to the source and destination data.  
+  
+-   Added a data flow that takes the data from a flat file source, performs the necessary Lookup transformations on the data, and configures the data for the destination.  
+  
+Your package is now complete and ready to test!
+  
+## Check the package components
+  
+Before you test the package, verify that the control and data flows in the Lesson 1 package contain the objects shown in the following diagrams.  
+  
+**Control Flow** 
+  
+Control flow in package  
+  
+**Data Flow**  
+  
+Data flow in package  
+  
+## Run the Lesson 1 package  
+  
+1.  On the **Debug** menu, select **Start Debugging**.  
+  
+    The package runs, resulting in 1,097 rows successfully added into the **NewFactCurrencyRate** fact table in  `AdventureWorksDW2025` . To verify this result, select the **Data Flow** tab.
+  
+2.  After the package has completed running, on the **Debug** menu, select **Stop Debugging**.  
+  
+## Go to next lesson
+[Lesson 2: Add looping with SSIS](lesson-2-adding-looping-with-ssis.md)  
+  
+## Related content
+
+- [Run Integration Services (SSIS) Packages](packages/run-integration-services-ssis-packages.md)

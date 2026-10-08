@@ -1,0 +1,80 @@
+---
+title: "STDistance (geography Data Type)"
+description: "STDistance (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "11/19/2019"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STDistance_TSQL"
+  - "STDistance (geography Data Type)"
+helpviewer_keywords:
+  - "STDistance method"
+dev_langs:
+  - "TSQL"
+---
+# STDistance (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the shortest distance between a point in a **geography** instance and a point in another **geography** instance.  
+  
+> **Note:**  
+>  `STDistance()` returns the shortest **LineString** between two geography types. This is a close approximate to the geodesic distance. The deviation of `STDistance()` on common earth models from the exact geodesic distance is no more than .25%. This avoids confusion over the subtle differences between length and distance in geodesic types.  
+  
+## Syntax  
+  
+```  
+  
+.STDistance ( other_geography )  
+```  
+  
+## Arguments
+ *other_geography*  
+ Is another **geography** instance from which to measure the distance between the instance on which STDistance() is invoked. If *other_geography* is an empty set, STDistance() returns null.  
+  
+## Return Types  
+  SQL Server 
+ return type: **float**  
+  
+ CLR return type: **SqlDouble**  
+  
+## Remarks  
+ The result is expressed in the unit of measure defined by the [Spatial Reference Identifier &#40;SRID&#41;](../../relational-databases/spatial/spatial-reference-identifiers-srids.md) of spatial data.
+STDistance() always returns *null* if the spatial reference IDs (SRIDs) of the **geography** instances do not match.  
+  
+> **Note:**  
+>  Methods on the **geography** data type that calculate an area or distance will return different results based on the SRID of the instance used in the method. For more information about SRIDs, see [Spatial Reference Identifiers &#40;SRIDs&#41;](../../relational-databases/spatial/spatial-reference-identifiers-srids.md).  
+  
+## Examples  
+ The following example finds the distance between two **geography** instances.  
+  
+```sql
+DECLARE @g geography;  
+DECLARE @h geography;  
+SET @g = geography::STGeomFromText('LINESTRING(-122.360 47.656, -122.343 47.656)', 4326);  
+SET @h = geography::STGeomFromText('POINT(-122.34900 47.65100)', 4326);  
+SELECT @g.STDistance(@h);  
+```  
+  
+## Related content
+
+- [OGC methods on geography instances](ogc-methods-on-geography-instances.md)

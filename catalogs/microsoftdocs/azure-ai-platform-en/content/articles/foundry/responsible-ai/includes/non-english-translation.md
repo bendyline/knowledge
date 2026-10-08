@@ -1,0 +1,13 @@
+---
+title: 'Non-English translation disclaimer'
+description: include 
+manager: mcleans
+author: PatrickFarley
+ms.author: pafarley
+ms.service: azure
+ms.topic: include
+ms.date: 06/11/2025
+---
+
+> **Important:**
+> Non-English translations are provided for convenience only. Please consult the [`EN-US` version of this document](https://learn.microsoft.com/en-us/azure/ai-foundry/responsible-ai/openai/customer-copyright-commitment) for the definitive version.

@@ -1,0 +1,64 @@
+---
+title: Local (.NET)
+description: Run Agent Framework CodeAct in a local Python subprocess from .NET.
+author: eavanvalkenburg
+ms.topic: article
+ms.author: edvan
+ms.date: 10/07/2026
+ms.service: agent-framework
+ms.custom: update-code1
+ai-usage: ai-assisted
+---
+
+# Local (.NET)
+
+`Microsoft.Agents.AI.LocalCodeAct` runs generated Python in a child process in the agent's environment. It provides the CodeAct provider pattern without requiring a Hyperlight guest runtime.
+
+This integration uses the CodeAct pattern and relies on the host environment for isolation.
+
+> **Warning:**
+> Local CodeAct is **not a security sandbox**. Run it only where an external container, virtual machine, or managed hosting environment provides process, filesystem, network, and credential isolation.
+>
+> [FIDES](../../../agents/security.md) is currently Python-only and isn't available in this .NET provider. Its host bridge invokes registered `AIFunction` tools directly, without the agent's per-function middleware pipeline.
+>
+> Checks on direct agent tools or the outer `execute_code` call don't cover nested calls, code-internal intermediate values, or file and network capabilities. Host tools must enforce their own authorization and destination controls. Use direct agent tools when you need individual middleware checks; don't rely on Local CodeAct for FIDES guarantees. See [CodeAct's current limitations](../../../agents/code-act.md#current-limitations).
+
+## Install the package
+
+```bash
+dotnet add package Microsoft.Agents.AI.LocalCodeAct --prerelease
+```
+
+The package requires an explicit Python executable path.
+
+## Configure the provider
+
+Register host tools through `LocalCodeActProviderOptions`. Generated code can call only those tools through `await call_tool(...)`. Apply execution limits to bound subprocess runtime and captured output.
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/dotnet/samples/04-hosting/FoundryHostedAgents/responses/Hosted-LocalCodeAct/Program.cs](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/integrations/by-component/context-providers/local.md)
+
+## Defense-in-depth controls
+
+Local CodeAct provides:
+
+- AST validation with configurable allowed and blocked imports and built-ins.
+- Direct Python subprocess execution without invoking a shell.
+- Time, output, result, and captured-file size limits.
+- Explicit host-tool registration.
+- Read-only and read-write file mounts.
+- Configurable working directory and subprocess environment.
+
+These controls reduce risk but don't provide containment. Keep validation enabled, pass a restricted environment dictionary, expose narrow host tools, and run the process inside a strong external sandbox.
+
+## Choose a CodeAct runtime
+
+| Runtime | Choose it when |
+| --- | --- |
+| [Hyperlight](hyperlight.md) | You need an isolated sandbox with filesystem and network controls. |
+| Local CodeAct | Your .NET agent already runs inside an externally sandboxed environment. |
+| [Monty](monty.md) | You need a cross-platform restricted interpreter for Python agents. |
+
+## Next steps
+
+> 
+> [Monty](monty.md)

@@ -1,0 +1,96 @@
+---
+title: "Recover database - no restore (Transact-SQL)"
+description: In SQL Server, a recovery-only restore recovers a database without restoring a backup, typically as the last step when restoring a sequence of backups.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "12/17/2019"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "restoring [SQL Server], recovery-only"
+  - "recovery-only scenario [SQL Server]"
+  - "restoring databases [SQL Server], recovery-only"
+  - "recovery [SQL Server], recovery-only"
+  - "database recovery [SQL Server]"
+  - "database restores [SQL Server], recovery-only"
+  - "recovery [SQL Server], without restoring data"
+---
+# Recover a database without restoring data (Transact-SQL)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Usually, all of the data in a  SQL Server 
+ database is restored before the database is recovered. However, a restore operation can recover a database without actually restoring a backup; for example, when recovering a read-only file that is consistent with the database. This is referred to as a *recovery-only restore*. When offline data is already consistent with the database and needs only to be made available, a recovery-only restore operation completes the recovery of the database and bring the data online.  
+  
+ A recovery-only restore can occur for a whole database or for one or more a files or filegroups.  
+  
+## Recovery-Only Database Restore  
+ A recovery-only database restore can be useful in the following situations:  
+  
+-   You did not recover the database when restoring the last backup in a restore sequence, and you now want to recover the database to bring it online.  
+  
+-   The database is in standby mode, and you want to make the database updatable without applying another log backup.  
+  
+ The [RESTORE](../../t-sql/statements/restore-statements-transact-sql.md) syntax for a recovery-only database restore is as follows:  
+  
+ `RESTORE DATABASE *database_name* WITH RECOVERY`  
+  
+> **Note:**  
+> The FROM **=** \<*backup_device>* clause is not used for recovery-only restores because no backup is necessary.  
+  
+ **Example**  
+  
+ The following example recovers the  `AdventureWorks2025`  sample database in a restore operation without restoring data.  
+  
+```sql  
+-- Restore database using WITH RECOVERY.  
+RESTORE DATABASE AdventureWorks2022  
+   WITH RECOVERY  
+```  
+  
+## Recovery-Only File Restore  
+ A recovery-only file restore can be useful in the following situation:  
+  
+ A database is restored piecemeal. After restore of the primary filegroup is complete, one or more of the unrestored files are consistent with the new database state, perhaps because it has been read-only for some time. These files only have to be recovered; data copying is unnecessary.  
+  
+ A recovery-only restore operation brings the data in the offline filegroup online; no data-copy, redo, or undo phase occurs. For information about the phases of restore, see [Restore and Recovery Overview (SQL Server)](restore-and-recovery-overview-sql-server.md#TlogAndRecovery).  
+  
+ The [RESTORE](../../t-sql/statements/restore-statements-transact-sql.md) syntax for a recovery-only file restore is:  
+  
+ `RESTORE DATABASE *database_name* { FILE **=**_logical_file_name_ | FILEGROUP **=**_logical_filegroup_name_ }[ **,**...*n* ] WITH RECOVERY`  
+  
+ **Example**  
+  
+ The following example illustrates a recovery-only file restore of the files in a secondary filegroup, `SalesGroup2`, in the `Sales` database. The primary filegroup has already been restored as the initial step of a piecemeal restore, and `SalesGroup2` is consistent with the restored primary filegroup. Recovering this filegroup and bringing it online requires only a single statement.  
+  
+```sql  
+RESTORE DATABASE Sales FILEGROUP=SalesGroup2 WITH RECOVERY;  
+```  
+  
+## Examples of completing a piecemeal restore scenario with a recovery-only restore  
+ **Simple recovery model**  
+  
+-   [Example: Piecemeal Restore of Database (Simple Recovery Model)](example-piecemeal-restore-of-database-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Simple Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-simple-recovery-model.md)  
+  
+ **Full recovery model**  
+  
+-   [Example: Piecemeal Restore of Database (Full Recovery Model)](example-piecemeal-restore-of-database-full-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Full Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-full-recovery-model.md)  
+  
+-   [Microsoft.SqlServer.Management.Smo.Restore.SqlRestore%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.Restore.SqlRestore%252A)  
+  
+## Related content
+
+- [Online Restore (SQL Server)](online-restore-sql-server.md)
+- [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)
+- [File Restores (Simple Recovery Model)](file-restores-simple-recovery-model.md)
+- [File Restores (Full Recovery Model)](file-restores-full-recovery-model.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)
+- [Restore and recovery overview (SQL Server)](restore-and-recovery-overview-sql-server.md)

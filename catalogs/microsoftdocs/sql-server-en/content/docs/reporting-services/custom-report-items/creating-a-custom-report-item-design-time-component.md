@@ -1,0 +1,203 @@
+---
+title: "Creating a custom report item design-time component"
+description: Learn how to create a custom report item design-time component. This component provides an activated design surface that can accept drag-and-drop operations.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: custom-report-items
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "custom report items, creating"
+---
+# Creating a custom report item design-time component
+  A custom report item design-time component is a control that can be used in the Visual Studio Report Designer environment. The custom report item design-time component provides an activated design surface that can accept drag-and-drop operations, integration with the  Visual Studio 
+ property browser, and the ability to provide custom property editors.  
+  
+ With a custom report item design-time component, the user can position a custom report item on a report in the design environment, set custom data properties on the custom report item, and then save the custom report item as part of the report project.  
+  
+ The properties that are set by using the design-time component in the development environment are serialized and deserialized by the host design environment. The properties are then stored as elements in the Report Definition Language (RDL) file. When the report processor executes the report, the properties that are set by using the design-time component are passed by the report processor to a custom report item run-time component, which renders the custom report item and passes it back to the report processor.  
+  
+> **Note:**
+>  The custom report item design-time component is implemented as a  Microsoft 
+  .NET Framework 
+ component. This document will describe implementation details specific to the custom report item design-time component.   
+  
+ For a sample of a fully implemented custom report item, see [SQL Server Reporting Services Product Samples](https://go.microsoft.com/fwlink/?LinkId=177889).  
+  
+## Implement a design-time component  
+ The main class of a custom report item design-time component is inherited from the **Microsoft.ReportDesigner.CustomReportItemDesigner** class. In addition to the standard attributes used for a  .NET Framework 
+ control, your component class should define a **CustomReportItem** attribute. This attribute must correspond to the name of the custom report item as it is defined in the reportserver.config file. For a list of  .NET Framework 
+ attributes, see Attributes in the  .NET Framework 
+ SDK documentation.  
+  
+ The following code example shows attributes being applied to a custom report item design-time control:  
+  
+```csharp  
+namespace PolygonsCRI  
+{  
+    [LocalizedName("Polygons")]  
+    [Editor(typeof(CustomEditor), typeof(ComponentEditor))]  
+        [ToolboxBitmap(typeof(PolygonsDesigner),"Polygons.ico")]  
+        [CustomReportItem("Polygons")]  
+  
+    public class PolygonsDesigner : CustomReportItemDesigner  
+    {  
+...  
+```  
+  
+### Initialize the component  
+ You pass user-specified properties for a custom report item using a [Microsoft.ReportingServices.RdlObjectModel.CustomData](https://learn.microsoft.com/search/?terms=Microsoft.ReportingServices.RdlObjectModel.CustomData) class. Your implementation of the **CustomReportItemDesigner** class should override the **InitializeNewComponent** method to create a new instance of your component's [Microsoft.ReportingServices.RdlObjectModel.CustomData](https://learn.microsoft.com/search/?terms=Microsoft.ReportingServices.RdlObjectModel.CustomData) class and set it to default values.  
+  
+ The following code example shows an example of a custom report item design-time component class overriding the **CustomReportItemDesigner.InitializeNewComponent** method to initialize the component's [Microsoft.ReportingServices.RdlObjectModel.CustomData](https://learn.microsoft.com/search/?terms=Microsoft.ReportingServices.RdlObjectModel.CustomData) class:  
+  
+```csharp  
+public override void InitializeNewComponent()  
+        {  
+            CustomData = new CustomData();  
+            CustomData.DataRowHierarchy = new DataHierarchy();  
+  
+            // Shape grouping  
+            CustomData.DataRowHierarchy.DataMembers.Add(new DataMember());  
+            CustomData.DataRowHierarchy.DataMembers[0].Group = new Group();  
+            CustomData.DataRowHierarchy.DataMembers[0].Group.Name = Name + "_Shape";  
+            CustomData.DataRowHierarchy.DataMembers[0].Group.GroupExpressions.Add(new ReportExpression());  
+  
+            // Point grouping  
+            CustomData.DataRowHierarchy.DataMembers[0].DataMembers.Add(new DataMember());  
+            CustomData.DataRowHierarchy.DataMembers[0].DataMembers[0].Group = new Group();  
+            CustomData.DataRowHierarchy.DataMembers[0].DataMembers[0].Group.Name = Name + "_Point";  
+            CustomData.DataRowHierarchy.DataMembers[0].DataMembers[0].Group.GroupExpressions.Add(new ReportExpression());  
+  
+            // Static column  
+            CustomData.DataColumnHierarchy = new DataHierarchy();  
+            CustomData.DataColumnHierarchy.DataMembers.Add(new DataMember());  
+  
+            // Points  
+            IList<IList<DataValue>> dataValues = new List<IList<DataValue>>();  
+            CustomData.DataRows.Add(dataValues);  
+            CustomData.DataRows[0].Add(new List<DataValue>());  
+            CustomData.DataRows[0][0].Add(NewDataValue("X", ""));  
+            CustomData.DataRows[0][0].Add(NewDataValue("Y", ""));  
+        }  
+```  
+  
+### Modify component properties  
+ You can modify **CustomData** properties in the design environment in several ways. You can modify any properties that are exposed by the design-time component that are marked with the [System.ComponentModel.BrowsableAttribute](https://learn.microsoft.com/search/?terms=System.ComponentModel.BrowsableAttribute) attribute by using the  Visual Studio 
+ property browser. In addition, you can modify properties by dragging items onto the custom report item's design surface, or by right-clicking the control in the design environment and selecting **Properties** on the shortcut menu to display a custom properties window.  
+  
+ The following code example shows a **Microsoft.ReportDesigner.CustomReportItemDesigner.CustomData** property that has the [System.ComponentModel.BrowsableAttribute](https://learn.microsoft.com/search/?terms=System.ComponentModel.BrowsableAttribute) attribute applied:  
+  
+```csharp  
+[Browsable(true), Category("Data")]  
+public string DataSetName  
+{  
+      get  
+      {  
+         return CustomData.DataSetName;  
+      }  
+      set  
+      {  
+         CustomData.DataSetName = value;  
+      }  
+   }  
+  
+```  
+  
+ You can provide your design-time component with a custom properties editor dialog box. The custom property editor implementation should inherit from the [System.ComponentModel.ComponentEditor](https://learn.microsoft.com/search/?terms=System.ComponentModel.ComponentEditor) class, and it should create an instance of a dialog box that can be used for property editing.  
+  
+ The following example shows an implementation of a class that inherits from [System.ComponentModel.ComponentEditor](https://learn.microsoft.com/search/?terms=System.ComponentModel.ComponentEditor) and displays a custom property editor dialog box:  
+  
+```csharp  
+internal sealed class CustomEditor : ComponentEditor  
+{  
+   public override bool EditComponent(  
+      ITypeDescriptorContext context, object component)  
+    {  
+     PolygonsDesigner designer = (PolygonsDesigner)component;  
+     PolygonProperties dialog = new PolygonProperties();  
+     dialog.m_designerComponent = designer;  
+     DialogResult result = dialog.ShowDialog();  
+     if (result == DialogResult.OK)  
+     {  
+        designer.Invalidate();  
+        designer.ChangeService().OnComponentChanged(designer, null, null, null);  
+        return true;  
+     }  
+     else  
+        return false;  
+    }  
+}  
+```  
+  
+ Your custom property editor dialog box can invoke the Report Designer Expression Editor. In the following example, the Expression Editor is invoked when the user selects the first element in the combo box:  
+  
+```csharp  
+private void EditableCombo_SelectedIndexChanged(object sender,   
+    EventArgs e)  
+{  
+   ComboBox combo = (ComboBox)sender;  
+   if (combo.SelectedIndex == 0 && m_launchEditor)  
+   {  
+      m_launchEditor = false;  
+      ExpressionEditor editor = new ExpressionEditor();  
+      string newValue;  
+      newValue = (string)editor.EditValue(null, m_designerComponent.Site, m_oldComboValue);  
+      combo.Items[0] = newValue;  
+   }  
+}  
+  
+```  
+  
+### Use designer verbs  
+ A designer verb is a menu command linked to an event handler. You can add designer verbs that appear in a component's shortcut menu when your custom report item run-time control is being used in the design environment. You can return the list of available designer verbs from your run-time component by using the **Verbs** property.  
+  
+ The following code example shows a designer verb and an event handler being added to the [System.ComponentModel.Design.DesignerVerbCollection](https://learn.microsoft.com/search/?terms=System.ComponentModel.Design.DesignerVerbCollection). The example also shows the event handler code:  
+  
+```csharp  
+public override DesignerVerbCollection Verbs  
+{  
+    get  
+    {  
+        if (m_verbs == null)  
+        {  
+            m_verbs = new DesignerVerbCollection();  
+            m_verbs.Add(new DesignerVerb("Proportional Scaling", new EventHandler(OnProportionalScaling)));  
+         m_verbs[0].Checked = (GetCustomProperty("poly:Proportional") == bool.TrueString);  
+        }  
+  
+        return m_verbs;  
+    }  
+}  
+  
+private void OnProportionalScaling(object sender, EventArgs e)  
+{  
+   bool proportional = !  
+        (GetCustomProperty("poly:Proportional") == bool.TrueString);  
+   m_verbs[0].Checked = proportional;  
+   SetCustomProperty("poly:Proportional", proportional.ToString());  
+   ChangeService().OnComponentChanged(this, null, null, null);  
+   Invalidate();  
+}  
+```  
+  
+### Use adornments  
+ Custom report item classes can also implement a **Microsoft.ReportDesigner.Design.Adornment** class. An adornment allows the custom report item control to provide areas outside the main rectangle of the design surface. These areas can handle user interface events, such as mouse clicks and drag-and-drop operations. The **Adornment** class that is defined in the  Reporting Services 
+ **Microsoft.ReportDesigner** namespace is a pass-through implementation of the [System.Windows.Forms.Design.Behavior.Adorner](https://learn.microsoft.com/search/?terms=System.Windows.Forms.Design.Behavior.Adorner) class found in Windows Forms. For complete documentation on the **Adorner** class, see [Behavior Service Overview](https://learn.microsoft.com/previous-versions/ms171826\(v=vs.140\)) in the MSDN library. For sample code that implements a **Microsoft.ReportDesigner.Design.Adornment** class, see [SQL Server Reporting Services Product Samples](https://go.microsoft.com/fwlink/?LinkId=177889).  
+  
+ For more information about programming and using Windows Forms in  Visual Studio 
+, see these articles in the MSDN Library:  
+  
+-   Design-Time Attributes for Components  
+  
+-   Components in  Visual Studio 
+  
+  
+-   Walkthrough: Creating a Windows Forms Control that Takes Advantage of Visual Studio Design-Time Features  
+  
+## Related content
+
+- [Custom report item architecture](custom-report-item-architecture.md)
+- [Creating a custom report item run-time component](creating-a-custom-report-item-run-time-component.md)
+- [Custom report item class libraries](custom-report-item-class-libraries.md)
+- [How to deploy a custom report item](how-to-deploy-a-custom-report-item.md)

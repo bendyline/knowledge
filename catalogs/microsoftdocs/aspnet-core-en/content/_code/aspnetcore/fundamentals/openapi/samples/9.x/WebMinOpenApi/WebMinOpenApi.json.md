@@ -1,0 +1,43 @@
+# Source code: aspnetcore/fundamentals/openapi/samples/9.x/WebMinOpenApi/WebMinOpenApi.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "GetDocument.Insider | v1",
+    "description": "Transformed OpenAPI document",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "GetDocument.Insider"
+        ],
+        "summary": "Transformed OpenAPI operation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "description": "Transformed OpenAPI schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": { },
+  "tags": [
+    {
+      "name": "GetDocument.Insider"
+    }
+  ]
+}
+```

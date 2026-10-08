@@ -1,0 +1,24 @@
+---
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 06/30/2026
+ms.author: lajanuar
+---
+## Balance training data
+
+When it comes to training data, try to keep your schema well balanced. Including large quantities of one intent and few of another results in a model with bias towards particular intents.
+
+To address this scenario, you might need to downsample your training set. Or you might need to add to it. To downsample, you can:
+
+* Get rid of a certain percentage of the training data randomly.
+* Analyze the dataset and remove overrepresented duplicate entries, which is a more systematic manner.
+
+To add to the training set, in Microsoft Foundry, on the **Data labeling** tab, select **Suggest utterances**. Conversational Language Understanding sends a call to [Azure OpenAI](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/openai/overview.md) to generate similar utterances.
+
+Screenshot that shows an utterance suggestion in Microsoft Foundry.
+
+You should also look for unintended "patterns" in the training set. For example, look to see if the training set for a particular intent is all lowercase or starts with a particular phrase. In such cases, the model you train might learn these unintended biases in the training set instead of being able to generalize.
+
+We recommend that you introduce casing and punctuation diversity in the training set. If your model is expected to handle variations, be sure to have a training set that also reflects that diversity. For example, include some utterances in proper casing and some in all lowercase.

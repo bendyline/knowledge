@@ -1,0 +1,46 @@
+---
+title: "setString Method (SQLServerPreparedStatement)"
+description: "setString Method (SQLServerPreparedStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPreparedStatement.setString"
+apitype: "Assembly"
+---
+# setString Method (SQLServerPreparedStatement)
+
+
+  Sets the designated parameter to the given **String** value.  
+  
+## Syntax  
+  
+```  
+  
+public final void setString(int index,  
+                            java.lang.String str)  
+```  
+  
+#### Parameters  
+ *index*  
+  
+ An **int** that indicates the parameter number.  
+  
+ *str*  
+  
+ A **String** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setString method is specified by the setString method in the java.sql.PreparedStatement interface.  
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

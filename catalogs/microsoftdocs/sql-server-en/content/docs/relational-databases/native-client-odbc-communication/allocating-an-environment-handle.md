@@ -1,0 +1,41 @@
+---
+title: "Allocating an Environment Handle"
+description: "Allocating an Environment Handle"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/16/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQL Server Native Client ODBC driver, environment handles"
+  - "ODBC applications, connections"
+  - "handles [SQL Server Native Client]"
+  - "environment handles [SQLNCLI]"
+---
+# Allocating an Environment Handle
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  Before an application can call any ODBC function, it must initialize the ODBC environment and allocate an environment handle. This is the global context handle and placeholder for the other handles in ODBC. You do this by calling **SQLAllocHandle** with the *HandleType* parameter set to SQL_HANDLE_ENV and *InputHandle* set to SQL_NULL_HANDLE.  
+  
+ After allocating the environment handle, the application must set environment attributes to indicate which version of ODBC function calls it will be using. To use the ODBC 3.*x* functions, call [SQLSetEnvAttr](../native-client-odbc-api/sqlsetenvattr.md) with the *Attribute* parameter set to SQL_ATTR_ODBC_VERSION and *ValuePtr* set to SQL_OV_ODBC3.  
+  
+## Related content
+
+- [Communicating with SQL Server (ODBC)](communicating-with-sql-server-odbc.md)

@@ -1,0 +1,41 @@
+---
+title: "MSmerge_tombstone (Transact-SQL)"
+description: MSmerge_tombstone (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSmerge_tombstone_TSQL"
+  - "MSmerge_tombstone"
+helpviewer_keywords:
+  - "MSmerge_tombstone system table"
+dev_langs:
+  - "TSQL"
+---
+# MSmerge_tombstone (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSmerge_tombstone** table contains information on deleted rows and allows deletes to be propagated to other Subscribers. This table is stored in the publication and subscription databases.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **rowguid** | **uniqueidentifier** | The row identifier. |
+| **tablenick** | **int** | The nickname of the table. |
+| **type** | **tinyint** | The type of delete:<br /><br /> 1 = User delete.<br /><br /> 5 = Row no longer belongs to the filtered partition.<br /><br /> 6 = System delete. |
+| **lineage** | **varbinary(249)** | Indicates the version of the record that was deleted, and which updates were known when it was deleted. Allows rules for consistent resolution of a conflict when one Subscriber updates a row while it is being deleted at another Subscriber. |
+| **generation** | **int** | Is assigned when a row is deleted. If a Subscriber requests generation N, only tombstones with generation >= N are sent. |
+| **logical_record_parent_rowguid** | **uniqueidentifier** | Identifies the logical record to which a deleted row belongs. |
+| **logical_record_lineage** | **Varbinary(501)** | The subscriber nickname, version number pairs that are used to maintain a history of deletes for the logical record to which this row belongs. |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

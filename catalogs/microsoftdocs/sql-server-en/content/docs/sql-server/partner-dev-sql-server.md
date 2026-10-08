@@ -1,0 +1,39 @@
+---
+title: Development SQL Server Partners
+description: Lists of third-party partners with development solutions for Server.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 09/08/2025
+ms.service: sql
+ms.subservice: release-landing
+ms.topic: partner-tools
+---
+# SQL Server development partners
+
+
+**Applies to:**
+ 
+
+](sql-docs-navigation-guide.md#applies-to)
+ 
+
+For support developing  SQL Server 
+ database solutions, choose from a wide variety of industry-leading tools. This article highlights  Microsoft 
+ partner companies with development solutions for  SQL Server 
+.
+
+## Development partners
+
+| Partner | Description | Links |
+| :---: | --- | --- |
+| <br />**IDERA** | Rapid SQL is an intelligent SQL integrated development environment empowering database developers and database administrators to create high-performing SQL code on all major database platforms including  SQL Server |
+ | from a single interface.<br /><br />- [System requirements](https://www.idera.com/productssolutions/freetools/rapid-database-extractor/systemrequirements/) | -&nbsp;[Website](https://www.idera.com/rapid-sql-ide)<br />- [X](https://x.com/Idera_Software)<br />- [Video](https://www.idera.com/resourcecentral/videos/rapid-sql-overview) |
+| <br />**Click2Cloud Inc.** | Click2Cloud Inc. enables developer community with the flexibility in choosing programming languages, frameworks and services with use of proper toolset.<br /><br />Using Click2Cloud's toolkit, developers can create  SQL Server |
+ | on Linux containers and attach it to an application, while still enabling the secure, multi-tenant architecture. The containers can be independently deployed on any cloud based container platform. | -&nbsp;[Marketplace](https://marketplace.visualstudio.com/items?itemName=Click2CloudInc.Click2CloudDockerExtensionforVisualStudio)<br />-&nbsp;[Website](https://www.click2cloud.com/)<br />- [X](https://x.com/click2cloudinc)<br />- [Video](https://www.youtube.com/channel/UCjVgly_5QMuNZQh2I2FkHQQ) |
+
+## Related content
+
+- [SQL Server high availability and disaster recovery partners](partner-hadr-sql-server.md)
+- [SQL Server managing partners](partner-management-sql-server.md)
+- [SQL Server monitoring partners](partner-monitor-sql-server.md)

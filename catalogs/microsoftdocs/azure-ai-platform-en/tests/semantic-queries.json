@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How does Azure Machine Learning manage the machine learning lifecycle, including training, deploying models, and MLOps?",
+    "expectedDocumentIds": [
+      "articles/machine-learning/overview-what-is-azure-machine-learning"
+    ]
+  }
+]

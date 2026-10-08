@@ -1,0 +1,72 @@
+---
+title: "STX (geometry Data Type)"
+description: "STX (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "06/23/2020"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STX (geometry Data Type)"
+  - "STX_TSQL"
+helpviewer_keywords:
+  - "STX (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STX (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The  X-coordinate property of a **Point** instance.
+  
+## Syntax  
+  
+```  
+  
+.STX  
+```  
+  
+## Return Types
+  SQL Server 
+ type: **float**  
+  
+ CLR type: **SqlDouble**  
+  
+## Remarks  
+ The value of this property will be null if the **geometry** instance is not a point.  
+  
+ This property is read-only.  
+  
+## Examples  
+ The following example creates a `Point` instance and uses `STX` to retrieve the X-coordinate of the instance.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POINT(3 8)', 0);  
+SELECT @g.STX;  
+```  
+  
+## Related content
+
+- [STY (geometry Data Type)](sty-geometry-data-type.md)
+- [STSrid (geometry Data Type)](stsrid-geometry-data-type.md)
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

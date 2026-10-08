@@ -1,0 +1,30 @@
+---
+title: "setDate Method (SQLServerPreparedStatement)"
+description: "setDate Method (SQLServerPreparedStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPreparedStatement.setDate"
+apitype: "Assembly"
+---
+# setDate Method (SQLServerPreparedStatement)
+
+
+  Sets the designated parameter to the given date value.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [setDate (int, java.sql.Date)](setdate-method-int-java-sql-date.md) | Sets the designated parameter to the given date value. |
+| [setDate (int, java.sql.Date, java.util.Calendar)](setdate-method-int-java-sql-date-java-util-calendar.md) | Sets the designated parameter to the given date and calendar values. |
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

@@ -1,0 +1,24 @@
+# Source code: aspnetcore/grpc/test-services/sample/Client/Client.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>dotnet-Client-33BD397C-6A11-40D0-AF85-24B9610F7517</UserSecretsId>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.41.0" />
+  </ItemGroup>
+
+</Project>
+
+```

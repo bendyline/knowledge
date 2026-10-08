@@ -1,0 +1,79 @@
+---
+title: "getCatalogs Method (SQLServerDatabaseMetaData)"
+description: "getCatalogs Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.getCatalogs"
+apitype: "Assembly"
+---
+# getCatalogs Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves the catalog names that are available in the connected server.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.ResultSet getCatalogs()  
+```  
+  
+## Return Value  
+ A [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getCatalogs method is specified by the getCatalogs method in the java.sql.DatabaseMetaData interface.  
+  
+> **Note:**  
+>  On Azure SQL Database, you should connect to the `master` database to call **SQLServerDatabaseMetaData.getCatalogs**. SQL Database does not support returning the entire set of catalogs from a user database. **SQLServerDatabaseMetaData.getCatalogs** uses the `sys.databases` view to get the catalogs. 
+  
+ The result set returned by the getCatalogs method will contain the following information:  
+  
+| Name | Type | Description |
+| --- | --- | --- |
+| TABLE_CAT | **String** | The name of the catalog, including system databases in  Microsoft |
+  | SQL Server |
+| . |
+  
+## Example  
+ The following example demonstrates how to use the getCatalogs method to return the names of all the databases that are contained in  Microsoft 
+  SQL Server 
+, including the system databases.  
+  
+```  
+public static void executeGetCatalogs(Connection con) {  
+   try {  
+      DatabaseMetaData dbmd = con.getMetaData();  
+      ResultSet rs = dbmd.getCatalogs();  
+      ResultSetMetaData rsmd = rs.getMetaData();  
+  
+      // Display the result set data.  
+      int cols = rsmd.getColumnCount();  
+      while(rs.next()) {  
+         for (int i = 1; i <= cols; i++) {  
+            System.out.println(rs.getString(i));  
+         }  
+      }  
+      rs.close();  
+   }   
+  
+   catch (Exception e) {  
+      e.printStackTrace();  
+   }  
+}  
+```  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

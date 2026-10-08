@@ -1,0 +1,86 @@
+# Source code: uwp/monetize/code/InAppPurchasesAndLicenses_RS1/json/StoreAppLicense.ExtendedJsonData.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+    "type": "object",
+    "properties": {
+        "productId": {
+            "type": "string",
+            "pattern": "^[0-9A-Z]{12}$"
+        },
+        "skuId": {
+            "type": "string",
+            "pattern": "^[0-9A-Z]{4}$"
+        },
+        "expiration": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d(\\.\\d+)?$"
+        },
+        "isActive": {
+            "type": "boolean"
+        },
+        "isTrial": {
+            "type": "boolean"
+        },
+        "isTrialOwnedByThisUser": {
+            "type": "boolean"
+        },
+        "trialTimeRemaining": {
+            "type": "string"
+        },
+        "productAddOns": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "inAppOfferToken": {
+                        "type": "string"
+                    },
+                    "productId": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Z]{12}$"
+                    },
+                    "productType": {
+                        "type": "string"
+                    },
+                    "skuId": {
+                        "type": "string",
+                        "pattern": "^[0-9A-Z]{4}$"
+                    },
+                    "skuType": {
+                        "type": "string"
+                    },
+                    "expiration": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d(\\.\\d+)?$"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "inAppOfferToken",
+                    "productType",
+                    "skuType",
+                    "expiration",
+                    "isActive"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "required": [
+        "productAddOns",
+        "productId",
+        "skuId",
+        "expiration",
+        "isActive",
+        "isTrial",
+        "isTrialOwnedByThisUser",
+        "trialTimeRemaining"
+    ],
+    "additionalProperties": false
+}
+```

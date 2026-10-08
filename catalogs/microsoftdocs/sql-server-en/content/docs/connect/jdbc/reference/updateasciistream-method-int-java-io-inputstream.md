@@ -1,0 +1,49 @@
+---
+title: updateAsciiStream method (int, java.io.InputStream)
+description: "updateAsciiStream Method (int, java.io.InputStream)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# updateAsciiStream Method (int, java.io.InputStream)
+
+
+  Updates the designated column with an ASCII stream value.  
+  
+## Syntax  
+  
+```  
+  
+public void updateAsciiStream(int columnIndex,  
+                              java.io.InputStream x)  
+```  
+  
+#### Parameters  
+ *columnIndex*  
+  
+ An **int** that indicates the column index.  
+  
+ *x*  
+  
+ An InputStream object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This updateAsciiStream method is specified by the updateAsciiStream method in the java.sql.ResultSet interface.  
+  
+ This method passes ASCII characters (bytes) from an InputStream object to convertible character columns, which are the ASCII range [0x00 - 0x7F] of Unicode, and 874, 932, 936, 949, 950, and 1250 through 1258 code pages. This method performs a conversion to the destination collation page. Trying to update an unconvertible destination column will cause an exception to be thrown. For binary columns, raw bytes are passed.  
+  
+ Using this method for the **image**, **text**, and **ntext** SQL Server 
+ data types might affect performance.  
+  
+## Related content
+
+- [updateAsciiStream Method (SQLServerResultSet)](updateasciistream-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

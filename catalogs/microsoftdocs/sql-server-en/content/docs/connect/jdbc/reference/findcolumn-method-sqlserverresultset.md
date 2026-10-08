@@ -1,0 +1,46 @@
+---
+title: "findColumn Method (SQLServerResultSet)"
+description: "findColumn Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.findColumn"
+apitype: "Assembly"
+---
+# findColumn Method (SQLServerResultSet)
+
+
+  Retrieves the index of the first matching column for the given column name in this [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public int findColumn(java.lang.String columnName)  
+```  
+  
+#### Parameters  
+ *columnName*  
+  
+ A **String** that contains the name of the column.  
+  
+## Return Value  
+ An **int** that indicates the column index.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This findColumn method is specified by the findColumn method in the java.sql.ResultSet interface.  
+  
+ If there are multiple columns with the same name, the findColumn method returns the first case-sensitive match. If there is no case-sensitive match, this method returns the first case-insensitive match.  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

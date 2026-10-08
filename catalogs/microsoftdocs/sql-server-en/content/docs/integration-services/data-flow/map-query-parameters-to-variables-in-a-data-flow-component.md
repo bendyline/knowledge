@@ -1,0 +1,60 @@
+---
+title: "Map Query Parameters to Variables in a Data Flow Component"
+description: "Map Query Parameters to Variables in a Data Flow Component"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+helpviewer_keywords:
+  - "queries [Integration Services], parameter mapping"
+  - "parameters [Integration Services]"
+  - "mapping query parameters to variables [Integration Services]"
+  - "variables [Integration Services], mapping parameters to"
+---
+# Map Query Parameters to Variables in a Data Flow Component
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  When you configure the OLE DB source to use parameterized queries, you can map the parameters to variables.  
+  
+ The OLE DB source uses parameterized queries to filter data when the source connects to a data source.  
+  
+### To map a query parameter to a variable  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ project that contains the package you want.  
+  
+2.  In Solution Explorer, double-click the package to open it.  
+  
+3.  Click the **Data Flow** tab, and then, from the **Toolbox**, drag the OLE DB source to the design surface.  
+  
+4.  Right-click the OLE DB source, and then click **Edit**.  
+  
+5.  In the **OLE DB Source Editor**, select an OLE DB connection manager to use to connect to the data source, or click **New** to create a new OLE DB connection manager.  
+  
+6.  Select the **SQL command** option for data access mode, and then type a parameterized query in the **SQL command text** pane.  
+  
+7.  Click **Parameters**.  
+  
+8.  In the **Set Query Parameters** dialog box, map each parameter in the **Parameters** list to a variable in the **Variables** list, or create a new variable by clicking **\<New variable>**. Click **OK**.  
+  
+    > **Note:**  
+    >  Only system variables and user-defined variables that are in the scope of the package, a parent container such as a Foreach Loop, or the Data Flow task that contains the data flow component are available for mapping. The variable must have a data type that is compatible with the column in the WHERE clause to which the parameter is assigned.  
+  
+9. You can click **Preview** to view up to 200 rows of the data that the query returns.  
+  
+10. To save the updated package, click **Save Selected Items** on the **File** menu.  
+  
+## Related content
+
+- [OLE DB Source](ole-db-source.md)
+- [Lookup Transformation](transformations/lookup-transformation.md)

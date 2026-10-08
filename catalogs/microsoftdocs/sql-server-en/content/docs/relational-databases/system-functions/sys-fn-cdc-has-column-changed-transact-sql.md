@@ -1,0 +1,64 @@
+---
+title: "sys.fn_cdc_has_column_changed (Transact-SQL)"
+description: "sys.fn_cdc_has_column_changed (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.fn_cdc_has_column_changed_TSQL"
+  - "sys.fn_cdc_has_column_changed"
+  - "fn_cdc_has_column_changed_TSQL"
+  - "fn_cdc_has_column_changed"
+helpviewer_keywords:
+  - "sys.fn_cdc_has_column_changed"
+  - "fn_cdc_has_column_changed"
+dev_langs:
+  - "TSQL"
+---
+# sys.fn_cdc_has_column_changed (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Identifies whether the specified update mask indicates that the specified column has been updated in the associated change row.  
+  
+ 
+  
+## Syntax  
+  
+```  
+  
+sys.fn_cdc_has_column_changed ( 'capture_instance','column_name' , update_mask )  
+```  
+  
+## Arguments  
+ **'** *capture_instance* **'**  
+ Is the name of the capture instance. *capture_instance* is **sysname**.  
+  
+ **'** *column_name* **'**  
+ Is the captured column of the specified capture instance to report on. *column_name* is **sysname**.  
+  
+ *update_mask*  
+ Is the mask identifying updated columns in any associated change row. *update_mask* is **varbinary(128)**.  
+  
+## Return Type  
+ **bit**  
+  
+## Remarks  
+ You can use this function to extract information from an update mask returned in a query for change data. It is most useful in post-processing the update mask when you need to know whether a particular column in the associated change row has been modified. For more information, see [About Change Data Capture (SQL Server)](../track-changes/about-change-data-capture-sql-server.md).  
+  
+ When this information will be returned as part of a change data query, we recommend that you use the functions [sys.fn_cdc_get_column_ordinal](sys-fn-cdc-get-column-ordinal-transact-sql.md) and [sys.fn_cdc_is_bit_set](sys-fn-cdc-is-bit-set-transact-sql.md) instead of this function. Use the function fn_cdc_get_column_ordinal before querying for change data so that the desired column ordinal is only computed once. Use fn_cdc_is_bit_set within the query to extract the information from the update mask for each returned row.  
+  
+## Permissions  
+ Requires membership in the sysadmin fixed server role or db_owner fixed database role. For all other users, requires SELECT permission on all captured columns in the source table and, if a gating role for the capture instance was defined, membership in that database role.  
+  
+## Related content
+
+- [cdc.&lt;capture_instance&gt;_CT (Transact-SQL)](../system-tables/cdc-capture-instance-ct-transact-sql.md)
+- [cdc.captured_columns (Transact-SQL)](../system-tables/cdc-captured-columns-transact-sql.md)

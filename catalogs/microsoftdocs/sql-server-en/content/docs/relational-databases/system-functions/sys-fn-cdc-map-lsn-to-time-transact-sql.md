@@ -1,0 +1,71 @@
+---
+title: "sys.fn_cdc_map_lsn_to_time (Transact-SQL)"
+description: "sys.fn_cdc_map_lsn_to_time (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.fn_cdc_map_lsn_to_time_TSQL"
+  - "sys.fn_cdc_map_lsn_to_time"
+  - "fn_cdc_map_lsn_to_time_TSQL"
+  - "fn_cdc_map_lsn_to_time"
+helpviewer_keywords:
+  - "sys.fn_cdc_map_lsn_to_time"
+  - "fn_cdc_map_lsn_to_time"
+dev_langs:
+  - "TSQL"
+---
+# sys.fn_cdc_map_lsn_to_time (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns the date and time value from the **tran_end_time** column in the [cdc.lsn_time_mapping](../system-tables/cdc-lsn-time-mapping-transact-sql.md) system table for the specified log sequence number (LSN). You can use this function to systematically map LSN ranges to date ranges in a change table.  
+  
+ 
+  
+## Syntax  
+  
+```  
+  
+sys.fn_cdc_map_lsn_to_time ( lsn_value )  
+```  
+  
+## Arguments  
+ *lsn_value*  
+ Is the LSN value to match against. *lsn_value* is **binary(10)**.  
+  
+## Return Type  
+ **datetime**  
+  
+## Remarks  
+ This function can be used to determine the time that a change was committed based upon the **__$start_lsn** value returned in the row of change data.  
+  
+## Permissions  
+ Requires membership in the **public** role.  
+  
+## Examples  
+ The following example uses the function `sys.fn_cdc_map_lsn_to_time` to determine the commit time associated with the last change processed in the specified LSN interval for the `HumanResources_Employee` capture instance.  
+  
+```  
+USE AdventureWorks2022;  
+GO  
+DECLARE @max_lsn binary(10);  
+SELECT @max_lsn = MAX(__$start_lsn)  
+FROM cdc.fn_cdc_get_all_changes_HumanResources_Employee(@from_lsn, @to_lsn, 'all');  
+SELECT sys.fn_cdc_map_lsn_to_time(@max_lsn);  
+GO   
+```  
+  
+## Related content
+
+- [cdc.lsn_time_mapping (Transact-SQL)](../system-tables/cdc-lsn-time-mapping-transact-sql.md)
+- [sys.fn_cdc_map_time_to_lsn (Transact-SQL)](sys-fn-cdc-map-time-to-lsn-transact-sql.md)
+- [cdc.fn_cdc_get_net_changes_&lt;capture_instance&gt; (Transact-SQL)](cdc-fn-cdc-get-net-changes-capture-instance-transact-sql.md)
+- [cdc.fn_cdc_get_all_changes_&lt;capture_instance&gt; (Transact-SQL)](cdc-fn-cdc-get-all-changes-capture-instance-transact-sql.md)

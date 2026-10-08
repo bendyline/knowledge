@@ -1,0 +1,123 @@
+---
+title: "Turn Reporting Services features on or off"
+description: Learn how to turn off individual features in native mode Reporting Services. There are different ways to configure features.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Reporting Services, configuration"
+  - "security [Reporting Services], strategies"
+---
+# Turn Reporting Services features on or off
+  You can turn off report server features that you don't use as part of a lockdown strategy for reducing the attack surface of a production report server. In most cases, you want to run  Reporting Services 
+ features concurrently to use all of the functionality provided in  Reporting Services 
+. However, depending on your deployment model, you can disable the features that you don't require. For example, you can enable only the background processing if all report processing is configured as scheduled operations. Similarly, you can run just the Report Server web service if you only want interactive, on-demand reporting.  
+  
+ The procedures in this article show you how to turn off native mode  Reporting Services 
+ features. Features can be configured in different ways, such as by editing the `RsReportServer.config` file directly or by using the **Surface Area Configuration for Reporting Services** facet of Policy-Based Management in  SQL Server Management Studio 
+. Use the links to locate the procedure or procedures that explain how to turn a feature on or off:  
+  
+-   [Report server web service](#RSWebSvc)  
+  
+-   [Scheduled events and processing](#Sched)  
+  
+-   [Web portal](#WebPortal)  
+  
+-   [Windows integrated security for report data sources](#WinIntSec)  
+  
+##  <a name="RSWebSvc"></a> Report server web service  
+  
+### Turn on or off the report server web service by editing configuration  
+  
+1.  Open the `RsReportServer.config` file in a text editor. For more information, see [Modify a Reporting Services configuration file (RSreportserver.config)](modify-a-reporting-services-configuration-file-rsreportserver-config.md).  
+  
+2.  To turn on the Report Server web service, set **IsWebServiceEnabled** to **true**:  
+  
+    ```  
+    <IsWebServiceEnabled>true</IsWebServiceEnabled>  
+    ```  
+  
+3.  To turn off the Report Server web service, set **IsWebServiceEnabled** to **false**:  
+  
+    ```  
+    <IsWebServiceEnabled>false</IsWebServiceEnabled>  
+    ```  
+  
+4.  Save your changes and then close the file.  
+  
+#### Turn on or off the Report Server web service by using SQL Server Management Studio  
+  
+1.  Open  SQL Server Management Studio 
+ and connect to the  Reporting Services 
+ instance that you want to configure.  
+  
+2.  In Object Explorer, right-click the  Reporting Services 
+ node, point to **Policies**, and select **Facets**.  
+  
+3.  In the **Facet** list, select **Surface Area Configuration for Reporting Services**.  
+  
+4.  Under **Facet Properties**:  
+  
+    -   To turn on the Report Server Web service, set **WebServiceAndHTTPAccessEnabled** to **True**.  
+  
+    -   To turn off the Report Server Web service, set **WebServiceAndHTTPAccessEnabled** to **False**.  
+  
+5.  Select **OK**.
+  
+##  <a name="Sched"></a> Scheduled events and delivery  
+  
+#### Turn on or off scheduled events and delivery by editing configuration  
+  
+1.  Open the `RsReportServer.config` file in a text editor. For more information, see [Modify a Reporting Services configuration file (RSreportserver.config)](modify-a-reporting-services-configuration-file-rsreportserver-config.md).  
+  
+1.  To turn on scheduled report processing and delivery, set **IsSchedulingService**, **IsNotificationService**, and **IsEventService** to **true**:  
+  
+    ```  
+    <IsSchedulingService>true</IsSchedulingService>  
+    <IsNotificationService>true</IsNotificationService>  
+    <IsEventService>true</IsEventService>  
+    ```  
+  
+1.  To turn off scheduled report processing and delivery, set **IsSchedulingService**, **IsNotificationService**, and **IsEventService** to **false**:  
+  
+    ```  
+    <IsSchedulingService>false</IsSchedulingService>  
+    <IsNotificationService>false</IsNotificationService>  
+    <IsEventService>false</IsEventService>  
+    ```  
+  
+1.  Save your changes and then close the file.  
+  
+> **Note:**  
+>  You can't turn off background processing completely because it provides database maintenance functionality that is required for server operations.  
+  
+##  <a name="WebPortal"></a> Web portal
+  
+As of SQL Server 2016 Reporting Services Cumulative Update 2, the web portal is always be enabled.
+  
+##  <a name="WinIntSec"></a> Windows integrated security  
+  
+### Turn on or off Windows integrated security by using SQL Server Management Studio  
+  
+1.  Open  SQL Server Management Studio 
+ and connect to the  Reporting Services 
+ instance that you want to configure.  
+  
+2.  In Object Explorer, right-click the  Reporting Services 
+ node, and select **Properties**.  
+  
+3.  In the **Server Properties** dialog, under **Select a page**, select **Security**.  
+  
+    -   To turn on Windows integrated security, select the **Enable Windows integrated security for report data sources** option.  
+  
+    -   To turn off Windows integrated security, clear the **Enable Windows integrated security for report data sources** option.  
+  
+4.  Select **OK**.  
+  
+## Related content
+
+- [What is the Report Server configuration manager (native mode)?](../install-windows/reporting-services-configuration-manager-native-mode.md)
+- [Try the Reporting Services forum](https://go.microsoft.com/fwlink/?LinkId=620231)

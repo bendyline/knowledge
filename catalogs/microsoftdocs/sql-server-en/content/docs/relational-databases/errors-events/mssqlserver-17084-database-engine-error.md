@@ -1,0 +1,47 @@
+---
+title: "MSSQLSERVER_17084"
+description: "MSSQLSERVER_17084"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "17084 (Database Engine error)"
+---
+# MSSQLSERVER_17084
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+|  |
+| Event ID | 17084 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | P3_ATOMIC_WITH_MISSING_OPTION |
+| Message Text | The WITH clause of BEGIN ATOMIC statement must specify a value for the option '%ls'. |
+  
+## Explanation  
+The WITH clause of BEGIN ATOMIC statement did not specify a value for an option.  
+  
+## User Action  
+**ATOMIC** blocks require values for the **WITH** options **TRANSACTION ISOLATION LEVEL** and **LANGUAGE**. For example::  
+  
+```  
+BEGIN ATOMIC WITH (TRANSACTION ISOLATION LEVEL = SNAPSHOT, LANGUAGE= N'us_english')  
+```  
+  
+For more information, see [In-Memory OLTP (In-Memory Optimization)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/in-memory-oltp/in-memory-oltp-in-memory-optimization.md).  
+  
+## Related content
+
+- [In-Memory OLTP (In-Memory Optimization)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/in-memory-oltp/in-memory-oltp-in-memory-optimization.md)

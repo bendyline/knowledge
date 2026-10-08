@@ -1,0 +1,2 @@
+> **Important:**
+> You can't acquire short codes on trial accounts or by using Azure free credits. For more information, see [subscription eligibility](../concepts/numbers/sub-eligibility-number-capability.md).

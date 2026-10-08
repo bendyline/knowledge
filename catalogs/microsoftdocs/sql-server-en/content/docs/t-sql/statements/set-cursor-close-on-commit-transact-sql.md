@@ -1,0 +1,146 @@
+---
+title: "SET CURSOR_CLOSE_ON_COMMIT (Transact-SQL)"
+description: SET CURSOR_CLOSE_ON_COMMIT (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "07/26/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "CURSOR_CLOSE_ON_COMMIT"
+  - "SET CURSOR_CLOSE_ON_COMMIT"
+  - "CURSOR_CLOSE_ON_COMMIT_TSQL"
+  - "SET_CURSOR_CLOSE_ON_COMMIT_TSQL"
+helpviewer_keywords:
+  - "CURSOR_CLOSE_ON_COMMIT option"
+  - "transactions [SQL Server], cursors"
+  - "closing cursors"
+  - "cursors [SQL Server], closing"
+  - "SET CURSOR_CLOSE_ON_COMMIT statement"
+dev_langs:
+  - "TSQL"
+---
+# SET CURSOR_CLOSE_ON_COMMIT (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Controls the behavior of the  Transact-SQL  COMMIT TRANSACTION statement. The default value for this setting is OFF. This means that the server will not close cursors when you commit a transaction.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+  
+SET CURSOR_CLOSE_ON_COMMIT { ON | OFF }  
+```  
+  
+## Remarks
+ When SET CURSOR_CLOSE_ON_COMMIT is ON, this setting closes any open cursors on commit or rollback in compliance with ISO. When SET CURSOR_CLOSE_ON_COMMIT is OFF, the cursor is not closed when a transaction is committed.  
+  
+> **Note:**  
+>  SET CURSOR_CLOSE_ON_COMMIT to ON will not close open cursors on rollback when the rollback is applied to a savepoint_name from a SAVE TRANSACTION statement.  
+  
+ When SET CURSOR_CLOSE_ON_COMMIT is OFF, a ROLLBACK statement closes only open asynchronous cursors that are not fully populated. STATIC or INSENSITIVE cursors that were opened after modifications were made will no longer reflect the state of the data if the modifications are rolled back.  
+  
+ SET CURSOR_CLOSE_ON_COMMIT controls the same behavior as the CURSOR_CLOSE_ON_COMMIT database option. If CURSOR_CLOSE_ON_COMMIT is set to ON or OFF, that setting is used on the connection. If SET CURSOR_CLOSE_ON_COMMIT has not been specified, the value in the **is_cursor_close_on_commit_on** column in the **sys.databases** catalog view applies.  
+  
+ The  SQL Server 
+ Native Client OLE DB Provider for  SQL Server 
+ and the  SQL Server 
+ Native Client ODBC driver both set CURSOR_CLOSE_ON_COMMIT to OFF when they connect. DB-Library does not automatically set the CURSOR_CLOSE_ON_COMMIT value.  
+  
+ When SET ANSI_DEFAULTS is ON, SET CURSOR_CLOSE_ON_COMMIT is enabled.  
+  
+ The setting of SET CURSOR_CLOSE_ON_COMMIT is set at execute or run time and not at parse time.  
+  
+ To view the current setting for this setting, run the following query.  
+  
+```sql
+DECLARE @CURSOR_CLOSE VARCHAR(3) = 'OFF';  
+IF ( (4 & @@OPTIONS) = 4 ) SET @CURSOR_CLOSE = 'ON';  
+SELECT @CURSOR_CLOSE AS CURSOR_CLOSE_ON_COMMIT;  
+```  
+  
+## Permissions  
+ Requires membership in the **public** role.  
+  
+## Examples  
+ The following example defines a cursor in a transaction and attempts to use it after the transaction is committed.  
+  
+```sql
+-- SET CURSOR_CLOSE_ON_COMMIT  
+-------------------------------------------------------------------------------  
+SET NOCOUNT ON;  
+  
+CREATE TABLE t1 (a INT);  
+GO   
+  
+INSERT INTO t1   
+VALUES (1), (2);  
+GO  
+  
+PRINT '-- SET CURSOR_CLOSE_ON_COMMIT ON';  
+GO  
+SET CURSOR_CLOSE_ON_COMMIT ON;  
+GO  
+PRINT '-- BEGIN TRAN';  
+BEGIN TRAN;  
+PRINT '-- Declare and open cursor';  
+DECLARE testcursor CURSOR FOR  
+    SELECT a FROM t1;  
+OPEN testcursor;  
+PRINT '-- Commit tran';  
+COMMIT TRAN;  
+PRINT '-- Try to use cursor';  
+FETCH NEXT FROM testcursor;  
+CLOSE testcursor;  
+DEALLOCATE testcursor;  
+GO  
+PRINT '-- SET CURSOR_CLOSE_ON_COMMIT OFF';  
+GO  
+SET CURSOR_CLOSE_ON_COMMIT OFF;  
+GO  
+PRINT '-- BEGIN TRAN';  
+BEGIN TRAN;  
+PRINT '-- Declare and open cursor';  
+DECLARE testcursor CURSOR FOR  
+    SELECT a FROM t1;  
+OPEN testcursor;  
+PRINT '-- Commit tran';  
+COMMIT TRAN;  
+PRINT '-- Try to use cursor';  
+FETCH NEXT FROM testcursor;  
+CLOSE testcursor;  
+DEALLOCATE testcursor;  
+GO  
+DROP TABLE t1;  
+GO  
+```  
+  
+## Related content
+
+- [ALTER DATABASE (Transact-SQL)](alter-database-transact-sql.md)
+- [BEGIN TRANSACTION (Transact-SQL)](../language-elements/begin-transaction-transact-sql.md)
+- [CLOSE (Transact-SQL)](../language-elements/close-transact-sql.md)
+- [COMMIT TRANSACTION (Transact-SQL)](../language-elements/commit-transaction-transact-sql.md)
+- [ROLLBACK TRANSACTION (Transact-SQL)](../language-elements/rollback-transaction-transact-sql.md)
+- [SET Statements (Transact-SQL)](set-statements-transact-sql.md)
+- [SET ANSI_DEFAULTS (Transact-SQL)](set-ansi-defaults-transact-sql.md)

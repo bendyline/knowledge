@@ -1,0 +1,660 @@
+---
+title: "Linux and macOS Installation for the Drivers for PHP"
+description: "In these instructions, learn how to install the Microsoft Drivers for PHP for SQL Server on Linux or macOS."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 08/25/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+ai-usage: ai-assisted
+ms.custom: intro-installation, linux-related-content
+---
+
+# Linux and macOS Installation Tutorial for the Microsoft Drivers for PHP for SQL Server
+
+The following instructions assume a clean environment and show how to install PHP 8.3, the Microsoft ODBC driver, the Apache web server, and the Microsoft Drivers for PHP for SQL Server on Ubuntu, Red Hat, Debian, SUSE, Alpine, and macOS. You can also download the prebuilt binaries from the [Microsoft Drivers for PHP for SQL Server](https://github.com/Microsoft/msphpsql/releases) GitHub project page and install them by following the instructions in [Loading the Microsoft Drivers for PHP for SQL Server](loading-the-php-sql-driver.md). For an explanation of extension loading and why the extensions aren't added to php.ini, see the section on [loading the drivers](loading-the-php-sql-driver.md#loading-the-driver-at-php-startup).
+
+Install the drivers with PIE, the PHP Installer for Extensions, which is the official installer for PHP extensions and replaces the deprecated PECL. Follow Step 1 and Step 2 for your platform to install PHP and the Microsoft ODBC driver, then use [Install the drivers with PIE](#install-the-drivers-with-pie) in place of Step 3. The Step 3 sections document the PECL commands, which still work.
+
+The following instructions install PHP 8.3 by default, if the PHP 8.3 packages are available. Some supported Linux distros default to old versions of PHP, which aren't supported for the latest version of the PHP drivers for SQL Server. To install PHP 8.4 or 8.5 instead, see the notes at the beginning of each section. If you install with PECL, you might need to run `pecl channel-update pecl.php.net` first.
+
+Also included are instructions for installing the PHP FastCGI Process Manager, PHP-FPM, on Ubuntu. PHP-FPM is needed if you're using the nginx web server instead of Apache.
+
+While these instructions contain commands to install both SQLSRV and PDO_SQLSRV drivers, the drivers can be installed and function independently. Users comfortable with customizing their configuration can adjust these instructions to be specific to SQLSRV or PDO_SQLSRV. Both drivers have the same dependencies except where noted.
+
+For the latest supported operating systems versions, see [Support Matrix](microsoft-php-drivers-for-sql-server-support-matrix.md).
+
+> **Note:**
+> Make sure to install the latest ODBC driver version to ensure optimal performance and security. For installation instructions, see [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md) or [Install the Microsoft ODBC driver for SQL Server (macOS)](../odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos.md).
+
+## Install the drivers with PIE
+
+[PIE](https://github.com/php/pie), the PHP Installer for Extensions, is the official installer for PHP extensions and replaces PECL, which is deprecated. The Microsoft Drivers for PHP for SQL Server support PIE in version 5.13.2 and later versions on Linux and macOS.
+
+PIE installs only the drivers. Complete Step 1 and Step 2 for your platform first, so that PHP and the Microsoft ODBC driver are already in place.
+
+### Install PIE
+
+PIE requires PHP 8.1 or later to run, but it can install an extension into any other PHP installation on the machine. PIE is distributed as a PHAR archive, in the same way as Composer.
+
+The following commands install PIE to `/usr/local/bin/pie`:
+
+```bash
+curl -fL --output /tmp/pie.phar https://github.com/php/pie/releases/latest/download/pie.phar
+sudo mv /tmp/pie.phar /usr/local/bin/pie
+sudo chmod +x /usr/local/bin/pie
+```
+
+Optionally, before you move the file, confirm that the PHAR was published by the PIE project. This step requires the [GitHub CLI](https://cli.github.com/):
+
+```bash
+gh attestation verify --owner php /tmp/pie.phar
+```
+
+For other ways to install PIE, see the [PIE documentation](https://github.com/php/pie).
+
+### Install the SQLSRV and PDO_SQLSRV drivers
+
+On Apple silicon, set the compiler flags first. Homebrew installs the unixODBC headers under `/opt/homebrew`, which isn't in the default compiler search path, and the build fails with `fatal error: 'sql.h' file not found` without them:
+
+```bash
+export CPPFLAGS="-I/opt/homebrew/opt/unixodbc/include/"
+export LDFLAGS="-L/opt/homebrew/lib/"
+```
+
+Install each driver with its own command:
+
+```bash
+pie install microsoft/sqlsrv
+pie install microsoft/pdo_sqlsrv
+```
+
+PIE might need elevated privileges and can prompt you for your password. PIE runs the install command without elevation first, and retries it with `sudo` only if the command fails because of permissions.
+
+On Linux and macOS, PIE checks for `gcc`, `make`, `autoconf`, `pkg-config`, `libtool`, and `phpize`, and offers to install any that are missing through your system package manager before it compiles the extension.
+
+> **Note:**
+> On Debian and Ubuntu, PIE proposes the unversioned `php-dev` package when `phpize` is missing, which installs the dev headers for the distro's default PHP. If you installed a specific PHP version, install the matching package yourself, such as `php8.3-dev`, instead of accepting the offer.
+
+Install the two drivers separately rather than in a single command. They're independent of each other, and PIE fails when several extensions named in one command share configure options.
+
+## Installing on Ubuntu
+
+> **Note:**
+> To install PHP 8.4 or 8.5, replace 8.3 with 8.4 or 8.5 in the following commands.
+
+### Step 1. Install PHP (Ubuntu)
+
+```bash
+sudo su
+add-apt-repository ppa:ondrej/php -y
+apt-get update
+apt-get install php8.3 php8.3-dev php8.3-xml -y --allow-unauthenticated
+```
+
+### Step 2. Install prerequisites (Ubuntu)
+
+Install the ODBC driver for Ubuntu by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md). Make sure to also install the `unixodbc-dev` package. It's used by the `pecl` command to install the PHP drivers.
+
+```bash
+sudo apt-get install unixodbc-dev
+```
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (Ubuntu)
+
+```bash
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+sudo su
+printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/8.3/mods-available/sqlsrv.ini
+printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/8.3/mods-available/pdo_sqlsrv.ini
+exit
+sudo phpenmod -v 8.3 sqlsrv pdo_sqlsrv
+```
+
+If there's only one PHP version in the system, then the last step can be simplified to `phpenmod sqlsrv pdo_sqlsrv`.
+
+### Step 4. Install Apache and configure driver loading (Ubuntu)
+
+```bash
+sudo su
+apt-get install libapache2-mod-php8.3 apache2
+a2dismod mpm_event
+a2enmod mpm_prefork
+a2enmod php8.3
+exit
+```
+
+### Step 5. Restart Apache and test the sample script (Ubuntu)
+
+```bash
+sudo service apache2 restart
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Installing on Ubuntu with PHP-FPM
+
+> **Note:**
+> To install PHP 8.4 or 8.5, replace 8.3 with 8.4 or 8.5 in the following commands.
+
+### Step 1. Install PHP (Ubuntu with PHP-FPM)
+
+```bash
+sudo su
+add-apt-repository ppa:ondrej/php -y
+apt-get update
+apt-get install php8.3 php8.3-dev php8.3-fpm php8.3-xml -y --allow-unauthenticated
+```
+
+Verify the status of the PHP-FPM service by running:
+
+```bash
+systemctl status php8.3-fpm
+```
+
+### Step 2. Install prerequisites (Ubuntu with PHP-FPM)
+
+Install the ODBC driver for Ubuntu by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md). Make sure to also install the `unixodbc-dev` package. It's used by the `pecl` command to install the PHP drivers.
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (Ubuntu with PHP-FPM)
+
+```bash
+sudo pecl config-set php_ini /etc/php/8.3/fpm/php.ini
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+sudo su
+printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/8.3/mods-available/sqlsrv.ini
+printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/8.3/mods-available/pdo_sqlsrv.ini
+exit
+sudo phpenmod -v 8.3 sqlsrv pdo_sqlsrv
+```
+
+If there's only one PHP version in the system, then the last step can be simplified to `phpenmod sqlsrv pdo_sqlsrv`.
+
+Verify that `sqlsrv.ini` and `pdo_sqlsrv.ini` are located in `/etc/php/8.3/fpm/conf.d/`:
+
+```bash
+ls /etc/php/8.3/fpm/conf.d/*sqlsrv.ini
+```
+
+Restart the PHP-FPM service:
+
+```bash
+sudo systemctl restart php8.3-fpm
+```
+
+### Step 4. Install and configure nginx (Ubuntu with PHP-FPM)
+
+```bash
+sudo apt-get update
+sudo apt-get install nginx
+sudo systemctl status nginx
+```
+
+To configure nginx, you must edit the `/etc/nginx/sites-available/default` file. Add `index.php` to the list below the section that says `# Add index.php to the list if you are using PHP`:
+
+```text
+# Add index.php to the list if you are using PHP
+index index.html index.htm index.nginx-debian.html index.php;
+```
+
+Uncomment and modify the section following `# pass PHP scripts to FastCGI server` as follows:
+
+```text
+# pass PHP scripts to FastCGI server
+#
+location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+}
+```
+
+### Step 5. Restart nginx and test the sample script (Ubuntu with PHP-FPM)
+
+```bash
+sudo systemctl restart nginx.service
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Installing on Red Hat
+
+### Step 1. Install PHP (Red Hat)
+
+To install PHP on Red Hat 8, run the following commands:
+> **Note:**
+> To install PHP 8.4 or 8.5, replace remi-8.3 with remi-8.4 or remi-8.5 respectively in the following commands.
+
+```bash
+sudo su
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+dnf install yum-utils
+dnf module reset php
+dnf module install php:remi-8.3
+subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+dnf update
+# Note: The php-pdo package is required only for the PDO_SQLSRV driver
+dnf install php-pdo php-pear php-devel
+```
+
+### Step 2. Install prerequisites (Red Hat)
+
+Install the ODBC driver for Red Hat 8 by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md). Make sure to also install the `unixodbc-dev` package. It's used by the `pecl` command to install the PHP drivers.
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (Red Hat)
+
+```bash
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+sudo su
+echo extension=pdo_sqlsrv.so >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/30-pdo_sqlsrv.ini
+echo extension=sqlsrv.so >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/20-sqlsrv.ini
+exit
+```
+
+You can alternatively install from the Remi repo:
+
+```bash
+sudo yum install php-sqlsrv
+```
+
+### Step 4. Install Apache (Red Hat)
+
+```bash
+sudo yum install httpd
+```
+
+SELinux is installed by default and runs in Enforcing mode. To allow Apache to connect to databases through SELinux, run the following command:
+
+```bash
+sudo setsebool -P httpd_can_network_connect_db 1
+```
+
+### Step 5. Restart Apache and test the sample script (Red Hat)
+
+```bash
+sudo apachectl restart
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Installing on Debian
+
+> **Note:**
+> To install PHP 8.4 or 8.5, replace 8.3 in the following commands with 8.4 or 8.5.
+
+### Step 1. Install PHP (Debian)
+
+```bash
+sudo su
+apt-get install curl apt-transport-https
+wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
+apt-get update
+apt-get install -y php8.3 php8.3-dev php8.3-xml php8.3-intl
+```
+
+### Step 2. Install prerequisites (Debian)
+
+Install the ODBC driver for Debian by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md). Make sure to also install the `unixodbc-dev` package. It's used by the `pecl` command to install the PHP drivers.
+
+You might also need to generate the correct locale to get PHP output to display correctly in a browser. For example, for the en_US UTF-8 locale, run the following commands:
+
+```bash
+sudo su
+sed -i 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+```
+
+You might need to add `/usr/sbin` to your `$PATH`, as the `locale-gen` executable is located there.
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (Debian)
+
+```bash
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+sudo su
+printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/8.3/mods-available/sqlsrv.ini
+printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/8.3/mods-available/pdo_sqlsrv.ini
+exit
+sudo phpenmod -v 8.3 sqlsrv pdo_sqlsrv
+```
+
+If there's only one PHP version in the system, then the last step can be simplified to `phpenmod sqlsrv pdo_sqlsrv`. As with `locale-gen`, `phpenmod` is located in `/usr/sbin` so you might need to add this directory to your `$PATH`.
+
+### Step 4. Install Apache and configure driver loading (Debian)
+
+```bash
+sudo su
+apt-get install libapache2-mod-php8.3 apache2
+a2dismod mpm_event
+a2enmod mpm_prefork
+a2enmod php8.3
+```
+
+### Step 5. Restart Apache and test the sample script (Debian)
+
+```bash
+sudo service apache2 restart
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Installing on SUSE
+
+> **Note:**
+> In the following instructions, replace `<SuseVersion>` with your version of SUSE - if you're using SUSE Linux Enterprise Server 15, it's SLE_15_SP3 or SLE_15_SP4 (or higher). Not all versions of PHP are available for all versions of SUSE Linux - refer to `http://download.opensuse.org/repositories/devel:/languages:/php` to see which versions of SUSE have the default version PHP available, or check `http://download.opensuse.org/repositories/devel:/languages:/php:/` to see which other versions of PHP are available for which versions of SUSE.
+
+### Step 1. Install PHP (SUSE)
+
+```bash
+sudo su
+zypper -n ar -f https://download.opensuse.org/repositories/devel:languages:php/<SuseVersion>/devel:languages:php.repo
+zypper --gpg-auto-import-keys refresh
+zypper -n install php8 php8-pdo php8-devel php8-openssl
+```
+
+### Step 2. Install prerequisites (SUSE)
+
+Install the ODBC driver for SUSE by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md). Make sure to also install the `unixodbc-dev` package. It's used by the `pecl` command to install the PHP drivers.
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (SUSE)
+
+```bash
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+sudo su
+echo extension=pdo_sqlsrv.so >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/pdo_sqlsrv.ini
+echo extension=sqlsrv.so >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/sqlsrv.ini
+exit
+```
+
+### Step 4. Install Apache and configure driver loading (SUSE)
+
+```bash
+sudo su
+zypper install apache2 apache2-mod_php8
+a2enmod php8
+echo "extension=sqlsrv.so" >> /etc/php8/apache2/php.ini
+echo "extension=pdo_sqlsrv.so" >> /etc/php8/apache2/php.ini
+exit
+```
+
+### Step 5. Restart Apache and test the sample script (SUSE)
+
+```bash
+sudo systemctl restart apache2
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Installing on Alpine
+
+> **Note:**
+> PHP 8.3 or above might be available from testing or edge repositories for Alpine. You can instead compile PHP from source.
+
+### Step 1. Install PHP (Alpine)
+
+PHP packages for Alpine can be found in the `edge/community` repository. Check [Enable Community Repository](https://wiki.alpinelinux.org/wiki/Enable_Community_Repository) on their WIKI page. Add the following line to `/etc/apk/repositories`, replacing `<mirror>` with the URL of an Alpine repository mirror:
+
+```bash
+http://<mirror>/alpine/edge/community
+```
+
+Then run:
+
+```bash
+sudo su
+apk update
+# Note: The php*-pdo package is required only for the PDO_SQLSRV driver
+# For PHP 8.*
+apk add php8 php8-dev php8-pear php8-pdo php8-openssl autoconf make g++
+# The following symbolic links are optional but useful
+ln -s /usr/bin/php8 /usr/bin/php
+ln -s /usr/bin/phpize8 /usr/bin/phpize
+ln -s /usr/bin/pecl8 /usr/bin/pecl
+ln -s /usr/bin/php-config8 /usr/bin/php-config
+```
+
+### Step 2. Install prerequisites (Alpine)
+
+Install the ODBC driver for Alpine by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (Linux)](../odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server.md). Make sure to also install the `unixodbc-dev` package (`sudo apk add unixodbc-dev`). It's used by the `pecl` command to install the PHP drivers.
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (Alpine)
+
+```bash
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+sudo su
+echo extension=pdo_sqlsrv.so >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/10_pdo_sqlsrv.ini
+echo extension=sqlsrv.so >> `php --ini | grep "Scan for additional .ini files" | sed -e "s|.*:\s*||"`/20_sqlsrv.ini
+```
+
+### Step 4. Install Apache and configure driver loading (Alpine)
+
+```bash
+# For PHP 8.*
+sudo apk add php8-apache2 apache2
+```
+
+### Step 5. Restart Apache and test the sample script (Alpine)
+
+```bash
+sudo rc-service apache2 restart
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Installing on macOS
+
+If you don't already have it, install brew as follows:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+> **Note:**
+> To install PHP 8.4 or 8.5, replace php@8.3 with php@8.4 or php@8.5 respectively in the following commands.
+
+### Step 1. Install PHP (macOS)
+
+```bash
+brew install php@8.3
+```
+
+PHP should now be in your path. Run `php -v` to verify that you're running the correct version of PHP. If PHP isn't in your path or it isn't the correct version, run the following commands:
+
+```bash
+brew link --force --overwrite php@8.3
+```
+
+If using Apple M1 ARM64, you might need to set the path:
+
+```bash
+export PATH="/opt/homebrew/bin:$PATH"
+```
+
+### Step 2. Install prerequisites (macOS)
+
+Install the ODBC driver for macOS by following the instructions on the [Install the Microsoft ODBC driver for SQL Server (macOS)](../odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos.md).
+
+> **Note:**
+> If using Apple M1 ARM64 hardware, install Microsoft ODBC driver 17.8+ directly without using the emulator Rosetta 2.
+
+In addition, you might need to install the GNU make tools:
+
+```bash
+brew install autoconf automake libtool
+```
+
+### Step 3. Install the PHP drivers for Microsoft SQL Server with PECL (macOS)
+
+```bash
+sudo pecl install sqlsrv
+sudo pecl install pdo_sqlsrv
+```
+
+If using Apple M1 ARM64, do the following instead:
+
+```bash
+sudo CXXFLAGS="-I/opt/homebrew/opt/unixodbc/include/" LDFLAGS="-L/opt/homebrew/lib/" pecl install sqlsrv
+sudo CXXFLAGS="-I/opt/homebrew/opt/unixodbc/include/" LDFLAGS="-L/opt/homebrew/lib/" pecl install pdo_sqlsrv
+```
+
+### Step 4. Install Apache and configure driver loading (macOS)
+
+> **Note:**
+> As of version 11.0 Big Sur, macOS comes with Apache 2.4 preinstalled, but Apple removed some required scripts. The solution is to install Apache 2.4 via Homebrew and configure it. This step is out of scope for this installation guide. Check Apache or Homebrew for detailed instructions.
+
+```bash
+brew install apache2
+```
+
+To find the Apache configuration file, `httpd.conf`, for your Apache installation, run:
+
+```bash
+/usr/local/bin/apachectl -V | grep SERVER_CONFIG_FILE
+```
+
+The following commands append the required configuration to `httpd.conf`. Be sure to substitute the path returned by the preceding command in place of `/usr/local/etc/httpd/httpd.conf`:
+
+```bash
+echo "LoadModule php7_module /usr/local/opt/php@8.3/lib/httpd/modules/libphp7.so" >> /usr/local/etc/httpd/httpd.conf
+(echo "<FilesMatch .php$>"; echo "SetHandler application/x-httpd-php"; echo "</FilesMatch>";) >> /usr/local/etc/httpd/httpd.conf
+```
+
+### Step 5. Restart Apache and test the sample script (macOS)
+
+```bash
+sudo apachectl restart
+```
+
+To test your installation, see [Testing your installation](#testing-your-installation) at the end of this document.
+
+## Testing your installation
+
+To test this sample script, create a file called testsql.php in your system's document root. This path is `/var/www/html/` on Ubuntu, Debian, and Red Hat, `/srv/www/htdocs` on SUSE, `/var/www/localhost/htdocs` on Alpine, or `/usr/local/var/www` on macOS. Copy the following script to it, replacing the server, database, username, and password as appropriate.
+
+### SQLSRV example
+
+```php
+<?php
+$serverName = "yourServername";
+$connectionOptions = array(
+    "database" => "yourDatabase",
+    "uid" => "yourUsername",
+    "pwd" => "yourPassword"
+);
+
+function exception_handler($exception) {
+    echo "<h1>Failure</h1>";
+    echo "Uncaught exception: " , $exception->getMessage();
+    echo "<h1>PHP Info for troubleshooting</h1>";
+    phpinfo();
+}
+
+set_exception_handler('exception_handler');
+
+// Establishes the connection
+$conn = sqlsrv_connect($serverName, $connectionOptions);
+if ($conn === false) {
+    die(formatErrors(sqlsrv_errors()));
+}
+
+// Select Query
+$tsql = "SELECT @@Version AS SQL_VERSION";
+
+// Executes the query
+$stmt = sqlsrv_query($conn, $tsql);
+
+// Error handling
+if ($stmt === false) {
+    die(formatErrors(sqlsrv_errors()));
+}
+?>
+
+<h1> Success Results : </h1>
+
+<?php
+while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    echo $row['SQL_VERSION'] . PHP_EOL;
+}
+
+sqlsrv_free_stmt($stmt);
+sqlsrv_close($conn);
+
+function formatErrors($errors)
+{
+    // Display errors
+    echo "<h1>SQL Error:</h1>";
+    echo "Error information: <br/>";
+    foreach ($errors as $error) {
+        echo "SQLSTATE: ". $error['SQLSTATE'] . "<br/>";
+        echo "Code: ". $error['code'] . "<br/>";
+        echo "Message: ". $error['message'] . "<br/>";
+    }
+}
+?>
+```
+
+### PDO_SQLSRV example
+
+```php
+<?php
+try {
+    $serverName = "yourServername";
+    $databaseName = "yourDatabase";
+    $uid = "yourUsername";
+    $pwd = "yourPassword";
+    
+    $conn = new PDO("sqlsrv:server = $serverName; Database = $databaseName;", $uid, $pwd);
+
+    // Select Query
+    $tsql = "SELECT @@Version AS SQL_VERSION";
+
+    // Executes the query
+    $stmt = $conn->query($tsql);
+} catch (PDOException $exception1) {
+    echo "<h1>Caught PDO exception:</h1>";
+    echo $exception1->getMessage() . PHP_EOL;
+    echo "<h1>PHP Info for troubleshooting</h1>";
+    phpinfo();
+}
+
+?>
+
+<h1> Success Results : </h1>
+
+<?php
+try {
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo $row['SQL_VERSION'] . PHP_EOL;
+    }
+} catch (PDOException $exception2) {
+    // Display errors
+    echo "<h1>Caught PDO exception:</h1>";
+    echo $exception2->getMessage() . PHP_EOL;
+}
+
+unset($stmt);
+unset($conn);
+?>
+```
+
+Point your browser to `https://localhost/testsql.php` (`https://localhost:8080/testsql.php` on macOS). You should now be able to connect to your SQL Server/Azure SQL database. If you don't see a success message showing SQL version information, you can do some basic troubleshooting by running the script from the command line:
+
+```bash
+php testsql.php
+```
+
+If running from the command line is successful but nothing shows in your browser, check the [Apache log files](https://linuxize.com/post/apache-log-files/#location-of-the-log-files). For more help, see [Support resources](support-resources-for-the-php-sql-driver.md) for places to go.
+
+## Related content
+
+- [Getting Started with the Microsoft Drivers for PHP for SQL Server](getting-started-with-the-php-sql-driver.md)
+- [Loading the Microsoft Drivers for PHP for SQL Server](loading-the-php-sql-driver.md)
+- [System requirements for the Microsoft Drivers for PHP for SQL Server](system-requirements-for-the-php-sql-driver.md)

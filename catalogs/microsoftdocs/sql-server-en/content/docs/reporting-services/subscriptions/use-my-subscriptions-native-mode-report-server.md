@@ -1,0 +1,54 @@
+---
+title: "Use My Subscriptions (native mode report server)"
+description: Learn to use the My Subscriptions page in the Reporting Services web portal to view, modify, enable, disable, or delete existing subscriptions.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: subscriptions
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "subscriptions [Reporting Services], My Subscriptions page"
+  - "My Subscriptions page [Reporting Services]"
+---
+# Use My Subscriptions (native mode report server)
+The  Reporting Services 
+ Web portal includes a **My Subscriptions** page that organizes all of your subscriptions into one place. You can use *My Subscriptions* to view, modify, enable, disable, and delete existing subscriptions. However, you can't use it to create subscriptions.  My Subscriptions shows only the subscriptions that you created, even if you're added as a subscriber to subscriptions that others own. It also doesn't show data-driven subscriptions.
+  
+|  |
+| --- |
+| ****Applies to:** |
+| **   Reporting Services |
+ | Native mode |
+  
+The search field dynamically filters the list of subscriptions as youYou can't search for subscriptions by name, nor can you search for subscriptions based on trigger information, status information, and so forth. For more information, see [Create and manage subscriptions for native mode report servers](create-and-manage-subscriptions-for-native-mode-report-servers.md).
+  
+## Open the My Subscriptions page  
+1. Open the  Reporting Services 
+ Web portal.
+2. Select settings  in the toolbar.
+3. Select **My Subscriptions**.
+
+For more information, see [Web portal (SSRS native mode)](../web-portal-ssrs-native-mode.md).
+
+## Use Windows PowerShell to list My Subscriptions  
+  
+ The following PowerShell script returns the list of subscriptions and subscription properties for the current user. For more information, see [ReportingService2010.ListMySubscriptions method](https://learn.microsoft.com/dotnet/api/reportservice2010.reportingservice2010.listmysubscriptions).  
+  
+```  
+#server -  all subscriptions of the current user at the given server or site  
+$server="[server name]/reportserver"  
+$rs2010 = New-WebServiceProxy -Uri "https://$server/ReportService2010.asmx" -Namespace SSRS.ReportingService2010 -UseDefaultCredential;  
+  
+$subscriptions=ListMySubscriptions(ItemPathOrSiteURL)  
+$subscriptions | select Path, report, Description, Owner, SubscriptionID, lastexecuted,Status  
+#uncomment the following to list all the subscription properties  
+#$subscriptions
+
+```  
+  
+## Related content
+
+- [Data-driven subscriptions in Reporting Services](data-driven-subscriptions.md)
+- [Subscriptions and delivery (Reporting Services)](subscriptions-and-delivery-reporting-services.md)
+- [Create and manage subscriptions for native mode report servers](create-and-manage-subscriptions-for-native-mode-report-servers.md)

@@ -1,0 +1,31 @@
+---
+title: "Diagnostics"
+description: "Diagnostics"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "diagnostic information [ODBC]"
+  - "functions [ODBC], diagnostic information"
+  - "diagnostic information [ODBC], about diagnostic information"
+---
+# Diagnostics
+Functions in ODBC return diagnostic information in two ways. The return code indicates the overall success or failure of the function, while diagnostic records provide detailed information about the function. At least one diagnostic record - the header record - is returned even if the function succeeds.  
+  
+ Diagnostic information is used at development time to catch programming errors such as invalid handles and syntax errors in hard-coded SQL statements. It is used at run time to catch run-time errors and warnings such as data truncation, access violations, and syntax errors in SQL statements entered by the user.  
+  
+ This section contains the following topics.  
+  
+-   [Return Codes](return-codes-odbc.md)  
+  
+-   [Diagnostic Records](diagnostic-records.md)  
+  
+-   [Using SQLGetDiagRec and SQLGetDiagField](using-sqlgetdiagrec-and-sqlgetdiagfield.md)  
+  
+-   [Implementing SQLGetDiagRec and SQLGetDiagField](implementing-sqlgetdiagrec-and-sqlgetdiagfield.md)  
+  
+-   [Diagnostic Handling Examples](diagnostic-handling-examples.md)

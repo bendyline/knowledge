@@ -1,0 +1,69 @@
+---
+title: Data ingress and egress
+titleSuffix: Azure Digital Twins
+description: Learn about the data ingress and egress requirements for integrating Azure Digital Twins with other services.
+author: baanders
+ms.author: baanders
+ms.date: 01/27/2025
+ms.topic: concept-article
+ms.service: azure-digital-twins
+---
+
+# Data ingress and egress for Azure Digital Twins
+
+Azure Digital Twins is typically used together with other services to create flexible, connected solutions that use your data in different kinds of ways. This article covers data ingress and egress for Azure Digital Twins.
+
+Azure Digital Twins can receive data from upstream services such as [IoT Hub](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/iot-hub/about-iot-hub.md) or [Logic Apps](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/logic-apps/logic-apps-overview.md), which are used to deliver telemetry and notifications. 
+
+Azure Digital Twins can also use [event routes](concepts-route-events.md) to send data to downstream services, such as [Azure Storage](../storage/common/storage-introduction.md), for storage, workflow integration, analytics, and more. 
+
+## Data ingress
+
+Azure Digital Twins can be driven with data and events from any service—[IoT Hub](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/iot-hub/about-iot-hub.md), [Logic Apps](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/logic-apps/logic-apps-overview.md), your own custom service, and more. This kind of data flow allows you to collect telemetry from physical devices in your environment, and process this data using the Azure Digital Twins graph in the cloud.
+
+Instead of having a built-in IoT Hub behind the scenes, Azure Digital Twins allows you to "bring your own" IoT Hub to use with the service. You can use an existing IoT Hub you currently have in production, or deploy a new one to be used for this purpose. This functionality gives you full access to all of the device management capabilities of IoT Hub.
+
+To ingest data from any source into Azure Digital Twins, you can use an [Azure function](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-overview.md). Learn more about this pattern in [Ingest telemetry from IoT Hub](how-to-ingest-iot-hub-data.md), or try it out yourself in the Azure Digital Twins [Connect an end-to-end solution](tutorial-end-to-end.md). 
+
+You can also integrate Azure Digital Twins into a [Microsoft Power Platform](https://learn.microsoft.com/power-platform) or [Azure Logic Apps](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/logic-apps/logic-apps-overview.md) flow, using the [Azure Digital Twins Power Platform connector](how-to-use-power-platform-logic-apps-connector.md). For more information about connectors, see [Connectors overview](https://learn.microsoft.com/connectors/connectors).
+
+## Data egress
+
+You may want to send Azure Digital Twins data to other downstream services for storage or additional processing. 
+
+There are two main egress options in Azure Digital Twins. Digital twin data can be sent to most Azure services using *endpoints*. Or, if your destination is [Azure Data Explorer](https://learn.microsoft.com/azure/data-explorer/data-explorer-overview), you can use *data history* to automatically send graph updates to an Azure Data Explorer cluster, where they are stored as historical data and can be queried as such. The subsections below describe the two egress options in more detail.
+
+### Endpoints
+
+To send Azure Digital Twins data to most Azure services, such as [Azure Maps](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-maps/about-azure-maps.md) or [Azure Storage](../storage/common/storage-introduction.md), start by attaching the destination service to an *endpoint*. 
+
+Endpoints can be instances of any of these Azure services:
+* [Event Hubs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/event-hubs/event-hubs-about.md)
+* [Event Grid](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/event-grid/overview.md)
+* [Service Bus](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/service-bus-messaging/service-bus-messaging-overview.md)
+
+The endpoint is attached to an Azure Digital Twins instance using management APIs or the Azure portal, and can carry data along from the instance to other listening services. For more information about Azure Digital Twins endpoints, see [Endpoints and event routes](concepts-route-events.md).
+
+### Data history
+
+To send twin data to [Azure Data Explorer](https://learn.microsoft.com/azure/data-explorer/data-explorer-overview), set up a [data history connection](concepts-data-history.md) that automatically historizes graph updates from your Azure Digital Twins instance to an Azure Data Explorer cluster. The data history connection requires an [event hub](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/event-hubs/event-hubs-about.md), but doesn't require an explicit endpoint.
+
+Once the data has been historized, you can query this data in Azure Data Explorer using the [Azure Digital Twins query plugin for Azure Data Explorer](concepts-data-explorer-plugin.md).
+
+You can also use data history in combination with [Azure Synapse Analytics](../synapse-analytics/overview-what-is.md) to aggregate data from disparate sources. For example, combine information technology (IT) data from ERP or CRM systems (like Dynamics 365, SAP, or Salesforce) with operational technology (OT) data from IoT devices and production management systems. For an example that illustrates how a company might combine this data, see the following blog post: [Integrating IT and OT Data with Azure Digital Twins, Azure Data Explorer, and Azure Synapse](https://techcommunity.microsoft.com/t5/internet-of-things-blog/integrating-it-and-ot-data-with-azure-digital-twins-azure-data/ba-p/3401981).
+
+### Security and delivery details
+
+In order for Azure Digital Twins to send data to other Azure services via endpoints or data history, the receiving service must have either public network access enabled or the Trusted Microsoft Service option enabled. For data history, the data history connection must be configured with public network access enabled on the Event Hub and Azure Data Explorer instances. Once data history is configured, the Event Hub and Azure Data Explorer firewall and security settings will need to be configured manually.
+
+Once the connection is set up, Azure Digital Twins implements *at least once* delivery for data emitted to egress services. 
+
+If the event hub, Event Grid, or Service Bus topic used for your endpoint is unavailable and the message can't be delivered, Azure Digital Twins will try to resend the message for at least 20 minutes and for up to 24 hours.
+
+## Next steps
+
+Learn more about endpoints and routing events to external services:
+* [Endpoints and event routes](concepts-route-events.md)
+
+See how to set up Azure Digital Twins to ingest device data from IoT Hub:
+* [Ingest telemetry from IoT Hub](how-to-ingest-iot-hub-data.md)

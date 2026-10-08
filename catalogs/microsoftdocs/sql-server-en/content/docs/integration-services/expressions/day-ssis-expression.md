@@ -1,0 +1,76 @@
+---
+title: "DAY (SSIS Expression)"
+description: "DAY (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "DAY function"
+  - "dates [Integration Services], DAY"
+---
+# DAY (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns an integer that represents the day datepart of a date.  
+  
+## Syntax  
+  
+```  
+  
+DAY(date)  
+```  
+  
+## Arguments  
+ *date*  
+ Is an expression that returns a valid date or a string in date format.  
+  
+## Result Types  
+ DT_I4  
+  
+## Remarks  
+ DAY returns a null result if the argument is null.  
+  
+ A date literal must be explicitly cast to one of the date data types. For more information, see [Integration Services Data Types](../data-flow/integration-services-data-types.md).  
+  
+> **Note:**  
+>  The expression fails to validate when a date literal is explicitly cast to one of these date data types: DT_DBTIMESTAMPOFFSET and DT_DBTIMESTAMP2.  
+  
+ Using the DAY function is briefer but equivalent to using DATEPART("Day", date).  
+  
+## Expression Examples  
+ This example returns the number of the day in a date literal. If the date format is in "mm/dd/yyyy" format, this example returns 23.  
+  
+```  
+DAY((DT_DBTIMESTAMP)"11/23/2002")  
+```  
+  
+ This example returns the integer that represents the day in the **ModifiedDate** column.  
+  
+```  
+DAY(ModifiedDate)  
+```  
+  
+ This example returns the integer that represents the day of the current date.  
+  
+```  
+DAY(GETDATE())  
+```  
+  
+## Related content
+
+- [DATEADD (SSIS Expression)](dateadd-ssis-expression.md)
+- [DATEDIFF (SSIS Expression)](datediff-ssis-expression.md)
+- [DATEPART (SSIS Expression)](datepart-ssis-expression.md)
+- [MONTH (SSIS Expression)](month-ssis-expression.md)
+- [YEAR (SSIS Expression)](year-ssis-expression.md)
+- [Functions (SSIS Expression)](functions-ssis-expression.md)

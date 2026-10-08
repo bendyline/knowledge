@@ -1,0 +1,79 @@
+---
+title: "sys.registered_search_properties (Transact-SQL)"
+description: sys.registered_search_properties (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sys.registered_search_properties"
+  - "registered_search_properties"
+  - "sys.registered_search_properties_TSQL"
+  - "registered_search_properties_TSQL"
+helpviewer_keywords:
+  - "full-text search [SQL Server], search property lists"
+  - "search properties [SQL Server]"
+  - "property searching [SQL Server], viewing registered properties"
+  - "search property lists [SQL Server], viewing registered properties"
+  - "sys.registered_search_properties catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.registered_search_properties (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Contains a row for each search property contained by any search property list on the current database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **property_list_id** | **int** | ID of the search property list to which this property belongs. |
+| **property_set_guid** | **uniqueidentifier** | Globally unique identifier GUID that identifies the property set to which the search property belongs. |
+| **property_int_id** | **int** | Integer that identifies this search property within the property set. **property_int_id** is unique within the property set. |
+| **property_name** | **nvarchar(64)** | Name that uniquely identifies this search property in the search property list.<br /><br /> Note: To search on a property, specify this property name in the [CONTAINS](../../t-sql/queries/contains-transact-sql.md) predicate. |
+| **property_description** | **nvarchar(512)** | Description of the property. |
+| **property_id** | **int** | Internal property ID of the search property within the search property list identified by the **property_list_id** value.<br /><br /> When a given property is added to a given search property list, the Full-Text Engine registers the property and assigns it an internal property ID that is specific to that property list. The internal property ID, which is an integer, is unique to a given search property list. If a given property is registered for multiple search property lists, a different internal property ID might be assigned for each search property list.<br /><br /> Note: The internal property ID is distinct from the property integer identifier that is specified when adding the property to the search property list. For more information, see [Search Document Properties with Search Property Lists](../search/search-document-properties-with-search-property-lists.md).<br /><br /> To view all property-related content in the full-text index: <br />                  [sys.dm_fts_index_keywords_by_property &#40;Transact-SQL&#41;](../system-dynamic-management-objects/sys-dm-fts-index-keywords-by-property-transact-sql.md) |
+  
+## Remarks  
+ For more information about search property lists, see [Search Document Properties with Search Property Lists](../search/search-document-properties-with-search-property-lists.md).  
+  
+## Permissions  
+ Visibility of the metadata for search properties is limited to those that are in search property lists that you either own or on which you have been granted some REFERENCE permission.  
+  
+> **Note:**  
+>  The search property list owner can grant REFERENCE or CONTROL permissions on the list. Users with CONTROL permission can also grant REFERENCE permission to other users.  
+  
+## Examples  
+ The following example lists all of the metadata for registered search properties.  
+  
+```  
+USE AdventureWorks2022;  
+GO  
+SELECT * FROM sys.registered_search_properties;   
+GO  
+```  
+  
+## Related content
+
+- [ALTER FULLTEXT INDEX (Transact-SQL)](../../t-sql/statements/alter-fulltext-index-transact-sql.md)
+- [sys.fulltext_indexes (Transact-SQL)](sys-fulltext-indexes-transact-sql.md)
+- [Search document properties with search property lists](../search/search-document-properties-with-search-property-lists.md)

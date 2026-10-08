@@ -1,0 +1,50 @@
+---
+title: "Subscription Type"
+description: "Subscription Type"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.newsubwizard.subscriptiontype.f1"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Subscription Type
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  Merge replication offers two subscription types: server and client (referred to in previous versions of  Microsoft 
+  SQL Server 
+ as global and local, respectively). Subscribers with a server subscription can:  
+  
+-   Republish data to other Subscribers.  
+  
+-   Serve as alternate synchronization partners.  
+  
+-   Resolve conflicts according to a priority you set.  
+  
+ Most Subscribers do not require this functionality and can use a client subscription. Client subscriptions still allow conflict detection and resolution, but Subscribers are not assigned a priority: the first Subscriber to submit a change to the Publisher wins any conflicts that might arise from that change.  
+  
+> **Note:**  
+>  Subscription type cannot be changed after a subscription is created.  
+  
+## Options  
+ **Subscription properties**  
+ For each Subscriber, select **Client** or **Server** from the dropdown list in the **Subscription Type** column. For Subscribers with server subscriptions, enter a number between 0 and 99.99 in the **Priority for Conflict Resolution** column (the higher the number, the higher the priority for the Subscriber).  
+  
+## Related content
+
+- [Create a Pull Subscription](create-a-pull-subscription.md)
+- [Create a push subscription](create-a-push-subscription.md)
+- [Subscribe to Publications](subscribe-to-publications.md)

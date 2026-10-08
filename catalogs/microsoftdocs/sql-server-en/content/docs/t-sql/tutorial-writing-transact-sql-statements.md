@@ -1,0 +1,86 @@
+---
+title: "T-SQL Tutorial: Write Transact-SQL Statements"
+description: This tutorial is intended for users who are new to writing SQL statements. It helps new users get started by reviewing some basic statements for creating tables and inserting data.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 09/02/2025
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: quickstart
+ms.custom:
+  - intro-quickstart
+  - ignite-2025
+helpviewer_keywords:
+  - "Transact-SQL statements, tutorials"
+  - "Transact-SQL tutorials"
+  - "tutorials [Transact-SQL]"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Tutorial: Write Transact-SQL statements
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+> **Note:**  
+> The [Get Started Querying with Transact-SQL](https://learn.microsoft.com/training/paths/get-started-querying-with-transact-sql/) learning path provides more in-depth content, along with practical examples.
+
+Welcome to the Writing  Transact-SQL  Statements tutorial. This tutorial is intended for users who are new to writing SQL statements. It helps new users get started by reviewing some basic statements for creating tables and inserting data. This tutorial uses  Transact-SQL , the  Microsoft 
+ implementation of the SQL standard.
+
+This tutorial is intended as a brief introduction to the  Transact-SQL  language and not as a replacement for a  Transact-SQL  class. The statements in this tutorial are intentionally simple, and aren't meant to represent the complexity found in a typical production database.
+
+> **Note:**  
+> If you're a beginner you might find it easier to use  SQL Server Management Studio 
+ instead of writing  Transact-SQL  statements.
+
+## Find more information
+
+To find more information about any specific statement, either search for the statement by name, or use the contents to browse the language elements listed alphabetically under [Transact-SQL reference (Database Engine)](language-reference.md). Another good strategy for finding information is to search for key words that are related to the subject matter you're interested in. For example, if you want to know how to return a part of a date (such as the month), search the index for **dates [SQL Server]**, and then select **dateparts**. This takes you to the article [DATEPART](functions/datepart-transact-sql.md). For more information, see [What are the SQL database functions?](functions/functions.md)
+
+## What you'll learn
+
+This tutorial shows you how to create a database, create a table in the database, insert data into the table, update the data, read the data, delete the data, and then delete the table. You'll create views and stored procedures and configure a user to the database and the data.
+
+This tutorial is divided into three lessons:
+
+- [Lesson 1: Create and query database objects](lesson-1-creating-database-objects.md)
+
+  In this lesson, you create a database, create a table in the database, insert data into the table, update the data, and read the data.
+
+- [Lesson 2: Configure permissions on database objects](lesson-2-configuring-permissions-on-database-objects.md)
+
+  In this lesson, you create a login and user. You'll also create a view and a stored procedure, and then grant the user permission to the stored procedure.
+
+- [Lesson 3: Delete database objects](lesson-3-deleting-database-objects.md)
+
+  In this lesson, you remove access to data, delete data from a table, delete the table, and then delete the database.
+
+## Requirements
+
+To complete this tutorial, you don't have to know the SQL language, but you should understand basic database concepts such as tables. During this tutorial, you'll create a database and create a Windows user. These tasks require a high level of permissions; therefore, you should log in to the computer as an administrator.
+
+Your system must have the following installed:
+
+- Any edition of  SQL Server 
+.
+
+- [SQL Server Management Studio](https://learn.microsoft.com/ssms/install/install)
+
+## Related content
+
+- [Lesson 1: Create and query database objects](lesson-1-creating-database-objects.md)

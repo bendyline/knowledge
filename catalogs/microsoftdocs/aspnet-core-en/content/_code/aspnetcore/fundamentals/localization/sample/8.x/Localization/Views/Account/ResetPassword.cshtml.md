@@ -1,0 +1,50 @@
+# Source code: aspnetcore/fundamentals/localization/sample/8.x/Localization/Views/Account/ResetPassword.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@model ResetPasswordViewModel
+@{
+    ViewData["Title"] = "Reset password";
+}
+
+<h2>@ViewData["Title"].</h2>
+
+<form asp-controller="Account" asp-action="ResetPassword" method="post" class="form-horizontal" role="form">
+    <h4>Reset your password.</h4>
+    <hr>
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input asp-for="Code" type="hidden">
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Email" class="form-control">
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Password" class="form-control">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="ConfirmPassword" class="form-control">
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">Reset</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+```

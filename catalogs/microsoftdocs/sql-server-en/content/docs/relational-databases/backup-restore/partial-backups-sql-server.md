@@ -1,0 +1,56 @@
+---
+title: "Partial Backups (SQL Server)"
+description: A partial backup in SQL Server contains the data in the primary filegroup, all read-write filegroups, and, optionally, one or more read-only files.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: concept-article
+helpviewer_keywords:
+  - "full backups [SQL Server]"
+  - "partial backups [SQL Server]"
+  - "READ_WRITE_FILEGROUPS option"
+  - "database backups [SQL Server], about backing up databases"
+---
+# Partial Backups (SQL Server)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  All  SQL Server 
+ recovery models support partial backups, so this topic is relevant for all  SQL Server 
+ databases. However, partial backups are designed for use under the simple recovery model to improve flexibility for backing up very large databases that contain one or more read-only filegroups.  
+  
+ Partial backups are useful whenever you want to exclude read-only filegroups. A *partial backup* resembles a full database backup, but a partial backup does not contain all the filegroups. Instead, for a read-write database, a partial backup contains the data in the primary filegroup, every read-write filegroup, and, optionally, one or more read-only files. A partial backup of a read-only database contains only the primary filegroup.  
+  
+> **Note:**  
+>  If a read-only database is changed to read/write after a partial backup, there might be read/write secondary filegroups that are not in the partial backup. In this case, if you try to take a differential partial backup, the backup fails. Before you can take a differential partial backup of the database, you must take another partial backup. The new partial backup contains every read/write secondary filegroup and can serve as the base for differential partial backups.  
+  
+ File backups of read-only filegroups can be combined with partial backups. For information about file backups, see [Full File Backups (SQL Server)](full-file-backups-sql-server.md).  
+  
+ A partial backup can serve as the *differential base* for differential partial backups. For more information, see [Differential Backups (SQL Server)](differential-backups-sql-server.md).  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+  
+> **Note:**  
+>  Partial backups are not supported by  SQL Server Management Studio 
+ or the Maintenance Plan Wizard.  
+  
+ **To create a partial backup**  
+  
+-   [BACKUP &#40;Transact-SQL&#41;](../../t-sql/statements/backup-transact-sql.md) (READ_WRITE_FILEGROUPS; FILEGROUP option, if needed)  
+  
+ **To use a partial backup in a restore sequence**  
+  
+-   [Example: Piecemeal Restore of Database (Simple Recovery Model)](example-piecemeal-restore-of-database-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Simple Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-simple-recovery-model.md)  
+  
+## Related content
+
+- [Backup overview (SQL Server)](backup-overview-sql-server.md)
+- [File Restores (Simple Recovery Model)](file-restores-simple-recovery-model.md)
+- [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)

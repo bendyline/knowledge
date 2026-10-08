@@ -1,0 +1,564 @@
+---
+title: Speech to text REST API for short audio - Speech service
+titleSuffix: Foundry Tools
+description: Learn how to use Speech to text REST API for short audio to convert speech to text.
+author: PatrickFarley
+manager: mcleans
+ms.service: azure-speech-foundry-tools
+ms.topic: how-to
+ms.date: 11/21/2025
+ms.author: pafarley
+ms.devlang: csharp
+ms.custom: devx-track-csharp
+# Customer intent: As a developer, I want to learn how to use the Speech to text REST API for short audio to convert speech to text.
+ai-usage: ai-assisted
+---
+
+# Use speech to text REST API for short audio
+
+Use the Speech to text REST API for short audio only in cases where you can't use the [Speech SDK](speech-sdk.md) or [fast transcription API](fast-transcription-create.md). 
+
+Before you use the Speech to text REST API for short audio, consider the following limitations:
+
+* Requests that use the REST API for short audio and transmit audio directly can contain no more than 60 seconds of audio. For pronunciation assessment, the audio duration should be no more than 30 seconds. The input [audio formats](#audio-formats) are more limited compared to the [Speech SDK](speech-sdk.md).
+* The REST API for short audio returns only final results. It doesn't provide partial results.
+* [Speech translation](speech-translation.md) isn't supported via REST API for short audio. You need to use the [Speech SDK](speech-sdk.md).
+* [Batch transcription](batch-transcription.md) and [custom speech](custom-speech-overview.md) aren't supported via REST API for short audio. You should always use the [Speech to text REST API](rest-speech-to-text.md) for batch transcription and custom speech.
+
+Before you use the Speech to text REST API for short audio, understand that you need to complete a token exchange as part of authentication to access the service. For more information, see [Authentication](#authentication).
+
+## Regions and endpoints
+
+The endpoint for the REST API for short audio has this format:
+
+```
+https://YourResourceName.cognitiveservices.azure.com/stt/speech/recognition/conversation/cognitiveservices/v1
+```
+
+Replace `YourResourceName` with the name of your Speech resource.
+
+> **Note:**
+> For Azure Government and Microsoft Azure operated by 21Vianet endpoints, see [this article about sovereign clouds](sovereign-clouds.md).
+
+## Audio formats
+
+Audio is sent in the body of the HTTP `POST` request. It must be in one of the formats in this table:
+
+| Format | Codec | Bit rate | Sample rate |
+| --- | --- | --- | --- |
+| WAV | PCM | 256 kbps | 16 kHz, mono |
+| OGG | OPUS | 256 kbps | 16 kHz, mono |
+
+> **Note:**
+> The preceding formats are supported through the REST API for short audio and WebSockets in the Speech service. The [Speech SDK](speech-sdk.md) supports the WAV format with PCM codec as well as [other formats](how-to-use-codec-compressed-audio-input-streams.md).
+
+## Request headers
+
+This table lists required and optional headers for speech to text requests:
+
+| Header | Description | Required or optional |
+| --- | --- | --- |
+| `Ocp-Apim-Subscription-Key` | Your resource key for the Speech service. | Either this header or `Authorization` is required. |
+| `Authorization` | An authorization token preceded by the word `Bearer`. For more information, see [Authentication](#authentication). | Either this header or `Ocp-Apim-Subscription-Key` is required. |
+| `Pronunciation-Assessment` | Specifies the parameters for showing pronunciation scores in recognition results. These scores assess the pronunciation quality of speech input, with indicators like accuracy, fluency, and completeness. <br><br>This parameter is a Base64-encoded JSON that contains multiple detailed parameters. To learn how to build this header, see [Pronunciation assessment parameters](#pronunciation-assessment-parameters). | Optional |
+| `Content-type` | Describes the format and codec of the provided audio data. Accepted values are `audio/wav; codecs=audio/pcm; samplerate=16000` and `audio/ogg; codecs=opus`. | Required |
+| `Transfer-Encoding` | Specifies that chunked audio data is being sent, rather than a single file. Use this header only if you're chunking audio data. | Optional |
+| `Expect` | If you're using chunked transfer, send `Expect: 100-continue`. The Speech service acknowledges the initial request and awaits more data. | Required if you're sending chunked audio data. |
+| `Accept` | If provided, it must be `application/json`. The Speech service provides results in JSON. Some request frameworks provide an incompatible default value. It's good practice to always include `Accept`. | Optional, but recommended. |
+
+## Query parameters
+
+These parameters might be included in the query string of the REST request.
+
+> **Note:**
+> You must append the language parameter to the URL to avoid receiving a 4xx HTTP error. For example, the language set to US English is: `https://YourResourceName.cognitiveservices.azure.com/stt/speech/recognition/conversation/cognitiveservices/v1?language=en-US`.
+
+| Parameter | Description | Required or optional |
+| --- | --- | --- |
+| `language` | Identifies the spoken language that's being recognized. See [Supported languages](language-support.md?tabs=stt). | Required |
+| `format` | Specifies the result format. Accepted values are `simple` and `detailed`. Simple results include `RecognitionStatus`, `DisplayText`, `Offset`, and `Duration`. Detailed responses include four different representations of display text. The default setting is `simple`. | Optional |
+| `profanity` | Specifies how to handle profanity in recognition results. Accepted values are: <br><br>`masked`, which replaces profanity with asterisks. <br>`removed`, which removes all profanity from the result. <br>`raw`, which includes profanity in the result. <br><br>The default setting is `masked`. | Optional |
+
+### Pronunciation assessment parameters
+
+This table lists required and optional parameters for pronunciation assessment:
+
+| Parameter | Description | Required or optional |
+| --- | --- | --- |
+| `ReferenceText` | The text that the pronunciation is evaluated against. | Required |
+| `GradingSystem` | The point system for score calibration. The `FivePoint` system gives a 0-5 floating point score, and `HundredMark` gives a 0-100 floating point score. Default: `FivePoint`. | Optional |
+| `Granularity` | The evaluation granularity. Accepted values are:<br><br> `Phoneme`, which shows the score on the full-text, word, and phoneme levels.<br>`Word`, which shows the score on the full-text and word levels. <br>`FullText`, which shows the score on the full-text level only.<br><br> The default setting is `Phoneme`. | Optional |
+| `Dimension` | Defines the output criteria. Accepted values are:<br><br> `Basic`, which shows the accuracy score only. <br>`Comprehensive`, which shows scores on more dimensions (for example, fluency score and completeness score on the full-text level, and error type on the word level).<br><br> To see definitions of different score dimensions and word error types, see [Response properties](#response-properties). The default setting is `Basic`. | Optional |
+| `EnableMiscue` | Enables miscue calculation. With this parameter enabled, the pronounced words are compared to the reference text. They are marked with omission or insertion based on the comparison. Accepted values are `False` and `True`. The default setting is `False`. | Optional |
+| `EnableProsodyAssessment` | Enables prosody assessment for your pronunciation evaluation. This feature assesses aspects like stress, intonation, speaking speed, and rhythm. This feature provides insights into the naturalness and expressiveness of your speech.<br><br> If this property is set to `True`, the `ProsodyScore` result value is returned. | Optional |
+| `ScenarioId` | A GUID that indicates a customized point system. | Optional |
+
+Here's example JSON that contains the pronunciation assessment parameters:
+
+```json
+{
+  "ReferenceText": "Good morning.",
+  "GradingSystem": "HundredMark",
+  "Granularity": "Word",
+  "Dimension": "Comprehensive",
+  "EnableProsodyAssessment": "True"
+}
+```
+
+The following sample code shows how to build the pronunciation assessment parameters into the `Pronunciation-Assessment` header:
+
+```csharp
+var pronAssessmentParamsJson = $"{{\"ReferenceText\":\"Good morning.\",\"GradingSystem\":\"HundredMark\",\"Granularity\":\"Word\",\"Dimension\":\"Comprehensive\",\"EnableProsodyAssessment\":\"True\"}}";
+var pronAssessmentParamsBytes = Encoding.UTF8.GetBytes(pronAssessmentParamsJson);
+var pronAssessmentHeader = Convert.ToBase64String(pronAssessmentParamsBytes);
+```
+
+We strongly recommend streaming ([chunked transfer](#chunked-transfer)) uploading while you're posting the audio data, which can significantly reduce the latency. To learn how to enable streaming, see the [sample code in various programming languages](https://github.com/Azure-Samples/Cognitive-Speech-TTS/tree/master/PronunciationAssessment).
+
+> **Note:**
+> For more information, see [pronunciation assessment](how-to-pronunciation-assessment.md).
+
+## Sample request
+
+The following sample includes the host name and required headers. It's important to note that the service also expects audio data, which isn't included in this sample. As mentioned earlier, chunking is recommended but not required.
+
+```HTTP
+POST speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed HTTP/1.1
+Accept: application/json;text/xml
+Content-Type: audio/wav; codecs=audio/pcm; samplerate=16000
+Ocp-Apim-Subscription-Key: YOUR_RESOURCE_KEY
+Host: YourResourceName.cognitiveservices.azure.com
+Transfer-Encoding: chunked
+Expect: 100-continue
+```
+
+To enable pronunciation assessment, you can add the following header. To learn how to build this header, see [Pronunciation assessment parameters](#pronunciation-assessment-parameters).
+
+```HTTP
+Pronunciation-Assessment: eyJSZWZlcm...
+```
+
+### HTTP status codes
+
+The HTTP status code for each response indicates success or common errors.
+
+| HTTP status code | Description | Possible reasons |
+| --- | --- | --- |
+| 100 | Continue | The initial request is accepted. Proceed with sending the rest of the data. (This code is used with chunked transfer.) |
+| 200 | OK | The request was successful. The response body is a JSON object. |
+| 400 | Bad request | The language code wasn't provided, the language isn't supported, or the audio file is invalid (for example). |
+| 401 | Unauthorized | A resource key or an authorization token is invalid in the specified region, or an endpoint is invalid. |
+| 403 | Forbidden | A resource key or authorization token is missing. |
+
+
+## Sample responses
+
+Here's a typical response for `simple` recognition:
+
+```json
+{
+  "RecognitionStatus": "Success",
+  "DisplayText": "Remind me to buy 5 pencils.",
+  "Offset": "1236645672289",
+  "Duration": "1236645672289"
+}
+```
+
+Here's a typical response for `detailed` recognition:
+
+```json
+{
+  "RecognitionStatus": "Success",
+  "Offset": "1236645672289",
+  "Duration": "1236645672289",
+  "NBest": [
+    {
+      "Confidence": 0.9052885,
+      "Display": "What's the weather like?",
+      "ITN": "what's the weather like",
+      "Lexical": "what's the weather like",
+      "MaskedITN": "what's the weather like"
+    },
+    {
+      "Confidence": 0.92459863,
+      "Display": "what is the weather like",
+      "ITN": "what is the weather like",
+      "Lexical": "what is the weather like",
+      "MaskedITN": "what is the weather like"
+    }
+  ]
+}
+```
+
+Here's a typical response for recognition with pronunciation assessment:
+
+```json
+{
+  "RecognitionStatus": "Success",
+  "Offset": 700000,
+  "Duration": 8400000,
+  "DisplayText": "Good morning.",
+  "SNR": 38.76819,
+  "NBest": [
+    {
+      "Confidence": 0.98503506,
+      "Lexical": "good morning",
+      "ITN": "good morning",
+      "MaskedITN": "good morning",
+      "Display": "Good morning.",
+      "AccuracyScore": 100.0,
+      "FluencyScore": 100.0,
+      "ProsodyScore": 87.8,
+      "CompletenessScore": 100.0,
+      "PronScore": 95.1,
+      "Words": [
+        {
+          "Word": "good",
+          "Offset": 700000,
+          "Duration": 2600000,
+          "Confidence": 0.0,
+          "AccuracyScore": 100.0,
+          "ErrorType": "None",
+          "Feedback": {
+            "Prosody": {
+              "Break": {
+                "ErrorTypes": [
+                  "None"
+                ],
+                "BreakLength": 0
+              },
+              "Intonation": {
+                "ErrorTypes": [],
+                "Monotone": {
+                  "Confidence": 0.0,
+                  "WordPitchSlopeConfidence": 0.0,
+                  "SyllablePitchDeltaConfidence": 0.91385907
+                }
+              }
+            }
+          }
+        },
+        {
+          "Word": "morning",
+          "Offset": 3400000,
+          "Duration": 5700000,
+          "Confidence": 0.0,
+          "AccuracyScore": 100.0,
+          "ErrorType": "None",
+          "Feedback": {
+            "Prosody": {
+              "Break": {
+                "ErrorTypes": [
+                  "None"
+                ],
+                "UnexpectedBreak": {
+                  "Confidence": 3.5294118e-08
+                },
+                "MissingBreak": {
+                  "Confidence": 1.0
+                },
+                "BreakLength": 0
+              },
+              "Intonation": {
+                "ErrorTypes": [],
+                "Monotone": {
+                  "Confidence": 0.0,
+                  "WordPitchSlopeConfidence": 0.0,
+                  "SyllablePitchDeltaConfidence": 0.91385907
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Response properties
+
+Results are provided as JSON. The `simple` format includes the following top-level fields:
+
+| Property | Description |
+| --- | --- |
+| `RecognitionStatus` | Status, such as `Success` for successful recognition. See the next table. |
+| `DisplayText` | The recognized text after capitalization, punctuation, inverse text normalization, and profanity masking. Present only on success. Inverse text normalization is conversion of spoken text to shorter forms, such as 200 for "two hundred" or "Dr. Smith" for "doctor smith." |
+| `Offset` | The time (in 100-nanosecond units) at which the recognized speech begins in the audio stream. |
+| `Duration` | The duration (in 100-nanosecond units) of the recognized speech in the audio stream. |
+| `SNR` | The signal-to-noise ratio (SNR) of the recognized speech in the audio stream. |
+
+The `RecognitionStatus` field might contain these values:
+
+| Status | Description |
+| --- | --- |
+| `Success` | The recognition was successful, and the `DisplayText` field is present. |
+| `NoMatch` | Speech was detected in the audio stream, but no words from the target language were matched. This status usually means that the recognition language is different from the language that the user is speaking. |
+| `InitialSilenceTimeout` | The start of the audio stream contained only silence, and the service timed out while waiting for speech. |
+| `BabbleTimeout` | The start of the audio stream contained only noise, and the service timed out while waiting for speech. |
+| `Error` | The recognition service encountered an internal error and couldn't continue. Try again if possible. |
+
+> **Note:**
+> If the audio consists only of profanity, and the `profanity` query parameter is set to `remove`, the service does not return a speech result.
+
+The `detailed` format includes more forms of recognized results.
+When you're using the `detailed` format, `DisplayText` is provided as `Display` for each result in the `NBest` list.
+
+The object in the `NBest` list can include:
+
+| Property | Description |
+| --- | --- |
+| `Confidence` | The confidence score of the entry, from 0.0 (no confidence) to 1.0 (full confidence). |
+| `Lexical` | The lexical form of the recognized text: the actual words recognized. |
+| `ITN` | The inverse-text-normalized (ITN) or canonical form of the recognized text, with phone numbers, numbers, abbreviations ("doctor smith" to "dr smith"), and other transformations applied. |
+| `MaskedITN` | The ITN form with profanity masking applied, if requested. |
+| `Display` | The display form of the recognized text, with punctuation and capitalization added. This parameter is the same as what `DisplayText` provides when the format is set to `simple`. |
+| `AccuracyScore` | Pronunciation accuracy of the speech. Accuracy indicates how closely the phonemes match a native speaker's pronunciation. The accuracy score at the word and full-text levels is aggregated from the accuracy score at the phoneme level. |
+| `FluencyScore` | Fluency of the provided speech. Fluency indicates how closely the speech matches a native speaker's use of silent breaks between words. |
+| `ProsodyScore` | Prosody of the given speech. Prosody indicates how natural the given speech is, including stress, intonation, speaking speed, and rhythm.<br><br> To see definitions of prosody assessment results in details, see [Result parameters](how-to-pronunciation-assessment.md?pivots=programming-language-csharp#result-parameters). |
+| `CompletenessScore` | Completeness of the speech, determined by calculating the ratio of pronounced words to reference text input. |
+| `PronScore` | Overall score that indicates the pronunciation quality of the provided speech. This score is aggregated from `AccuracyScore`, `FluencyScore`, and `CompletenessScore` with weight. |
+| `ErrorType` | Value that indicates whether a word is omitted, inserted, or badly pronounced, compared to `ReferenceText`. Possible values are `None` (meaning no error on this word), `Omission`, `Insertion`, and `Mispronunciation`. |
+
+## Chunked transfer
+
+Chunked transfer (`Transfer-Encoding: chunked`) can help reduce recognition latency. It allows the Speech service to begin processing the audio file while it's transmitted. The REST API for short audio doesn't provide partial or interim results.
+
+The following code sample shows how to send audio in chunks. Only the first chunk should contain the audio file's header. `request` is an `HttpWebRequest` object that's connected to the appropriate REST endpoint. `audioFile` is the path to an audio file on disk.
+
+```csharp
+var request = (HttpWebRequest)HttpWebRequest.Create(requestUri);
+request.SendChunked = true;
+request.Accept = @"application/json;text/xml";
+request.Method = "POST";
+request.ProtocolVersion = HttpVersion.Version11;
+request.Host = host;
+request.ContentType = @"audio/wav; codecs=audio/pcm; samplerate=16000";
+request.Headers["Ocp-Apim-Subscription-Key"] = "YOUR_RESOURCE_KEY";
+request.AllowWriteStreamBuffering = false;
+
+using (var fs = new FileStream(audioFile, FileMode.Open, FileAccess.Read))
+{
+    // Open a request stream and write 1,024-byte chunks in the stream one at a time.
+    byte[] buffer = null;
+    int bytesRead = 0;
+    using (var requestStream = request.GetRequestStream())
+    {
+        // Read 1,024 raw bytes from the input audio file.
+        buffer = new Byte[checked((uint)Math.Min(1024, (int)fs.Length))];
+        while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) != 0)
+        {
+            requestStream.Write(buffer, 0, bytesRead);
+        }
+
+        requestStream.Flush();
+    }
+}
+```
+
+## Authentication
+
+
+Each request requires an authorization header. This table illustrates which headers are supported for each feature:
+
+| Supported authorization header | Speech to text | Text to speech |
+| --- | --- | --- |
+| `Ocp-Apim-Subscription-Key` | Yes | Yes |
+| `Authorization: Bearer` | Yes | Yes |
+
+When you're using the `Ocp-Apim-Subscription-Key` header, only your resource key must be provided. For example:
+
+```http
+'Ocp-Apim-Subscription-Key': 'YourSpeechResourceKey'
+```
+
+If you use the STS bearer-token flow with `Authorization: Bearer`, first make a request to the `issueToken` endpoint. In this request, you exchange your resource key for an access token that's valid for 10 minutes.
+
+Another option is to use Microsoft Entra authentication that also uses the `Authorization: Bearer` header, but with a token issued via Microsoft Entra ID. See [Use Microsoft Entra authentication](#use-microsoft-entra-authentication).
+
+### How to get an STS access token
+
+To get an STS access token, make a request to the `issueToken` endpoint by using `Ocp-Apim-Subscription-Key` and your resource key.
+
+The `issueToken` endpoint has this format:
+
+```http
+https://YourResourceName.cognitiveservices.azure.com/sts/v1.0/issueToken
+```
+
+Replace `YourResourceName` with the name of your Speech resource.
+
+> **Note:**
+> This endpoint requires your resource to have a [custom subdomain](../cognitive-services-custom-subdomains.md) configured. For resources without a custom domain, use the regional endpoint instead: `https://<region>.api.cognitive.microsoft.com/sts/v1.0/issueToken`. Replace `<region>` with your resource's Azure region (for example, `eastus`).
+
+Use the following samples to create your access token request.
+
+#### HTTP sample
+
+This example is a simple HTTP request to get a token. Replace `YourSpeechResourceKey` with your resource key for the Speech service. Replace `YourResourceName` with the name of your Speech resource.
+
+```http
+POST /sts/v1.0/issueToken HTTP/1.1
+Ocp-Apim-Subscription-Key: YourSpeechResourceKey
+Host: YourResourceName.cognitiveservices.azure.com
+Content-type: application/x-www-form-urlencoded
+Content-Length: 0
+```
+
+The body of the response contains the access token in JSON Web Token (JWT) format.
+
+#### PowerShell sample
+
+This example is a simple PowerShell script to get an access token. Replace `YourSpeechResourceKey` with your resource key for the Speech service. Replace `YourResourceName` with the name of your Speech resource.
+
+```powershell
+$FetchTokenHeader = @{
+  'Content-type'='application/x-www-form-urlencoded';
+  'Content-Length'= '0';
+  'Ocp-Apim-Subscription-Key' = 'YourSpeechResourceKey'
+}
+
+$OAuthToken = Invoke-RestMethod -Method POST `
+    -Uri https://YourResourceName.cognitiveservices.azure.com/sts/v1.0/issueToken `
+    -Headers $FetchTokenHeader
+
+# show the token received
+$OAuthToken
+
+```
+
+#### cURL sample
+
+cURL is a command-line tool available in Linux (and in the Windows Subsystem for Linux). This cURL command illustrates how to get an access token. Replace `YourSpeechResourceKey` with your resource key for the Speech service. Replace `YourResourceName` with the name of your Speech resource.
+
+```console
+curl -v -X POST \
+ "https://YourResourceName.cognitiveservices.azure.com/sts/v1.0/issueToken" \
+ -H "Content-type: application/x-www-form-urlencoded" \
+ -H "Content-Length: 0" \
+ -H "Ocp-Apim-Subscription-Key: YourSpeechResourceKey"
+```
+
+#### C# sample
+
+This C# class illustrates how to get an access token. Pass your resource key for the Speech service when you instantiate the class. Replace `YourResourceName` with the name of your Speech resource.
+
+```csharp
+public class Authentication
+{
+    public static readonly string FetchTokenUri =
+        "https://YourResourceName.cognitiveservices.azure.com/sts/v1.0/issueToken";
+    private string subscriptionKey;
+    private string token;
+
+    public Authentication(string subscriptionKey)
+    {
+        this.subscriptionKey = subscriptionKey;
+        this.token = FetchTokenAsync(FetchTokenUri, subscriptionKey).Result;
+    }
+
+    public string GetAccessToken()
+    {
+        return this.token;
+    }
+
+    private async Task<string> FetchTokenAsync(string fetchUri, string subscriptionKey)
+    {
+        using (var client = new HttpClient())
+        {
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+            UriBuilder uriBuilder = new UriBuilder(fetchUri);
+
+            var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null);
+            Console.WriteLine("Token Uri: {0}", uriBuilder.Uri.AbsoluteUri);
+            return await result.Content.ReadAsStringAsync();
+        }
+    }
+}
+```
+
+#### Python sample
+
+```python
+# Request module must be installed.
+# Run pip install requests if necessary.
+import requests
+
+subscription_key = 'REPLACE_WITH_YOUR_KEY'
+
+
+def get_token(subscription_key):
+    fetch_token_url = 'https://YourResourceName.cognitiveservices.azure.com/sts/v1.0/issueToken'
+    headers = {
+        'Ocp-Apim-Subscription-Key': subscription_key
+    }
+    response = requests.post(fetch_token_url, headers=headers)
+    access_token = str(response.text)
+    print(access_token)
+```
+
+### How to use an access token
+
+The access token should be sent to the service as the `Authorization: Bearer <TOKEN>` header. Each access token is valid for 10 minutes. You can get a new token at any time, but to minimize network traffic and latency, we recommend using the same token for nine minutes.
+
+> **Important:**
+> Bearer tokens are scoped to the endpoint that issued them. A token obtained from `YourResourceName.cognitiveservices.azure.com` works only for requests to that same host. A token from `<region>.api.cognitive.microsoft.com` works only against regional Speech endpoints. If you receive a 401 error when using a Bearer token, use `Ocp-Apim-Subscription-Key` with your resource key instead, which works with all endpoint formats.
+
+Here's a sample HTTP request to the Speech to text REST API for short audio:
+
+```http
+POST /cognitiveservices/v1 HTTP/1.1
+Authorization: Bearer YOUR_ACCESS_TOKEN
+Host: YourResourceName.cognitiveservices.azure.com
+Content-type: application/ssml+xml
+Content-Length: 199
+Connection: Keep-Alive
+
+// Message body here...
+```
+
+### Use Microsoft Entra authentication
+
+To use Microsoft Entra authentication with the Speech to text REST API for short audio, you need to create an access token.
+The steps to obtain the access token consisting of Resource ID and  Microsoft Entra access token are the same as when using the Speech SDK.
+Follow the steps here [Use Microsoft Entra authentication](how-to-configure-azure-ad-auth.md)
+
+> 
+>
+> - Create a Foundry resource for Speech
+> - Configure the Speech resource for Microsoft Entra authentication
+> - Get a Microsoft Entra access token
+> - Get the Speech resource ID
+
+After the resource ID and the Microsoft Entra access token were obtained, the actual access token can be constructed following this format:
+```http
+aad#YOUR_RESOURCE_ID#YOUR_MICROSOFT_ENTRA_ACCESS_TOKEN
+```
+You need to include the "aad#" prefix and the "#" (hash) separator between resource ID and the access token.
+
+Here's a sample HTTP request to the Speech to text REST API for short audio:
+
+```http
+POST /cognitiveservices/v1 HTTP/1.1
+Authorization: Bearer YOUR_ACCESS_TOKEN
+Host: YourResourceName.cognitiveservices.azure.com
+Content-type: application/ssml+xml
+Content-Length: 199
+Connection: Keep-Alive
+
+// Message body here...
+```
+
+To learn more about Microsoft Entra access tokens, including token lifetime, visit [Access tokens in the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/access-tokens).
+
+
+
+
+
+
+
+## Related content
+
+- [Fast transcription API](fast-transcription-create.md)
+- [Customize speech models](how-to-custom-speech-train-model.md)
+- [Get familiar with batch transcription](batch-transcription.md)

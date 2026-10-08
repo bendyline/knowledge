@@ -1,0 +1,42 @@
+# Source code: aspnetcore/mvc/views/view-components/sample/StarterViewComp/Views/ToDo/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+
+@using ViewComponentSample.Models
+@model IEnumerable<TodoItem>
+
+
+<h2>ToDo Starter</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.IsDone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Priority)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            </tr>
+    }
+</table>
+```

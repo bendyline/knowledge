@@ -1,0 +1,344 @@
+---
+title: "Tutorial: Regex String Search in Java"
+description: This tutorial shows you how to use SQL Server Language Extensions and run Java code that searches a string with regular expressions (regex).
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/28/2025
+ms.service: sql
+ms.subservice: language-extensions
+ms.topic: tutorial
+monikerRange: ">=sql-server-ver15 || >=sql-server-linux-ver15"
+---
+# Tutorial: Search for a string using regular expressions (regex) in Java
+
+
+**Applies to:**
+ 
+
+
+
+ and later versions
+
+
+This tutorial shows you how to use [SQL Server Language Extensions](../language-extensions-overview.md) to create a Java class that receives two columns (ID and text) from SQL Server and a regular expression (regex) as an input parameter. The class returns two columns back to SQL Server (ID and text).
+
+For a given text in the text column sent to the Java class, the code checks if the given regular expression is fulfilled, and returns that text together with the original ID.
+
+This sample code uses a regular expression that checks if a text contains the word `Java` or `java`.
+
+## Prerequisites
+
+- Database Engine instance on  SQL Server 2019 (15.x) 
+ and later versions, with the extensibility framework and Java programming extension [on Windows](../install/windows-java.md) or [on Linux](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/linux/sql-server-linux-setup-language-extensions-java.md). For more information, see [SQL Server Language Extensions](../language-extensions-overview.md). For more information about coding requirements, see [How to call the Java runtime in SQL Server Language Extensions](../how-to/call-java-from-sql.md).
+
+- A database client. You can connect to an instance of  SQL Server 
+ using any familiar  SQL Server 
+ client tool, such as **[sqlcmd](../../tools/sqlcmd/sqlcmd-utility.md)**, [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/), or the [MSSQL extension for Visual Studio Code](../../tools/visual-studio-code-extensions/mssql/mssql-extension-visual-studio-code.md).
+
+- Java SE Development Kit (JDK) 8 or JRE 8 on Windows or Linux.
+
+- The `mssql-java-lang-extension.jar` file from the [Microsoft Extensibility SDK for Java for SQL Server](../how-to/extensibility-sdk-java-sql-server.md) .
+
+Command-line compilation using `javac` is sufficient for this tutorial.
+
+## Create sample data
+
+First, create a new database and populate a `testdata` table with `ID` and `text` columns.
+
+```sql
+CREATE DATABASE javatest;
+GO
+
+USE javatest;
+GO
+
+CREATE TABLE testdata
+(
+    [id] INT NOT NULL,
+    [text] NVARCHAR (100) NOT NULL
+);
+GO
+
+-- Insert data into test table
+INSERT INTO testdata ([id], [text]) VALUES (1, 'This sentence contains java');
+INSERT INTO testdata ([id], [text]) VALUES (2, 'This sentence does not');
+INSERT INTO testdata ([id], [text]) VALUES (3, 'I love Java!');
+GO
+```
+
+## Create the main class
+
+In this step, create a class file called `RegexSample.java` and copy the following Java code into that file.
+
+This main class is importing the SDK, which means that the jar file downloaded in step1 needs to be discoverable from this class.
+
+```java
+package pkg;
+
+import com.microsoft.sqlserver.javalangextension.PrimitiveDataset;
+import com.microsoft.sqlserver.javalangextension.AbstractSqlServerExtensionExecutor;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.regex.*;
+
+public class RegexSample extends AbstractSqlServerExtensionExecutor {
+    private Pattern expr;
+
+    public RegexSample() {
+        // Setup the expected extension version, and class to use for input and output dataset
+        executorExtensionVersion = SQLSERVER_JAVA_LANG_EXTENSION_V1;
+        executorInputDatasetClassName = PrimitiveDataset.class.getName();
+        executorOutputDatasetClassName = PrimitiveDataset.class.getName();
+    }
+
+    public PrimitiveDataset execute(PrimitiveDataset input, LinkedHashMap<String, Object> params) {
+        // Validate the input parameters and input column schema
+        validateInput(input, params);
+
+        int[] inIds = input.getIntColumn(0);
+        String[] inValues = input.getStringColumn(1);
+        int rowCount = inValues.length;
+
+        String regexExpr = (String)params.get("regexExpr");
+        expr = Pattern.compile(regexExpr);
+
+        System.out.println("regex expression: " + regexExpr);
+
+        // Lists to store the output data
+        LinkedList<Integer> outIds = new LinkedList<Integer>();
+        LinkedList<String> outValues = new LinkedList<String>();
+
+        // Evaluate each row
+        for(int i = 0; i < rowCount; i++) {
+            if (check(inValues[i])) {
+                outIds.add(inIds[i]);
+                outValues.add(inValues[i]);
+            }
+        }
+
+        int outputRowCount = outValues.size();
+
+        int[] idOutputCol = new int[outputRowCount];
+        String[] valueOutputCol = new String[outputRowCount];
+
+        // Convert the list of output columns to arrays
+        outValues.toArray(valueOutputCol);
+
+        ListIterator<Integer> it = outIds.listIterator(0);
+        int rowId = 0;
+
+        System.out.println("Output data:");
+        while (it.hasNext()) {
+            idOutputCol[rowId] = it.next().intValue();
+
+            System.out.println("ID: " + idOutputCol[rowId] + " Value: " + valueOutputCol[rowId]);
+            rowId++;
+        }
+
+        // Construct the output dataset
+        PrimitiveDataset output = new PrimitiveDataset();
+
+        output.addColumnMetadata(0, "ID", java.sql.Types.INTEGER, 0, 0);
+        output.addColumnMetadata(1, "Text", java.sql.Types.NVARCHAR, 0, 0);
+
+        output.addIntColumn(0, idOutputCol, null);
+        output.addStringColumn(1, valueOutputCol);
+
+        return output;
+    }
+
+    private void validateInput(PrimitiveDataset input, LinkedHashMap<String, Object> params) {
+        // Check for the regex expression input parameter
+        if (params.get("regexExpr") == null) {
+            throw new IllegalArgumentException("Input parameter 'regexExpr' is not found");
+        }
+
+        // The expected input schema should be at least 2 columns, (INTEGER, STRING)
+        if (input.getColumnCount() < 2) {
+            throw new IllegalArgumentException("Unexpected input schema, schema should be an (INTEGER, NVARCHAR or VARCHAR)");
+        }
+
+        // Check that the input column types are expected
+        if (input.getColumnType(0) != java.sql.Types.INTEGER &&
+                (input.getColumnType(1) != java.sql.Types.VARCHAR && input.getColumnType(1) == java.sql.Types.NVARCHAR )) {
+            throw new IllegalArgumentException("Unexpected input schema, schema should be an (INTEGER, NVARCHAR or VARCHAR)");
+        }
+    }
+
+    private boolean check(String text) {
+        Matcher m = expr.matcher(text);
+
+        return m.find();
+    }
+}
+```
+
+## Compile and create a .jar file
+
+Package your classes and dependencies into a `.jar` files. Most Java IDEs (for example, Eclipse or IntelliJ) support generating `.jar` files when you build or compile the project. Name the `.jar` file `regex.jar`.
+
+If you aren't using a Java IDE, you can manually create a `.jar` file. For more information, see [Create a Java .jar file from class files](../how-to/create-a-java-jar-file-from-class-files.md).
+
+> **Note:**  
+> This tutorial uses packages. The `package pkg;` line at the top of the class ensures that the compiled code is saved in a sub folder called `pkg`. If you use an IDE, the compiled code is automatically saved in this folder. If you use `javac` to manually compile the classes, you need to place the compiled code in the `pkg` folder.
+
+## Create external language
+
+You need to create an external language in the database. The external language is a database scoped object, which means that external languages like Java need to be created for each database you want to use it in.
+
+### Create external language on Windows
+
+If you're using Windows, follow these steps to create an external language for Java.
+
+1. Create a .zip file containing the extension.
+
+   As part of the SQL Server setup on Windows, the Java extension `.zip` file is installed in this location: `[SQL Server install path]\MSSQL\Binn\java-lang-extension.zip`. This zip file contains the `javaextension.dll`.
+
+1. Create an external language Java from the .zip file:
+
+   ```sql
+   CREATE EXTERNAL LANGUAGE Java
+   FROM
+   (CONTENT = N'[SQL Server install path]\MSSQL\Binn\java-lang-extension.zip', FILE_NAME = 'javaextension.dll',
+   ENVIRONMENT_VARIABLES = N'{"JRE_HOME":"<path to JRE>"}' );
+   GO
+   ```
+
+### Create external language on Linux
+
+As part of setup, the extension `.tar.gz` file is saved under the following path:
+`/opt/mssql-extensibility/lib/java-lang-extension.tar.gz`.
+
+To create an external language Java, run the following T-SQL statement on Linux:
+
+```sql
+CREATE EXTERNAL LANGUAGE Java
+FROM (CONTENT = N'/opt/mssql-extensibility/lib/java-lang-extension.tar.gz', file_name = 'javaextension.so',
+ENVIRONMENT_VARIABLES = N'{"JRE_HOME":"<path to JRE>"}' );
+GO
+```
+
+### Permissions to execute external language
+
+To execute Java code, a user needs to be granted external script execution on that specific language.
+
+For more information, see [CREATE EXTERNAL LANGUAGE](../../t-sql/statements/create-external-language-transact-sql.md).
+
+## Create external libraries
+
+Use [CREATE EXTERNAL LIBRARY](../../t-sql/statements/create-external-library-transact-sql.md) to create an external library for your `.jar` files. SQL Server has access to the `.jar` files and you don't need to set any special permissions to the `classpath`.
+
+In this sample, you create two external libraries. One for the SDK and one for the RegEx Java code.
+
+1. The SDK jar file `mssql-java-lang-extension.jar` is installed as part of  SQL Server 2019 (15.x) 
+ and later versions, on both Windows and Linux.
+
+   - Default installation path on Windows: `<instance installation home directory>\MSSQL\Binn\mssql-java-lang-extension.jar`
+
+   - Default installation path on Linux: `/opt/mssql/lib/mssql-java-lang-extension.jar`
+
+   The code is also open sourced and can be found on the [SQL Server Language Extensions GitHub repository](https://github.com/microsoft/sql-server-language-extensions). For more information, see [Microsoft Extensibility SDK for Java for SQL Server](../how-to/extensibility-sdk-java-sql-server.md).
+
+1. Create an external library for the SDK.
+
+   ```sql
+   CREATE EXTERNAL LIBRARY sdk
+   FROM (CONTENT = '<OS specific path from above>/mssql-java-lang-extension.jar')
+   WITH (LANGUAGE = 'Java');
+   GO
+   ```
+
+1. Create an external library for the RegEx code.
+
+   ```sql
+   CREATE EXTERNAL LIBRARY regex
+   FROM (CONTENT = '<path>/regex.jar')
+   WITH (LANGUAGE = 'Java');
+   GO
+   ```
+
+## Set permissions
+
+> **Note:**  
+> Skip this step, if you use external libraries in the previous step. The recommended way is to create an external library from your `.jar` file.
+
+If you don't want to use external libraries, you need to set the necessary permissions. Script execution only succeeds if the process identities have access to your code. You can find more information about setting permissions in the [installation guide](../install/windows-java.md).
+
+### On Linux
+
+Grant read/execute permissions on the classpath to the `mssql_satellite` user.
+
+### On Windows
+
+Grant 'Read and Execute' permissions to **SQLRUserGroup** and the **All application packages** SID on the folder containing your compiled Java code.
+
+The entire tree must have permissions, from root parent to the last sub folder.
+
+1. Right-click the folder (for example, `C:\myJavaCode`) and choose **Properties** > **Security**.
+1. Select **Edit**.
+1. Select **Add**.
+1. In **Select Users, Computer, Service Accounts, or Groups**:
+   1. Select **Object Types** and make sure *Built-in security principles* and *Groups* are selected.
+   1. Select **Locations** to select the local computer name at the top of the list.
+1. Enter **SQLRUserGroup**, check the name, and select **OK** to add the group.
+1. Enter **ALL APPLICATION PACKAGES**, check the name, and select **OK** to add.
+   If the name doesn't resolve, revisit the Locations step. The SID is local to your machine.
+
+Make sure both security identities have **Read and Execute** permissions on the folder and the `pkg` sub folder.
+
+<a id="call-method"></a>
+
+## Call the Java class
+
+Create a stored procedure that calls `sp_execute_external_script` to call the Java code from SQL Server. In the `script` parameter, define which `package.class` you want to call. In the following code, the class belongs to a package called `pkg` and a class file called `RegexSample.java`.
+
+> **Note:**  
+> The code isn't defining which method to call. By default, the `execute` method is called. This means that you need to follow the SDK interface and implement an execute method in your Java class, if you want to be able to call the class from SQL Server.
+
+The stored procedure takes an input query (input dataset) and a regular expression and returns the rows that fulfilled the given regular expression. It uses a regular expression `[Jj]ava` that checks if a text contains the word `Java` or `java`.
+
+```sql
+CREATE OR ALTER PROCEDURE [dbo].[java_regex] (
+    @expr NVARCHAR (200),
+    @query NVARCHAR (400)
+)
+AS
+BEGIN
+    --Call the Java program by giving the package.className in @script
+    --The method invoked in the Java code is always the "execute" method
+    EXECUTE sp_execute_external_script
+        @language = N'Java',
+        @script = N'pkg.RegexSample',
+        @input_data_1 = @query,
+        @params = N'@regexExpr nvarchar(200)',
+        @regexExpr = @expr
+        WITH RESULT SETS
+    (
+            (ID INT, TEXT NVARCHAR (100))
+    );
+END
+GO
+
+--Now execute the above stored procedure and provide the regular expression and an input query
+EXECUTE [dbo].[java_regex] N'[Jj]ava', N'SELECT id, text FROM testdata';
+GO
+```
+
+### Results
+
+After executing the call, you should get a result set with two of the rows.
+
+Screenshot of Results from Java sample.
+
+### If you get an error
+
+- When you compile your classes, the `pkg` sub folder should contain the compiled code for all three classes.
+
+- If you aren't using external libraries, check permissions on *each* folder, from the `root` to `pkg` sub folder, to ensure that the security identities running the external process have permission to read and execute your code.
+
+## Related content
+
+- [How to call the Java runtime in SQL Server Language Extensions](../how-to/call-java-from-sql.md)
+- [What is SQL Server Language Extensions?](../language-extensions-overview.md)
+- [Java and SQL Server supported data types](../how-to/java-to-sql-data-types.md)

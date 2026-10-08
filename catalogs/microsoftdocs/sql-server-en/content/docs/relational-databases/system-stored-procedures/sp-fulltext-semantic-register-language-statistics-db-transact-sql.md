@@ -1,0 +1,103 @@
+---
+title: "sys.sp_fulltext_semantic_register_language_statistics_db (Transact-SQL)"
+description: Registers a pre-populated Semantic Language Statistics database in the current instance of SQL Server.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_fulltext_semantic_register_language_statistics_db"
+  - "sp_fulltext_semantic_register_language_statistics_db_TSQL"
+helpviewer_keywords:
+  - "sp_fulltext_semantic_register_language_statistics_db"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_fulltext_semantic_register_language_statistics_db (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Registers a pre-populated Semantic Language Statistics database in the current instance of  SQL Server 
+.
+
+You can initiate semantic extraction only after you have attached this language statistics database and registered it by using this stored procedure. You only need to perform this task once for each instance of  SQL Server 
+.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_fulltext_semantic_register_language_statistics_db [ @dbname = ] N'dbname'
+[ ; ]
+```
+
+## Arguments
+
+#### [ @dbname = ] N'*dbname*'
+
+The name of the Semantic Language Statistics database to be registered for the current instance of  SQL Server 
+. The database must already be attached. *@dbname* is **sysname**, and can't be `NULL`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Result set
+
+None.
+
+## Remarks
+
+The Semantic Language Statistics database contains language-related statistics that are required for semantic processing of textual content.
+
+`sp_fulltext_semantic_register_language_statistics_db` performs the following steps:
+
+1. Checks that the instance of  SQL Server 
+ is a version that supports semantic processing.
+
+1. Checks that the instance of  SQL Server 
+ doesn't already have a Semantic Language Statistics database defined.
+
+1. Checks that the database is a valid Semantic Language Statistics database.
+
+1. Sets permissions on the Semantic Language Statistics database to restrict access to the database by users.
+
+1. Inserts the metadata that defines the name of the Semantic Language Statistics database for the instance of  SQL Server 
+.
+
+1. Inserts the metadata that defines the mappings between the installed Semantic Language Statistics database and the internal Language Model tables.
+
+1. Checks to ensure that the database is ready to be used.
+
+For more information, see [Install and Configure Semantic Search](../search/install-and-configure-semantic-search.md).
+
+## Metadata
+
+For information about the Semantic Language Statistics database installed on an instance of  SQL Server 
+, query the catalog view [sys.fulltext_semantic_language_statistics_database](../system-catalog-views/sys-fulltext-semantic-language-statistics-database-transact-sql.md).
+
+## Permissions
+
+Requires CONTROL SERVER permissions.
+
+## Examples
+
+The following example shows how to register the Semantic Language Statistics database by calling `sp_fulltext_semantic_register_language_statistics_db`.
+
+```sql
+EXECUTE sp_fulltext_semantic_register_language_statistics_db @dbname = 'semanticsDb';
+GO
+```
+
+## Related content
+
+- [Install and Configure Semantic Search](../search/install-and-configure-semantic-search.md)

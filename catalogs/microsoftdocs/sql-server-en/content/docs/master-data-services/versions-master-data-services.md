@@ -1,0 +1,102 @@
+---
+title: Versions
+description: You can create multiple versions of the master data within a model in Master Data Services. Learn about versions and when to use them.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "version flags [Master Data Services], about version flags"
+  - "versions [Master Data Services]"
+  - "version flags [Master Data Services]"
+  - "versions [Master Data Services], version flags"
+---
+# Versions (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, you can create multiple versions of the master data within a model. Versions can be locked while you validate your data and committed after the data is validated. Committed versions form an auditable record of changes. Each version you create contains all members, attribute values, hierarchy members, hierarchy relationships, and collections for the model.  
+  
+## When to Use Versions  
+ Use versions to:  
+  
+-   Maintain an auditable record of your master data as it changes over time.  
+  
+-   Prevent users from making changes while you ensure all data validates successfully against business rules.  
+  
+-   Lock down a model for use by subscribing systems.  
+  
+-   Test different hierarchies without implementing them right away.  
+  
+> **Note:**  
+>  When you change the structure of your model, such as when you create a new entity or domain-based attribute, the change applies to all versions. If you view an earlier version of the model, the entity or attribute is displayed, but no data exists.  
+  
+## Version Flags  
+ When a version is ready for users or for a subscribing system, you can set a flag to identify the version. You can move this flag from version to version as needed. Flags help users and subscribing systems identify which version of a model to use.  
+  
+## Workflow for Version Management  
+ Use the following workflow for version management:  
+  
+1.  An initial version is created automatically when you create a model and populate the  Master Data Services 
+ database with your company's master data. Based on permissions, users can make changes to this version as needed.  
+  
+2.  When you want to commit a version of a model, lock the version so that only model administrators can update the data. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md). If notifications are configured, an email notification is sent to model administrators each time the version's status changes. For more information, see [Configure Email Notifications (Master Data Services)](configure-email-notifications-master-data-services.md).  
+  
+3.  Apply business rules to the locked version's data and review any validation issues. If necessary, you can fill in missing information or revert the transaction that caused the issue. You can also unlock the version for users to make changes.  
+  
+4.  When all the data passes validation, commit the version and flag it for use by subscribing systems. Changes cannot be made to a committed version.  
+  
+5.  Copy the committed version and notify users that they can begin working in a new version of the model.  
+  
+## Sequential or Simultaneous Versions  
+ You can create sequential or simultaneous versions of your model.  
+  
+-   **Sequential versions.** Each time you commit a version, create a new copy and give the version the next sequential number. For example, you can copy **Version 7** of your model and name the copy **Version 8**.  
+  
+-   **Simultaneous versions.** Create simultaneous versions of your model when you want to work on two or more versions of your data at once. This is useful when your company has reorganizations or mergers that coincide with the normal course of business and you want to determine how the new master data might fit into your existing structures.  
+  
+    > **Note:**  
+    >  A setting in  Master Data Services Configuration Manager 
+ determines whether or not you can copy all versions or only those that are committed. To create simultaneous versions you must configure  Master Data Services 
+ to allow you to copy all versions. This setting is also available in the System Settings table. For more information, see [System Settings (Master Data Services)](system-settings-master-data-services.md).  
+  
+## Related Tasks  
+  
+| Task Description | Topic |
+| --- | --- |
+| Change the name of an existing version. | [Change a Version Name (Master Data Services)](change-a-version-name-master-data-services.md) |
+| Lock a version so only administrators can edit its data. | [Lock a Version (Master Data Services)](lock-a-version-master-data-services.md) |
+| Unlock a version so users can edit its data. | [Unlock a Version (Master Data Services)](unlock-a-version-master-data-services.md) |
+| Commit a version after all data is validated. | [Commit a Version (Master Data Services)](commit-a-version-master-data-services.md) |
+| Create a new flag to mark a version. | [Create a Version Flag (Master Data Services)](create-a-version-flag-master-data-services.md) |
+| Change the name of an existing version flag. | [Change a Version Flag Name (Master Data Services)](change-a-version-flag-name-master-data-services.md) |
+| Assign an existing flag to a version. | [Assign a Flag to a Version (Master Data Services)](assign-a-flag-to-a-version-master-data-services.md) |
+| Create a new copy of an existing version | [Copy a Version (Master Data Services)](copy-a-version-master-data-services.md) |
+| Delete an existing version. | [Delete a Version (Master Data Services)](delete-a-version-master-data-services.md) |
+| Purge soft-deleted members from a version | [Purge Version Members (Master Data Services)](purge-version-members-master-data-services.md) |
+  
+## Related content
+
+- [Reverse a Transaction (Master Data Services)](reverse-a-transaction-master-data-services.md)
+- [Notifications (Master Data Services)](notifications-master-data-services.md)
+- [Business Rules (Master Data Services)](business-rules-master-data-services.md)

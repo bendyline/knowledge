@@ -1,0 +1,113 @@
+---
+title: "Replication Agent Administration"
+description: Learn about managing replication agents, which perform tasks for replication, like creating copies of schema and data and propagating changes between servers.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.reviewer: randolphwest
+ms.date: 04/07/2025
+ms.service: sql
+ms.subservice: replication
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Snapshot Agent, administering"
+  - "Log Reader Agent, administering"
+  - "Queue Reader Agent, administering"
+  - "shared agents [SQL Server replication]"
+  - "Merge Agent, administering"
+  - "Distribution Agent, administering"
+  - "agents [SQL Server replication], administering"
+  - "replication cleanup jobs [SQL Server]"
+  - "administering replication, agents"
+  - "replication [SQL Server], administering"
+  - "independent agents [SQL Server replication]"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Replication Agent Administration
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Replication agents carry out many of the tasks associated with replication, including creating copies of schema and data, detecting updates at the Publisher or Subscriber, and propagating changes between servers. By default, replication agents run under  SQL Server 
+ Agent job steps. The agents are simply executables, so they can also be called directly from the command line and from batch scripts. Each replication agent supports a set of run-time parameters used to control how it runs; these parameters are specified in an agent profile or on the command line.
+
+> **Important:**  
+> By default, the  SQL Server 
+ Agent service is disabled when  SQL Server 
+ is installed unless you explicitly choose to autostart the service during installation.
+
+Replication agent files are located under \<*drive*>:\Program Files\Microsoft SQL Server\\*nnn*\\
+\COM. The following table lists the replication executable names and file names. Select the link for an agent to view its parameter reference.
+
+| Agent executable | File name |
+| --- | --- |
+| [Replication Snapshot Agent](replication-snapshot-agent.md) | `snapshot.exe` |
+| [Replication Distribution Agent](replication-distribution-agent.md) | `distrib.exe` |
+| [Replication Log Reader Agent](replication-log-reader-agent.md) | `logread.exe` |
+| [Replication Queue Reader Agent](replication-queue-reader-agent.md) | `qrdrsvc.exe` |
+| [Replication Merge Agent](replication-merge-agent.md) | `replmerg.exe` |
+
+In addition to replication agents, replication has several jobs that perform scheduled and on-demand maintenance.
+
+## Run agents and maintenance jobs
+
+ SQL Server Management Studio 
+ and Replication Monitor: [Start and Stop a Replication Agent (SQL Server Management Studio)](start-and-stop-a-replication-agent-sql-server-management-studio.md)
+
+Replication programming: [Replication Agent Executables Concepts](../concepts/replication-agent-executables-concepts.md)
+
+## Agent profiles
+
+When replication is configured, a set of agent profiles is installed on the Distributor. An agent profile contains a set of parameters that are used each time an agent runs: each agent logs in to the Distributor during its startup process and queries for the parameters in its profile. Replication provides a default profile for each agent and additional predefined profiles for the Log Reader agent, Distribution agent, and Merge agent. In addition to the profiles provided, you can create profiles suited to your application requirements. For more information, see [Replication Agent Profiles](replication-agent-profiles.md).
+
+For information about specifying command line parameters directly, see [Replication Agent Executables Concepts](../concepts/replication-agent-executables-concepts.md).
+
+## Monitor Replication agents
+
+Replication Monitor allows you to view information and perform tasks associated with each replication agent. The following list includes each agent, the tabs in the Replication Monitor on which it can be found, and a link to an article that explains how to access these tabs:
+
+- The following agents are associated with publications in Replication Monitor:
+
+  - Snapshot agent
+  - Log Reader agent
+  - Queue Reader agent
+
+  Access information and tasks associated with these agents through the **Agents** tab. For more information, see View information and perform tasks using [View information and perform tasks using Replication Monitor](../monitor/view-information-and-perform-tasks-replication-monitor.md).
+
+- The following agents are associated with subscriptions in Replication Monitor:
+
+  - Distribution Agent
+  - Merge Agent
+
+  Access information and tasks associated with these agents through the following tabs: **Subscription Watch List** (available for each Publisher) or the **All Subscriptions** tab (available for each publication). For more information, see [View information and perform tasks using Replication Monitor](../monitor/view-information-and-perform-tasks-replication-monitor.md).
+
+## Independent and shared agents
+
+An independent agent is an agent that services one subscription; a shared agent services multiple subscriptions. If multiple subscriptions using the same shared agent need to synchronize, by default they wait in a queue, and the shared agent services them one at a time. Latency is reduced when using independent agents because the agent is ready whenever the subscription needs to be synchronized. Merge replication always uses independent agents, and transactional replication uses independent agents by default for publications created in the New Publication Wizard. In previous versions of  SQL Server 
+, transactional replication used shared agents by default.
+
+## Replication maintenance jobs
+
+Replication uses the following jobs to perform scheduled and on-demand maintenance.
+
+| Clean up job | Description | Default schedule |
+| --- | --- | --- |
+| Agent History Clean Up: Distribution | Removes replication agent history from the distribution database. | Runs every 10 minutes |
+| Distribution Clean Up: Distribution | Removes replicated transactions from the distribution database. | Runs every 10 minutes |
+| Expired Subscription Clean Up | Detects and removes expired subscriptions from publication databases. On the distributor, deactivates subscriptions that weren't synchronized within the maximum distribution retention period. | Runs every day at 1:00 A.M. |
+| Reinitialize Subscriptions Having Data Validation Failures | Detects all subscriptions that have data validation failures and marks them for reinitialization. The next time the Merge Agent or Distribution Agent runs, a new snapshot will be applied at the Subscribers. | No default schedule (not enabled by default). |
+| Replication Agents Checkup | Detects replication agents that aren't actively logging history. It writes to the Windows event log if a job step fails. | Runs every 10 minutes. |
+| Replication monitoring refresher for distribution | Refreshes cached queries used by Replication Monitor. | Runs continuously. |
+
+## Related content
+
+- [Monitoring (Replication)](../monitor/monitoring-replication.md)

@@ -1,0 +1,116 @@
+---
+title: Configure a cross-tenant connection in Azure Virtual Network Manager Preview - CLI
+description: Learn how to connect Azure subscriptions in Azure Virtual Network Manager by using cross-tenant connections for the management of virtual networks across subscriptions.
+author: mbender-ms
+ms.author: mbender
+ms.service: azure-virtual-network-manager
+ms.topic: how-to 
+ms.date: 07/29/2026
+ms.custom: template-how-to, devx-track-azurecli
+# Customer intent: As a cloud admin, I need to manage multiple tenants from a single network manager so that I can easily manage all network resources governed by Azure Virtual Network Manager.
+---
+
+# Configure a cross-tenant connection in Azure Virtual Network Manager Preview - CLI
+
+In this article, you learn how to create [cross-tenant connections](concept-cross-tenant.md) in Azure Virtual Network Manager by using the [Azure CLI](https://learn.microsoft.com/cli/azure/network/manager/scope-connection). Cross-tenant support enables organizations to use a central network manager for managing virtual networks across tenants and subscriptions. 
+
+First, you create the scope connection on the central network manager. Then, you create the network manager connection on the connecting tenant and verify the connection. Last, you add virtual networks from different tenants and verify. After you complete all the tasks, you can centrally manage the resources of other tenants from your network manager.
+
+## Prerequisites
+
+- Two Azure tenants with virtual networks that you want to manage through Azure Virtual Network Manager. This article refers to the tenants as follows:
+  - **Central management tenant**: The tenant where an Azure Virtual Network Manager instance is installed, and where you centrally manage network groups from cross-tenant connections.
+  - **Target managed tenant**: The tenant that contains virtual networks to be managed. This tenant connects to the central management tenant.
+- Azure Virtual Network Manager deployed in the central management tenant.
+- See the [required permissions](concept-cross-tenant.md#required-permissions) for cross-tenant connections.
+
+Need help with setting up permissions? Check out how to [add guest users in the Azure portal](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/external-identities/b2b-quickstart-add-guest-users-portal.md) and how to [assign user roles to resources in the Azure portal](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-portal).
+
+## Create a scope connection within a network manager
+
+Creation of the scope connection starts on the central management tenant with a network manager deployed. This network manager is where you plan to manage all of your resources across tenants. 
+
+In this task, you set up a scope connection to add a subscription from a target tenant. Use the subscription ID and tenant ID of the target network manager. If you want to use a management group, modify the `--resource-id` argument to look like `/providers/Microsoft.Management/managementGroups/{mgId}`.
+
+```azurecli
+# Create a scope connection in the network manager in the central management tenant
+az network manager scope-connection create --resource-group "myRG" --network-manager-name "myAVNM" --name "ToTargetManagedTenant" --description "This is a connection to manage resources in the target managed tenant" --resource-id "/subscriptions/aaaa0a0a-bb1b-cc2c-dd3d-eeeeee4e4e4e" --tenant-id "aaaabbbb-0000-cccc-1111-dddd2222eeee"
+```
+
+## Create a network manager connection on a subscription in another tenant 
+
+Run the commands in this section in the target managed tenant, not in the central management tenant. These commands create a network manager connection on a subscription in the managed tenant that points back to the network manager in the central management tenant. This connection completes the pairing you started with the scope connection. You also verify the connection state.
+
+1. Enter the following command to connect to the target managed tenant by using your administrative account:
+
+   ```azurecli
+   
+   # Log in to the target managed tenant
+   # Change the --tenant value to the appropriate tenant ID
+   az login --tenant "aaaabbbb-0000-cccc-1111-dddd2222eeee"
+   ```
+   
+   Complete authentication with your organization, based on your organization's policies.
+
+1. Enter the following commands to set the subscription and to create the connection back to the central management tenant. The subscription is the same one that the scope connection referenced in the previous step.
+
+    ```azurecli
+    # Set the Azure subscription
+    az account set --subscription aaaa0a0a-bb1b-cc2c-dd3d-eeeeee4e4e4e
+
+
+    # Create a cross-tenant connection to the central management tenant
+    az network manager connection subscription create --connection-name "toCentralManagementTenant" --description "This connection allows management of the tenant by a central management tenant" --network-manager-id "/subscriptions/aaaa0a0a-bb1b-cc2c-dd3d-eeeeee4e4e4e/resourceGroups/myRG/providers/Microsoft.Network/networkManagers/myAVNM"
+    ```
+
+## Verify the connection status
+
+1.	Enter the following command to check the connection status:
+
+    ```azurecli
+    # Check connection status
+    az network manager connection subscription show --name "toCentralManagementTenant"
+    ```
+
+1. Switch back to the central management tenant. Use the `show` command for the network manager to show the subscription added via the property for cross-tenant scopes:
+
+    ```azurecli
+    # View the subscription added to the network manager
+    az network manager show --resource-group myAVNMResourceGroup --name myAVNM
+    ```
+
+## Add static members to a network group 
+
+In this task, you add a cross-tenant virtual network to your network group by using static membership. In the following command, the virtual network subscription is the same as the one that you referenced when you created connections earlier.
+
+```azurecli
+# Create a network group with a static member from the target managed tenant
+az network manager group static-member create --network-group-name "CrossTenantNetworkGroup" --network-manager-name "myAVNM" --resource-group "myAVNMResourceGroup" --static-member-name "targetVnet01" --resource-id="/subscriptions/aaaa0a0a-bb1b-cc2c-dd3d-eeeeee4e4e4e
+/resourceGroups/myScopeAVNM/providers/Microsoft.Network/virtualNetworks/targetVnet01"
+```
+## Delete network manager configurations
+
+After you add the virtual network to the network group, you apply configurations. To remove the static member or cross-tenant resources, use the corresponding `delete` commands:
+
+```azurecli
+
+# Delete the static member group
+az network manager group static-member delete --network-group-name  "CrossTenantNetworkGroup" --network-manager-name " myAVNM" --resource-group "myRG" --static-member-name "targetVnet01” 
+
+# Delete scope connections
+az network manager scope-connection delete --resource-group "myRG" --network-manager-name "myAVNM" --name "ToTargetManagedTenant" 
+
+# Switch to a managed tenant if needed 
+az network manager connection subscription delete --name "toCentralManagementTenant"  
+
+```
+
+## Next steps
+
+> 
+
+- Learn more about [security admin rules](concept-security-admins.md).
+
+- Learn how to [create a mesh or hub-and-spoke topology with Azure Virtual Network Manager](how-to-create-network-manager-topologies.md).
+
+- Check out the [Azure Virtual Network Manager FAQ](faq.md).

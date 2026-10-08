@@ -1,0 +1,43 @@
+---
+title: What is Azure Synapse Link for SQL?
+description: Learn about Azure Synapse Link for SQL, the benefits it offers, and price.
+author: im-microsoft
+ms.author: imotiwala
+ms.reviewer: wiassaf, yexu
+ms.service: azure-synapse-analytics
+ms.topic: overview
+ms.subservice: synapse-link
+ms.date: 10/31/2025
+ms.update-cycle: 1825-days
+---
+
+# What is Azure Synapse Link for SQL?
+
+Azure Synapse Link for SQL enables near real time analytics over operational data in Azure SQL Database or SQL Server 2022. With a seamless integration between operational stores including Azure SQL Database and SQL Server 2022 and Azure Synapse Analytics, Azure Synapse Link for SQL enables you to run analytics, business intelligence and machine learning scenarios on your operational data with minimum impact on source databases with a new change feed technology.
+
+> **Important:**
+> **Mirroring to Microsoft Fabric is now available.** Mirroring to Fabric provides all the capabilities of Azure Synapse Link with better analytical performance, the ability to unify your data estate with OneLake in Fabric, and open access to your data in Delta Parquet format. Instead of Azure Synapse Link, use Fabric Mirroring. 
+>
+> With Mirroring to Microsoft Fabric, you can continuously replicate your existing data estate directly into OneLake in Fabric, including data from SQL Server 2016+, Azure SQL Database, Azure SQL Managed Instance, Cosmos DB, Oracle, Snowflake, and more. 
+> 
+> For more information, see [Microsoft Fabric mirrored databases](https://learn.microsoft.com/fabric/database/mirrored-database/overview).
+
+The following image shows the Azure Synapse Link integration with Azure SQL Database, SQL Server 2022, and Azure Synapse Analytics:
+
+Diagram of the Azure Synapse Link for SQL architecture.
+
+Azure Synapse Link for SQL provides fully managed and turnkey experience for you to land operational data in Azure Synapse Analytics dedicated SQL pools. It does this by continuously replicating the data from Azure SQL Database or SQL Server 2022 with full consistency. By using Azure Synapse Link for SQL, you can get the following benefits:
+
+* **Minimum impact on operational workload**
+With the new change feed technology in Azure SQL Database and SQL Server 2022, Azure Synapse Link for SQL can automatically extract incremental changes from Azure SQL Database or SQL Server 2022. It then replicates to Azure Synapse Analytics dedicated SQL pool with minimal impact on the operational workload.
+
+* **Reduced complexity with No ETL jobs to manage**
+After selecting your operational database and tables, updates made to the operational data in Azure SQL Database or SQL Server 2022 are visible in the Azure Synapse Analytics dedicated SQL pool. They're available in near real-time with no ETL or data integration logic. You can focus on analytical and reporting logic against operational data via all the capabilities within Azure Synapse Analytics.
+
+* **Near real-time insights into your operational data**
+You can now get rich insights by analyzing operational data in Azure SQL Database or SQL Server 2022 in near real-time to enable new business scenarios including operational BI reporting, real time scoring and personalization, or supply chain forecasting etc. via Azure Synapse Link for SQL.
+
+## Related content
+
+* [Azure Synapse Link for Azure SQL Database](sql-database-synapse-link.md) and how to [configure Azure Synapse Link for Azure SQL Database](connect-synapse-link-sql-database.md).
+* [Azure Synapse Link for SQL Server 2022](sql-server-2022-synapse-link.md) and how to [configure Azure Synapse Link for SQL Server 2022](connect-synapse-link-sql-server-2022.md).

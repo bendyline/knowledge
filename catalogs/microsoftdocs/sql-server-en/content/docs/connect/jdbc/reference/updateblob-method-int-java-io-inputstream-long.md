@@ -1,0 +1,49 @@
+---
+title: "updateBlob Method (int, java.io.InputStream, long)"
+description: "updateBlob Method (int, java.io.InputStream, long)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# updateBlob Method (int, java.io.InputStream, long)
+
+
+  Updates the designated column using the specified input stream, which will have the specified number of bytes.  
+  
+## Syntax  
+  
+```  
+  
+public void updateBlob(int columnIndex,  
+                       java.io.InputStream inputStream,  
+                                              long length)  
+```  
+  
+#### Parameters  
+ *columnIndex*  
+  
+ An **int** that indicates the column index.  
+  
+ *inputStream*  
+  
+ An InputStream object.  
+  
+ *length*  
+  
+ A **long** that indicates the length of the stream.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This updateBlob method is specified by the updateBlob method in the java.sql.ResultSet interface.  
+  
+## Related content
+
+- [updateBlob Method (SQLServerResultSet)](updateblob-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

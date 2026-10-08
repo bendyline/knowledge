@@ -1,0 +1,42 @@
+---
+title: "Calling Web Service Methods"
+description: Call methods of a proxy class to perform reporting operations on the report server. Web service methods have public access and require appropriate arguments.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server-web-service
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Web service [Reporting Services], SOAP"
+  - "Web service [Reporting Services], calls"
+  - "calling Web service"
+  - "Report Server Web service, SOAP"
+  - "XML Web service [Reporting Services], calls"
+  - "Report Server Web service, calls"
+  - "XML Web service [Reporting Services], SOAP"
+  - "SOAP [Reporting Services], calls"
+---
+# Calling Web Service Methods
+  When you use a  Microsoft 
+  .NET Framework 
+ proxy class to call Web service operations, you do so by using the methods of that class. These methods respond like any other method of a class in the  .NET Framework 
+ class library. All Web service methods have public access and require you to supply the appropriate number of arguments and argument types. After you have created an instance of the proxy class in your project, you can call the methods to perform reporting operations via the report server. The following C# code illustrates the use of the [ReportService2010.ReportingService2010.ListChildren%2A](https://learn.microsoft.com/search/?terms=ReportService2010.ReportingService2010.ListChildren%252A) method of the [ReportService2010.ReportingService2010](https://learn.microsoft.com/search/?terms=ReportService2010.ReportingService2010) proxy class. The code is used to make a recursive call to the Web service that returns an array of [ReportService2010.CatalogItem](https://learn.microsoft.com/search/?terms=ReportService2010.CatalogItem) objects that contains a list of all items in the report server database:  
+  
+```vb  
+Dim rs As New ReportingService2010()  
+rs.Credentials = System.Net.CredentialCache.DefaultCredentials  
+Dim items As CatalogItem() = rs.ListChildren("/", True)  
+```  
+  
+```csharp  
+ReportingService2010 rs = new ReportingService2010();  
+rs.Credentials = System.Net.CredentialCache.DefaultCredentials;  
+CatalogItem[] items = rs.ListChildren("/", true);  
+```  
+  
+## Related content
+
+- [Building Applications Using the Web Service and the .NET Framework](building-applications-using-the-web-service-and-the-net-framework.md)
+- [Report Server Web service](../report-server-web-service.md)
+- [Technical reference (SSRS)](../../technical-reference-ssrs.md)

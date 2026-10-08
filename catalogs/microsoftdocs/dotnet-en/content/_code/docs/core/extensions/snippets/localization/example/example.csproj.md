@@ -1,0 +1,32 @@
+# Source code: docs/core/extensions/snippets/localization/example/example.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <RootNamespace>Localization.Example</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="MessageService.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ParameterizedMessageService.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+
+```

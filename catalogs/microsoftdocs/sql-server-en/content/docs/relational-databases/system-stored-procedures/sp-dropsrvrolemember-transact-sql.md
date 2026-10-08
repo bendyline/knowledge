@@ -1,0 +1,97 @@
+---
+title: "sys.sp_dropsrvrolemember (Transact-SQL)"
+description: sp_dropsrvrolemember removes a SQL Server login, Windows user, or Windows group, from a fixed server role.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_dropsrvrolemember"
+  - "sp_dropsrvrolemember_TSQL"
+helpviewer_keywords:
+  - "sp_dropsrvrolemember"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_dropsrvrolemember (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Removes a  SQL Server 
+ login, a Windows user, or Windows group, from a fixed server role.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use [ALTER SERVER ROLE](../../t-sql/statements/alter-server-role-transact-sql.md) instead.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_dropsrvrolemember
+    [ @loginame = ] N'loginame'
+    [ , [ @rolename = ] N'rolename' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @loginame = ] N'*loginame*'
+
+The name of a login to remove from the fixed server role. *@loginame* is **sysname**, with no default. *@loginame* must exist.
+
+#### [ @rolename = ] N'*rolename*'
+
+The name of a server role. *@rolename* is **sysname**, with a default of `NULL`. *@rolename* must be one of the following values:
+
+- **sysadmin**
+- **securityadmin**
+- **serveradmin**
+- **setupadmin**
+- **processadmin**
+- **diskadmin**
+- **dbcreator**
+- **bulkadmin**
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+Only `sp_dropsrvrolemember` can be used to remove a login from a fixed server role. Use `sp_droprolemember` to remove a member from a database role.
+
+The `sa` login can't be removed from any fixed server role.
+
+`sp_dropsrvrolemember` can't be executed within a user-defined transaction.
+
+## Permissions
+
+Requires membership in the **sysadmin** fixed server role, or both `ALTER ANY LOGIN` permission on the server, and membership in the role from which the member is being dropped.
+
+## Examples
+
+The following example removes the login `JackO` from the **sysadmin** fixed server role.
+
+```sql
+EXECUTE sp_dropsrvrolemember 'JackO', 'sysadmin';
+```
+
+## Related content
+
+- [CREATE SERVER ROLE (Transact-SQL)](../../t-sql/statements/create-server-role-transact-sql.md)
+- [DROP SERVER ROLE (Transact-SQL)](../../t-sql/statements/drop-server-role-transact-sql.md)
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [sys.sp_addsrvrolemember (Transact-SQL)](sp-addsrvrolemember-transact-sql.md)
+- [sys.sp_droprolemember (Transact-SQL)](sp-droprolemember-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [Security Functions (Transact-SQL)](../../t-sql/functions/security-functions-transact-sql.md)

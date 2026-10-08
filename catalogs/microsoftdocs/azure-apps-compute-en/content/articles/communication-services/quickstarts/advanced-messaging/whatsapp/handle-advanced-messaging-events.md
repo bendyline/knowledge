@@ -1,0 +1,111 @@
+---
+title: Handle Advanced Messaging events
+titleSuffix: Azure Communication Services
+description: "This article describes how to subscribe to Advanced Messaging for WhatsApp events."
+author: shamkh
+manager: camilo.ramirez
+services: azure-communication-services
+ms.author: shamkh
+ms.service: azure-communication-services
+ms.subservice: advanced-messaging
+ms.topic: quickstart 
+ms.date: 05/01/2025
+ms.custom: template-quickstart
+---
+
+# Handle Advanced Messaging events
+
+
+> **Warning:**
+> **Azure Communication Services is introducing breaking changes, and some services are being retired. Learn more in the [retirement and breaking changes guide](https://aka.ms/acs-retirement-and-breaking-changes-guide).**
+
+
+Azure Communication Services enables you to send and receive WhatsApp messages using the Advanced Messaging SDK. Get started with setting up Event Grid events for receiving WhatsApp messages send/receive status reports. Completing this article incurs a small cost of a few USD cents or less in your Azure account.
+
+## Prerequisites
+
+- [Azure account with an active subscription](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+- [Register Event Grid Resource Provider](../../sms/handle-sms-events.md#register-an-event-grid-resource-provider)
+- [Create an Azure Communication Services resource](../../create-communication-resource.md)
+
+## About Event Grid
+
+[Event Grid](../../../../event-grid/overview.md) is a cloud-based eventing service. This article describes how to subscribe to [communication service events](../../../../event-grid/event-schema-communication-services.md) and trigger an event to view the result. Typically, you send events to an endpoint that processes the event data and takes actions. In this article, we send the events to a web app that collects and displays the messages.
+
+## Set up Event Grid Viewer
+
+The Event Grid Viewer is a sample site that allows you to view incoming events from Event Grid.
+
+1.  Go to [Azure Event Grid Viewer - Code Samples | Microsoft Learn](https://learn.microsoft.com/azure/event-grid/) and deploy the Event Grid Viewer sample by selecting **Deploy to Azure**.
+    
+    Screenshot that shows the Event Grid Viewer Sample Page with Deploy To Azure option.
+
+2.  After clicking the **Deploy to Azure**, fill in the required fields. Because the site name creates a DNS entry, it needs to be globally unique. We recommended that you include your alias in the name for this step. While this quickstart doesn't require any special setup for this step, here are suggestions for filling out the deployment details:
+  - `Subscription` - Select the subscription that contains your Azure Communication Services resource. This specific subscription isn't required, but it will make it easier to clean up after you're done with the quickstart.
+  - `Resource Group` - Select the resource group that contains your Azure Communication Services resource. This specific resource group isn't required, but it will make it easier to clean up after you're done with the quickstart.
+  - `Region` - Select the resource group that contains your Azure Communication Services resource. This specific region isn't required, but is recommended.
+  - `Site Name` - Create a name that is globally unique. This site name is used to create a domain to connect to your Event Grid Viewer.
+  - `Hosting Plan Name` - Create any name to identify your hosting plan.
+  - `Sku` - Use the SKU F1 for development and testing purposes. If you encounter validation errors creating your Event Grid Viewer that say there's no more capacity for the F1 plan, try selecting a different region. For more information about SKUs, see [App Service pricing](https://azure.microsoft.com/pricing/details/app-service/windows/)
+
+    Screenshot that shows Custom deployment of Events Viewer web app and properties you need to provide to successfully deploy.
+
+3.  Then select **Review + Create**.
+
+4.  After the deployment completes, select the App Service resource to open it.
+
+    Screenshot that shows Events Viewer web app.
+
+5.  On the resource overview page, select the copy button next to the **Default Domain** property.
+
+    Screenshot that shows URL of Events Viewer web app.
+
+6.  The URL for the Event Grid Viewer is the Site Name you used to create the deployment with the path `/api/updates` appended.
+    For example: "https://{{site-name}}.azurewebsites.net/api/updates". You'll need it in the next step and during the creation of the demo app.
+
+## Subscribe to Advanced Messaging events
+
+1.  Open your Communication Services resource in the Azure portal, navigate to the **Events** option in left panel, and select **+Event Subscription**.
+    
+    Screenshot that shows Azure Communication Services Events subscription option and allows you to subscribe to Advanced Messaging events.
+
+2.  Fill in the details for the new event subscription.
+
+    -  Subscription name.
+
+    -  System topic name: Enter a unique name, unless this name is already prefilled with a topic from your subscription.
+
+    -  Event types: Select the two Advanced messaging events from the list.
+
+        Screenshot that shows create event subscription properties.
+   
+
+    -  Endpoint type: Select **"Webhook"** and enter the URL for the Event Grid Viewer we created in the **Setup Event Grid Viewer** step with the path `/api/updates` appended. For example: `https://{{site-name}}.azurewebsites.net/api/updates`.
+
+        Screenshot that shows how to update webhook url of event subscription to receive events.
+
+    -  Select **Create**.
+
+3.  Navigate back to the **Events** option in left panel of your Azure Communication Services resource. Notice the new event subscription with Advanced Messaging events.
+
+    Screenshot that shows two Advanced messaging events subscribed.
+
+## Clean up resources
+
+If you want to clean up and remove a Communication Services subscription, you can delete the resource or resource group. Deleting the resource group also deletes any other resources associated with it. Learn more about [cleaning up resources](../../create-communication-resource.md#clean-up-resources).
+
+## WhatsApp usernames and BSUIDs
+
+With the introduction of WhatsApp usernames, Advanced Messaging events now include new fields for business-scoped user IDs (BSUIDs).
+
+- **`AdvancedMessageReceived`** events include a `fromBSUID` field with the sender's BSUID.
+- **`AdvancedMessageDeliveryStatusUpdated`** events include a `toBSUID` field with the recipient's BSUID.
+
+> **Warning:**
+> **Breaking change:** The existing `from` and `to` fields may now be empty or null when a WhatsApp user has adopted a username and hidden their phone number. Update your event handlers accordingly. Additionally, the event `subject` field may now contain a BSUID instead of a phone number, which can break existing webhook subject filters and automation code that parses the subject. For more information, see [WhatsApp usernames and BSUIDs](../../../concepts/advanced-messaging/whatsapp/whatsapp-username-support-overview.md).
+
+## Next steps
+
+- [Understand Advanced Communication Messages Events](../../../../event-grid/communication-services-advanced-messaging-events.md)
+- [WhatsApp usernames and BSUIDs](../../../concepts/advanced-messaging/whatsapp/whatsapp-username-support-overview.md)
+- [Get started With Advanced Communication Messages SDK](get-started.md)

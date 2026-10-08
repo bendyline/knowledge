@@ -1,0 +1,49 @@
+---
+title: "sys.database_ledger_digest_locations (Transact-SQL)"
+description: sys.database_ledger_digest_locations (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: 05/23/2023
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current||>=sql-server-ver16||>=sql-server-linux-ver16"
+---
+# sys.database_ledger_digest_locations (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+Captures the current and the historical ledger digest storage endpoints for the ledger feature.
+
+For more information on database ledger, see [Ledger](https://learn.microsoft.com/azure/azure-sql/database/ledger-overview).
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **path** | **nvarchar(4000)** | The location of storage digests. For example, a path for a container in [Azure Blob storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction). |
+| **last_digest_block_id** | **bigint** | The block ID for the last digest uploaded. |
+| **is_current** | **bit** | Indicates whether this is the current path or a path used in the past. |
+
+## Permissions
+
+Requires the **VIEW LEDGER CONTENT** permission.
+
+## Related content
+
+- [Digest management](../security/ledger/ledger-digest-management.md)
+- [Enable automatic digest storage](../security/ledger/ledger-how-to-enable-automatic-digest-storage.md)
+- [Ledger overview](../security/ledger/ledger-overview.md)

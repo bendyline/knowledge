@@ -1,0 +1,55 @@
+---
+title: Copy or clone a data factory in Azure Data Factory 
+description: Learn how to copy or clone a data factory in Azure Data Factory
+ms.subservice: data-movement
+author: kromerm
+ms.author: makromer
+ms.reviewer: whhender
+ms.topic: concept-article
+ms.date: 03/31/2025
+---
+
+# Copy or clone a data factory in Azure Data Factory
+
+**APPLIES TO:** Azure Data Factory Azure Synapse Analytics
+
+
+> **Tip:**
+> [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory) is the next generation of Azure Data Factory, with a simpler architecture, built-in AI, and new features. If you're new to data integration, start with Fabric Data Factory. Existing ADF workloads can upgrade to Fabric to access new capabilities across data science, real-time analytics, and reporting.
+>
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Upgrade from Azure Data Factory to Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/migrate-planning-azure-data-factory).
+
+
+This article describes how to copy or clone a data factory in Azure Data Factory.
+
+## Use cases for cloning a data factory
+
+Here are some of the circumstances in which you might find it useful to copy or clone a data factory:
+
+- **Move Data Factory** to a new region. If you want to move your Data Factory to a different region, the best way is to create a copy in the targeted region, and delete the existing one.
+
+- **Renaming Data Factory**. Azure doesn't support renaming resources. If you want to rename a data factory, you can clone the data factory with a different name, and delete the existing one.
+
+- **Debugging changes** when the debug features aren't sufficient. In most scenarios, you can use [Debug](iterative-development-debugging.md). In others, testing out changes in a cloned sandbox environment makes more sense. For instance, how your parameterized ETL pipelines would behave when a trigger fires upon file arrival versus over Tumbling time window, might not be easily testable through Debug alone. In these cases, you might want to clone a sandbox environment for experimenting. Since Azure Data Factory charges primarily by the number of runs, a second factory doesn't lead to any extra charges.
+
+## How to clone a data factory
+
+1. As a prerequisite, first you need to create your target data factory from the Azure portal.
+
+1. If you are in GIT mode:
+    1. Every time you publish from the portal, the factory's Resource Manager template is saved into GIT in the adf\_publish branch
+    1. Connect the new factory to the _same_ repository and build from adf\_publish branch. Resources, such as pipelines, datasets, and triggers, will carry through
+
+1. If you are in Live mode:
+    1. Data Factory UI lets you export the entire payload of your data factory into a Resource Manager template file and a parameter file. They can be accessed from the **ARM template \ Export Resource Manager template** button in the portal.
+    1. You might make appropriate changes to the parameter file and swap in new values for the new factory
+    1. Next, you can deploy it via standard Resource Manager template deployment methods. For detailed steps, see [Deploy resources with ARM templates](https://learn.microsoft.com/azure/azure-resource-manager/templates/deploy-portal)
+
+1. If you have a SelfHosted IntegrationRuntime in your source factory, you need to precreate it with the same name in the target factory. If you want to share the SelfHosted Integration Runtime between different factories, you can use the pattern published [here](create-shared-self-hosted-integration-runtime-powershell.md) on sharing SelfHosted IR.
+
+1. For security reasons, the generated Resource Manager template won't contain any secret information, for example passwords for linked services. Hence, you need to provide the credentials as deployment parameters. If manually inputting credential isn't desirable for your settings, consider retrieving the connection strings and passwords from Azure Key Vault instead. [See more](store-credentials-in-key-vault.md)
+
+## Related content
+
+Review the guidance for creating a data factory in the Azure portal in [Create a data factory by using the Azure Data Factory UI](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/data-factory/quickstart-create-data-factory-portal.md).

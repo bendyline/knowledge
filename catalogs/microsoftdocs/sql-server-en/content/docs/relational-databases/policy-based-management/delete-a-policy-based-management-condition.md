@@ -1,0 +1,46 @@
+---
+title: "Delete a Policy-Based Management Condition"
+description: "Delete a Policy-Based Management Condition"
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: security
+ms.topic: how-to
+helpviewer_keywords:
+  - "Policy-Based Management, delete policy conditions"
+---
+# Delete a Policy-Based Management Condition
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to delete a Policy-based Management condition in  SQL Server 
+ by using  SQL Server Management Studio 
+.  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the PolicyAdministratorRole role in the msdb database.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To delete a condition  
+  
+1.  In **Object Explorer**, click the plus sign to expand the server that contains the condition that you want to delete.  
+  
+2.  Click the plus sign to expand the **Management** folder.  
+  
+3.  Click the plus sign to expand **Policy Management**.  
+  
+4.  Click the plus sign to expand the **Conditions** folder.  
+  
+5.  Right-click the condition that you want to delete and select **Delete**.  
+  
+6.  In the **Delete Object** dialog box, ensure that the correct condition is selected and then click **OK**.

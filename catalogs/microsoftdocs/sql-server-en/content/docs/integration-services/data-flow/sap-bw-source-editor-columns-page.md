@@ -1,0 +1,68 @@
+---
+title: "SAP BW Source Editor (Columns Page)"
+description: "SAP BW Source Editor (Columns Page)"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: ui-reference
+f1_keywords:
+  - "sql13.dts.designer.sapbwsource.columns.f1"
+---
+# SAP BW Source Editor (Columns Page)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Use the **Columns** page of the **SAP BW Source Editor** to map an output column to each external (source) column.  
+  
+ To learn more about the SAP BW source component of the  Microsoft 
+ Connector 1.1 for SAP BW, see [SAP BW Source](sap-bw-source.md).  
+  
+> **Important:**  
+>  The documentation for the Microsoft Connector 1.1 for SAP BW assumes familiarity with the SAP Netweaver BW environment. For more information about SAP Netweaver BW, or for information about how to configure SAP Netweaver BW objects and processes, see your SAP documentation.  
+  
+> **Important:**  
+>  Extracting data from SAP Netweaver BW requires additional SAP licensing. Check with SAP to verify these requirements.  
+  
+ **To open the Columns page**  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ package that contains the SAP BW source.  
+  
+2.  On the **Data Flow** tab, double-click the SAP BW source.  
+  
+3.  In the **SAP BW Source Editor**, click **Columns** to open the **Columns** page of the editor.  
+  
+## Options  
+  
+> **Note:**  
+>  If you do not know all the values that are required to configure the source, you might have to ask your SAP administrator.  
+  
+ **Available External Columns**  
+ View the list of available external columns in the data source, and then select the columns to be included in the data flow.  
+  
+ To include a column in the data flow, select the check box that corresponds to that column. The order in which you select the check boxes determines the order in which columns will be output. That is, the first check box that you select will be the first output column, the second check box will be the second output columns, and so on.  
+  
+ **External Column**  
+ View the selected external (source) columns. The selected columns appear in the order in which you will see their corresponding output columns when you configure downstream components that consume data from this source.  
+  
+ To change the order of the columns, in the **Available External Columns** list, clear the check boxes for all columns. Then, select the columns in the order that you want them to appear.  
+  
+ **Output Column**  
+ Provide a unique name for each output column. The default is the name of the selected external (source) column. However, you can enter any unique, descriptive name.  SSIS 
+ Designer will display the **Output Column** names for the columns when you configure downstream components that consume data from this source.  
+  
+## Related content
+
+- [SAP BW Source Editor (Connection Manager Page)](sap-bw-source-editor-connection-manager-page.md)
+- [SAP BW Source Editor (Error Output Page)](sap-bw-source-editor-error-output-page.md)
+- [SAP BW Source Editor (Advanced Page)](sap-bw-source-editor-advanced-page.md)
+- [Microsoft Connector for SAP BW F1 Help](../microsoft-connector-for-sap-bw-f1-help.md)

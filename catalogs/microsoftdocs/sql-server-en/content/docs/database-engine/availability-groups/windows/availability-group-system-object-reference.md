@@ -1,0 +1,65 @@
+---
+title: Availability Group System Object Reference
+description: A reference of various system objects that can be used when working with Always On availability groups.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: randolphwest
+ms.date: 10/20/2025
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: reference
+monikerRange: ">=sql-server-2017"
+---
+# Always On availability group system object reference
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+
+This article serves as a reference page to all the various system objects that can be used when working with availability groups (AGs).
+
+## System catalog views
+
+| System catalog view | Description |
+| --- | --- |
+| [sys.availability_databases_cluster](../../../relational-databases/system-catalog-views/sys-availability-databases-cluster-transact-sql.md) | Contains one row for each availability database on the instance of SQL Server hosting an availability replica for any availability group (AG) in the Windows Server Failover Clustering (WSFC) cluster, regardless of whether the local copy database has been joined to the AG yet. |
+| [sys.availability_group_listener_ip_addresses](../../../relational-databases/system-catalog-views/sys-availability-group-listener-ip-addresses-transact-sql.md) | Returns a row for every IP address that is associated with any AG listener in the Windows Server Failover Clustering (WSFC) cluster. |
+| [sys.availability_group_listeners](../../../relational-databases/system-catalog-views/sys-availability-group-listeners-transact-sql.md) | For each AG, returns either zero rows indicating that no network name is associated with the AG, or returns a row for each availability-group listener configuration in the Windows Server Failover Clustering (WSFC) cluster. |
+| [sys.availability_groups](../../../relational-databases/system-catalog-views/sys-availability-groups-transact-sql.md) | Returns a row for each AG for which the local instance of SQL Server hosts an availability replica. Each row contains a cached copy of the AG metadata. |
+| [sys.availability_groups_cluster](../../../relational-databases/system-catalog-views/sys-availability-groups-cluster-transact-sql.md) | Returns a row for each AG in the Windows Server Failover Clustering (WSFC). Each row contains the AG metadata from the WSFC cluster. |
+| [sys.availability_read_only_routing_lists](../../../relational-databases/system-catalog-views/sys-availability-read-only-routing-lists-transact-sql.md) | Returns a row for the read only routing list of each availability replica in an AG in the WSFC failover cluster. |
+| [sys.availability_replicas](../../../relational-databases/system-catalog-views/sys-availability-replicas-transact-sql.md) | Returns a row for each of the availability replicas that belong to any AG in the WSFC failover cluster. |
+
+## System dynamic management views
+
+| System dynamic management view | Description |
+| --- | --- |
+| [sys.dm_hadr_auto_page_repair](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-auto-page-repair-transact-sql.md) | Returns a row for every automatic page-repair attempt on any availability database on an availability replica that is hosted for any availability group (AG) by the server instance. |
+| [sys.dm_hadr_availability_group_states](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-availability-group-states-transact-sql.md) | Returns a row for each AG that possesses an availability replica on the local instance of SQL Server. Each row displays the states that define the health of a given AG. |
+| [sys.dm_hadr_availability_replica_cluster_nodes](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-availability-replica-cluster-nodes-transact-sql.md) | Returns a row for every availability replica (regardless of join state) of the availability groups in the Windows Server Failover Clustering (WSFC) cluster |
+| [sys.dm_hadr_availability_replica_cluster_states](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-availability-replica-cluster-states-transact-sql.md) | Returns a row for each Always On availability replica (regardless of its join state) of all availability groups (regardless of replica location) in the Windows Server Failover Clustering (WSFC) cluster. |
+| [sys.dm_hadr_availability_replica_states](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-availability-replica-states-transact-sql.md) | Returns a row for each local replica and a row for each remote replica in the same AG as a local replica. Each row contains information about the state of a given replica. |
+| [sys.dm_hadr_cluster](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-cluster-transact-sql.md) | Returns a row that exposes the cluster name and information about the quorum |
+| [sys.dm_hadr_cluster_members](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-cluster-members-transact-sql.md) | Returns a row for each of the members that constitute the quorum and the state of each of them |
+| [sys.dm_hadr_cluster_networks](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-cluster-networks-transact-sql.md) | Returns a row for every WSFC cluster member participating in an AG's subnet configuration. |
+| [sys.dm_hadr_database_replica_cluster_states](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-database-replica-cluster-states-transact-sql.md) | Returns a row containing information intended to provide you with insight into the health of the availability databases in the availability groups in each AG on the Windows Server Failover Clustering (WSFC) cluster. |
+| [sys.dm_hadr_database_replica_states](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-database-replica-states-transact-sql.md) | Returns a row for each database participating in an AG for which the local instance of SQL Server is hosting an availability replica. |
+| [sys.dm_hadr_instance_node_map](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-instance-node-map-transact-sql.md) | For every instance of SQL Server that hosts an availability replica that is joined to its AG, returns the name of the Windows Server Failover Cluster (WSFC) node that hosts the server instance. |
+| [sys.dm_hadr_name_id_map](../../../relational-databases/system-dynamic-management-objects/sys-dm-hadr-name-id-map-transact-sql.md) | Shows the mapping of availability groups that the current instance of SQL Server has joined to three unique IDs: an AG ID, a WSFC resource ID, and a WSFC Group ID. |
+| [sys.dm_tcp_listener_states](../../../relational-databases/system-dynamic-management-objects/sys-dm-tcp-listener-states-transact-sql.md) | Returns a row containing dynamic-state information for each TCP listener. |
+
+## System functions
+
+| System function | Description |
+| --- | --- |
+| [sys.fn_hadr_is_primary_replica](../../../relational-databases/system-functions/sys-fn-hadr-is-primary-replica-transact-sql.md) | Used to determine if the current replica is the primary replica. |
+| [sys.fn_hadr_backup_is_preferred_replica](../../../relational-databases/system-functions/sys-fn-hadr-backup-is-preferred-replica-transact-sql.md) | Used to determine if the current replica is the preferred backup replica. |
+| [sys.fn_hadr_distributed_ag_replica](../../../relational-databases/system-functions/sys-fn-hadr-distributed-ag-replica-transact-sql.md) | Used to map a replica in a distributed AG to the local AG. |
+
+## Related content
+
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)

@@ -1,0 +1,44 @@
+---
+title: "setNString Method (int, java.lang.String)"
+description: "setNString Method (int, java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# setNString Method (int, java.lang.String)
+
+
+  Sets the designated parameter to the specified **String** object.  
+  
+## Syntax  
+  
+```  
+  
+public final void setNString(int parameterIndex,  
+                                                  java.lang.String value)  
+```  
+  
+#### Parameters  
+ *parameterIndex*  
+  
+ An **int** that indicates the parameter index.  
+  
+ *value*  
+  
+ A **String** object that contains the parameter value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This method should be used for **NCHAR**, **NVARCHAR**, **NTEXT**, and **XML** data types.  
+  
+ This setNString method is specified by the setNString method in the java.sql.PreparedStatement interface.  
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)

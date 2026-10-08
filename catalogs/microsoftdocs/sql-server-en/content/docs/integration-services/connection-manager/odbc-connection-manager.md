@@ -1,0 +1,76 @@
+---
+title: "ODBC Connection Manager"
+description: "ODBC Connection Manager"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.odbcconnection.f1"
+helpviewer_keywords:
+  - "connections [Integration Services], ODBC"
+  - "ODBC connection manager"
+  - "data sources [Integration Services], connections"
+  - "connection managers [Integration Services], ODBC"
+---
+# ODBC Connection Manager
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  An ODBC connection manager enables a package to connect to a variety of database management systems using the Open Database Connectivity specification (ODBC).  
+  
+ When you add an ODBC connection to a package and set the connection manager properties,  SQL Server 
+  Integration Services 
+ creates a connection manager and adds the connection manager to the **Connections** collection of the package. At run time the connection manager is resolved as a physical ODBC connection.  
+  
+ The **ConnectionManagerType** property of the connection manager is set to **ODBC**.  
+  
+ You can configure the ODBC connection manager in the following ways:  
+  
+-   Provide a connection string that references a user or system data source name.  
+  
+-   Specify the server to connect to.  
+  
+-   Indicate whether the connection is retained at run time.  
+
+> **Note:**
+> Only ODBC 3.0 and above are supported for SSIS IR in Azure Data Factory, SQL Server 2019 and above.
+  
+## Configuration of the ODBC Connection Manager  
+ You can set properties through  SSIS 
+ Designer or programmatically.  
+  
+ For more information about the properties that you can set in  SSIS 
+ Designer, click one of the following topic:  
+ 
+
+ For information about configuring a connection manager programmatically, see [Microsoft.SqlServer.Dts.Runtime.ConnectionManager](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.ConnectionManager) and [Adding Connections Programmatically](../building-packages-programmatically/adding-connections-programmatically.md).  
+  
+## ODBC Connection Manager UI Reference
+  Use the **Configure ODBC Connection Manager** dialog box to add a connection to an ODBC data source.  
+  
+ To learn more about the ODBC connection manager, see [ODBC Connection Manager](#odbc-connection-manager).  
+  
+### Options  
+ **Data connections**  
+ Select an existing ODBC connection manager from the list.  
+  
+ **Data connection properties**  
+ View properties and values for the selected ODBC connection manager.  
+  
+ **New**  
+ Create an ODBC connection manager by using the **Connection Manager** dialog box. This dialog box also lets you create a new ODBC data source if it is required.  
+  
+ **Delete**  
+ Select a connection, and then delete it by using the **Delete** button.  
+## Related content
+
+- [Integration Services (SSIS) Connections](integration-services-ssis-connections.md)

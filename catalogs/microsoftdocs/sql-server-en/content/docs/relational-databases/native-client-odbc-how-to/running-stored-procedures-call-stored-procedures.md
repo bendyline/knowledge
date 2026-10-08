@@ -1,0 +1,60 @@
+---
+title: "Call Stored Procedures (ODBC)"
+description: Learn how to add a data source by using ODBC Administrator, programmatically, or using a file, before using ODBC applications with SQL Server 2005 or later.
+author: markingmyname
+ms.author: maghan
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "stored procedures [ODBC], calling"
+---
+# Running Stored Procedures - Call Stored Procedures
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The  SQL Server 
+ ODBC driver supports executing stored procedures as remote stored procedures. Executing a stored procedure as a remote stored procedure allows the driver and the server to optimize the performance of executing the procedure.  
+  
+  When a SQL statement calls a stored procedure using the ODBC CALL escape clause, the  SQL Server 
+ driver sends the procedure to SQL Server using the remote stored procedure call (RPC) mechanism. RPC requests bypass much of the statement parsing and parameter processing in SQL Server and are faster than using the Transact-SQL EXECUTE statement.  
+  
+ For a sample application that demonstrates this feature, see [Process Return Codes and Output Parameters (ODBC)](running-stored-procedures-process-return-codes-and-output-parameters.md).  
+  
+### To run a procedure as an RPC  
+  
+1.  Construct a SQL statement that uses the ODBC CALL escape sequence. The statement uses parameter markers for each input, input/output, and output parameter, and for the procedure return value (if any):  
+  
+    ```  
+    {? = CALL procname (?,?)}  
+    ```  
+  
+2.  Call [SQLBindParameter](../native-client-odbc-api/sqlbindparameter.md) for each input, input/output, and output parameter, and for the procedure return value (if any).  
+  
+3.  Execute the statement with [SQLExecDirect](../../odbc/reference/syntax/sqlexecdirect-function.md).  
+  
+> **Note:**  
+>  If an application submits a procedure using the Transact-SQL EXECUTE syntax (as opposed to the ODBC CALL escape sequence), the SQL Server ODBC driver passes the procedure call to SQL Server as a SQL statement rather than as an RPC. Also, output parameters are not returned if the Transact-SQL EXECUTE statement is used.  
+  
+## Related content
+
+- [Batching Stored Procedure Calls](../native-client-odbc-stored-procedures/batching-stored-procedure-calls.md)
+- [Running Stored Procedures](../native-client-odbc-stored-procedures/running-stored-procedures.md)
+- [Calling a Stored Procedure](../native-client-odbc-stored-procedures/calling-a-stored-procedure.md)
+- [Procedures](../native-client-odbc-queries/executing-statements/procedures.md)

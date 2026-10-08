@@ -1,0 +1,204 @@
+---
+title: Connect Azure Elastic SAN to Azure Kubernetes over iSCSI
+description: Learn how to use the Kubernetes iSCSI CSI driver to configure Azure Elastic SAN as backing storage for Azure Kubernetes Service clusters for persistent storage
+author: roygara
+ms.service: azure-elastic-san
+ms.topic: how-to
+ms.date: 06/18/2025
+ms.author: rogarana
+# Customer intent: As a Kubernetes administrator, I want to connect Azure Elastic SAN to my AKS cluster using the iSCSI CSI driver, so that I can provision and manage persistent storage for my applications effectively.
+---
+
+# Connect Azure Elastic SAN volumes to an Azure Kubernetes Service cluster
+
+This article explains how to connect an Azure Elastic SAN volume from an Azure Kubernetes Service (AKS) cluster. To make this connection, enable the [Kubernetes iSCSI CSI driver](https://github.com/kubernetes-csi/csi-driver-iscsi) on your cluster. By using this driver, you can access volumes on your Elastic SAN by creating persistent volumes on your AKS cluster, and then attaching the Elastic SAN volumes to the persistent volumes. 
+
+## About the driver
+
+The iSCSI CSI driver is an open source project that allows you to connect to a Kubernetes cluster over iSCSI. Since the driver is an open source project, Microsoft doesn't provide support for any issues that stem from the driver.
+
+The Kubernetes iSCSI CSI driver is available on GitHub:
+
+- [Kubernetes iSCSI CSI driver repository](https://github.com/kubernetes-csi/csi-driver-iscsi)
+- [Readme](https://github.com/kubernetes-csi/csi-driver-iscsi/blob/master/README.md)
+- [Report iSCSI driver issues](https://github.com/kubernetes-csi/csi-driver-iscsi/issues)
+
+### Licensing
+
+The iSCSI CSI driver for Kubernetes is [licensed under the Apache 2.0 license](https://github.com/kubernetes-csi/csi-driver-iscsi/blob/master/LICENSE).
+
+## Prerequisites
+
+- Use either the [latest Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) or install the [latest Azure PowerShell module](https://learn.microsoft.com/powershell/azure/install-azure-powershell)
+- Meet the [compatibility requirements](https://github.com/kubernetes-csi/csi-driver-iscsi/blob/master/README.md#container-images--kubernetes-compatibility) for the iSCSI CSI driver
+- [Deploy an Elastic SAN](elastic-san-create.md)
+- Configure either [private endpoints](elastic-san-configure-private-endpoints.md) or [service endpoints](elastic-san-configure-service-endpoints.md).
+
+## Limitations
+
+- Dynamic provisioning isn't currently supported
+- Only `ReadWriteOnce` access mode is currently supported
+
+## Get started
+
+### Driver installation
+
+```
+curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-iscsi/master/deploy/install-driver.sh | bash -s master --
+```
+
+After deployment, check the pod status to verify that the driver installed.
+
+```bash
+kubectl -n kube-system get pod -o wide -l app=csi-iscsi-node
+```
+
+### Get volume information
+
+You need the volume's `StorageTargetIQN`, `StorageTargetPortalHostName`, and `StorageTargetPortalPort`.
+
+You can get them by using the following Azure PowerShell command:
+
+```azurepowershell
+Get-AzElasticSanVolume -ResourceGroupName $resourceGroupName -ElasticSanName $sanName -VolumeGroupName $searchedVolumeGroup -Name $searchedVolume 
+```
+
+You can also get them with the following Azure CLI command:
+
+```azurecli
+az elastic-san volume show --elastic-san-name --name --resource-group --volume-group-name
+```
+
+### Cluster configuration
+
+After you retrieve your volume's information, create a few YAML files for your new resources on your AKS cluster.
+
+### Storageclass
+
+Use the following example to create a `storageclass.yml` file. This file defines your persistent volume's storageclass.
+
+```yml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: san-volume
+provisioner: manual
+```
+
+### Persistent volume
+
+After you create the storage class, create a *pv.yml* file. This file defines your [persistent volume](https://learn.microsoft.com/azure/aks/concepts-storage#persistent-volumes). In the following example, replace `yourTargetPortal`, `yourTargetPortalPort`, and `yourIQN` with the values you collected earlier. Use the example to create a *pv.yml* file. If you need more than 1 gibibyte of storage and have it available, replace `1Gi` with the amount of storage you require.
+
+```yml
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsiplugin-pv
+  labels:
+    name: data-iscsiplugin
+spec:
+  storageClassName: san-volume
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  csi:
+    driver: iscsi.csi.k8s.io
+    volumeHandle: iscsi-data-id
+    volumeAttributes:
+      targetPortal: "yourTargetPortal:yourTargetPortalPort"
+      portals: "[]"
+      iqn: "yourIQN"
+      lun: "0"
+      iscsiInterface: "default"
+      discoveryCHAPAuth: "true"
+      sessionCHAPAuth: "false"
+```
+
+After creating the *pv.yml* file, create a persistent volume by using the following command:
+
+```bash
+kubectl apply -f pathtoyourfile/pv.yaml
+```
+
+### Persistent volume claim
+
+Next, create a [persistent volume claim](https://learn.microsoft.com/azure/aks/concepts-storage#persistent-volume-claims). Use the storage class you defined earlier with the persistent volume you defined. The following example shows what your `pvc.yml` file might look like:
+
+```yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: iscsiplugin-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: san-volume
+  selector:
+    matchExpressions:
+      - key: name
+        operator: In
+        values: ["data-iscsiplugin"]
+```
+
+After creating the *pvc.yml* file, create a persistent volume claim.
+
+```bash
+kubectl apply -f pathtoyourfile/pvc.yaml
+```
+
+To verify your PersistentVolumeClaim is created and bound to the PersistentVolume, run the following command: 
+
+```bash
+kubectl get pvc pathtoyourfile 
+```
+
+
+Finally, create a [pod manifest](https://learn.microsoft.com/azure/aks/concepts-clusters-workloads#pods). The following example shows what your *pod.yml* file might look like. You can use it to make your own pod manifest. Replace the values for `name`, `image`, and `mountPath` with your own:
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - image: maersk/nginx
+      imagePullPolicy: Always
+      name: nginx
+      ports:
+        - containerPort: 80
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /var/www
+          name: iscsi-volume
+  volumes:
+    - name: iscsi-volume
+      persistentVolumeClaim:
+        claimName: iscsiplugin-pvc
+```
+
+After creating the *pod.yml* file, create a pod.
+
+```bash
+kubectl apply -f pathtoyourfile/pod.yaml
+```
+
+To verify your Pod was created, run the following command: 
+
+```bash
+kubectl get pods  
+```
+
+You successfully connected an Elastic SAN volume to your AKS cluster.
+
+## Next steps
+
+[Plan for deploying an Elastic SAN](elastic-san-planning.md)
+
+<!-- LINKS - internal -->
+[Configure Elastic SAN networking]: elastic-san-networking.md

@@ -1,0 +1,79 @@
+---
+title: Monitor an Azure Managed Grafana workspace using diagnostic settings
+description: Learn how to monitor your Azure Managed Grafana workspace by configuring diagnostic settings and accessing event logs.
+author: maud-lv 
+ms.author: malev 
+ms.service: azure-managed-grafana
+ms.topic: how-to 
+ms.date: 08/28/2026
+ms.custom:
+  - engagement-fy23
+  - sfi-image-nochange
+#customer intent: I want to use diagnostic settings to monitor my Azure Managed Grafana workspace.
+---
+
+# Monitor Azure Managed Grafana using diagnostic settings
+
+In this article, you learn how to monitor an Azure Managed Grafana workspace by configuring diagnostic settings and accessing event logs.
+
+## Prerequisites
+
+- An Azure account with an active subscription. [Create an account for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- An Azure Managed Grafana workspace with access to at least one data source. If you don't have a workspace yet, [create an Azure Managed Grafana instance](quickstart-managed-grafana-portal.md).
+
+## Sign in to Azure
+
+Sign in to the Azure portal at [https://portal.azure.com/](https://portal.azure.com/) with your Azure account.
+
+## Add diagnostic settings
+
+Configure diagnostic settings to stream your workspace logs to one or more destinations.
+
+You can create up to five different diagnostic settings to send different logs to independent destinations.
+
+1. Open an Azure Managed Grafana resource, and under **Monitoring**, select **Diagnostic settings**.
+
+   Screenshot of the Azure platform. Diagnostic settings.
+
+1. Select **+ Add diagnostic setting**.
+
+1. For **Diagnostic setting name**, enter a unique name.
+
+1. Under **Logs**, select **allLogs** to stream all supported logs. To select individual categories instead, see [Supported logs for Microsoft.Dashboard/grafana](https://learn.microsoft.com/azure/azure-monitor/reference/supported-logs/microsoft-dashboard-grafana-logs).
+
+   The **AllMetrics** option isn't currently supported. For available platform metrics, see [Supported metrics for Microsoft.Dashboard/grafana](https://learn.microsoft.com/azure/azure-monitor/reference/supported-metrics/microsoft-dashboard-grafana-metrics).
+
+1. Under **Destination details**, select one or more destinations, fill out details and select **Save**.
+
+   | Destination | Description | Settings |
+   | --- | --- | --- |
+   | Log Analytics workspace | Send data to a Log Analytics workspace | Select the **subscription** containing an existing Log Analytics workspace, then select the **Log Analytics workspace** |
+   | Storage account | Archive data to a storage account | Select the **subscription** containing an existing storage account, then select the **storage account**. Only storage accounts in the same region as the Grafana workspace are displayed in the dropdown menu. |
+   | Event hub | Stream to an event hub | Select a **subscription** and an existing Azure Event Hubs **namespace**. Optionally also choose an existing **event hub**. Lastly, choose an **event hub policy** from the list. Only event hubs in the same region as the Grafana workspace are displayed in the dropdown menu. |
+   | Partner solution | Send to a partner solution | Select a **subscription** and a **destination**. For more information about available destinations, go to [partner destinations](https://learn.microsoft.com/azure/azure-monitor/partners). |
+
+   Screenshot of the Azure platform. Diagnostic settings configuration.
+
+## Access logs
+
+After you configure diagnostic settings, Azure streams new events to your selected destinations and generates logs. You can then create queries and access logs to monitor your workspace.
+
+1. In your Azure Managed Grafana workspace, select **Logs** from the left menu. The Azure platform displays a **Queries** page, with suggestions of queries to choose from.
+
+   Screenshot of the Azure platform. Open Logs.
+
+1. Select a query from the suggestions displayed under the **Queries** page, or close the page to create your own query.
+   1. To use a suggested query, select a query and select **Run**, or select **Load to editor** to review the code.
+   1. To create your own query, enter your query in the code editor and select **Run**. You can also perform some actions, such as editing the scope and the range of the query, as well as saving and sharing the query. The result of the query is displayed in the lower part of the screen.
+
+   Screenshot of the Azure platform. Log query editing.
+
+1. Select **Schema and Filter** on the left side of the screen to access tables, queries, and functions. You can also filter and group results, and find your favorites.
+1. Select **Columns** on the right of **Results** to edit the columns of the results table and manage the table like a pivot table.
+
+   Screenshot of the Azure platform. Log query filters and columns.
+
+## Next steps
+
+> 
+> [Monitor a workspace using metrics](how-to-monitor-managed-grafana-metrics.md)

@@ -1,0 +1,116 @@
+---
+title: "sys.sp_db_selective_xml_index (Transact-SQL)"
+description: sp_db_selective_xml_index enables and disables selective XML index (SXI) functionality on a SQL Server database.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_db_selective_xml_index_TSQL"
+  - "sp_db_selective_xml_index"
+helpviewer_keywords:
+  - "sp_db_selective_xml_index procedure"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_db_selective_xml_index (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Enables and disables selective XML index (SXI) functionality on a  SQL Server 
+ database. If called without any parameters, the stored procedure returns `1` if SXI is enabled on a particular database.
+
+> **Note:**  
+> In  SQL Server 2014 (12.x)
+ and later versions, the SXI functionality can't be disabled. This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature. 
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_db_selective_xml_index
+    [ [ @dbname = ] N'dbname' ]
+    [ , [ @selective_xml_index = ] 'selective_xml_index' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @dbname = ] N'*dbname*'
+
+The name of the database on which to enable or disable selective XML index. *@dbname* is **sysname**, with a default of `NULL`.
+
+If *@dbname* is `NULL`, the current database is assumed.
+
+#### [ @selective_xml_index = ] '*selective_xml_index*'
+
+Determines whether to enable or disable the index. *@selective_xml_index* is **varchar(6)**, with a default of `NULL`, and can be one of the following values: `ON`, `OFF`, `TRUE`, or `FALSE`. Any other value raises an error.
+
+## Return code values
+
+`1` if the SXI is enabled on a particular database, `0` if disabled.
+
+## Examples
+
+### A. Enable selective XML index functionality
+
+The following example enables SXI on the current database.
+
+```sql
+EXECUTE sys.sp_db_selective_xml_index
+    @dbname = NULL,
+    @selective_xml_index = N'on';
+GO
+```
+
+The following example enables SXI on the  `AdventureWorks2025`  database.
+
+```sql
+EXECUTE sys.sp_db_selective_xml_index
+    @dbname = N'AdventureWorks2022',
+    @selective_xml_index = N'true';
+GO
+```
+
+### B. Disable selective XML index functionality
+
+The following example disables SXI on the current database.
+
+```sql
+EXECUTE sys.sp_db_selective_xml_index
+    @dbname = NULL,
+    @selective_xml_index = N'off';
+GO
+```
+
+The following example disables SXI on the  `AdventureWorks2025`  database.
+
+```sql
+EXECUTE sys.sp_db_selective_xml_index
+    @dbname = N'AdventureWorks2022',
+    @selective_xml_index = N'false';
+GO
+```
+
+### C. Detect if selective XML index is enabled
+
+The following example detects if SXI is enabled, and returns `1` if SXI is enabled.
+
+```sql
+EXECUTE sys.sp_db_selective_xml_index;
+GO
+```
+
+## Related content
+
+- [Selective XML indexes (SXI)](../xml/selective-xml-indexes-sxi.md)

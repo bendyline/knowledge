@@ -1,0 +1,36 @@
+---
+title: "Create drillthrough (RDLC) reports with parameters - ReportViewer"
+description: Learn about creating a drillthrough (RDLC) report with parameters and a query in local mode reporting.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Create drillthrough (RDLC) reports with parameters - ReportViewer
+A [drillthrough](report-design/drillthrough-reports-report-builder-and-ssrs.md) report is a report that a user opens by selecting a link within another report. Drillthrough reports commonly contain details about an item that is contained in an original summary report. This tutorial will walk you through the following lessons of creating a drillthrough report with parameters and a query, in [local mode reporting](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/reporting-services/report-server-sharepoint/local-mode-vs-connected-mode-reports-in-the-report-viewer.md).  
+  
+## Requirements  
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+  
+This walkthrough assumes that you are familiar with Transaction-SQL queries and ADO.NET [DataSet](https://learn.microsoft.com/dotnet/api/system.data.dataset) and [DataTable](https://learn.microsoft.com/dotnet/api/system.data.datatable) objects.  
+  
+Use Visual Studio 2015, and the ASP.NET Web Application, to create an ASP.NET webpage with a ReportViewer control. The control is configured to view a report that you create. For this walkthrough, you create the application in Microsoft Visual C#.  
+  
+## Tasks  
+[Lesson 1: Create a new web site](lesson-1-create-a-new-web-site.md)  
+[Lesson 2: Define a data connection and data table for parent report](lesson-2-define-a-data-connection-and-data-table-for-parent-report.md)  
+[Lesson 3: Design the parent report by using the Report Wizard](lesson-3-design-the-parent-report-using-the-report-wizard.md)  
+[Lesson 4: Define a data connection and data table for child report](lesson-4-define-a-data-connection-and-data-table-for-child-report.md)  
+[Lesson 5: Design the child report by using the Report Wizard](lesson-5-design-the-child-report-using-the-report-wizard.md)  
+[Lesson 6: Add a ReportViewer control to the application](lesson-6-add-a-reportviewer-control-to-the-application.md)  
+[Lesson 7: Add drillthrough action on parent report](lesson-7-add-drillthrough-action-on-parent-report.md)  
+[Lesson 8: Create a data filter](lesson-8-create-a-data-filter.md)  
+[Lesson 9: Build and run the application](lesson-9-build-and-run-the-application.md)  
+  
+## Related content
+
+- [Reporting Services tutorials (SSRS)](reporting-services-tutorials-ssrs.md)
+- [Design Reporting Services paginated reports with Report Designer (SSRS)](tools/design-reporting-services-paginated-reports-with-report-designer-ssrs.md)

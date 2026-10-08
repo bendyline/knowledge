@@ -1,0 +1,67 @@
+---
+title: Understanding the desktop hosting environment
+description: Overview of an RDS deployment using Azure IaaS.
+ms.author: roharwoo
+ms.date: 7/3/2024
+ms.topic: concept-article
+author: robinharwood
+---
+# Understanding the desktop hosting environment
+
+The following information describes the components of the desktop hosting service.
+
+## Tenant environment
+The provider's desktop hosting service is implemented as a set of isolated tenant environments. Each tenant's environment consists of a storage container, a set of virtual machines, and a combination of Azure services, all communicating over an isolated virtual network. Each virtual machine contains one or more of the components that make up the tenant's hosted desktop environment. The following subsections describe the components that make up each tenant's hosted desktop environment.
+
+## Remote Desktop Services
+In a desktop hosting environment, the following Remote Desktop Services roles are installed amongst various virtual machines:
+
+  - Remote Desktop Connection Broker
+  - Remote Desktop Gateway
+  - Remote Desktop Licensing
+  - Remote Desktop Session Host
+  - Remote Desktop Web Access
+
+For a full description of each of these roles and how they interact with each other, please review the [Understanding RDS roles](Desktop-hosting-service.md) document.
+
+##  (Azure) Active Directory Domain Services
+There are multiple ways to connect to and manage Active Directory Domain Services (AD DS) for a desktop hosting environment in Azure:
+
+1. Create a virtual machine in the tenant's environment running the AD DS role
+2. Create a site-to-site VPN connection with the tenant's on-premises environment to use an existing AD DS
+3. Use the Microsoft Entra Domain Services PaaS role, which creates a domain on the tenant's virtual network based on the tenant's Microsoft Entra ID
+
+With Remote Desktop Services, the tenant must have an Active Directory to manage access into the environment, user profile storage, and monitoring within the deployment. When using the standard (non-Azure) AD DS, the tenant's forest does not require any trust relationship with the provider's management forest. A domain administrator account may be set up in the tenant's domain to allow the provider's technical personnel to perform administrative tasks in the tenant's environment (such as monitoring system status and applying software updates) and to assist with troubleshooting and configuration.
+
+Additional information:
+[Microsoft Entra Domain Services Documentation](https://learn.microsoft.com/azure/active-directory-domain-services/)
+[Install a new Active Directory forest on an Azure virtual network](../../identity/ad-ds/Introduction-to-Active-Directory-Domain-Services-AD-DS-Virtualization-Level-100.md)
+[Create a resource manager VNet with a Site-to-Site VPN connection using the Azure Portal](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal)
+
+## Azure SQL Database
+Azure SQL Database allows for hosters to extend their Remote Desktop Services deployment without needing to deploy and maintain a full SQL Server Always-On cluster. The Azure SQL Database is used by the Remote Desktop Connection Broker to store deployment information, such as the mapping of current users' connections to end-host servers. Like other Azure services, Azure SQL DB follows a consumption model, ideal for any size deployment.
+
+Additional information:
+[What is SQL Database?](https://learn.microsoft.com/azure/azure-sql/database/sql-database-paas-overview)
+
+<a name='azure-active-directory-application-proxy'></a>
+
+## Microsoft Entra application proxy
+Microsoft Entra application proxy is a service provided in paid-SKUs of Microsoft Entra ID that allow users to connect to internal applications through Azure's own reverse-proxy service. This allows the RD Web and RD Gateway endpoints to be hidden inside of the virtual network, eliminating the need to be exposed to the internet via a public IP address. This further allows hosters to condense the number of virtual machines in the tenant's environment while still maintaining a full deployment.
+
+Additional information:
+[Enabling Microsoft Entra application proxy](https://learn.microsoft.com/azure/active-directory/app-proxy/application-proxy-config-how-to)
+
+## File server
+The file server provides shared folders by using the Server Message Block (SMB) 3.0 protocol. The shared folders are used to create and store user profile disk files (.vhdx), to backup data, and to allow users a place to share data with other users in the tenant's virtual network.
+
+The VM used to deploy the file server must have an Azure data disk attached and configured with shared folders. Azure data disks use write-through caching which guarantees that writes to the disk persist across restarts of the VM.
+
+For small tenants, the cost can be reduced by combining the file server with the virtual machine running the RD Connection Broker and RD Licensing roles on a single virtual machine in the tenant's environment.
+
+Additional information
+[File and Storage Services Overview](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831487\(v=ws.11\))
+[How to Attach a Data Disk to a Virtual Machine](https://learn.microsoft.com/shows/azure-documentation-shorts/attaching-data-disk-to-windows-vm)
+
+### User Profile Disks
+User profile disks allow users to save personal settings and files when they are signed in to a session on an RD Session Host server in a collection, and then have access to the same settings and files when signing in to a different RD Session Host server in the collection. When the user first signs in, a user profile disk is created on the tenant's file server, and that disk is mounted to the RD Session Host server to which the user is connected. For each subsequent sign-in, the user profile disk is mounted to the appropriate RD Session host server, and with each sign-out, it is un-mounted. The contents of the profile disk can only be accessed by that user.

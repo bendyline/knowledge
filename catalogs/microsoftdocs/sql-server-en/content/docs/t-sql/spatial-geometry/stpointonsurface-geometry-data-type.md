@@ -1,0 +1,70 @@
+---
+title: "STPointOnSurface (geometry Data Type)"
+description: "STPointOnSurface (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STPointOnSurface (geometry Data Type)"
+  - "STPointOnSurface_TSQL"
+helpviewer_keywords:
+  - "STPointOnSurface (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STPointOnSurface (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns an arbitrary point located within the interior of a **geometry** instance.
+  
+## Syntax  
+  
+```  
+  
+.STPointOnSurface ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+ Open Geospatial Consortium (OGC) type: **Point**  
+  
+## Remarks  
+ This method returns null if the instance is empty.  
+  
+## Examples  
+ The following example creates a `Polygon` instance and uses `STPointOnSurface()` to find a point on the instance.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POLYGON((0 0, 3 0, 3 3, 0 3, 0 0),(2 2, 2 1, 1 1, 1 2, 2 2))', 0);  
+SELECT @g.STPointOnSurface().ToString();  
+```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

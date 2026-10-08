@@ -1,0 +1,52 @@
+---
+title: "Installing the Microsoft Connector for SAP BW"
+description: "Installing the Microsoft Connector for SAP BW"
+ms.reviewer: 
+ms.date: 02/13/2025
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+ms.custom:
+  - intro-installation
+---
+
+# Installing the Microsoft Connector for SAP BW
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+The  Microsoft 
+ Connector for SAP BW for SQL Server 2016 is a component of the SQL Server 2016 Feature Pack. To install the Connector for SAP BW and its documentation, download and run the installer from the [SQL Server 2016 Feature Pack web page](https://www.microsoft.com/download/details.aspx?id=56833).
+
+> **Important:**  
+> Microsoft doesn't anticipate providing an updated version of the Connector for SAP BW. Microsoft doesn't own the source code for the SAP BW components, which were developed by a third-party, and as a result can't update them. Consider purchasing the latest SAP connectivity components from a Microsoft ISV partner such as [Theobald Software](https://helpcenter.theobald-software.com/xtract-is/). Microsoft's ISV partners have adapted their SAP connectivity components for SSIS for installation in Azure.
+
+> **Important:**  
+> The documentation for the Microsoft Connector for SAP BW assumes familiarity with the SAP Netweaver BW environment. For more information about SAP Netweaver BW, or for information about how to configure SAP Netweaver BW objects and processes, see your SAP documentation.
+
+> **Important:**  
+> Extracting data from SAP Netweaver BW requires additional SAP licensing. Check with SAP to verify these requirements.
+
+## Required SAP Files
+
+To use the  Microsoft 
+ Connector for SAP BW, you don't have to install the SAP Front End software (SAP GUI) on the local computer.
+
+However you must copy the SAP .NET connector file, librfc32.dll, into the system subfolder in the Windows folder. (Typically, this folder location is **C:\Windows\system32**.)
+
+## Considerations for 64-bit Computers
+
+The  Microsoft 
+ Connector for SAP BW fully supports the 64-bit version of  Microsoft 
+ Windows. On a 64-bit computer, the  Microsoft 
+ Connector for SAP BW has the following additional requirements:
+
+- To run packages in 64-bit mode on any 64-bit Windows operating system, copy the 64-bit version of the SAP GUI file, librfc32.dll, into the **system32** folder of the Windows folder. (Typically, this file location is **C:\Windows\system32**.)
+
+- To run packages in 32-bit mode on any 64-bit Windows operating system, copy the SAP GUI file, librfc32.dll, into the **SysWow64** folder of the Windows folder. (Typically, this folder location is **C:\Windows\SysWow64**.)

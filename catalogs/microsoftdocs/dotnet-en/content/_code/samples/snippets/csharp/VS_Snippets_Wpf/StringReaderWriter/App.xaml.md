@@ -1,0 +1,16 @@
+# Source code: samples/snippets/csharp/VS_Snippets_Wpf/StringReaderWriter/App.xaml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Application x:Class="StringReaderWriter.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:StringReaderWriter"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
+
+```

@@ -1,0 +1,113 @@
+---
+title: "Querying the Active Directory with the Script Task"
+description: "Querying the Active Directory with the Script Task"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: "reference"
+helpviewer_keywords:
+  - "Script task [Integration Services], Active Directory access"
+  - "SSIS Script task, Active Directory access"
+  - "Script task [Integration Services], examples"
+  - "Active Directory [Integration Services]"
+dev_langs:
+  - "VB"
+---
+# Querying the Active Directory with the Script Task
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Enterprise data processing applications, such as  Integration Services 
+ packages, often need to process data differently based on the rank, job title, or other characteristics of employees stored in Active Directory. Active Directory is a  Microsoft 
+ Windows directory service that provides a centralized store of metadata, not only about users, but also about other organizational assets such as computers and printers. The **System.DirectoryServices** namespace in the Microsoft .NET Framework provides classes for working with Active Directory, to help you direct data processing workflow based on the information that it stores.  
+  
+> **Note:**  
+>  If you want to create a task that you can more easily reuse across multiple packages, consider using the code in this Script task sample as the starting point for a custom task. For more information, see [Developing a Custom Task](../extending-packages-custom-objects/task/developing-a-custom-task.md).  
+  
+## Description  
+ The following example retrieves an employee's name, title, and phone number from Active Directory based on the value of the `email` variable, which contains the e-mail address of the employee. Precedence constraints in the package can use the retrieved information to determine, for example, whether to send a low-priority e-mail message or a high-priority page, based on the job title of the employee.  
+  
+#### To configure this Script Task example  
+  
+1.  Create the three string variables `email`, `name`, and `title`. Enter a valid corporate email address as the value of the `email` variable.  
+  
+2.  On the **Script** page of the **Script Task Editor**, add the `email` variable to the **ReadOnlyVariables** property.  
+  
+3.  Add the `name` and `title` variables to the **ReadWriteVariables** property.  
+  
+4.  In the script project, add a reference to the **System.DirectoryServices** namespace.  
+  
+5.  . In your code, use an **Imports** statement to import the **DirectoryServices** namespace.  
+  
+> **Note:**  
+>  To run this script successfully, your company must be using Active Directory on its network and storing the employee information that this example uses.  
+  
+### Code  
+  
+```vb  
+Public Sub Main()  
+  
+    Dim directory As DirectoryServices.DirectorySearcher  
+    Dim result As DirectoryServices.SearchResult  
+    Dim email As String  
+  
+    email = Dts.Variables("email").Value.ToString  
+  
+    Try  
+        directory = New _  
+            DirectoryServices.DirectorySearcher("(mail=" & email & ")")  
+        result = directory.FindOne  
+        Dts.Variables("name").Value = _  
+            result.Properties("displayname").ToString  
+        Dts.Variables("title").Value = _  
+            result.Properties("title").ToString  
+        Dts.TaskResult = ScriptResults.Success  
+    Catch ex As Exception  
+        Dts.Events.FireError(0, _  
+            "Script Task Example", _  
+            ex.Message & ControlChars.CrLf & ex.StackTrace, _  
+            String.Empty, 0)  
+        Dts.TaskResult = ScriptResults.Failure  
+    End Try  
+  
+End Sub  
+```  
+  
+```csharp  
+public void Main()  
+{  
+    //  
+    DirectorySearcher directory;  
+    SearchResult result;  
+    string email;  
+  
+    email = (string)Dts.Variables["email"].Value;  
+  
+    try  
+    {  
+        directory = new DirectorySearcher("(mail=" + email + ")");  
+        result = directory.FindOne();  
+        Dts.Variables["name"].Value = result.Properties["displayname"].ToString();  
+        Dts.Variables["title"].Value = result.Properties["title"].ToString();  
+        Dts.TaskResult = (int)ScriptResults.Success;  
+    }  
+    catch (Exception ex)  
+    {  
+        Dts.Events.FireError(0, "Script Task Example", ex.Message + "\n" + ex.StackTrace, String.Empty, 0);  
+        Dts.TaskResult = (int)ScriptResults.Failure;  
+    }  
+  
+}  
+```  
+  
+## Related content
+
+- [Integration Services (SSIS) Logging](../performance/integration-services-ssis-logging.md)

@@ -1,0 +1,44 @@
+# Source code: aspnetcore/data/ef-rp/intro/samples/cu60/Pages/Students/Details.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model ContosoUniversity.Pages.Students.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Student.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Student.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Student.FirstMidName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Student.FirstMidName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Student.EnrollmentDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Student.EnrollmentDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Student.ID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+```

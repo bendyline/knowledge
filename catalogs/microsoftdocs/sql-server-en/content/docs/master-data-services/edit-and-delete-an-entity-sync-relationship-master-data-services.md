@@ -1,0 +1,98 @@
+---
+title: Edit and Delete an Entity Sync Relationship
+description: Edit and Delete an Entity Sync Relationship (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+---
+# Edit and Delete an Entity Sync Relationship (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Entity sync is a one-way and repeatable synchronization between entity versions. It provides a way to share entity data between different models. You can edit and delete a sync relationship that you've created.  
+  
+## Prerequisites  
+ Prerequisites to edit an entity sync relationship.  
+  
+-   You must have permission to access the System Administration functional area. For more information, see [Functional Area Permissions (Master Data Services)](functional-area-permissions-master-data-services.md).  
+  
+-   You must be a model administrator of the target model. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md).  
+  
+-   You must have at least read access to the source entity and all its attributes and members.  
+  
+ Prerequisites to delete an entity sync relationship.  
+  
+-   You must have permission to access the System Administration functional area. For more information, see [Functional Area Permissions (Master Data Services)](functional-area-permissions-master-data-services.md).  
+  
+-   You must be a model administrator of the target model. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md).  
+  
+ Consider the following when editing an entity sync relationship.  
+  
+-   The source and target entities must be in different models.  
+  
+-   A target entity version status must not be committed.  
+  
+-   Once a sync relationship has been established, the target is immediately synced with the source.  
+  
+-   A target entity version cannot be a source entity version of another sync relationship.  
+  
+ Consider the following when executing an entity sync relationship  
+  
+-   Only leaf members will be copied.  
+  
+-   Domain-based attributes will not be copied.  
+  
+-   Soft-deleted members will not be copied.  
+  
+-   Sync does not generate target entity transactions/histories.  
+  
+ **To edit an entity sync relationship**  
+  
+1.  In Master Data Manager, click **System Administration**.  
+  
+2.  On the **Model View** page, from the menu bar, point to **Manage** and click **Entity Sync**.  
+  
+3.  On the **Entity Sync Maintenance** page, select a sync relationship in the grid.  
+  
+4.  Click **Edit**. A panel shows up on the right side.  
+  
+5.  Change **Frequency**. Select **Sync On Demand**, or select **Auto Sync** and set a frequency.  
+  
+6.  Click **Save**.  
+  
+ **To delete an entity sync relationship**  
+  
+1.  In Master Data Manager, click **System Administration**.  
+  
+2.  On the **Model View** page, from the menu bar, point to **Manage** and click **Entity Sync**.  
+  
+3.  On the **Entity Sync Maintenance** page, select a sync relationship in the grid.  
+  
+4.  Click **Delete**.  
+  
+5.  In the confirmation dialog, click **OK**.  
+  
+## Related content
+
+- [Create and Execute an Entity Sync Relationship (Master Data Services)](create-and-execute-an-entity-sync-relationship-master-data-services.md)
+- [Entity Sync Relationship (Master Data Services)](entity-sync-relationship-master-data-services.md)

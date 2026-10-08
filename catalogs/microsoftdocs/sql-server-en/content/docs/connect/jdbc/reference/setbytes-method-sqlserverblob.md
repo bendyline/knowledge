@@ -1,0 +1,31 @@
+---
+title: "setBytes Method (SQLServerBlob)"
+description: "setBytes Method (SQLServerBlob)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerBlob.setBytes"
+apitype: "Assembly"
+---
+# setBytes Method (SQLServerBlob)
+
+
+  Writes the given array of bytes into the BLOB starting at the given position, and then returns the number of bytes written.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [setBytes (long, byte\[\])](setbytes-method-long-byte.md) | Writes the given array of bytes into the BLOB starting at the given position, and then returns the number of bytes written. |
+| [setBytes (long, byte\[\], int, int)](setbytes-method-long-byte-int-int.md) | Writes all or part of the given array of bytes into the BLOB starting at the given position, offset, and length, and then returns the number of bytes written. |
+  
+## Related content
+
+- [SQLServerBlob Methods](sqlserverblob-methods.md)
+- [SQLServerBlob Members](sqlserverblob-members.md)
+- [SQLServerBlob Class](sqlserverblob-class.md)

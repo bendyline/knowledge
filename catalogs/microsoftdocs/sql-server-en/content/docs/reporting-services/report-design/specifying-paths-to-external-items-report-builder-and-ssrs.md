@@ -1,0 +1,47 @@
+---
+title: "Specifying paths to external items in a paginated report"
+description: Find out how to specify paths in item properties to reference items that are external to the paginated report definition file in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+# Specifying paths to external items in a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+  You specify paths in paginated report item properties to reference items such as drillthrough reports, subreports, and image files that are external to the report definition file and are stored on a report server.  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+> **Note:**  
+>  In Report Builder, paths to items must specify items on a report server. Paths to items on a file system are not supported. You can preview a report that uses these items only if you are connected to the report server where the items are located.  
+  
+ When you specify a path for an external item in a dialog box for actions, subreports, or images, you can browse directly to the report server and select the item. Browsing to an item and selecting it directly is the recommended way to specify a drillthrough report or subreport. That way the correct parameter names will be available in a dropdown list when you specify report or subreport parameters. When you change an item path to point to a different item, you must manually update the correct parameter names and values as needed.  
+  
+ On a report server configured in native mode, specify a drillthrough report name without the file extension .rdl.  
+  
+ On a report server configured in SharePoint integrated mode, you must include the file extension .rdl. The path can be one of the following:  
+  
+-   **A relative path to the item from the main report.** For example, ../AllSubreports/Subreport1. In this example, the **..** indicates the folder above the folder where the main report is located.  
+  
+    > **Note:**  
+    >  Relative paths are not supported when the report is run inside Report Builder. To view a report that uses relative paths to external items, save the report to the report server, and run the report from there  
+  
+-   **A full path to the item.**  
+  
+    -   **On a report server:** The path starts from **/**, the Home folder. For example, /Reports/AllSubreports/Subreport1.  
+  
+    -   **On a SharePoint site:** You must specify the report name in an expression, with the full URL of the item and the file extension .rdl. For example, `="https://server/site/library/folder/Report1.rdl"`.  
+  
+## Related content
+
+- [Add an external image to a paginated report (Report Builder)](add-an-external-image-report-builder-and-ssrs.md)
+- [Add a subreport and parameters to a Report Builder paginated report](add-a-subreport-and-parameters-report-builder-and-ssrs.md)
+- [Add a drillthrough action on a paginated report (Report Builder)](add-a-drillthrough-action-on-a-report-report-builder-and-ssrs.md)

@@ -1,0 +1,30 @@
+{
+  "policy": "standard-open-v1",
+  "approved": true,
+  "evidence": [
+    {
+      "path": "LICENSE.md",
+      "license": "docs",
+      "spdx": "CC-BY-4.0",
+      "sha256": "e09e0a96f6abe2e9acd2c611a97c8d5da5b88b924b08927c7515359e3107e26c",
+      "reference": "https://raw.githubusercontent.com/MicrosoftDocs/PowerShell-Docs/a3de8f22552170e70852470d46cd52cd9ca471ec/LICENSE.md",
+      "obligations": [
+        "retain-license-and-notices",
+        "attribute-source",
+        "mark-modifications"
+      ]
+    },
+    {
+      "path": "LICENSE-CODE.md",
+      "license": "code",
+      "spdx": "MIT",
+      "sha256": "adbda6ffa243c17838b6391c5c19747d407053759dbacd1fc236767bda0f83b0",
+      "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+      "obligations": [
+        "retain-license-and-notices",
+        "attribute-source",
+        "mark-modifications"
+      ]
+    }
+  ]
+}

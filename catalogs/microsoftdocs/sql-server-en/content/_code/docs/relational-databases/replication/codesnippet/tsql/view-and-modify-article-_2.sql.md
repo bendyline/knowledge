@@ -1,0 +1,22 @@
+# Source code: docs/relational-databases/replication/codesnippet/tsql/view-and-modify-article-_2.sql
+
+Complete source file; linked examples may select a region or line range.
+
+```
+DECLARE @publication AS sysname;
+DECLARE @article AS sysname;
+DECLARE @option AS int;
+SET @publication = N'AdvWorksProductTran';
+SET @article = N'Product';
+SET @option = (SELECT CAST(0x0000000002030073 AS int));
+
+-- Change the schema options to replicate schema with XML.
+USE [AdventureWorks2022]
+EXEC sp_changearticle 
+  @publication = @publication,
+  @article = @article, 
+  @property = N'schema_option', 
+  @value = @option,
+  @force_invalidate_snapshot = 1;
+GO
+```

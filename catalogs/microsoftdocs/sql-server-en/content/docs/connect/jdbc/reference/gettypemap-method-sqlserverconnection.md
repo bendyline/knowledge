@@ -1,0 +1,43 @@
+---
+title: "getTypeMap Method (SQLServerConnection)"
+description: "getTypeMap Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.getTypeMap"
+apitype: "Assembly"
+---
+# getTypeMap Method (SQLServerConnection)
+
+
+  Retrieves the Map object associated with this [SQLServerConnection](sqlserverconnection-class.md) object.  
+  
+> **Note:**  
+>  This method is not currently supported by the  Microsoft JDBC Driver for SQL Server 
+.  
+  
+## Syntax  
+  
+```  
+  
+public java.util.Map getTypeMap()  
+```  
+  
+## Return Value  
+ A Map object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getTypeMap method is specified by the getTypeMap method in the java.sql.Connection interface.  
+  
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

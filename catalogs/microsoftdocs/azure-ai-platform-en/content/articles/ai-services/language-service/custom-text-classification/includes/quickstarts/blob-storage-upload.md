@@ -1,0 +1,54 @@
+---
+#services: cognitive-services
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 06/30/2026
+ms.author: lajanuar
+---
+After you create an Azure storage account and connected it to your Language resource, you need to upload the documents from the sample dataset to the root directory of your container. These documents are used to train your model.
+
+# [Multi label classification](#tab/multi-classification)
+
+1. [Download the sample dataset for multi label classification projects](https://github.com/Azure-Samples/cognitive-services-sample-data-files/raw/master/language-service/Custom%20text%20classification/Custom%20multi%20classification%20-%20movies%20summary.zip).
+
+1. Open the .zip file, and extract the folder containing the documents. 
+
+The provided sample dataset contains about 200 documents,  each of which is a summary for a movie. Each document belongs to one or more of the following classes: 
+* "Mystery"
+* "Drama"
+* "Thriller"
+* "Comedy"
+* "Action"
+
+# [Single label classification](#tab/single-classification)
+
+1. [Download the sample dataset for single label classification projects](https://github.com/Azure-Samples/cognitive-services-sample-data-files/raw/master/language-service/Custom%20text%20classification/Custom%20single%20classification%20-%20WebOfScience.zip). 
+
+1. Open the .zip file, and extract the folder containing the documents. 
+
+The provided sample dataset contains about 210 documents, each of which is an abstract of a scientific paper. Each document is labeled with only one class of the following classes: 
+* "Computer_science"
+* "Electrical_engineering"
+* "Psychology"
+* "Mechanical_engineering"
+* "Civil_engineering"
+* "Medical"
+* "Biochemistry"
+
+---
+
+### Azure portal
+
+1. In the [Azure portal](https://portal.azure.com), navigate to the storage account you created, and select it by selecting **Storage accounts** and typing your storage account name into **Filter for any field**.
+
+    if your resource group doesn't show up, make sure the **Subscription equals** filter is set to **All**.
+
+1. In your storage account, select **Containers** from the left menu, located below **Data storage**. On the screen that appears, select **+ Container**. Give the container the name **example-data** and leave the default **Public access level**.
+
+    A screenshot showing the main page for a storage account.
+
+1. After your container is created, select it. Then select **Upload** button to select the `.txt` and `.json` files you downloaded earlier. 
+
+    A screenshot showing the button for uploading files to the storage account.

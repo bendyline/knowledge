@@ -1,0 +1,25 @@
+# Source code: docs/core/whats-new/snippets/dotnet-8/csharp/ConsoleApp/Project.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.4.1" />
+  </ItemGroup>
+
+</Project>
+
+```

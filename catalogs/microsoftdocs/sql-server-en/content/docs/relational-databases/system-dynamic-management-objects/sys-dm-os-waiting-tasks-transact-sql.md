@@ -1,0 +1,216 @@
+---
+title: "sys.dm_os_waiting_tasks (Transact-SQL)"
+description: sys.dm_os_waiting_tasks returns information about the wait queue of tasks that are waiting on some resource.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: wiassaf
+ms.date: 09/17/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "dm_os_waiting_tasks"
+  - "sys.dm_os_waiting_tasks_TSQL"
+  - "dm_os_waiting_tasks_TSQL"
+  - "sys.dm_os_waiting_tasks"
+helpviewer_keywords:
+  - "sys.dm_os_waiting_tasks dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.dm_os_waiting_tasks (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns information about the wait queue of tasks that are waiting on some resource. For more information about tasks, see the [Thread and task architecture guide](../thread-and-task-architecture-guide.md).
+
+> **Note:**  
+> To call this from  Azure Synapse Analytics , use the name `sys.dm_pdw_nodes_os_waiting_tasks`.  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `waiting_task_address` | **varbinary(8)** | Address of the waiting task. |
+| `session_id` | **smallint** | ID of the session associated with the task. |
+| `exec_context_id` | **int** | ID of the execution context associated with the task. |
+| `wait_duration_ms` | **bigint** | Total wait time for this wait type, in milliseconds. This time is inclusive of `signal_wait_time`. |
+| `wait_type` | **nvarchar(60)** | Name of the wait type. For more information, see [sys.dm_os_wait_stats](sys-dm-os-wait-stats-transact-sql.md). |
+| `resource_address` | **varbinary(8)** | Address of the resource for which the task is waiting. |
+| `blocking_task_address` | **varbinary(8)** | Task that is currently holding this resource |
+| `blocking_session_id` | **smallint** | ID of the session blocking the request. If this column is `NULL`, the request isn't blocked, or the session information of the blocking session isn't available (or can't be identified).<br /><br />`-2` = The blocking resource is owned by an orphaned distributed transaction.<br /><br />`-3` = The blocking resource is owned by a deferred recovery transaction.<br /><br />`-4` = `session_id` of the blocking latch owner couldn't be determined due to internal latch state transitions. |
+| `blocking_exec_context_id` | **int** | ID of the execution context of the blocking task. |
+| `resource_description` | **nvarchar(3072)** | Description of the resource being consumed. For more information, see [The resource_description column](#resource_description-column). |
+| `pdw_node_id` | **int** | The identifier for the node that this distribution is on.<br /><br />**Applies to**:  Azure Synapse Analytics |
+
+<a id="resource_description-column"></a>
+
+## The `resource_description` column
+
+The `resource_description` column has the following possible values.
+
+### Thread-pool resource owner
+
+`threadpool id=scheduler<hex-address>`
+
+### Parallel query resource owner
+
+`exchangeEvent id={Port|Pipe}<hex-address> WaitType=<exchange-wait-type> nodeId=<exchange-node-id>`
+
+### Exchange-wait-type
+
+- `e_waitNone`
+- `e_waitPipeNewRow`
+- `e_waitPipeGetRow`
+- `e_waitSynchronizeConsumerOpen`
+- `e_waitPortOpen`
+- `e_waitPortClose`
+- `e_waitRange`
+
+### Lock resource owner
+
+`<type-specific-description> id=lock<lock-hex-address> mode=<mode> associatedObjectId=<associated-obj-id>`
+
+- `<type-specific-description>` can be:
+
+  - For `DATABASE`: `databaselock subresource=<databaselock-subresource> dbid=<db-id>`
+  - For `FILE`: `filelock fileid=<file-id> subresource=<filelock-subresource> dbid=<db-id>`
+  - For `OBJECT`: `objectlock lockPartition=<lock-partition-id> objid=<obj-id> subresource=<objectlock-subresource> dbid=<db-id>`
+  - For `PAGE`: `pagelock fileid=<file-id> pageid=<page-id> dbid=<db-id> subresource=<pagelock-subresource>`
+  - For `Key`: `keylock hobtid=<hobt-id> dbid=<db-id>`
+  - For `EXTENT`: `extentlock fileid=<file-id> pageid=<page-id> dbid=<db-id>`
+  - For `RID`: `ridlock fileid=<file-id> pageid=<page-id> dbid=<db-id>`
+  - For `APPLICATION`: `applicationlock hash=<hash> databasePrincipalId=<role-id> dbid=<db-id>`
+  - For `METADATA`: `metadatalock subresource=<metadata-subresource> classid=<metadatalock-description> dbid=<db-id>`
+  - For `HOBT`: `hobtlock hobtid=<hobt-id> subresource=<hobt-subresource> dbid=<db-id>`
+  - For `ALLOCATION_UNIT`: `allocunitlock hobtid=<hobt-id> subresource=<alloc-unit-subresource> dbid=<db-id>`
+
+- `<mode>` can be:
+
+  Sch-S, Sch-M, S, U, X, IS, IU, IX, SIU, SIX, UIX, BU, RangeS-S, RangeS-U, RangeI-N, RangeI-S, RangeI-U, RangeI-X, RangeX-, RangeX-U, RangeX-X
+
+#### External resource owner
+
+External `ExternalResource=<wait-type>`
+
+#### Generic resource owner
+
+- `TransactionMutex` `TransactionInfo Workspace=<workspace-id>`
+- `Mutex`
+- `CLRTaskJoin`
+- `CLRMonitorEvent`
+- `CLRRWLockEvent`
+- `resourceWait`
+
+#### Latch resource owner
+
+- `<db-id>:<file-id>:<page-in-file>`
+- `<GUID>`
+- `<latch-class> (<latch-address>)`
+
+#### XACT (transaction) resource owner
+
+Occurs when [optimized locking](../performance/optimized-locking.md) is enabled:
+
+- `xactlock`: `xactlock xdesIdLow=<xdesIdLow> xdesIdHigh=<xdesIdHigh> dbid=<dbid> id=<resource id> mode=<mode> UnderlyingResource (<keylock|ridlock>) hobtId=<hobtId> dbid=<dbid>`
+
+## Permissions
+
+ SQL Server 2019 (15.x) 
+ and earlier versions require `VIEW SERVER STATE` permission.
+
+ SQL Server 2022 (16.x) 
+ and later versions, and  SQL Server 
+ and Azure SQL Managed Instance, require `VIEW SERVER PERFORMANCE STATE` permission on the server.
+
+On  Azure SQL Database 
+ **Basic**, **S0**, and **S1** service objectives, and for databases in **elastic pools**, the [server admin](https://learn.microsoft.com/azure/azure-sql/database/logins-create-manage#existing-logins-and-user-accounts-after-creating-a-new-database) account, the [Microsoft Entra admin](https://learn.microsoft.com/azure/azure-sql/database/authentication-aad-overview#administrator-structure) account, or membership in the `##MS_ServerStateReader##` [server role](https://learn.microsoft.com/azure/azure-sql/database/security-server-roles) is required. On all other SQL Database service objectives, either the `VIEW DATABASE STATE` permission on the database, or membership in the `##MS_ServerStateReader##` server role is required.
+
+## Examples
+
+### A. Identify tasks from blocked sessions
+
+```sql
+SELECT * FROM sys.dm_os_waiting_tasks
+WHERE blocking_session_id IS NOT NULL;
+```
+
+### B. View waiting tasks per connection
+
+```sql
+SELECT st.text AS [SQL Text],
+       c.connection_id,
+       w.session_id,
+       w.wait_duration_ms,
+       w.wait_type,
+       w.resource_address,
+       w.blocking_session_id,
+       w.resource_description,
+       c.client_net_address,
+       c.connect_time
+FROM sys.dm_os_waiting_tasks AS w
+     INNER JOIN sys.dm_exec_connections AS c
+         ON w.session_id = c.session_id
+CROSS APPLY (SELECT *
+             FROM sys.dm_exec_sql_text(c.most_recent_sql_handle)) AS st
+WHERE w.session_id > 50
+      AND w.wait_duration_ms > 0
+ORDER BY c.connection_id, w.session_id;
+GO
+```
+
+### C. View waiting tasks for all user processes with additional information
+
+```sql
+SELECT 'Waiting_tasks' AS [Information],
+       owt.session_id,
+       owt.wait_duration_ms,
+       owt.wait_type,
+       owt.blocking_session_id,
+       owt.resource_description,
+       es.program_name,
+       est.text,
+       est.dbid,
+       eqp.query_plan,
+       er.database_id,
+       es.cpu_time,
+       es.memory_usage * 8 AS memory_usage_KB
+FROM sys.dm_os_waiting_tasks AS owt
+     INNER JOIN sys.dm_exec_sessions AS es
+         ON owt.session_id = es.session_id
+     INNER JOIN sys.dm_exec_requests AS er
+         ON es.session_id = er.session_id
+OUTER APPLY sys.dm_exec_sql_text(er.sql_handle) AS est
+OUTER APPLY sys.dm_exec_query_plan(er.plan_handle) AS eqp
+WHERE es.is_user_process = 1
+ORDER BY owt.session_id;
+GO
+```
+
+## Related content
+
+- [SQL Server Operating System related dynamic management views (Transact-SQL)](sql-server-operating-system-related-dynamic-management-views-transact-sql.md)
+- [Thread and task architecture guide](../thread-and-task-architecture-guide.md)
+- [Transaction locking and row versioning guide](../sql-server-transaction-locking-and-row-versioning-guide.md)
+- [sys.dm_os_wait_stats (Transact-SQL)](sys-dm-os-wait-stats-transact-sql.md)
+- [sys.dm_exec_requests (Transact-SQL)](sys-dm-exec-requests-transact-sql.md)

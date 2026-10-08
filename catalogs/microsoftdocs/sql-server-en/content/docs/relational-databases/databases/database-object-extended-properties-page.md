@@ -1,0 +1,49 @@
+---
+title: "Database Object (Extended Properties Page)"
+description: "Find out about the Extended Properties page. Learn how to use this page to add, view, or modify custom properties of database objects."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: configuration
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.swb.common.extendedproperties.f1"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Database Object (Extended Properties Page)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+  Extended properties allow you to add custom properties to database objects. Use this page to view or modify extended properties for the selected object. The **Extended Properties** page is the same for all types of database objects.  
+  
+## UI element list  
+ **Database**  
+ Displays the name of the selected database. This field is read-only.  
+  
+ **Collation**  
+ Displays the collation used for the selected database. This field is read-only.  
+  
+ **Properties**  
+ View or specify the extended properties for the object. Each extended property consists of a name/value pair of metadata associated with the object.  
+  
+ **Browse button**  
+ Click the browse (...) button after **Value** to open the **Value for Extended Property Dialog Box** dialog box. Type or view the value of the extended property in this larger location.  
+  
+ **Delete**  
+ Removes the selected extended property.  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](../system-catalog-views/catalog-views-transact-sql.md)

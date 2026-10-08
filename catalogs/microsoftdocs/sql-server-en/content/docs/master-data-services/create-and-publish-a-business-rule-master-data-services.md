@@ -1,0 +1,130 @@
+---
+title: Create and Publish a Business Rule
+description: Learn how to create a business rule in Master Data Services to ensure the accuracy of your master data. After you create a rule, publish it to apply the rule.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "business rules [Master Data Services], creating"
+  - "creating business rules [Master Data Services]"
+---
+# Create and Publish a Business Rule (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, create a business rule to ensure the accuracy of your master data. After you create a rule, you must publish it before you can apply it to data.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **System Administration** functional area.  
+  
+-   You must be a model administrator. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md).  
+  
+### To create and publish a business rule  
+  
+1.  In  Master Data Manager 
+, click **System Administration**.  
+  
+2.  From the menu bar, point to **Manage** and click **Business Rules**.  
+  
+3.  On the **Business Rule** page, from the **Model** dropdown list, select a model.  
+  
+4.  From the **Entity** dropdown list, select an entity.  
+  
+5.  From the **Member Types** dropdown list, select a type of member for the business rule to apply to.  
+  
+6.  Click **Add**.  
+  
+7.  In the **Name** box, type a name for the business rule.  
+  
+8.  Optionally, in the **Description** field, type the business rule description.  
+  
+9. Optionally, check the **Send Notifications** option and from the dropdown list select a user or group to send the email notification to.  
+  
+    > **Note:**  
+    >  Notifications are sent only for rules that include a validation action.  
+  
+10. Under the **If** block, click **Add**. A panel will be displayed.  
+  
+11. From the **Attribute** dropdown list, select an attribute.  
+  
+12. From the **Operator** dropdown list, select a condition.  
+  
+13. Complete any required fields.  
+  
+14. Click **Save** button. A new row will be added to the **If** grid.  
+  
+    > **Tip:**  
+    >  You can delete items from your business rule by right-clicking each item and choosing **Delete**.  
+  
+15. Optionally, add multiple conditions to the rule. For more information, see [Add Multiple Conditions to a Business Rule (Master Data Services)](add-multiple-conditions-to-a-business-rule-master-data-services.md).  
+  
+16. Under the **Then** block, click **Add** . A panel will be displayed.  
+  
+17. From the **Attribute** dropdown list, select an attribute.  
+  
+18. From the **Operator** dropdown list, select an action.  
+  
+19. Complete any required fields.  
+  
+20. Click **Save**. A new row will be added to the **Then** grid.  
+  
+21. Optionally, to add **Else** action, complete the following steps.  
+  
+    1.  Under the **Else** block, click **Add**. A panel will be displayed.  
+  
+    2.  From the **Attribute** dropdown list, select an attribute.  
+  
+    3.  From the **Operator** dropdown list, select an action.  
+  
+    4.  Complete any required fields.  
+  
+    5.  Click **Save**. A new row will be added to the **Else** grid.  
+  
+22. Click **Save**. A new row will be added to the business rules grid.  
+  
+23. Click **Publish All**.  
+  
+24. On the confirmation dialog box, click **OK**. The value in the **Business Rule State** column is **Active**.  
+  
+## Grid Columns  
+ For each created business rule, a row with six columns is added to the grid. The following are the columns.  
+  
+| Name | Description |
+| --- | --- |
+| Status | When you click **Save** the following image is displayed that indicates that the business rule is updating.<br /><br /> mds_BR_refresh<br /><br /> If there are errors when creating or editing a business rule, the following image is displayed.<br /><br /> mds_br_error<br /><br /> If the status is OK, then the following image is displayed.<br /><br /> mds_BR_success |
+| Name | The business rule name. |
+| Description | The business rule description. |
+| Business Rule State | One of the following business rule statuses: : Rule not defined, Active, Excluded, Pending Changes, Pending Exclusion and Pending Deletion. |
+| Excluded | Specifies whether the business rule is excluded. |
+| Notification | Specifies the selected user or group to send the email notification to. |
+  
+## Related content
+
+- [Configure Business Rules to Send Notifications (Master Data Services)](configure-business-rules-to-send-notifications-master-data-services.md)
+- [Change a Business Rule Name (Master Data Services)](change-a-business-rule-name-master-data-services.md)
+- [Add Multiple Conditions to a Business Rule (Master Data Services)](add-multiple-conditions-to-a-business-rule-master-data-services.md)
+- [Validate Specific Members against Business Rules (Master Data Services)](validate-specific-members-against-business-rules-master-data-services.md)
+- [Validate a Version against Business Rules (Master Data Services)](validate-a-version-against-business-rules-master-data-services.md)

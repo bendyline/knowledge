@@ -1,0 +1,377 @@
+{
+  "repository": "MicrosoftDocs/windows-dev-docs",
+  "branch": "docs",
+  "revision": "aabd22a9113af71e56bd6f5af8fde06df68162e0",
+  "tree": "59962154864c5c55c81f39d4cb0a6ab91ce30a97",
+  "licenseFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+        "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE-CODE",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices",
+      "sha256": "f90a4ebe55a146d29bae7ce11cb57faf7346beab9dd9db5f15b533ac6c48a37f"
+    }
+  ],
+  "markdownFiles": 2181,
+  "markdownBytes": 23932197,
+  "totalBlobBytes": 751480828,
+  "roots": [
+    ".gitattributes",
+    ".github",
+    ".gitignore",
+    ".localization-config",
+    ".openpublishing.publish.config.json",
+    ".openpublishing.redirection.json",
+    ".whatsnew.json",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "LICENSE-CODE",
+    "README.md",
+    "SECURITY.md",
+    "ThirdPartyNotices",
+    "WSL",
+    "auto-publish.yml",
+    "hub",
+    "landing",
+    "master-branch-inf.txt",
+    "terminal",
+    "tools",
+    "uwp",
+    "windows-apps-src"
+  ],
+  "groups": {
+    ".github/instructions": {
+      "files": 1,
+      "bytes": 6611
+    },
+    "CONTRIBUTING.md": {
+      "files": 1,
+      "bytes": 710
+    },
+    "README.md": {
+      "files": 1,
+      "bytes": 2278
+    },
+    "SECURITY.md": {
+      "files": 1,
+      "bytes": 2757
+    },
+    "hub/advanced-settings": {
+      "files": 4,
+      "bytes": 26336
+    },
+    "hub/apps": {
+      "files": 963,
+      "bytes": 12241586
+    },
+    "hub/core-utils": {
+      "files": 2,
+      "bytes": 12948
+    },
+    "hub/cross-device": {
+      "files": 1,
+      "bytes": 22537
+    },
+    "hub/curl": {
+      "files": 1,
+      "bytes": 1580
+    },
+    "hub/dev-configs": {
+      "files": 1,
+      "bytes": 3202
+    },
+    "hub/dev-drive": {
+      "files": 2,
+      "bytes": 55506
+    },
+    "hub/dev-environment": {
+      "files": 21,
+      "bytes": 113581
+    },
+    "hub/edit": {
+      "files": 1,
+      "bytes": 2728
+    },
+    "hub/includes": {
+      "files": 14,
+      "bytes": 17884
+    },
+    "hub/package-manager": {
+      "files": 34,
+      "bytes": 248029
+    },
+    "hub/powertoys": {
+      "files": 344,
+      "bytes": 805115
+    },
+    "hub/tar": {
+      "files": 1,
+      "bytes": 1313
+    },
+    "hub/web": {
+      "files": 2,
+      "bytes": 23512
+    },
+    "landing/arm-docs": {
+      "files": 16,
+      "bytes": 178012
+    },
+    "uwp/app-resources": {
+      "files": 18,
+      "bytes": 279613
+    },
+    "uwp/app-to-app": {
+      "files": 3,
+      "bytes": 21091
+    },
+    "uwp/apps-for-education": {
+      "files": 3,
+      "bytes": 19453
+    },
+    "uwp/apps-for-xbox": {
+      "files": 4,
+      "bytes": 15429
+    },
+    "uwp/audio-video-camera": {
+      "files": 24,
+      "bytes": 297029
+    },
+    "uwp/communication": {
+      "files": 2,
+      "bytes": 19446
+    },
+    "uwp/composition": {
+      "files": 4,
+      "bytes": 98637
+    },
+    "uwp/contacts-and-calendar": {
+      "files": 5,
+      "bytes": 43721
+    },
+    "uwp/cpp-and-winrt-apis": {
+      "files": 42,
+      "bytes": 821889
+    },
+    "uwp/data-access": {
+      "files": 3,
+      "bytes": 25118
+    },
+    "uwp/data-binding": {
+      "files": 8,
+      "bytes": 178355
+    },
+    "uwp/debug-test-perf": {
+      "files": 26,
+      "bytes": 367000
+    },
+    "uwp/develop": {
+      "files": 2,
+      "bytes": 10771
+    },
+    "uwp/devices-sensors": {
+      "files": 7,
+      "bytes": 43971
+    },
+    "uwp/dotnet-native": {
+      "files": 38,
+      "bytes": 289034
+    },
+    "uwp/files": {
+      "files": 4,
+      "bytes": 37907
+    },
+    "uwp/gaming": {
+      "files": 113,
+      "bytes": 1670312
+    },
+    "uwp/get-started": {
+      "files": 25,
+      "bytes": 219822
+    },
+    "uwp/graphics-concepts": {
+      "files": 134,
+      "bytes": 632877
+    },
+    "uwp/launch-resume": {
+      "files": 66,
+      "bytes": 799037
+    },
+    "uwp/maps-and-location": {
+      "files": 13,
+      "bytes": 195827
+    },
+    "uwp/monetize": {
+      "files": 127,
+      "bytes": 1274069
+    },
+    "uwp/networking": {
+      "files": 9,
+      "bytes": 274151
+    },
+    "uwp/packaging": {
+      "files": 5,
+      "bytes": 140198
+    },
+    "uwp/security": {
+      "files": 7,
+      "bytes": 154930
+    },
+    "uwp/threading-async": {
+      "files": 8,
+      "bytes": 64322
+    },
+    "uwp/ui-input": {
+      "files": 30,
+      "bytes": 661805
+    },
+    "uwp/updates-and-versions": {
+      "files": 2,
+      "bytes": 33123
+    },
+    "uwp/whats-new": {
+      "files": 17,
+      "bytes": 1096007
+    },
+    "uwp/winrt-components": {
+      "files": 12,
+      "bytes": 223968
+    },
+    "uwp/xaml-islands": {
+      "files": 7,
+      "bytes": 143621
+    },
+    "windows-apps-src/develop": {
+      "files": 1,
+      "bytes": 9985
+    },
+    "windows-apps-src/porting": {
+      "files": 1,
+      "bytes": 3454
+    }
+  },
+  "nestedLegal": [
+    "uwp/graphics-concepts/copying-and-accessing-resource-data.md"
+  ],
+  "selection": {
+    "markdownGlobs": [
+      "hub/**/*.md",
+      "landing/**/*.md",
+      "uwp/**/*.md",
+      "windows-apps-src/**/*.md",
+      "WSL/**/*.md",
+      "terminal/**/*.md"
+    ],
+    "codeGlobs": [
+      "hub/**/*.cs",
+      "hub/**/*.vb",
+      "hub/**/*.fs",
+      "hub/**/*.fsx",
+      "hub/**/*.xaml",
+      "hub/**/*.sql",
+      "hub/**/*.json",
+      "hub/**/*.xml",
+      "hub/**/*.config",
+      "hub/**/*.csproj",
+      "hub/**/*.razor",
+      "hub/**/*.cshtml",
+      "hub/**/*.js",
+      "hub/**/*.ts",
+      "hub/**/*.cpp",
+      "hub/**/*.h",
+      "hub/**/*.py",
+      "hub/**/*.ps1",
+      "hub/**/*.sh",
+      "hub/**/*.css",
+      "hub/**/*.html",
+      "hub/**/*.props",
+      "hub/**/*.targets",
+      "uwp/**/*.cs",
+      "uwp/**/*.vb",
+      "uwp/**/*.fs",
+      "uwp/**/*.fsx",
+      "uwp/**/*.xaml",
+      "uwp/**/*.sql",
+      "uwp/**/*.json",
+      "uwp/**/*.xml",
+      "uwp/**/*.config",
+      "uwp/**/*.csproj",
+      "uwp/**/*.razor",
+      "uwp/**/*.cshtml",
+      "uwp/**/*.js",
+      "uwp/**/*.ts",
+      "uwp/**/*.cpp",
+      "uwp/**/*.h",
+      "uwp/**/*.py",
+      "uwp/**/*.ps1",
+      "uwp/**/*.sh",
+      "uwp/**/*.css",
+      "uwp/**/*.html",
+      "uwp/**/*.props",
+      "uwp/**/*.targets",
+      "windows-apps-src/**/*.cs",
+      "windows-apps-src/**/*.vb",
+      "windows-apps-src/**/*.fs",
+      "windows-apps-src/**/*.fsx",
+      "windows-apps-src/**/*.xaml",
+      "windows-apps-src/**/*.sql",
+      "windows-apps-src/**/*.json",
+      "windows-apps-src/**/*.xml",
+      "windows-apps-src/**/*.config",
+      "windows-apps-src/**/*.csproj",
+      "windows-apps-src/**/*.razor",
+      "windows-apps-src/**/*.cshtml",
+      "windows-apps-src/**/*.js",
+      "windows-apps-src/**/*.ts",
+      "windows-apps-src/**/*.cpp",
+      "windows-apps-src/**/*.h",
+      "windows-apps-src/**/*.py",
+      "windows-apps-src/**/*.ps1",
+      "windows-apps-src/**/*.sh",
+      "windows-apps-src/**/*.css",
+      "windows-apps-src/**/*.html",
+      "windows-apps-src/**/*.props",
+      "windows-apps-src/**/*.targets"
+    ],
+    "exclude": [
+      "**/wwwroot/lib/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json",
+      "**/jquery*.js",
+      "**/bootstrap*.js",
+      "**/bootstrap*.css",
+      "**/knockout*.js",
+      "**/modernizr*.js",
+      "**/wwwroot/swagger/ui/**",
+      "**/signalr/dist/**"
+    ]
+  }
+}

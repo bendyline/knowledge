@@ -1,0 +1,71 @@
+---
+title: "AsTextZM (geometry Data Type)"
+description: "AsTextZM (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "AsTextZM_(geometry Data Type)"
+  - "AsTextZM_(geometry_Data_Type)_TSQL"
+helpviewer_keywords:
+  - "AsTextZM (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# AsTextZM (geometry Data Type)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a geometry instance augmented with any **Z** (elevation) and **M** (measure) values carried by the instance.
+  
+## Syntax  
+  
+```sql  
+.AsTextZM ()  
+```  
+  
+## Return Types
+
+ SQL Server 
+ return type: **nvarchar(max)**  
+  
+ CLR return type: **SqlChars**  
+  
+## Remarks  
+  
+## Examples  
+
+The following example creates a `Point` instance that contains **Z** (elevation) and **M** (measure) values. `STAsText()` selects the WKT values, (1 2); `AsTextZM()` selects the same WKT values and also returns the values for **Z** and **M**, yielding (1 2 3 4).  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POINT(1 2 3 4)', 0);  
+SELECT @g.STAsText();  
+SELECT @g.AsTextZM();  
+```  
+  
+## Related content
+
+- [Extended methods on geometry instances](extended-methods-on-geometry-instances.md)
+- [M (geometry Data Type)](m-geometry-data-type.md)
+- [Z (geometry Data Type)](z-geometry-data-type.md)

@@ -1,0 +1,231 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-microsoft-365-en",
+  "name": "Microsoft technology: Microsoft 365 and Copilot",
+  "description": "Preserved English Microsoft 365 and Copilot documentation from MicrosoftDocs/microsoft-365-docs, with normalized Markdown, selected complete code examples, source revisions, and license notices.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "git",
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "MicrosoftDocs/microsoft-365-docs",
+    "ref": "eab9d7696cdff87474698b08a1fb328091102a2f",
+    "paths": [
+      "."
+    ],
+    "include": [
+      "microsoft-365/**/*.md",
+      "copilot/**/*.md"
+    ],
+    "exclude": [
+      "**/wwwroot/lib/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json",
+      "**/jquery*.js",
+      "**/bootstrap*.js",
+      "**/bootstrap*.css",
+      "**/knockout*.js",
+      "**/modernizr*.js",
+      "**/wwwroot/swagger/ui/**",
+      "**/signalr/dist/**"
+    ],
+    "transport": "files",
+    "downloadConcurrency": 8,
+    "codeFiles": [
+      "microsoft-365/**/*.cs",
+      "microsoft-365/**/*.vb",
+      "microsoft-365/**/*.fs",
+      "microsoft-365/**/*.fsx",
+      "microsoft-365/**/*.xaml",
+      "microsoft-365/**/*.sql",
+      "microsoft-365/**/*.json",
+      "microsoft-365/**/*.xml",
+      "microsoft-365/**/*.config",
+      "microsoft-365/**/*.csproj",
+      "microsoft-365/**/*.razor",
+      "microsoft-365/**/*.cshtml",
+      "microsoft-365/**/*.js",
+      "microsoft-365/**/*.ts",
+      "microsoft-365/**/*.cpp",
+      "microsoft-365/**/*.h",
+      "microsoft-365/**/*.py",
+      "microsoft-365/**/*.ps1",
+      "microsoft-365/**/*.sh",
+      "microsoft-365/**/*.css",
+      "microsoft-365/**/*.html",
+      "microsoft-365/**/*.props",
+      "microsoft-365/**/*.targets",
+      "copilot/**/*.cs",
+      "copilot/**/*.vb",
+      "copilot/**/*.fs",
+      "copilot/**/*.fsx",
+      "copilot/**/*.xaml",
+      "copilot/**/*.sql",
+      "copilot/**/*.json",
+      "copilot/**/*.xml",
+      "copilot/**/*.config",
+      "copilot/**/*.csproj",
+      "copilot/**/*.razor",
+      "copilot/**/*.cshtml",
+      "copilot/**/*.js",
+      "copilot/**/*.ts",
+      "copilot/**/*.cpp",
+      "copilot/**/*.h",
+      "copilot/**/*.py",
+      "copilot/**/*.ps1",
+      "copilot/**/*.sh",
+      "copilot/**/*.css",
+      "copilot/**/*.html",
+      "copilot/**/*.props",
+      "copilot/**/*.targets"
+    ],
+    "docfxRoot": "microsoft-365",
+    "maxArchiveBytes": 2000000000,
+    "publishedBaseUrl": "https://learn.microsoft.com/microsoft-365/",
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices",
+        "sha256": "d45b694be4373592e745f6c46b3f20b8465a1e2fb9c648b1e9b19de2843ac22b"
+      }
+    ]
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "microsoft-365/**/*.md",
+          "copilot/**/*.md"
+        ],
+        "license": "docs"
+      },
+      {
+        "include": [
+          "_code/**/*.md",
+          "microsoft-365/**/*.cs",
+          "microsoft-365/**/*.vb",
+          "microsoft-365/**/*.fs",
+          "microsoft-365/**/*.fsx",
+          "microsoft-365/**/*.xaml",
+          "microsoft-365/**/*.sql",
+          "microsoft-365/**/*.json",
+          "microsoft-365/**/*.xml",
+          "microsoft-365/**/*.config",
+          "microsoft-365/**/*.csproj",
+          "microsoft-365/**/*.razor",
+          "microsoft-365/**/*.cshtml",
+          "microsoft-365/**/*.js",
+          "microsoft-365/**/*.ts",
+          "microsoft-365/**/*.cpp",
+          "microsoft-365/**/*.h",
+          "microsoft-365/**/*.py",
+          "microsoft-365/**/*.ps1",
+          "microsoft-365/**/*.sh",
+          "microsoft-365/**/*.css",
+          "microsoft-365/**/*.html",
+          "microsoft-365/**/*.props",
+          "microsoft-365/**/*.targets",
+          "copilot/**/*.cs",
+          "copilot/**/*.vb",
+          "copilot/**/*.fs",
+          "copilot/**/*.fsx",
+          "copilot/**/*.xaml",
+          "copilot/**/*.sql",
+          "copilot/**/*.json",
+          "copilot/**/*.xml",
+          "copilot/**/*.config",
+          "copilot/**/*.csproj",
+          "copilot/**/*.razor",
+          "copilot/**/*.cshtml",
+          "copilot/**/*.js",
+          "copilot/**/*.ts",
+          "copilot/**/*.cpp",
+          "copilot/**/*.h",
+          "copilot/**/*.py",
+          "copilot/**/*.ps1",
+          "copilot/**/*.sh",
+          "copilot/**/*.css",
+          "copilot/**/*.html",
+          "copilot/**/*.props",
+          "copilot/**/*.targets"
+        ],
+        "license": "code"
+      }
+    ]
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true,
+    "docfxReferences": "preserve",
+    "docfxMetadataMaxBytes": 12000,
+    "docfxProfile": "rendered-v1"
+  },
+  "sync": {
+    "maxFileBytes": 20000000,
+    "maxTotalBytes": 1500000000,
+    "maxDeleteFraction": 0.2
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "folders"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "microsoft",
+        "technology",
+        "microsoft-365"
+      ]
+    }
+  }
+}

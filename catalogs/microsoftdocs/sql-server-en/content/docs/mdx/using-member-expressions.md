@@ -1,0 +1,58 @@
+---
+title: "Using Member Expressions"
+description: "Using Member Expressions"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Using Member Expressions
+
+
+  A member expression contains a member identifier, a member function, or an expression that can be converted to a member.  
+  
+ Member identifiers can come in many different formats. The simplest form of a member identifier consists of the member's name. For example:  
+  
+```  
+SELECT Amount ON 0  
+FROM [Adventure Works]  
+  
+```  
+  
+ However, if there are several members with the same name on different hierarchies, there is no method to determine which member the query will return. For example, the following query requests data for a member with the name [CY 2004]. The query executes successfully, but there are at least six members with that name in the Adventure Works cube:  
+  
+```  
+SELECT [CY 2004] ON 0  
+FROM [Adventure Works]  
+  
+```  
+  
+ Therefore, the most reliable form of member identifier is the member's unique name, which guarantees to identify a specific member in a cube. Analysis Services can generate unique names in several ways, but a unique name is always composed of at least two identifiers: the dimension name, and the member name or member key. A unique name appears in the following format:  
+  
+```  
+  
+Dimension_Name  
+.[Hierarchy_Name.] [[{Member_Name | &Member_Key}.]... ] {Member_Name | &Member_Key}  
+  
+```  
+  
+ Here are some examples of member unique names from the Adventure Works cube:  
+  
+```  
+[Measures].[Amount]  
+[Date].[Calendar Year].&[2004]  
+[Date].[Calendar].[Calendar Quarter].&[2004]&[1]  
+[Employee].[Employees].&[112]  
+[Product].[Product Categories].[All Products]  
+  
+```  
+  
+ Many MDX functions exist that return members. For a full list, see [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)  
+  
+> **Note:**  
+>  For more information about member names and member keys, see [Working with Members, Tuples, and Sets (MDX)](https://learn.microsoft.com/analysis-services/multidimensional-models/mdx/working-with-members-tuples-and-sets-mdx).  
+  
+## Related content
+
+- [Expressions (MDX)](expressions-mdx.md)

@@ -1,0 +1,24 @@
+# Source code: aspnetcore/fundamentals/logging/index/samples/3.x/MyMain/MyMain.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="http://json.schemastore.org/npmpackagejsonlintrc" /></VisualStudio></ProjectExtensions>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="3.1.3" />
+    <PackageReference Include="Rick.Docs.Samples.RouteInfo" Version="1.0.0.4" />
+  </ItemGroup>
+
+
+
+</Project>
+
+```

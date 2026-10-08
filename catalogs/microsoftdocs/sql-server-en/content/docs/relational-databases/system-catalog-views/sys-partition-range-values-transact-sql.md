@@ -1,0 +1,67 @@
+---
+title: "sys.partition_range_values (Transact-SQL)"
+description: sys.partition_range_values (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sys.partition_range_values"
+  - "partition_range_values_TSQL"
+  - "partition_range_values"
+  - "sys.partition_range_values_TSQL"
+helpviewer_keywords:
+  - "sys.partition_range_values catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# sys.partition_range_values (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Contains a row for each range boundary value of a partition function of type R.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **function_id** | **int** | ID of the partition function for this range boundary value. |
+| **boundary_id** | **int** | ID (1-based ordinal) of the boundary value tuple, with left-most boundary starting at an ID of 1. |
+| **parameter_id** | **int** | ID of the parameter of the function to which this value corresponds. The values in this column correspond with those in the **parameter_id** column of the **sys.partition_parameters** catalog view for any particular **function_id**. |
+| **value** | **sql_variant** | The actual boundary value. |
+  
+## Permissions  
+ Requires membership in the **public** role. For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Partition Function Catalog Views (Transact-SQL)](partition-function-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [sys.partition_functions (Transact-SQL)](sys-partition-functions-transact-sql.md)
+- [sys.partition_parameters (Transact-SQL)](sys-partition-parameters-transact-sql.md)

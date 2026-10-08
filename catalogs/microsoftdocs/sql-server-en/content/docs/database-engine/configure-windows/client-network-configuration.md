@@ -1,0 +1,111 @@
+---
+title: "Client Network Configuration"
+description: Find out how client computers connect to an instance of SQL Server on a network. Learn about the tools that you can use to manage clients.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/26/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: concept-article
+helpviewer_keywords:
+  - "client configuration [SQL Server], connections"
+  - "Database Engine [SQL Server], network configurations"
+  - "connections [SQL Server], client configuration"
+  - "client connections [SQL Server], about client network connections"
+  - "client computers [SQL Server]"
+  - "client connections [SQL Server]"
+  - "network connections [SQL Server], client configuration"
+---
+# Client network configuration
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Client software enables client computers to connect to an instance of  SQL Server 
+ on a network. A "client" is a front-end application that uses the services provided by a server such as the  SQL Server Database Engine 
+. The computer that hosts this application is referred to as the *client computer*.
+
+At the simplest level, a  SQL Server 
+ client can reside on the same machine as an instance of  SQL Server 
+. Typically, however, a client connects to one or more remote servers over a network. The client/server architecture of  SQL Server 
+ allows it to seamlessly manage multiple clients and servers on a network. The default client configurations suffice in most situations.
+
+ SQL Server 
+ clients can include applications of various types, such as:
+
+- OLE DB consumers
+
+  These applications use the  SQL Server 
+ Native Client OLE DB provider to connect to an instance of  SQL Server 
+. The OLE DB provider mediates between  SQL Server 
+ and client applications that consume  SQL Server 
+ data as OLE DB rowsets. The **sqlcmd** command prompt utility and  SQL Server Management Studio 
+ are examples of OLE DB applications.
+
+- ODBC applications
+
+  These applications include client utilities installed with previous versions of  SQL Server 
+, such as the **osql** command prompt utility, and other applications that use the  SQL Server 
+ Native Client ODBC driver to connect to an instance of  SQL Server 
+.
+
+- DB-Library clients
+
+  These applications include the  SQL Server 
+ **isql** command prompt utility and clients written to DB-Library.  SQL Server 
+ support for client applications using DB-Library is limited to  SQL Server 
+ 7.0 features.
+
+> **Note:**  
+> Although the  SQL Server Database Engine 
+ still supports connections from existing applications using the DB-Library and Embedded SQL APIs, it doesn't include the files or documentation needed to do programming work on applications that use these APIs. A future version of the  SQL Server Database Engine 
+ will drop support for connections from DB-Library or Embedded SQL applications. Don't use DB-Library or Embedded SQL to develop new applications. Remove any dependencies on either DB-Library or Embedded SQL when modifying existing applications. Instead of these APIs, use the SQLClient namespace or an API such as OLE DB or ODBC.  SQL Server 
+ doesn't include the DB-Library DLL required to run these applications. To run DB-Library or Embedded SQL applications, you must have available the DB-Library DLL from  SQL Server 
+ version 6.5,  SQL Server 
+ 7.0, or  SQL Server 2000 (8.x) 
+.
+
+Regardless of the type of application, managing a client consists mainly of configuring its connection with the server components of  SQL Server 
+. Depending on the requirements of your site, client management can range from little more than entering the name of the server computer to building a library of custom configuration entries to accommodate a diverse multiserver environment.
+
+The  SQL Server 
+ Native Client DLL contains the network libraries and is installed by the setup program. The network protocols aren't enabled during setup for new installations of  SQL Server 
+. Upgraded installations enable the previously enabled protocols. The underlying network protocols are installed as part of Windows Setup (or through Networks in Control Panel). The following tools are used to manage  SQL Server 
+ clients:
+
+-  SQL Server 
+ Configuration Manager
+
+  Both client and server network components are managed with  SQL Server 
+ Configuration Manager, which combines the  SQL Server 
+ Network Utility,  SQL Server 
+ Client Network Utility, and Service Manager of previous versions.  SQL Server 
+ Configuration Manager is a  Microsoft 
+ Management Console (MMC) snap-in. It also appears as a node in the Windows Computer Manager snap-in. Individual network libraries can be enabled, disabled, configured, and prioritized using  SQL Server 
+ Configuration Manager.
+
+- Setup
+
+  Run  SQL Server 
+ setup to install the network components on a client computer. Individual network libraries can be enabled or disabled during setup when Setup is started from the command prompt.
+
+- ODBC Data Source Administrator
+
+  The ODBC Data Source Administrator lets you create and modify ODBC data sources on computers running the Microsoft Windows operating system.
+
+## In this section
+
+- [Configure client protocols](configure-client-protocols.md)
+- [Create or delete a server alias for use by a client](create-or-delete-a-server-alias-for-use-by-a-client.md)
+- [Sign in to SQL Server](logging-in-to-sql-server.md)
+- [Open and use ODBC Data Source Administrator](open-the-odbc-data-source-administrator.md)
+- [Check the ODBC SQL Server Driver Version (Windows)](open-the-odbc-data-source-administrator.md)
+
+## Related content
+
+- [Server network configuration](server-network-configuration.md)
+- [Manage the Database Engine services](manage-the-database-engine-services.md)

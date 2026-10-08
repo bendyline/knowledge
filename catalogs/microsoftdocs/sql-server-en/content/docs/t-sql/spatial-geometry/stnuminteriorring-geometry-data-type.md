@@ -1,0 +1,68 @@
+---
+title: "STNumInteriorRing (geometry Data Type)"
+description: "STNumInteriorRing (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STNumInteriorRing_TSQL"
+  - "STNumInteriorRing (geometry Data Type)"
+helpviewer_keywords:
+  - "STNumInteriorRing (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STNumInteriorRing (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns the number of interior rings of a **Polygongeometry** instance.
+  
+## Syntax  
+  
+```  
+  
+.STNumInteriorRing ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **int**  
+  
+ CLR return type: **SqlInt32**  
+  
+## Remarks  
+ This method returns null if the **geometry** instance is not a polygon.  
+  
+## Examples  
+ The following example creates a `Polygon` instance and uses `STNumInteriorRing()` to find how many interior rings the instance has.  
+  
+```  
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POLYGON((0 0, 3 0, 3 3, 0 3, 0 0),(2 2, 2 1, 1 1, 1 2, 2 2))', 0);  
+SELECT @g.STNumInteriorRing();  
+```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

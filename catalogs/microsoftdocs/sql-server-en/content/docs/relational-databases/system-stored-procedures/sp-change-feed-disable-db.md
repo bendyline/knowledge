@@ -1,0 +1,83 @@
+---
+title: "sp_change_feed_disable_db (Transact-SQL)"
+description: "The sys.sp_change_feed_disable_db system stored procedure disables the SQL change feed at the database level."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: imotiwala, ajayj, randolphwest
+ms.date: 12/17/2025
+ms.service: fabric
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sys.sp_change_feed_disable_db_TSQL"
+  - "sys.sp_change_feed_disable_db"
+  - "sp_change_feed_disable_db_TSQL"
+  - "sp_change_feed_disable_db"
+helpviewer_keywords:
+  - "sp_change_feed_disable_db"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-ver16 || =azuresqldb-current || =azuresqldb-mi-current || =fabric || =fabric-sqldb || =azure-sqldw-latest"
+---
+# sp_change_feed_disable_db (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+Disable the change feed at the database level, and then the metadata for all the associated tables.
+
+> **Caution:**  
+> This system stored procedure is used internally and isn't recommended for direct administrative use. Use Synapse Studio or the Fabric portal instead. Using this procedure could introduce inconsistency.
+
+
+This system stored procedure is used for:
+
+- [SQL database in Microsoft Fabric](https://learn.microsoft.com/fabric/database/sql/overview)
+- [Microsoft Fabric mirrored databases](https://learn.microsoft.com/fabric/database/mirrored-database/overview)
+- [Azure Synapse Link](../../sql-server/synapse-link/synapse-link-sql-server-change-feed-manage.md)
+
+## Syntax
+
+
+
+```syntaxsql
+sys.sp_change_feed_disable_db
+[ ; ]
+```
+
+## Permissions
+
+A user with `CONTROL` database permissions, **db_owner** database role membership, or **sysadmin** server role membership can execute this procedure.
+
+## Remarks
+
+When the change feed is disabled with active table groups, all connections and schedulers are stopped immediately/forcefully without waiting for the current operations are completed. No new change feed table groups can be created for the database, and all the existing metadata describing the table groups will be deleted without waiting for the current operations to complete. Re-enabling change feed results in clean initializations of all table groups and reseeding of all the data.
+
+You should only execute this stored procedure when unsupported actions or unexpected errors have occurred, that require the Mirroring feature to be disabled manually, and can't be removed via the Synapse workspace or Fabric portal.
+
+## Related content
+
+- [sys.sp_help_change_feed (Transact-SQL)](sp-help-change-feed.md)
+- [sys.sp_help_change_feed_table (Transact-SQL)](sp-help-change-feed-table.md)
+- [sys.sp_change_feed_configure_parameters (Transact-SQL)](sp-change-feed-configure-parameters.md)
+- [sys.dm_change_feed_log_scan_sessions (Transact-SQL)](../system-dynamic-management-objects/sys-dm-change-feed-log-scan-sessions.md)
+- [sys.dm_change_feed_errors (Transact-SQL)](../system-dynamic-management-objects/sys-dm-change-feed-errors.md)

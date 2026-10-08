@@ -1,0 +1,71 @@
+---
+title: "sys.selective_xml_index_paths (Transact-SQL)"
+description: sys.selective_xml_index_paths (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "xml_schema_index_TSQL"
+  - "xml_schema_index"
+helpviewer_keywords:
+  - "sys.xml_schema_attributes catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.selective_xml_index_paths (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Available beginning in  SQL Server 2012 (11.x) 
+ Service Pack 1, each row in sys.selective_xml_index_paths represents one promoted path for particular selective xml index.  
+  
+If you create a selective xml index on xmlcol of table T using following statement,  
+  
+```sql  
+CREATE SELECTIVE XML INDEX sxi1 ON T(xmlcol)   
+FOR ( path1 = '/a/b/c' AS XQUERY 'xs:string',  
+      path2 = '/a/b/d' AS XQUERY 'xs:double'  
+    )  
+```  
+  
+ There will be two new rows in sys.selective_xml_index_paths corresponding to the index sxi1.  
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **object_id** | **int** | ID of table with XML column. |
+| **index_id** | **int** | Unique id of the selective xml index. |
+| **path_id** | **int** | Promoted XML path id. |
+| **path** | **nvarchar(4000)** | Promoted path. For example, '/a/b/c/d/e'. |
+| **name** | **sysname** | Path name. |
+| **path_type** | **tinyint** | 0 = XQUERY<br /><br /> 1 = SQL |
+| **path_type_desc** | **sysname** | Based on **path_type** value 'XQUERY' or 'SQL'. |
+| **xml_component_id** | **int** | Unique ID of the XML schema component in the database. |
+| **xquery_type_description** | **nvarchar(4000)** | Name of the specified xsd type. |
+| **is_xquery_type_inferred** | **bit** | 1 = type is inferred. |
+| **xquery_max_length** | **smallint** | Max length (in character of xsd type). |
+| **is_xquery_max_length_inferred** | **bit** | 1 = maximum length is inferred. |
+| **is_node** | **bit** | 0 = node() hint not present.<br /><br /> 1 = node() optimization hint applied. |
+| **system_type_id** | **tinyint** | ID of the system type of the column. |
+| **user_type_id** | **tinyint** | ID of the user type of the column. |
+| **max_length** | **smallint** | Max Length (in bytes) of the type.<br /><br /> -1 = Column data type is varchar(max), nvarchar(max), varbinary(max), or xml. |
+| **precision** | **tinyint** | Maximum precision of the type if it is numeric-based. Otherwise 0. |
+| **scale** | **tinyint** | Maximum scale of the type if it is numeric-based. Otherwise, 0. |
+| **collation_name** | **sysname** | Name of the collation of the type if it is character-based. Otherwise, NULL. |
+| **is_singleton** | **bit** | 0 = SINGLETON hint not present.<br /><br /> 1 = SINGLETON optimization hint applied. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [XML Schemas (XML Type System) Catalog Views (Transact-SQL)](xml-schemas-xml-type-system-catalog-views-transact-sql.md)

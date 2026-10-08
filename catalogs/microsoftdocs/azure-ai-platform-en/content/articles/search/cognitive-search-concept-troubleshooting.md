@@ -1,0 +1,79 @@
+---
+title: Tips for AI Enrichment Design
+description: Tips and troubleshooting for setting up AI enrichment pipelines in Azure AI Search.
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ms.topic: best-practice
+ms.date: 08/31/2026
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Tips for AI enrichment in Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+This article provides tips to help you get started with AI enrichment and skillsets used during indexing.
+
+## Tip 1: Start simple and start small
+
+The [**Import data** wizard](search-get-started-skillset.md) in the Azure portal supports AI enrichment. Without writing any code, you can create and examine all of the objects used in an enrichment pipeline: an index, indexer, data source, and skillset.
+
+Another way to start simply is by creating a data source with just a handful of documents or rows in a table that are representative of the documents you want to index. A small data set is the best way to increase the speed of finding and fixing problems. Run your sample through the end-to-end pipeline and check that the results meet your needs. When you're satisfied with the results, you're ready to add more files to your data source.
+
+## Tip 2: See what works even if there are some failures
+
+Sometimes a small failure stops an indexer in its tracks. That condition is fine if you plan to fix problems one by one. However, you might want to ignore a particular type of error, so the indexer can continue and you can see what flows are actually working.
+
+To ignore errors during development, set `maxFailedItems` and `maxFailedItemsPerBatch` to -1 as part of the indexer definition.
+
+```json
+{
+  "parameters": {
+    "maxFailedItems": -1,
+    "maxFailedItemsPerBatch": -1
+  }
+}
+```
+
+> **Note:**
+> As a best practice, set the `maxFailedItems` and `maxFailedItemsPerBatch` to 0 for production workloads.
+
+## Tip 3: Use Debug session to troubleshoot problems
+
+[**Debug session**](cognitive-search-debug-session.md) is a visual editor that shows a skillset's dependency graph, inputs and outputs, and definitions. It loads a single source document from the indexer data source with the current indexer and skillset configuration. You can then run the entire skillset, scoped to that document. Within a debug session, you can identify and resolve errors, validate changes, and commit changes to a parent skillset. For a walkthrough, see [Tutorial: debug sessions](cognitive-search-tutorial-debug-sessions.md).
+
+## Tip 4: Expected content doesn't appear
+
+If content is missing, check for dropped documents in the Azure portal. On the search service page, open **Indexers**, select the indexer, and then select a run's **Status** value to view execution details and errors.
+
+If the problem is related to file size, you might see an error like this: "The blob \<file-name>" has the size of \<file-size> bytes, which exceeds the maximum size for document extraction for your current service tier." For more information on indexer limits, see [Service limits](search-limits-quotas-capacity.md).
+
+A second reason for content failing to appear might be related to input/output mapping errors. For example, an output target name is "People" but the index field name is lower-case "people". The system returns 201 success messages for the entire pipeline so you think indexing succeeded, when in fact a field is empty. 
+
+## Tip 5: Extend processing beyond maximum run time
+
+Image analysis is computationally intensive for even simple cases, so when images are especially large or complex, processing times can exceed the maximum time allowed.
+
+For indexers that have skillsets, skillset execution is [capped at 2 hours for most tiers](search-limits-quotas-capacity.md#indexer-limits). If skillset processing fails to complete within that period, schedule the indexer to run every five minutes so it can resume processing from the last known good document.
+
+Scheduled indexing resumes at the last known good document. On a recurring schedule, the indexer can work its way through the image backlog over a series of hours or days, until all unprocessed images are processed. For more information on schedule syntax, see [Schedule an indexer](search-howto-schedule-indexers.md).
+
+> **Note:**
+> If a scheduled indexer repeatedly fails on the same document, the service reduces its run frequency (up to once every 24 hours) until it makes progress. After fixing the underlying issue, run the indexer on demand. If it makes progress, the indexer returns to its configured interval. If the indexer doesn't return to its configured schedule after a successful run, see [Scheduling behavior FAQ](search-howto-schedule-indexers.md#scheduling-behavior-faq).
+
+## Tip 6: Increase indexing throughput
+
+For [parallel indexing](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/search-howto-large-index.md), distribute your data into multiple containers or multiple virtual folders inside the same container. Then create multiple data source and indexer pairs. All indexers can use the same skillset and write into the same target search index, so your search app doesn’t need to be aware of this partitioning.
+
+## See also
+
++ [Quickstart: Create an AI enrichment pipeline in the Azure portal](search-get-started-skillset.md)
++ [Tutorial: Learn AI enrichment REST APIs](tutorial-skillset.md)
++ [How to configure blob indexers](search-how-to-index-azure-blob-storage.md)
++ [How to define a skillset](cognitive-search-defining-skillset.md)
++ [How to map enriched fields to an index](cognitive-search-output-field-mapping.md)

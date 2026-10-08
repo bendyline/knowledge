@@ -1,0 +1,65 @@
+---
+title: "STAsText (geometry Data Type)"
+description: "STAsText (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STAsText_TSQL"
+  - "STAsText (geometry Data Type)"
+helpviewer_keywords:
+  - "STAsText (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STAsText (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a **geometry** instance. This text will not contain any Z (elevation) or M (measure) values carried by the instance.
+  
+## Syntax  
+  
+```  
+  
+.STAsText ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **nvarchar(max)**  
+  
+ CLR return type: **SqlChars**  
+  
+## Examples  
+ The following example creates a `LineString` geometry instance from (0,0) to (2,3) from text. `STAsText()` returns the result in text.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('LINESTRING(0 0, 2 3)', 0);  
+SELECT @g.STAsText();  
+```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

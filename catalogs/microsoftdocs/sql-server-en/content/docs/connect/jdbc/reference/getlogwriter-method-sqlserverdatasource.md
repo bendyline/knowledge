@@ -1,0 +1,36 @@
+---
+title: "getLogWriter Method (SQLServerDataSource)"
+description: "getLogWriter Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDataSource.getLogWriter"
+apitype: "Assembly"
+---
+# getLogWriter Method (SQLServerDataSource)
+
+
+  This method is for internal use only. For more information about logging, see [Tracing Driver Operation](../tracing-driver-operation.md).  
+  
+## Syntax  
+  
+```  
+  
+public java.io.PrintWriter getLogWriter()  
+```  
+  
+## Return Value  
+ A PrintWriter object.  
+  
+## Remarks  
+ This getLogWriter method is specified by the getLogWriter method in the javax.sql.DataSource interface.  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

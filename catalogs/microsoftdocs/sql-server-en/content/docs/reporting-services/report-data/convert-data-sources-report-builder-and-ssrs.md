@@ -1,0 +1,59 @@
+---
+title: "Convert Data Sources (Report Builder)"
+description: Learn how to convert your data sources in Report Builder and Report Designer by using options in the Report Data pane.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "data sources [Reporting Services], embedded"
+  - "data sources [Reporting Services], shared"
+---
+# Convert Data Sources (Report Builder and SSRS)
+  Each data source in the Report Data pane is embedded and specific to the report or is shared. In Report Builder, a shared data source points to a published shared data source on a report server or SharePoint site. In Report Designer, a shared data source points to a shared data source in the **Shared Data Sources** folder in Solution Explorer.  
+  
+ For more information about the differences between embedded and shared data sources, see [Embedded and Shared Data Connections or Data Sources (Report Builder and SSRS)](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md).  
+  
+ For more information on how to create a shared data source, see [Create an Embedded or Shared Data Source (SSRS)](https://learn.microsoft.com/previous-versions/sql/).  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Report Designer  
+  
+#### To convert a data source from embedded to shared  
+  
+-   In the Report Data pane, right-click the data source, and then click **Convert to Shared Data Source**.  
+  
+    > **Note:**  
+    >  If the Report Data pane is not visible, on the **View** menu, click **Report Data**. If the pane opens as a floating window, you can dock it. For more information, see [Dock the Report Data Pane in Report Designer (SSRS)](../tools/dock-the-report-data-pane-in-report-designer-ssrs.md).  
+  
+     In the Report Data pane, the data source icon changes to the shared data source icon. In Solution Explorer, a shared data source with the same name appears under the **Shared Data Source** folder.  
+  
+### To convert a data source from shared to embedded  
+  
+-   In the Report Data pane, right-click the data source, open the **Data Source Properties** dialog box, and then click **Embedded Connection**. Enter the required information.  
+  
+     In the Report Data pane, the data source icon changes to the shared data source icon.  
+  
+## Report Builder  
+  
+#### To convert a data source from embedded to shared  
+  
+-   In the Report Data pane, right-click the data source to open the **Data Source Properties** dialog box, and then click **Embedded Connection**. Enter the required information.  
+  
+     In the Report Data pane, the data source icon changes to the shared data source icon.  
+  
+#### To convert a data source from shared to embedded  
+  
+-   In the Report Data pane, right-click the data source, open the **Data Source Properties** dialog box, and then click **Embedded Connection**. Enter the required information.  
+  
+     In the Report Data pane, the data source icon changes to the shared data source icon.  
+  
+## Related content
+
+- [Manage Report Data Sources](manage-report-data-sources.md)
+- [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)

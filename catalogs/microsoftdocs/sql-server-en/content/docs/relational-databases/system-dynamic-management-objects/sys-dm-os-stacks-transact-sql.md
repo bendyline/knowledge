@@ -1,0 +1,71 @@
+---
+title: "sys.dm_os_stacks (Transact-SQL)"
+description: sys.dm_os_stacks (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "02/27/2023"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "dm_os_stacks"
+  - "dm_os_stacks_TSQL"
+  - "sys.dm_os_stacks"
+  - "sys.dm_os_stacks_TSQL"
+helpviewer_keywords:
+  - "sys.dm_os_stacks dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.dm_os_stacks (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  This dynamic management view is used internally by  SQL Server 
+ to do the following:  
+  
+-   Keep track of debug data such as outstanding allocations.  
+  
+-   Assume or validate logic that is used by  SQL Server 
+ components in places where the component assumes that a certain call has been made.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **stack_address** | **varbinary(8)** | Unique address for this stack allocation. Is not nullable. |
+| **frame_index** | **int** | Each line represents a function call that, when sorted in ascending order by frame index for a particular **stack_address**, returns the full call stack. Is not nullable. |
+| **frame_address** | **varbinary(8)** | Address of the function call. Is not nullable. |
+  
+## Remarks  
+ **sys.dm_os_stacks** requires that the symbols of the server and other components be present on the server to display the information correctly.  
+  
+## Permissions
+
+On  SQL Server 
+ and SQL Managed Instance, requires `VIEW SERVER STATE` permission.
+
+On SQL Database **Basic**, **S0**, and **S1** service objectives, and for databases in **elastic pools**, the [server admin](https://learn.microsoft.com/azure/azure-sql/database/logins-create-manage#existing-logins-and-user-accounts-after-creating-a-new-database) account, the [Microsoft Entra admin](https://learn.microsoft.com/azure/azure-sql/database/authentication-aad-overview#administrator-structure) account, or membership in the `##MS_ServerStateReader##` [server role](https://learn.microsoft.com/azure/azure-sql/database/security-server-roles) is required. On all other SQL Database service objectives, either the `VIEW DATABASE STATE` permission on the database, or membership in the `##MS_ServerStateReader##` server role is required.   
+
+### Permissions for SQL Server 2022 and later
+
+Requires VIEW SERVER PERFORMANCE STATE permission on the server.
+
+## Related content
+
+- [SQL Server Operating System related dynamic management views (Transact-SQL)](sql-server-operating-system-related-dynamic-management-views-transact-sql.md)

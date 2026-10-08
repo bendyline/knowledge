@@ -1,0 +1,39 @@
+---
+title: "ODBC Service Provider Interface (SPI) Reference"
+description: "ODBC Service Provider Interface (SPI) Reference"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# ODBC Service Provider Interface (SPI) Reference
+Traditionally, ODBC defined an application programming interface (API). The functions in the API can be called by applications and they should be implemented inside both the Driver Manager and the driver.  
+  
+ With the addition of the driver-aware connection pooling feature, ODBC introduces the service provider interface (SPI). The functions in the SPI are used for communication between the Driver Manager and driver. SPI functions are implemented by the driver; the Driver Manager does not expose SPI functions to applications. Applications should not call these functions directly.  
+  
+ Include sqlspi.h for ODBC driver development.  
+  
+ This section contains the following topics  
+  
+-   [SQLCleanupConnectionPoolID](sqlcleanupconnectionpoolid-function.md)  
+  
+-   [SQLGetPoolID](sqlgetpoolid-function.md)  
+  
+-   [SQLPoolConnect](sqlpoolconnect-function.md)  
+  
+-   [SQLRateConnection](sqlrateconnection-function.md)  
+  
+-   [SQLSetConnectAttrForDbcInfo](sqlsetconnectattrfordbcinfo-function.md)  
+  
+-   [SQLSetConnectInfo](sqlsetconnectinfo-function.md)  
+  
+-   [SQLSetDriverConnectInfo](installation-and-configuration-wwi-oltp.md)  
+  
+## Related content
+
+- [Developing an ODBC Driver](../develop-driver/developing-an-odbc-driver.md)
+- [Developing Connection-Pool Awareness in an ODBC Driver](../develop-driver/developing-connection-pool-awareness-in-an-odbc-driver.md)
+- [Driver Manager Connection Pooling](../develop-app/driver-manager-connection-pooling.md)

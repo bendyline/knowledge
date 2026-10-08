@@ -1,0 +1,82 @@
+---
+title: Connect and query Synapse SQL with Visual Studio and SSDT
+description: Use Visual Studio to query dedicated SQL pool using Azure Synapse Analytics.
+services: synapse analytics
+author: azaricstefan 
+ms.service: azure-synapse-analytics
+ms.topic: get-started
+ms.subservice: sql
+ms.date: 02/04/2026
+ms.author: stefanazaric 
+---
+
+# Connect to Synapse SQL with Visual Studio and SSDT
+
+> **Tip:**
+> [Microsoft Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse) is an enterprise scale relational warehouse on a data lake foundation, with a future-ready architecture, built-in AI, and new features. If you're new to data warehousing, start with Fabric Data Warehouse. Existing [dedicated SQL pool workloads can upgrade to Fabric](https://learn.microsoft.com/fabric/data-warehouse/migration-synapse-dedicated-sql-pool-warehouse) to access new capabilities across data science, real-time analytics, and reporting.
+> 
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Migration Assistant for Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse/migration-assistant).
+
+> 
+> * [Power BI](get-started-power-bi-professional.md)
+> * [Visual Studio](get-started-visual-studio.md)
+> * [sqlcmd](get-started-connect-sqlcmd.md) 
+> * [SSMS](get-started-ssms.md)
+
+Use Visual Studio to query dedicated SQL pool using Azure Synapse Analytics. This method uses the SQL Server Data Tools (SSDT) extension in Visual Studio 2019. 
+
+> **Note:**
+> Serverless SQL pool support requires at least VS2022 17.7 see the release notes: [Support for Serverless Sql Pool](https://learn.microsoft.com/visualstudio/releases/2022/release-notes-v17.7#support-for-serverless-sql-pool-in-ssdt).
+
+## Prerequisites
+
+To use this tutorial, you need to have the following components:
+
+- An existing Synapse workspace, If you need to create one see [Creating a Synapse workspace](../get-started-create-workspace.md)
+- A dedicated SQL pool. If you do not have one, see [Create a dedicated SQL pool](../get-started-analyze-sql-pool.md#create-a-dedicated-sql-pool).
+- SSDT for Visual Studio. If you have Visual Studio, you probably already have this component. For installation instructions and options, see [Installing Visual Studio and SSDT](../sql-data-warehouse/sql-data-warehouse-install-visual-studio.md?context=/azure/synapse-analytics/context/context).
+- The fully qualified SQL server name. To find this server name, see [Connect to a dedicated SQL pool](connect-overview.md).
+
+## 1. Connect to a dedicated SQL pool
+1. Open Visual Studio 2019.
+2. Open the SQL Server Object Explorer by selecting **View** > **SQL Server Object Explorer**.
+   
+    SQL Server Object Explorer
+3. Click the **Add SQL Server** icon.
+   
+    Add SQL Server
+4. Fill in the fields in the Connect to Server window.
+   
+    Connect to Server
+   
+   * **Server name**: Enter the **server name** previously identified.
+   * **Authentication**: Select **SQL Server Authentication** or **Active Directory Integrated Authentication**:
+   * **User Name** and **Password**: Enter your user name and password if SQL Server Authentication was selected above.
+   * Click **Connect**.
+5. To explore, expand your Azure SQL server. You can view the databases associated with the server. Expand AdventureWorksDW to see the tables in your sample database.
+   
+    Explore AdventureWorksDW
+
+## 2. Run a sample query
+Now that a connection has been established to your database, you'll write a query.
+
+1. Right-click your database in SQL Server Object Explorer.
+2. Select **New Query**. A new query window opens.
+   
+    New query
+3. Copy the following T-SQL query into the query window:
+   
+    ```sql
+    SELECT COUNT(*) FROM dbo.FactInternetSales;
+    ```
+4. Run the query by clicking the green arrow or use the following shortcut: `CTRL`+`SHIFT`+`E`.
+   
+    Run query
+5. Look at the query results. In this example, the FactInternetSales table has 60398 rows.
+   
+    Query results
+
+## Next steps
+Now that you can connect and query, try [visualizing the data with Power BI](get-started-power-bi-professional.md).
+To configure your environment for Microsoft Entra authentication, see [Authenticate to dedicated SQL pool](sql-authentication.md?tabs=provisioned).

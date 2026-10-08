@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Tracking No Tracking",
+    "expectedDocumentIds": [
+      "entity-framework/core/querying/tracking"
+    ]
+  }
+]

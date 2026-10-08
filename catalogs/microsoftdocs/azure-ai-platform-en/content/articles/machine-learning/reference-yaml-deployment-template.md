@@ -1,0 +1,193 @@
+---
+title: 'CLI (v2) deployment template YAML schema'
+titleSuffix: Azure Machine Learning
+description: Reference documentation for the CLI (v2) deployment template YAML schema.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: mlops
+ms.topic: reference
+ms.custom: cliv2, update-code
+author: s-polly
+ms.author: scottpolly
+ms.date: 05/12/2026
+ms.reviewer: sehan
+ai-usage: ai-assisted
+---
+
+# CLI (v2) deployment template YAML schema
+
+
+**APPLIES TO:**  [Azure CLI ml extension **v2 (current)**](how-to-configure-cli.md) 
+
+
+The source JSON schema can be found at https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json.
+
+
+> **Note:**
+> The YAML syntax detailed in this document is based on the JSON schema for the latest version of the ML CLI v2 extension. This syntax is guaranteed only to work with the latest version of the ML CLI v2 extension.
+> You can find the schemas for older extension versions at [https://azuremlschemasprod.azureedge.net/](https://azuremlschemasprod.azureedge.net/).
+
+
+## YAML syntax
+
+| Key | Type | Description | Allowed values | Default value |
+| --- | --- | --- | --- | --- |
+| `$schema` | string | The YAML schema. If you use the Azure Machine Learning VS Code extension to author the YAML file, including `$schema` at the top of your file enables you to invoke schema and resource completions. |  |  |
+| `name` | string | **Required.** Name of the deployment template. |  |  |
+| `version` | string or integer | Version of the deployment template. |  |  |
+| `description` | string | Description of the deployment template. |  |  |
+| `display_name` | string | Display name of the deployment template. Used by UI surfaces (such as the Foundry portal) to present a friendly label to consumers when they choose a deployment template. |  |  |
+| `tags` | object | Dictionary of tags for the deployment template. |  |  |
+| `type` | string | Type of the deployment template. |  |  |
+| `deployment_template_type` | string | **Required.** The deployment template type. "Managed" is the only currently allowed value. |  |  |
+| `environment` | string | **Required.** The environment to use for the deployment template. This value must be a reference to an existing versioned environment in a registry. Use the `azureml://registries/<registry-name>/environments/<environment-name>/versions/<version>` syntax. <br><br> **Note:** Workspace-scoped environments (using `azureml:<name>:<version>` syntax) and inline environment definitions are not supported for deployment templates. |  |  |
+| `environment_variables` | object | Dictionary of environment variable key-value pairs to set for the deployment. You can access these environment variables from your scoring scripts. |  |  |
+| `instance_count` | integer | **Required.** The number of instances to use for the deployment. Specify the value based on the workload you expect. |  |  |
+| `default_instance_type` | string | **Required.** The default instance type to use when deploying with this template. |  |  |
+| `allowed_instance_types` | list of strings | The instance types that consumers are allowed to set when they deploy a model that uses this template. Specify instance types as a list of strings. |  |  |
+| `model_mount_path` | string | The path to mount the model in the container. |  |  |
+| `scoring_path` | string | **Required.** The path for the scoring endpoint. |  |  |
+| `scoring_port` | integer | **Required.** The port for the scoring endpoint. |  |  |
+| `liveness_probe` | object | Liveness probe settings for monitoring the health of the container regularly. See [ProbeSettings](#probesettings) for the set of configurable properties. |  |  |
+| `readiness_probe` | object | Readiness probe settings for validating if the container is ready to serve traffic. See [ProbeSettings](#probesettings) for the set of configurable properties. |  |  |
+| `request_settings` | object | Request settings for the deployment. See [RequestSettings](#requestsettings) for the set of configurable properties. |  |  |
+
+### ProbeSettings
+
+| Key | Type | Description | Default value |
+| --- | --- | --- | --- |
+| `failure_threshold` | integer | When a probe fails, the system tries `failure_threshold` times before giving up. Giving up in the case of a liveness probe means the container is restarted. In the case of a readiness probe, the container is marked Unready. Minimum value is `1`. | `30` |
+| `initial_delay` | integer | The number of seconds after the container has started before the probe is initiated. Minimum value is `1`. | `10` |
+| `method` | string | The HTTP method to use for the probe. |  |
+| `path` | string | The path for the probe. |  |
+| `period` | integer | How often (in seconds) to perform the probe. | `10` |
+| `port` | integer | The port to probe. |  |
+| `scheme` | string | The scheme to use for the probe (for example, HTTP or HTTPS). |  |
+| `success_threshold` | integer | The minimum consecutive successes for the probe to be considered successful after having failed. Minimum value is `1`. | `1` |
+| `timeout` | integer | The number of seconds after which the probe times out. Minimum value is `1`. | `2` |
+
+### RequestSettings
+
+| Key | Type | Description | Default value |
+| --- | --- | --- | --- |
+| `request_timeout_ms` | integer | The request timeout in milliseconds. | `5000` |
+| `max_concurrent_requests_per_instance` | integer | The maximum number of concurrent requests per instance allowed for the deployment. | `1` |
+
+## Remarks
+
+Deployment templates provide a reusable configuration for deploying models. They define the environment, infrastructure settings, and probe configurations that can be applied when creating deployments.
+
+## Examples
+
+Examples are shown below.
+
+## YAML: basic
+
+```yml
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: my-deployment-template
+version: 1
+description: Basic deployment template example
+deployment_template_type: Managed
+environment: azureml://registries/my-registry/environments/my-environment/versions/1
+instance_count: 1
+default_instance_type: Standard_DS3_v2
+scoring_path: /score
+scoring_port: 5001
+```
+
+## YAML: with environment variables and probes
+
+```yml
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: my-deployment-template
+version: 1
+description: Deployment template with environment variables and health probes
+display_name: My deployment template
+deployment_template_type: Managed
+environment: azureml://registries/azureml/environments/minimal-ubuntu20.04-py38-cpu-inference/versions/latest
+environment_variables:
+  MODEL_PATH: /var/azureml-app/model
+  SCORING_TIMEOUT: "60"
+instance_count: 3
+default_instance_type: Standard_DS3_v2
+scoring_path: /score
+scoring_port: 8080
+liveness_probe:
+  initial_delay: 30
+  period: 10
+  timeout: 2
+  success_threshold: 1
+  failure_threshold: 3
+readiness_probe:
+  initial_delay: 10
+  period: 5
+  timeout: 2
+  success_threshold: 1
+  failure_threshold: 3
+request_settings:
+  request_timeout_ms: 10000
+  max_concurrent_requests_per_instance: 2
+```
+
+## YAML: with allowed instance types
+
+```yml
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: my-deployment-template-restricted
+version: 1
+description: Deployment template with instance type restrictions
+deployment_template_type: Managed
+environment: azureml://registries/my-registry/environments/my-environment/versions/1
+instance_count: 1
+default_instance_type: Standard_DS3_v2
+allowed_instance_types:
+  - Standard_DS3_v2
+  - Standard_DS4_v2
+scoring_path: /score
+scoring_port: 5001
+```
+
+## YAML: with allowed instance types (list)
+
+```yml
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: my-deployment-template-multi
+version: 1
+description: Deployment template that allows multiple instance types
+deployment_template_type: Managed
+environment: azureml://registries/my-registry/environments/my-environment/versions/1
+instance_count: 1
+default_instance_type: Standard_DS3_v2
+allowed_instance_types:
+  - Standard_DS3_v2
+  - Standard_DS4_v2
+  - Standard_DS5_v2
+scoring_path: /score
+scoring_port: 5001
+```
+
+## YAML: with model mount path
+
+```yml
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: my-deployment-template-custom-mount
+version: 1
+description: Deployment template with custom model mount path
+deployment_template_type: Managed
+environment: azureml://registries/my-registry/environments/my-environment/versions/1
+instance_count: 1
+default_instance_type: Standard_DS3_v2
+scoring_path: /score
+scoring_port: 5001
+model_mount_path: /var/azureml-app/models
+```
+
+## Next steps
+
+- [Install and use the CLI (v2)](how-to-configure-cli.md)
+- [What are deployment templates?](concept-deployment-template.md)
+- [Manage models with deployment templates](how-to-manage-models-deployment-templates.md)
+- [Deploy models that use deployment templates](how-to-deploy-models-deployment-template.md)
+- [CLI (v2) model YAML schema](reference-yaml-model.md)
+- [CLI (v2) managed online deployment YAML schema](reference-yaml-deployment-managed-online.md)

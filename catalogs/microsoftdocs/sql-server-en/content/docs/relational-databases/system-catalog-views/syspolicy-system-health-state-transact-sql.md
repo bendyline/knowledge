@@ -1,0 +1,47 @@
+---
+title: "syspolicy_system_health_state (Transact-SQL)"
+description: syspolicy_system_health_state (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "syspolicy_system_health_state_TSQL"
+  - "syspolicy_system_health_state"
+helpviewer_keywords:
+  - "syspolicy_system_health_state view"
+dev_langs:
+  - "TSQL"
+---
+# syspolicy_system_health_state (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Displays one row for each Policy-Based Management policy and target query expression combination. Use the syspolicy_system_health_state view to programmatically check the policy health of the server. The following table describes the columns in the syspolicy_system_health_state view.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| health_state_id | **bigint** | Identifier of the policy health state record. |
+| policy_id | **int** | Identifier of the policy. |
+| last_run_date | **datetime** | Date and time the policy was last run. |
+| target_query_expression_with_id | **nvarchar(400)** | The target expression, with values assigned to identity variables, that defines the target against which the policy is evaluated. |
+| target_query_expression | **nvarchar(max)** | The expression that defines the target against which the policy is evaluated. |
+| result | **bit** | Health state of this target with regard to the policy:<br /><br /> 0 = Failure<br /><br /> 1 = Success |
+  
+## Remarks  
+ The syspolicy_system_health_state view displays the most recent health state of target query expression for each active (enabled) policy. The  SQL Server Management Studio 
+ Object Explorer and Object Explorer Details page aggregates policy health from this view to show the critical health state.  
+  
+## Permissions  
+ Requires membership in the PolicyAdministratorRole role in the msdb database.  
+  
+## Related content
+
+- [Administer Servers by Using Policy-Based Management](../policy-based-management/administer-servers-by-using-policy-based-management.md)
+- [Policy-Based Management Views (Transact-SQL)](policy-based-management-views-transact-sql.md)

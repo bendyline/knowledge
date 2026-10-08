@@ -1,0 +1,70 @@
+---
+title: "Maintenance Plan (Reporting and Logging Page)"
+description: Maintenance Plan (Reporting and Logging Page)
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 03/27/2023
+ms.service: sql
+ms.subservice: supportability
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.swb.maint.reportinglogging.f1"
+---
+# Maintenance Plan (Reporting and Logging Page)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Use the **Reporting and Logging** dialog box to configure the reports and logs that are generated when maintenance plans are executed.
+
+## Options
+
+- **Generate a text file report**
+
+  Specify if you want  Microsoft 
+  SQL Server 
+ to write a text file report.
+
+- **Create a new file**
+
+  Create a new report file for each execution of the maintenance plan. By default, the report files are written to the computer hosting the instance of  SQL Server 
+ that contains this maintenance plan, in the folder established as the default log folder during  SQL Server 
+ setup. To specify a different folder, enter the full path of the folder in the **Folder** text box, or select the browse button (**...**) and navigate to the desired folder.
+
+- **Append to file**
+
+  Append the report from each plan execution to the file specified in the **File name** text box. You may also specify a file by selecting the browse button and selecting a file from the dialog box.
+
+- **Send report to an e-mail recipient**
+
+  Transmit the outcome of a maintenance plan execution via e-mail. This option is only available if Database Mail is enabled and properly configured.
+
+- **Agent operator**
+
+  Select an agent operator from the list who will be the recipient of the e-mail. This option is only available if mail is enabled and properly
+
+- **Log extended information**
+
+  Include more information in the log. Including this option increases the size of the stored maintenance plan history.
+
+- **Log to remote server**
+
+  Logs maintenance plan history to a remote server.
+
+- **Connection**
+
+  Specifies the connection information to use when logging to a remote server.
+
+- **New**
+
+  Displays the **Connection Properties** dialog box. Used to configure new connection information for logging to a remote server.
+
+## Related content
+
+- [Maintenance plans](maintenance-plans.md)
+- [Database Mail](../database-mail/database-mail.md)

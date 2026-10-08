@@ -1,0 +1,73 @@
+---
+title: "bit (Transact-SQL)"
+description: The bit data type is an integer data type that can take a value of 1, 0, or NULL, representing Boolean values.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 09/24/2024
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "bit_TSQL"
+  - "bit"
+helpviewer_keywords:
+  - "bit data type"
+  - "Boolean"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# bit (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+An integer data type that can take a value of `1`, `0`, or `NULL`.
+
+## Remarks
+
+The  SQL Server Database Engine 
+ optimizes storage of **bit** columns. If there are 8 or fewer **bit** columns in a table, the columns are stored as 1 byte. If there are from 9 up to 16 **bit** columns, the columns are stored as 2 bytes, and so on.
+
+The **bit** data type can be used to store Boolean values. The string values `TRUE` and `FALSE` can be converted to **bit** values: `TRUE` is converted to `1`, and `FALSE` is converted to `0`.
+
+Converting to **bit** promotes any nonzero value to `1`.
+
+The **bit** data type supports the [COUNT](../functions/count-transact-sql.md) function. However, other standard aggregate functions, like `SUM`, `AVG`, `MIN`, and `MAX`, don't directly support the **bit** data type.
+
+## Related content
+
+- [ALTER TABLE (Transact-SQL)](../statements/alter-table-transact-sql.md)
+- [CAST and CONVERT (Transact-SQL)](../functions/cast-and-convert-transact-sql.md)
+- [CREATE TABLE (Transact-SQL)](../statements/create-table-transact-sql.md)
+- [Data type conversion (Database Engine)](data-type-conversion-database-engine.md)
+- [Data types (Transact-SQL)](data-types-transact-sql.md)
+- [DECLARE @local_variable (Transact-SQL)](../language-elements/declare-local-variable-transact-sql.md)
+- [SET @local_variable (Transact-SQL)](../language-elements/set-local-variable-transact-sql.md)
+- [sys.types (Transact-SQL)](../../relational-databases/system-catalog-views/sys-types-transact-sql.md)

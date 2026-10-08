@@ -1,0 +1,38 @@
+---
+title: "SQLFreeHandle"
+description: "SQLFreeHandle"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQLFreeHandle function"
+apitype: "DLLExport"
+---
+# SQLFreeHandle
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  In manual-commit mode, calling **SQLFreeHandle** on a statement handle with an open transaction causes a rollback of pending changes to the database. Calling **SQLFreeHandle** on a statement handle always closes any open cursors and discards pending results, freeing all resources associated with the statement handle.  
+  
+## Related content
+
+- [SQLFreeHandle Function](../../odbc/reference/syntax/sqlfreehandle-function.md)
+- [ODBC API implementation details](odbc-api-implementation-details.md)

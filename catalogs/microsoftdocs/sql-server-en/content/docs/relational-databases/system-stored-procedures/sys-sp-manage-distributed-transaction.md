@@ -1,0 +1,76 @@
+---
+title: "sys.sp_manage_distributed_transaction (Transact-SQL)"
+description: sp_manage_distributed_transaction commits, aborts, or forgets a specified transaction.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+monikerRange: ">=sql-server-ver16 || >=sql-server-linux-ver16 || =azuresqldb-mi-current"
+---
+# sys.sp_manage_distributed_transaction (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+
+ 
+
+
+
+
+
+`sp_manage_distributed_transaction` commits, aborts, or forgets a specified transaction.
+
+
+
+## Syntax
+
+```syntaxsql
+sp_manage_distributed_transaction
+    @transaction_uow = 'transaction_ID'
+    , @operation = 'value'
+[ ; ]
+```
+
+## Arguments
+
+> **Important:**  
+> Arguments for extended stored procedures must be entered in the specific order as described in the [Syntax](#syntax) section. If the parameters are entered out of order, an error message occurs.
+
+
+#### @transaction_uow = '*transaction_id*'
+
+Specifies the MSDTC transaction ID (transaction unit of work). *@transaction_uow* is **uniqueidentifier**.
+
+#### @operation = '*value*'
+
+Specifies operation to perform. Valid values are `commit`, `abort`, or `forget`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Result set
+
+None.
+
+## Permissions
+
+Requires **sysadmin** fixed server role, or have CONTROL SERVER permissions.
+
+## Examples
+
+```sql
+EXECUTE sys.sp_manage_distributed_transaction
+    @transaction_uow = '1101AD68-43A7-4DC5-B06C-2B4BEF230643',
+    @operation = N'commit';
+```
+
+## Related content
+
+- [sys.dm_tran_distributed_transaction_stats (Transact-SQL)](../system-dynamic-management-objects/sys-dm-tran-distributed-transaction-stats.md)
+- [sp_reset_dtc_log (Transact-SQL)](sp-reset-dtc-log.md)

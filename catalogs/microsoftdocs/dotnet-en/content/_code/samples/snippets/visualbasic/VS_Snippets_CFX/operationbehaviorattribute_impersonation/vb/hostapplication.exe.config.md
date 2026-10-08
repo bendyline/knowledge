@@ -1,0 +1,44 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_CFX/operationbehaviorattribute_impersonation/vb/hostapplication.exe.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+  <configuration>
+    <!-- <snippet2> -->
+  <system.serviceModel>
+    <services>
+      <service 
+        behaviorConfiguration="impersonation" 
+        name="Microsoft.WCF.Documentation.HelloService">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://localhost:8080/Hello"/>
+          </baseAddresses>
+        </host>
+        <endpoint 
+          address="" 
+          binding="wsHttpBinding"
+          contract="Microsoft.WCF.Documentation.IHello" 
+        />
+        <endpoint
+          address="mex"
+          binding="mexHttpBinding"
+          contract="IMetadataExchange"
+        />
+      </service>
+    </services>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="impersonation">
+          <serviceAuthorization impersonateCallerForAllOperations="true" />
+          <serviceMetadata httpGetEnabled="true" httpGetUrl="" />
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+    
+  </system.serviceModel>
+  <!-- </snippet2> -->
+</configuration>
+  
+```

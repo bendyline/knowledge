@@ -1,0 +1,42 @@
+---
+author: stevenmatthew
+ms.service: azure-data-box
+ms.topic: include
+ms.date: 05/07/2021
+ms.author: shaas
+ms.custom: sfi-image-nochange
+---
+
+To review non-retryable errors and proceed with your order, do the following steps:
+
+1. Open your order in the Azure portal.  
+
+   If any non-retryable errors prevented files from uploading, you see the following notification. The current order status will be **Data copy completed with errors. Device pending data erasure.**
+
+   Notification for copy errors during an upload in the Azure portal
+
+   Make a note of the **COPY LOG PATH** in **DATA COPY DETAILS**. You review the errors in the data copy log.
+
+   > **Note:**
+   > 
+If firewall rules are set on the storage account for your Data Box, you might not be able to access copy logs from the Azure portal by using **COPY LOG PATH** on the **Overview** pane. To access the logs, either modify the storage firewall settings to allow the current system, or use a system which is in the firewall network.
+
+
+
+2. Select **Confirm device erasure** to open a review panel.
+
+   Review and proceed panel for upload errors in the Azure portal
+
+3. Review the errors in the data copy log using the copy log path that you made a note of earlier. If you need to, you can select **Close** to display the path again. 
+
+   You need to fix any configuration issues before you try another upload via a network transfer or a new import order. <!--For guidance, see [Review copy errors in uploads from Azure Data Box and Azure Data Box Heavy devices](../articles/databox/data-box-troubleshoot-data-upload.md). - To make the Include, I needed to move this reference out of the main procedure.-->
+
+4. After you review the errors, select the check box to acknowledge that you're ready to proceed with data erasure. Then select **Proceed**.
+
+   Confirm that you are ready to proceed with data erasure
+
+   After the data is secure erased from the device, the order status is updated to **Copy completed with errors**.
+
+   Status display for a Data Box import order that completed with errors
+
+   If you don't take any action, the order completes automatically after 14 days.

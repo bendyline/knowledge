@@ -1,0 +1,52 @@
+---
+title: Azure Firewall preview features
+description: Learn about Azure Firewall preview features that are publicly available for deployment and testing.
+author: duongau
+ms.service: azure-firewall
+ms.topic: concept-article
+ms.date: 08/31/2026
+ms.author: duau
+# Customer intent: "As a network administrator, I want to explore and test Azure Firewall preview features, so that I can enhance our security configurations and monitor health more effectively before they reach general availability."
+---
+
+# Azure Firewall preview features
+
+You can deploy and test the following Azure Firewall preview features. Some preview features are available on the Azure portal, and some are only visible by using a feature flag.
+
+> **Important:**
+> These features are currently in preview.
+> See the [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/) for legal terms that apply to Azure features that are in beta, preview, or otherwise not yet released into general availability.
+
+## Feature flags
+
+As Microsoft releases new preview features, some of them require a feature flag. To enable the functionality in your environment, turn on the feature flag for your subscription. These features apply at the subscription level for all firewalls (virtual network firewalls and SecureHub firewalls).
+
+This article is updated to reflect the features that are currently in preview with instructions to enable them. When the features move to general availability (GA), they're available to all customers without the need to enable a feature flag.
+
+## Preview features
+
+The following features are available in preview.
+
+### Dual-stack support (preview)
+
+Azure Firewall now supports IPv6 in preview, enabling you to configure Azure Firewall and Firewall Policy in dual-stack mode for both IPv4 and IPv6 traffic. This preview allows native IPv6 network-rule filtering and DNS Proxy support, helping organizations secure cloud, hybrid, and internal IPv6 traffic as they modernize toward dual-stack architectures. 
+
+For more information, see [Deploy Azure Firewall in dual stack mode](deploy-dual-stack-firewall.md).
+
+## Change tracking (preview)
+
+The *Change tracking* feature provides detailed insights into changes made to Azure Firewall configurations, specifically within *Rule Collection Groups*. It uses [Azure Resource Graph (ARG)](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/governance/resource-graph/overview.md) to enable efficient monitoring and analysis of changes, enhancing visibility, accountability, and troubleshooting.
+
+For more information, see [Change tracking for Azure Firewall](monitor-firewall.md#change-tracking-preview).
+
+## Customer provided public IP address support in secured hubs (preview)
+
+Virtual WAN hub deployments can now associate customer tenant public IP addresses with Secured Hub Azure Firewall. The capability is available to new deployments of Secured Hub Firewalls (preview).
+
+For existing secured virtual WAN hubs, delete the hub firewall and redeploy a new Firewall during scheduled maintenance hours. You can use the Azure portal or Azure PowerShell to configure this. 
+
+For more information, see [Customer provided public IP address support in secured hubs (preview)](secured-hub-customer-public-ip.md).
+
+## Next steps
+
+To learn more about Azure Firewall, see [What is Azure Firewall?](overview.md)

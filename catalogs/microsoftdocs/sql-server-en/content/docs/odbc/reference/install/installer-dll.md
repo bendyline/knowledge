@@ -1,0 +1,25 @@
+---
+title: "Installer DLL"
+description: "Installer DLL"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+ms.custom: intro-installation
+helpviewer_keywords:
+  - "installing ODBC components [ODBC], installer DLL functions"
+  - "installer DLL [ODBC]"
+---
+# Installer DLL
+> **Note:**  
+>  Starting with Windows XP and Windows Server 2003, ODBC is included in the Windows operation system. You should only explicitly install ODBC on earlier versions of Windows.  
+  
+ The installer DLL contains functions to install and remove ODBC components, maintain registry information about those components, and maintain registry information about data sources. It is written by Microsoft and can be redistributed. For a complete description of the functions in the installer DLL, see [Installer DLL API Reference](../syntax/installer-dll-api-reference-function.md).  
+  
+## Related content
+
+- [Registry Entries for ODBC Components](registry-entries-for-odbc-components.md)
+- [Registry Entries for Data Sources](registry-entries-for-data-sources.md)

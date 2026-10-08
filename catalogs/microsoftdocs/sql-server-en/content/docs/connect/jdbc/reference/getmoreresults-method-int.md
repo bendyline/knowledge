@@ -1,0 +1,56 @@
+---
+title: "getMoreResults Method (int)"
+description: "getMoreResults Method (int)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerStatement.getMoreResults (int)"
+apitype: "Assembly"
+---
+# getMoreResults Method (int)
+
+
+  Moves to the next result of this [SQLServerStatement](sqlserverstatement-class.md) object and deals with any currently open result set objects according to the instructions specified by the given mode.  
+  
+## Syntax  
+  
+```  
+  
+public final boolean getMoreResults(int mode)  
+```  
+  
+#### Parameters  
+ *mode*  
+  
+ An **int** that indicates how to handle currently open result set objects. Must be one of the following constants:  
+  
+ CLOSE_CURRENT_RESULT  
+  
+ KEEP_CURRENT_RESULT (not supported by the JDBC driver)  
+  
+ CLOSE_ALL_RESULTS  
+  
+## Return Value  
+ **true** if the returned result is a result set. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getMoreResults method is specified by the getMoreResults method in the java.sql.Statement interface.  
+  
+ If the getMoreResults method is called before results are retrieved, it behaves as specified by the *mode* argument and moves to the next result.  
+  
+> **Note:**  
+>  The JDBC driver does not support using the KEEP_CURRENT_RESULT constant. If it is used, an exception will be thrown.  
+  
+## Related content
+
+- [getMoreResults Method (SQLServerStatement)](getmoreresults-method-sqlserverstatement.md)
+- [SQLServerStatement Members](sqlserverstatement-members.md)
+- [SQLServerStatement Class](sqlserverstatement-class.md)

@@ -1,0 +1,34 @@
+# Source code: aspnetcore/security/authorization/policies/samples/PoliciesAuthApp2/Services/Handlers/BadgeEntryHandler.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+namespace PoliciesAuthApp2.Services.Handlers
+{
+    #region snippet_BadgeEntryHandlerClass
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using PoliciesAuthApp2.Services.Requirements;
+
+    public class BadgeEntryHandler : AuthorizationHandler<BuildingEntryRequirement>
+    {
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+                                                       BuildingEntryRequirement requirement)
+        {
+            if (context.User.HasClaim(c => c.Type == "BadgeId" &&
+                                           c.Issuer == "http://microsoftsecurity"))
+            {
+                context.Succeed(requirement);
+            }
+
+            //TODO: Use the following if targeting a version of
+            //.NET Framework older than 4.6:
+            //      return Task.FromResult(0);
+            return Task.CompletedTask;
+        }
+    }
+    #endregion
+}
+
+```

@@ -1,0 +1,63 @@
+---
+title: "Add column to SQL Server table (OLE DB driver)"
+description: "Learn how the ITableDefinition::AddColumn method allows consumers to add a column to a SQL Server table in OLE DB Driver for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "06/14/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "columns [OLE DB]"
+  - "AddColumn function"
+  - "OLE DB Driver for SQL Server, columns"
+  - "adding columns"
+---
+# Adding a Column to a SQL Server Table
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  The OLE DB Driver for SQL Server exposes the **ITableDefinition::AddColumn** function. This allows consumers to add a column to a  SQL Server 
+ table.  
+  
+ When you add a column to a  SQL Server 
+ table, the OLE DB Driver for SQL Server consumer is constrained as follows:  
+  
+-   If DBPROP_COL_AUTOINCREMENT is VARIANT_TRUE, DBPROP_COL_NULLABLE must be VARIANT_FALSE.  
+  
+-   If the column is defined by using the  SQL Server 
+ **timestamp** data type, DBPROP_COL_NULLABLE must be VARIANT_FALSE.  
+  
+-   For any other column definition, DBPROP_COL_NULLABLE must be VARIANT_TRUE.  
+  
+ Consumers specify the table name as a Unicode character string in the *pwszName* member of the *uName* union in the *pTableID* parameter. The *eKind* member of *pTableID* must be DBKIND_NAME.  
+  
+ The new column name is specified as a Unicode character string in the *pwszName* member of the *uName* union in the *dbcid* member of the DBCOLUMNDESC parameter *pColumnDesc*. The *eKind* member must be DBKIND_NAME.  
+  
+## Related content
+
+- [Tables and Indexes](tables-and-indexes.md)
+- [ALTER TABLE (Transact-SQL)](../../../t-sql/statements/alter-table-transact-sql.md)

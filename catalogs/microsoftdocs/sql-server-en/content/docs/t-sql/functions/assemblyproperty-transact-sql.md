@@ -1,0 +1,76 @@
+---
+title: "ASSEMBLYPROPERTY (Transact-SQL)"
+description: "ASSEMBLYPROPERTY (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "ASSEMBLYPROPERTY_TSQL"
+  - "ASSEMBLYPROPERTY"
+helpviewer_keywords:
+  - "ASSEMBLYPROPERTY statement"
+  - "assemblies [CLR integration], properties"
+dev_langs:
+  - "TSQL"
+---
+# ASSEMBLYPROPERTY (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+This function returns information about a property of an assembly.
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+ASSEMBLYPROPERTY('assembly_name', 'property_name')  
+```  
+  
+## Arguments
+*assembly_name*  
+The name of the assembly.
+  
+*property_name*  
+The name of a property about which to retrieve information. *property_name* can have one of the following values:
+  
+| Value | Description |
+| --- | --- |
+| **CultureInfo** | Locale of the assembly. |
+| **PublicKey** | Public key or public key token of the assembly. |
+| **MvID** | Complete, compiler-generated version identification number of the assembly. |
+| **VersionMajor** | Major component (first part) of the four-part version identification number of the assembly. |
+| **VersionMinor** | Minor component (second part) of the four-part version identification number of the assembly. |
+| **VersionBuild** | Build component (third part) of the four-part version identification number of the assembly. |
+| **VersionRevision** | Revision component (fourth part) of the four-part version identification number of the assembly. |
+| **SimpleName** | Simple name of the assembly. |
+| **Architecture** | Processor architecture of the assembly. |
+| **CLRName** | Canonical string that encodes the simple name, version number, culture, public key, and architecture of the assembly. This value uniquely identifies the assembly on the common language runtime (CLR) side. |
+  
+## Return type
+**sql_variant**
+  
+## Examples  
+This example assumes a `HelloWorld` assembly that is registered in the  `AdventureWorks2025`  database. For more information, see [Hello World Sample](https://learn.microsoft.com/previous-versions/sql/sql-server-2016/ff878250\(v=sql.130\)).
+  
+```sql
+USE AdventureWorks2022;  
+GO  
+SELECT ASSEMBLYPROPERTY ('HelloWorld' , 'PublicKey');  
+```  
+  
+## Related content
+
+- [CREATE ASSEMBLY (Transact-SQL)](../statements/create-assembly-transact-sql.md)
+- [DROP ASSEMBLY (Transact-SQL)](../statements/drop-assembly-transact-sql.md)

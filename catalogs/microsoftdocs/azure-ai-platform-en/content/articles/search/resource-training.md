@@ -1,0 +1,51 @@
+---
+title: Training Modules
+description: Get hands-on training on Azure AI Search from Microsoft and other third-party training providers.
+ms.date: 06/08/2026
+ms.service: azure-ai-search
+ms.topic: concept-article
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Training for Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+Training modules provide an end-to-end learning experience that helps you build skills and develop practical knowledge through a progression of exercises. Use the following links to start with learning content from Microsoft and other training providers.
+
+## Learning paths
+
+Learning paths are a collection of training modules that are organized around specific roles (like developer) or technologies (like Azure AI Search). Azure AI Search is covered in two learning paths.
+
+- [Microsoft Azure AI Fundamentals: Azure Document Intelligence in Foundry Tools and Knowledge Mining](https://learn.microsoft.com/training/paths/document-intelligence-knowledge-mining/) includes two modules: [Fundamentals of Azure AI Search and knowledge mining](https://learn.microsoft.com/training/modules/intro-to-azure-search/) and [Fundamentals of Azure Document Intelligence](https://learn.microsoft.com/training/modules/analyze-receipts-form-recognizer/). Choose this learning path to broaden your understanding of when to use each technology.
+
+- [Implement knowledge mining with Azure AI Search](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) includes eight modules that teach important skills. Choose this learning path to gain expertise in Azure AI Search.
+
+## Modules
+
+| Module | Learning path |
+| --- | --- |
+| [Fundamentals of Knowledge Mining and Azure AI Search](https://learn.microsoft.com/training/modules/intro-to-azure-search/) | [Microsoft Azure AI Fundamentals](https://learn.microsoft.com/training/paths/document-intelligence-knowledge-mining/) |
+| [Create an Azure AI Search solution](https://learn.microsoft.com/training/modules/create-azure-cognitive-search-solution/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Create a custom skill for Azure AI Search](https://learn.microsoft.com/training/modules/create-azure-ai-custom-skill/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Enrich your data with Azure Language in Foundry Tools](https://learn.microsoft.com/training/modules/enrich-search-index-using-language-studio/) |  |
+| [Create a knowledge store with Azure AI Search](https://learn.microsoft.com/training/modules/create-knowledge-store-azure-cognitive-search/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Implement advanced search features in Azure AI Search](https://learn.microsoft.com/training/modules/implement-advanced-search-features-azure-cognitive-search/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Search data outside the Azure platform in Azure AI Search using Azure Data Factory](https://learn.microsoft.com/training/modules/search-data-outside-azure-platform-cognitive-search/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Perform vector search and retrieval in Azure AI Search](https://learn.microsoft.com/training/modules/improve-search-results-vector-search/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Perform search reranking with semantic ranking in Azure AI Search](https://learn.microsoft.com/training/modules/use-semantic-search/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+| [Maintain an Azure AI Search solution](https://learn.microsoft.com/training/modules/maintain-azure-cognitive-search-solution/) | [Implement knowledge mining](https://learn.microsoft.com/training/paths/implement-knowledge-mining-azure-cognitive-search/) |
+
+## RAG-centric modules
+
+- [Build a RAG-based copilot solution with your own data using Microsoft Foundry](https://learn.microsoft.com/training/modules/build-copilot-ai-studio/)
+- [Implement Retrieval Augmented Generation (RAG) with Azure OpenAI in Foundry Models](https://learn.microsoft.com/training/modules/use-own-data-azure-openai/)
+
+## Pluralsight training
+
+- [Add search to apps (Pluralsight)](https://www.pluralsight.com/courses/azure-adding-search-abilities-apps)
+- [Developer course (Pluralsight)](https://www.pluralsight.com/courses/microsoft-azure-textual-content-search-enabling)

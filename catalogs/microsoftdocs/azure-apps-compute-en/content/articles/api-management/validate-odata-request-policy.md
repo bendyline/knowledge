@@ -1,0 +1,73 @@
+---
+title: Azure API Management policy reference - validate-odata-request | Microsoft Docs
+description: Reference for the validate-odata-request policy available for use in Azure API Management. Provides policy usage, settings, and examples.
+services: api-management
+
+ms.service: azure-api-management
+ms.custom:
+  - build-2024
+ms.topic: reference
+ms.date: 07/23/2024
+---
+
+# Validate OData request
+
+**APPLIES TO: All API Management tiers**
+
+
+
+The `validate-odata-request` policy validates the request URL, headers, and parameters of a request to an OData API to ensure conformance with the [OData specification](https://www.odata.org/documentation).
+
+## Policy statement
+
+```xml
+<validate-odata-request error-variable-name="variable name" default-odata-version="OData version number" min-odata-version="OData version number" max-odata-version="OData version number" max-size="size in bytes" />
+```
+
+## Attributes
+
+| Attribute | Description | Required | Default |
+| --- | --- | --- | --- |
+| error-variable-name | Name of the variable in `context.Variables` to log validation errors to. | No | N/A |
+| default-odata-version | The default OData version that is assumed for parameter validation if the request doesn't contain an `OData-Version` header. | No | 4.0 |
+| min-odata-version | The minimum OData version in the `OData-Version` header of the request that the policy accepts. | No | N/A |
+| max-odata-version | The maximum OData version in the `OData-Version` header of the request that the policy accepts. | No | N/A |
+| max-size | Maximum size of the request payload in bytes. | No | N/A |
+
+
+## Usage
+
+- [**Policy sections:**](api-management-howto-policies.md#understanding-policy-configuration) inbound
+- [**Policy scopes:**](api-management-howto-policies.md#scopes) global, workspace, product, API
+-  [**Gateways:**](api-management-gateways-overview.md) classic, v2, consumption, self-hosted, workspace
+
+### Usage notes
+
+* Configure the policy for an OData API that has been [imported](import-api-from-odata.md) to API Management. 
+* This policy can only be used once in a policy section.
+
+## Example
+
+The following example validates a request to an OData API and assumes a default OData version of 4.01 if no `OData-Version` header is present:
+
+```xml
+<validate-odata-request default-odata-version="4.01" />  
+```
+
+## Related policies
+
+* [Content validation](api-management-policies.md#content-validation)
+
+## Related content
+
+For more information about working with policies, see:
+
+- [Tutorial: Transform and protect your API](transform-api.md)
+- [Policy reference](api-management-policies.md) for a full list of policy statements and their settings
+- [Policy expressions](api-management-policy-expressions.md)
+- [Set or edit policies](set-edit-policies.md)
+- [Reuse policy configurations](policy-fragments.md)
+- [Policy snippets repo](https://github.com/Azure/api-management-policy-snippets)
+- [Policy samples repo](https://github.com/Azure-Samples/Apim-Samples)
+- [Azure API Management policy toolkit](https://github.com/Azure/azure-api-management-policy-toolkit/)
+- [Get Copilot assistance to create, explain, and troubleshoot policies](https://learn.microsoft.com/azure/copilot/author-api-management-policies?toc=%2Fazure%2Fapi-management%2Ftoc.json\&bc=/azure/api-management/breadcrumb/toc.json)

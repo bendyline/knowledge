@@ -1,0 +1,262 @@
+---
+title: Manage a compute instance
+titleSuffix: Azure Machine Learning
+description: Learn how to manage an Azure Machine Learning compute instance. Use as your development environment, or as  compute target for dev/test purposes.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: compute
+ms.custom: devx-track-azurecli, dev-focus
+ai-usage: ai-assisted
+ms.topic: how-to
+ms.author: scottpolly
+author: s-polly
+ms.reviewer: jturuk
+ms.date: 02/05/2026
+---
+
+# Manage an Azure Machine Learning compute instance
+
+
+**APPLIES TO:**
+
+
+
+Learn how to manage a [compute instance](concept-compute-instance.md) in your Azure Machine Learning workspace. 
+
+Use a compute instance as your fully configured and managed development environment in the cloud. For development and testing, you can also use the instance as a [training compute target](concept-compute-target.md#training-compute-targets). A compute instance can run multiple jobs in parallel and has a job queue. As a development environment, a compute instance isn't shared with other users in your workspace.
+
+In this article, you learn how to start, stop, restart, and delete a compute instance. To learn how to create a compute instance, see [Create an Azure Machine Learning compute instance](how-to-create-compute-instance.md).
+
+> **Note:**
+> This article shows CLI v2 in the sections. If you're still using CLI v1, see [Create an Azure Machine Learning compute cluster CLI v1](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/v1/how-to-create-manage-compute-instance.md?view=azureml-api-1\&preserve-view=true).
+
+
+## Prerequisites
+
+* An Azure Machine Learning workspace. For more information, see [Manage Azure Machine Learning workspaces](how-to-manage-workspace.md).
+
+Select the appropriate tab for the rest of the prerequisites based on your preferred method of managing your compute instance.
+
+# [Python SDK](#tab/python)
+
+* If you're not running your code on a compute instance, install the [Azure Machine Learning Python SDK](https://learn.microsoft.com/python/api/overview/azure/ai-ml-readme). This SDK is already installed for you on a compute instance.
+
+* Attach to the workspace in your Python script:
+
+    
+Run this code to connect to your Azure Machine Learning workspace. 
+
+Replace your Subscription ID, Resource Group name, and Workspace name in the following code. To find these values:
+
+1. Sign in to [Azure Machine Learning studio](https://ml.azure.com).
+1. Open the workspace you wish to use.
+1. Select your workspace name in the upper right Azure Machine Learning studio toolbar.
+1. Copy the value for workspace, resource group, and subscription ID into the code.  
+
+
+**APPLIES TO**:  [Python SDK azure-ai-ml **v2 (current)**](https://aka.ms/sdk-v2-install)
+
+[!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/includes/~/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=subscription_id)]
+
+[!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/includes/~/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=ml_client)]
+
+`ml_client` is a handler to the workspace that you use to manage other resources and jobs.
+
+# [Azure CLI](#tab/azure-cli)
+
+* If you're not running these commands on a compute instance, install the [Azure CLI extension for Machine Learning service (v2)](how-to-configure-cli.md). This extension is already installed for you on a compute instance.
+
+* Authenticate and set the default workspace and resource group. Leave the terminal open to run the rest of the commands in this article.
+
+    
+* If you're on a compute instance:
+
+    ```azurecli
+    az login --identity
+    # next line needed only if you have multiple subscriptions:
+    az account set --subscription "<SUBSCRIPTION-NAME>" # replace with your subscription name
+    az configure --defaults group=$CI_RESOURCE_GROUP workspace=$CI_WORKSPACE
+     ```
+
+* If you're running the commands locally, omit `--identity` and follow instructions for authentication. Also replace `$CI_RESOURCE_GROUP` and `$CI_WORKSPACE` with your values.
+
+
+# [Studio](#tab/azure-studio)
+
+Start at [Azure Machine Learning studio](https://ml.azure.com).
+
+---
+
+> **Note:**
+> When you configure a Virtual Network (VNet) located in a different resource group from your Azure Machine Learning workspace, resources such as Network Security Groups (NSGs), public IPs, and load balancers are created in the same resource group as the VNet. This behavior ensures proper network management and isolation.
+
+## Manage
+
+You can start, stop, restart, and delete a compute instance. A compute instance doesn't always automatically scale down, so make sure to stop the resource to prevent ongoing charges. Stopping a compute instance deallocates it. Then start it again when you need it. While stopping the compute instance stops the billing for compute hours, you still pay for disk, public IP, and standard load balancer. 
+
+You can [enable automatic shutdown](how-to-create-compute-instance.md#configure-idle-shutdown) to automatically stop the compute instance after a specified time.
+
+You can also [create a schedule](how-to-create-compute-instance.md#schedule-automatic-start-and-stop) for the compute instance to automatically start and stop based on a time and day of week.
+
+> **Tip:**
+> The compute instance has a 120-GB OS disk. If you run out of disk space, [use the terminal](how-to-access-terminal.md) to clear at least 5 GB before you stop or restart the compute instance. Don't stop the compute instance by issuing sudo shutdown from the terminal. The temp disk size on compute instance depends on the VM size chosen and is mounted on /mnt.
+
+# [Python SDK](#tab/python)
+
+
+**APPLIES TO**:  [Python SDK azure-ai-ml **v2 (current)**](https://aka.ms/sdk-v2-install)
+
+In these examples, the variable `ci_basic_name` stores the name of the compute instance.
+
+* Get status
+
+  [!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=ci_basic_state)]
+
+
+* Stop
+
+  [!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=stop_compute)]
+
+
+* Start
+
+  [!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=start_compute)]
+
+
+* Restart
+
+  [!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=restart_compute)]
+
+
+* Delete
+
+  [!notebook-python[](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/azureml-examples-main/sdk/python/resources/compute/compute.ipynb?name=delete_compute)]
+
+
+# [Azure CLI](#tab/azure-cli)
+
+
+**APPLIES TO:**  [Azure CLI ml extension **v2 (current)**](how-to-configure-cli.md) 
+
+
+In these examples, the name of the compute instance is **instance**.
+
+
+* Stop
+
+    ```azurecli
+    az ml compute stop --name instance 
+    ```
+
+* Start
+
+    ```azurecli
+    az ml compute start --name instance 
+    ```
+
+* Restart
+
+    ```azurecli
+    az ml compute restart --name instance 
+    ```
+
+* Delete
+
+    ```azurecli
+    az ml compute delete --name instance 
+    ```
+
+# [Studio](#tab/azure-studio)
+
+In your workspace in Azure Machine Learning studio, select **Compute**, then select **compute instance** on the top.
+
+
+You can perform the following actions:
+
+* Create a new compute instance
+* Refresh the compute instances tab.
+* Start, stop, and restart a compute instance. You do pay for the instance whenever it's running. Stop the compute instance when you aren't using it to reduce cost. Stopping a compute instance deallocates it. Then start it again when you need it. You can also schedule a time for the compute instance to start and stop.
+* Delete a compute instance.
+* Filter the list of compute instances to show only ones you created.
+
+For each compute instance in a workspace that you created (or that was created for you), you can:
+
+* Access Jupyter, JupyterLab on the compute instance, and RStudio or Posit Workbench if [configured as a custom application](how-to-create-compute-instance.md#add-custom-applications-such-as-rstudio-or-posit-workbench).
+* SSH into compute instance. SSH access is disabled by default but can be enabled at compute instance creation time. SSH access is through public/private key mechanism. The tab gives you details for SSH connection such as IP address, username, and port number. In a virtual network deployment, disabling SSH prevents SSH access from public internet. You can still SSH from within virtual network using private IP address of compute instance node and port 22.
+
+    > **Tip:**
+    > If the compute instances is in a *managed* virtual network and the public IP address is disabled, use the `az ml compute connect-ssh` command to connect to the compute instance.
+
+* Select the compute name to:
+    * View details about a specific compute instance such as IP address, and region.
+    * Create or modify the schedule for starting and stopping the compute instance. Scroll down to the bottom of the page to edit the schedule.
+
+---
+
+> **Caution:**
+> Applying resource locks, such as "Delete" or "Read-only", to the resource group that contains your Machine Learning workspace or to a separate resource group where you've configured a virtual network can prevent operations like creation, resizing, or deletion of these instances. Ensure that resource locks are configured appropriately to avoid unintended disruptions. 
+
+[Azure RBAC](https://learn.microsoft.com/azure/role-based-access-control/overview) allows you to control which users in the workspace can create, delete, start, stop, restart a compute instance. All users in the workspace contributor and owner role can create, delete, start, stop, and restart compute instances across the workspace. However, only the creator of a specific compute instance, or the user assigned if it was created on their behalf, is allowed to access Jupyter, JupyterLab, and RStudio (if configured) on that compute instance. A compute instance is dedicated to a single user who has root access. That user has access to Jupyter/JupyterLab and any configured custom applications running on the instance. Compute instance has single-user sign-in and all actions use that user's identity for Azure RBAC and attribution of experiment jobs. SSH access is controlled through public/private key mechanism.
+
+These actions can be controlled by Azure RBAC:
+* *Microsoft.MachineLearningServices/workspaces/computes/read*
+* *Microsoft.MachineLearningServices/workspaces/computes/write*
+* *Microsoft.MachineLearningServices/workspaces/computes/delete*
+* *Microsoft.MachineLearningServices/workspaces/computes/start/action*
+* *Microsoft.MachineLearningServices/workspaces/computes/stop/action*
+* *Microsoft.MachineLearningServices/workspaces/computes/restart/action*
+* *Microsoft.MachineLearningServices/workspaces/computes/updateSchedules/action*
+
+To create a compute instance, you need permissions for the following actions:
+* *Microsoft.MachineLearningServices/workspaces/computes/write*
+* *Microsoft.MachineLearningServices/workspaces/checkComputeNameAvailability/action*
+
+## Audit and observe compute instance version
+
+Once a compute instance is deployed, it doesn't get automatically updated. Microsoft [releases](azure-machine-learning-ci-image-release-notes.md) new VM images on a monthly basis. To understand options for keeping recent with the latest version, see [vulnerability management](concept-vulnerability-management.md#compute-instance). 
+
+To keep track of whether an instance's operating system version is current, you could query its version using the CLI, SDK, or Studio UI. 
+
+# [Python SDK](#tab/python)
+
+
+**APPLIES TO**:  [Python SDK azure-ai-ml **v2 (current)**](https://aka.ms/sdk-v2-install)
+
+```python
+from azure.ai.ml.entities import ComputeInstance, AmlCompute
+
+# Display operating system version
+instance = ml_client.compute.get("myci")
+print(instance.os_image_metadata)
+```
+
+For more information on the classes, methods, and parameters used in this example, see the following reference documents:
+
+* [`AmlCompute` class](https://learn.microsoft.com/python/api/azure-ai-ml/azure.ai.ml.entities.amlcompute)
+* [`ComputeInstance` class](https://learn.microsoft.com/python/api/azure-ai-ml/azure.ai.ml.entities.computeinstance)
+
+# [Azure CLI](#tab/azure-cli)
+
+
+**APPLIES TO:**  [Azure CLI ml extension **v2 (current)**](how-to-configure-cli.md) 
+
+
+```azurecli
+az ml compute show --name "myci"
+
+# query outdated compute instances:
+az ml compute list --query "[?os_image_metadata.is_latest_os_image_version == ``false``].name"
+```
+# [Studio](#tab/azure-studio)
+
+In your workspace in Azure Machine Learning studio, select Compute, then select compute instance on the top. To see its properties including the current operating system, select a compute instance's compute name.
+
+---
+
+IT administrators can use [Azure Policy](https://learn.microsoft.com/azure/governance/policy/overview) to monitor the inventory of instances across workspaces in Azure Policy compliance portal. Assign the built-in policy [Audit Azure Machine Learning Compute Instances with an outdated operating system](https://ms.portal.azure.com/#view/Microsoft_Azure_Policy/PolicyDetailBlade/definitionId/%2Fproviders%2FMicrosoft.Authorization%2FpolicyDefinitions%2Ff110a506-2dcb-422e-bcea-d533fc8c35e2) on an Azure subscription or Azure management group scope.
+
+## Next steps
+
+* [Access the compute instance terminal](how-to-access-terminal.md)
+* [Create and manage files](how-to-manage-files.md)
+* [Update the compute instance to the latest VM image](concept-vulnerability-management.md#compute-instance)

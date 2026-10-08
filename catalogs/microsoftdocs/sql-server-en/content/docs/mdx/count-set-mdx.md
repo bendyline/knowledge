@@ -1,0 +1,97 @@
+---
+title: "Count (Set) (MDX)"
+description: "Count (Set) (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Count (Set) (MDX)
+
+
+  Returns the number of cells in a set.  
+  
+## Syntax  
+  
+```  
+  
+Standard syntax  
+Count(Set_Expression [ , ( EXCLUDEEMPTY | INCLUDEEMPTY ) ] )  
+  
+Alternate syntax  
+Set_Expression.Count  
+```  
+  
+## Arguments  
+ *Set_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a set.  
+  
+## Remarks  
+ The **Count (Set)** function includes or excludes empty cells, depending on the syntax used. If the standard syntax is used, empty cells can be excluded or included by using the **EXCLUDEEMPTY** or **INCLUDEEMPTY** flags, respectively. If the alternate syntax is used, the function always includes empty cells.  
+  
+ To exclude empty cells in the count of a set, use the standard syntax and the optional **EXCLUDEEMPTY** flag.  
+  
+> **Note:**  
+>  The **Count (Set)** function counts empty cells by default. In contrast, the **Count** function in OLE DB that counts a set excludes empty cells by default.  
+  
+## Examples  
+ The following example counts the number of cells in the set of members that consist of the children of the Model Name attribute hierarchy in the Product dimension.  
+  
+```  
+WITH MEMBER measures.X AS  
+   [Product].[Model Name].children.count   
+SELECT Measures.X ON 0  
+FROM [Adventure Works]  
+```  
+  
+ The following example counts the number of products in the Product dimension by using the **DrilldownLevel** function in conjunction with the **Count** function.  
+  
+```  
+Count(DrilldownLevel (   
+   [Product].[Product].[Product]))  
+```  
+  
+ The following example returns those resellers with declining sales compared to the previous calendar quarter, by using the **Count** function in conjunction with the **Filter** function and a number of other functions. This query uses the **Aggregate** function to support the selection of multiple geography members, such as for selection from within a dropdown list in a client application.  
+  
+```  
+WITH MEMBER Measures.[Declining Reseller Sales] AS  
+   Count  
+   (Filter  
+      (Existing(Reseller.Reseller.Reseller),  
+         [Measures].[Reseller Sales Amount]   
+         < ([Measures].[Reseller Sales Amount],  
+            [Date].Calendar.PrevMember)  
+      )  
+   )  
+MEMBER [Geography].[State-Province].x AS   
+   Aggregate  
+   ( {[Geography].[State-Province].&[WA]&[US],   
+      [Geography].[State-Province].&[OR]&[US] }   
+   )  
+SELECT NON EMPTY HIERARCHIZE   
+   (AddCalculatedMembers   
+      ({DrillDownLevel  
+         ({[Product].[All Products]})  
+      })  
+   ) DIMENSION PROPERTIES PARENT_UNIQUE_NAME ON COLUMNS   
+FROM [Adventure Works]  
+WHERE ([Geography].[State-Province].x,  
+   [Date].[Calendar].[Calendar Quarter].&[2003]&[4]  
+   ,[Measures].[Declining Reseller Sales])  
+  
+```  
+  
+## Related content
+
+- [Count (Dimension) (MDX)](count-dimension-mdx.md)
+- [Count (Hierarchy Levels) (MDX)](count-hierarchy-levels-mdx.md)
+- [Count (Tuple) (MDX)](count-tuple-mdx.md)
+- [DrilldownLevel (MDX)](drilldownlevel-mdx.md)
+- [AddCalculatedMembers (MDX)](addcalculatedmembers-mdx.md)
+- [Hierarchize (MDX)](hierarchize-mdx.md)
+- [Properties (MDX)](properties-mdx.md)
+- [Aggregate (MDX)](aggregate-mdx.md)
+- [Filter (MDX)](filter-mdx.md)
+- [PrevMember (MDX)](prevmember-mdx.md)
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

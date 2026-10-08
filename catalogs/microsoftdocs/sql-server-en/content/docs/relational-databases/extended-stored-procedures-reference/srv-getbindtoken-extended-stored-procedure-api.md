@@ -1,0 +1,76 @@
+---
+title: "srv_getbindtoken (Extended Stored Procedure API)"
+description: Learn how srv_getbindtoken obtains a bind token of the transaction in the current client session that invokes the extended stored procedure.
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: stored-procedures
+ms.topic: "reference"
+helpviewer_keywords:
+  - "srv_getbindtoken"
+dev_langs:
+  - "C++"
+apilocation: opends60.dll
+apiname: srv_getbindtoken
+apitype: "DLLExport"
+---
+# srv_getbindtoken (Extended Stored Procedure API)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+    
+> **Important:**  
+>  This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use CLR integration instead.  
+  
+ Obtains a bind token of the transaction in the current client session that invokes the extended stored procedure.  
+  
+ The extended stored procedure can then use **sp_bindsession** to bind any new session it creates against the same server to the existing transaction so that the new session can share the same transaction lock space with the client session that invoked the extended stored procedure.  
+  
+## Syntax  
+  
+```  
+  
+int srv_getbindtoken (  
+SRV_PROC*  
+srvproc  
+,  
+char*  
+bindtoken  
+);  
+```  
+  
+## Arguments  
+ *srvproc*  
+ Is a pointer to the SRV_PROC structure that is the handle for a particular client connection. The structure contains all the information that the Extended Stored Procedure API library uses to manage communications and data between the application and the client.  
+  
+ *bindtoken*  
+ Is a pointer to a buffer where the bind token will be copied. The bind token is represented as a null-terminated string. The buffer you specify should be at least 255 bytes in length.  
+  
+## Returns  
+ SUCCEED or FAIL.  
+  
+## Remarks  
+  
+### To bind an extended stored procedure session to the client session that called it so they share the same transaction lock space  
+  
+1.  The extended stored procedure calls **srv_getbindtoken** to get the bind token for the current transaction in the session. The token is returned in the given *bindtoken* parameter.  
+  
+2.  The extended stored procedure opens new session(s) against the same server. Inside that session, the extended stored procedure uses the bind token with **sp_bindsession** to bind the new session to the same transaction. The extended stored procedure can create multiple sessions and bind all the sessions to the same transaction.  
+  
+3.  A bound session is unbound when the external stored procedure returns or when **sp_bindsession** is called with an empty string.  
+  
+    > **Note:**  
+    >  Only one bound session at a time can have access to a shared connection. If one session is currently executing a statement at the server or has results pending from the server, no other sessions sharing the same bound connection can gain access to the server until the current session has finished executing the current statement. If a session attempts to gain access to the connection while the server is busy, an error is returned to the conflicting session indicating the connection is in use and the session should retry later.  
+  
+> **Important:**  
+>  You should thoroughly review the source code of extended stored procedures, and you should test the compiled DLLs before you install them on a production server. For information about security review and testing, see this [Microsoft Web site](https://go.microsoft.com/fwlink/?LinkID=54761&amp;clcid=0x409https://msdn.microsoft.com/security/).  
+  
+## Related content
+
+- [sp_bindsession (Transact-SQL)](../system-stored-procedures/sp-bindsession-transact-sql.md)
+- [sp_getbindtoken (Transact-SQL)](../system-stored-procedures/sp-getbindtoken-transact-sql.md)

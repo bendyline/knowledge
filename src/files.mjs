@@ -56,7 +56,9 @@ export async function hashFile(path) {
 }
 export async function inventory(root) {
   if (!await exists(root)) return [];
-  const paths = await walk(root);
+  // Sort complete paths, not directory entries: a/b must follow a.cs/b.
+  // Snapshot locks use this same bytewise path order.
+  const paths = (await walk(root)).sort();
   const results = new Array(paths.length); let next = 0;
   // Large catalogs must not open a stream for every article at once (EMFILE).
   await Promise.all(Array.from({ length: Math.min(16, paths.length) }, async () => {

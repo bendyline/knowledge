@@ -1,0 +1,114 @@
+---
+title: "sp_query_store_clear_hints (Transact-SQL)"
+description: Removes all Query Store hints for a given query.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/25/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sp_query_store_clear_hints_TSQL"
+  - "sys.sp_query_store_clear_hints_TSQL"
+  - "sp_query_store_clear_hints"
+  - "sys.sp_query_store_clear_hints"
+helpviewer_keywords:
+  - "sys.sp_query_store_clear_hints"
+  - "sp_query_store_clear_hints"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azuresqldb-mi-current || >=sql-server-ver16 || >=sql-server-linux-ver16 || =fabric-sqldb"
+---
+# sp_query_store_clear_hints (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+Removes all [Query Store hints](../performance/query-store-hints.md) for a given query ID.
+
+
+
+## Syntax
+
+```syntaxsql
+sp_query_store_clear_hints
+    [ @query_id = ] query_id
+    [ , [ @replica_group_id = ] 'replica_group_id' ]
+[ ; ]
+```
+
+## Arguments
+
+> **Important:**  
+> Arguments for extended stored procedures must be entered in the specific order as described in the [Syntax](#syntax) section. If the parameters are entered out of order, an error message occurs.
+
+
+#### [ @query_id = ] *query_id*
+
+The Query Store `query_id` column from [sys.query_store_query](../system-catalog-views/sys-query-store-query-transact-sql.md). *query_id* is **bigint**.
+
+#### [ @replica_group_id = ] '*replica_group_id*'
+
+The optional *@replica_group_id* argument defaults to the local replica (primary or secondary), but you can optionally specify a value matching a value in the `replica_group_id` column in [sys.query_store_replicas](../system-catalog-views/sys-query-store-replicas.md) to clear a hint for a different replica group. *@replica_group_id* is **bigint**.
+
+## Return value
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+Query Store hints are created by [sys.sp_query_store_set_hints](sys-sp-query-store-set-hints-transact-sql.md).
+
+## Permissions
+
+Requires the `ALTER` permission on the database.
+
+## Examples
+
+### Clear query hint text
+
+The following example removes the Query Store hint text for *query_id* 39:
+
+```sql
+EXECUTE sys.sp_query_store_clear_hints @query_id = 39;
+```
+
+### View Query Store hints
+
+The following example returns existing Query Store hints for *query_id* 39:
+
+```sql
+SELECT query_hint_id,
+       query_id,
+       replica_group_id,
+       query_hint_text,
+       last_query_hint_failure_reason,
+       last_query_hint_failure_reason_desc,
+       query_hint_failure_count,
+       source,
+       source_desc
+FROM sys.query_store_query_hints
+WHERE query_id = 39;
+```
+
+## Related content
+
+- [sys.sp_query_store_set_hints (Transact-SQL)](sys-sp-query-store-set-hints-transact-sql.md)
+- [sys.query_store_query_hints (Transact-SQL)](../system-catalog-views/sys-query-store-query-hints-transact-sql.md)
+- [Query Store hints](../performance/query-store-hints.md)
+- [Monitor performance by using the Query Store](../performance/monitoring-performance-by-using-the-query-store.md)

@@ -1,0 +1,40 @@
+
+## Prerequisites
+
+- An [Azure Communication Services resource](../../../create-communication-resource.md).
+
+## Create the access tokens
+
+1. In the [Azure portal](https://portal.azure.com), navigate to the **Identities & User Access Tokens** blade in your Communication Services resource. 
+
+2. Choose the scope of the access tokens. You can choose none, one, or multiple services. 
+
+3. Select **Generate**.
+
+   Screenshot that shows the scopes of the identity and access tokens where you select Generate.
+
+   The system generates an identity and corresponding user access token.
+
+4. Copy these strings and use them in the [sample apps](../../../../samples/overview.md) and other testing scenarios.
+
+   Screenshot that shows the identity and access tokens with expiration date
+
+
+## Original source metadata
+
+```text
+---
+title: include file
+description: include file
+services: azure-communication-services
+author: sundiraman
+manager: chpalm
+ms.service: azure-communication-services
+ms.subservice: identity
+ms.date: 07/19/2021
+ms.topic: include
+ms.custom: include file
+ms.author: sundraman
+ms.custom: mode-other
+---
+```

@@ -1,0 +1,9 @@
+---
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 11/25/2018
+ms.service: azure-vm-sql-server
+ms.topic: include
+---
+> **Note:**
+> Azure has two different deployment models you can use to create and work with resources: [Azure Resource Manager and classic](https://learn.microsoft.com/azure/azure-resource-manager/management/deployment-models). This article covers the use of the Resource Manager deployment model. We recommend the Resource Manager deployment model for new deployments instead of the classic deployment model.

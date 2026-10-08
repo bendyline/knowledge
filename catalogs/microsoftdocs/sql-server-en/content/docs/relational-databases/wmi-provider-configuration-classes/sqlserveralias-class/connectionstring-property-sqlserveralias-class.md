@@ -1,0 +1,40 @@
+---
+title: "ConnectionString Property (SqlServerAlias)"
+description: "ConnectionString Property (SqlServerAlias Class)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: wmi
+ms.topic: "reference"
+helpviewer_keywords:
+  - "ConnectionString property"
+apilocation: "sqlmgmproviderxpsp2up.mof"
+apiname: "ConnectionString Property (SqlServerAlias Class)"
+ms.custom: sfi-ropc-nochange
+---
+# ConnectionString Property (SqlServerAlias Class)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Gets the connection string that is used to establish the connection for the server connection alias.  
+  
+## Syntax  
+  
+```  
+  
+object.ConnectionString [= value]  
+```  
+  
+## Parts  
+ *object*  
+ A [SqlServerAlias Class](sqlserveralias-class.md) object that represents a  SQL Server 
+ alias.  
+  
+## Property Value/Return Value  
+ A string that specifies the connection string that is used to establish the connection for the server connection alias.  
+  
+## Remarks

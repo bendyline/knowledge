@@ -1,0 +1,28 @@
+# Source code: samples/snippets/csharp/VS_Snippets_CFX/c_howto_configureclientbinding/common/client.exe.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!-- <snippet100> -->
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <system.serviceModel>
+
+    <client>
+      <endpoint 
+          name=""
+          address="http://localhost/servicemodelsamples/service.svc" 
+          binding="basicHttpBinding" 
+          contract="Microsoft.ServiceModel.Samples.ICalculator" />
+    </client>
+
+    <bindings>
+      <basicHttpBinding/>
+    </bindings>
+
+  </system.serviceModel>
+
+</configuration>
+<!-- </snippet100> -->
+
+```

@@ -1,0 +1,37 @@
+---
+title: "closeUnreferencedPreparedStatementHandles Method (SQLServerConnection)"
+description: "closeUnreferencedPreparedStatementHandles Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.closeUnreferencedPreparedStatementHandles"
+apitype: "Assembly"
+---
+# closeUnreferencedPreparedStatementHandles Method (SQLServerConnection)
+
+
+ Forces the un-prepare requests for any outstanding discarded prepared statements to be executed.
+
+## Syntax  
+  
+```  
+  
+public void closeUnreferencedPreparedStatementHandles()  
+```  
+
+
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+
+## Remarks  
+ This method is available from JDBC driver version 6.4 and onward.
+ 
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

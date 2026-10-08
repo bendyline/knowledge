@@ -1,0 +1,71 @@
+---
+title: "Lesson 1: Create a sample subscriber database"
+description: Learn how to create a small subscriber database to store subscription data for your data-driven subscription.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: tutorial
+ms.custom:
+  - updatefrequency5
+---
+
+# Lesson 1: Create a sample subscriber database
+
+In this  Reporting Services 
+ tutorial lesson, you create a small "subscriber" database to store subscription data for your data-driven subscription. When the subscription is processed, the report server retrieves this data and uses it to customize report output. For example, the rows of data include specific order numbers to use for filters and what file format generated reports are in when they're created.  
+  
+This lesson assumes you're using  SQL Server Management Studio 
+ to create a SQL Server database.  
+  
+### Create a sample subscriber database  
+  
+1.  Start  Management Studio
+, and open a connection to an instance of the  SQL Server Database Engine 
+.  
+  
+2.  Right-click on Databases, select **New Database...**.  
+  
+3.  In the New Database dialog box, in **Database Name**, type *Subscribers*. 
+
+4.  Select **OK**.
+
+5.  Select the **New Query** button on the toolbar.  
+  
+6.  Copy the following  Transact-SQL  statements into the empty query:  
+  
+    ```  
+    Use Subscribers  
+    CREATE TABLE [dbo].[OrderInfo] (  
+        [SubscriptionID] [int] NOT NULL PRIMARY KEY ,  
+        [Order] [nvarchar] (20) NOT NULL,  
+        [FileType] [bit],  
+        [Format] [nvarchar] (20) NOT NULL ,  
+    ) ON [PRIMARY]  
+    GO  
+  
+    INSERT INTO [dbo].[OrderInfo] (SubscriptionID, [Order], FileType, Format)   
+    VALUES ('1', 'so43659', '1', 'IMAGE')  
+    INSERT INTO [dbo].[OrderInfo] (SubscriptionID, [Order], FileType, Format)   
+    VALUES ('2', 'so43664', '1', 'MHTML')  
+    INSERT INTO [dbo].[OrderInfo] (SubscriptionID, [Order], FileType, Format)   
+    VALUES ('3', 'so43668', '1', 'PDF')  
+    INSERT INTO [dbo].[OrderInfo] (SubscriptionID, [Order], FileType, Format)   
+    VALUES ('4', 'so71949', '1', 'Excel')  
+    GO  
+    ```  
+  
+7.  Select **! Execute** on the toolbar.  
+  
+8.  Use a SELECT statement to verify that you have three rows of data. For example: `select * from OrderInfo`  
+  
+## Next step
+
+> 
+> [Lesson 2: Modify the report data source properties](lesson-2-modifying-the-report-data-source-properties.md)
+
+## Related content
+
+- [Create a data-driven subscription (SSRS Tutorial)](create-a-data-driven-subscription-ssrs-tutorial.md)
+- [Create a database](../relational-databases/databases/create-a-database.md)
+- [Create a basic table report (SSRS tutorial)](create-a-basic-table-report-ssrs-tutorial.md)
+- [Try asking the Reporting Services forum](https://go.microsoft.com/fwlink/?LinkId=620231)

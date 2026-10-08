@@ -1,0 +1,1 @@
+The Microsoft Authentication Library ([Microsoft.Authentication.WebAssembly.Msal](https://learn.microsoft.com/search/?terms=Microsoft.Authentication.WebAssembly.Msal), [NuGet package](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal/)) doesn't support [AAD B2C custom policies](https://learn.microsoft.com/azure/active-directory-b2c/user-flow-overview).

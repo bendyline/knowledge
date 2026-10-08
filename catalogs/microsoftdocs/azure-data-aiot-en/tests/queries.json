@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Introduction Azure Storage",
+    "expectedDocumentIds": [
+      "articles/storage/common/storage-introduction"
+    ]
+  }
+]

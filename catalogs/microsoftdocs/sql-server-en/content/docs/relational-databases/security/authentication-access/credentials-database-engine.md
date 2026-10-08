@@ -1,0 +1,72 @@
+---
+title: "Credentials (Database Engine)"
+description: Learn about credentials in SQL Server. Get acquainted with the authentication information required to connect to a resource outside SQL Server.
+author: VanMSFT
+ms.author: vanto
+ms.date: "06/27/2019"
+ms.service: sql
+ms.subservice: security
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "principals [SQL Server], credentials"
+  - "schemas [SQL Server], credentials"
+  - "permissions [SQL Server], credentials"
+  - "groups [SQL Server], credentials"
+  - "ALTER ANY CREDENTIAL permission"
+  - "security [SQL Server], credentials"
+  - "authentication [SQL Server], credentials"
+  - "users [SQL Server], credentials"
+  - "credentials [SQL Server], about credentials"
+  - "credentials [SQL Server]"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Credentials (Database Engine)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+  A credential is a record that contains the authentication information (credentials) required to connect to a resource outside  SQL Server 
+. This information is used internally by  SQL Server 
+. Most credentials contain a Windows user name and password.  
+  
+ The information stored in a credential enables a user who has connected to  SQL Server 
+ by way of  SQL Server 
+ Authentication to access resources outside the server instance. When the external resource is Windows, the user is authenticated as the Windows user specified in the credential. A single credential can only be mapped to a single  SQL Server 
+ login. And a  SQL Server 
+ login can be mapped to only one credential.  
+  
+ For credentials that are stored in the master database and can be used throughout the instance of  SQL Server 
+, see [CREATE CREDENTIAL &#40;Transact-SQL&#41;](../../../t-sql/statements/create-credential-transact-sql.md). For credentials used by a specific database, and portable with that database, see [CREATE DATABASE SCOPED CREDENTIAL &#40;Transact-SQL&#41;](../../../t-sql/statements/create-database-scoped-credential-transact-sql.md).  
+  
+ System credentials are created automatically and are associated with specific endpoints. Names for system credentials start with two hash signs (##).  
+  
+ For more information about credentials, see the [sys.credentials](../../system-catalog-views/sys-credentials-transact-sql.md) and [sys.database_scoped_credentials](../../system-catalog-views/sys-database-scoped-credentials-transact-sql.md) catalog views.  
+
+In Fabric SQL database, Microsoft Entra ID for database users is the only supported authentication method. Only database-scoped credentials are supported.
+  
+## Related content
+
+- [Create a Credential](create-a-credential.md)
+- [CREATE CREDENTIAL (Transact-SQL)](../../../t-sql/statements/create-credential-transact-sql.md)
+- [CREATE DATABASE SCOPED CREDENTIAL (Transact-SQL)](../../../t-sql/statements/create-database-scoped-credential-transact-sql.md)
+- [Securing SQL Server](../securing-sql-server.md)

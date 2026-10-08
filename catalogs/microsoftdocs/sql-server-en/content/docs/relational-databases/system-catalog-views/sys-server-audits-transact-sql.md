@@ -1,0 +1,78 @@
+---
+title: "sys.server_audits (Transact-SQL)"
+description: sys.server_audits (Transact-SQL)
+author: sravanisaluru
+ms.author: srsaluru
+ms.date: "03/23/2022"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "server_audits_TSQL"
+  - "sys.server_audits_TSQL"
+  - "sys.server_audits"
+  - "server_audits"
+helpviewer_keywords:
+  - "sys.server_audits catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.server_audits (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Contains one row for each  SQL Server 
+ audit in a server instance. For more information, see [SQL Server Audit (Database Engine)](../security/auditing/sql-server-audit-database-engine.md).  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **audit_id** | **int** | ID of the audit. |
+| **name** | **sysname** | Name of the audit. |
+| **audit_guid** | **uniqueidentifier** | GUID for the audit that is used to enumerate audits with member Server&#124;Database audit specifications during server start-up and database attach operations. |
+| **create_date** | **datetime** | UTC date the audit was created. |
+| **modify_date** | **datetime** | UTC date the audit was last modified. |
+| **principal_id** | **int** | ID of the owner of the audit, as registered to the server. |
+| **type** | **char(2)** | Audit type:<br /><br /> SL - NT Security event log<br /><br /> AL - NT Application event log<br /><br /> FL - File on file system |
+| **type_desc** | **nvarchar(60)** | SECURITY LOG<br /><br /> APPLICATION LOG<br /><br /> FILE |
+| **on_failure** | **tinyint** | On Failure to write an action entry:<br /><br /> 0 - Continue<br /><br /> 1 - Shutdown server instance<br /><br /> 2 - Fail operation |
+| **on_failure_desc** | **nvarchar(60)** | On Failure to write an action entry:<br /><br /> CONTINUE<br /><br /> SHUTDOWN SERVER INSTANCE<br /><br /> FAIL_OPERATION |
+| **is_state_enabled** | **tinyint** | 0 - Disabled<br /><br /> 1 - Enabled |
+| **queue_delay** | **int** | Maximum time, in milliseconds, to wait before writing to disk. If 0, the audit will guarantee a write before an event can continue. |
+| **predicate** | **nvarchar(3000)** | The predicate expression that is applied to the event. |
+  
+## Permissions  
+ Principals with the **ALTER ANY SERVER AUDIT** or **VIEW ANY DEFINITION** permission have access to this catalog view. In addition, the principal must not be denied **VIEW ANY DEFINITION** permission.  
+  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [CREATE SERVER AUDIT (Transact-SQL)](../../t-sql/statements/create-server-audit-transact-sql.md)
+- [ALTER SERVER AUDIT (Transact-SQL)](../../t-sql/statements/alter-server-audit-transact-sql.md)
+- [DROP SERVER AUDIT (Transact-SQL)](../../t-sql/statements/drop-server-audit-transact-sql.md)
+- [CREATE SERVER AUDIT SPECIFICATION (Transact-SQL)](../../t-sql/statements/create-server-audit-specification-transact-sql.md)
+- [ALTER SERVER AUDIT SPECIFICATION (Transact-SQL)](../../t-sql/statements/alter-server-audit-specification-transact-sql.md)
+- [DROP SERVER AUDIT SPECIFICATION (Transact-SQL)](../../t-sql/statements/drop-server-audit-specification-transact-sql.md)
+- [CREATE DATABASE AUDIT SPECIFICATION (Transact-SQL)](../../t-sql/statements/create-database-audit-specification-transact-sql.md)
+- [ALTER DATABASE AUDIT SPECIFICATION (Transact-SQL)](../../t-sql/statements/alter-database-audit-specification-transact-sql.md)
+- [DROP DATABASE AUDIT SPECIFICATION (Transact-SQL)](../../t-sql/statements/drop-database-audit-specification-transact-sql.md)
+- [ALTER AUTHORIZATION (Transact-SQL)](../../t-sql/statements/alter-authorization-transact-sql.md)
+- [sys.fn_get_audit_file (Transact-SQL)](../system-functions/sys-fn-get-audit-file-transact-sql.md)
+- [sys.server_file_audits (Transact-SQL)](sys-server-file-audits-transact-sql.md)
+- [sys.server_audit_specifications (Transact-SQL)](sys-server-audit-specifications-transact-sql.md)
+- [sys.server_audit_specification_details (Transact-SQL)](sys-server-audit-specification-details-transact-sql.md)
+- [sys.database_audit_specifications (Transact-SQL)](sys-database-audit-specifications-transact-sql.md)
+- [sys.database_audit_specification_details (Transact-SQL)](sys-database-audit-specification-details-transact-sql.md)
+- [sys.dm_server_audit_status (Transact-SQL)](../system-dynamic-management-objects/sys-dm-server-audit-status-transact-sql.md)
+- [sys.dm_audit_actions (Transact-SQL)](../system-dynamic-management-objects/sys-dm-audit-actions-transact-sql.md)
+- [sys.dm_audit_class_type_map (Transact-SQL)](../system-dynamic-management-objects/sys-dm-audit-class-type-map-transact-sql.md)
+- [Create a Server Audit and Server Audit Specification](../security/auditing/create-a-server-audit-and-server-audit-specification.md)

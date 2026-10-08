@@ -1,0 +1,108 @@
+---
+title: "VERIFYSIGNEDBYASYMKEY (Transact-SQL)"
+description: "VERIFYSIGNEDBYASYMKEY (Transact-SQL)"
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "VERIFYSIGNEDBYASYMKEY_TSQL"
+  - "VERIFYSIGNEDBYASYMKEY"
+helpviewer_keywords:
+  - "verifying digitally signed data for changes"
+  - "VERIFYSIGNEDBYASYMKEY"
+  - "testing digitally signed data for changes"
+  - "checking digitally signed data for changes"
+  - "signatures [SQL Server]"
+  - "digital signatures [SQL Server]"
+dev_langs:
+  - "TSQL"
+---
+# VERIFYSIGNEDBYASYMKEY (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Tests whether digitally signed data has been changed since it was signed.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+VerifySignedByAsymKey( Asym_Key_ID , clear_text , signature )  
+```  
+  
+## Arguments
+ *Asym_Key_ID*  
+ Is the ID of an asymmetric key certificate in the database.  
+  
+ *clear_text*  
+ Is clear text data that is being verified.  
+  
+ *signature*  
+ Is the signature that was attached to the signed data. *signature* is **varbinary**.  
+  
+## Return Types  
+ **int**  
+  
+ Returns 1 when the signatures match; otherwise 0.  
+  
+## Remarks  
+ **VerifySignedByAsymKey** decrypts the signature of the data by using the public key of the specified asymmetric key, and compares the decrypted value to a newly computed MD5 hash of the data. If the values match, the signature is confirmed to be valid.  
+  
+## Permissions  
+ Requires VIEW DEFINITION permission on the asymmetric key.  
+  
+## Examples  
+  
+### A. Testing for data with a valid signature  
+ The following example returns 1 if the selected data has not been changed since it was signed with asymmetric key `WillisKey74`. The example returns 0 if the data has been tampered with.  
+  
+```sql
+SELECT Data,  
+     VerifySignedByAsymKey( AsymKey_Id( 'WillisKey74' ), SignedData,  
+     DataSignature ) as IsSignatureValid  
+FROM [AdventureWorks2022].[SignedData04]   
+WHERE Description = N'data encrypted by asymmetric key ''WillisKey74''';  
+GO  
+RETURN;  
+```  
+  
+### B. Returning a result set that contains data with a valid signature  
+ The following example returns rows in `SignedData04` that contain data that has not been changed since it was signed with asymmetric key `WillisKey74`. The example calls the function `AsymKey_ID` to obtain the ID of the asymmetric key from the database.  
+  
+```sql
+SELECT Data   
+FROM [AdventureWorks2022].[SignedData04]   
+WHERE VerifySignedByAsymKey( AsymKey_Id( 'WillisKey74' ), Data,  
+     DataSignature ) = 1  
+AND Description = N'data encrypted by asymmetric key ''WillisKey74''';  
+GO  
+```  
+  
+## Related content
+
+- [ASYMKEY_ID (Transact-SQL)](asymkey-id-transact-sql.md)
+- [SIGNBYASYMKEY (Transact-SQL)](signbyasymkey-transact-sql.md)
+- [CREATE ASYMMETRIC KEY (Transact-SQL)](../statements/create-asymmetric-key-transact-sql.md)
+- [ALTER ASYMMETRIC KEY (Transact-SQL)](../statements/alter-asymmetric-key-transact-sql.md)
+- [DROP ASYMMETRIC KEY (Transact-SQL)](../statements/drop-asymmetric-key-transact-sql.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)

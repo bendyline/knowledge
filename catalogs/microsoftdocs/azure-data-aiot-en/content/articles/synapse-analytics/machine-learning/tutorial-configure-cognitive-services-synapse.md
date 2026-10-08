@@ -1,0 +1,114 @@
+---
+title: 'Quickstart: Prerequisites for Foundry Tools in Azure Synapse Analytics'
+description: Learn how to configure the prerequisites for using Foundry Tools in Azure Synapse.
+ms.service: azure-synapse-analytics
+ms.subservice: machine-learning
+ms.topic: quickstart
+
+ms.date: 11/20/2020
+author: nelgson
+ms.author: negust
+ms.custom:
+  - mode-other
+  - sfi-image-nochange
+---
+
+# Quickstart: Configure prerequisites for using Foundry Tools in Azure Synapse Analytics
+
+In this quickstart, you'll learn how set up the prerequisites for securely using Foundry Tools in Azure Synapse Analytics. Linking these Foundry Tools allows you to leverage Foundry Tools from various experiences in Synapse.
+
+This quickstart covers:
+> 
+> - Create an Azure AI services resource like Text Analytics or Anomaly Detector.
+> - Store an authentication key to Azure AI services resources as secrets in Azure Key Vault, and configure access for an Azure Synapse Analytics workspace.
+> - Create an Azure Key Vault linked service in your Azure Synapse Analytics workspace.
+> - Create a Foundry Tools linked service in your Azure Synapse Analytics workspace.
+
+If you don't have an Azure subscription, [create a free account before you begin](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+## Prerequisites
+
+- [Azure Synapse Analytics workspace](../get-started-create-workspace.md) with an Azure Data Lake Storage Gen2 storage account configured as the default storage. You need to be the *Storage Blob Data Contributor* of the Azure Data Lake Storage Gen2 file system that you work with.
+
+## Sign in to the Azure portal
+
+Sign in to the [Azure portal](https://portal.azure.com/).
+
+## Create an Azure AI services resource
+
+[Foundry Tools](https://learn.microsoft.com/azure/ai-services/) includes many types of services. Follow services are examples used in the Azure Synapse tutorials.
+
+You can create a [Text Analytics](https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics) resource in the Azure portal:
+
+Screenshot that shows Text Analytics in the portal, with the Create button.
+
+You can create an [Anomaly Detector](https://portal.azure.com/#create/Microsoft.CognitiveServicesAnomalyDetector) resource in the Azure portal:
+
+Screenshot that shows Anomaly Detector in the portal, with the Create button.
+
+You can create an [Azure Document Intelligence in Foundry Tools](https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer) resource (for Document Intelligence) in the Azure portal:
+
+Screenshot that shows Document Intelligence in the portal, with the Create button.
+
+You can create a [Translator](https://portal.azure.com/#create/Microsoft.CognitiveServicesTextTranslation) resource in the Azure portal:
+
+Screenshot that shows Translator in the portal, with the Create button.
+
+You can create a [Computer Vision](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision) resource in the Azure portal:
+
+Screenshot that shows Computer Vision in the portal, with the Create button.
+
+
+You can create a [Face](https://portal.azure.com/#create/Microsoft.CognitiveServicesFace) resource in the Azure portal:
+
+Screenshot that shows Face in the portal, with the Create button.
+
+
+You can create a [Speech](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices) resource in the Azure portal:
+
+Screenshot that shows Speech in the portal, with the Create button.
+
+## Create a key vault and configure secrets and access
+
+1. Create a [key vault](https://portal.azure.com/#create/Microsoft.KeyVault) in the Azure portal.
+2. Go to **Key Vault** > **Access policies**, and grant the [Azure Synapse workspace MSI](../../data-factory/data-factory-service-identity.md?context=/azure/synapse-analytics/context/context&tabs=synapse-analytics) permissions to read secrets from Azure Key Vault.
+
+   > **Note:**
+   > Make sure that the policy changes are saved. This step is easy to miss.
+
+   Screenshot that shows selections for adding an access policy.
+
+3. Go to your Azure AI services resource. For example, go to **Anomaly Detector** > **Keys and Endpoint**. Then copy either of the two keys to the clipboard.
+
+4. Go to **Key Vault** > **Secret** to create a new secret. Specify the name of the secret, and then paste the key from the previous step into the **Value** field. Finally, select **Create**.
+
+   Screenshot that shows selections for creating a secret.
+
+   > **Important:**
+   > Make sure you remember or note down this secret name. You'll use it later when you create the Foundry Tools linked service.
+
+## Create an Azure Key Vault linked service in Azure Synapse
+
+1. Open your workspace in Synapse Studio. 
+2. Go to **Manage** > **Linked Services**. Create an **Azure Key Vault** linked service by pointing to the key vault that you just created. 
+3. Verify the connection by selecting the **Test connection** button. If the connection is green, select **Create** and then select **Publish all** to save your change.
+
+Screenshot that shows Azure Key Vault as a new linked service.
+
+
+## Create an Azure AI linked service in Azure Synapse
+
+1. Open your workspace in Synapse Studio.
+2. Go to **Manage** > **Linked Services**. Create an **Azure Cognitive Services** linked service by pointing to the Microsoft Foundry tool that you just created. 
+3. Verify the connection by selecting the **Test connection** button. If the connection is green, select **Create** and then select **Publish all** to save your change.
+
+Screenshot that shows Foundry Tools as a new linked service.
+
+You're now ready to continue with one of the tutorials for using the Foundry Tools experience in Synapse Studio.
+
+## Next steps
+
+- [Tutorial: Sentiment analysis with Foundry Tools](tutorial-cognitive-services-sentiment.md)
+- [Tutorial: Anomaly detection with Foundry Tools](tutorial-cognitive-services-sentiment.md)
+- [Tutorial: Machine learning model scoring in Azure Synapse dedicated SQL Pools](tutorial-sql-pool-model-scoring-wizard.md).
+- [Machine Learning capabilities in Azure Synapse Analytics](what-is-machine-learning.md)

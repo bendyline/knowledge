@@ -1,0 +1,168 @@
+---
+title: Manage imported data assets (preview)
+titleSuffix: Azure Machine Learning
+description: Learn how to manage imported data assets also known as edit autodeletion.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: mldata
+ms.topic: how-to
+ms.author: scottpolly
+author: s-polly
+ms.reviewer: soumyapatro
+ms.date: 07/30/2024
+ms.custom:
+  - data4ml
+  - devx-track-azurecli
+  - sfi-image-nochange
+---
+
+# Manage imported data assets (preview)
+
+
+**APPLIES TO:**
+
+
+
+
+> **Warning:**
+> __Import data from external sources (preview)__ and __Data Connections (preview)__ in Azure Machine Learning are deprecated and won't be available after September 30, 2026. Until then, you can continue to use these features without disruption. After that date, any workloads that depend on them will be disrupted.
+>
+> **Recommended action:** Migrate external data imports to [Microsoft Fabric](https://www.microsoft.com/microsoft-fabric) and use Azure Machine Learning datastores to make data available in Azure Machine Learning.
+
+
+
+In this article, you learn how to manage imported data assets from a life-cycle perspective. You'll learn how to modify or update auto delete settings on the data assets imported into a managed datastore (`workspacemanagedstore`) that Microsoft manages for the customer.
+
+> **Note:**
+> Auto delete settings capability, or lifecycle management, is currently offered only through the imported data assets in managed datastore, also known as `workspacemanagedstore`.
+
+
+> **Important:**
+> This feature is currently in public preview. This preview version is provided without a service-level agreement, and we don't recommend it for production workloads. Certain features might not be supported or might have constrained capabilities.
+>
+> For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+
+## Modifying auto delete settings
+
+You can change the auto delete setting value or condition as shown in these code samples:
+
+# [Azure CLI](#tab/cli)
+
+```cli
+> az ml data update -n <my_imported_ds> -v <version_number> --set auto_delete_setting.value='45d'
+
+> az ml data update -n <my_imported_ds> -v <version_number> --set auto_delete_setting.condition='created_greater_than'
+
+```
+
+# [Python SDK](#tab/python)
+```python
+from azure.ai.ml.entities import Data 
+from azure.ai.ml.constants import AssetTypes 
+
+name='<my_imported_ds>'
+version='<version_number>'
+type='mltable'
+auto_delete_setting = AutoDeleteSetting(
+    condition='created_greater_than', value='45d'
+) 
+my_data=Data(name=name,version=version,type=type, auto_delete_setting=auto_delete_setting)
+
+ml_client.data.create_or_update(my_data) 
+
+```
+
+# [Studio](#tab/azure-studio)
+
+These steps describe how to modify the auto delete settings of an imported data asset in `workspacemanageddatastore` in the Azure Machine Learning studio:
+
+1. Navigate to [Azure Machine Learning studio](https://ml.azure.com)
+
+1. As shown in the next screenshot, under **Assets** in the left navigation, select **Data**. At the **Data assets** tab, select an imported data asset located in the **workspacemanageddatastore**.
+
+   Screenshot highlighting the imported data asset name in workspace managed datastore in the Data assets tab.
+
+1. As shown in the next screenshot, the details page of the data asset has an **Auto delete setting** property. This property is currently active on the data asset. Verify that you have the correct **Version:** of the data asset selected in the drop-down, and select the pencil icon to edit the property.
+
+   Screenshot showing the edit of the auto delete setting.
+
+1. To change the auto delete **Condition** setting, select **Created greater than**, and change **Value** to any numeric value. Then, select **Save** as shown in this screenshot:
+
+   Screenshot that shows the managed data asset auto delete settings choices.
+
+   > **Note:**
+   > At this time, the supported values range from 1 day to 3 years.
+
+1. After a successful edit, you'll return to the data asset detail page. That page shows the updated values in **Auto delete settings** property box, as shown in the next screenshot:
+
+   Screenshot showing the managed data asset auto delete settings.
+
+   > **Note:**
+   > The auto delete setting is available only on imported data assets in a **workspacemanaged** datastore, as shown in the above screenshot.
+
+---
+
+## Deleting/removing auto delete settings
+
+If you don't want a specific data asset version to become part of life-cycle management, you can remove a previously configured auto delete setting.
+
+# [Azure CLI](#tab/cli)
+
+```cli
+> az ml data update -n <my_imported_ds> -v <version_number> --remove auto_delete_setting
+
+```
+
+# [Python SDK](#tab/python)
+```python
+from azure.ai.ml.entities import Data 
+from azure.ai.ml.constants import AssetTypes 
+
+name='<my_imported_ds>'
+version='<version_number>'
+type='mltable'
+ 
+my_data=Data(name=name,version=version,type=type, auto_delete_setting=None)
+
+ml_client.data.create_or_update(my_data) 
+
+```
+# [Studio](#tab/azure-studio)
+
+These steps describe how to delete or clear the auto delete settings of an imported data asset in `workspacemanageddatastore` in the Azure Machine Learning studio:
+
+1. Navigate to [Azure Machine Learning studio](https://ml.azure.com)
+
+1. As shown in this screenshot, under **Assets** in the left navigation, select **Data**. On the **Data assets** tab, select an imported data asset located in the **workspacemanageddatastore**:
+
+   Screenshot highlighting the imported data asset name in workspace managed datastore in the Data assets tab.
+
+1. As shown in the next screenshot, the data asset details page has an **Auto delete setting** property. This property is currently active on the data asset. Verify that you have the correct **Version:** of the data asset selected in the drop-down, and select the pencil icon to edit the property.
+
+   Screenshot showing the edit of the auto delete setting.
+
+1. To delete or clear the auto delete setting, select the **Clear auto delete setting** trash can icon at the bottom of the page, as shown in this screenshot:
+
+   Screenshot showing the managed data asset auto delete settings choices.
+
+1. After a successful deletion, you'll return to the data asset detail page. This page shows the **Auto delete settings** property box, which displays **None**, as shown in this screenshot:
+
+   This screenshot shows the managed data asset auto delete settings.
+---
+
+## Query on the configured auto delete settings
+
+This Azure CLI code sample shows the data assets with certain conditions, or with values configured in the **auto delete** settings:
+
+```cli
+> az ml data list --query '[?auto_delete_setting.\"condition\"==''created_greater_than'']'
+
+> az ml data list --query '[?auto_delete_setting.\"value\"==''30d'']'
+```
+
+## Next steps
+
+- [Access data in a job](how-to-read-write-data-v2.md#access-data-in-a-job)
+- [Access data from Azure cloud storage during interactive development](how-to-access-data-interactive.md)
+- [Working with tables in Azure Machine Learning](how-to-mltable.md)

@@ -1,0 +1,70 @@
+---
+title: "&amp;&amp; (Logical AND) (SSIS Expression)"
+description: "&amp;&amp; (Logical AND) (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "&& (logical AND)"
+  - "AND, logical AND"
+  - "logical AND (&&)"
+---
+# &amp;&amp; (Logical AND) (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Performs a logical AND operation. The expression evaluates to TRUE if all conditions are TRUE.  
+  
+## Syntax  
+  
+```  
+  
+boolean_expression1 && boolean_expression2  
+```  
+  
+## Arguments  
+ *boolean _expression1, boolean_expression2*  
+ Is any valid expression that evaluates to TRUE, FALSE, or NULL.  
+  
+## Result Types  
+ DT_BOOL  
+  
+## Remarks  
+ The following table shows the result of the && operator.  
+  
+| Result | Expression | Expression |
+| --- | --- | --- |
+| TRUE | TRUE | TRUE |
+| FALSE | TRUE | FALSE |
+| FALSE | FALSE | FALSE |
+| NULL | NULL | NULL |
+| NULL | NULL | TRUE |
+| FALSE | NULL | FALSE |
+  
+## Expression Examples  
+ This example uses the **StandardCost** and the **ListPrice** columns. The example evaluates to TRUE if the value of the **StandardCost** column is less than 300 and the **ListPrice** column is greater than 500.  
+  
+```  
+StandardCost < 300 && ListPrice > 500  
+```  
+  
+ This example uses the variables **SPrice** and **LPrice** instead of literals.  
+  
+```  
+StandardCost < @SPrice && ListPrice > @LPrice  
+```  
+  
+## Related content
+
+- [&amp; (Bitwise AND) (SSIS Expression)](bitwise-and-ssis-expression.md)
+- [Operator Precedence and Associativity](operator-precedence-and-associativity.md)
+- [Operators (SSIS Expression)](operators-ssis-expression.md)

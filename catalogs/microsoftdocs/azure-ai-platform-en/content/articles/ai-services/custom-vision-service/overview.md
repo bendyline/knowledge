@@ -1,0 +1,98 @@
+---
+title: What is Custom Vision?
+titleSuffix: Foundry Tools
+description: Learn how to use the Azure AI Custom Vision service to build custom AI models to detect objects or classify images.
+author: PatrickFarley
+manager: mcleans
+
+ms.service: azure-ai-custom-vision
+ms.topic: overview
+ms.date: 03/26/2025
+ms.author: pafarley
+keywords: image recognition, image identifier, image recognition app, custom vision
+ms.custom: FY25Q1-Linter
+#Customer intent: As a data scientist/developer, I want to understand what the Custom Vision service does so that I can determine if it's suitable for my project.
+---
+
+# What is Custom Vision?
+
+
+
+> **Important:**
+> Microsoft is announcing the planned retirement of the Azure Custom Vision service. Microsoft will provide full support for all existing Azure Custom Vision customers until 9/25/2028. During this support window, customers are encouraged to begin planning and executing their transition to alternative solutions.
+> Depending on your use case, we recommend the following paths for transition:
+> - For creating custom models for both image classification and object detection, **Azure Machine Learning AutoML** offers the ability to train both custom model types using classic machine learning techniques
+> - [Learn more about Azure Machine Learning AutoML](https://learn.microsoft.com/azure/machine-learning/concept-automated-ml) and explore how it can offer support for custom model training.
+> 
+> Microsoft is also investing in Generative AI-based solutions that increase accuracy in custom scenarios using prompt engineering and other techniques.
+> - To use generative models, you can use one of models available in the Foundry model catalog and create your own solution for customized vision.
+> - For a managed generative solution for image classification, Azure Content Understanding in Foundry Tools (currently in public preview) offers the ability to create custom classification workflows. It also supports processing unstructured data of any type (image, documents, audio, video) and extract structured insights based on pre-defined or user-defined formats.
+> - [Learn more about Microsoft Foundry Models](https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview) and [Azure Content Understanding (public preview)](https://learn.microsoft.com/azure/ai-services/content-understanding/overview) and explore how they can offer alternative paths for your custom needs.
+>
+> For more detailed guidance on migration, see the [Azure Custom Vision Migration Guide](https://aka.ms/custom-vision-migration).
+
+
+Azure AI Custom Vision is an image recognition service that lets you build, deploy, and improve your own **image identifier** models. An image identifier applies labels to images according to their visual characteristics. Each label represents a classification or object. Custom Vision allows you to specify your own labels and train custom models to detect them.
+
+You can use Custom Vision through a client library SDK, REST API, or through the [Custom Vision web portal](https://customvision.ai/). Follow a quickstart to get started.
+
+> 
+> [Quickstart (web portal)](getting-started-build-a-classifier.md)
+
+Screenshot of an image on the Custom Vision website with predicted tags.
+
+This documentation contains the following types of articles:
+* The [quickstarts](getting-started-build-a-classifier.md) are step-by-step instructions that let you make calls to the service and get results in a short period of time.
+* The [how-to guides](test-your-model.md) contain instructions for using the service in more specific or customized ways.
+<!--* The [conceptual articles](Vision-API-How-to-Topics/call-read-api.md) provide in-depth explanations of the service's functionality and features.-->
+
+For a more structured approach, follow a **Training module** for Custom Vision:
+* [Classify images with the Custom Vision service](https://learn.microsoft.com/training/modules/classify-images-custom-vision/)
+* [Classify endangered bird species with Custom Vision](https://learn.microsoft.com/training/modules/cv-classify-bird-species/)
+
+## How it works
+
+The Custom Vision service uses a machine learning algorithm to analyze images for custom features. You submit sets of images that do and don't have the visual characteristics you're looking for. Then you label the images with your own labels (tags) at the time of submission. The algorithm trains to this data and calculates its own accuracy by testing itself on the same images. Once you've trained your model, you can test, retrain, and eventually use it in your image recognition app to [classify images](getting-started-build-a-classifier.md) or [detect objects](get-started-build-detector.md). You can also [export the model](export-your-model.md) for offline use.
+
+### Classification and object detection
+
+Custom Vision functionality can be divided into two features. **[Image classification](getting-started-build-a-classifier.md)** applies one or more labels to an entire image. **[Object detection](get-started-build-detector.md)** is similar, but it returns the coordinates in the image where the applied label(s) are found.
+
+### Use case optimization
+
+The Custom Vision service is optimized to quickly recognize major differences between images, so you can start prototyping your model with a small amount of data. It's generally a good start to use 50 images per label. However, the service isn't optimal for detecting subtle differences in images (for example, detecting minor cracks or dents in quality assurance scenarios).
+
+Additionally, you can choose from several variations of the Custom Vision algorithm that are optimized for images with certain subject material&mdash;for example, landmarks or retail items. For more information, see [Select a domain](select-domain.md).
+
+## How to use Custom Vision
+
+The Custom Vision Service is available as a set of native SDKs and through a web-based interface on the [Custom Vision portal](https://customvision.ai/). You can create, test, and train a model through either interface or use both together.
+
+### Supported browsers
+
+The Custom Vision portal can be used by the following web browsers:
+-	Microsoft Edge (latest version)
+-	Google Chrome (latest version)
+
+Custom Vision website in a Chrome browser window
+
+## Backup and disaster recovery
+
+As a part of Azure, Custom Vision Service has components that are maintained across multiple regions. Service zones and regions are used by all of our services to provide continued service to our customers. For more information on zones and regions, see [Azure regions](https://learn.microsoft.com/azure/reliability/availability-zones-overview). If you need additional information or have any issues, [contact support](https://learn.microsoft.com/answers/topics/azure-custom-vision.html).
+
+## Input requirements
+
+See [Limits and quotas](limits-and-quotas.md) for image input limitations.
+
+## Data privacy and security
+
+As with all of the Foundry Tools, developers using the Custom Vision service should be aware of Microsoft's policies on customer data. See the [Foundry Tools page](https://www.microsoft.com/trustcenter/cloudservices/cognitiveservices) on the Microsoft Trust Center to learn more.
+
+### Data residency
+
+Custom Vision doesn't replicate data outside of the specified region, except for one region, `NorthCentralUS`, where there is no local Azure Support.
+
+## Next steps
+
+Follow the [Build a classifier](getting-started-build-a-classifier.md) quickstart to get started using Custom Vision in the web portal.
+* Or, complete an [SDK quickstart](quickstarts/image-classification.md) to implement the basic scenarios with code.

@@ -1,0 +1,43 @@
+---
+title: "MSSQLSERVER_41301"
+description: "MSSQLSERVER_41301"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "41301 (Database Engine error)"
+---
+# MSSQLSERVER_41301
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+|  |
+| Event ID | 41301 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | COMMIT_DEPENDENCY_FAILURE |
+| Message Text | A previous transaction that the current transaction took a dependency on has aborted, and the current transaction can no longer commit. |
+  
+## Explanation  
+The transaction encountered a dependency failure, and is now doomed.  
+  
+This error can also be caused by too many dependent transactions. Any write transaction can have a limited number of dependent transactions. For example, this error can occur if too many read transactions try to take a dependency on the update transaction.  
+  
+## User Action  
+Don't do any work on the transaction. Call ROLLBACK TRAN to roll back the transaction. For more information, see [In-Memory OLTP (In-Memory Optimization)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/in-memory-oltp/in-memory-oltp-in-memory-optimization.md).  
+  
+## Related content
+
+- [Enable or disable the Always On availability group feature](../../database-engine/availability-groups/windows/enable-and-disable-always-on-availability-groups-sql-server.md)

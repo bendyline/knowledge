@@ -1,0 +1,247 @@
+---
+title: Migration Overview for SMB Azure File Shares
+description: Learn how to migrate to SMB Azure file shares and choose from a table of migration guides using Azure Storage Mover, Robocopy, Azure File Sync, and other tools.
+author: khdownie
+ms.service: azure-file-storage
+ms.topic: concept-article
+ms.date: 07/13/2026
+ms.author: kendownie
+# Customer intent: "As a system administrator, I want to understand the migration process to SMB Azure file shares, so that I can efficiently move our data with full fidelity and select the appropriate tools for a seamless transition to cloud storage."
+---
+
+# Migrate to SMB Azure file shares
+
+:heavy_check_mark: **Applies to:** Classic SMB file shares created with the Microsoft.Storage resource provider
+
+:heavy_multiplication_x: **Doesn't apply to:** All NFS file shares including file shares created with the Microsoft.FileShares resource provider or classic file shares created with the Microsoft.Storage resource provider
+
+This article covers the basic aspects of a migration to SMB [Azure file shares](storage-files-introduction.md) and contains a table of migration guides. The guides are organized based on where your data is and what deployment model (cloud-only or hybrid) you're moving to. The goal is to move the data from existing file share locations to Azure. 
+
+## Migration basics
+
+During the migration, you need to guarantee the integrity of the production data and availability. This requirement means preserving file fidelity and minimizing downtime so that the migration can fit into or only slightly exceed your regular maintenance windows.
+
+### Preserving file fidelity
+
+A key aspect in any file share migration is capturing as much file fidelity as possible when moving your files from their current storage location to Azure.
+
+Here are the two basic components of a file:
+
+- **Data stream**: The data stream of a file stores the file content.
+- **File metadata**: Unlike object storage in Azure blobs, an Azure file share can natively store [supported file metadata](#supported-metadata). General-purpose file data traditionally depends on file metadata. App data might not. The file metadata has these subcomponents:
+  - File attributes like read-only
+  - File permissions, which are often referred to as *NTFS permissions* or *file and folder ACLs*
+  - Timestamps, most notably the creation and last-modified timestamps
+  - An [alternative data stream](storage-files-faq.md#alternate-data-streams), which is a space to store larger amounts of nonstandard properties. This alternative data stream can't be stored on a file in an Azure file share. It's preserved on-premises when Azure File Sync is used.
+
+File fidelity in a migration can be defined as the ability to:
+
+- Store all applicable file information on the source.
+- Transfer files with the migration tool.
+- Store files in the target storage of the migration. </br> The target for migration guides in this article is one or more Azure file shares. Consider this [list of features that SMB Azure file shares don't support](files-smb-protocol.md#limitations).
+
+To ensure your migration proceeds smoothly, identify [the best copy tool for your needs](#migration-guides) and match a storage target to your source.
+
+> **Important:**
+> If you're migrating on-premises file servers to Azure Files, set the ACLs for the root directory of the file share **before** copying a large number of files, as changes to permissions for root ACLs can take a long time to propagate if done after a large file migration.
+
+If you use on-premises Active Directory Domain Services (AD DS) or Microsoft Entra Domain Services as your domain controller, you can natively access an Azure file share. Learn more about [identity-based authentication for Azure Files over SMB](storage-files-active-directory-overview.md).
+
+#### Supported metadata
+
+The following table lists supported metadata for Azure Files.
+
+> **Important:**
+> The *LastAccessTime* timestamp isn't currently supported for files or directories on the target share. However, Azure Files returns the *LastAccessTime* value for a file when requested. Because the timestamp isn't updated on read operations, it always equals the *CreationTime*.
+
+| **Source** | **Target** |
+| --- | --- |
+| Directory structure | The original directory structure of the source can be preserved on the target share. |
+| Access permissions | Azure Files supports Windows ACLs, and they must be set on the target share even if no AD integration is configured at migration time. The following ACLs must be preserved: owner security identifier (SID), group SID, discretionary access lists (DACLs), system access control lists (SACLs). |
+| Create timestamp | The original create timestamp of the source file can be preserved on the target share. |
+| Change timestamp | The original change timestamp of the source file can be preserved on the target share. |
+| Modified timestamp | The original modified timestamp of the source file can be preserved on the target share. |
+| File attributes | Common attributes such as read-only, hidden, and archive flags can be preserved on the target share. |
+
+## File share discovery
+
+The first phase of a migration is the discovery phase. In this phase, you determine all the existing SMB file shares that need to be migrated, including their size, number, and any dependencies. This phase can be difficult and time-consuming, especially for organizations with large, distributed environments.
+
+### Azure Migrate file share discovery
+
+If you've already deployed an [Azure Migrate](https://learn.microsoft.com/azure/migrate/migrate-services-overview) appliance for server migration, you can use it to discover file shares without any additional setup. The appliance automatically identifies existing SMB and NFS shares on both Windows and Linux servers and displays them in the Azure Migrate portal.
+
+You can view discovered file shares in two ways:
+
+- **Per-server view:** Select a specific server to see all the file shares hosted on that operating system.
+- **Infrastructure view:** Navigate to the infrastructure view to see all discovered file shares across all servers in a hierarchical inventory. Select an individual share to see details such as the volume, file system path, and approximate size.
+
+### Third-party discovery tools
+
+For customers with more than 100 TiB of file data, we recommend using Komprise, a third-party tool that can help you discover and analyze your file shares. For more information, see [Komprise File Migration](https://www.komprise.com/azure-file-migration/).
+
+Keep in mind that your existing SMB file shares might not be limited to on-premises Windows Servers. They could be on Linux servers, in the cloud, or on external NAS devices.
+
+## Migration assessment
+
+After discovery comes the assessment phase, which involves understanding available options for file storage, deploying the Azure resources you'll need, and preparing to use Azure file shares.
+
+### Azure Migrate file share assessment
+
+If you used [Azure Migrate](https://learn.microsoft.com/azure/migrate/migrate-services-overview) to discover your file shares, you can also use it to create assessments. Select one or more discovered shares and create an assessment. For each share, Azure Migrate evaluates IOPS, throughput, size, capacity, and regional availability to determine a readiness state: **ready**, **ready with conditions**, or **not ready**. It then recommends a target configuration, prioritizing migration to Azure Files as a modernization path. If Azure Files isn't suitable for a particular share, the assessment falls back to recommending an Azure VM-based path.
+
+You can also create a business case from the assessment to compare the cost of running your file shares on-premises versus migrating them to Azure Files, helping you make a data-driven decision.
+
+### Deploy Azure storage resources
+
+As part of the assessment phase, provision the Azure storage accounts and the Azure classic file shares within them.
+
+You deploy classic Azure file shares in the cloud in an Azure storage account. For HDD (standard) file shares, that arrangement makes the storage account a scale target for performance numbers like IOPS and throughput. If you place multiple file shares in a single storage account, you create a shared pool of IOPS and throughput for these shares.
+
+As a general rule, you can pool multiple Azure file shares into the same storage account if you have archival shares or you expect low day-to-day activity in them. However, if you have highly active shares (shares used by many users and/or applications), you'll want to deploy storage accounts with one file share each. These limitations don't apply to FileStorage (SSD) storage accounts, where performance is explicitly provisioned and guaranteed for each share.
+
+For more information about performance and cost, see [Understand performance](understand-performance.md) and [Understand billing](understanding-billing.md).
+
+> **Note:**
+> There's a limit of 250 storage accounts per subscription per Azure region. With a quota increase, you can create up to 500 storage accounts per region. For more information, see [Increase Azure Storage account quotas](https://learn.microsoft.com/azure/quotas/storage-account-quota-requests).
+
+Another consideration when deploying classic file shares in a storage account is redundancy. See [Azure Files redundancy](files-redundancy.md).
+
+If you've made a list of your shares, you should map each share to the storage account it will be created in.
+
+The names of your resources are also important. For example, if you group multiple shares for the HR department into an Azure storage account, you should name the storage account appropriately. Similarly, when you name your Azure file shares, you should use names similar to the ones used for their on-premises counterparts.
+
+Now deploy the appropriate number of Azure storage accounts with the appropriate number of Azure file shares in them, following the instructions in [Create an SMB file share](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/storage-how-to-create-file-share.md). In most cases, you'll want to make sure the region of each of your storage accounts is the same.
+
+### Prepare to use Azure file shares
+
+You also need to decide how your servers and users in Azure and outside of Azure access your Azure file shares. The most critical decisions are:
+
+- **Networking:** Enable your networks to route SMB traffic. See [Networking overview for Azure file shares](storage-files-networking-overview.md) for more information. You can use public endpoints, private endpoints, or a combination of both.
+- **Authentication:** Configure the Azure storage account for identity-based authentication and join the storage account to your AD domain. This will allow your apps and users to use their AD identity for authentication.
+- **Authorization:** Share-level ACLs for each Azure file share will allow AD users and groups to access a given share. Within an Azure file share, native NTFS ACLs will take over. Authorization based on file and folder ACLs then works like it does for on-premises SMB shares.
+- **Business continuity:** Integrating Azure file shares into an existing environment often entails preserving existing share addresses. If you aren't already using [DFS-Namespaces](files-manage-namespaces.md), consider establishing that in your environment. You'll be able to keep share addresses your users and scripts use, unchanged. DFS-N provides a namespace routing service for SMB by redirecting clients to Azure file shares.
+
+
+
+> [!VIDEO https://www.youtube-nocookie.com/embed/jd49W33DxkQ]
+
+
+This video is a guide and demo for how to securely expose Azure file shares directly to information workers and apps in five simple steps.</br>
+The video references dedicated documentation for the following topics. Note that Azure Active Directory is now Microsoft Entra ID. For more information, see [New name for Azure AD](https://aka.ms/azureadnewname).
+
+* [Identity-based authentication overview](storage-files-active-directory-overview.md)
+* [Networking overview for Azure file shares](storage-files-networking-overview.md)
+* [How to configure public and private endpoints](storage-files-networking-endpoints.md)
+* [How to configure a site-to-site VPN](storage-files-configure-s2s-vpn.md)
+* [How to configure a Windows point-to-site VPN](storage-files-configure-p2s-vpn-windows.md)
+* [How to configure a Linux point-to-site VPN](storage-files-configure-p2s-vpn-linux.md)
+* [How to configure DNS forwarding](storage-files-networking-dns.md)
+* [Configure DFS-N](files-manage-namespaces.md)
+
+
+
+## Migration guides
+
+Selecting the right tools for your migration scenario is crucial. The following diagram shows what migration tool or tool combination you should use based on your SMB data source and whether or not you want to use Azure File Sync.
+
+Decision flowchart showing which migration tool you should choose based on your SMB data source.
+
+The following table lists the suggested migration tool combinations and includes links to tool-specific migration guides.
+
+How to use the table:
+
+1. Locate the row for the source system your files are currently stored on.
+
+1. Choose one of these targets:
+
+   - **Hybrid deployment:** Use [Azure File Sync](../file-sync/file-sync-introduction.md) to cache the content of Azure file shares on-premises and tier less frequently used files to the cloud.
+   - **Cloud-only deployment:** Azure file shares in the cloud, with no on-premises caching.
+
+   Select the target column that matches your choice.
+
+1. Within the intersection of source and target, a table cell lists available migration scenarios. Select one to view the migration guide.
+
+A scenario without a link doesn't yet have a published migration guide. Check this table occasionally for updates.
+
+| Source | Target: </br>Hybrid deployment </br>(Azure Files + Azure File Sync) | Target: </br>Cloud-only deployment </br>(Azure Files) |
+| :--- | :--- | :--- |
+|  | Recommended tool combination: | Recommended tool combination: |
+| Windows Server 2012 R2 and later | <ul><li>[Azure File Sync](../file-sync/file-sync-deployment-guide.md)</li><li>[Azure File Sync and Azure DataBox](storage-files-migration-server-hybrid-databox.md)</li></ul> | <ul><li>Via Azure File Sync: Follow same steps as [Azure File Sync hybrid deployment](../file-sync/file-sync-deployment-guide.md) and [decommission server endpoint](../file-sync/file-sync-server-endpoint-delete.md) at the end.</li><li>[Via RoboCopy to a mounted Azure file share](storage-files-migration-robocopy.md)</li><li>Via [Azure Storage Mover](migrate-files-storage-mover.md)</li></ul> |
+| Windows Server 2012 and earlier | <ul><li>Via [DataBox](../../databox/data-box-overview.md)</li><li>Via [Storage Migration Service](https://learn.microsoft.com/windows-server/storage/storage-migration-service/overview) to recent server with [Azure File Sync](../file-sync/file-sync-deployment-guide.md), then upload</li></ul> | <ul><li>Via [Azure Storage Mover](migrate-files-storage-mover.md)</li><li>Via [Storage Migration Service](https://learn.microsoft.com/windows-server/storage/storage-migration-service/overview) to recent server with [Azure File Sync](../file-sync/file-sync-deployment-guide.md)</li><li>[Via RoboCopy to a mounted Azure file share](storage-files-migration-robocopy.md)</li></ul> |
+| Linux (SMB) | <ul><li>NA</li></ul> | <ul><li>Via [Azure Storage Mover](migrate-files-storage-mover.md)</li></ul> |
+| Network-attached storage (NAS) | <ul><li>Via [Storage Mover upload](migrate-files-storage-mover.md) + [Azure File Sync](../file-sync/file-sync-deployment-guide.md)</li><li>[Via Azure File Sync upload](storage-files-migration-nas-hybrid.md)</li><li>[Via DataBox + Azure File Sync](storage-files-migration-nas-hybrid-databox.md)</li></ul> | <ul><li>Via [Azure Storage Mover](migrate-files-storage-mover.md)</li><li>[Via DataBox](storage-files-migration-nas-cloud-databox.md)</li><li>[Via RoboCopy to a mounted Azure file share](storage-files-migration-robocopy.md)</li></ul> |
+
+### File-copy tools
+
+To select the right tool for your migration scenario, consider these fundamental questions:
+
+- Does the tool support the source and target locations for your file copy?
+
+- Does the tool support your network path or available protocols (such as REST or SMB) between the source and target storage locations?
+
+- Does the tool preserve the necessary file fidelity supported by your source and target locations?
+
+    In some cases, your target storage doesn't support the same fidelity as your source. If the target storage is sufficient for your needs, the tool must match only the target's file-fidelity capabilities.
+
+- Does the tool have features that let it fit into your migration strategy?
+
+    For example, consider whether the tool lets you minimize your downtime.
+
+    When a tool supports an option to mirror a source to a target, you can often run it multiple times on the same source and target while the source stays accessible.
+
+    The first time you run the tool, it copies the bulk of the data. This initial run might last a while. It often lasts longer than you want for taking the data source offline for your business processes.
+
+    By mirroring a source to a target (as with **robocopy /MIR**), you can run the tool again on that same source and target. This second run is much faster because it needs to transport only source changes that happened after the previous run. Rerunning a copy tool this way can reduce downtime significantly.
+
+The following table classifies Microsoft tools and their current suitability for SMB Azure file shares:
+
+| Recommended | Tool | Support for Azure file shares | Preservation of file fidelity |
+| :---: | :--- | :--- | :--- |
+| Yes, recommended | [Azure Storage Mover](../../storage-mover/service-overview.md) | Supported. | Full fidelity.* |
+| Yes, recommended | [Azure Data Box](../../databox/data-box-overview.md?pivots=dbx-ng) | Supported. | Full fidelity.* |
+| Yes, recommended | RoboCopy | Supported. Azure file shares can be mounted as network drives. | Full fidelity.* |
+| Yes, recommended | [Azure File Sync](../file-sync/file-sync-introduction.md) | Natively integrated into Azure file shares. | Full fidelity.* |
+| Yes, recommended | [Azure Storage Migration Program](../solution-integration/validated-partners/data-management/azure-file-migration-program-solutions.md) | Supported. | Full fidelity.* |
+| Yes, recommended | Storage Migration Service | Indirectly supported. Azure file shares can be mounted as network drives on Storage Migration Service target servers. | Full fidelity.* |
+| Yes, recommended | Data Box (including the [data copy service](../../databox/data-box-deploy-copy-data-via-copy-service.md) to load files onto the device) | Supported. </br>(Data Box Disks doesn't support large file shares) | Data Box and Data Box Heavy fully support metadata. </br>Data Box Disks doesn't preserve file metadata. |
+| Not fully recommended | AzCopy </br>latest version | Supported but not fully recommended. | AzCopy sync supports up to 10 million files per AzCopy job and some file fidelity might be lost as AzCopy uses the Azure Files REST APIs for copying content to your Azure Files share. </br>[Learn how to use AzCopy with Azure file shares](../common/storage-use-azcopy-files.md) |
+| Not fully recommended | Azure Storage Explorer </br>latest version | Supported but not recommended. | Loses most file fidelity, like ACLs. Supports timestamps. |
+| Not recommended | Azure Data Factory | Supported. | Doesn't copy metadata. |
+|  |  |  |  |
+
+*\* Full fidelity: meets or exceeds Azure file share capabilities.*
+
+### Migration helper tools
+
+This section describes tools that help you plan and run migrations.
+
+#### Azure Storage Mover
+
+Azure Storage Mover is a fully managed migration service that enables you to migrate files and folders to SMB Azure file shares with the same level of file fidelity as the underlying Azure file share. Folder structure and metadata values such as file and folder timestamps, ACLs, and file attributes are maintained. See [Migrate to Azure file shares using Azure Storage Mover](migrate-files-storage-mover.md).
+
+#### RoboCopy
+
+Included in Windows, RoboCopy is a useful tool for SMB file migrations. The [RoboCopy documentation](https://learn.microsoft.com/windows-server/administration/windows-commands/robocopy) is a helpful resource for this tool's many options.
+
+#### Azure Storage Migration Program
+
+Understanding your data is the first step in selecting the appropriate Azure storage service and migration strategy. Azure Storage Migration Program provides different tools that can analyze your data and storage infrastructure to provide valuable insights. These tools can help you understand the size and type of data, file and folder count, and access patterns. They provide a consolidated view of your data and enable the creation of various customized reports.
+
+This information can help:
+
+- Identify duplicate and redundant data sets
+- Identify colder data that can be moved to less expensive storage
+
+To learn more, see [Comparison Matrix for Azure Storage Migration Program participants](../solution-integration/validated-partners/data-management/azure-file-migration-program-solutions.md).
+
+#### TreeSize from JAM Software GmbH
+
+Azure File Sync scales primarily with the number of items (files and folders) and not with the total storage amount. The TreeSize tool lets you determine the number of items on your Windows Server volumes.
+
+You can use the tool to create a perspective before an [Azure File Sync deployment](../file-sync/file-sync-deployment-guide.md). You can also use it when cloud tiering is engaged after deployment. In that scenario, you see the number of items and which directories use your server cache the most. The tool won't cause recall of tiered files during its normal operation.
+
+## See also
+
+- [Azure Files overview](storage-files-introduction.md)
+- [Plan for an Azure File Sync deployment](../file-sync/file-sync-planning.md)

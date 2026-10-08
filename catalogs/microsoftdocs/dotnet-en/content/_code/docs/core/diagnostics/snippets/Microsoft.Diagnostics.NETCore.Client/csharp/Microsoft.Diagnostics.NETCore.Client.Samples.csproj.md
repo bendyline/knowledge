@@ -1,0 +1,20 @@
+# Source code: docs/core/diagnostics/snippets/Microsoft.Diagnostics.NETCore.Client/csharp/Microsoft.Diagnostics.NETCore.Client.Samples.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.745401" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.6" />
+  </ItemGroup>
+
+</Project>
+
+```

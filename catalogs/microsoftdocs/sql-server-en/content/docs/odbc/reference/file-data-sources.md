@@ -1,0 +1,22 @@
+---
+title: "File Data Sources"
+description: "File Data Sources"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "data sources [ODBC], file"
+  - "file data sources [ODBC]"
+---
+# File Data Sources
+*File data sources* are stored in a file and allow connection information to be used repeatedly by a single user or shared among several users. When a file data source is used, the Driver Manager makes the connection to the data source using the information in a .dsn file. This file can be manipulated like any other file. A file data source does not have a data source name, as does a machine data source, and is not registered to any one user or machine.  
+  
+ A file data source streamlines the connection process, because the .dsn file contains the connection string that would otherwise have to be built for a call to the **SQLDriverConnect** function. Another advantage of the .dsn file is that it can be copied to any machine, so identical data sources can be used by many machines as long as they have the appropriate driver installed. A file data source can also be shared by applications. A shareable file data source can be placed on a network and used simultaneously by multiple applications.  
+  
+ A .dsn file can also be unshareable. An unshareable .dsn file resides on a single machine and points to a machine data source. Unshareable file data sources exist mainly to allow the easy conversion of machine data sources to file data sources so that an application can be designed to work solely with file data sources. When the Driver Manager is sent the information in an unshareable file data source, it connects as necessary to the machine data source that the .dsn file points to.  
+  
+ For more information about file data sources, see [Connecting Using File Data Sources](develop-app/connecting-using-file-data-sources.md), or the [SQLDriverConnect](syntax/sqldriverconnect-function.md) function description.

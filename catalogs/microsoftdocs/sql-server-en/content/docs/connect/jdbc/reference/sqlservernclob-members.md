@@ -1,0 +1,50 @@
+---
+title: "SQLServerNClob Members"
+description: "SQLServerNClob Members"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# SQLServerNClob Members
+
+
+  The following tables list the members exposed by the [SQLServerNClob](sqlservernclob-class.md) class.  
+  
+## Constructors  
+ None.  
+  
+## Fields  
+ None.  
+  
+## Inherited Fields  
+ None.  
+  
+## Methods  
+  
+| Name | Description |
+| --- | --- |
+| [free](free-method-sqlservernclob.md) | This method frees the **NCLOB** object and releases the resources that it holds. |
+| [getAsciiStream](getasciistream-method-sqlservernclob.md) | Retrieves the **NCLOB** value designated by the **java.sql.NClob** object as an ASCII stream. |
+| [getCharacterStream](getcharacterstream-method-sqlservernclob.md) | Retrieves the **NCLOB** value designated by the **java.sql.NClob** object. |
+| [getSubString](getsubstring-method-sqlservernclob.md) | Retrieves a copy of the specified substring in the **NCLOB** value designated by the **java.sql.NClob** object. |
+| [length](length-method-sqlservernclob.md) | Retrieves the number of characters in the **NCLOB** value designated by the **java.sql.NClob** object. |
+| [position](position-method-sqlservernclob.md) | Retrieves the character position of the specified **java.sql.NClob** object or substring in the **java.sql.NClob** based on the specified starting position. |
+| [setAsciiStream](setasciistream-method-sqlservernclob.md) | Retrieves a stream to be used to write ASCII characters to the **NCLOB** value that this **java.sql.NClob** object represents, starting at the specified position. |
+| [setCharacterStream](setcharacterstream-method-sqlservernclob.md) | Retrieves a stream to be used to write a stream of Unicode characters to the **NCLOB** value that this **java.sql.NClob** object represents, starting at the specified position. |
+| [setString](setstring-method-sqlservernclob.md) | Writes the specified **String** to the **NCLOB** starting at the specified position. |
+| [truncate](truncate-method-sqlservernclob.md) | Truncates the **NCLOB** value to the specified length. |
+  
+## Inherited Methods  
+  
+| Class inherited from | Methods |
+| --- | --- |
+| java.lang.Object | clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait |
+| java.sql.Clob | free, getAsciiStream, getCharacterStream, getSubString, length, position, setAsciiStream, setCharacterStream, setString, truncate |
+  
+## Related content
+
+- [SQLServerClob Class](sqlserverclob-class.md)

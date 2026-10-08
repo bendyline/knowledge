@@ -1,0 +1,73 @@
+---
+title: Azure Vision Vectorizer
+description: Connects to Azure Vision in Foundry Tools to generate embeddings at query time.
+ms.reviewer: gimondra
+ms.service: azure-ai-search
+ms.custom:
+  - build-2024
+ms.topic: concept-article
+ms.date: 10/23/2025
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Azure Vision vectorizer (preview)
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+
+> **Important:**
+> Features, capabilities, or properties marked (preview) aren't covered by a service-level agreement, aren't recommended for production workloads, and might change or be constrained before they become generally available. The [Azure AI Search preview terms](https://learn.microsoft.com/azure/search/search-preview-terms) apply to all preview functionality, whether it's standalone or part of a generally available feature.
+
+
+The **Azure Vision** vectorizer (preview) connects to Azure Vision in Foundry Tools via a [Microsoft Foundry resource](https://learn.microsoft.com/azure/ai-services/multi-service-resource). At query time, the vectorizer uses the [multimodal embeddings API](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-image-retrieval) to generate embeddings.
+
+To determine where this model is accessible, see the [region availability for multimodal embeddings](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0#region-availability). Your data is processed in the [Geo](https://azure.microsoft.com/explore/global-infrastructure/data-residency/) where your model is deployed.
+
+> **Note:**
+> This vectorizer is bound to Foundry Tools. Execution of the vectorizer is charged at the [Foundry Tools Standard price](https://azure.microsoft.com/pricing/details/cognitive-services/).
+
+## Vectorizer parameters
+
+Parameters are case sensitive.
+
+| Parameter name | Description |
+| --- | --- |
+| `resourceUri` | The endpoint of the Foundry resource, which must have the the `https://<resource-name>.services.ai.azure.com` or `https://<resource-name>.cognitiveservices.azure.com` format. You can find this endpoint on the **Keys and Endpoint** page in the Azure portal. |
+| `apiKey` | The API key of the Foundry resource. |
+| `modelVersion` | (Required) The model version to be passed to the Azure Vision API for generating embeddings. It's important that all embeddings stored in a given index field are generated using the same `modelVersion`. For information about version support for this model refer to [multimodal embeddings](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-image-retrieval#what-are-vector-embeddings). |
+| `authIdentity` | A user-managed identity used by the search service for connecting to Foundry. You can use either a [system- or user-managed identity](search-how-to-managed-identities.md). To use a system-managed identity, leave `apiKey` and `authIdentity` blank. The system-managed identity is used automatically. A managed identity must have **Cognitive Services User** permissions to use this vectorizer. |
+
+## Supported vector query types
+
+The Azure Vision vectorizer supports `text`, `imageUrl`, and `imageBinary` vector queries.
+
+## Expected field dimensions
+
+A vector field configured with the Azure Vision vectorizer should have a dimensions value of 1024.
+
+## Sample definition
+
+```json
+"vectorizers": [
+    {
+        "name": "my-ai-services-vision-vectorizer",
+        "kind": "aiServicesVision",
+        "aiServicesVisionParameters": {
+            "resourceUri": "https://westus.api.cognitive.microsoft.com/",
+            "apiKey": "0000000000000000000000000000000000000",
+            "authIdentity": null,
+            "modelVersion": "2023-04-15"
+        },
+    }
+]
+```
+
+## See also
+
++ [Integrated vectorization](vector-search-integrated-vectorization.md)
++ [How to configure a vectorizer in a search index](vector-search-how-to-configure-vectorizer.md)
++ [Azure Vision multimodal embeddings skill](cognitive-search-skill-vision-vectorize.md)

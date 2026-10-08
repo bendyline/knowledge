@@ -1,0 +1,49 @@
+---
+title: "SQL Server data types and ADO.NET"
+description: "Describes how to work with SQL Server data types and how they interact with .NET data types."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, paulmedynski, cmalhotra
+ms.date: "08/15/2019"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+---
+# SQL Server data types and ADO.NET
+
+
+
+
+SQL Server and the .NET are based on different type systems, which can result in potential data loss. To preserve data integrity, the Microsoft SqlClient Data Provider for SQL Server ([Microsoft.Data.SqlClient](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient)) provides typed accessor methods for working with SQL Server data. You can use the enumerations in the [System.Data.SqlDbType](https://learn.microsoft.com/search/?terms=System.Data.SqlDbType) classes to specify [Microsoft.Data.SqlClient.SqlParameter](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlParameter) data types.  
+  
+SQL Server 2008 introduces new data types that are designed to meet business needs to work with date and time, structured, semi-structured, and unstructured data. These are documented in SQL Server 2008 Books Online.  
+  
+The SQL Server data types that are available for use in your application depends on the version of SQL Server that you are using. For more information, see [Data Types (Database Engine)](https://learn.microsoft.com/previous-versions/sql/sql-server-2008-r2/ms187594\(v=sql.105\)) from SQL Server Books Online.
+  
+## In this section  
+[SqlTypes and the DataSet](sqltypes-dataset.md)  
+Describes type support for `SqlTypes` in the `DataSet`.  
+  
+[Handling null values](handle-null-values.md)  
+Demonstrates how to work with null values and three-valued logic.  
+  
+[Comparing GUID and uniqueidentifier values](compare-guid-uniqueidentifier-values.md)  
+Demonstrates how to work with GUID and uniqueidentifier values in SQL Server and .NET.  
+  
+[Date and time data](date-time-data.md)  
+Describes how to use the new date and time data types introduced in SQL Server 2008.  
+  
+[Large UDTs](large-udts.md)  
+Demonstrates how to retrieve data from large value UDTs introduced in SQL Server 2008.  
+  
+[XML data in SQL Server](xml-data-sql-server.md)  
+Describes how to work with XML data retrieved from SQL Server.  
+  
+## Related content
+
+- [System.Data.DataSet](https://learn.microsoft.com/search/?terms=System.Data.DataSet)
+- [System.Data.SqlTypes](https://learn.microsoft.com/search/?terms=System.Data.SqlTypes)
+- [System.Data.SqlDbType](https://learn.microsoft.com/search/?terms=System.Data.SqlDbType)
+- [System.Data.DbType](https://learn.microsoft.com/search/?terms=System.Data.DbType)
+- [Table-valued parameters](table-valued-parameters.md)
+- [SQL Server binary and large-value data](sql-server-binary-large-value-data.md)

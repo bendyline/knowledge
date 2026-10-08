@@ -1,0 +1,75 @@
+---
+title: "STSrid (geography Data Type)"
+description: "STSrid (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STSrid (geography Data Type)"
+  - "STSrid_TSQL"
+helpviewer_keywords:
+  - "STSrid method"
+dev_langs:
+  - "TSQL"
+---
+# STSrid (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  **STSrid** is an integer representing the spatial reference identifier (SRID) of the instance.  
+  
+## Syntax  
+  
+```  
+  
+.STSrid  
+```  
+  
+## Return Types
+  SQL Server 
+ type: **int**  
+  
+ CLR type: **SqlInt32**  
+  
+## Remarks  
+ This property can be modified.  
+  
+## Examples  
+ The first example creates a `geography` instance with the SRID value 4326 (WGS84) and uses `STSrid` to confirm the SRID.  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('LINESTRING(-122.360 47.656, -122.343 47.656)', 4326);  
+SELECT @g.STSrid;  
+```  
+  
+ The second example uses `STSrid` to change the SRID value of the instance to 4267 (NAD27) and then confirms the modified SRID value.  
+  
+```sql
+SET @g.STSrid = 4267;  
+SELECT @g.STSrid;  
+```  
+  
+## Related content
+
+- [OGC methods on geography instances](ogc-methods-on-geography-instances.md)
+- [Spatial Reference Identifiers (SRIDs)](../../relational-databases/spatial/spatial-reference-identifiers-srids.md)

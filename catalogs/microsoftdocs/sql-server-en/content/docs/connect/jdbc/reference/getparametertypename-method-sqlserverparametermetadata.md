@@ -1,0 +1,45 @@
+---
+title: "getParameterTypeName Method (SQLServerParameterMetaData)"
+description: "getParameterTypeName Method (SQLServerParameterMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerParameterMetaData.getParameterTypeName"
+apitype: "Assembly"
+---
+# getParameterTypeName Method (SQLServerParameterMetaData)
+
+
+  Retrieves the database-specific type name of the designated parameter.  
+  
+## Syntax  
+  
+```  
+  
+public java.lang.String getParameterTypeName(int param)  
+```  
+  
+#### Parameters  
+ *param*  
+  
+ An **int** that indicates parameter index.  
+  
+## Return Value  
+ A **String** that contains type name.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getParameterTypeName method is specified by the getParameterTypeName method in the java.sql.ParameterMetaData interface.  
+  
+## Related content
+
+- [SQLServerParameterMetaData Methods](sqlserverparametermetadata-methods.md)
+- [SQLServerParameterMetaData Members](sqlserverparametermetadata-members.md)
+- [SQLServerParameterMetaData Class](sqlserverparametermetadata-class.md)

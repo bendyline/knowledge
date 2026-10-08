@@ -1,0 +1,10 @@
+# Source code: aspnetcore/release-notes/aspnetcore-9/samples/SignalRChatTraceExample/Pages/_ViewStart.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    Layout = "_Layout";
+}
+
+```

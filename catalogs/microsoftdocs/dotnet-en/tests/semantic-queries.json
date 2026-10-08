@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How do async and await make asynchronous C# code easier to write without blocking the calling thread?",
+    "expectedDocumentIds": [
+      "docs/csharp/asynchronous-programming/index"
+    ]
+  }
+]

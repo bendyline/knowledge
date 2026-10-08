@@ -1,0 +1,427 @@
+---
+title: "SQL Server 2016 Release Notes"
+description: This Release Notes document describes known issues that you should read about before you install or troubleshoot Microsoft SQL Server 2016 releases.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 08/21/2025
+ms.service: sql
+ms.subservice: release-landing
+ms.topic: release-notes
+helpviewer_keywords:
+  - "build notes"
+  - "release issues"
+  - "Release Notes, SQL Server 2016"
+---
+
+# SQL Server 2016 release notes
+
+
+**Applies to:**
+ 
+
+ and later versions
+
+This article describes limitations and issues with  SQL Server 2016 (13.x) 
+ releases, including service packs. For information on what's new, see [What's new in SQL Server 2016](https://learn.microsoft.com/previous-versions/sql/sql-server/what-s-new-in-sql-server-2016).
+
+
+
+
+
+## Azure Connect Pack for SQL Server 2016 (May 2022)
+
+Adds support for the [link feature](https://learn.microsoft.com/azure/azure-sql/managed-instance/managed-instance-link-feature-overview) for Azure SQL Managed Instance, which enables database replication from SQL Server to [Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/sql-managed-instance-paas-overview).
+
+For more information, see [Azure Connect Pack for SQL Server 2016 Service Pack 3](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2016/servicepack3-azureconnect).
+
+<a id="bkmk_2016sp3"></a>
+
+## SQL Server 2016 Service Pack 3 (SP3) (September 2021)
+
+ SQL Server 2016 (13.x) 
+ SP3 includes all cumulative updates released after  SQL Server 2016 (13.x) 
+ SP2, up to and including CU17.
+
+
+
+For a complete list of updates, see [KB5003279 - SQL Server 2016 Service Pack 3 release information](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2016/servicepack3).
+
+The  SQL Server 2016 (13.x) 
+ SP3 installation might require restart after installation. As a best practice, you should perform a restart following the installation of  SQL Server 2016 (13.x) 
+ SP3.
+
+Performance and scale related improvements included in  SQL Server 2016 (13.x) 
+ SP3.
+
+| Feature | Description | More information |
+| --- | --- | --- |
+| Availability Group listener without the load balancer | Enables you to create a new type of Availability Group (AG) listener named "distributed network name (DNN) listener" without the load balancer.<br /><br />**Note:** Removing the load balancer greatly reduces the configuration complexity and also greatly reduces the AG failover latency (by 6 to 7 times for some workloads). | [KB4578579](https://support.microsoft.com/help/4578579) |
+| Enable DNN feature in SQL Server 2016 and 2019 FCI | Failover Cluster Instance (FCI) listeners are enhanced to work with Windows Server Failover Cluster (WSFC) Distributed Network Name (DNN) access point. | [KB4537868](https://support.microsoft.com/help/4537868) |
+
+Supportability and diagnostics related improvements included in  SQL Server 2016 (13.x) 
+ SP3.
+
+| Feature | Description | More information |
+| --- | --- | --- |
+| Improve CDC supportability and usability with in-memory databases | The Change Data Capture (CDC) feature can't be enabled on a database that is enabled for In-Memory Online Transaction Processing (OLTP) access. This improvement unblocks enabling CDC on a database with In-Memory OLTP and In-Memory Objects. Additionally, the `cdc_session` XEvent is updated to print Scan Phase information. | [KB4500511](https://support.microsoft.com/help/4500511) |
+| Size and retention policy are increased in default XEvent trace `system_health` | The current definition for the `system_health` XEvent session has a maximum file size of 5 megabytes (MB) and maximum number of files of 4, for a maximum of 20 MB of `system_health` XEvent data. On systems that have a lot of activity, you can roll over this limitation quickly and miss important information in the event of an issue that affects the system. To keep more troubleshooting data available on the system, the default file size changed from 5 MB to 100 MB, and the default number of files changed from 4 to 10, for a maximum of 1 GB of `system_health` XEvent data, in this update. If the definition of the `system_health` session has already been modified from the default values, this improvement doesn't overwrite the existing settings. | [KB4541132](https://support.microsoft.com/help/4541132) |
+| New XEvents `temp_table_cache_trace` and `temp_table_destroy_list_trace` | Two new XEvents `temp_table_cache_trace` and `temp_table_destroy_list_trace` are created for tracking temporary table cache metrics and operations.<br /><br />**Note:** These XEvents track a specific metadata cache object called the temporary object cache, which contains information about what temporary tables, objects, parameters are cached, evicted, and reused. You can run the XEvent to trace the behavior of the cache when you notice `tempdb` cache contention. Most customers don't use this and it helps CSS Engineers to debug issues on their environment. | [KB5003937](https://support.microsoft.com/help/5003937) |
+| New logging and XEvents to help troubleshoot long-running Buffer Pool scans | Certain operations in SQL Server trigger a scan of the buffer pool (the cache that stores database pages in memory). On systems with a large amount of memory (1 TB or higher), scanning the buffer pool takes a long time, which slows down the operation that triggered the scan. These new XEvents can help troubleshoot long-running Buffer Pool scans. | [Operations that scan SQL Server buffer pool are slow on large memory machines](https://learn.microsoft.com/troubleshoot/sql/performance/buffer-pool-scan-runs-slowly-large-memory-machines) |
+| New logging format for SQL Writer | Provides extra troubleshooting data in an easy to read/parse format, along with enhanced control of log verbosity and enabling/disabling. | [SQL Server VSS Writer logging](../relational-databases/backup-restore/sql-server-vss-writer-logging.md) |
+| Adds `sql_statement_post_compile` XEvent | This extended event is fired every time that a query compilation is finished. It provides information such as whether the query compilation was an initial compile or a recompile, how long it took to compile the query, and how much CPU capacity was used. | [KB4480630](https://support.microsoft.com/help/4480630) |
+| Corrupt statistics can be detected by using `extended_logical_checks` | When statistics are corrupted, a generic message might be thrown without information about the statistics corruption. In addition, CHECKDB might not report corrupt statistics. This improvement can detect corrupt statistics by using `extended_logical_checks` as part of `DBCC CHECKDB`. | [KB4530907](https://support.microsoft.com/help/4530907) |
+| Improved accuracy of XEvent `query_plan_profile` | CPU time and duration reported by XEvent `query_plan_profile` are more accurate. | [Lightweight query execution statistics profiling infrastructure v2](../relational-databases/performance/query-profiling-infrastructure.md#lightweight-query-execution-statistics-profiling-infrastructure-v2) |
+
+## Known issues
+
+This section identifies issues which might occur after you apply  SQL Server 2016 (13.x) 
+ SP3.
+
+### R Services using specific algorithms, streaming, or partitioning
+
+- **Issue**: The following limitations apply on  SQL Server 2016 (13.x) 
+ with runtime upgrade configured using [Change the default R or Python language runtime version](../machine-learning/install/change-default-language-runtime-version.md) or with SP3 [slipstream](../database-engine/install-windows/install-sql-server-using-slipstream.md) install. This issue applies to Enterprise Edition.
+
+  - Parallelism: `RevoScaleR` and `MicrosoftML` algorithm thread parallelism for scenarios are limited to maximum of 2 threads.
+
+  - Streaming & partitioning: Scenarios involving `@r_rowsPerRead` parameter passed to T-SQL `sp_execute_external_script` isn't applied.
+
+  - Streaming & partitioning: `RevoScaleR` and `MicrosoftML` data sources (that is, `ODBC`, `XDF`) doesn't support reading rows in chunks for training or scoring scenarios. These scenarios always bring all data to memory for computation and the operations are memory bound
+
+- **Solution**: The best solution is to upgrade to  SQL Server 2019 (15.x) 
+. Alternatively you can continue to use  SQL Server 2016 (13.x) 
+ SP3, after you complete the following tasks.
+
+   1. Edit registry to create a key `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\150` and add a value `SharedCode` with data `C:\Program Files\Microsoft SQL Server\150\Shared` or the shared directory as configured for the instance.
+
+   1. Create a folder `C:\Program Files\Microsoft SQL Server\150\Shared and copy instapi130.dll` from the folder `C:\Program Files\Microsoft SQL Server\130\Shared` to the newly created folder.
+
+   1. Rename the `instapi130.dll` to `instapi150.dll` in the new folder `C:\Program Files\Microsoft SQL Server\150\Shared`.
+
+> **Important:**  
+> If you do the previous steps, you must manually remove the added key before upgrading to a later version of SQL Server.
+
+For more information, see [Change the default R or Python language runtime version](../machine-learning/install/change-default-language-runtime-version.md).
+
+### Change Tracking cleanup errors
+
+- **Issue**: The following error message occurs after you run a change tracking cleanup stored procedure `sp_flush_commit_table_on_demand` or `sp_flush_CT_internal_table_on_demand`:
+
+  ```output
+  Msg 8114, Level 16, State 1, Procedure sp_add_ct_history, Line <LineNumber>
+  Error converting data type numeric to int.
+  ```
+
+For more information, see [KB5007039](https://support.microsoft.com/topic/kb5007039-fix-you-encounter-error-messages-8114-or-22122-when-performing-change-tracking-cleanup-b102b180-a80c-4b32-90d7-0811108fe7d1).
+
+### R script failure
+
+- **Issue**: After you install SP3, R script execution fails. The R script fails with an error like:
+
+  ```output
+  Error: executable command line exceeds the 2047 characters limit.
+  ```
+
+- **Solution**: Uninstall Microsoft MPI v7. Install Microsoft MPI v10. For more information, see [Microsoft MPI](https://learn.microsoft.com/message-passing-interface/microsoft-mpi).
+
+<a id="removing-sp3-issue"></a>
+
+### Remove SP3 issue
+
+- **Issue**: If you remove SP3, the 20 user accounts in the `SQLRUserGroup` used by launchpad are deleted. Any execution of `sp_execute_external_script` results in this error:
+
+  ```output
+  Unable to launch the runtime. ErrorCode 0x80070718: 1816(Not enough quota is available to process this command.).
+  ```
+
+- **Solution**: Run repair. For example:
+
+  ```cmd
+  setup.exe /q /ACTION=Repair /INSTANCENAME=<instancename>
+  ```
+
+  For more information, see [Repair a Failed SQL Server Installation](../database-engine/install-windows/repair-a-failed-sql-server-installation.md).
+
+### Install SP3 with `SysPrep`
+
+- **Issue**: When you use SysPrep to install SP3 with extensibility feature, SysPrep doesn't install the SP3 version of the extensibility framework correctly. Instead, some binaries are missing/incorrect. For example, R runtime 3.5.2 is missing.
+
+- **Solution**: Run repair after completing the image. For example:
+
+  ```cmd
+  setup.exe /q /ACTION=Repair /INSTANCENAME=<instancename>
+  ```
+
+  For more information, see [Repair a Failed SQL Server Installation](../database-engine/install-windows/repair-a-failed-sql-server-installation.md).
+
+<a id="bkmk_2016sp2"></a>
+
+## SQL Server 2016 Service Pack 2 (SP2)
+
+ SQL Server 2016 (13.x) 
+ SP2 includes all cumulative updates released after  SQL Server 2016 (13.x) 
+ SP1, up to and including CU8.
+
+-  **[Download SQL Server 2016 Service Pack 2 (SP2)](https://www.microsoft.com/download/details.aspx?id=56836)**
+
+- For a complete list of updates, see [SQL Server 2016 Service Pack 2 release information](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2016/servicepack2).
+
+The  SQL Server 2016 (13.x) 
+ SP2 installation might require restart after installation. As a best practice, you should perform a restart following the installation of  SQL Server 2016 (13.x) 
+ SP2.
+
+Performance and scale related improvements included in  SQL Server 2016 (13.x) 
+ SP2.
+
+| Feature | Description | More information |
+| --- | --- | --- |
+| Improved Distribution DB cleanup procedure | An oversized distribution database table causes blocking and deadlock situation. An improved cleanup procedure aims to eliminate some of these blocking or deadlock scenarios. | [KB4040276](https://support.microsoft.com/help/4040276/fix-indirect-checkpoints-on-the-tempdb-database-cause-non-yielding) |
+| Change tracking cleanup | Improved change tracking cleanup performance and efficiency for Change Tracking side tables. | [KB4052129](https://support.microsoft.com//help/4052129/update-for-manual-change-tracking-cleanup-procedure-in-sql-server-2016) |
+| Use CPU time out to cancel Resource Governor request | Improves the handling of query requests by actually canceling the request, if CPU thresholds for a request are reached. This behavior is enabled under trace flag 2422. | [KB4038419](https://support.microsoft.com/help/4038419/add-cpu-timeout-to-resource-governor-request-max-cpu-time-sec) |
+| SELECT INTO to create target table in filegroup | Starting with  SQL Server 2016 (13.x) |
+ | SP2, SELECT INTO T-SQL syntax supports loading a table into a filegroup other than a default filegroup of the user using the ON \<filegroup name\> keyword in T-SQL syntax. |  |
+| Improved indirect checkpoint for `tempdb` | Indirect checkpointing for `tempdb` is improved to minimize the spinlock contention on DPLists. This improvement allows `tempdb` workload on  SQL Server 2016 (13.x) |
+ | to scale out of the box if indirect checkpointing is ON for `tempdb`. | [KB4040276](https://support.microsoft.com/help/4040276) |
+| Improved database backup performance on large memory machines | SQL Server 2016 (13.x) |
+ | SP2 optimizes the way we drain the ongoing I/O during backup resulting in dramatic gains in backup performance for small to medium databases. We have seen more than 100x improvement when taking system database backups on a 2-TB machine. The performance gain reduces as the database size increases as the pages to backup and backup I/O takes more time compared to iterating buffer pool. This change helps improve the backup performance for customers hosting multiple small databases on a large high end server with large memory. |  |
+| VDI backup compression support for TDE-enabled databases | SQL Server 2016 (13.x) |
+ | SP2 adds VDI support to allow VDI backup solutions to use compression for TDE enabled databases. With this improvement, a new backup format was introduced to support backup compression for TDE enabled databases. The SQL Server Database Engine transparently handles new and old backup formats to restore the backups. |  |
+| Dynamic loading of replication agent profile parameters | This new enhancement allows replication agents parameters to be loaded dynamically without having to restart the agent. This change is applicable only to the most commonly used agent profile parameters. |  |
+| Support MAXDOP option for statistics create/update | This enhancement allows you to specify the MAXDOP option for a CREATE/UPDATE statistics statement, and make sure the right MAXDOP setting is used when statistics are updated as part of create or rebuild for all types of indexes (if the MAXDOP option is present) | [KB4041809](https://support.microsoft.com/help/4041809) |
+| Improved Auto Statistics Update for Incremental Statistics | In certain scenarios, when several data changes happened across multiple partitions in a table in a way that the total modification counter for incremented statistics exceeds the auto update threshold, but none of the individual partitions exceed the auto update threshold, statistics update might be delayed until more modifications happen in the table. This behavior is corrected under trace flag 11024. |  |
+
+Supportability and diagnostics related improvements included in  SQL Server 2016 (13.x) 
+ SP2.
+
+| Feature | Description | More information |
+| --- | --- | --- |
+| Full DTC support for databases in an Availability Group | Cross-databases transactions for databases which are part of an Availability Group are currently not supported for  SQL Server 2016 (13.x) |
+| . With  SQL Server 2016 (13.x) |
+ | SP2, we introduce full support for distributed transactions with Availability Group Databases. |  |
+| Update to `sys.databases.is_encrypted` column to accurately reflect encryption status for `tempdb` | The value of the `is_encryptedcolumn` column in `sys.databases` is `1` for `tempdb`, even after you turn off encryption for all user databases and restart SQL Server. The expected behavior would be that the value for this is `0`, since `tempdb` is no longer encrypted in this situation. Starting with  SQL Server 2016 (13.x) |
+ | SP2, `sys.databases.is_encrypted` now accurately reflects encryption status for `tempdb`. |  |
+| New `DBCC CLONEDATABASE` options to generate verified clone and backup | With  SQL Server 2016 (13.x) |
+ | SP2, `DBCC CLONEDATABASE` allows two new options: produce a verified clone, or produce a backup clone. When a clone database is created using the `WITH VERIFY_CLONEDB` option, a consistent database clone is created and verified, which is supported by Microsoft for production use. A new property is introduced to validate if the clone is verified `SELECT DATABASEPROPERTYEX('clone_database_name', 'IsVerifiedClone')`. When a clone is created with the `BACKUP_CLONEDB` option, a backup is generated in the same folder as the data file to make it easy for customers to move the clone to different server or to send it to Microsoft Customer Support (CSS) for troubleshooting. |  |
+| Service Broker (SSB) support for `DBCC CLONEDATABASE` | Enhanced `DBCC CLONEDATABASE` command to allow scripting of SSB objects. |  |
+| New DMV to monitor `tempdb` version store space usage | A new `sys.dm_tran_version_store_space_usage` DMV is introduced in  SQL Server 2016 (13.x) |
+ | SP2 to allow monitoring `tempdb` for version store usage. DBAs can now proactively plan `tempdb` sizing based on the version store usage requirement per database, without any performance overhead when running it on production servers. |  |
+| Full Dumps support for Replication Agents | Today if replication agents encounter an unhandled exception, the default is to create a mini dump of the exception symptoms. This makes troubleshooting unhandled exception issues difficult. Through this change we introduce a new registry key, which allows you to create a full dump for Replication Agents. |  |
+| Extended Events enhancement for read routing failure for an Availability Group | Before, the `read_only_rout_fail` XEvent fired if there was a routing list present, but none of the servers in the routing list were available for connections.  SQL Server 2016 (13.x) |
+ | SP2 includes additional information to assist with troubleshooting, and also expand on the code points where this XEvent gets fired. |  |
+| New DMV to monitor the transaction log | Added a new DMV `sys.dm_db_log_stats` that returns summary level attributes and information about transaction log files of databases. |  |
+| New DMV to monitor VLF information | A new DMV `sys.dm_db_log_info` is introduced in  SQL Server 2016 (13.x) |
+ | SP2 to expose the VLF information similar to DBCC LOGINFO to monitor, alert, and avert potential T-Log issues experienced by customers. |  |
+| Processor information in `sys.dm_os_sys_info` | New columns added to the `sys.dm_os_sys_info` DMV to expose the processor related information, such as `socket_count`, and `cores_per_numa`. |  |
+| Extent modified information in `sys.dm_db_file_space_usage` | New column added to `sys.dm_db_file_space_usage` to track the number of modified extents since the last full backup. |  |
+| Segment information in `sys.dm_exec_query_stats` | New columns were added to sys.dm_exec_query_stats to track number of columnstore segments skipped and read, such as `total_columnstore_segment_reads`, and `total_columnstore_segment_skips`. | [KB4051358](https://support.microsoft.com/help/4051358) |
+| Setting correct compatibility level for distribution database | After Service Pack installation, the Distribution database compatibility level changes to 90. This was because of a code path in `sp_vupgrade_replication` stored procedure. The SP has now been changed to set the correct compatibility level for the distribution database. |  |
+| Expose last known good `DBCC CHECKDB` information | A new database option has been added to programmatically return the date of the last successful DBCC CHECKDB run. Users can now query `DATABASEPROPERTYEX([database], 'lastgoodcheckdbtime')` to obtain a single value representing the date/time of the last successful DBCC CHECKDB run on the specified database. |  |
+| Showplan XML enhancements | [Information on which statistics were used to compile the query plan](https://learn.microsoft.com/archive/blogs/sql_server_team/sql-server-2017-showplan-enhancements), including statistics name, modification counter, sampling percent, and when the statistics was updated last time. Note this is added for CE models 120 and later only. For example it isn't supported for CE 70. |  |
+|  | A new attribute [EstimateRowsWithoutRowgoal](https://learn.microsoft.com/archive/blogs/sql_server_team/more-showplan-enhancements-row-goal) is added to showplan XML if Query Optimizer uses "row goal" logic. |  |
+|  | New runtime attributes [UdfCpuTime and UdfElapsedTime](https://learn.microsoft.com/archive/blogs/sql_server_team/more-showplan-enhancements-udfs) in actual showplan XML, to track time spent in scalar User-Defined Functions (UDF). |  |
+|  | Add CXPACKET wait type to [list of possible top 10 waits](https://learn.microsoft.com/archive/blogs/sql_server_team/new-showplan-enhancements) in actual showplan XML - Parallel query execution frequently involves CXPACKET waits, but this type of wait wasn't reporting in actual showplan XML. |  |
+|  | Extended the runtime spill warning to report number of pages written to `tempdb` during a parallelism operator spill. |  |
+| Replication Support for databases with Supplemental characters collations | Replication is now supportable on databases which use the Supplemental Character Collation. |  |
+| Proper handling of Service Broker with Availability group failover | In the current implementation when Service Broker is enabled on an Availability Group Databases, during an AG failover, all Service broker connections which originated on the Primary Replica are left open. This improvement targets to close all such open connections during an AG failover. |  |
+| Improved troubleshooting for parallelism waits | by adding a new [CXCONSUMER](https://learn.microsoft.com/archive/blogs/sql_server_team/making-parallelism-waits-actionable) wait. |  |
+| Improved consistency between DMVs for same information | The `sys.dm_exec_session_wait_stats` DMV now tracks `CXPACKET` and `CXCONSUMER` waits consistently with the sys.dm_os_wait_stats DMV. |  |
+| Improved troubleshooting of intra-query parallelism deadlocks | A new `exchange_spill` Extended Event to report the number of pages written to `tempdb` during a parallelism operator spill, in the XEvent field name `worktable_physical_writes`. |  |
+|  | The `spills` columns in the `sys.dm_exec_query_stats`, `sys.dm_exec_procedure_stats`, and `sys.dm_exec_trigger_stats` DMVs (such as `total_spills`) now also include the data spilled by parallelism operators. |  |
+|  | The XML deadlock graph is improved for parallelism deadlock scenarios, with more attributes added to the exchangeEvent resource. |  |
+|  | The XML deadlock graph is improved for deadlocks involving batch-mode operators, with more attributes added to the SyncPoint resource. |  |
+| Dynamic reloading of some replication agent profile parameters | In the current implementation of replication agents any change in the agent profile parameter requires the agent to be stopped and restarted. This improvement allows for the parameters to be dynamically reloaded without having to restart the replication agent. |  |
+
+<a id="bkmk_2016sp1"></a>
+
+## SQL Server 2016 Service Pack 1 (SP1)
+
+ SQL Server 2016 (13.x) 
+ SP1 includes all cumulative updates up to  SQL Server 2016 (13.x) 
+ RTM CU3 including Security Update MS16-136. It contains a roll-up of solutions provided in  SQL Server 2016 (13.x) 
+ cumulative updates up to and includes the latest Cumulative Update - CU3 and Security Update MS16-136 released on November 8, 2016.
+
+The following features are available in the Standard, Web, Express, and Local DB editions of  SQL Server 2016 (13.x) 
+ SP1 (except as noted):
+
+- Always encrypted
+- Changed data capture (not available in Express)
+- Columnstore
+- Compression
+- Dynamic data masking
+- Fine-grained auditing
+- In Memory OLTP (not available in Local DB)
+- Multiple filestream containers (not available in Local DB)
+- Partitioning
+- PolyBase
+- Row level security
+
+The following table summarizes key improvements provided in  SQL Server 2016 (13.x) 
+ SP1.
+
+| Feature | Description | More information |
+| --- | --- | --- |
+| Bulk insert into heaps with auto TABLOCK under TF 715 | Trace flag 715 enables table lock for bulk load operations into heap with no nonclustered indexes. | [Migrating SAP workloads to SQL Server just got 2.5x faster](https://learn.microsoft.com/archive/blogs/sql_server_team/migrating-sap-workloads-to-sql-server-just-got-2-5x-faster) |
+| `CREATE OR ALTER` | Deploy objects such as Stored Procedures, Triggers, User-Defined Functions, and Views. | [SQL Server Database Engine Blog](https://learn.microsoft.com/archive/blogs/sqlserverstorageengine/create-or-alter-another-great-language-enhancement-in-sql-server-2016-sp1) |
+| DROP TABLE support for replication | DROP TABLE DDL support for replication to allow replication articles to be dropped. | [KB 3170123](https://support.microsoft.com/help/3170123/supports-drop-table-ddl-for-articles-that-are-included-in-transactiona) |
+| Filestream RsFx Driver signing | The Filestream RsFx driver is signed and certified using Windows Hardware Developer Center Dashboard portal (Dev Portal) allowing  SQL Server 2016 (13.x) |
+ | SP1 Filestream RsFx driver to be installed on Windows Server 2016/Windows 10 without any issue. | [Migrating SAP workloads to SQL Server just got 2.5x faster](https://learn.microsoft.com/archive/blogs/sql_server_team/migrating-sap-workloads-to-sql-server-just-got-2-5x-faster) |
+| LPIM to SQL service account - programmatic identification | Allow DBAs to programmatically identify if Lock Pages in Memory (LPIM) privilege is in effect at the service startup time. | [Developers Choice: Programmatically identify LPIM and IFI privileges in SQL Server](https://learn.microsoft.com/archive/blogs/sql_server_team/developers-choice-programmatically-identify-lpim-and-ifi-privileges-in-sql-server) |
+| Manual change tracking cleanup | New stored procedure cleans the change tracking internal table on demand. | [KB 3173157](https://support.microsoft.com/help/3173157/adds-a-stored-procedure-for-the-manual-cleanup-of-the-change-tracking) |
+| Parallel `INSERT..SELECT` changes for local temp tables | New Parallel INSERT in INSERT..SELECT operations. | [SQL Server Customer Advisory Team](https://learn.microsoft.com/archive/blogs/sqlcat/real-world-parallel-insert-what-else-you-need-to-know) |
+| Showplan XML | Extended diagnostics including grant warning and maximum memory enabled for a query, enabled trace flags, and also surfaces other diagnostic information. | [KB 3190761](https://support.microsoft.com/help/3190761/update-to-improve-diagnostics-by-expose-data-type-of-the-parameters-fo) |
+| Storage class memory | Boost the transaction processing using Storage Class Memory in Windows Server 2016, resulting in the ability to accelerate transaction commit times by orders of magnitude. | [SQL Server Database Engine Blog](https://learn.microsoft.com/archive/blogs/sqlserverstorageengine/transaction-commit-latency-acceleration-using-storage-class-memory-in-windows-server-2016sql-server-2016-sp1) |
+| `USE HINT` | Use the query option, `OPTION(USE HINT('<option>'))` to alter query optimizer behavior using supported query level hints. Unlike `QUERYTRACEON`, the `USE HINT` option doesn't require sysadmin privileges. | [Developers Choice: USE HINT query hints](https://learn.microsoft.com/archive/blogs/sql_server_team/developers-choice-use-hint-query-hints) |
+| XEvent additions | New XEvents and Perfmon diagnostics capabilities improve latency troubleshooting. | [Extended Events](../relational-databases/extended-events/extended-events.md) |
+
+In addition, note the following fixes:
+
+- Based on feedback from DBAs and SQL community, starting SQL Server 2016 SP1, the Hekaton logging messages are reduced to minimal.
+- Review new [trace flags](../t-sql/database-console-commands/dbcc-traceon-trace-flags-transact-sql.md).
+- The full versions of the WideWorldImporters sample databases now work with Standard Edition and Express Edition, starting  SQL Server 2016 (13.x) 
+ SP1 and are available on [GitHub](https://github.com/Microsoft/sql-server-samples/releases/tag/wide-world-importers-v1.0). No changes are needed in the sample. The database backups created at RTM for Enterprise edition work with Standard and Express in SP1.
+
+The  SQL Server 2016 (13.x) 
+ SP1 installation might require restart post installation. As a best practice, you should perform a restart following the installation of  SQL Server 2016 (13.x) 
+ SP1.
+
+### Download pages and more information
+
+- [Download Service Pack 1 for Microsoft SQL Server 2016](https://www.microsoft.com/download/details.aspx?id=54276)
+- [SQL Server 2016 Service Pack 1 (SP1) Released](https://learn.microsoft.com/archive/blogs/sqlreleaseservices/sql-server-2016-service-pack-1-sp1-released)
+- [SQL Server 2016 Service Pack 1 release information](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2016/servicepack1)
+- [SQL Server Update Center](https://learn.microsoft.com/troubleshoot/sql/releases/download-and-install-latest-updates?bc=%2fsql%2fbreadcrumb%2ftoc.json\&toc=%2fsql%2ftoc.json) for links and information for all supported versions, including service packs of  SQL Server 
+
+
+<a id="bkmk_2016_ga"></a>
+
+## SQL Server 2016 Release - General Availability (GA)
+
+- [Database Engine (GA)](#bkmk_ga_instalpatch)
+- [Stretch Database (GA)](#bkmk_ga_stretch)
+- [Query Store (GA)](#bkmk_ga_query_store)
+- [Product Documentation (GA)](#bkmk_ga_docs)
+
+<a id="bkmk_ga_instalpatch"></a>
+
+
+
+**Issue and customer impact:** Microsoft identified a problem that affects the Microsoft VC++ 2013 Runtime binaries that are installed as a prerequisite by SQL Server 2016. An update is available to fix this problem. If this update to the VC runtime binaries isn't installed, SQL Server 2016 might experience stability issues in certain scenarios. Before you install SQL Server 2016, check to see if the computer needs the patch described in [KB 3164398](https://support.microsoft.com/kb/3164398). The patch is also included in [Cumulative Update Package 1 (CU1) for SQL Server 2016 RTM](https://www.microsoft.com/download/details.aspx?id=53338).
+
+**Resolution:** Use one of the following solutions:
+
+- Install [KB 3138367 - Update for Visual C++ 2013 and Visual C++ Redistributable Package](https://support.microsoft.com/kb/3138367). The KB is the preferred resolution. You can install this before or after you install  SQL Server 2016 (13.x) 
+.
+
+  If  SQL Server 2016 (13.x) 
+ is already installed, do the following steps in order:
+
+  1. Download the appropriate `vcredist_<version>.exe`.
+  1. Stop the SQL Server service for all instances of the database engine.
+  1. Install **KB 3138367**.
+  1. Restart the computer.
+
+- Install [KB 3164398 - Critical Update for SQL Server 2016 MSVCRT prerequisites](https://support.microsoft.com/kb/3164398).
+
+  If you use **KB 3164398**, you can install during SQL Server installation, through Microsoft Update, or from Microsoft Download Center.
+
+  - **During  SQL Server 2016 (13.x) 
+ Installation:** If the computer running SQL Server setup has internet access, SQL Server setup checks for the update as part of the overall SQL Server installation. If you accept the update, setup downloads and updates the binaries during installation.
+
+  - **Microsoft Update:** The update is available from Microsoft Update as a critical non-security  SQL Server 2016 (13.x) 
+ update. Installing through Microsoft update after  SQL Server 2016 (13.x) 
+ requires the server to be restarted following the update.
+
+  - **Download Center:** Finally, the update is available from the Microsoft Download Center. You can download the software for the update and install it on servers after they have  SQL Server 2016 (13.x) 
+.
+
+<a id="bkmk_ga_stretch"></a>
+
+### Stretch Database
+
+#### Problem with a specific character in a database or table name
+
+**Issue and customer impact:** Attempting to enable Stretch Database on a database or a table fails with an error. The issue occurs when the name of the object includes a character that's treated as a different character when converted from lower case to upper case. An example of a character that causes this issue is the character "ƒ" (created by typing ALT+159).
+
+**Workaround:** If you want to enable Stretch Database on the database or the table, the only option is to rename the object and remove the problem character.
+
+#### Problem with an index that uses the INCLUDE keyword
+
+**Issue and customer impact:** Attempting to enable Stretch Database on a table that has an index that uses the INCLUDE keyword to include extra columns in the index fails with an error.
+
+**Workaround:** Drop the index that uses the INCLUDE keyword, enable Stretch Database on the table, then recreate the index. If you do this, be sure to follow your organization's maintenance practices and policies to ensure minimal or no impact to users of the affected table.
+
+<a id="bkmk_ga_query_store"></a>
+
+### Query Store
+
+#### Problem with automatic data cleanup on editions other than Enterprise and Developer
+
+**Issue and customer impact:**
+
+Automatic data cleanup fails on editions other than Enterprise and Developer. So, if data isn't purged manually, space used by the Query Store grows over time until configured limit is reached. If not mitigated, this issue also fills up disk space allocated for the error logs, as every attempt to execute cleanup produces a dump file. Cleanup activation period depends on the workload frequency, but it's no longer than 15 minutes.
+
+**Workaround:** If you plan to use Query Store on editions other than Enterprise and Developer, you need to explicitly turn off cleanup policies. It can be done either from SQL Server Management Studio (Database Properties page) or via Transact-SQL script:
+
+Additionally, consider manual cleanup options to prevent Query Store from transitioning to read-only mode. For example, run the following query to periodically clean entire data space:
+
+```sql
+ALTER DATABASE <database> SET QUERY_STORE CLEAR;
+```
+
+Also, execute the following Query Store stored procedures periodically to clean runtime statistics, specific queries, or plans:
+
+- `sp_query_store_reset_exec_stats`
+- `sp_query_store_remove_plan`
+- `sp_query_store_remove_query`
+
+<a id="bkmk_ga_docs"></a>
+
+### Product Documentation (GA)
+
+**Issue and customer impact:** A downloadable version of the  SQL Server 2016 (13.x) 
+ documentation isn't yet available. When you use Help Library Manager to attempt to **Install content from online**, you see the SQL Server 2012 and SQL Server 2014 documentation but there are no options for  SQL Server 2016 (13.x) 
+ documentation.
+
+**Workaround:** Use one of the following work-arounds:
+
+Screenshot of Manage Help Settings for SQL Server.
+
+- Use the option **Choose online or local help** and configure help for "I want to use online help".
+
+- Use the option **Install content from online** and download the SQL Server 2014 Content.
+
+**F1 Help:** By design when you press F1 in  SQL Server Management Studio 
+, the online version of the F1 Help article is displayed in the browser, providing browser-based help even when you configured and installed local Help.
+
+**Updating content:**
+
+In SQL Server Management Studio and Visual Studio, the Help Viewer application might stop responding during the process of adding the documentation. To resolve this issue, complete the following steps. For more information about this issue, see [Visual Studio Help Viewer freezes](https://learn.microsoft.com/previous-versions/mt654096\(v=vs.140\)).
+
+- Open the `%LOCALAPPDATA%\Microsoft\HelpViewer2.2\HlpViewer_SSMS16_en-US.settings` or `HlpViewer_VisualStudio14_en-US.settings` file in Notepad and change the date in the following code to some date in the future.
+
+  ```output
+  Cache LastRefreshed="12/31/2017 00:00:00"
+  ```
+
+## Additional Information
+
+- [SQL Server 2016 installation](../database-engine/install-windows/install-sql-server.md)
+- [SQL Server Update Center - links and information for all supported versions](https://learn.microsoft.com/troubleshoot/sql/releases/download-and-install-latest-updates?bc=%2fsql%2fbreadcrumb%2ftoc.json\&toc=%2fsql%2ftoc.json)
+
+
+##  Get help
+
+- [Ideas for SQL: Have suggestions for improving SQL Server?](https://feedback.azure.com/forums/908035-sql-server)
+- [Microsoft Q & A (SQL Server)](https://learn.microsoft.com/answers/products/sql-server)
+- [DBA Stack Exchange (tag sql-server): Ask SQL Server questions](https://dba.stackexchange.com/questions/tagged/sql-server)
+- [Stack Overflow (tag sql-server): Answers to SQL development questions](https://stackoverflow.com/questions/tagged/sql-server)
+- [Microsoft SQL Server License Terms and Information](https://www.microsoft.com/licensing/product-licensing/sql-server)
+- [Support options for business users](https://support.microsoft.com/support-for-business)
+- [Additional SQL Server help and feedback](sql-server-get-help.md)
+
+##  Contribute to SQL documentation
+
+Did you know that you can edit SQL content yourself? If you do so, not only do you help improve our documentation, but you also get credited as a contributor to the page.
+
+For more information, see [Edit Microsoft Learn documentation](sql-server-docs-contribute.md).

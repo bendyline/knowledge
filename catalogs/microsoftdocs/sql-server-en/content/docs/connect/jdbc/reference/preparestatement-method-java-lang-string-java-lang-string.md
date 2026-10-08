@@ -1,0 +1,50 @@
+---
+title: "prepareStatement Method (java.lang.String, java.lang.String)"
+description: "prepareStatement Method (java.lang.String, java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.prepareStatement"
+apitype: "Assembly"
+---
+# prepareStatement Method (java.lang.String, java.lang.String)
+
+
+  Creates a [SQLServerPreparedStatement](sqlserverpreparedstatement-class.md) object for sending parameterized SQL statements to the database.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.PreparedStatement prepareStatement(java.lang.String sql,  
+                                                   java.lang.String[] columnNames)  
+```  
+  
+#### Parameters  
+ *sql*  
+  
+ A **String** containing a SQL statement.  
+  
+ *columnNames*  
+  
+ A **String** array of column names.  
+  
+## Return Value  
+ A PreparedStatement object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This prepareStatement method is specified by the prepareStatement method in the java.sql.Connection interface.  
+  
+## Related content
+
+- [prepareStatement Method (SQLServerConnection)](preparestatement-method-sqlserverconnection.md)
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

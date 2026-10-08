@@ -1,0 +1,53 @@
+---
+title: "getBigDecimal Method (int, int) (SQLServerResultSet)"
+description: "getBigDecimal Method (int, int) (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.getBigDecimal (int, int)"
+apitype: "Assembly"
+---
+# getBigDecimal Method (int, int) (SQLServerResultSet)
+
+
+  Retrieves the value of the designated column index in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object using the given scale.  
+  
+> **Note:**  
+>  This method has been deprecated from the JDBC specification. Instead, you should use the [getBigDecimal (int)](getbigdecimal-method-int-sqlserverresultset.md) method.  
+  
+## Syntax  
+  
+```  
+  
+public java.math.BigDecimal getBigDecimal(int columnIndex,  
+                                          int scale)  
+```  
+  
+#### Parameters  
+ *columnIndex*  
+  
+ An **int** that indicates the column index.  
+  
+ *scale*  
+  
+ An **int** that indicates the number of digits to the right of the decimal point.  
+  
+## Return Value  
+ A BigDecimal object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getBigDecimal method is specified by the getBigDecimal method in the java.sql.ResultSet interface.  
+  
+## Related content
+
+- [getBigDecimal Method (SQLServerResultSet)](getbigdecimal-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

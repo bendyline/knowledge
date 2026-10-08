@@ -1,0 +1,92 @@
+---
+title: "Replicate Schema Changes"
+description: Learn how to replicate schema changes in SQL Server by using SQL Server Management Studio or Transact-SQL.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "replication [SQL Server], schema changes"
+  - "schemas [SQL Server replication], replicating changes"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Replicate Schema Changes
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  This topic describes how to replicate schema changes in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .  
+  
+ If you make the following schema changes to a published article, they are propagated, by default, to  Microsoft 
+  SQL Server 
+ Subscribers:  
+  
+-   ALTER TABLE  
+  
+-   ALTER VIEW  
+  
+-   ALTER PROCEDURE  
+  
+-   ALTER FUNCTION  
+  
+-   ALTER TRIGGER  
+
+<a id="BeforeYouBegin"></a>
+
+##  <a name="Restrictions"></a> Limitations and Restrictions
+  
+-   The ALTER TABLE ... DROP COLUMN statement is always replicated to all Subscribers whose subscription contains the columns being dropped, even if you disable the replication of schema changes.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+ If you do not want to replicate schema changes for a publication, disable the replication of schema changes in the **Publication Properties - \<Publication>** dialog box. For more information about accessing this dialog box, see [View and Modify Publication Properties](view-and-modify-publication-properties.md).  
+  
+#### To disable replication of schema changes  
+  
+1.  On the **Subscription Options** page of the **Publication Properties - \<Publication>** dialog box, set the value of the **Replicate schema changes** property to **False**.  
+  
+2.  Select **OK**.
+
+     To propagate only specific schema changes, set the property to **True** before a schema change, and then set it to **False** after the change is made. Conversely, to propagate most schema changes, but not a given change, set the property to **False** before the schema change, and then set it to **True** after the change is made.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+ You can use replication stored procedures to specify whether these schema changes are replicated. The stored procedure that you use depends on the type of publication.  
+  
+#### To create a snapshot or transactional publication that does not replicate schema changes  
+  
+1.  At the Publisher on the publication database, execute [sp_addpublication (Transact-SQL)](../../system-stored-procedures/sp-addpublication-transact-sql.md), specifying a value of `0` for `@replicate_ddl`. For more information, see [Create a Publication](create-a-publication.md).  
+  
+#### To create a merge publication that does not replicate schema changes  
+  
+1.  At the Publisher on the publication database, execute [sp_addmergepublication (Transact-SQL)](../../system-stored-procedures/sp-addmergepublication-transact-sql.md), specifying a value of `0` for `@replicate_ddl`. For more information, see [Create a Publication](create-a-publication.md).  
+  
+#### To temporarily disable replicating schema changes for a snapshot or transactional publication  
+  
+1.  For a publication with replication of schema changes, execute [sp_changepublication (Transact-SQL)](../../system-stored-procedures/sp-changepublication-transact-sql.md), specifying a value of `replicate_ddl` for `@property` and a value of `0` for `@value`.  
+  
+2.  Execute the DDL command on the published object.  
+  
+3.  (Optional) Re-enable replicating schema changes by executing [sp_changepublication (Transact-SQL)](../../system-stored-procedures/sp-changepublication-transact-sql.md), specifying a value of `replicate_ddl` for `@property` and a value of `1` for `@value`.  
+  
+#### To temporarily disable replicating schema changes for a merge publication  
+  
+1.  For a publication with replication of schema changes, execute [sp_changemergepublication (Transact-SQL)](../../system-stored-procedures/sp-changemergepublication-transact-sql.md), specifying a value of `replicate_ddl` for `@property` and a value of `0` for `@value`.  
+  
+2.  Execute the DDL command on the published object.  
+  
+3.  (Optional) Re-enable replicating schema changes by executing [sp_changemergepublication (Transact-SQL)](../../system-stored-procedures/sp-changemergepublication-transact-sql.md), specifying a value of `replicate_ddl` for `@property` and a value of `1` for `@value`.  
+  
+## Related content
+
+- [Make Schema Changes on Publication Databases](make-schema-changes-on-publication-databases.md)

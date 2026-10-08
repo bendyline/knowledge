@@ -1,0 +1,97 @@
+---
+title: "COL_LENGTH (Transact-SQL)"
+description: "COL_LENGTH (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "COL_LENGTH"
+  - "COL_LENGTH_TSQL"
+helpviewer_keywords:
+  - "lengths [SQL Server], columns"
+  - "COL_LENGTH function"
+  - "column properties [SQL Server]"
+  - "column length [SQL Server]"
+dev_langs:
+  - "TSQL"
+---
+# COL_LENGTH (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This function returns the defined length of a column, in bytes.
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+COL_LENGTH ( 'table' , 'column' )   
+```  
+  
+## Arguments
+**'** *table* **'**  
+The name of the table whose column length information we want to determine. *table* is an expression of type **nvarchar**.
+  
+**'** *column* **'**  
+The column name whose length we want to determine. *column* is an expression of type **nvarchar**.
+  
+## Return type
+**smallint**
+  
+## Exceptions  
+Returns NULL on error, or if a caller does not have the correct permission to view the object.
+  
+In  SQL Server 
+, a user can only view the metadata of securables that the user owns, or on which the user has been granted permission. This means that metadata-emitting, built-in functions such as COL_LENGTH might return NULL, if the user does not have correct permission on the object. See [Metadata Visibility Configuration](../../relational-databases/security/metadata-visibility-configuration.md) for more information.
+  
+## Remarks  
+For **varchar** columns declared with the **max** specifier (**varchar(max)**), COL_LENGTH returns the value -1.
+  
+## Examples  
+This example shows the return values for a column of type `varchar(40)` and a column of type `nvarchar(40)`:
+  
+```sql
+USE AdventureWorks2022;  
+GO  
+CREATE TABLE t1(c1 VARCHAR(40), c2 NVARCHAR(40) );  
+GO  
+SELECT COL_LENGTH('t1','c1')AS 'VarChar',  
+      COL_LENGTH('t1','c2')AS 'NVarChar';  
+GO  
+DROP TABLE t1;  
+```  
+  
+ Here's the result set. 
+
+  
+```
+VarChar     NVarChar  
+40          80  
+```  
+  
+## Related content
+
+- [Expressions (Transact-SQL)](../language-elements/expressions-transact-sql.md)
+- [Metadata functions (Transact-SQL)](metadata-functions-transact-sql.md)
+- [COL_NAME (Transact-SQL)](col-name-transact-sql.md)
+- [COLUMNPROPERTY (Transact-SQL)](columnproperty-transact-sql.md)

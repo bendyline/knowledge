@@ -1,0 +1,421 @@
+---
+title: Known Issues 
+description: Known issues for the MQTT broker, connector for OPC UA, OPC PLC simulator, data flows, and operations experience web UI.
+author: dominicbetts
+ms.author: dobett
+ms.service: azure-iot-operations
+ms.topic: troubleshooting-known-issue
+ms.custom: sfi-ropc-nochange
+ms.date: 07/30/2026
+---
+
+# Known issues for Azure IoT Operations
+
+This article lists the current known issues you might encounter when using Azure IoT Operations. The guidance helps you identify these issues and provides workarounds where available.
+
+For general troubleshooting guidance, see [Troubleshoot Azure IoT Operations](troubleshoot.md).
+
+## Azure Device Registry issues
+
+This section lists current known issues for the Azure Device Registry.
+
+### ADR namespace asset healthstate resources don't sync from edge to cloud
+
+---
+
+Issue ID: 1235
+
+---
+
+Log signature: N/A
+
+---
+
+Azure Device Registry namespace asset healthstate resources don't synchronize back to the cloud if they were created with an API version older than 2026-04-01. This failure occurs because a required Kubernetes resource annotation is missing.
+
+Workaround: Use the [arc proxy](https://learn.microsoft.com/azure/azure-arc/kubernetes/quickstart-connect-cluster#connect-an-existing-kubernetes-cluster) to connect to your Kubernetes cluster and then run the [remediation script](https://github.com/Azure/azure-iot-operations/tree/main/scripts/known-issues/asset-health-status-reporting) for the shell you're using (PowerShell or bash). The scripts list all outdated namespace assets and request confirmation before they add the missing annotations.
+
+
+## MQTT broker issues
+
+This section lists current known issues for the MQTT broker.
+
+### MQTT broker resources aren't visible in the Azure portal
+
+---
+
+Issue ID: 4257
+
+---
+
+Log signature: N/A
+
+---
+
+MQTT broker resources created in your cluster using Kubernetes aren't visible in the Azure portal. This result is expected because [managing Azure IoT Operations components using Kubernetes](tips-tools.md#manage-components-using-kubernetes-deployment-manifests) is for debugging and testing only, and synchronizing resources from the edge to the cloud isn't currently supported.
+
+There's currently no workaround for this issue.
+
+
+## General connector issues
+
+This section lists current known issues that affect all connectors.
+
+### Connector doesn't detect updates to device credentials in Azure Key Vault
+
+---
+
+Issue ID: 6514
+
+---
+
+N/A
+
+---
+
+Fixed in release 2605 and later
+
+---
+
+The connector doesn't receive a notification when device credentials stored in Azure Key Vault are updated. As a result, the connector continues to use the old credentials until it's restarted.
+
+Workaround: Restart the connector to force it to retrieve the updated credentials from Azure Key Vault.
+
+### Akri connectors don't work with registry endpoint resources
+
+---
+
+Issue ID: 7710
+
+---
+
+Fixed in version 1.2.154 (2512) and later
+
+---
+
+Log signature:
+
+```output
+[aio_akri_logs@311 tid="7"] - failed to generate StatefulSet payload for instance rest-connector-template-...
+[aio_akri_logs@311 tid="7"] - reconciliation error for Connector resource... 
+[aio_akri_logs@311 tid="7"] - reconciliation of Connector resource failed...
+```
+
+If you create a `RegistryEndpoint` resource using bicep and reference it in the `ConnectorTemplate` resource then when the Akri operator tries the reconcile the `ConnectorTemplate` it fails with the error shown previously.
+
+Workaround: Don't use `RegistryEndpoint` resources with Akri connectors. Instead, specify the registry information in the `ContainerRegistry` settings in the `ConnectorTemplate` resource.
+
+### Akri error when updating or deleting an Azure IoT Operations instance
+
+---
+
+Issue ID: 9347
+
+---
+
+Fixed in version 1.2.154 (2512) and later
+
+---
+
+Users may encounter an error regarding expired webhook certificates with Akri when deleting/upgrading instances of Azure IoT Operations or performing CRUD operations on Akri resources such as *Connector* and *ConnectorTemplates* instances. 
+
+Workaround: Run `kubectl delete pod -n azure-iot-operations aio-akri-webhook-0 --ignore-not-found` to delete and restart the webhook pods to enable the pod to pick up the new certificate.
+
+## Connector for OPC UA issues
+
+This section lists current known issues for the connector for OPC UA.
+
+### Can't use special characters in event names
+
+---
+
+Issue ID: 1532
+
+---
+
+Fixed in version 1.3.36 (2603) and later
+
+---
+
+Log signature: `2025-10-22T14:51:59.338Z aio-opc-opc.tcp-1-68ff6d4c59-nj2s4 - Updated schema information for Boiler#1Notifier skipped!`
+
+---
+
+Schema generation fails if event names contain special characters such as `#`, `%`, or `&`. Avoid using these characters in event names to prevent schema generation issues.
+
+### OPC connector template missing
+
+---
+
+Issue ID: 1330
+
+---
+
+Fixed in version 1.4.73 (2608) and later
+
+---
+
+Log signature: N/A
+
+---
+
+Azure IoT Operations instance deployment should install an **OPC ConnectorTemplate** by default. Following the deployment, the connector template is missing from the Azure portal and the `ConnectorTemplate` resource isn't present in the cluster.
+
+## Connector for media and connector for ONVIF issues
+
+This section lists current known issues for the connector for media and the connector for ONVIF.
+
+### Secret sync conflict
+
+---
+
+Issue ID: 0606
+
+---
+
+Log signature: N/A
+
+---
+
+When using secret sync, ensure that secret names are globally unique. If a local secret with the same name exists, connectors might fail to retrieve the intended secret.
+
+### ONVIF asset event destination can only be configured on group or asset level
+
+---
+
+Issue ID: 9545
+
+---
+
+Fixed in version 1.2.154 (2512) and later
+
+---
+
+Log signature similar to:
+
+`No matching event subscription for topic: "tns1:RuleEngine/CellMotionDetector/Motion"`
+
+---
+
+Currently, ONVIF asset event destinations are only recognized at the event group or asset level. Configuring destinations at the individual event level results in log entries similar to the example, and no event data is published to the MQTT broker.
+
+Workaround: Configure the event destination at the event group or asset level instead of the individual event level. For example, use `defaultEventsDestinations` at the event group level:
+
+```yaml
+eventGroups:
+  - dataSource: ""
+    events:
+    - dataSource: tns1:RuleEngine/CellMotionDetector/Motion
+      destinations:
+      - configuration:
+          qos: Qos1
+          retain: Never
+          topic: azure-iot-operations/data/motion
+          ttl: 5
+        target: Mqtt
+      name: Motion
+    name: Default
+    defaultEventsDestinations:
+    - configuration:
+        qos: Qos1
+        retain: Never
+        topic: azure-iot-operations/data/motion
+        ttl: 5
+      target: Mqtt
+```
+
+## Connector for MQTT issues
+
+### MQTT connector template version mismatch during update
+
+---
+
+Issue ID: 1533
+
+---
+
+Log signature: N/A
+
+---
+
+Fixed in release 2606 and later
+
+---
+
+When updating to version 2605, existing MQTT connector templates may display mismatched metadata versions in the portal. To resolve, delete and recreate the connector template. Alternatively, use the Azure CLI to update the connector.
+
+### MQTT connector can't connect to external MQTT brokers that have private IP addresses
+
+---
+
+Issue ID: 7791
+
+---
+
+Log signature: N/A
+
+---
+
+Fixed in release 2607 and later
+
+---
+
+Starting in release 2605, the MQTT connector can't connect to external MQTT brokers that use private IP addresses.  
+
+
+## Data flows issues
+
+This section lists current known issues for data flows.
+
+### Operations experience web UI only displays data flow graph artifacts sourced from Azure Container Registry (ACR) and mcr.microsoft.com
+
+---
+
+Issue ID: 8895
+
+---
+
+Log signature: N/A
+
+---
+
+Even if you configure a container registry endpoint for a non-ACR container registry, like GHCR:
+
+- Data flow graph artifacts from the non-ACR registry don't appear in the operations experience web UI, so you can't create a data flow graph that uses them.
+
+- Selecting a data flow graph from the list of data flows in the operations experience web UI that contains elements from a non-ACR registry produces an error similar to: `Can't load data flow graph. The contents of this data flow graph are unavailable. Please ensure that it still exists, then work with your administrator to get 'AcrPull' access to required registry endpoints.`
+
+Workaround: You have two options:
+
+- If you don't need to use the operations experience UI, use the Azure CLI to perform CRUD operations on data flow graphs defined in JSON or Bicep files that contain artifacts sourced from non-ACR registries.
+
+- If you want to use the operations experience web UI, import data flow artifacts and graphs from non-ACR registries into an ACR registry. To learn more, see [Push modules to your registry](../develop-edge-apps/howto-deploy-wasm-graph-definitions.md#push-modules-to-your-registry).
+
+### Data flow resources created using Kubernetes aren't visible in the operations experience web UI
+
+---
+
+Issue ID: 8724
+
+---
+
+Log signature: N/A
+
+---
+
+Data flow custom resources created in your cluster using Kubernetes aren't visible in the operations experience web UI. This result is expected because [managing Azure IoT Operations components using Kubernetes](tips-tools.md#manage-components-using-kubernetes-deployment-manifests) is for debugging and testing only, and synchronizing resources from the edge to the cloud isn't currently supported.
+
+There's currently no workaround for this issue.
+
+### A data flow profile can't exceed 70 data flows
+
+---
+
+Issue ID: 1028
+
+---
+
+Log signature:
+
+`exec /bin/main: argument list too long`
+
+---
+
+If you create more than 70 data flows for a single data flow profile, deployments fail with the error `exec /bin/main: argument list too long`.
+
+To work around this issue, create multiple data flow profiles and distribute the data flows across them. Don't exceed 70 data flows per profile.
+
+### Can't use the same graph definition multiple times in a chained graph scenario
+
+---
+
+Issue ID: 1352
+
+---
+
+Fixed in version 1.3.36 (2603) and later
+
+---
+
+Failed to send config
+
+---
+
+You create a chained graph scenario by using the output of one data flow graph as the input to another data flow graph. However, if you try to use the same graph definition multiple times in this scenario, it currently doesn't work as expected. For example, the following code fails when using the same graph definition (`graph-passthrough:1.3.6`) for both `graph-1` and `graph-2`.
+
+```bicep
+      {
+          nodeType: 'Graph'
+          name: 'graph-1'
+          graphSettings: {
+            registryEndpointRef: dataflowRegistryEndpoint.name
+            artifact: 'graph-passthrough:1.3.6'
+            configuration: []
+            }
+      }
+      {
+          nodeType: 'Graph'
+          name: 'graph-2'
+          graphSettings: {
+            registryEndpointRef: dataflowRegistryEndpoint.name
+            artifact: 'graph-passthrough:1.3.6'
+            configuration: graphConfiguration
+            }
+      }
+  nodeConnections: [
+      {
+          from: {name: 'source'}
+          to: {name: 'graph-1'}
+      }
+      {
+          from: {name: 'graph-1'}
+          to: {name: 'graph-2'}
+      }
+      {
+          from: {name: 'graph-2'}
+          to: {name: 'destination'}
+      }
+  ]
+```
+
+To solve this error, push the graph definition to the ACR as many times as needed with the scenario with a different name or tag each time. For example, in the scenario described, the graph definition need to be pushed twice with either a different name or a different tag, such as `graph-passthrough-one:1.3.6` and `graph-passthrough-two:1.3.6`.
+
+## Federated identity issues
+
+This section lists current known issues for federated identity.
+
+### Federated identity credential issuer mismatch can cause secret sync authentication failures
+
+---
+
+Issue ID: 1190
+
+---
+
+Fixed in version 2607 and later
+
+---
+
+Log signature: Similar to `AADSTS700211: No matching federated identity record found for presented assertion issuer 'https://northamerica.oic.prod-arc.azure.com/1f5f7baf-633d-4eb5-9be1-8cf1e9c6fcc9/f512e8f6-0c47-48a1-91f3-aeb5422dd766'. Please check your federated identity credential Subject, Audience and Issuer against the presented assertion.`
+
+---
+
+Azure IoT Operations encounters 401 Unauthorized errors when retrieving secrets from Azure Key Vault.
+
+Root cause: The error occurs because the federated identity credential issuer URL doesn't match the issuer (iss) claim in the Kubernetes service account token.
+
+When the `az iot ops secretsync enable` command creates a federated identity credential (FIC) on the user-assigned managed identity that Azure IoT Operations uses to access Azure Key Vault, it sets the FIC issuer URL to the cluster's OIDC issuer URL. In some deployments, this URL includes a trailing slash ('/') that the cluster-issued service account token's iss (issuer) claim omits.
+
+Because the issue affects token exchange during secret retrieval, the failure typically doesn't occur when you run `az iot ops secretsync enable`. Instead, it surfaces later when Azure IoT Operations attempts to access a secret, which can make the root cause difficult to identify.
+
+Workaround: Verify that the issuer URL configured on the federated identity credential doesn't end with a slash. If it does, update the federated identity credential to remove the trailing slash.
+
+You can use the Azure CLI [az identity federated-credential](https://learn.microsoft.com/cli/azure/identity/federated-credential) commands to view and, if necessary, update the federated identity credential issuer value, for example:
+
+```azurecli
+az identity federated-credential show --name <fic-name> --identity-name <managed-identity-name> --resource-group <resource-group-name>
+
+az identity federated-credential update --name <fic-name> --identity-name <managed-identity-name> --resource-group <resource-group> --issuer <new-issuer-url-without-trailing-slash>
+```
+
+As a best practice, perform this validation during setup after you run the `az iot ops secretsync enable` command to help avoid potentially difficult-to-diagnose authentication failures later.

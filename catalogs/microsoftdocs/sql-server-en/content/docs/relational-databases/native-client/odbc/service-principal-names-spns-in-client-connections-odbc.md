@@ -1,0 +1,87 @@
+---
+title: "Service Principal Names (SPNs) in ODBC Client"
+description: Learn about ODBC attributes and functions that support service principal names (SPNs) in client applications.
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+---
+# Service Principal Names (SPNs) in Client Connections (ODBC)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+> **Important:** 
+> [SQL Server Native Client](../sql-server-native-client.md) (SNAC) isn't shipped with:
+
+-  SQL Server 2022 (16.x) 
+ and later versions
+-  SQL Server Management Studio 
+ 19 and later versions
+
+The SQL Server Native Client (SQLNCLI or SQLNCLI11) and the legacy Microsoft OLE DB Provider for SQL Server (SQLOLEDB) aren't recommended for new application development.
+
+For new projects, use one of the following drivers:
+
+- [Microsoft ODBC Driver for SQL Server](../../../connect/odbc/microsoft-odbc-driver-for-sql-server.md)
+- [Microsoft OLE DB Driver for SQL Server](../../../connect/oledb/oledb-driver-for-sql-server.md)
+
+For SQLNCLI that ships as a component of  SQL Server Database Engine 
+ (versions 2012 through 2019), see this [Support Lifecycle exception](../applications/support-policies-for-sql-server-native-client.md#support-lifecycle-exception).
+
+
+  This topic describes ODBC attributes and functions that support service principal names (SPNs) in client applications. For more information about SPNs in client applications, see [Service Principal Name (SPN) Support in Client Connections](../features/service-principal-name-spn-support-in-client-connections.md) and [Get Mutual Kerberos Authentication](../../native-client-odbc-how-to/get-mutual-kerberos-authentication.md).  
+  
+## Connection String Keywords  
+ The following connection string keywords enable client applications to specify an SPN.  
+  
+| Keyword | Value |
+| --- | --- |
+| **ServerSPN** | The SPN for the server. The default value is an empty string, which causes  SQL Server |
+ | Native Client to use the default, driver-generated SPN. |
+| **FailoverPartnerSPN** | The SPN for the failover partner. The default value is an empty string, which causes  SQL Server |
+ | Native Client to use the default, driver-generated SPN. |
+  
+## Connection Attributes  
+ The following connection attributes enable client applications to specify an SPN and query for the authentication method.  
+  
+| Name | Type | Usage |
+| --- | --- | --- |
+| SQL_COPT_SS_SERVER_SPN<br /><br /> SQL_COPT_SS_FAILOVER_PARTNER_SPN | SQLTCHAR, read/write | Specifies the SPN for the server. The default value is an empty string, which causes  SQL Server |
+ | Native Client to use the default, driver-generated SPN.<br /><br /> This attribute can be queried only after it has been set programmatically, or after a connection has been opened. If an attempt is made to query this attribute on a connection that is not open and the attribute has not been set programmatically, SQL_ERROR is returned, and a diagnostic record is logged with SQLState 08003 and the message "Connection not open".<br /><br /> If an attempt is made to set this attribute when a connection is open, SQL_ERROR is returned, and a diagnostic record is logged with SQLState HY011 and the message "Operation invalid at this time". |
+| SQL_COPT_SS_INTEGRATED_AUTHENTICATION_METHOD | SQLTCHAR, read-only | Returns the authentication method used for the connection. The value returned to the application is the value that Windows returns to  SQL Server |
+ | Native Client. Possible values are:<br /><br /> "NTLM", which is returned when a connection is opened using NTLM authentication.<br /><br /> "Kerberos", which is returned when a connection is opened using Kerberos authentication.<br /><br /> <br /><br /> This attribute can only be read for an open connection that used Windows Authentication. If an attempt is made to read it before a connection has been opened, SQL_ERROR is returned, and an error is logged with SQLState 08003 and the message "Connection not open".<br /><br /> If this attribute is queried on a connection that did not use Windows Authentication, SQL_ERROR is returned, and an error is logged with SQLState HY092 and the message "Invalid attribute/option identifier (SQL_COPT_SS_INTEGRATED_AUTHENTICATION_METHOD is only available for Trusted Connections)".<br /><br /> If the authentication method cannot be determined, SQL_ERROR is returned, and an error is logged with SQLState HY000 and the message "General error". |
+| SQL_COPT_SS_MUTUALLY_AUTHENTICATED | SQLSMALLINT, read-only | Returns SQL_TRUE if the server in the connection was mutually authenticated; otherwise, returns SQL_FALSE.<br /><br /> This attribute can only be read for an open connection. If an attempt is made to read it before a connection has been opened, SQL_ERROR is returned, and an error is logged with SQLState 08003 and the message "Connection not open".<br /><br /> If this attribute is queried for a connection that did not use Windows Authentication, SQL_FALSE is returned. |
+  
+## ODBC Function Support for Specifying SPNs  
+ The following ODBC functions support client applications and SPNs:  
+  
+-   [SQLBrowseConnect](../../native-client-odbc-api/sqlbrowseconnect.md)  
+  
+-   [SQLConnect](../../native-client-odbc-api/sqlconnect.md)  
+  
+-   [SQLDriverConnect](../../native-client-odbc-api/sqldriverconnect.md)  
+  
+-   [SQLGetConnectAttr](../../native-client-odbc-api/sqlgetconnectattr.md)  
+  
+-   [SQLSetConnectAttr](../../native-client-odbc-api/sqlsetconnectattr.md)  
+  
+## Related content
+
+- [SQL Server Native Client (ODBC)](sql-server-native-client-odbc.md)

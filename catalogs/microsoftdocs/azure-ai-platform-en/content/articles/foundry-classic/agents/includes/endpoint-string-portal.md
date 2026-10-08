@@ -1,0 +1,13 @@
+---
+manager: mcleans
+author: aahill
+ms.author: aahi
+ms.service: microsoft-foundry
+ms.subservice: foundry-agent-service
+ms.topic: include
+ms.date: 12/11/2024
+---
+
+You can find your endpoint in the **overview** for your project in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs), under **Libraries** > **Foundry**.
+
+A screenshot showing the endpoint in the Foundry portal.

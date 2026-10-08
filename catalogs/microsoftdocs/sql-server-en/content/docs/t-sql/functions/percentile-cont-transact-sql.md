@@ -1,0 +1,181 @@
+---
+title: PERCENTILE_CONT (Transact-SQL)
+description: PERCENTILE_CONT calculates a percentile based on a continuous distribution of the column value.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: jovanpop, wiassaf
+ms.date: 09/21/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "PERCENTILE_CONT_TSQL"
+  - "PERCENTILE_CONT"
+helpviewer_keywords:
+  - "analytic functions, PERCENTILE_CONT"
+  - "PERCENTILE_CONT function"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# PERCENTILE_CONT (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The `PERCENTILE_CONT` function calculates a percentile based on a continuous distribution of the column value in the  SQL Server Database Engine 
+. The result is interpolated, and might not equal any of the specific values in the column.
+
+
+
+## Syntax
+**Applies to: fabric**
+
+Aggregation function syntax:
+
+```syntaxsql
+PERCENTILE_CONT ( numeric_literal )
+    WITHIN GROUP ( ORDER BY order_by_expression [ ASC | DESC ] )
+```
+
+
+
+Analytic function syntax:
+
+```syntaxsql
+PERCENTILE_CONT ( numeric_literal )
+    WITHIN GROUP ( ORDER BY order_by_expression [ ASC | DESC ] 
+    [ OVER ( [ <partition_by_clause> ] ) ]
+    )
+    OVER ( [ <partition_by_clause> ] )
+```
+
+## Arguments
+
+#### *numeric_literal*
+
+The percentile to compute. The value must range between `0.0` and `1.0`.
+
+#### WITHIN GROUP ( ORDER BY *order_by_expression* )
+
+Specifies a list of numeric values to sort and compute the percentile over. Only one *order_by_expression* is allowed. The expression must evaluate to an exact or approximate numeric type, with no other data types allowed. Exact numeric types are **int**, **bigint**, **smallint**, **tinyint**, **numeric**, **bit**, **decimal**, **smallmoney**, and **money**. Approximate numeric types are **float** and **real**. The default sort order is ascending.
+
+#### OVER ( <partition_by_clause> )
+
+Divides the result set produced by the `FROM` clause into partitions to which the percentile function is applied. For more information, see [SELECT - OVER Clause](../queries/select-over-clause-transact-sql.md). The `ORDER BY` clause and `<rows or range clause>` of the `OVER` syntax can't be specified in a `PERCENTILE_CONT` function.
+
+**Applies to: fabric**
+
+> **Note:**
+> The `OVER` clause is optional in Fabric Data Warehouse and the SQL analytics endpoint. `PERCENTILE_CONT` can be used in either aggregate or analytic (window) form.
+
+
+
+## Return types
+
+**float(53)**
+
+## Compatibility support
+
+`WITHIN GROUP` is a reserved keyword, starting with compatibility level `110`. For more information, see [ALTER DATABASE Compatibility Level](../statements/alter-database-transact-sql-compatibility-level.md).
+
+## Remarks
+
+The aggregate form of `PERCENTILE_CONT`, which omits the `OVER` clause, isn't supported in SQL Server, Azure SQL Database, Azure SQL Managed Instance, or SQL database in Fabric.
+
+Any nulls in the data set are ignored.
+
+`PERCENTILE_CONT` is nondeterministic. For more information, see [Deterministic and Nondeterministic Functions](../../relational-databases/user-defined-functions/deterministic-and-nondeterministic-functions.md).
+
+## Examples
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+### A. Find median employee salary per department
+
+The following example uses `PERCENTILE_CONT` and `PERCENTILE_DISC` to find the median employee salary in each department. These functions might not return the same value. `PERCENTILE_CONT` interpolates the appropriate value, which might or might not exist in the data set, while `PERCENTILE_DISC` always returns an actual value from the set.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+SELECT DISTINCT Name AS DepartmentName,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY ph.Rate)
+        OVER (PARTITION BY Name) AS MedianCont,
+    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY ph.Rate)
+        OVER (PARTITION BY Name) AS MedianDisc
+FROM HumanResources.Department AS d
+INNER JOIN HumanResources.EmployeeDepartmentHistory AS dh
+    ON dh.DepartmentID = d.DepartmentID
+INNER JOIN HumanResources.EmployeePayHistory AS ph
+    ON ph.BusinessEntityID = dh.BusinessEntityID
+WHERE dh.EndDate IS NULL;
+```
+
+Here's a partial result set.
+
+```output
+DepartmentName        MedianCont    MedianDisc
+--------------------   ----------   ----------
+Document Control       16.8269      16.8269
+Engineering            34.375       32.6923
+Executive              54.32695     48.5577
+Human Resources        17.427850    16.5865
+```
+
+## Examples:  Azure Synapse Analytics 
+
+The following example uses the `AdventureWorksDW2012` sample database.
+
+### B. Find median employee salary per department
+
+The following example uses `PERCENTILE_CONT` and `PERCENTILE_DISC` to find the median employee salary in each department. These functions might not return the same value. `PERCENTILE_CONT` interpolates the appropriate value, which might or might not exist in the data set, while `PERCENTILE_DISC` always returns an actual value from the set.
+
+```sql
+SELECT DISTINCT DepartmentName,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY BaseRate)
+        OVER (PARTITION BY DepartmentName) AS MedianCont,
+    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY BaseRate)
+        OVER (PARTITION BY DepartmentName) AS MedianDisc
+FROM dbo.DimEmployee;
+```
+
+Here's a partial result set.
+
+```output
+DepartmentName        MedianCont    MedianDisc
+--------------------   ----------   ----------
+Document Control       16.826900    16.8269
+Engineering            34.375000    32.6923
+Human Resources        17.427850    16.5865
+Shipping and Receiving 9.250000      9.0000
+```
+
+## Related content
+
+- [PERCENTILE_DISC (Transact-SQL)](percentile-disc-transact-sql.md)

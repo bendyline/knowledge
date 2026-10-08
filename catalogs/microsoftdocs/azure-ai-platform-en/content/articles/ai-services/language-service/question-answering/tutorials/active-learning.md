@@ -1,0 +1,74 @@
+---
+title: Enrich your project with active learning
+description: In this tutorial, learn how to enrich your Custom question answering projects with active learning
+ms.service: azure-language-foundry-tools
+ms.topic: tutorial
+author: laujan
+ms.author: lajanuar
+ms.date: 06/30/2026
+ms.custom: language-service-question-answering
+---
+# Enrich your project with active learning
+
+In this tutorial, you learn how to:
+
+<!-- green checkmark -->
+> 
+> * Download an active learning test file
+> * Import the test file to your existing project
+> * Accept/reject active learning suggestions
+> * Add alternate questions
+
+This tutorial shows you how to enhance your Custom question answering project with active learning. If you notice that customers are asking questions that are not covered in your project, they may be paraphrased variations of questions.
+
+These variations, when added as alternate questions to the relevant question answer pair, help to optimize the project to answer real world user queries. You can manually add alternate questions to question answer pairs through the editor. At the same time, you can also use the active learning feature to generate active learning suggestions based on user queries. The active learning feature, however, requires that the project receives regular user traffic to generate suggestions.
+
+## Use active learning
+
+Active learning is turned on by default for Custom question answering enabled resources.
+
+To try out active learning suggestions, you can import the following file as a new project: [SampleActiveLearning.tsv](https://github.com/Azure-Samples/cognitive-services-sample-data-files/blob/master/qna-maker/knowledge-bases/SampleActiveLearning.tsv).
+
+## Download file
+
+Run the following command from the command prompt to download a local copy of the `SampleActiveLearning.tsv` file.
+
+```cmd
+curl "https://github.com/Azure-Samples/cognitive-services-sample-data-files/blob/master/qna-maker/knowledge-bases/SampleActiveLearning.tsv" --output SampleActiveLearning.tsv
+```
+
+## Import file
+
+From the edit project pane for your project, select the `...` (ellipsis) icon from the menu > **Import questions and answers** > **Import as TSV**. Then, select **Choose file** to browse to the copy of `SampleActiveLearning.tsv` that you downloaded to your computer in the previous step, and then select done.
+
+> 
+> [ Screenshot of edit project menu bar with import as TSV option displayed. ](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/active-learning/import-questions.png#lightbox)
+
+## View and add/reject active learning suggestions
+
+Once the import of the test file is complete, active learning suggestions can be viewed on the review suggestions pane:
+
+> 
+> [ Screenshot with review suggestions page displayed. ](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/active-learning/review-suggestions.png#lightbox)
+
+> **Note:**
+> Active learning suggestions are not real time. There is an approximate delay of 30 minutes before the suggestions can show on this pane. This delay is to ensure that we balance the high cost involved for real time updates to the index and service performance.
+
+We can now either accept these suggestions or reject them using the options on the menu bar to **Accept all suggestions** or **Reject all suggestions**.
+
+Alternatively, to accept or reject individual suggestions, select the checkmark (accept) symbol or trash can (reject) symbol that appears next to individual questions in the **Review suggestions** page.
+
+> 
+> [ Screenshot with option to accept or reject highlighted in red. ](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/active-learning/accept-reject.png#lightbox)
+
+## Add alternate questions
+
+While active learning automatically suggests alternate questions based on the user queries hitting the project, we can also add variations of a question on the edit project page by selecting **Add alternate phrase** to question answer pairs.
+
+By adding alternate questions along with active learning, we further enrich the project with variations of a question that helps to provide consistent answers to user queries.
+
+> **Note:**
+> When alternate questions have many stop words, they might negatively impact the accuracy of responses. So, if the only difference between alternate questions is in the stop words, these alternate questions are not required.
+> To examine the list of stop words consult the [stop words article](https://github.com/Azure-Samples/azure-search-sample-data/blob/master/STOPWORDS.md).
+
+## Next steps

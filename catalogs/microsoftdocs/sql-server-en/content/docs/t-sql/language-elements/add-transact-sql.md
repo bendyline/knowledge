@@ -1,0 +1,153 @@
+---
+title: "+ (Addition) (Transact-SQL)"
+description: "+ (Addition) (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/16/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "add"
+  - "+ (Add)"
+  - "+_TSQL"
+helpviewer_keywords:
+  - "addition (+)"
+  - "adding numbers"
+  - "+ (add)"
+  - "plus sign (+)"
+  - "add operator (+)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# + (Addition) (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Adds two numbers. This addition arithmetic operator can also add a number, in days, to a date.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql  
+expression + expression  
+```  
+  
+## Arguments
+ *expression*  
+ Is any valid [expression](expressions-transact-sql.md) of any one of the data types in the numeric category except the **bit** data type. Cannot be used with **date**, **time**, **datetime2**, or **datetimeoffset** data types.  
+  
+## Result Types  
+ Returns the data type of the argument with the higher precedence. For more information, see [Data Type Precedence (Transact-SQL)](../data-types/data-type-precedence-transact-sql.md).  
+  
+## Examples  
+  
+### A. Using the addition operator to calculate the total number of hours away from work for each employee.  
+ This example finds the total number of hours away from work for each employee by adding the number of hours taken for vacation and the number of hours taken as sick leave.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT p.FirstName, p.LastName, VacationHours, SickLeaveHours,   
+    VacationHours + SickLeaveHours AS 'Total Hours Away'  
+FROM HumanResources.Employee AS e  
+    JOIN Person.Person AS p ON e.BusinessEntityID = p.BusinessEntityID  
+ORDER BY 'Total Hours Away' ASC;  
+GO  
+```  
+  
+### B. Using the addition operator to add days to date and time values  
+ This example adds a number of days to a `datetime` date.  
+  
+```sql
+SET NOCOUNT ON  
+DECLARE @startdate DATETIME, @adddays INT;  
+SET @startdate = 'January 10, 1900 12:00 AM';  
+SET @adddays = 5;  
+SET NOCOUNT OFF;  
+SELECT @startdate + 1.25 AS 'Start Date',   
+   @startdate + @adddays AS 'Add Date';  
+```  
+  
+  Here's the result set. 
+  
+  
+ ```
+Start Date                  Add Date
+--------------------------- ---------------------------
+1900-01-11 06:00:00.000     1900-01-15 00:00:00.000
+  
+(1 row(s) affected)
+ ```  
+  
+### C. Adding character and integer data types  
+ The following example adds an **int** data type value and a character value by converting the character data type to **int**. If a character that is not valid exists in the **char** string, the  Transact-SQL  returns an error.  
+  
+```sql  
+DECLARE @addvalue INT;  
+SET @addvalue = 15;  
+SELECT '125127' + @addvalue;  
+```  
+  
+  Here's the result set. 
+  
+  
+ ```
+-----------------------
+125142
+  
+(1 row(s) affected)
+ ```  
+  
+## Examples:  Azure Synapse Analytics 
+  
+### D: Using the addition operator to calculate the total number of hours away from work for each employee  
+ The following example finds the total number of hours away from work for each employee by adding the number of hours taken for vacation and the number of hours taken as sick leave and sorts the results in ascending order.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT FirstName, LastName, VacationHours, SickLeaveHours,   
+    VacationHours + SickLeaveHours AS TotalHoursAway  
+FROM DimEmployee  
+ORDER BY TotalHoursAway ASC;  
+```  
+  
+## Related content
+
+- [Operators (Transact-SQL)](operators-transact-sql.md)
+- [Compound operators (Transact-SQL)](compound-operators-transact-sql.md)
+- [+= (Addition assignment) (Transact-SQL)](add-equals-transact-sql.md)
+- [CAST and CONVERT (Transact-SQL)](../functions/cast-and-convert-transact-sql.md)
+- [Data type conversion (Database Engine)](../data-types/data-type-conversion-database-engine.md)
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)
+- [What are the SQL database functions?](../functions/functions.md)
+- [SELECT (Transact-SQL)](../queries/select-transact-sql.md)

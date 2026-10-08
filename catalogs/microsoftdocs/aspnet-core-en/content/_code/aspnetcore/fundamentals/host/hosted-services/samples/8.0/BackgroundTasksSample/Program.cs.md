@@ -1,0 +1,44 @@
+# Source code: aspnetcore/fundamentals/host/hosted-services/samples/8.0/BackgroundTasksSample/Program.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using BackgroundTasksSample.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+using var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
+    {
+        #region snippet3
+        services.AddSingleton<MonitorLoop>();
+        services.AddHostedService<QueuedHostedService>();
+        services.AddSingleton<IBackgroundTaskQueue>(ctx =>
+        {
+            if (!int.TryParse(hostContext.Configuration["QueueCapacity"], out var queueCapacity))
+                queueCapacity = 100;
+            return new BackgroundTaskQueue(queueCapacity);
+        });
+        #endregion
+
+        #region snippet1
+        services.AddHostedService<TimedHostedService>();
+        #endregion
+
+        #region snippet2
+        services.AddHostedService<ConsumeScopedServiceHostedService>();
+        services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+        #endregion
+    })
+    .Build();
+
+await host.StartAsync();
+
+#region snippet4
+var monitorLoop = host.Services.GetRequiredService<MonitorLoop>();
+monitorLoop.StartMonitorLoop();
+#endregion
+
+await host.WaitForShutdownAsync();
+
+```

@@ -1,0 +1,36 @@
+# Source code: docs/ai/evaluation/snippets/evaluate-with-reporting/TestAIWithReporting.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>07aae6fc-a2ea-407b-b1e1-83d0de270091</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="10.10.1" />
+    <PackageReference Include="Microsoft.Extensions.AI.Evaluation" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Evaluation.Quality" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Evaluation.Reporting" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.10.1" />
+    <PackageReference Include="microsoft.extensions.configuration" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.12" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="MSTest" Version="4.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+</Project>
+
+```

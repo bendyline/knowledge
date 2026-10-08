@@ -1,0 +1,38 @@
+---
+title: "setSelectMethod Method (SQLServerDataSource)"
+description: "setSelectMethod Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDataSource.setSelectMethod"
+apitype: "Assembly"
+---
+# setSelectMethod Method (SQLServerDataSource)
+
+
+  Sets the default cursor type that is used for all result sets that are created by using this [SQLServerDataSource](sqlserverdatasource-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public void setSelectMethod(java.lang.String selectMethod)  
+```  
+  
+#### Parameters  
+ *selectMethod*  
+  
+ A **String** value that contains the default cursor type.  
+  
+## Remarks  
+ The selectMethod is the default cursor type that is used for a result set. This property is useful when you are dealing with large result sets and do not want to store the whole result set in memory on the client side. By setting the property to "cursor," you can create a server-side cursor that can fetch smaller chunks of data at a time. If the selectMethod property is not set, [getSelectMethod](getselectmethod-method-sqlserverdatasource.md) returns the default value of "direct".  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

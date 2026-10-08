@@ -1,0 +1,77 @@
+---
+title: "Running and Managing Packages Programmatically"
+description: "Running and Managing Packages Programmatically"
+ms.date: "03/17/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: "reference"
+---
+# Running and Managing Packages Programmatically
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  If you need manage and run  Integration Services 
+ packages outside the development environment, you can manipulate packages programmatically. In this approach, you have a range of options:  
+  
+-   Load and run an existing package without modification.  
+  
+-   Load an existing package, reconfigure it (for example, for a different data source), and run it.  
+  
+-   Create a new package, add and configure components object by object and property by property, save it, and run it.  
+  
+ You can load and run an existing package from a client application by writing only a few lines of code.  
+  
+ This section describes and demonstrates how to run an existing package programmatically and how to access the output of the data flow from other applications. As an advanced programming option, you can programmatically create an  Integration Services 
+ package line by line as described in the topic, [Building Packages Programmatically](../building-packages-programmatically/building-packages-programmatically.md).  
+  
+ This section also discusses other administrative tasks that you can perform programmatically to manage stored packages, running packages, and package roles.  
+  
+## Running Packages on the Integration Services Server  
+ When you deploy packages to the  Integration Services 
+ server, you can run the packages programmatically by using the [Microsoft.SqlServer.Management.IntegrationServices](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.IntegrationServices) namespace. The Microsoft.SqlServer.Management.IntegrationServices assembly is compiled with .NET Framework 3.5. If you are building a .NET Framework 4.0 application, you might need to add the assembly reference directly to your project file.  
+  
+ You can also use the namespace to deploy and manage  Integration Services 
+ projects on the  Integration Services 
+ server. For an overview of the namespace and code snippets, see the blog entry, [A Glimpse of the SSIS Catalog Managed Object Model](https://techcommunity.microsoft.com/t5/sql-server-integration-services/a-glimpse-of-the-ssis-catalog-managed-object-model/ba-p/387892), on blogs.msdn.com.  
+  
+## In This Section  
+ [Understanding the Differences between Local and Remote Execution](understanding-the-differences-between-local-and-remote-execution.md)  
+ Discusses critical differences between executing a package locally or on the server.  
+  
+ [Loading and Running a Local Package Programmatically](loading-and-running-a-local-package-programmatically.md)  
+ Describes how to execute an existing package from a client application on the local computer.  
+  
+ [Loading and Running a Remote Package Programmatically](loading-and-running-a-remote-package-programmatically.md)  
+ Describes how to execute an existing package from a client application and to ensure that the package runs on the server.  
+  
+ [Loading the Output of a Local Package](loading-the-output-of-a-local-package.md)  
+ Describes how to execute a package on the local computer and how to load the data flow output into a client application by using the DataReader destination and the DtsClient namespace.  
+  
+ [Enumerating Available Packages Programmatically](enumerating-available-packages-programmatically.md)  
+ Describes how to discover available packages that are managed by the  Integration Services 
+ service.  
+  
+ [Managing Packages and Folders Programmatically](managing-packages-and-folders-programmatically.md)  
+ Describes how to create, rename, and delete both packages and folders.  
+  
+ [Managing Running Packages Programmatically](managing-running-packages-programmatically.md)  
+ Describes how to list packages that are currently running, examine their properties, and stop a running package.  
+  
+ [Managing Package Roles Programmatically (SSIS Service)](managing-package-roles-programmatically-ssis-service.md)  
+ Describes how to get or set information about the roles assigned to a package or a folder.  
+  
+## Related content
+
+- [Integration Services error and message reference](../integration-services-error-and-message-reference.md)
+- [Extending Packages with Scripting](../extending-packages-scripting/extending-packages-with-scripting.md)
+- [Extending Packages with Custom Objects](../extending-packages-custom-objects/extending-packages-with-custom-objects.md)
+- [Building Packages Programmatically](../building-packages-programmatically/building-packages-programmatically.md)
+- [SQL Server Integration Services](../sql-server-integration-services.md)

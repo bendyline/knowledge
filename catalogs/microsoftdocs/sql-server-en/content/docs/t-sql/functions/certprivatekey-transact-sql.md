@@ -1,0 +1,97 @@
+---
+title: "CERTPRIVATEKEY (Transact-SQL)"
+description: "CERTPRIVATEKEY (Transact-SQL)"
+author: VanMSFT
+ms.author: vanto
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "CERTPRIVATEKEY"
+  - "CERTPRIVATEKEY_TSQL"
+helpviewer_keywords:
+  - "CERTPRIVATEKEY"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# CERTPRIVATEKEY (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This function returns the private key of a certificate in binary format. This function takes three arguments.
+-   A certificate ID.  
+-   An encryption password, used to encrypt the private key bits returned by the function. This approach does not expose the keys as clear text to users.  
+-   An optional decryption password. A specified decryption password is used to decrypt the private key of the certificate. Otherwise, the database master key is used.  
+  
+Only users with access to the certificate private key can use this function. This function returns the private key in PVK format.
+  
+## Syntax  
+  
+```syntaxsql
+CERTPRIVATEKEY   
+    (  
+          cert_ID   
+        , ' encryption_password '   
+      [ , ' decryption_password ' ]  
+    )  
+```  
+  
+## Arguments
+*certificate_ID*  
+The **certificate_id** of the certificate. Obtain this value from sys.certificates or from the [CERT_ID (Transact-SQL)](cert-id-transact-sql.md) function. *cert_id* has data type **int**.
+  
+*encryption_password*  
+The password used to encrypt the returned binary value.
+  
+*decryption_password*  
+The password used to decrypt the returned binary value.
+  
+## Return types
+**varbinary**
+  
+## Remarks  
+Use **CERTENCODED** and **CERTPRIVATEKEY** together to return different portions of a certificate, in binary form.
+  
+## Permissions  
+**CERTPRIVATEKEY** is publicly available.
+  
+## Examples  
+  
+```sql
+CREATE DATABASE TEST1;  
+GO  
+USE TEST1  
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Use 5tr0ng P^55Words'  
+GO  
+CREATE CERTIFICATE Shipping04   
+WITH SUBJECT = 'Sammamish Shipping Records',   
+EXPIRY_DATE = '20401031';  
+GO  
+SELECT CERTPRIVATEKEY(CERT_ID('Shipping04'), 'jklalkaa/; uia3dd');  
+```  
+  
+See [CERTENCODED (Transact-SQL)](certencoded-transact-sql.md), Example B, for a more complex example that uses **CERTPRIVATEKEY** and **CERTENCODED** to copy a certificate to another database.
+  
+## Related content
+
+- [Security Functions (Transact-SQL)](security-functions-transact-sql.md)
+- [CREATE CERTIFICATE (Transact-SQL)](../statements/create-certificate-transact-sql.md)
+- [sys.certificates (Transact-SQL)](../../relational-databases/system-catalog-views/sys-certificates-transact-sql.md)

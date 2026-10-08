@@ -1,0 +1,208 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-dotnet-en",
+  "name": "Microsoft technology: .NET and C#",
+  "description": "Preserved English .NET and C# documentation from dotnet/docs, with normalized Markdown, complete selected code examples, source revisions, and license notices.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "git",
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "dotnet/docs",
+    "ref": "77bc2511d224447ac13474e7757e3600ad30c3de",
+    "paths": [
+      "."
+    ],
+    "include": [
+      "docs/**/*.md",
+      "includes/**/*.md"
+    ],
+    "exclude": [
+      "docs/core/extensions/snippets/fileglobbing/example/parent/README.md",
+      "docs/core/extensions/snippets/fileglobbing/example/parent/child/file.MD",
+      "docs/core/extensions/snippets/fileglobbing/example/parent/child/grandchild/file.md",
+      "docs/core/extensions/snippets/fileglobbing/example/parent/child/more.md",
+      "docs/core/extensions/snippets/fileglobbing/example/parent/file.md"
+    ],
+    "transport": "archive",
+    "codeFiles": [
+      "docs/**/*.cs",
+      "docs/**/*.vb",
+      "docs/**/*.fs",
+      "docs/**/*.fsx",
+      "docs/**/*.csx",
+      "docs/**/*.xaml",
+      "docs/**/*.sql",
+      "docs/**/*.json",
+      "docs/**/*.xml",
+      "docs/**/*.config",
+      "docs/**/*.csproj",
+      "docs/**/*.razor",
+      "docs/**/*.cshtml",
+      "docs/**/*.js",
+      "docs/**/*.ts",
+      "docs/**/*.cpp",
+      "docs/**/*.h",
+      "docs/**/*.py",
+      "docs/**/*.ps1",
+      "docs/**/*.sh",
+      "samples/**/*.cs",
+      "samples/**/*.vb",
+      "samples/**/*.fs",
+      "samples/**/*.fsx",
+      "samples/**/*.csx",
+      "samples/**/*.xaml",
+      "samples/**/*.sql",
+      "samples/**/*.json",
+      "samples/**/*.xml",
+      "samples/**/*.config",
+      "samples/**/*.csproj",
+      "samples/**/*.razor",
+      "samples/**/*.cshtml",
+      "samples/**/*.js",
+      "samples/**/*.ts",
+      "samples/**/*.cpp",
+      "samples/**/*.h",
+      "samples/**/*.py",
+      "samples/**/*.ps1",
+      "samples/**/*.sh"
+    ],
+    "docfxRoot": ".",
+    "maxArchiveBytes": 2000000000,
+    "publishedBaseUrl": "https://learn.microsoft.com/dotnet/",
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices.md",
+        "sha256": "5475fc89bfee030d104954a7ffff30e150e91c1b80b1511e4e06553b77a0062c"
+      }
+    ]
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "docs/**/*.md",
+          "includes/**/*.md"
+        ],
+        "license": "docs"
+      },
+      {
+        "include": [
+          "_code/**/*.md",
+          "docs/**/*.cs",
+          "docs/**/*.vb",
+          "docs/**/*.fs",
+          "docs/**/*.fsx",
+          "docs/**/*.csx",
+          "docs/**/*.xaml",
+          "docs/**/*.sql",
+          "docs/**/*.json",
+          "docs/**/*.xml",
+          "docs/**/*.config",
+          "docs/**/*.csproj",
+          "docs/**/*.razor",
+          "docs/**/*.cshtml",
+          "docs/**/*.js",
+          "docs/**/*.ts",
+          "docs/**/*.cpp",
+          "docs/**/*.h",
+          "docs/**/*.py",
+          "docs/**/*.ps1",
+          "docs/**/*.sh",
+          "samples/**/*.cs",
+          "samples/**/*.vb",
+          "samples/**/*.fs",
+          "samples/**/*.fsx",
+          "samples/**/*.csx",
+          "samples/**/*.xaml",
+          "samples/**/*.sql",
+          "samples/**/*.json",
+          "samples/**/*.xml",
+          "samples/**/*.config",
+          "samples/**/*.csproj",
+          "samples/**/*.razor",
+          "samples/**/*.cshtml",
+          "samples/**/*.js",
+          "samples/**/*.ts",
+          "samples/**/*.cpp",
+          "samples/**/*.h",
+          "samples/**/*.py",
+          "samples/**/*.ps1",
+          "samples/**/*.sh"
+        ],
+        "license": "code"
+      }
+    ]
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true,
+    "docfxReferences": "preserve",
+    "docfxMetadataMaxBytes": 12000
+  },
+  "sync": {
+    "maxFileBytes": 20000000,
+    "maxTotalBytes": 1500000000,
+    "maxDeleteFraction": 0.2
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "folders"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "microsoft",
+        "technology",
+        "dotnet"
+      ]
+    }
+  }
+}

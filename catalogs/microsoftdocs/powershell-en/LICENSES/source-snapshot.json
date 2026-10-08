@@ -1,0 +1,54 @@
+{
+  "repository": "MicrosoftDocs/PowerShell-Docs",
+  "branch": "main",
+  "revision": "a3de8f22552170e70852470d46cd52cd9ca471ec",
+  "tree": "c2df51780644d493f1dfb1ceb0f53cd0b8c8a193",
+  "licenseFiles": [
+    {
+      "path": "LICENSE-CODE.md",
+      "sha256": "adbda6ffa243c17838b6391c5c19747d407053759dbacd1fc236767bda0f83b0",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "adbda6ffa243c17838b6391c5c19747d407053759dbacd1fc236767bda0f83b0",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE.md",
+      "sha256": "e09e0a96f6abe2e9acd2c611a97c8d5da5b88b924b08927c7515359e3107e26c",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "e09e0a96f6abe2e9acd2c611a97c8d5da5b88b924b08927c7515359e3107e26c",
+        "reference": "https://raw.githubusercontent.com/MicrosoftDocs/PowerShell-Docs/a3de8f22552170e70852470d46cd52cd9ca471ec/LICENSE.md",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices.md",
+      "sha256": "91d33e2b778b36ae8188207b8a8352249c35d0da0115aba9461633f98a8c2ed9"
+    }
+  ],
+  "markdownFiles": 3113,
+  "markdownBytes": 33259214,
+  "roots": [
+    ".github",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "LICENSE-CODE.md",
+    "LICENSE.md",
+    "README.md",
+    "SECURITY.md",
+    "ThirdPartyNotices.md",
+    "reference",
+    "terminology.md"
+  ]
+}

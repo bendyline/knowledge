@@ -1,0 +1,38 @@
+---
+manager: mcleans
+author: santiagxf
+ms.author: fasantia 
+ms.service: microsoft-foundry
+ms.subservice: foundry-model-inference
+ms.date: 1/21/2025
+ms.topic: include
+---
+
+
+> **Important:**
+> Items marked preview in this article are currently in preview. This preview is provided without a service-level agreement, and Microsoft doesn't recommend it for production workloads. Certain features might not be supported or might have constrained capabilities. For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+
+In this article, you learn how to create the resources required to use Microsoft Foundry Models in your projects.
+
+## Understand the resources
+
+Foundry Models is a capability in Foundry Services (formerly known Azure AI Services). You can create model deployments under the resource to consume their predictions. You can also connect the resource to Azure AI Hubs and Projects in Foundry to create intelligent applications if needed. The following picture shows the high level architecture.
+
+A diagram showing the high level architecture of the resources created in the tutorial.
+
+Foundry Services don't require AI projects or AI hubs to operate and you can create them to consume flagship models from your applications. However, additional capabilities are available if you **deploy a Foundry project and hub**, including playground, or agents.
+
+The tutorial helps you create:
+
+> 
+> * A Foundry resource.
+> * A model deployment for each of the models supported with serverless API deployments.
+> * (Optionally) A Foundry project and hub.
+> * (Optionally) A connection between the hub and the models in Foundry.
+
+## Prerequisites
+
+To complete this article, you need:
+
+* An Azure subscription.

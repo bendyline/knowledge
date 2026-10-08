@@ -1,0 +1,76 @@
+---
+title: "sys.traces (Transact-SQL)"
+description: sys.traces contains the current running traces on the system.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/23/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "traces"
+  - "sys.traces_TSQL"
+  - "sys.traces"
+  - "traces_TSQL"
+helpviewer_keywords:
+  - "sys.traces catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.traces (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+The `sys.traces` catalog view contains the current running traces on the system. This view is intended as a replacement for the `fn_trace_getinfo` function.
+
+For a complete list of supported trace events, see [SQL Server Event Class Reference](../event-classes/sql-server-event-class-reference.md).
+
+> **Important:**
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use Extended Event catalog views instead.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `id` | **int** | Trace ID. |
+| `status` | **int** | Trace status:<br /><br />0 = stopped<br /><br />1 = running |
+| `path` | **nvarchar(260)** | Path of the trace file. This value is null when the trace is a rowset trace. |
+| `max_size` | **bigint** | Maximum trace file size limit in megabytes (MB). This value is null when the trace is a rowset trace. |
+| `stop_time` | **datetime** | Time to stop the running trace. |
+| `max_files` | **int** | Maximum number of rollover files. This value is null if the Max number isn't set. |
+| `is_rowset` | **bit** | 1 = rowset trace. |
+| `is_rollover` | **bit** | 1 = rollover option is enabled. |
+| `is_shutdown` | **bit** | 1 = shutdown option is enabled. |
+| `is_default` | **bit** | 1 = default trace. |
+| `buffer_count` | **int** | Number of in-memory buffers used by the trace. |
+| `buffer_size` | **int** | Size of each buffer (KB). |
+| `file_position` | **bigint** | Last trace file position. This value is null when the trace is a rowset trace. |
+| `reader_spid` | **int** | Rowset trace reader session ID. This value is null when the trace is a file trace. |
+| `start_time` | **datetime** | Trace start time. |
+| `last_event_time` | **datetime** | Time the last event fired. |
+| `event_count` | **bigint** | Total number of events that occurred. |
+| `dropped_event_count` | **int** | Total number of events dropped. |
+  
+## Permissions
+
+The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).
+
+Requires ALTER TRACE permission on the server.
+
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [sys.trace_categories (Transact-SQL)](sys-trace-categories-transact-sql.md)
+- [sys.trace_columns (Transact-SQL)](sys-trace-columns-transact-sql.md)
+- [sys.trace_events (Transact-SQL)](sys-trace-events-transact-sql.md)
+- [sys.trace_event_bindings (Transact-SQL)](sys-trace-event-bindings-transact-sql.md)
+- [sys.trace_subclass_values (Transact-SQL)](sys-trace-subclass-values-transact-sql.md)

@@ -1,0 +1,52 @@
+{
+  "repository": "MicrosoftDocs/sql-docs",
+  "branch": "live",
+  "revision": "e261e18779bfc7d6123e89ebb40055901b927c2a",
+  "tree": "a95203f3af8bfba0cffc4e12ca6891efbd662116",
+  "licenseFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "7183ef9749eb9b75e710a81a4c812a9405cc184f087500581a973e5929ac3f5e",
+        "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE-CODE",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices",
+      "sha256": "f90a4ebe55a146d29bae7ce11cb57faf7346beab9dd9db5f15b533ac6c48a37f"
+    }
+  ],
+  "markdownFiles": 14441,
+  "markdownBytes": 100471423,
+  "roots": [
+    ".github",
+    "CONTRIBUTING.md",
+    "ReadMe.md",
+    "SECURITY.md",
+    "azure-sql",
+    "data-migration",
+    "docs",
+    "managed-reference"
+  ]
+}

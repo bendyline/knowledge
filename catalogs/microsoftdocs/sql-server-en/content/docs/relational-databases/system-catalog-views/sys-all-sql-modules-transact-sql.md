@@ -1,0 +1,78 @@
+---
+title: "sys.all_sql_modules (Transact-SQL)"
+description: sys.all_sql_modules (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/17/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "all_sql_modules_TSQL"
+  - "sys.all_sql_modules"
+  - "all_sql_modules"
+  - "sys.all_sql_modules_TSQL"
+helpviewer_keywords:
+  - "sys.all_sql_modules catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# sys.all_sql_modules (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the union of **sys.sql_modules** and **sys.system_sql_modules**.  
+  
+ The view returns a row for each natively compiled, scalar user-defined function. For more information, see [Scalar User-Defined Functions for In-Memory OLTP](../in-memory-oltp/scalar-user-defined-functions-for-in-memory-oltp.md).  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **object_id** | **int** | ID of the object of the containing object. Is unique within a database. |
+| **definition** | **nvarchar(max)** | SQL text that defines this module.<br /><br /> NULL = Encrypted |
+| **uses_ansi_nulls** | **bit** | Module was created with SET ANSI_NULLS ON. |
+| **uses_quoted_identifier** | **bit** | Module was created with SET QUOTED_IDENTIFIER ON. |
+| **is_schema_bound** | **bit** | Module was created with the SCHEMABINDING option. |
+| **uses_database_collation** | **bit** | 1 = Schema-bound module definition depends on the default-collation of the database for correct evaluation; otherwise, 0. Such a dependency prevents changing the default collation of the database. |
+| **is_recompiled** | **bit** | Procedure was created using the WITH RECOMPILE option. |
+| **null_on_null_input** | **bit** | Module was declared to produce a NULL output on any NULL input. |
+| **execute_as_principal_id** | **int** | ID of the EXECUTE AS database principal.<br /><br /> NULL by default or if EXECUTE AS CALLER.<br /><br /> ID of the specified principal if EXECUTE AS SELF or EXECUTE AS \<principal>.<br /><br /> -2 = EXECUTE AS OWNER. |
+| **uses_native_compilation** | bit | **Applies to**:  SQL Server 2014 (12.x) |
+ | and later.<br /><br /> 0 = not natively compiled<br /><br /> 1 = is natively compiled<br /><br /> The default value is 0. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [sys.sql_modules (Transact-SQL)](sys-sql-modules-transact-sql.md)
+- [sys.system_sql_modules (Transact-SQL)](sys-system-sql-modules-transact-sql.md)
+- [In-Memory OLTP overview and usage scenarios](../in-memory-oltp/overview-and-usage-scenarios.md)

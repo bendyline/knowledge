@@ -1,0 +1,39 @@
+---
+title: "MSreplication_options (Transact-SQL)"
+description: MSreplication_options (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSreplication_options"
+  - "MSreplication_options_TSQL"
+helpviewer_keywords:
+  - "MSreplication_options system table"
+dev_langs:
+  - "TSQL"
+---
+# MSreplication_options (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSreplication_options** table stores metadata that is used internally by replication. This table is stored in the **master** database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **optname** | **sysname** | Internal use only. |
+| **value** | **bit** | Internal use only. |
+| **major_version** | **int** | Internal use only. |
+| **minor_version** | **int** | Internal use only. |
+| **revision** | **int** | Internal use only. |
+| **install_failures** | **int** | Internal use only. |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)

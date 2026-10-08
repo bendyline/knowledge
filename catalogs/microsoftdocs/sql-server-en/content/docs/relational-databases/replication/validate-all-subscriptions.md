@@ -1,0 +1,45 @@
+---
+title: "Validate All Subscriptions"
+description: "Validate All Subscriptions"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.validate.allsubscriptions.f1"
+helpviewer_keywords:
+  - "Validate All Subscriptions dialog box"
+monikerRange: "=azuresqldb-current || >=sql-server-2017"
+---
+# Validate All Subscriptions
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Use the **Validate All Subscriptions** dialog box to specify that all subscriptions to a merge publication should be validated the next time the Merge Agent for each subscription runs. The results of validation are displayed in Replication Monitor. For more information, see [Validate Data at the Subscriber](validate-data-at-the-subscriber.md).  
+  
+ It is also possible to validate a single subscription by right-clicking a subscription in  SQL Server Management Studio 
+ and clicking **Validate Subscription**.  
+  
+## Options  
+ **Verify the row counts only**  
+ Select to validate whether the table at the Subscriber has the same number of rows as the table at the Publisher. This method does not validate that the content of the rows matches. Row count validation provides a lightweight approach to validation that can make you aware of issues with your data.  
+  
+ **Verify the row counts and compare checksums to verify the row data**  
+ In addition to taking a count of rows at the Publisher and Subscriber, a checksum of all the data is calculated using the binary checksum algorithm. If the row count fails, the checksum is not performed. This option is not valid for  SQL Server Compact 
+.  
+  
+## Related content
+
+- [Validate Replicated Data](validate-data-at-the-subscriber.md)

@@ -1,0 +1,66 @@
+---
+title: "Distributed Queries Stored Procedures (Transact-SQL)"
+description: "Distributed Queries stored procedures (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+helpviewer_keywords:
+  - "system stored procedures [SQL Server], distributed queries"
+  - "distributed queries [SQL Server], stored procedures"
+dev_langs:
+  - "TSQL"
+---
+# Distributed Queries stored procedures (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+ SQL Server 
+ supports the following system stored procedures that are used to implement and manage Distributed Queries.
+
+
+
+        [sp_addlinkedserver](sp-addlinkedserver-transact-sql.md)
+
+        [sp_addlinkedsrvlogin](sp-addlinkedsrvlogin-transact-sql.md)
+
+        [sp_catalogs](sp-catalogs-transact-sql.md)
+
+        [sp_column_privileges_ex](sp-column-privileges-ex-transact-sql.md)
+
+        [sp_columns_ex](sp-columns-ex-transact-sql.md)
+
+        [sp_droplinkedsrvlogin](sp-droplinkedsrvlogin-transact-sql.md)
+
+        [sp_dropserver](sp-dropserver-transact-sql.md)
+
+        [sp_foreignkeys](sp-foreignkeys-transact-sql.md)
+    :::column-end:::
+    :::column:::
+        [sp_indexes](sp-indexes-transact-sql.md)
+
+        [sp_linkedservers](sp-linkedservers-transact-sql.md)
+
+        [sp_primarykeys](sp-primarykeys-transact-sql.md)
+
+        [sp_serveroption](sp-serveroption-transact-sql.md)
+
+        [sp_table_privileges_ex](sp-table-privileges-ex-transact-sql.md)
+
+        [sp_tables_ex](sp-tables-ex-transact-sql.md)
+
+        [sp_testlinkedserver](sp-testlinkedserver-transact-sql.md)
+    :::column-end:::
+
+
+## Related content
+
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

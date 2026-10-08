@@ -1,0 +1,1891 @@
+---
+title: SAP HANA scale-out with HSR and Pacemaker on RHEL| Microsoft Docs
+description: SAP HANA scale-out with HANA system replication (HSR) and Pacemaker on Red Hat Enterprise Linux (RHEL)
+author: rdeltcheva
+manager: juergent
+ms.assetid: 5e514964-c907-4324-b659-16dd825f6f87
+ms.service: sap-on-azure
+ms.subservice: sap-vm-workloads
+ms.topic: article
+ms.date: 02/19/2026
+ms.author: radeltch
+ms.custom:
+  - devx-track-azurecli
+  - devx-track-azurepowershell
+  - linux-related-content
+  - sfi-image-nochange
+# Customer intent: "As an SAP administrator, I want to configure a highly available SAP HANA scale-out system using HANA system replication and Pacemaker on Red Hat Enterprise Linux, so that I can ensure data reliability and automatic failover in my Azure environment."
+---
+
+# High availability of SAP HANA scale-out system on Red Hat Enterprise Linux
+
+[dbms-guide]:dbms-guide-general.md
+[deployment-guide]:deployment-guide.md
+[planning-guide]:planning-guide.md
+
+[anf-azure-doc]: https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/index.yml
+
+[1928533]:https://launchpad.support.sap.com/#/notes/1928533
+[2015553]:https://launchpad.support.sap.com/#/notes/2015553
+[2178632]:https://launchpad.support.sap.com/#/notes/2178632
+[2191498]:https://launchpad.support.sap.com/#/notes/2191498
+[2243692]:https://launchpad.support.sap.com/#/notes/2243692
+[1999351]:https://launchpad.support.sap.com/#/notes/1999351
+[1900823]:https://launchpad.support.sap.com/#/notes/1900823
+[2009879]:https://launchpad.support.sap.com/#/notes/2009879
+[3108302]:https://launchpad.support.sap.com/#/notes/3108302
+
+[sap-hana-ha]:sap-hana-high-availability.md
+
+This article describes how to deploy a highly available SAP HANA system in a scale-out configuration. Specifically, the configuration uses HANA system replication (HSR) and Pacemaker on Azure Red Hat Enterprise Linux virtual machines (VMs). The shared file systems in the presented architecture are NFS mounted and are provided by [Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-introduction.md) or [NFS share on Azure Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/files-nfs-protocol.md).
+
+In the example configurations and installation commands, the HANA instance is `03` and the HANA system ID is `HN1`.  
+
+## Prerequisites
+
+Some readers will benefit from consulting a variety of SAP notes and resources before proceeding further with the topics in this article:
+
+* SAP note [1928533] includes:  
+  * A list of Azure VM sizes that are supported for the deployment of SAP software.
+  * Important capacity information for Azure VM sizes.
+  * Supported SAP software, and operating system and database combinations.
+  * The required SAP kernel version for Windows and Linux on Microsoft Azure.
+* SAP note [2015553]: Lists prerequisites for SAP-supported SAP software deployments in Azure.
+* SAP note [2002167]: Has recommended operating system settings for RHEL.
+* SAP note [2009879]: Has SAP HANA guidelines for RHEL.
+* SAP Note [3108302] has SAP HANA Guidelines for Red Hat Enterprise Linux 9.x.
+* SAP note [2178632]: Contains detailed information about all monitoring metrics reported for SAP in Azure.
+* SAP note [2191498]: Contains the required SAP host agent version for Linux in Azure.
+* SAP note [2243692]: Contains information about SAP licensing on Linux in Azure.
+* SAP note [1999351]: Contains additional troubleshooting information for the Azure enhanced monitoring extension for SAP.
+* SAP note [1900823]: Contains information about SAP HANA storage requirements.
+* [SAP community wiki](https://wiki.scn.sap.com/wiki/display/HOME/SAPonLinuxNotes): Contains all required SAP notes for Linux.
+* [Azure Virtual Machines planning and implementation for SAP on Linux][planning-guide].
+* [Azure Virtual Machines deployment for SAP on Linux][deployment-guide].
+* [Azure Virtual Machines DBMS deployment for SAP on Linux][dbms-guide].
+* General RHEL documentation:
+  * [High availability add-on overview](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/high_availability_add-on_overview/index).
+  * [High availability add-on administration](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/high_availability_add-on_administration/index).
+  * [High availability add-on reference](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/high_availability_add-on_reference/index).
+  * [Red Hat Enterprise Linux networking guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide).
+  * [How do I configure SAP HANA scale-out system replication in a Pacemaker cluster with HANA file systems on NFS shares?](https://access.redhat.com/solutions/5423971).
+  * [Active/Active (read-enabled): RHEL HA solution for SAP HANA scale out and system replication](https://access.redhat.com/articles/3004101).
+* Azure-specific RHEL documentation:
+  * [Install SAP HANA on Red Hat Enterprise Linux for use in Microsoft Azure](https://access.redhat.com/public-cloud/microsoft-azure).
+  * [Red Hat Enterprise Linux Solution for SAP HANA scale-out and system replication](https://access.redhat.com/solutions/4386601).
+  * [What is the fast_stop option for a Filesystem resource in a Pacemaker cluster?](https://access.redhat.com/solutions/4801371)
+* [Azure NetApp Files documentation][anf-azure-doc].
+* [NFS v4.1 volumes on Azure NetApp Files for SAP HANA](hana-vm-operations-netapp.md).
+* [Azure Files documentation](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/storage-files-introduction.md)  
+
+## Overview
+
+To achieve HANA high availability for HANA scale-out installations, you can configure HANA system replication, and protect the solution with a Pacemaker cluster to allow automatic failover. When an active node fails, the cluster fails over the HANA resources to the other site.  
+
+In the following diagram, there are three HANA nodes on each site, and a majority maker node to prevent a "split-brain" scenario. The instructions can be adapted to include more VMs as HANA DB nodes.  
+
+The HANA shared file system `/hana/shared` in the presented architecture can be provided by [Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-introduction.md) or [NFS share on Azure Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/files-nfs-protocol.md). The HANA shared file system is NFS mounted on each HANA node in the same HANA system replication site. File systems `/hana/data` and `/hana/log` are local file systems and aren't shared between the HANA DB nodes. SAP HANA will be installed in non-shared mode.  
+
+For recommended SAP HANA storage configurations, see [SAP HANA Azure VMs storage configurations](hana-vm-operations-storage.md).
+
+> **Important:**
+> If deploying all HANA file systems on Azure NetApp Files, for production systems, where performance is a key, we recommend evaluating and considering using [Azure NetApp Files application volume group for SAP HANA](hana-vm-operations-netapp.md#deployment-through-azure-netapp-files-application-volume-group-for-sap-hana-avg).  
+
+[Diagram of SAP HANA scale-out with HSR and Pacemaker cluster.](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/sap/workloads/media/sap-hana-high-availability-rhel/sap-hana-high-availability-scale-out-hsr-rhel-detail.png#lightbox)
+
+The preceding diagram shows three subnets represented within one Azure virtual network, following the SAP HANA network recommendations:
+
+* For client communication: `client` 10.23.0.0/24  
+* For internal HANA internode communication: `inter` 10.23.1.128/26  
+* For HANA system replication: `hsr` 10.23.1.192/26  
+
+Because `/hana/data` and `/hana/log` are deployed on local disks, it isn't necessary to deploy separate subnet and separate virtual network cards for communication to the storage.  
+
+If you're using Azure NetApp Files, the NFS volumes for `/hana/shared`, are deployed in a separate subnet, [delegated to Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-delegate-subnet.md): `anf` 10.23.1.0/26.  
+
+## Set up the infrastructure
+
+In the instructions that follow, we assume that you've already created the resource group, the Azure virtual network with three Azure network subnets: `client`, `inter` and `hsr`.
+
+### Deploy Linux virtual machines via the Azure portal
+
+1. Deploy the Azure VMs. For this configuration, deploy seven virtual machines:
+
+   * Three virtual machines to serve as HANA DB nodes for HANA replication site 1: **hana-s1-db1**, **hana-s1-db2** and **hana-s1-db3**.  
+   * Three virtual machines to serve as HANA DB nodes for HANA replication site 2: **hana-s2-db1**, **hana-s2-db2** and **hana-s2-db3**.  
+   * A small virtual machine to serve as majority maker: **hana-s-mm**.
+
+   The VMs deployed as SAP DB HANA nodes should be certified by SAP for HANA, as published in the [SAP HANA hardware directory](https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=v:deCertified;ve:24;iaas;v:125;v:105;v:99;v:120). When you're deploying the HANA DB nodes, make sure to select [accelerated network](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/create-vm-accelerated-networking-cli.md).  
+  
+   For the majority maker node, you can deploy a small VM, because this VM doesn't run any of the SAP HANA resources. The majority maker VM is used in the cluster configuration to achieve and odd number of cluster nodes in a split-brain scenario. The majority maker VM only needs one virtual network interface in the `client` subnet in this example.
+
+   Deploy local managed disks for `/hana/data` and `/hana/log`. The minimum recommended storage configuration for `/hana/data` and `/hana/log` is described in [SAP HANA Azure VMs storage configurations](hana-vm-operations-storage.md).
+
+   Deploy the primary network interface for each VM in the `client` virtual network subnet. When the VM is deployed via Azure portal, the network interface name is automatically generated. In this article, we'll refer to the automatically generated, primary network interfaces as **hana-s1-db1-client**, **hana-s1-db2-client**, **hana-s1-db3-client**, and so on. These network interfaces are attached to the `client` Azure virtual network subnet.  
+
+   > **Important:**
+   > Make sure that the operating system you select is SAP-certified for SAP HANA on the specific VM types that you're using. For a list of SAP HANA certified VM types and operating system releases for those types, see [SAP HANA certified IaaS platforms](https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=v:deCertified;ve:24;iaas;v:125;v:105;v:99;v:120). Drill into the details of the listed VM type to get the complete list of SAP HANA-supported operating system releases for that type.  
+  
+2. Create six network interfaces, one for each HANA DB virtual machine, in the `inter` virtual network subnet (in this example, **hana-s1-db1-inter**, **hana-s1-db2-inter**, **hana-s1-db3-inter**, **hana-s2-db1-inter**, **hana-s2-db2-inter**, and **hana-s2-db3-inter**).  
+
+3. Create six network interfaces, one for each HANA DB virtual machine, in the `hsr` virtual network subnet (in this example, **hana-s1-db1-hsr**, **hana-s1-db2-hsr**, **hana-s1-db3-hsr**, **hana-s2-db1-hsr**, **hana-s2-db2-hsr**, and **hana-s2-db3-hsr**).  
+
+4. Attach the newly created virtual network interfaces to the corresponding virtual machines:  
+
+    1. Go to the virtual machine in the [Azure portal](https://portal.azure.com/#home).  
+    2. On the left pane, select **Virtual Machines**. Filter on the virtual machine name (for example, **hana-s1-db1**), and then select the virtual machine.  
+    3. On the **Overview** pane, select **Stop** to deallocate the virtual machine.  
+    4. Select **Networking**, and then attach the network interface. In the **Attach network interface** dropdown list, select the already created network interfaces for the `inter` and `hsr` subnets.  
+    5. Select **Save**.
+    6. Repeat steps b through e for the remaining virtual machines (in our example,  **hana-s1-db2**, **hana-s1-db3**, **hana-s2-db1**, **hana-s2-db2** and **hana-s2-db3**)
+    7. Leave the virtual machines in the stopped state for now.
+
+5. Enable [accelerated networking](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/create-vm-accelerated-networking-cli.md) for the additional network interfaces for the `inter` and `hsr` subnets by doing the following:  
+
+    1. Open [Azure Cloud Shell](https://azure.microsoft.com/features/cloud-shell/) in the [Azure portal](https://portal.azure.com/#home).  
+
+    2. Run the following commands to enable accelerated networking for the additional network interfaces, which are attached to the `inter` and `hsr` subnets.  
+
+       ```azurecli
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s1-db1-inter --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s1-db2-inter --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s1-db3-inter --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s2-db1-inter --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s2-db2-inter --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s2-db3-inter --accelerated-networking true
+       
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s1-db1-hsr --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s1-db2-hsr --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s1-db3-hsr --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s2-db1-hsr --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s2-db2-hsr --accelerated-networking true
+       az network nic update --id /subscriptions/your subscription/resourceGroups/your resource group/providers/Microsoft.Network/networkInterfaces/hana-s2-db3-hsr --accelerated-networking true
+       ```
+
+       > **Note:**
+       > You don’t have to install the Azure CLI package on your HANA nodes to run `az` command. You can run it from any machine that has the CLI installed, or use Azure Cloud Shell.
+
+6. Start the HANA DB virtual machines.
+
+### Configure Azure load balancer
+
+During VM configuration, you have an option to create or select exiting load balancer in networking section. Follow below steps to set up standard load balancer for high availability setup of HANA database.
+
+> **Note:**
+>
+> * For HANA scale-out, select the NIC for the `client` subnet when adding the virtual machines in the backend pool.
+> * The full set of command in Azure CLI and PowerShell adds the VMs with primary NIC in the backend pool.
+
+#### [Azure portal](#tab/lb-portal)
+
+
+Follow the steps in [Create load balancer](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/load-balancer/quickstart-load-balancer-standard-internal-portal.md#create-load-balancer) to set up a standard load balancer for a high-availability SAP system by using the Azure portal. During the setup of the load balancer, consider the following points:
+
+1. **Frontend IP Configuration:** Create a front-end IP. Select the same virtual network and subnet name as your database virtual machines.
+1. **Backend Pool:** Create a back-end pool and add database VMs.
+1. **Inbound rules:** Create a load-balancing rule. Follow the same steps for both load-balancing rules.
+     - **Frontend IP address**: Select a front-end IP.
+     - **Backend pool**: Select a back-end pool.
+     - **High-availability ports**: Select this option.
+     - **Protocol**: Select **TCP**.
+     - **Health Probe**: Create a health probe with the following details:
+       - **Protocol**: Select **TCP**.
+       - **Port**: For example, **625<instance-no.>**.
+       - **Interval**: Enter **5**.
+       - **Probe Threshold**: Enter **2**.
+     - **Idle timeout (minutes)**: Enter **30**.
+     - **Enable Floating IP**: Select this option.
+
+> **Note:**
+> The health probe configuration property `numberOfProbes`, otherwise known as **Unhealthy threshold** in the portal, isn't respected. To control the number of successful or failed consecutive probes, set the property `probeThreshold` to `2`. It's currently not possible to set this property by using the Azure portal, so use either the [Azure CLI](https://learn.microsoft.com/cli/azure/network/lb/probe) or the [PowerShell](https://learn.microsoft.com/powershell/module/az.network/set-azloadbalancerprobeconfig) command.
+
+
+#### [Azure CLI](#tab/lb-azurecli)
+
+The full set of Azure CLI codes display the setup of the load balancer, which includes two VMs in the backend pool. Depending on the number of VMs in your HANA scale-out, you could add more VMs in the backend pool.
+
+
+> **Note:**
+> Use azure-cli v2.63.0 or later. You can check the version using `az version`.
+
+To create Azure standard load balancer for high availability setup using Azure CLI, follow below steps.
+
+```azurecli-interactive
+# Create the load balancer resource with frontend IP. Allocation of private IP address is dynamic using below command. If you want to pass static IP address, include parameter --private-ip-address.
+az network lb create -g MyResourceGroup -n MyLB --sku Standard --vnet-name MyVMsVirtualNetwork --subnet MyVMsSubnet --backend-pool-name MyBackendPool --frontend-ip-name MyDBFrontendIpName
+
+# Create the health probe
+az network lb probe create -g MyResourceGroup --lb-name MyLB -n MyDBHealthProbe --protocol tcp --port MyDBHealthProbePort --interval 5 --probe-threshold 2
+ 
+# Create load balancing rule
+az network lb rule create -g MyResourceGroup --lb-name MyLB -n MyDBRuleName --protocol All --frontend-ip-name MyDBFrontendIpName --frontend-port 0 --backend-pool-name MyBackendPool --backend-port 0 --probe-name MyDBHealthProbe --idle-timeout-in-minutes 30 --enable-floating-ip 
+
+# Add database VMs in backend pool
+az network nic ip-config address-pool add --address-pool MyBackendPool --ip-config-name DBVm1IpConfigName --nic-name DBVm1NicName -g MyResourceGroup --lb-name MyLB
+az network nic ip-config address-pool add --address-pool MyBackendPool --ip-config-name DBVm2IpConfigName --nic-name DBVm2NicName -g MyResourceGroup --lb-name MyLB
+```
+
+</br>
+<details>
+<summary>Expand to view full CLI code</summary>
+
+```azurecli-interactive
+# Define variables for Resource Group, and Database VMs.
+
+rg_name="resourcegroup-name"
+vm1_name="db1-name"
+vm2_name="db2-name"
+
+# Define variables for the load balancer that will be utilized in the creation of the load balancer resource.
+
+lb_name="sap-db-sid-ilb"
+bkp_name="db-backendpool"
+db_fip_name="db-frontendip"
+
+db_hp_name="db-healthprobe"
+db_hp_port="625<instance-no>"
+
+db_rule_name="db-lb-rule"
+ 
+# Command to get VMs network information like primary NIC name, primary IP configuration name, virtual network name, and subnet name. 
+ 
+vm1_primary_nic=$(az vm nic list -g $rg_name --vm-name $vm1_name --query "[?primary == \`true\`].{id:id} || [?primary == \`null\`].{id:id}" -o tsv)
+vm1_nic_name=$(basename $vm1_primary_nic)
+vm1_ipconfig=$(az network nic ip-config list -g $rg_name --nic-name $vm1_nic_name --query "[?primary == \`true\`].name" -o tsv)
+ 
+vm2_primary_nic=$(az vm nic list -g $rg_name --vm-name $vm2_name --query "[?primary == \`true\`].{id:id} || [?primary == \`null\`].{id:id}" -o tsv)
+vm2_nic_name=$(basename $vm2_primary_nic)
+vm2_ipconfig=$(az network nic ip-config list -g $rg_name --nic-name $vm2_nic_name --query "[?primary == \`true\`].name" -o tsv)
+ 
+vnet_subnet_id=$(az network nic show -g $rg_name -n $vm1_nic_name --query ipConfigurations[0].subnet.id -o tsv)
+vnet_name=$(basename $(dirname $(dirname $vnet_subnet_id)))
+subnet_name=$(basename $vnet_subnet_id)
+ 
+# Create the load balancer resource with frontend IP.
+# Allocation of private IP address is dynamic using below command. If you want to pass static IP address, include parameter --private-ip-address. 
+  
+az network lb create -g $rg_name -n $lb_name --sku Standard --vnet-name $vnet_name --subnet $subnet_name --backend-pool-name $bkp_name --frontend-ip-name $db_fip_name
+ 
+# Create the health probe
+ 
+az network lb probe create -g $rg_name --lb-name $lb_name -n $db_hp_name --protocol tcp --port $db_hp_port --interval 5 --probe-threshold 2
+ 
+# Create load balancing rule
+  
+az network lb rule create -g $rg_name --lb-name $lb_name -n  $db_rule_name --protocol All --frontend-ip-name $db_fip_name --frontend-port 0 --backend-pool-name $bkp_name --backend-port 0 --probe-name $db_hp_name --idle-timeout-in-minutes 30 --enable-floating-ip 
+ 
+# Add database VMs in backend pool
+ 
+az network nic ip-config address-pool add --address-pool $bkp_name --ip-config-name $vm1_ipconfig --nic-name $vm1_nic_name -g $rg_name --lb-name $lb_name
+az network nic ip-config address-pool add --address-pool $bkp_name --ip-config-name $vm2_ipconfig --nic-name $vm2_nic_name -g $rg_name --lb-name $lb_name
+
+# [OPTIONAL] Change the assignment of frontend IP address from dynamic to static
+dbfip=$(az network lb frontend-ip show --lb-name $lb_name -g $rg_name -n $db_fip_name --query "{privateIPAddress:privateIPAddress}" -o tsv)
+az network lb frontend-ip update --lb-name $lb_name -g $rg_name -n $db_fip_name --private-ip-address $dbfip
+```
+
+</details>
+
+
+#### [PowerShell](#tab/lb-powershell)
+
+The full set of PowerShell code display the setup of the load balancer, which includes two VMs in the backend pool. Depending on the number of VMs in your HANA scale-out, you could add more VMs in the backend pool.
+
+
+```azurecli-interactive
+# Create frontend IP configurations
+$db_fip = New-AzLoadBalancerFrontendIpConfig -Name MyDBFrontendIpName -SubnetId MyDBSubnetName
+
+# Create backend pool
+$bePool = New-AzLoadBalancerBackendAddressPoolConfig -Name MyBackendPool
+
+# Create health probe
+$db_healthprobe = New-AzLoadBalancerProbeConfig -Name MyDBHealthProbe -Protocol 'tcp' -Port MyDBHealthProbePort -IntervalInSeconds 5 -ProbeThreshold 2 -ProbeCount 1
+
+# Create load balancing rule
+$db_rule = New-AzLoadBalancerRuleConfig -Name MyDBRuleName -Probe $db_healthprobe -Protocol 'All' -IdleTimeoutInMinutes 30 -FrontendIpConfiguration $db_fip -BackendAddressPool $bePool -EnableFloatingIP
+
+# Create the load balancer resource
+$lb = New-AzLoadBalancer -ResourceGroupName MyResourceGroup -Name MyLB -Location MyRegion -Sku 'Standard' -FrontendIpConfiguration $db_fip -BackendAddressPool $bePool -LoadBalancingRule $db_rule -Probe $db_healthprobe
+```
+
+</br>
+<details>
+<summary>Expand to view full PowerShell code</summary>
+
+```azurepowershell-interactive
+# Define variables for Resource Group, and Database VMs.
+
+$rg_name = 'resourcegroup-name'
+$vm1_name = 'db1-name'
+$vm2_name = 'db2-name'
+
+# Define variables for the load balancer that will be utilized in the creation of the load balancer resource.
+
+$lb_name = 'sap-db-sid-ilb'
+$bkp_name = 'db-backendpool'
+$db_fip_name = 'db-frontendip'
+ 
+$db_hp_name = 'db-healthprobe'
+$db_hp_port = '625<instance-no>'
+ 
+$db_rule_name = 'db-lb-rule'
+ 
+# Command to get VMs network information like primary NIC name, primary IP configuration name, virtual network name, and subnet name.
+ 
+$vm1 = Get-AzVM -ResourceGroupName $rg_name -Name $vm1_name
+$vm1_primarynic = $vm1.NetworkProfile.NetworkInterfaces | Where-Object {($_.Primary -eq "True") -or ($_.Primary -eq $null)}
+$vm1_nic_name = $vm1_primarynic.Id.Split('/')[-1]
+ 
+$vm1_nic_info = Get-AzNetworkInterface -Name $vm1_nic_name -ResourceGroupName $rg_name
+$vm1_primaryip = $vm1_nic_info.IpConfigurations | Where-Object -Property Primary -EQ -Value "True"
+$vm1_ipconfig_name = ($vm1_primaryip).Name
+ 
+$vm2 = Get-AzVM -ResourceGroupName $rg_name -Name $vm2_name
+$vm2_primarynic = $vm2.NetworkProfile.NetworkInterfaces | Where-Object {($_.Primary -eq "True") -or ($_.Primary -eq $null)}
+$vm2_nic_name = $vm2_primarynic.Id.Split('/')[-1]
+ 
+$vm2_nic_info = Get-AzNetworkInterface -Name $vm2_nic_name -ResourceGroupName $rg_name
+$vm2_primaryip = $vm2_nic_info.IpConfigurations | Where-Object -Property Primary -EQ -Value "True"
+$vm2_ipconfig_name = ($vm2_primaryip).Name
+ 
+$vnet_name = $vm1_primaryip.Subnet.Id.Split('/')[-3]
+$subnet_name = $vm1_primaryip.Subnet.Id.Split('/')[-1]
+$location = $vm1.Location
+ 
+# Create frontend IP resource.
+# Allocation of private IP address is dynamic using below command. If you want to pass static IP address, include parameter -PrivateIpAddress
+ 
+$db_lb_fip = @{
+    Name = $db_fip_name
+    SubnetId = $vm1_primaryip.Subnet.Id
+}
+$db_fip = New-AzLoadBalancerFrontendIpConfig @db_lb_fip
+
+# Create backend pool
+ 
+$bepool = New-AzLoadBalancerBackendAddressPoolConfig -Name $bkp_name
+
+# Create the health probe
+ 
+$db_probe = @{
+    Name = $db_hp_name
+    Protocol = 'tcp'
+    Port = $db_hp_port
+    IntervalInSeconds = '5'
+    ProbeThreshold = '2'
+    ProbeCount = '1'
+}
+$db_healthprobe = New-AzLoadBalancerProbeConfig @db_probe
+    
+# Create load balancing rule
+ 
+$db_lbrule = @{
+    Name = $db_rule_name
+    Probe = $db_healthprobe
+    Protocol = 'All'
+    IdleTimeoutInMinutes = '30'
+    FrontendIpConfiguration = $db_fip
+    BackendAddressPool = $bePool 
+} 
+$db_rule = New-AzLoadBalancerRuleConfig @db_lbrule -EnableFloatingIP 
+ 
+# Create the load balancer resource
+ 
+$loadbalancer = @{
+    ResourceGroupName = $rg_name
+    Name = $lb_name
+    Location = $location
+    Sku = 'Standard'
+    FrontendIpConfiguration = $db_fip
+    BackendAddressPool = $bePool
+    LoadBalancingRule = $db_rule
+    Probe = $db_healthprobe
+} 
+$lb = New-AzLoadBalancer @loadbalancer
+
+# Add DB VMs in backend pool
+ 
+$vm1_primaryip.LoadBalancerBackendAddressPools.Add($lb.BackendAddressPools[0])
+$vm2_primaryip.LoadBalancerBackendAddressPools.Add($lb.BackendAddressPools[0])
+$vm1_nic_info | Set-AzNetworkInterface
+$vm2_nic_info | Set-AzNetworkInterface
+```
+
+</details>
+
+
+---
+
+> **Note:**
+> When you're using the standard load balancer, you should be aware of the following limitation. When you place VMs without public IP addresses in the back-end pool of an internal load balancer, there's no outbound internet connectivity. To allow routing to public end points, you need to perform additional configuration. For more information, see [Public endpoint connectivity for Virtual Machines using Azure Standard Load Balancer in SAP high-availability scenarios](high-availability-guide-standard-load-balancer-outbound-connections.md).  
+
+> **Important:**
+> Don't enable TCP timestamps on Azure VMs placed behind Azure Load Balancer. Enabling TCP timestamps causes the health probes to fail. Set the parameter `net.ipv4.tcp_timestamps` to `0`. For details, see [Load Balancer health probes](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/load-balancer/load-balancer-custom-probe-overview.md) and SAP note [2382421](https://launchpad.support.sap.com/#/notes/2382421).  
+
+### Deploy NFS
+
+There are two options for deploying Azure native NFS for `/hana/shared`. You can deploy NFS volume on [Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-introduction.md) or [NFS share on Azure Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/files-nfs-protocol.md). Azure files support NFSv4.1 protocol, NFS on Azure NetApp files supports both NFSv4.1 and NFSv3.
+
+The next sections describe the steps to deploy NFS - you'll need to select only *one* of the options.
+
+> **Tip:**
+> You chose to deploy `/hana/shared` on [NFS share on Azure Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/files-nfs-protocol.md) or [NFS volume on Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-introduction.md).  
+
+#### Deploy the Azure NetApp Files infrastructure
+
+Deploy the Azure NetApp Files volumes for the `/hana/shared` file system. You need a separate `/hana/shared` volume for each HANA system replication site. For more information, see [Set up the Azure NetApp Files infrastructure](sap-hana-scale-out-standby-netapp-files-rhel.md#set-up-the-azure-netapp-files-infrastructure).
+
+In this example, you use the following Azure NetApp Files volumes:
+
+* volume **HN1**-shared-s1 (nfs://10.23.1.7/**HN1**-shared-s1)
+* volume **HN1**-shared-s2 (nfs://10.23.1.7/**HN1**-shared-s2)
+
+#### Deploy the NFS on Azure Files infrastructure
+
+Deploy Azure Files NFS shares for the `/hana/shared` file system. You'll need a separate `/hana/shared` Azure Files NFS share for each HANA system replication site. For more information, see [How to create an NFS share](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/storage-files-how-to-create-nfs-shares.md?tabs=azure-portal).
+
+In this example, the following Azure Files NFS shares were used:
+
+* share **hn1**-shared-s1 (sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s1)
+* share **hn1**-shared-s2 (sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s2)
+
+> **Note:**
+> Azure Files NFS supports Encryption in Transit (EiT). If you would like to use Encryption in Transit, read [Azure Files NFS Encryption in Transit for SAP on Azure Systems](sap-azure-files-nfs-encryption-in-transit-guide.md) to learn how to configure and deploy.
+
+## Operating system configuration and preparation
+
+The instructions in the next sections are prefixed with one of the following abbreviations:
+
+* **[A]**: Applicable to all nodes
+* **[AH]**: Applicable to all HANA DB nodes
+* **[M]**: Applicable to the majority maker node
+* **[AH1]**: Applicable to all HANA DB nodes on SITE 1
+* **[AH2]**: Applicable to all HANA DB nodes on SITE 2
+* **[1]**: Applicable only to HANA DB node 1, SITE 1
+* **[2]**: Applicable only to HANA DB node 1, SITE 2
+
+Configure and prepare your operating system by doing the following:
+
+1. **[A]** Maintain the host files on the virtual machines. Include entries for all subnets. The following entries are added to `/etc/hosts` for this example.  
+
+    ```bash
+    # Client subnet
+    10.23.0.11 hana-s1-db1
+    10.23.0.12 hana-s1-db1
+    10.23.0.13 hana-s1-db2
+    10.23.0.14 hana-s2-db1
+    10.23.0.15 hana-s2-db2
+    10.23.0.16 hana-s2-db3
+    10.23.0.17 hana-s-mm
+    # Internode subnet
+    10.23.1.138 hana-s1-db1-inter
+    10.23.1.139 hana-s1-db2-inter
+    10.23.1.140 hana-s1-db3-inter
+    10.23.1.141 hana-s2-db1-inter
+    10.23.1.142 hana-s2-db2-inter
+    10.23.1.143 hana-s2-db3-inter
+    # HSR subnet
+    10.23.1.202 hana-s1-db1-hsr
+    10.23.1.203 hana-s1-db2-hsr
+    10.23.1.204 hana-s1-db3-hsr
+    10.23.1.205 hana-s2-db1-hsr
+    10.23.1.206 hana-s2-db2-hsr
+    10.23.1.207 hana-s2-db3-hsr
+    ```
+
+1. **[A]** Create configuration file */etc/sysctl.d/ms-az.conf* with Microsoft for Azure configuration settings.  
+
+    ```bash
+    vi /etc/sysctl.d/ms-az.conf
+    
+    # Add the following entries in the configuration file
+    
+    net.ipv6.conf.all.disable_ipv6 = 1
+    net.ipv4.tcp_max_syn_backlog = 16348
+    net.ipv4.conf.all.rp_filter = 0
+    sunrpc.tcp_slot_table_entries = 128
+    vm.swappiness=10
+    ```
+
+    > **Tip:**
+    > Avoid setting `net.ipv4.ip_local_port_range` and `net.ipv4.ip_local_reserved_ports` explicitly in the `sysctl` configuration files, to allow the SAP host agent to manage the port ranges. For more details, see SAP note [2382421](https://launchpad.support.sap.com/#/notes/2382421).  
+
+1. **[A]** Install the NFS client package.  
+
+   ```bash
+   dnf install nfs-utils
+   ```
+
+1. **[AH]** Red Hat for HANA configuration.
+
+   Configure RHEL, as described in the [Red Hat customer portal](https://access.redhat.com/solutions/2447641) and in the following SAP notes:
+
+   * [2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8](https://me.sap.com/notes/2777782)
+   * [3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9](https://me.sap.com/notes/3108302)
+   * [3562919 - SAP HANA DB: Recommended OS Settings for RHEL 10](https://me.sap.com/notes/3562919)
+   * [3057467 - Which compat-sap-c++ package do I need for SAP on RHEL?](https://me.sap.com/notes/3057467)
+
+## Prepare the file systems
+
+The following sections provide steps for the preparation of your file systems. You chose to deploy /hana/shared' on [NFS share on Azure Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/files-nfs-protocol.md) or [NFS volume on Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-introduction.md).
+
+### Mount the shared file systems (Azure NetApp Files NFS)
+
+In this example, the shared HANA file systems are deployed on Azure NetApp Files and mounted over NFSv4.1. Follow the steps in this section, only if you're using NFS on Azure NetApp Files.  
+
+1. **[AH]** Prepare the OS for running SAP HANA on NetApp Systems with NFS, as described in SAP note [3024346 - Linux Kernel Settings for NetApp NFS](https://launchpad.support.sap.com/#/notes/3024346). Create configuration file */etc/sysctl.d/91-NetApp-HANA.conf* for the NetApp configuration settings.  
+
+    ```bash
+    vi /etc/sysctl.d/91-NetApp-HANA.conf
+     
+    # Add the following entries in the configuration file
+    net.core.rmem_max = 16777216
+    net.core.wmem_max = 16777216
+    net.ipv4.tcp_rmem = 4096 131072 16777216
+    net.ipv4.tcp_wmem = 4096 16384 16777216
+    net.core.netdev_max_backlog = 300000
+    net.ipv4.tcp_slow_start_after_idle = 0
+    net.ipv4.tcp_no_metrics_save = 1
+    net.ipv4.tcp_moderate_rcvbuf = 1
+    net.ipv4.tcp_window_scaling = 1
+    net.ipv4.tcp_sack = 1
+    ```
+
+2. **[AH]** Adjust the sunrpc settings, as recommended in SAP note [3024346 - Linux Kernel Settings for NetApp NFS](https://launchpad.support.sap.com/#/notes/3024346).  
+
+    ```bash
+    vi /etc/modprobe.d/sunrpc.conf
+     
+    # Insert the following line
+    options sunrpc tcp_max_slot_table_entries=128
+    ```
+
+3. **[AH]** Create mount points for the HANA database volumes.
+
+    ```bash
+    mkdir -p /hana/shared
+    ```
+
+4. **[AH]** Verify the NFS domain setting. Make sure that the domain is configured as the default Azure NetApp Files domain: `defaultv4iddomain.com`. Make sure the mapping is set to `nobody`.  
+   (This step is only needed if you're using Azure NetAppFiles NFS v4.1.)  
+
+    > **Important:**
+    > Make sure to set the NFS domain in `/etc/idmapd.conf` on the VM to match the default domain configuration on Azure NetApp Files: `defaultv4iddomain.com`. If there's a mismatch between the domain configuration on the NFS client and the NFS server, the permissions for files on Azure NetApp volumes that are mounted on the VMs will be displayed as `nobody`.  
+
+    ```bash
+    sudo cat /etc/idmapd.conf
+    # Example
+    [General]
+    Domain = defaultv4iddomain.com
+    [Mapping]
+    Nobody-User = nobody
+    Nobody-Group = nobody
+    ```
+
+5. **[AH]** Verify `nfs4_disable_idmapping`. It should be set to `Y`. To create the directory structure where `nfs4_disable_idmapping` is located, run the mount command. You won't be able to manually create the directory under */sys/modules*, because access is reserved for the kernel or drivers.  
+   This step is only needed, if using Azure NetAppFiles NFSv4.1.  
+
+    ```bash
+    # Check nfs4_disable_idmapping 
+    cat /sys/module/nfs/parameters/nfs4_disable_idmapping
+    # If you need to set nfs4_disable_idmapping to Y
+    mkdir /mnt/tmp
+    mount 10.9.0.4:/HN1-shared /mnt/tmp
+    umount  /mnt/tmp
+    echo "Y" > /sys/module/nfs/parameters/nfs4_disable_idmapping
+    # Make the configuration permanent
+    echo "options nfs nfs4_disable_idmapping=Y" >> /etc/modprobe.d/nfs.conf
+    ```
+
+   For more information on how to change the `nfs4_disable_idmapping` parameter, see the [Red Hat customer portal](https://access.redhat.com/solutions/1749883).
+
+6. **[AH1]** Mount the shared Azure NetApp Files volumes on the SITE1 HANA DB VMs.  
+
+    ```bash
+    sudo mount -o rw,nfsvers=4.1,hard,timeo=600,rsize=262144,wsize=262144,noatime,lock,_netdev,sec=sys 10.23.1.7:/HN1-shared-s1 /hana/shared
+    ```
+
+7. **[AH2]** Mount the shared Azure NetApp Files volumes on the SITE2 HANA DB VMs.  
+
+    ```bash
+    sudo mount -o rw,nfsvers=4.1,hard,timeo=600,rsize=262144,wsize=262144,noatime,lock,_netdev,sec=sys 10.23.1.7:/HN1-shared-s2 /hana/shared
+    ```
+
+8. **[AH]** Verify that the corresponding `/hana/shared/` file systems are mounted on all HANA DB VMs, with NFS protocol version **NFSv4**.  
+
+    ```bash
+    sudo nfsstat -m
+    # Verify that flag vers is set to 4.1 
+    # Example from SITE 1, hana-s1-db1
+    /hana/shared from 10.23.1.7:/HN1-shared-s1
+     Flags: rw,noatime,vers=4.1,rsize=262144,wsize=262144,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.11,local_lock=none,addr=10.23.1.7
+    # Example from SITE 2, hana-s2-db1
+    /hana/shared from 10.23.1.7:/HN1-shared-s2
+     Flags: rw,noatime,vers=4.1,rsize=262144,wsize=262144,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.14,local_lock=none,addr=10.23.1.7
+    ```
+
+### Mount the shared file systems (Azure Files NFS)
+
+In this example, the shared HANA file systems are deployed on NFS on Azure Files. Follow the steps in this section only if you're using NFS on Azure Files.
+
+> **Note:**
+> For Encryption in Transit enabled file systems, use `aznfs` as the filesystem type in the mount command syntax. To learn how to enable Encryption in Transit and mount the file systems, see [Azure Files NFS Encryption in Transit for SAP on Azure Systems](sap-azure-files-nfs-encryption-in-transit-guide.md).
+
+1. **[AH]** Create mount points for the HANA database volumes.  
+
+    ```bash
+    mkdir -p /hana/shared
+    ```
+
+2. **[AH1]** Mount the shared Azure Files NFS volumes on the SITE1 HANA DB VMs.  
+
+    ```bash
+    sudo mount -t nfs sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s1 /hana/shared -o nfsvers=4.1,sec=sys
+    ```
+
+3. **[AH2]** Mount the shared Azure Files NFS volumes on the SITE2 HANA DB VMs.  
+
+    ```bash
+    sudo mount -t nfs sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s2 /hana/shared -o nfsvers=4.1,sec=sys
+    ```
+
+4. **[AH]** Verify that the corresponding `/hana/shared/` file systems are mounted on all HANA DB VMs with NFS protocol version **NFSv4.1**.  
+
+    ```bash
+    sudo nfsstat -m
+    # Example from SITE 1, hana-s1-db1
+    sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s1
+     Flags: rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.19,local_lock=none,addr=10.23.0.35
+    # Example from SITE 2, hana-s2-db1
+    sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s2
+     Flags: rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.22,local_lock=none,addr=10.23.0.35
+    ```
+
+### Prepare the data and log local file systems
+
+In the presented configuration, you deploy file systems `/hana/data` and `/hana/log` on a managed disk, and you attach these file systems locally to each HANA DB VM. Run the following steps to create the local data and log volumes on each HANA DB virtual machine.
+
+Set up the disk layout with **Logical Volume Manager (LVM)**. The following example assumes that each HANA virtual machine has three data disks attached, and that these disks are used to create two volumes.
+
+1. **[AH]** List all of the available disks:
+
+    ```bash
+    ls /dev/disk/azure/scsi1/lun*
+    ```
+
+   Example output:
+
+    ```bash
+    /dev/disk/azure/scsi1/lun0  /dev/disk/azure/scsi1/lun1  /dev/disk/azure/scsi1/lun2 
+    ```
+
+2. **[AH]** Create physical volumes for all of the disks that you want to use:
+
+    ```bash
+    sudo pvcreate /dev/disk/azure/scsi1/lun0
+    sudo pvcreate /dev/disk/azure/scsi1/lun1
+    sudo pvcreate /dev/disk/azure/scsi1/lun2
+    ```
+
+3. **[AH]** Create a volume group for the data files. Use one volume group for the log files and one for the shared directory of SAP HANA:
+
+    ```bash
+    sudo vgcreate vg_hana_data_HN1 /dev/disk/azure/scsi1/lun0 /dev/disk/azure/scsi1/lun1
+    sudo vgcreate vg_hana_log_HN1 /dev/disk/azure/scsi1/lun2
+    ```
+
+4. **[AH]** Create the logical volumes. A *linear* volume is created when you use `lvcreate` without the `-i` switch. We suggest that you create a *striped* volume for better I/O performance. Align the stripe sizes to the values documented in [SAP HANA VM storage configurations](hana-vm-operations-storage.md). The `-i` argument should be the number of the underlying physical volumes and the `-I` argument is the stripe size. In this article, two physical volumes are used for the data volume, so the `-i` switch argument is set to `2`. The stripe size for the data volume is `256 KiB`. One physical volume is used for the log volume, so you don't need to use explicit `-i` or `-I` switches for the log volume commands.  
+
+   > **Important:**
+   > Use the `-i` switch, and set it to the number of the underlying physical volume, when you use more than one physical volume for each data or log volume. Use the `-I` switch to specify the stripe size when you're creating a striped volume. See [SAP HANA VM storage configurations](hana-vm-operations-storage.md) for recommended storage configurations, including stripe sizes and number of disks.  
+
+    ```bash
+    sudo lvcreate -i 2 -I 256 -l 100%FREE -n hana_data vg_hana_data_HN1
+    sudo lvcreate -l 100%FREE -n hana_log vg_hana_log_HN1
+    sudo mkfs.xfs /dev/vg_hana_data_HN1/hana_data
+    sudo mkfs.xfs /dev/vg_hana_log_HN1/hana_log
+    ```
+
+5. **[AH]** Create the mount directories and copy the UUID of all of the logical volumes:
+
+    ```bash
+    sudo mkdir -p /hana/data/HN1
+    sudo mkdir -p /hana/log/HN1
+    # Write down the ID of /dev/vg_hana_data_HN1/hana_data and /dev/vg_hana_log_HN1/hana_log
+    sudo blkid
+    ```
+
+6. **[AH]** Create `fstab` entries for the logical volumes and mount:
+
+    ```bash
+    sudo vi /etc/fstab
+    ```
+
+   Insert the following line in the `/etc/fstab` file:
+
+    ```bash
+    /dev/disk/by-uuid/UUID of /dev/mapper/vg_hana_data_HN1-hana_data /hana/data/HN1 xfs  defaults,nofail  0  2
+    /dev/disk/by-uuid/UUID of /dev/mapper/vg_hana_log_HN1-hana_log /hana/log/HN1 xfs  defaults,nofail  0  2
+    ```
+
+   Mount the new volumes:
+
+    ```bash
+    sudo mount -a
+    ```
+
+## Installation  
+
+In this example for deploying SAP HANA in a scale-out configuration with HSR on Azure VMs, you're using HANA 2.0 SP4.  
+
+### Prepare for HANA installation
+
+1. **[AH]** Before the HANA installation, set the root password. You can disable the root password after the installation has been completed. Run as `root` command `passwd` to set the password.
+
+2. **[1,2]** Change the permissions on `/hana/shared`.
+
+    ```bash
+    chmod 775 /hana/shared
+    ```
+
+3. **[1]** Verify that you can sign in **hana-s1-db2** and **hana-s1-db3** via secure shell (SSH), without being prompted for a password. If that isn't the case, exchange `ssh` keys, as documented in [Using key-based authentication](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/s2-ssh-configuration-keypairs).
+
+    ```bash
+    ssh root@hana-s1-db2
+    ssh root@hana-s1-db3
+    ```
+
+4. **[2]** Verify that you can sign in **hana-s2-db2** and **hana-s2-db3** via SSH, without being prompted for a password. If that isn't the case, exchange `ssh` keys, as documented in [Using key-based authentication](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/s2-ssh-configuration-keypairs).
+
+    ```bash
+    ssh root@hana-s2-db2
+    ssh root@hana-s2-db3
+    ```
+
+1. **[A]** Disable the firewall temporarily, so that it doesn't interfere with the HANA installation. You can re-enable it after the HANA installation is done.
+
+    ```bash
+    # Execute as root
+    systemctl stop firewalld
+    systemctl disable firewalld
+    ```
+
+### HANA installation on the first node on each site
+
+1. **[1]** Install SAP HANA by following the instructions in the [SAP HANA 2.0 installation and update guide](https://help.sap.com/viewer/2c1988d620e04368aa4103bf26f17727/2.0.04/en-US/7eb0167eb35e4e2885415205b8383584.html). The following instructions show the SAP HANA installation on the first node on SITE 1.
+
+   1. Start the `hdblcm` program as `root` from the HANA installation software directory. Use the `internal_network` parameter and pass the address space for subnet, which is used for the internal HANA internode communication.  
+
+      ```bash
+      ./hdblcm --internal_network=10.23.1.128/26
+      ```
+
+   1. At the prompt, enter the following values:
+
+        * For **Choose an action**, enter **1** (for install).
+        * For **Additional components for installation**, enter **2, 3**.
+        * For the installation path, press Enter (defaults to */hana/shared*).
+        * For **Local Host Name**, press Enter to accept the default.
+        * For **Do you want to add hosts to the system?**, enter **n**.
+        * For **SAP HANA System ID**, enter **HN1**.
+        * For **Instance number** [00], enter **03**.
+        * For **Local Host Worker Group** [default], press Enter to accept the default.
+        * For **Select System Usage / Enter index [4]**, enter **4** (for custom).
+        * For **Location of Data Volumes** [/hana/data/HN1], press Enter to accept the default.
+        * For **Location of Log Volumes** [/hana/log/HN1], press Enter to accept the default.
+        * For **Restrict maximum memory allocation?** [n], enter **n**.
+        * For **Certificate Host Name For Host hana-s1-db1** [hana-s1-db1], press Enter to accept the default.
+        * For **SAP Host Agent User (sapadm) Password**, enter the password.
+        * For **Confirm SAP Host Agent User (sapadm) Password**, enter the password.
+        * For **System Administrator (hn1adm) Password**, enter the password.
+        * For **System Administrator Home Directory** [/usr/sap/HN1/home], press Enter to accept the default.
+        * For **System Administrator Login Shell** [/bin/sh], press Enter to accept the default.
+        * For **System Administrator User ID** [1001], press Enter to accept the default.
+        * For **Enter ID of User Group (sapsys)** [79], press Enter to accept the default.
+        * For **System Database User (system) Password**, enter the system's password.
+        * For **Confirm System Database User (system) Password**, enter system's password.
+        * For **Restart system after machine reboot?** [n], enter **n**.
+        * For **Do you want to continue (y/n)**, validate the summary and if everything looks good, enter **y**.
+
+2. **[2]** Repeat the preceding step to install SAP HANA on the first node on SITE 2.
+
+3. **[1,2]** Verify *global.ini*.  
+
+   Display *global.ini*, and ensure that the configuration for the internal SAP HANA internode communication is in place. Verify the `communication` section. It should have the address space for the `inter` subnet, and `listeninterface` should be set to `.internal`. Verify the `internal_hostname_resolution` section. It should have the IP addresses for the HANA virtual machines that belong to the `inter` subnet.  
+
+   ```bash
+     sudo cat /usr/sap/HN1/SYS/global/hdb/custom/config/global.ini
+     # Example from SITE1 
+     [communication]
+     internal_network = 10.23.1.128/26
+     listeninterface = .internal
+     [internal_hostname_resolution]
+     10.23.1.138 = hana-s1-db1
+     10.23.1.139 = hana-s1-db2
+     10.23.1.140 = hana-s1-db3
+   ```
+
+4. **[1,2]** Prepare *global.ini* for installation in non-shared environment, as described in SAP note [2080991](https://launchpad.support.sap.com/#/notes/0002080991).  
+
+   ```bash
+    sudo vi /usr/sap/HN1/SYS/global/hdb/custom/config/global.ini
+    [persistence]
+    basepath_shared = no
+   ```
+
+5. **[1,2]** Restart SAP HANA to activate the changes.  
+
+   ```bash
+    sudo -u hn1adm /usr/sap/hostctrl/exe/sapcontrol -nr 03 -function StopSystem
+    sudo -u hn1adm /usr/sap/hostctrl/exe/sapcontrol -nr 03 -function StartSystem
+   ```
+
+6. **[1,2]** Verify that the client interface uses the IP addresses from the `client` subnet for communication.  
+
+    ```bash
+    # Execute as hn1adm
+    /usr/sap/HN1/HDB03/exe/hdbsql -u SYSTEM -p "password" -i 03 -d SYSTEMDB 'select * from SYS.M_HOST_INFORMATION'|grep net_publicname
+    # Expected result - example from SITE 2
+    "hana-s2-db1","net_publicname","10.23.0.14"
+   ```
+
+   For information about how to verify the configuration, see SAP note [2183363 - Configuration of SAP HANA internal network](https://launchpad.support.sap.com/#/notes/2183363).  
+
+7. **[AH]** Change permissions on the data and log directories to avoid a HANA installation error.  
+
+   ```bash
+    sudo chmod o+w -R /hana/data /hana/log
+   ```
+
+8. **[1]** Install the secondary HANA nodes. The example instructions in this step are for SITE 1.
+
+   1. Start the resident `hdblcm` program as `root`.
+
+      ```bash
+       cd /hana/shared/HN1/hdblcm
+       ./hdblcm 
+      ```
+
+   2. At the prompt, enter the following values:
+
+        * For **Choose an action**, enter **2** (for add hosts).
+        * For **Enter comma separated host names to add**, enter hana-s1-db2, hana-s1-db3.
+        * For **Additional components for installation**, enter **2, 3**.
+        * For **Enter Root User Name [root]**, press Enter to accept the default.
+        * For **Select roles for host 'hana-s1-db2' [1]**, select 1 (for worker).
+        * For **Enter Host Failover Group for host 'hana-s1-db2' [default]**, press Enter to accept the default.
+        * For **Enter Storage Partition Number for host 'hana-s1-db2' [\<\<assign automatically\>\>]**, press Enter to accept the default.
+        * For **Enter Worker Group for host 'hana-s1-db2' [default]**, press Enter to accept the default.
+        * For **Select roles for host 'hana-s1-db3' [1]**, select 1 (for worker).
+        * For **Enter Host Failover Group for host 'hana-s1-db3' [default]**, press Enter to accept the default.
+        * For **Enter Storage Partition Number for host 'hana-s1-db3' [\<\<assign automatically\>\>]**, press Enter to accept the default.
+        * For **Enter Worker Group for host 'hana-s1-db3' [default]**, press Enter to accept the default.
+        * For **System Administrator (hn1adm) Password**, enter the password.
+        * For **Enter SAP Host Agent User (sapadm) Password**, enter the password.
+        * For **Confirm SAP Host Agent User (sapadm) Password**, enter the password.
+        * For **Certificate Host Name For Host hana-s1-db2** [hana-s1-db2], press Enter to accept the default.
+        * For **Certificate Host Name For Host hana-s1-db3** [hana-s1-db3], press Enter to accept the default.
+        * For **Do you want to continue (y/n)**, validate the summary and if everything looks good, enter **y**.
+
+9. **[2]** Repeat the preceding step to install the secondary SAP HANA nodes on SITE 2.
+
+## Configure SAP HANA 2.0 system replication
+
+The following steps get you set up for system replication:
+
+1. **[1]** Configure system replication on SITE 1:
+
+   Back up the databases as **hn1**adm:
+
+    ```bash
+    hdbsql -d SYSTEMDB -u SYSTEM -p "passwd" -i 03 "BACKUP DATA USING FILE ('initialbackupSYS')"
+    hdbsql -d HN1 -u SYSTEM -p "passwd" -i 03 "BACKUP DATA USING FILE ('initialbackupHN1')"
+    ```
+
+   > **Note:**
+   > When using Local Secure Store (LSS), SAP HANA backups are self-contained and require you to set a backup password for the encryption root keys. Refer to SAP Note [3571561](https://me.sap.com/notes/0003571561) for detailed instructions. The password must be set for SYSTEMDB and individual tenant database.
+
+   Copy the system PKI files to the secondary site:
+
+    ```bash
+    scp /usr/sap/HN1/SYS/global/security/rsecssfs/data/SSFS_HN1.DAT hana-s2-db1:/usr/sap/HN1/SYS/global/security/rsecssfs/data/
+    scp /usr/sap/HN1/SYS/global/security/rsecssfs/key/SSFS_HN1.KEY  hana-s2-db1:/usr/sap/HN1/SYS/global/security/rsecssfs/key/
+    ```
+
+   Create the primary site:
+
+    ```bash
+    hdbnsutil -sr_enable --name=HANA_S1
+    ```
+
+2. **[2]** Configure system replication on SITE 2:
+
+   Register the second site to start the system replication. Run the following command as <hanasid\>adm:
+
+    ```bash
+    sapcontrol -nr 03 -function StopWait 600 10
+    hdbnsutil -sr_register --remoteHost=hana-s1-db1 --remoteInstance=03 --replicationMode=sync --name=HANA_S2
+    sapcontrol -nr 03 -function StartSystem
+    ```
+
+3. **[1]** Check the replication status and wait until all databases are in sync.
+
+    ```bash
+    sudo su - hn1adm -c "python /usr/sap/HN1/HDB03/exe/python_support/systemReplicationStatus.py"
+    
+    # | Database | Host          | Port  | Service Name | Volume ID | Site ID | Site Name | Secondary     | Secondary | Secondary | Secondary | Secondary     | Replication | Replication | Replication    |
+    # |          |               |       |              |           |         |           | Host          | Port      | Site ID   | Site Name | Active Status | Mode        | Status      | Status Details |
+    # | -------- | ------------- | ----- | ------------ | --------- | ------- | --------- | ------------- | --------- | --------- | --------- | ------------- | ----------- | ----------- | -------------- |
+    # | HN1      | hana-s1-db3   | 30303 | indexserver  |         5 |       1 | HANA_S1   | hana-s2-db3   |     30303 |         2 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+    # | SYSTEMDB | hana-s1-db1   | 30301 | nameserver   |         1 |       1 | HANA_S1   | hana-s2-db1   |     30301 |         2 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+    # | HN1      | hana-s1-db1   | 30307 | xsengine     |         2 |       1 | HANA_S1   | hana-s2-db1   |     30307 |         2 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+    # | HN1      | hana-s1-db1   | 30303 | indexserver  |         3 |       1 | HANA_S1   | hana-s2-db1   |     30303 |         2 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+    # | HN1      | hana-s1-db2   | 30303 | indexserver  |         4 |       1 | HANA_S1   | hana-s2-db2   |     30303 |         2 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+    #
+    # status system replication site "2": ACTIVE
+    # overall system replication status: ACTIVE
+    #
+    # Local System Replication State
+    #
+    # mode: PRIMARY
+    # site id: 1
+    # site name: HANA_S1
+    ```
+
+4. **[1,2]** Change the HANA configuration so that communication for HANA system replication is directed though the HANA system replication virtual network interfaces.
+
+   1. Stop HANA on both sites.
+
+      ```bash
+      sudo -u hn1adm /usr/sap/hostctrl/exe/sapcontrol -nr 03 -function StopSystem HDB
+      ```
+
+   2. Edit *global.ini* to add the host mapping for HANA system replication. Use the IP addresses from the `hsr` subnet.
+
+      ```bash
+      sudo vi /usr/sap/HN1/SYS/global/hdb/custom/config/global.ini
+      # Add the section
+      [system_replication_hostname_resolution]
+      10.23.1.202 = hana-s1-db1
+      10.23.1.203 = hana-s1-db2
+      10.23.1.204 = hana-s1-db3
+      10.23.1.205 = hana-s2-db1
+      10.23.1.206 = hana-s2-db2
+      10.23.1.207 = hana-s2-db3
+      ```
+
+   3. Start HANA on both sites.
+
+      ```bash
+       sudo -u hn1adm /usr/sap/hostctrl/exe/sapcontrol -nr 03 -function StartSystem HDB
+      ```
+
+    For more information, see [Host name resolution for system replication](https://help.sap.com/viewer/eb3777d5495d46c5b2fa773206bbfb46/1.0.12/en-US/c0cba1cb2ba34ec89f45b48b2157ec7b.html).  
+
+5. **[AH]** Re-enable the firewall and open the necessary ports.
+
+   1. Re-enable the firewall.
+
+       ```bash
+       # Execute as root
+       systemctl start firewalld
+       systemctl enable firewalld
+       ```
+
+   2. Open the necessary firewall ports. You will need to adjust the ports for your HANA instance number.  
+
+       > **Important:**
+       > Create firewall rules to allow HANA internode communication and client traffic. The required ports are listed on [TCP/IP ports of all SAP products](https://help.sap.com/viewer/ports). The following commands are just an example. In this scenario, you use system number 03.
+
+       ```bash
+        # Execute as root
+        sudo firewall-cmd --zone=public --add-port={30301,30303,30306,30307,30313,30315,30317,30340,30341,30342,1128,1129,40302,40301,40307,40303,40340,50313,50314,30310,30302}/tcp --permanent
+        sudo firewall-cmd --zone=public --add-port={30301,30303,30306,30307,30313,30315,30317,30340,30341,30342,1128,1129,40302,40301,40307,40303,40340,50313,50314,30310,30302}/tcp
+       ```
+
+## Create a Pacemaker cluster
+
+To create the base Pacemaker cluster for SAP HANA Scale-out, see [Setting up Pacemaker on Red Hat Enterprise Linux in Azure](high-availability-guide-rhel-pacemaker.md). Make sure you add all virtual machines, including the majority maker, to the cluster.
+
+Consider the following details when setting up a basic Pacemaker cluster for HANA scale-out:
+
+* Don't set `quorum expected-votes` to 2, as this isn't a two node cluster.
+* Set the cluster property `concurrent-fencing=true` to enable deserialized node fencing.
+
+    ```bash
+    sudo pcs property set concurrent-fencing=true
+    ```
+
+## Installing the SAP HANA HA components
+
+Red Hat provides two generations of resource agents for configuring a HANA system replication HA cluster on RHEL. Because the configuration procedures differ, this document splits them into separate tabs based on the resource agent generation:
+
+* **Classic Tab**: Covers the classic generation of resource agents, provided in the `resource-agents-sap-hana-scaleout` (scale-out) packages.
+* **New Generation Tab**: Covers the new generation of resource agents, provided in the `sap-hana-ha` package. In upstream, this generation is referred to as `SAPHanaSR-angi`.
+
+The classic and new generation packages are mutually exclusive, and you can configure only one on your system at a time. Use the corresponding tab below for your specific configuration.
+
+> **Note:**
+> To upgrade from classic to new generation resource agent, see [Upgrading SAP HANA HA setup to the new generation of resource agents](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_sap_solutions/9/html-single/upgrading_sap_hana_ha_setup_to_the_new_generation_of_resource_agents/index).
+
+**[A]** Install the SAP HANA HA package
+
+# [New Generation](#tab/newgeneration-angi)
+
+> **Important:**
+> For new generation setup, the package `sap-hana-ha` is available from RHEL 9.4 and later.
+
+```bash
+sudo dnf install sap-hana-ha
+```
+
+# [Classic](#tab/classic)
+
+> **Note:**
+> For the minimum supported version of the `resource-agents-sap-hana-scaleout` package for your operating system release, see [Support policies for RHEL HA clusters - Management of SAP HANA in a cluster](https://access.redhat.com/articles/3397471).  
+
+```bash
+sudo dnf install resource-agents-sap-hana-scaleout
+```
+
+---
+
+## Manage shared file system on HANA scale-out
+
+For HANA scale-out on RHEL, Red Hat takes different approaches depending on the software package. With the new generation resource agent package, you define the mount in `/etc/fstab` instead, and the `SAPHanaFilesystem` resource agent monitors the filesystem and detects issues before `SAPHanaController` does. In contrast, the classic resource agent package uses Pacemaker filesystem cluster resources to manage `/hana/shared`.
+
+1. **[1,2]** Stop SAP HANA on both replication sites. Run as \<sap-sid\>adm.
+
+    ```bash
+    sapcontrol -nr 03 -function StopSystem
+    ```
+
+1. **[AH]** Unmount the `/hana/shared` filesystem on all HANA DB VMs, since you only mount it temporarily for installation. Before unmounting, stop any processes or sessions that are still using it.
+
+    ```bash
+    umount /hana/shared
+    ```
+
+1. Follow the appropriate step in the following section, depending on whether you're configuring HANA scale-out with new generation or classic resource agents.
+
+   # [New Generation](#tab/newgeneration-angi)
+
+    To create a persistent entry for the `/hana/shared` file system, follow these steps:
+
+    1. **[AH1]** Mount the shared Azure Files NFS volumes on the SITE1 HANA DB VMs.
+
+        ```bash
+        sudo vi /etc/fstab
+        # Add the following entry
+        sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s1 /hana/shared  nfs nfsvers=4.1,sec=sys  0  0
+        # Mount all volumes
+        sudo mount -a 
+        ```
+
+    1. **[AH2]** Mount the shared Azure Files NFS volumes on the SITE2 HANA DB VMs.
+
+        ```bash
+        sudo vi /etc/fstab
+        # Add the following entries
+        sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s2 /hana/shared  nfs nfsvers=4.1,sec=sys  0  0
+        # Mount the volume
+        sudo mount -a 
+        ```
+
+    > **Note:**
+    > For encryption in transit enabled file systems, use `aznfs` as the filesystem type in the mount command syntax. To learn how to enable encryption in transit and mount the file systems, see [Azure Files NFS Encryption in Transit for SAP on Azure Systems](sap-azure-files-nfs-encryption-in-transit-guide.md).
+
+   # [Classic](#tab/classic)
+
+    1. **[1]** Create the file system cluster resources for `/hana/shared` in the disabled state. Use `--disabled` because you need to define the location constraints before the mounts are enabled. Deploy `/hana/shared` on either [NFS share on Azure Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/files-nfs-protocol.md) or [NFS volume on Azure NetApp Files](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/azure-netapp-files-introduction.md).
+
+        * In this example, the `/hana/shared` file system is deployed on Azure NetApp Files and mounted over NFSv4.1. Follow the steps in this section only if you're using NFS on Azure NetApp Files.
+
+        ```bash
+        # /hana/shared file system for site 1
+        sudo pcs resource create fs_hana_shared_s1 --disabled ocf:heartbeat:Filesystem device=10.23.1.7:/HN1-shared-s1  directory=/hana/shared \
+            fstype=nfs options='defaults,rw,hard,timeo=600,rsize=262144,wsize=262144,proto=tcp,noatime,sec=sys,nfsvers=4.1,lock,_netdev' fast_stop=no op monitor interval=20s on-fail=fence timeout=120s OCF_CHECK_LEVEL=20 \
+            op start interval=0 timeout=120 op stop interval=0 timeout=120
+               
+        # /hana/shared file system for site 2
+        sudo pcs resource create fs_hana_shared_s2 --disabled ocf:heartbeat:Filesystem device=10.23.1.7:/HN1-shared-s1 directory=/hana/shared \
+            fstype=nfs options='defaults,rw,hard,timeo=600,rsize=262144,wsize=262144,proto=tcp,noatime,sec=sys,nfsvers=4.1,lock,_netdev' fast_stop=no op monitor interval=20s on-fail=fence timeout=120s OCF_CHECK_LEVEL=20 \
+            op start interval=0 timeout=120 op stop interval=0 timeout=120
+               
+        # Clone the /hana/shared file system resources for both site1 and site2
+        sudo pcs resource clone fs_hana_shared_s1 meta clone-node-max=1 interleave=true
+        sudo pcs resource clone fs_hana_shared_s2 meta clone-node-max=1 interleave=true
+        ```
+
+        The suggested timeout values allow the cluster resources to withstand protocol-specific pause, related to NFSv4.1 lease renewals on Azure NetApp Files. For more information, see [NFS in NetApp Best practice](https://www.netapp.com/media/10720-tr-4067.pdf).
+
+        * In this example, the `/hana/shared` file system is deployed on NFS on Azure Files. Follow the steps in this section only if you're using NFS on Azure Files.  
+
+        ```bash
+        # /hana/shared file system for site 1
+        sudo pcs resource create fs_hana_shared_s1 --disabled ocf:heartbeat:Filesystem device=sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s1  directory=/hana/shared \
+        fstype=nfs options='defaults,rw,hard,proto=tcp,noatime,nfsvers=4.1,lock' fast_stop=no op monitor interval=20s on-fail=fence timeout=120s OCF_CHECK_LEVEL=20 \
+        op start interval=0 timeout=120 op stop interval=0 timeout=120
+         
+        # /hana/shared file system for site 2
+        sudo pcs resource create fs_hana_shared_s2 --disabled ocf:heartbeat:Filesystem device=sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s2 directory=/hana/shared \
+        fstype=nfs options='defaults,rw,hard,proto=tcp,noatime,nfsvers=4.1,lock' fast_stop=no op monitor interval=20s on-fail=fence timeout=120s OCF_CHECK_LEVEL=20 \
+        op start interval=0 timeout=120 op stop interval=0 timeout=120
+        
+        # clone the /hana/shared file system resources for both site1 and site2
+        sudo pcs resource clone fs_hana_shared_s1 meta clone-node-max=1 interleave=true
+        sudo pcs resource clone fs_hana_shared_s2 meta clone-node-max=1 interleave=true
+        ```
+
+        The `OCF_CHECK_LEVEL=20` attribute is added to the monitor operation, so that monitor operations perform a read/write test on the file system. Without this attribute, the monitor operation only verifies that the file system is mounted. This can be a problem because when connectivity is lost, the file system might remain mounted, despite being inaccessible.  
+
+        The `on-fail=fence` attribute is also added to the monitor operation. With this option, if the monitor operation fails on a node, that node is immediately fenced. Without this option, the default behavior is to stop all resources that depend on the failed resource, then restart the failed resource, and then start all the resources that depend on the failed resource. Not only can this behavior take a long time when an SAP HANA resource depends on the failed resource, but it also can fail altogether. The SAP HANA resource can't stop successfully, if the NFS share holding the HANA binaries is inaccessible.
+
+        The timeouts in the above configurations may need to be adapted to the specific SAP setup.
+
+        > **Note:**
+        > For Encryption in Transit enabled file systems for `/hana/shared`, use `fstype='aznfs'` as the filesystem type in the cluster resource agent setup command syntax. To learn how to enable Encryption in Transit and mount the file systems, see [Azure Files NFS Encryption in Transit for SAP on Azure Systems](sap-azure-files-nfs-encryption-in-transit-guide.md).
+
+    1. **[1]** Configure and verify the node attributes. Assign attribute `S1` to all SAP HANA DB nodes on replication site 1, and assign attribute `S2` to all SAP HANA DB nodes on replication site 2.  
+
+        ```bash
+        # HANA replication site 1
+        sudo pcs node attribute hana-s1-db1 NFS_SID_SITE=S1
+        sudo pcs node attribute hana-s1-db2 NFS_SID_SITE=S1
+        sudo pcs node attribute hana-s1-db3 NFS_SID_SITE=S1
+        
+        # HANA replication site 2
+        sudo pcs node attribute hana-s2-db1 NFS_SID_SITE=S2
+        sudo pcs node attribute hana-s2-db2 NFS_SID_SITE=S2
+        sudo pcs node attribute hana-s2-db3 NFS_SID_SITE=S2
+        
+        # To verify the attribute assignment to nodes execute
+        sudo pcs node attribute
+        ```
+
+    1. **[1]** Configure the constraints that determine where the NFS file systems are mounted, and enable the file system resources.
+
+        ```bash
+        # On RHEL 10.x
+        sudo pcs constraint location fs_hana_shared_s1-clone rule resource-discovery=never score=-INFINITY "NFS_SID_SITE ne S1"
+        sudo pcs constraint location fs_hana_shared_s2-clone rule resource-discovery=never score=-INFINITY "NFS_SID_SITE ne S2"
+    
+        # On RHEL 9.x/8.x
+        sudo pcs constraint location fs_hana_shared_s1-clone rule resource-discovery=never score=-INFINITY NFS_SID_SITE ne S1
+        sudo pcs constraint location fs_hana_shared_s2-clone rule resource-discovery=never score=-INFINITY NFS_SID_SITE ne S2
+        ```
+
+        Enable the file system resources
+
+        ```bash
+        sudo pcs resource enable fs_hana_shared_s1
+        sudo pcs resource enable fs_hana_shared_s2
+        ```
+
+        When you enable the file system resources, the cluster mounts the `/hana/shared` file systems.  
+
+    1. **[AH]** Verify that the Azure NetApp Files volumes are mounted under `/hana/shared`, on all HANA DB VMs on both sites.
+
+        * Example, if using Azure NetApp Files:
+
+        ```bash
+        sudo nfsstat -m
+        # Verify that flag vers is set to 4.1 
+        # Example from SITE 1, hana-s1-db1
+        /hana/shared from 10.23.1.7:/HN1-shared-s1
+         Flags: rw,noatime,vers=4.1,rsize=262144,wsize=262144,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.11,local_lock=none,addr=10.23.1.7
+        # Example from SITE 2, hana-s2-db1
+        /hana/shared from 10.23.1.7:/HN1-shared-s2
+         Flags: rw,noatime,vers=4.1,rsize=262144,wsize=262144,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.14,local_lock=none,addr=10.23.1.7
+        ```
+
+        * Example, if using Azure Files NFS:
+
+        ```bash
+        sudo nfsstat -m
+        # Example from SITE 1, hana-s1-db1
+        sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s1
+         Flags: rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.19,local_lock=none,addr=10.23.0.35
+        # Example from SITE 2, hana-s2-db1
+        sapnfsafs.file.core.windows.net:/sapnfsafs/hn1-shared-s2
+         Flags: rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.23.0.22,local_lock=none,addr=10.23.0.35
+        ```
+
+    1. **[1]** Configure and clone the attribute resources, and configure the constraints, as follows:  
+
+        ```bash
+        # Configure the attribute resources
+        sudo pcs resource create hana_nfs_s1_active ocf:pacemaker:attribute active_value=true inactive_value=false name=hana_nfs_s1_active
+        sudo pcs resource create hana_nfs_s2_active ocf:pacemaker:attribute active_value=true inactive_value=false name=hana_nfs_s2_active
+
+        # Clone the attribute resources
+        sudo pcs resource clone hana_nfs_s1_active meta clone-node-max=1 interleave=true
+        sudo pcs resource clone hana_nfs_s2_active meta clone-node-max=1 interleave=true
+
+        # Configure the constraints, which will set the attribute values
+        sudo pcs constraint order fs_hana_shared_s1-clone then hana_nfs_s1_active-clone
+        sudo pcs constraint order fs_hana_shared_s2-clone then hana_nfs_s2_active-clone
+        ```
+
+        > **Tip:**
+        > If your configuration includes file systems other than `/hana/shared`, and these file systems are NFS mounted, include the `sequential=false` option. This option ensures that there are no ordering dependencies among the file systems. All NFS mounted file systems must start before the corresponding attribute resource, but they don't need to start in any order relative to each other. For more information, see [How do I configure SAP HANA scale-out HSR in a Pacemaker cluster when the HANA file systems are NFS shares](https://access.redhat.com/solutions/5423971).  
+
+    1. **[1]** Place Pacemaker in maintenance mode, in preparation for the creation of the HANA cluster resources.
+
+        ```bash
+        sudo pcs property set maintenance-mode=true
+        ```
+
+     ---
+
+## Set up SAP HANA HA/DR providers
+
+The SAP HANA HA/DR providers improve cluster integration and enhance the detection of failover conditions. The primary hook script is SAPHanaSR (for the resource-agents-sap-hana-scaleout package), or HanaSR (for the sap-hana-ha package). It is strongly recommended to configure the SAPHanaSR or HanaSR Python hook, along with the ChkSrv hook.
+
+The ChkSrv hook extends the capabilities of the SAPHanaSR/HanaSR provider by handling scenarios where the HANA hdbindexserver process crashes. In such cases, HANA typically attempts a local restart, which offloads and reloads data, causing performance degradation.
+
+When you enable ChkSrv, it triggers a configurable action immediately, initiating a failover within the defined timeout instead of waiting for the hdbindexserver process to restart on the same node.
+
+1. **[1,2]** Configure SAP HANA HA provider hooks. Install the hooks on both HANA database sites.
+
+    # [New Generation](#tab/newgeneration-angi)
+
+    1. **[1,2]** Adjust `global.ini` on one of the HANA DB node on each replication site. SAP HANA should still be down. We highly recommend that you configure both HanaSR and ChkSrv Python hooks.
+
+        If you choose not to use the recommended ChkSrv hook, remove the entire `[ha_dr_provider_chksrv]` block from the following parameters. You can adjust the behavior of ChkSrv by using the `action_on_lost` parameter. Valid values are `ignore`, `stop`, `kill`, and `fence`.
+
+        ```bash
+        [ha_dr_provider_hanasr]
+        provider = HanaSR
+        path = /usr/share/sap-hana-ha/
+        execution_order = 1
+        
+        [ha_dr_provider_chksrv]
+        provider = ChkSrv
+        path = /usr/share/sap-hana-ha/
+        execution_order = 2
+        action_on_lost = fence
+        
+        [trace]
+        ha_dr_hanasr = info
+        ha_dr_chksrv = info
+        ```
+
+    1. **[AH]** Create the file `/etc/sudoers.d/20-saphana`, as the root user, on each cluster node with the following content. These command privileges allow the `<sap-sid>adm` user to update certain cluster node attributes as part of the HanaSR hook execution:
+
+        ```bash
+        cat << EOF > /etc/sudoers.d/20-saphana
+        <sid>adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_*
+        <sid>adm ALL=(ALL) NOPASSWD: /usr/bin/SAPHanaSR-hookHelper
+        Defaults:hn1adm !requiretty
+        EOF
+        ```
+
+    For more information on the implementation of HanaSR HA/DR provider, see [Configuring the HanaSR HA/DR provider for the srConnectionChanged() hook method](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_sap_solutions/9/html-single/deploying_sap_hana_scale-out_system_replication_high_availability/index#proc_config_srConnectionChanged_v9-deploying-scale-out-system-replication), and [Configuring the ChkSrv HA/DR provider for the srServiceStateChanged() hook method](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_sap_solutions/9/html-single/deploying_sap_hana_scale-out_system_replication_high_availability/index#proc_config_srServiceStateChanged_v9-deploying-scale-out-system-replication).
+
+    # [Classic](#tab/classic)
+
+    1. **[1,2]** Adjust `global.ini` on one of the HANA DB node on each replication site. SAP HANA should still be down. We highly recommend that you configure both SAPHanaSR and ChkSrv Python hooks.
+
+        If you choose not to use the recommended ChkSrv hook, remove the entire [ha_dr_provider_chksrv] block from the following parameters. You can adjust the behavior of ChkSrv by using the action_on_lost parameter. Valid values are [ ignore | stop | kill ].
+
+        ```bash
+        # add to global.ini
+        [ha_dr_provider_SAPHanaSR]
+        provider = SAPHanaSR
+        path = /usr/share/SAPHanaSR-ScaleOut
+        execution_order = 1
+        
+        [ha_dr_provider_chksrv]
+        provider = ChkSrv
+        path = /usr/share/SAPHanaSR-ScaleOut
+        execution_order = 2
+        action_on_lost = kill
+        
+        [trace]
+        ha_dr_saphanasr = info
+        ha_dr_chksrv = info
+        ```
+
+    2. **[AH]** The cluster requires sudoers configuration on the cluster node for <sid\>adm. In this example, you achieve this by creating a new file. Run the commands as `root`.
+
+        ```bash
+        sudo visudo -f /etc/sudoers.d/20-saphana
+        # Insert the following lines and then save
+        Cmnd_Alias SOK = /usr/sbin/crm_attribute -n hana_<sid>_glob_srHook -v SOK -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL = /usr/sbin/crm_attribute -n hana_<sid>_glob_srHook -v SFAIL -t crm_config -s SAPHanaSR
+        Cmnd_Alias SRREBOOT = /usr/sbin/crm_attribute -n hana_<sid>_gsh -v * -l reboot -t crm_config -s SAPHanaSR
+        <sid>adm ALL=(ALL) NOPASSWD: SOK, SFAIL, SRREBOOT
+        Defaults!SOK, SFAIL, SRREBOOT !requiretty
+        ```
+
+    For more information on the implementation of the SAP HANA hooks, see [Configuring the SAPHanaSR HA/DR provider for the srConnectionChanged() hook method](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_sap_solutions/9/html-single/automating_sap_hana_scale-out_system_replication_using_the_rhel_ha_add-on/index#proc_config_srConnectionChanged_automating-sap-hana-scale-out-v9) and [Configuring the ChkSrv HA/DR provider for the srConnectionChanged() hook method](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_sap_solutions/9/html-single/automating_sap_hana_scale-out_system_replication_using_the_rhel_ha_add-on/index#proc_config_srServiceStateChanged_automating-sap-hana-scale-out-v9).
+
+     ---
+
+2. **[1,2]** Start SAP HANA on both replication sites. Run as <sid\>adm.  
+
+    ```bash
+    sapcontrol -nr 03 -function StartSystem 
+    ```
+
+3. **[1]** Verify the hook installation. Run as <sid\>adm on the active HANA system replication site.
+
+    # [New Generation](#tab/newgeneration-angi)
+
+    1. **[1]** Verify the HanaSR and ChkSrv hooks are configured. Run the following command as \<sap-sid\>adm on the active HANA system replication site:
+
+        ```bash
+        cdtrace
+        grep -he "loading HA/DR Provider.*" nameserver_*
+        # Example output
+        # [480845]{-1}[-1/-1] i ha_dr_provider   HADRProviderManager.cpp(00080) : loading HA/DR Provider 'ChkSrv' from /usr/share/sap-hana-ha/
+        # [480845]{-1}[-1/-1] i ha_dr_provider   HADRProviderManager.cpp(00080) : loading HA/DR Provider 'HanaSR' from /usr/share/sap-hana-ha/
+        ```
+
+    2. **[1]** As user root, check the system secure log to confirm the sudo command executed without errors. A misconfigured sudoers file will produce an error entry at the time of execution.
+
+        ```bash
+        [root]# grep -e 'sudo.*crm_attribute.*' /var/log/secure
+        # Feb 25 21:48:06 <hostname> sudo[483654]:  hn1adm : PWD=/hana/shared/HN1/HDB03/<hostname> ; USER=root ; COMMAND=/usr/sbin/crm_attribute -n hana_hn1_site_srHook_SITE2 -v SFAIL -t crm_config -s SAPHanaSR
+        # Feb 25 21:48:49 <hostname> sudo[483960]:  hn1adm : PWD=/hana/shared/HN1/HDB03/<hostname> ; USER=root ; COMMAND=/usr/sbin/crm_attribute -n hana_hn1_site_srHook_SITE2 -v SOK -t crm_config -s SAPHanaSR
+        ```
+
+        When the HANA instance starts on both nodes, the srHook attribute typically goes through several updates. It initially shows SFAIL because the primary is not yet in sync with the secondary immediately after startup. Once system replication reaches full sync, HANA triggers a final hook event that updates the attribute to SOK.
+
+    # [Classic](#tab/classic)
+
+    1. **[1]** Verify the SAPHanaSR hook is configured. Run the following command as \<sap-sid\>adm on the active HANA system replication site:
+
+    ```bash
+    cdtrace
+    awk '/ha_dr_SAPHanaSR.*crm_attribute/ \
+    { printf "%s %s %s %s\n",$2,$3,$5,$16 }' nameserver_*
+
+    # Example entries
+    # 2020-07-21 22:04:52.782774 ha_dr_SAPHanaSR SFAIL
+    # 2020-07-21 22:04:53.117492 ha_dr_SAPHanaSR SFAIL
+    # 2020-07-21 22:06:35.599324 ha_dr_SAPHanaSR SOK
+    ```
+
+4. **[1]** Verify the ChkSrv hook installation. Run as <sid\>adm on the active HANA system replication site.
+
+    ```bash
+    cdtrace
+    tail -20 nameserver_chksrv.trc
+    # Example output
+    # [1781280827-14237] init called
+    # [1781280827-14237] ChkSrv.init() version 1.001.1, parameter info: action_on_lost=<value> stop_timeout=20 kill_signal=9
+    ```
+
+## Create SAP HANA cluster resources
+
+1. **[1]** Create SAP HANA topology resources
+
+    # [New Generation](#tab/newgeneration-angi)
+
+    ```bash
+    sudo pcs property set maintenance-mode=true
+
+    sudo pcs resource create rsc_SAPHanaTopology_HN1_HDB03 \
+        ocf:heartbeat:SAPHanaTopology \
+        SID=HN1 \
+        InstanceNumber=03 \
+        op start timeout=600 \
+        op stop timeout=300 \
+        op monitor interval=30 timeout=300 \
+        clone cln_SAPHanaTopology_HN1_HDB03 \
+        meta clone-node-max=1 interleave=true --future
+    ```
+
+    # [Classic](#tab/classic)
+
+    ```bash
+    sudo pcs property set maintenance-mode=true
+
+    sudo pcs resource create SAPHanaTopology_HN1_HDB03 SAPHanaTopology \
+        SID=HN1 InstanceNumber=03 \
+        op methods interval=0s timeout=5 \
+        op start timeout=600 op stop timeout=300 op monitor interval=10 timeout=600
+
+    sudo pcs resource clone SAPHanaTopology_HN1_HDB03 meta clone-node-max=1 interleave=true
+    ```
+
+     ---
+
+2. **[1]** Create SAP HANA resources
+
+    # [New Generation](#tab/newgeneration-angi)
+
+    ```bash
+    sudo pcs resource create rsc_SAPHanaController_HN1_HDB03 \
+        ocf:heartbeat:SAPHanaController \
+        SID=HN1 \
+        InstanceNumber=03 \
+        PREFER_SITE_TAKEOVER=true \
+        DUPLICATE_PRIMARY_TIMEOUT=7200 \
+        AUTOMATED_REGISTER=false \
+        op stop timeout=3600 \
+        op monitor interval=59 role=Promoted timeout=700 \
+        op monitor interval=61 role=Unpromoted timeout=700 \
+        promotable cln_SAPHanaController_HN1_HDB03 \
+        meta clone-node-max=1 interleave=true --future
+    ```
+
+    The new generation package introduces a new resource agent, SAPHanaFilesystem, which monitors read/write access to the /hana/shared/\<SID\> path. The filesystem is mounted statically at the OS level, with each host configured via /etc/fstab. Neither SAPHanaFilesystem nor Pacemaker is responsible for mounting this filesystem for HANA. We recommend using SAPHanaFilesystem as /hana/shared/\<SID\> is hosted on NFS in HANA Scale-Out.
+
+    ```bash
+    sudo pcs resource create rsc_SAPHanaFilesystem_HN1_HDB03 \
+        ocf:heartbeat:SAPHanaFilesystem \
+        SID=HN1 \
+        InstanceNumber=03 \
+        ON_FAIL_ACTION="fence" \
+        op start interval=0 timeout=10 \
+        op stop interval=0 timeout=20 \
+        op monitor interval=120 timeout=120 \
+        clone cln_SAPHanaFilesystem_HN1_HDB03 \
+        meta clone-node-max=1 interleave=true --future
+    ```
+
+    In a scale-out HANA environment, when a single node is fenced, stopping the HANA instances on the remaining nodes within the same site takes time. This delays the takeover to the secondary site. To reduce the time for all nodes of one HANA site to stop and the cluster to initiate the takeover to secondary site, you can configure alert agent that fences the remaining nodes of the same site on which the node was fenced. For more details on alert, see [Configuring alert-fencing of the HANA site](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_for_sap_solutions/9/html-single/deploying_sap_hana_scale-out_system_replication_high_availability/index#proc_alert_fencing__v9-deploying-scale-out-system-replication)
+
+    ```bash
+    sudo pcs alert create id=alert-hana-1 \
+        path=/usr/bin/SAPHanaSR-alert-fencing \
+        options alert_uptime_threshold=600
+
+    sudo cibadmin --modify --scope alerts \
+        --xml-text '
+        <alert id="alert-hana-1">
+         <select>
+          <select_nodes />
+          <select_fencing />
+         </select>
+        </alert>'
+    ```
+
+    # [Classic](#tab/classic)
+
+    > **Note:**
+    > This article contains references to a term that Microsoft no longer uses. When the term is removed from the software, we’ll remove it from this article.
+
+    ```bash
+    # On RHEL 10.x
+    sudo pcs resource create SAPHana_HN1_HDB03 SAPHanaController \
+        SID=HN1 InstanceNumber=03 PREFER_SITE_TAKEOVER=true DUPLICATE_PRIMARY_TIMEOUT=7200 AUTOMATED_REGISTER=false \
+        op demote interval=0s timeout=320 \
+        op methods interval=0s timeout=5 \
+        op start interval=0 timeout=3600 \
+        op stop interval=0 timeout=3600 \
+        op promote interval=0 timeout=3600 \
+        op monitor interval=60 role="Promoted" timeout=700 \
+        op monitor interval=61 role="Unpromoted" timeout=700
+    
+    sudo pcs resource promotable SAPHana_HN1_HDB03 \
+        meta master-max=1 clone-node-max=1 interleave=true
+
+    # On RHEL 9.x/8.x
+    sudo pcs resource create SAPHana_HN1_HDB03 SAPHanaController \
+        SID=HN1 InstanceNumber=03 PREFER_SITE_TAKEOVER=true DUPLICATE_PRIMARY_TIMEOUT=7200 AUTOMATED_REGISTER=false \
+        op demote interval=0s timeout=320 \
+        op methods interval=0s timeout=5 \
+        op start interval=0 timeout=3600 \
+        op stop interval=0 timeout=3600 \
+        op promote interval=0 timeout=3600 \
+        op monitor interval=60 role="Master" timeout=700 \
+        op monitor interval=61 role="Slave" timeout=700
+        
+    sudo pcs resource promotable SAPHana_HN1_HDB03 \
+        meta master-max=1 clone-node-max=1 interleave=true
+    ```
+
+     ---
+
+    > **Important:**
+    > It's a good idea to set `AUTOMATED_REGISTER` to `false`, while you're performing failover tests, to prevent a failed primary instance to automatically register as secondary. After testing, as a best practice, set `AUTOMATED_REGISTER` to `true`, so that after takeover, system replication can resume automatically.
+
+3. **[1]** Create the virtual IP and associated resources.
+
+    ```bash
+    sudo pcs resource create vip_HN1_03 ocf:heartbeat:IPaddr2 ip=10.23.0.18 \
+        op monitor interval="10s" timeout="20s"
+    
+    sudo pcs resource create nc_HN1_03 azure-lb port=62503
+    
+    sudo pcs resource group add g_ip_HN1_03 nc_HN1_03 vip_HN1_03
+    ```
+
+4. **[1]** Create the cluster constraints
+
+    # [New Generation](#tab/newgeneration-angi)
+
+    ```bash
+    # Order constraint to start SAPHanaTopology resource before SAPHanaController resource
+    sudo pcs constraint order cln_SAPHanaTopology_HN1_HDB03 \
+        then cln_SAPHanaController_HN1_HDB03 symmetrical=false
+
+    # Colocation constraint that places the IP resources with SAPHanaController resource on primary site
+    sudo pcs constraint colocation add g_ip_HN1_03 \
+        with Promoted cln_SAPHanaController_HN1_HDB03 4000
+
+    # Add a location constraint to prevent any HANA resource from running on majority maker node. 
+    sudo pcs constraint location add avoid-hana-s-mm \
+        regexp%.*SAPHana.* hana-s-mm -- -INFINITY resource-discovery=never
+    ```
+
+    # [Classic](#tab/classic)
+
+    ```bash
+    # Order constraint to start SAPHanaTopology resource before SAPHana resource
+    sudo pcs constraint order SAPHanaTopology_HN1_HDB03-clone then SAPHana_HN1_HDB03-clone
+    
+    # IP resource group should run with promoted SAPHana clone
+    # On RHEL 10.x
+    sudo pcs constraint colocation add g_ip_HN1_03 with Promoted SAPHana_HN1_HDB03-clone score=4000
+    # On RHEL 9.x/8.x
+    sudo pcs constraint colocation add g_ip_HN1_03 with master SAPHana_HN1_HDB03-clone 4000
+    
+    # HANA resources are only allowed to run on a node, if the node's NFS file systems are mounted. The constraint also avoids the majority maker node
+    # On RHEL 10.x
+    sudo pcs constraint location SAPHanaTopology_HN1_HDB03-clone rule resource-discovery=never score=-INFINITY "hana_nfs_s1_active ne true and hana_nfs_s2_active ne true"
+    # On RHEL 9.x/8.x
+    sudo pcs constraint location SAPHanaTopology_HN1_HDB03-clone rule resource-discovery=never score=-INFINITY hana_nfs_s1_active ne true and hana_nfs_s2_active ne true
+    ```
+
+5. **[1]** Setting resource defaults
+
+    ```bash
+    sudo pcs resource defaults update resource-stickiness=1000
+    sudo pcs resource defaults update migration-threshold=5000
+    ```
+
+6. **[1]** Place the cluster out of maintenance mode. Make sure that the cluster status is `ok`, and that all of the resources are started.
+
+    ```bash
+    sudo pcs property set maintenance-mode=false
+
+    # If there are failed cluster resources, you may need to run the next command
+    pcs resource cleanup
+    ```
+  
+> **Note:**
+> The timeouts in the preceding configuration are just examples, and might need to be adapted to the specific HANA setup. For instance, you might need to increase the start timeout, if it takes longer to start the SAP HANA database.
+
+## Configure HANA active/read-enabled system replication
+
+Starting with SAP HANA 2.0 SPS 01, SAP allows active/read-enabled setups for SAP HANA system replication. With this capability, you can use the secondary systems of SAP HANA system replication actively for read-intensive workloads. To support such a setup in a cluster, you need a second virtual IP address, which allows clients to access the secondary read-enabled SAP HANA database. To ensure that the secondary replication site can still be accessed after a takeover has occurred, the cluster needs to move the virtual IP address around with the secondary of the SAP HANA resource.
+
+This section describes the additional steps you must take to manage this type of system replication in a Red Hat high availability cluster, with a second virtual IP address.  
+
+Before proceeding further, make sure you have fully configured a Red Hat high availability cluster, managing an SAP HANA database, as described earlier in this article.  
+
+SAP HANA scale-out high availability with read-enabled secondary
+
+### Additional setup in Azure Load Balancer for active/read-enabled setup
+
+To proceed with provisioning your second virtual IP, make sure you have configured Azure Load Balancer as described in [Configure Azure Load Balancer](#configure-azure-load-balancer).
+
+For the *standard* load balancer, follow these additional steps on the same load balancer that you created in the earlier section.
+
+1. Create a second front-end IP pool:
+
+   1. Open the load balancer, select **frontend IP pool**, and select **Add**.
+   1. Enter the name of the second front-end IP pool (for example, *hana-secondaryIP*).
+   1. Set the **Assignment** to **Static**, and enter the IP address (for example, **10.23.0.19**).
+   1. Select **OK**.
+   1. After the new front-end IP pool is created, note the pool IP address.
+
+1. Next, create a health probe:
+
+   1. Open the load balancer, select **health probes**, and select **Add**.
+   1. Enter the name of the new health probe (for example, *hana-secondaryhp*).
+   1. Select **TCP** as the protocol and port **62603**. Keep the **Interval** value set to 5, and the **Unhealthy threshold** value set to 2.
+   1. Select **OK**.
+
+1. Next, create the load-balancing rules:
+
+   1. Open the load balancer, select **load balancing rules**, and select **Add**.
+   1. Enter the name of the new load balancer rule (for example, *hana-secondarylb*).
+   1. Select the front-end IP address, the back-end pool, and the health probe that you created earlier (for example, **hana-secondaryIP**, **hana-backend**, and **hana-secondaryhp**).
+   1. Select **HA Ports**.
+   1. Make sure to **enable Floating IP**.
+   1. Select **OK**.
+
+### Configure HANA active/read-enabled system replication
+
+The steps to configure HANA system replication are described in the [Configure SAP HANA 2.0 system replication](#configure-sap-hana-20-system-replication) section. If you are deploying a read-enabled secondary scenario, while you're configuring system replication on the second node, run following command as **hanasid**adm:
+
+```bash
+sapcontrol -nr 03 -function StopWait 600 10 
+
+hdbnsutil -sr_register --remoteHost=hana-s1-db1 --remoteInstance=03 --replicationMode=sync --name=HANA_S2 --operationMode=logreplay_readaccess 
+```
+
+### Add a secondary virtual IP address resource for an active/read-enabled setup
+
+1. Create the virtual IP resources.
+
+    ```bash
+    sudo pcs property set maintenance-mode=true
+    
+    sudo pcs resource create sec_vip_HN1_03 ocf:heartbeat:IPaddr2 ip="10.23.0.19"
+    sudo pcs resource create sec_nc_HN1_03 ocf:heartbeat:azure-lb port=62603
+    sudo pcs resource group add g_sec_ip_HN1_03 sec_nc_HN1_03 sec_vip_HN1_03
+    ```
+
+2. Create constraints
+
+    # [New Generation](#tab/newgeneration-angi)
+
+    ```bash
+    sudo pcs constraint location g_sec_ip_HN1_03 \
+        rule score=INFINITY master-rsc_SAPHanaController_HN1_HDB03 eq 100 \
+        and hana_hn1_clone_state eq DEMOTED
+
+    sudo pcs constraint location g_sec_ip_HN1_03 \
+        rule score=4000 masterrsc_SAPHanaController_HN1_HDB03 eq 150 \
+        and hana_hn1_clone_state eq PROMOTED
+    ```
+
+    # [Classic](#tab/classic)
+
+    ```bash
+    sudo pcs constraint location g_secip_HN1_03 rule score=50 "hana_hn1_roles eq master1:master:worker:master"
+    sudo pcs constraint order promote SAPHana_HN1_HDB03-clone then start g_ip_HN1_03
+    sudo pcs constraint order start g_ip_HN1_03 then start g_sec_ip_HN1_03
+
+    On RHEL 10.x
+    sudo pcs constraint location g_ip_HN1_03 rule score=500 role=Promoted "hana_hn1_roles eq master1:master:worker:master and hana_hn1_clone_state eq PROMOTED"
+    sudo pcs constraint colocation add g_sec_ip_HN1_03 with Unpromoted SAPHana_HN1_HDB03-clone score=5
+
+    On RHEL 9.x/8.x
+    sudo pcs constraint location g_ip_HN1_03 rule score=500 role=master hana_hn1_roles eq "master1:master:worker:master" and hana_hn1_clone_state eq PROMOTED
+    sudo pcs constraint colocation add g_sec_ip_HN1_03 with Slave SAPHana_HN1_HDB03-clone 5
+    ```
+
+     ---
+
+3. Remove cluster from maintenance mode
+
+    ```bash
+    sudo pcs property set maintenance-mode=false
+    ```
+
+Make sure that the cluster status is `ok`, and that all of the resources are started. The second virtual IP will run on the secondary site along with SAP HANA secondary resource.
+
+```bash
+# Example output from crm_mon
+#Online: [ hana-s-mm hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+#
+#Active resources:
+#
+#rsc_st_azure    (stonith:fence_azure_arm):      Started hana-s-mm
+#Clone Set: fs_hana_shared_s1-clone [fs_hana_shared_s1]
+#    Started: [ hana--s1-db1 hana-s1-db2 hana-s1-db3 ]
+#Clone Set: fs_hana_shared_s2-clone [fs_hana_shared_s2]
+#    Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+#Clone Set: hana_nfs_s1_active-clone [hana_nfs_s1_active]
+#    Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 ]
+#Clone Set: hana_nfs_s2_active-clone [hana_nfs_s2_active]
+#    Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+#Clone Set: SAPHanaTopology_HN1_HDB03-clone [SAPHanaTopology_HN1_HDB03]
+#    Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+#Primary/Secondary Set: msl_SAPHana_HN1_HDB03 [SAPHana_HN1_HDB03]
+#    Primaries: [ hana-s1-db1 ]
+#    Secondaries: [ hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+#Resource Group: g_ip_HN1_03
+#    nc_HN1_03  (ocf::heartbeat:azure-lb):      Started hana-s1-db1
+#    vip_HN1_03 (ocf::heartbeat:IPaddr2):       Started hana-s1-db1
+#Resource Group: g_secip_HN1_03
+#    secnc_HN1_03       (ocf::heartbeat:azure-lb):      Started hana-s2-db1
+#    secvip_HN1_03      (ocf::heartbeat:IPaddr2):       Started hana-s2-db1
+
+```
+
+In the next section, you can find the typical set of failover tests to run.
+
+When you're testing a HANA cluster configured with a read-enabled secondary, be aware of the following behavior of the second virtual IP:
+
+* When cluster resource **SAPHana_HN1_HDB03** moves to the secondary site (**S2**), the second virtual IP will move to the other site, **hana-s1-db1**. If you have configured `AUTOMATED_REGISTER="false"`, and HANA system replication isn't registered automatically, then the second virtual IP will run on **hana-s2-db1**.  
+
+* When you're testing server crash, the second virtual IP resources (**secvip_HN1_03**) and the Azure Load Balancer port resource (**secnc_HN1_03**) run on the primary server, alongside the primary virtual IP resources. While the secondary server is down, the applications that are connected to the read-enabled HANA database will connect to the primary HANA database. This behavior is expected. It allows applications that are connected to the read-enabled HANA database to operate while a secondary server is unavailable.
+  
+* During failover and fallback, the existing connections for applications that are using the second virtual IP to connect to the HANA database might be interrupted.  
+
+## Test SAP HANA failover
+
+1. Before you start a test, check the cluster and SAP HANA system replication status.  
+
+   1. Verify that there are no failed cluster actions.
+  
+       ```bash
+       #Verify that there are no failed cluster actions
+       pcs status
+       # Example
+       #Stack: corosync
+       #Current DC: hana-s-mm (version 1.1.19-8.el7_6.5-c3c624ea3d) - partition with quorum
+       #Last updated: Thu Sep 24 06:00:20 2020
+       #Last change: Thu Sep 24 05:59:17 2020 by root via crm_attribute on hana-s1-db1
+       #
+       #7 nodes configured
+       #45 resources configured
+       #
+       #Online: [ hana-s-mm hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+       #
+       #Active resources:
+       #
+       #rsc_st_azure    (stonith:fence_azure_arm):      Started hana-s-mm
+       #Clone Set: fs_hana_shared_s1-clone [fs_hana_shared_s1]
+       #    Started: [ hana--s1-db1 hana-s1-db2 hana-s1-db3 ]
+       #Clone Set: fs_hana_shared_s2-clone [fs_hana_shared_s2]
+       #    Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+       #Clone Set: hana_nfs_s1_active-clone [hana_nfs_s1_active]
+       #    Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 ]
+       #Clone Set: hana_nfs_s2_active-clone [hana_nfs_s2_active]
+       #    Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+       #Clone Set: SAPHanaTopology_HN1_HDB03-clone [SAPHanaTopology_HN1_HDB03]
+       #    Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+       #Primary/Secondary Set: msl_SAPHana_HN1_HDB03 [SAPHana_HN1_HDB03]
+       #    Primaries: [ hana-s1-db1 ]
+       #    Secondaries: [ hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+       #Resource Group: g_ip_HN1_03
+       #    nc_HN1_03  (ocf::heartbeat:azure-lb):      Started hana-s1-db1
+       #    vip_HN1_03 (ocf::heartbeat:IPaddr2):       Started hana-s1-db1
+       ```
+
+   2. Verify that SAP HANA system replication is in sync.
+
+      ```bash
+      # Verify HANA HSR is in sync
+      sudo su - hn1adm -c "python /usr/sap/HN1/HDB03/exe/python_support/systemReplicationStatus.py"
+      #| Database | Host        | Port  | Service Name | Volume ID | Site ID | Site Name | Secondary     | Secondary| Secondary | Secondary | Secondary     | Replication | Replication | Replication    |
+      #|          |             |       |              |           |         |           | Host          | Port     | Site ID   | Site Name | Active Status | Mode        | Status      | Status Details |
+      #| -------- | ----------- | ----- | ------------ | --------- | ------- | --------- | ------------- | -------- | --------- | --------- | ------------- | ----------- | ----------- | -------------- |
+      #| HN1      | hana-s1-db3 | 30303 | indexserver  |         5 |       2 | HANA_S1   | hana-s2-db3 |     30303  |         1 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+      #| HN1      | hana-s1-db2 | 30303 | indexserver  |         4 |       2 | HANA_S1   | hana-s2-db2 |     30303  |         1 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |  
+      #| SYSTEMDB | hana-s1-db1 | 30301 | nameserver   |         1 |       2 | HANA_S1   | hana-s2-db1 |     30301  |         1 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+      #| HN1      | hana-s1-db1 | 30307 | xsengine     |         2 |       2 | HANA_S1   | hana-s2-db1 |     30307  |         1 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+      #| HN1      | hana-s1-db1 | 30303 | indexserver  |         3 |       2 | HANA_S1   | hana-s2-db1 |     30303  |         1 | HANA_S2   | YES           | SYNC        | ACTIVE      |                |
+   
+      #status system replication site "1": ACTIVE
+      #overall system replication status: ACTIVE
+   
+      #Local System Replication State
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+      #mode: PRIMARY
+      #site id: 1
+      #site name: HANA_S1
+      ```
+
+2. Verify the cluster configuration for a failure scenario, when a node loses access to the NFS share (`/hana/shared`).  
+
+   The SAP HANA resource agents depend on binaries, stored on `/hana/shared`, to perform operations during failover. File system `/hana/shared` is mounted over NFS in the presented configuration. A test that can be performed, is to create a temporary firewall rule to block access to the `/hana/shared` NFS mounted file system on one of the primary site VMs. This approach validates that the cluster will fail over, if access to `/hana/shared` is lost on the active system replication site.
+
+   **Expected result**: When you block the access to the `/hana/shared` NFS mounted file system on one of the primary site VMs, the monitoring operation that performs read/write operation on file system, will fail, as it is not able to access the file system and will trigger HANA resource failover. The same result is expected when your HANA node loses access to the NFS share.
+
+   You can check the state of the cluster resources by running `crm_mon` or `pcs status`. Resource state before starting the test:
+
+      ```bash
+      # Output of crm_mon
+      #7 nodes configured
+      #45 resources configured
+   
+      #Online: [ hana-s-mm hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      #
+      #Active resources:
+   
+      #rsc_st_azure    (stonith:fence_azure_arm):      Started hana-s-mm
+      # Clone Set: fs_hana_shared_s1-clone [fs_hana_shared_s1]
+      #    Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 ]
+      # Clone Set: fs_hana_shared_s2-clone [fs_hana_shared_s2]
+      #     Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Clone Set: hana_nfs_s1_active-clone [hana_nfs_s1_active]
+      #     Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 ]
+      # Clone Set: hana_nfs_s2_active-clone [hana_nfs_s2_active]
+      #     Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Clone Set: SAPHanaTopology_HN1_HDB03-clone [SAPHanaTopology_HN1_HDB03]
+      #     Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Primary/Secondary Set: msl_SAPHana_HN1_HDB03 [SAPHana_HN1_HDB03]
+      #     Primaries: [ hana-s1-db1 ]
+      #     Secondaries: [ hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Resource Group: g_ip_HN1_03
+      #     nc_HN1_03  (ocf::heartbeat:azure-lb):      Started hana-s1-db1
+      #     vip_HN1_03 (ocf::heartbeat:IPaddr2):       Started hana-s1-db1
+      ```
+
+   To simulate failure for `/hana/shared`:
+
+   * If using NFS on ANF, first confirm the IP address for the `/hana/shared` ANF volume on the primary site. You can do that by running `df -kh|grep /hana/shared`.
+   * If using NFS on Azure Files, first determine the IP address of the private end point for your storage account.
+
+   Then, set up a temporary firewall rule to block access to the IP address of the `/hana/shared` NFS file system by executing the following command on one of the primary HANA system replication site VMs.
+
+   In this example, the command was executed on hana-s1-db1 for ANF volume `/hana/shared`.
+
+     ```bash
+     iptables -A INPUT -s 10.23.1.7 -j DROP; iptables -A OUTPUT -d 10.23.1.7 -j DROP
+     ```
+
+   The HANA VM that lost access to `/hana/shared` should restart or stop, depending on the cluster configuration. The cluster resources are migrated to the other HANA system replication site.
+
+   If the cluster hasn't started on the VM that was restarted, start the cluster by running the following:
+
+      ```bash
+      # Start the cluster 
+      pcs cluster start
+      ```
+
+   When the cluster starts, file system `/hana/shared` is automatically mounted. If you set `AUTOMATED_REGISTER="false"`, you will need to configure SAP HANA system replication on the secondary site. In this case, you can run these commands to reconfigure SAP HANA as secondary.
+
+      ```bash
+      # Execute on the secondary 
+      su - hn1adm
+      # Make sure HANA is not running on the secondary site. If it is started, stop HANA
+      sapcontrol -nr 03 -function StopWait 600 10
+      # Register the HANA secondary site
+      hdbnsutil -sr_register --name=HANA_S1 --remoteHost=hana-s2-db1 --remoteInstance=03 --replicationMode=sync
+      # Switch back to root and clean up failed resources
+      pcs resource cleanup SAPHana_HN1_HDB03
+      ```
+
+   The state of the resources, after the test:
+
+      ```bash
+      # Output of crm_mon
+      #7 nodes configured
+      #45 resources configured
+
+      #Online: [ hana-s-mm hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+
+      #Active resources:
+
+      #rsc_st_azure    (stonith:fence_azure_arm):      Started hana-s-mm
+      # Clone Set: fs_hana_shared_s1-clone [fs_hana_shared_s1]
+      #    Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 ]
+      # Clone Set: fs_hana_shared_s2-clone [fs_hana_shared_s2]
+      #     Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Clone Set: hana_nfs_s1_active-clone [hana_nfs_s1_active]
+      #     Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 ]
+      # Clone Set: hana_nfs_s2_active-clone [hana_nfs_s2_active]
+      #     Started: [ hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Clone Set: SAPHanaTopology_HN1_HDB03-clone [SAPHanaTopology_HN1_HDB03]
+      #     Started: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db1 hana-s2-db2 hana-s2-db3 ]
+      # Primary/Secondary Set: msl_SAPHana_HN1_HDB03 [SAPHana_HN1_HDB03]
+      #     Primaries: [ hana-s2-db1 ]
+      #     Secondaries: [ hana-s1-db1 hana-s1-db2 hana-s1-db3 hana-s2-db2 hana-s2-db3 ]
+      # Resource Group: g_ip_HN1_03
+      #     nc_HN1_03  (ocf::heartbeat:azure-lb):      Started hana-s2-db1
+      #     vip_HN1_03 (ocf::heartbeat:IPaddr2):       Started hana-s2-db1
+      ```
+
+It's a good idea to test the SAP HANA cluster configuration thoroughly, by also performing the tests documented in [HA for SAP HANA on Azure VMs on RHEL](sap-hana-high-availability-rhel.md#test-the-cluster-setup).
+
+## Next steps
+
+* [Azure Virtual Machines planning and implementation for SAP][planning-guide]
+* [Azure Virtual Machines deployment for SAP][deployment-guide]
+* [Azure Virtual Machines DBMS deployment for SAP][dbms-guide]
+* [NFS v4.1 volumes on Azure NetApp Files for SAP HANA](hana-vm-operations-netapp.md)
+* To learn how to establish high availability and plan for disaster recovery of SAP HANA on Azure VMs, see [High Availability of SAP HANA on Azure VMs][sap-hana-ha].

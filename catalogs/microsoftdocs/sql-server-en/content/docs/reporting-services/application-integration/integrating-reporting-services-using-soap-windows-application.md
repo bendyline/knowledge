@@ -1,0 +1,104 @@
+---
+title: "Use SOAP API in Windows applications"
+description: You can access functionality of the report server with the Reporting Services SOAP API. Access the Web service in a Windows app by making calls to the service.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: application-integration
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "rendered reports [Reporting Services]"
+  - "Windows applications [Reporting Services]"
+  - "Windows Forms [Reporting Services]"
+  - "SOAP [Reporting Services], Windows applications"
+---
+# Integrate Reporting Services by using SOAP - Windows application
+  You can access the full functionality of the report server through the Reporting Services SOAP API. The SOAP API is a Web service and, as such, can be easily accessed to provide enterprise reporting features to your custom business applications. You can access the Web service in a Windows application simply by writing code that makes calls to the service. By using the  Microsoft 
+  .NET Framework 
+, you can generate a proxy class that exposes the properties and methods of the Web service. You can then use a familiar infrastructure and tools to build business applications built on  Reporting Services 
+ technology.  
+  
+## Integrate Report Management functionality using Windows Forms  
+ Unlike URL access, the SOAP API exposes the complete set of management functions that are available through the report server. This means that the entire administrative functionality of Report Manager is available to developers through SOAP. As such, you can develop a complete management and administration tool using Windows Forms. For example, in your Windows application, you might want to enable your users to retrieve the contents of the report server namespace. You can use the Web service [ReportService2010.ReportingService2010.ListChildren%2A](https://learn.microsoft.com/search/?terms=ReportService2010.ReportingService2010.ListChildren%252A) method to list all the items in the report server database and then use a Listview, Treeview, or Combobox control to display those items to your users. The following Web service code might be used to retrieve the current list of available reports in a user's My Reports folder when a user selects a button on a form:  
+  
+```vb  
+' Button click event that retrieves a list of reports from  
+' the My Reports folder and displays them in a combo box  
+Private Sub listReportsButton_Click(sender As Object, e As System.EventArgs)  
+   ' Create a new Web service object and set credentials  
+   ' to Windows Authentication  
+   Dim rs As New ReportingService2010()  
+   rs.Credentials = System.Net.CredentialCache.DefaultCredentials  
+  
+   ' Return the list of items in My Reports  
+   Dim items As CatalogItem() = rs.ListChildren("/Adventureworks Sample Reports", False)  
+  
+   Dim ci As CatalogItem  
+   For Each ci In  items  
+      ' If the item is a report, add it to   
+      ' a combo box  
+      If ci.TypeName = "Report" Then  
+         catalogComboBox.Items.Add(ci.Name)  
+      End If  
+   Next ci  
+End Sub 'listReportsButton_Click  
+```  
+  
+```csharp  
+// Button click event that retrieves a list of reports from  
+// the My Reports folder and displays them in a combo box  
+private void listReportsButton_Click(object sender, System.EventArgs e)  
+{  
+   // Create a new Web service object and set credentials  
+   // to Windows Authentication  
+   ReportingService2010 rs = new ReportingService2010();  
+   rs.Credentials = System.Net.CredentialCache.DefaultCredentials;  
+  
+   // Return the list of items in My Reports  
+   CatalogItem[] items = rs.ListChildren("/Adventureworks Sample Reports", false);  
+  
+   foreach (CatalogItem ci in items)  
+   {  
+      // If the item is a report, add it to   
+      // a combo box  
+      if (ci.TypeName == "Report")  
+         catalogComboBox.Items.Add(ci.Name);  
+   }  
+}  
+```  
+  
+ From there, you might enable users to select the report from the Combo box and preview the report on the form either using a Web browser control or an image control.  
+  
+## Enable Report Viewing and navigation using Windows Forms  
+ There are two methods available for integrating reports into your Windows Forms applications.  
+  
+ You can use the SOAP API to render reports to any of the supported rendering formats using the [ReportExecution2005.ReportExecutionService.Render%2A](https://learn.microsoft.com/search/?terms=ReportExecution2005.ReportExecutionService.Render%252A) method. There are slight disadvantages to enabling report viewing and navigation through SOAP:  
+  
+-   You can't take advantage of the built-in functionality of the report toolbar that is included with the HTML Viewer through URL access.  
+  
+-   If you render to HTML, you must separately render any images or resources as additional streams using the [ReportExecution2005.ReportExecutionService.RenderStream%2A](https://learn.microsoft.com/search/?terms=ReportExecution2005.ReportExecutionService.RenderStream%252A) method.  
+  
+-   There's a slight performance advantage to rendering reports using URL access over using the SOAP API.  
+  
+ However, the [ReportExecution2005.ReportExecutionService.Render%2A](https://learn.microsoft.com/search/?terms=ReportExecution2005.ReportExecutionService.Render%252A) method of the SOAP API can be used to render reports and save them to various output formats programmatically. This method is an advantage over URL access, which requires user interaction. When you render a report using the SOAP API [ReportExecution2005.ReportExecutionService.Render%2A](https://learn.microsoft.com/search/?terms=ReportExecution2005.ReportExecutionService.Render%252A) method, you can render to any of the supported output formats.  
+  
+ You can also use the freely distributable Report Viewer controls that are included with  Microsoft 
+  Visual Studio 2008 
+. The Report Viewer controls make it easy to embed  Reporting Services 
+ functionality into custom applications. The Report Viewer controls are intended for developers who want to provide predesigned, fully authored reports as part of an application feature set. For example, a Web site management application might include reports that show click-stream analysis on company Web sites. Embedding the controls in an application provides a streamlined alternative to including the  Reporting Services 
+ server components in your application deployment. The controls provide report functionality, but without the extra report authoring, publication, or distribution and delivery support that you find in  Reporting Services 
+.  
+  
+ There are two versions of the Report Viewer controls, one for rich Windows client applications and one for  ASP.NET 
+ applications. The controls support both local processing and remote processing modes. In local processing mode, your application provides the report definition and datasets and triggers report processing. In remote processing mode, data retrieval and report processing happen on the report server and the control is used for display and report navigation. This model allows you to build rich applications that can be scaled from desktop to the enterprise.  
+  
+ Report Viewer controls are documented in  Visual Studio 
+ online Help. For more information, see the  Visual Studio 
+ product documentation.  
+  
+## Related content
+
+- [Building Applications Using the Web Service and the .NET Framework](../report-server-web-service/net-framework/building-applications-using-the-web-service-and-the-net-framework.md)
+- [Integrating Reporting Services into Applications](https://learn.microsoft.com/previous-versions/sql/reporting-services/application-integration/integrating-reporting-services-into-applications)
+- [Integrate Reporting Services by using SOAP - Web application](integrating-reporting-services-using-soap-web-application.md)

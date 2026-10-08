@@ -1,0 +1,136 @@
+---
+title: "STR (Transact-SQL)"
+description: "The STR Transact-SQL function returns character data converted from numeric data."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 02/09/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STR"
+  - "STR_TSQL"
+helpviewer_keywords:
+  - "converting numbers to characters"
+  - "characters [SQL Server], converting"
+  - "character data [SQL Server]"
+  - "STR function"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# STR (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns character data converted from numeric data. The character data is right-justified, with a specified length and decimal precision. 
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+STR ( float_expression [ , length [ , decimal ] ] )  
+```  
+  
+## Arguments
+
+#### *float_expression*  
+ An expression of approximate numeric (**float**) data type with a decimal point.  
+  
+#### *length*  
+ The total length, including the decimal point, sign, digits, and spaces. The default is 10.
+  
+#### *decimal*  
+ The number of places to the right of the decimal point. *decimal* must be less than or equal to 16. If *decimal* is more than 16, the result is truncated to 16 places to the right of the decimal point.  
+  
+## Return Types  
+ **varchar**  
+  
+## Remarks  
+ If supplied, the values for *length* and *decimal* parameters to STR should be positive. The number is rounded to an integer by default or if the decimal parameter is 0. The specified length should be greater than or equal to the part of the number before the decimal point plus the number's sign (if any). A short *float_expression* is right-justified in the specified length, and a long *float_expression* is truncated to the specified number of decimal places. For example, STR(12, 10) yields the result of 12. This is right-justified in the result set. However, STR(1223, 2) truncates the result set to \*\*. String functions can be nested.  
+  
+> **Note:**  
+>  To convert to Unicode data, use STR inside a CONVERT or [CAST](cast-and-convert-transact-sql.md) conversion function.  
+  
+## Examples  
+ The following example converts an expression that is made up of five digits and a decimal point to a six-position character string. The fractional part of the number is rounded to one decimal place.  
+  
+```sql
+SELECT STR(123.45, 6, 1);  
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+------  
+ 123.5  
+  
+(1 row(s) affected)  
+```  
+  
+ When the expression exceeds the specified length, the string returns `**` for the specified length.  
+  
+```sql
+SELECT STR(123.45, 2, 2);  
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+--  
+**  
+  
+(1 row(s) affected)  
+```  
+  
+ Even when numeric data is nested within `STR`, the result is character data with the specified format.  
+  
+```sql
+SELECT STR (FLOOR (123.45), 8, 3);
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+--------  
+ 123.000  
+  
+(1 row(s) affected)  
+```  
+  
+## Related content
+
+- [CAST and CONVERT (Transact-SQL)](cast-and-convert-transact-sql.md)
+- [FORMAT (Transact-SQL)](format-transact-sql.md)

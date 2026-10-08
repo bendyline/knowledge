@@ -1,0 +1,50 @@
+---
+title: "PreConnect:Starting Event Class"
+description: "PreConnect:Starting Event Class"
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "PreConnect:Starting Event Class"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# PreConnect:Starting Event Class
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  The PreConnect:Starting event class indicates when a LOGON trigger or the Resource Governor classifier function starts execution.  
+  
+## PreConnect:Starting Event Class Data Columns  
+  
+| Data column name | Data type | Description | Column ID | Filterable |
+| --- | --- | --- | --- | --- |
+| EventClass | **int** | 215 | 27 | No |
+| SPID | **int** | The ID of server process that fires this event. | 12 | Yes |
+| EventSubClass | **int** | 1 for the user-defined classifier function. | 21 | Yes |
+| StartTime | **datetime** | The time when the user-defined classifier function starts. | 14 | Yes |
+| ObjectID | **int** | The ID of the user-defined classifier object. | 22 | Yes |
+| ObjectName | **nvarchar(256)** | The two-part name of the classifier user-defined function. For example, dbo.classifier. | 34 | Yes |
+  
+## Related content
+
+- [Extended Events overview](../extended-events/extended-events.md)
+- [PreConnect:Completed Event Class](preconnect-completed-event-class.md)
+- [Resource governor](../resource-governor/resource-governor.md)

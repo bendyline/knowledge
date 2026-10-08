@@ -1,0 +1,122 @@
+---
+title: Secure Key Release with Azure Key Vault and Azure Confidential Computing
+description: Concept guide on what SKR is and its usage with Azure Confidential Computing Offerings
+author: angarg05
+ms.service: azure-confidential-computing
+ms.topic: concept-article
+ms.date: 09/09/2026
+ms.author: ananyagarg
+# Customer intent: "As a security architect, I want to implement Secure Key Release with Azure Key Vault and Trusted Execution Environments, so that I can enhance the protection and access control for sensitive encryption keys during their use in cloud applications."
+---
+
+# Secure Key Release feature with AKV and Azure Confidential Computing (ACC)
+
+Secure Key Release (SKR) is a functionality of Azure Key Vault (AKV) Managed HSM and Premium offering. Secure key release enables the release of an HSM protected key from AKV to an attested Trusted Execution Environment (TEE), such as a secure enclave, VM based TEEs etc. SKR adds another layer of access protection to your data decryption/encryption keys where you can target an application + TEE runtime environment with known configuration get access to the key material. The SKR policies defined at the time of exportable key creation govern the access to these keys.
+
+## SKR support with AKV offerings
+
+- [Azure Key Vault Premium](../security/fundamentals/key-management.md)
+- [Azure Key Vault Managed HSM](https://learn.microsoft.com/azure/key-vault/managed-hsm/overview)
+
+## Overall Secure Key Release Flow with TEE
+
+SKR can only release keys based on the Microsoft Azure Attestation (MAA) generated claims. There's a tight integration on the SKR policy definition to MAA claims.
+
+Diagram of Secure Key Release Flow.
+
+The below steps are for AKV Premium. 
+
+### Step 1: Create a Key Vault Premium HSM Backed
+
+[Follow the details here for Az CLI based AKV creation](https://learn.microsoft.com/azure/key-vault/general/quick-create-cli)
+
+Make sure to set the value of [--sku] to "premium".
+
+### Step 2: Create a Secure Key Release Policy
+
+A Secure Key Release Policy is a json format release policy as defined [here](https://learn.microsoft.com/rest/api/keyvault/keys/create-key/create-key?tabs=HTTP#keyreleasepolicy) that specifies a set of claims required in addition to authorization to release the key. The claims here are MAA based claims as referenced [here for SGX](https://learn.microsoft.com/azure/attestation/attestation-token-examples#sample-jwt-generated-for-sgx-attestation) and here for [AMD SEV-SNP CVM](https://learn.microsoft.com/azure/attestation/attestation-token-examples#sample-jwt-generated-for-sev-snp-attestation).
+
+Visit the TEE specific [examples page for more details](skr-policy-examples.md). For more information on the SKR policy grammar, see [Azure Key Vault secure key release policy grammar](https://learn.microsoft.com/azure/key-vault/keys/policy-grammar).
+
+Before you set an SKR policy make sure to run your TEE application through the remote attestation flow. Remote attestation isn't covered as part of this tutorial.
+
+Example
+
+```json
+{
+    "version": "1.0.0",
+    "anyOf": [ // Always starts with "anyOf", meaning you can multiple, even varying rules, per authority.
+        {
+            "authority": "https://sharedweu.weu.attest.azure.net",
+            "allOf": [ // can be replaced by "anyOf", though you cannot nest or combine "anyOf" and "allOf" yet.
+                {
+                    "claim": "x-ms-isolation-tee.x-ms-attestation-type", // These are the MAA claims.
+                    "equals": "sevsnpvm"
+                },
+                {
+                    "claim": "x-ms-isolation-tee.x-ms-compliance-status",
+                    "equals": "azure-compliant-cvm"
+                }
+            ]
+        }
+    ]
+}
+
+
+```
+
+### Step 3: Create an exportable key in AKV with attached SKR policy
+
+Exact details of the type of key and other attributes associated can be found [here](https://learn.microsoft.com/azure/key-vault/general/quick-create-cli).
+
+```azurecli
+az keyvault key create --exportable true --vault-name "vault name from step 1" --kty RSA-HSM --name "keyname" --policy "jsonpolicyfromstep3 -can be a path to JSON"
+```
+
+### Step 4: Application running within a TEE doing a remote attestation
+
+This step can be specific to the type of TEE you're running your application Intel SGX Enclaves or AMD SEV-SNP based Confidential Virtual Machines (CVM) or Confidential Containers running in CVM Enclaves with AMD SEV-SNP etc.
+
+Follow these references examples for various TEE types offering with Azure:
+
+- [Application within AMD EV-SNP based CVM's performing Secure Key Release](skr-flow-confidential-vm-sev-snp.md)
+- [Confidential containers with Azure Container Instances (ACI) with SKR side-car containers](skr-flow-confidential-containers-azure-container-instance.md)
+- [Intel SGX based applications performing Secure Key Release - Open Source Solution Mystikos Implementation](https://github.com/deislabs/mystikos/tree/main/samples/confidential_ml#environment)
+
+## Frequently Asked Questions (FAQ)
+
+### Can I perform SKR with non-confidential-computing offerings?
+
+Yes. Secure Key Release is a feature of Azure Key Vault Premium and Managed HSM. The release operation validates a signed Microsoft Azure Attestation (MAA) token against the key's release policy, independent of the compute type. Confidential computing offerings (confidential VMs, confidential containers) are the most common source of these tokens because they carry hardware-based TEE claims, but they aren't required. Trusted Launch VMs also produce MAA attestation tokens—for example the `secureboot` claim and the vTPM-measured `x-ms-azurevm-attested-pcr-values` PCR claims—and a release policy can gate key release on those claims. For the token requirements and claim structure, see [Azure Key Vault secure key release policy grammar](https://learn.microsoft.com/azure/key-vault/keys/policy-grammar). Confidential computing additionally protects the released key material in memory from the host; use a confidential computing offering when that protection is required.
+
+### Can I bring my own attestation provider or service and use those claims for AKV to validate and release?
+
+Microsoft Azure Attestation is the natively integrated attestation service. A release policy can also validate tokens from another attestation authority, provided the token conforms to the expected structure, supports OpenID Connect, carries the expected claims, and is signed by a certificate that chains to a public CA that Key Vault trusts—currently DigiCert. For more information, see [Azure Key Vault secure key release policy grammar](https://learn.microsoft.com/azure/key-vault/keys/policy-grammar).
+
+### Can I use AKV SDKs to perform key RELEASE?
+
+Yes. Latest SDK integrated with 7.3 AKV API's support key RELEASE.
+
+### Can you share some examples of the key release policies?
+
+Yes, detailed examples by TEE type are listed [here.](skr-policy-examples.md)
+
+## Can I attach SKR type of policy with certificates and secrets?
+
+No. Not at this time.
+
+## References
+
+[SKR Policy Examples](skr-policy-examples.md)
+
+[Azure Container Instance with confidential containers Secure Key Release with container side-cars](skr-flow-confidential-containers-azure-container-instance.md)
+
+[CVM on AMD SEV-SNP Applications with Secure Key Release Example](skr-flow-confidential-vm-sev-snp.md)
+
+[AKV REST API With SKR Details](https://learn.microsoft.com/rest/api/keyvault/keys/create-key/create-key?tabs=HTTP)
+
+[Azure Key Vault secure key release policy grammar](https://learn.microsoft.com/azure/key-vault/keys/policy-grammar)
+
+[Protect intellectual property on Azure VMs with attestation-gated Secure Key Release](https://learn.microsoft.com/azure/virtual-machines/secure-key-release-pattern-trusted-launch)
+
+[AKV SDKs](https://learn.microsoft.com/azure/key-vault/general/client-libraries)

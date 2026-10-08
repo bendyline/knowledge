@@ -1,0 +1,63 @@
+---
+title: Support Resources
+description: Helpful resources when you're developing applications that use the Microsoft Drivers for PHP for SQL Server.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 05/06/2020
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "support"
+---
+# Support resources for the Microsoft Drivers for PHP for SQL Server
+
+
+
+
+This article lists resources that may be helpful when you're developing applications that use the Microsoft Drivers for PHP for SQL Server
+.
+
+## Microsoft Drivers for PHP for SQL Server
+ support resources
+
+For the latest documentation, see the [Microsoft PHP Driver for SQL Server](microsoft-php-driver-for-sql-server.md) for the Microsoft Drivers for PHP for SQL Server
+.
+
+For peer-to-peer support, visit the Microsoft Drivers for PHP for SQL Server
+ [Forum](https://social.msdn.microsoft.com/Forums/sqlserver/home?forum=sqldriverforphp).
+
+To provide feedback, ask questions, or learn what the development team is considering, visit the Microsoft Drivers for PHP for SQL Server
+ [SQL Server Drivers Blog](https://techcommunity.microsoft.com/t5/sql-server/bg-p/SQLServer/label-name/SQLServerDrivers).
+
+[Microsoft PHP driver for SQL Server source code on GitHub](https://github.com/Microsoft/msphpsql)
+
+## SQL Server and Transact-SQL support resources
+
+SQL Server and Transact-SQL documentation can be found at [SQL Server Documentation](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/sql-server/index.yml).
+
+For peer-to-peer support, visit the [MSDN SQL Server Forums](https://social.msdn.microsoft.com/Forums/sqlserver/home).
+
+## Internet Information Services (IIS) support resources
+
+For the latest IIS news, visit [IIS Home](https://www.iis.net/).
+
+For peer-to-peer support, visit the [IIS Forums](https://forums.iis.net/).
+
+## PHP support resources
+
+[PHP For Windows](https://windows.php.net) documentation.
+
+For the latest information about PHP, visit the [official site](http://www.php.net/).
+
+For PHP documentation, see the [PHP Manual](https://www.php.net/docs.php).
+
+## Microsoft customer support
+
+For support questions related to the Microsoft Drivers for PHP for SQL Server
+, you can contact [Microsoft Support](https://support.microsoft.com/contactus/), or ask on the [GitHub project page](https://github.com/Microsoft/msphpsql/issues).
+
+## Related content
+
+- [Overview of the Microsoft Drivers for PHP for SQL Server](overview-of-the-php-sql-driver.md)

@@ -1,0 +1,49 @@
+---
+title: "Start Database Mirroring Monitor (SSMS)"
+description: Describes how to start the Database Mirroring Monitor within the SQL Server Management Studio (SSMS) GUI.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: database-mirroring
+ms.topic: ui-reference
+helpviewer_keywords:
+  - "monitoring database mirroring [SQL Server]"
+  - "Database Mirroring Monitor [SQL Server], starting"
+  - "database mirroring [SQL Server], monitoring"
+---
+# Start Database Mirroring Monitor (SQL Server Management Studio)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  The Database Mirroring Monitor is part of the  SQL Server 
+ Monitor, which is launched from  SQL Server Management Studio 
+.  
+  
+> **Note:**
+>  Database Mirroring Monitor is not available in every edition of  SQL Server 
+. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+  
+### To launch the Database Mirroring Monitor  
+  
+1.  After connecting to the principal server instance, in Object Explorer, click the server name to expand the server tree.  
+  
+2.  Expand **Databases**, and select the database to be monitored.  
+  
+3.  Right-click the database, select **Tasks**, and then click **Launch Database Mirroring Monitor**.  
+  
+4.  In the **Database Mirroring Monitor** dialog box, click **Register Mirrored Database** to register one or more mirrored database.  
+  
+    > **Note:**  
+    >  When you register a database at one partner, the database is automatically registered at the other partner. If the monitor already has connection credentials for the other partner instance, those are used to connect. Otherwise the monitor attempts to connect using Windows Authentication. If you want to change the credentials used to connect to either server instance, click **Show the Manage Server Connections dialog box when I click OK**.  
+  
+ For more information about Database Mirroring Monitor, see [Database Mirroring Monitor Overview](database-mirroring-monitor-overview.md).  
+  
+## Related content
+
+- [Database Mirroring (SQL Server)](database-mirroring-sql-server.md)
+- [Establish Database Mirroring Session - Windows Authentication](establish-database-mirroring-session-windows-authentication.md)

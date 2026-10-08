@@ -1,0 +1,34 @@
+# Source code: aspnetcore/security/authentication/social/additional-claims/samples/3.x/ClaimsSample/Pages/MyClaims.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model MyClaimsModel
+@{
+    ViewData["Title"] = "My Claims";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h2>User Claims</h2>
+
+<dl>
+    @foreach (var claim in User.Claims)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
+
+<h2>Authentication Properties</h2>
+
+<dl>
+    @foreach (var prop in Model.AuthProperties)
+    {
+        <dt>@prop.Key</dt>
+        <dd>@prop.Value</dd>
+    }
+</dl>
+
+```

@@ -1,0 +1,58 @@
+---
+title: "Add a Data Source (ODBC)"
+description: Learn how SQL Server ODBC driver calls stored procedures as remote stored procedures in SQL Server using the remote stored procedure call mechanism.
+author: markingmyname
+ms.author: maghan
+ms.date: "04/15/2024"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "data sources [ODBC]"
+---
+# Configuring the SQL Server ODBC Driver - Add a Data Source
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  Before using ODBC applications with  SQL Server 2005 (9.x) 
+ or later, you must know how to upgrade the version of the catalog stored procedures on earlier versions of  SQL Server 
+ and add, delete, and test data sources.  
+  
+  You can add a data source by using ODBC Administrator, programmatically (by using [SQLConfigDataSource](../native-client-odbc-api/sqlconfigdatasource.md)), or by creating a file.  
+  
+### To add a data source by using ODBC Administrator  
+  
+1.  From the **Control Panel**, access **Administrative Tools** and then either **ODBC Data Sources (64-bit)** or **ODBC Data Sources (32-bit)**. Alternatively, you can invoke odbcad32.exe.  
+  
+2.  Click the **User DSN**, **System DSN**, or **File DSN** tab, and then click **Add**.  
+  
+3.  Click **SQL Server**, and then click **Finish**.  
+  
+4.  Complete the steps in the **Create a New Data Source to SQL Server** Wizard. For more information, see [ODBC Data Source Administrator DSN](../../connect/odbc/windows/odbc-administrator-dsn-creation.md).
+  
+### To add a data source programmatically  
+  
+1.  Call [SQLConfigDataSource](../native-client-odbc-api/sqlconfigdatasource.md) with the second parameter set to either ODBC_ADD_DSN or ODBC_ADD_SYS_DSN.  
+  
+### To add a file data source  
+  
+1.  Call [SQLDriverConnect](../native-client-odbc-api/sqldriverconnect.md) with a SAVEFILE=file_name parameter in the connect string. If the connect is successful, the ODBC driver creates a file data source with the connection parameters in the location pointed to by the SAVEFILE parameter.  
+  
+## Related content
+
+- [Configuring the SQL Server ODBC Driver - Delete a Data Source](configuring-the-sql-server-odbc-driver-delete-a-data-source.md)

@@ -1,0 +1,89 @@
+---
+title: "DBCC dllname (FREE) (Transact-SQL)"
+description: DBCC dllname (FREE) unloads the specified extended stored procedure DLL from memory.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/05/2022
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "dbcc_dllname_(FREE)_TSQL"
+  - "dllname"
+  - "dbcc dllname (FREE)"
+  - "FREE"
+  - "dbcc_dllname(FREE)_TSQL"
+  - "FREE_TSQL"
+  - "dllname_TSQL"
+  - "dbcc dllname(FREE)"
+helpviewer_keywords:
+  - "DLL unloading [SQL Server]"
+  - "DBCC dllname (FREE)"
+  - "freeing DLLs"
+  - "unloading DLLs"
+dev_langs:
+  - "TSQL"
+---
+# DBCC dllname (FREE) (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Unloads the specified extended stored procedure DLL from memory.
+
+
+
+## Syntax
+
+```syntaxsql
+DBCC <dllname> ( FREE ) [ WITH NO_INFOMSGS ]
+```
+
+## Arguments
+
+#### `<dllname>`
+
+The name of the DLL to release from memory.
+
+#### WITH NO_INFOMSGS
+
+Suppresses all informational messages.
+
+## Remarks
+
+When an extended stored procedure is executed, the DLL remains loaded by the instance of  SQL Server 
+ until the server is shut down. This statement allows for a DLL to be unloaded from memory without shutting down  SQL Server 
+. To display the DLL files currently loaded by  SQL Server 
+, execute `sp_helpextendedproc`.
+
+## Result sets
+
+When a valid DLL is specified, `DBCC <dllname> (FREE)` returns:
+
+```output
+DBCC execution completed. If DBCC printed error messages, contact your system administrator.
+```
+
+## Permissions
+
+Requires membership in the **sysadmin** fixed server role or the **db_owner** fixed database role.
+
+## Examples
+
+The following example assumes that `xp_sample` is implemented as `xp_sample.dll` and has been executed. `DBCC <dllname> (FREE)` unloads the `xp_sample.dll` file associated with the `xp_sample` extended procedure.
+
+```sql
+DBCC xp_sample (FREE);
+```
+
+## Related content
+
+- [DBCC (Transact-SQL)](dbcc-transact-sql.md)
+- [Programming Database Engine extended stored procedures](../../relational-databases/extended-stored-procedures-programming/database-engine-extended-stored-procedures-programming.md)
+- [sys.sp_addextendedproc (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-addextendedproc-transact-sql.md)
+- [sys.sp_dropextendedproc (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-dropextendedproc-transact-sql.md)
+- [sys.sp_helpextendedproc (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-helpextendedproc-transact-sql.md)

@@ -1,0 +1,77 @@
+---
+title: "FILEGROUP_ID (Transact-SQL)"
+description: "FILEGROUP_ID (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "FILEGROUP_ID_TSQL"
+  - "FILEGROUP_ID"
+helpviewer_keywords:
+  - "FILEGROUP_ID function"
+  - "identification numbers [SQL Server], filegroups"
+  - "filegroups [SQL Server], IDs"
+  - "IDs [SQL Server], filegroups"
+  - "names [SQL Server], filegroups"
+dev_langs:
+  - "TSQL"
+---
+# FILEGROUP_ID (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+This function returns the filegroup identification (ID) number for a specified filegroup name.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql 
+FILEGROUP_ID ( 'filegroup_name' )   
+```  
+  
+## Arguments
+*filegroup_name*
+An expression of type **sysname**, representing the filegroup name whose filegroup ID `FILEGROUP_ID` will return.  
+  
+## Return Types  
+**int**  
+  
+## Remarks  
+*filegroup_name* corresponds to the **name** column in the **sys.filegroups** catalog view.  
+  
+## Examples  
+This example returns the filegroup ID for the filegroup named `PRIMARY` in the  AdventureWorks2025  database.  
+  
+```sql  
+SELECT FILEGROUP_ID('PRIMARY') AS [Filegroup ID];  
+GO  
+```  
+  
+ Here's the result set. 
+  
+  
+```
+Filegroup ID  
+------------  
+1  
+
+(1 row(s) affected)
+ ```  
+  
+## Related content
+
+- [FILEGROUP_NAME (Transact-SQL)](filegroup-name-transact-sql.md)
+- [Metadata functions (Transact-SQL)](metadata-functions-transact-sql.md)
+- [sys.filegroups (Transact-SQL)](../../relational-databases/system-catalog-views/sys-filegroups-transact-sql.md)

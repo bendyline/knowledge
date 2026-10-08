@@ -1,0 +1,102 @@
+---
+title: Migrate blueprints to deployment stacks
+description: Learn how to migrate blueprints to deployment stacks.
+ms.topic: article
+ms.custom: devx-track-bicep
+ms.date: 06/26/2026
+---
+
+# Migrate blueprints to deployment stacks
+
+
+> **Important:**
+> Azure Blueprints (Preview) will be **retired on January 31, 2027**, with a phased retirement
+> beginning July 31, 2026. Migrate your existing blueprint definitions and assignments to
+> [Deployment Stacks](deployment-stacks.md) (recommended)
+> and [Template Specs](template-specs.md). Blueprint
+> artifacts are converted to ARM JSON templates or Bicep files used to define deployment stacks.
+> For the full phased timeline, impact, and FAQ, see
+> [Azure Blueprints retirement](../../governance/blueprints/blueprint-retirement.md) or
+> <https://aka.ms/AzureBlueprintsRetirement>. To learn how to author an artifact as an ARM
+> resource, see:
+>
+> - [Policy](https://learn.microsoft.com/azure/templates/microsoft.authorization/policyassignments?pivots=deployment-language-bicep)
+> - [RBAC](https://learn.microsoft.com/azure/templates/microsoft.authorization/roleassignments?pivots=deployment-language-bicep)
+> - [Deployments](https://learn.microsoft.com/azure/templates/microsoft.resources/deployments?pivots=deployment-language-bicep)
+
+
+This article explains how to convert your Blueprint definitions and assignments into deployment stacks. Deployment stacks are new tools within the `Microsoft.Resources` namespace, bringing Azure Blueprint features into this area.
+
+## Migration steps
+
+1. Export the blueprint definitions into the blueprint definition JSON files which include the artifacts of Azure policies, Azure role assignments, and templates. For more information, see [Export your blueprint definition](../../governance/blueprints/how-to/import-export-ps.md#export-your-blueprint-definition).
+2. Convert the blueprint definition JSON files into a single ARM template or Bicep file to be deployed via deployment stacks with the following considerations:
+
+    - **Role assignments**: Convert any [role assignments](https://learn.microsoft.com/azure/templates/microsoft.authorization/roleassignments).
+    - **Policies**: Convert any [policy assignments](https://learn.microsoft.com/azure/templates/microsoft.authorization/policyassignments) into the Bicep (or ARM JSON template) syntax, and then add them to your main template. You can also embed the [`policyDefinitions`](https://learn.microsoft.com/azure/templates/microsoft.authorization/policydefinitions) into the JSON template.
+    - **Templates**: Convert any templates into a main template for submission to a deployment stack. You can use [modules](modules.md) in Bicep, embed templates as nested templates or template links, and optionally use [template specs](template-specs.md) to store your templates in Azure. Template Specs aren't required to use deployment stacks.
+    - **Locks**: Deployment stack [DenySettingsMode](deployment-stacks.md#protect-managed-resources) gives you the ability to block unwanted changes via `DenySettingsMode` (similar to [Blueprint locks](../../governance/blueprints/concepts/resource-locking.md)). You can configure these via Azure CLI or Azure PowerShell. In order to do this, you need corresponding roles to be able to set deny settings. For more information, see [Deployment stacks](deployment-stacks.md).
+
+3. You can optionally create template specs for the converted ARM templates or Bicep files. Template specs allow you to store templates and their versions in your Azure environment, simplifying the sharing of the templates across your organization. Deployment stacks enable you to deploy template spec definitions, or ARM templates/Bicep files, to a specified target scope.
+
+## Sample
+
+The following Bicep file is a sample migration file.
+
+```bicep
+targetScope = 'subscription'
+
+param roleAssignmentName string = 'myTestRoleAssignment'
+param roleDefinitionId string = guid(roleAssignmentName)
+param principalId string = guid('myTestId')
+
+param policyAssignmentName string = 'myTestPolicyAssignment'
+param policyDefinitionID string = '/providers/Microsoft.Authorization/policyDefinitions/06a78e20-9358-41c9-923c-fb736d382a4d'
+
+param rgName string = 'myTestRg'
+param rgLocation string = deployment().location
+param templateSpecName string = 'myNetworkingTs'
+
+// Step 1 - create role assignments
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(roleAssignmentName)
+  properties: {
+    principalId: principalId
+    roleDefinitionId: roleDefinitionId
+  }
+}
+
+// Step 2 - create policy assignments
+resource policyAssignment 'Microsoft.Authorization/policyAssignments@2025-03-01' = {
+    name: policyAssignmentName
+    scope: subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)
+    properties: {
+        policyDefinitionId: policyDefinitionID
+    }
+}
+
+// Step 3 - create template artifacts via modules (or template specs)
+resource rg1 'Microsoft.Resources/resourceGroups@2025-04-01' = {
+  name: rgName
+  location: rgLocation
+}
+
+module vnet 'templates/bicep/vnet.bicep' = if (rgName == 'myTestRg') {
+  name: uniqueString(rgName)
+  scope: rg1
+  params: { location: rgLocation }
+}
+```
+
+## Migrate to template specs
+
+If you want to store and version your converted templates in Azure rather than deploy them
+directly, publish them as [template specs](template-specs.md) and deploy the template spec with a
+deployment stack. Template specs replace the artifact storage and versioning role that blueprint
+definitions provided. For step-by-step instructions, see
+[Migrate Azure Blueprints to template specs](../../governance/blueprints/migrate-to-template-specs.md).
+
+## Next steps
+
+- [Azure Blueprints retirement](../../governance/blueprints/blueprint-retirement.md)
+- [Migrate Azure Blueprints to template specs](../../governance/blueprints/migrate-to-template-specs.md)

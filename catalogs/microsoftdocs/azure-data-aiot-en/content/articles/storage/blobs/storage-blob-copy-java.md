@@ -1,0 +1,52 @@
+---
+title: Copy a blob with Java
+titleSuffix: Azure Storage
+description: Learn how to copy a blob in Azure Storage by using the Java client library.
+services: storage
+author: stevenmatthew
+
+ms.author: shaas
+ms.date: 08/05/2024
+ms.service: azure-blob-storage
+ms.topic: how-to
+ms.devlang: java
+ms.custom: devx-track-java, devguide-java, devx-track-extended-java
+# Customer intent: As a Java developer, I want to understand how to copy blobs using the Azure Storage client library, so that I can efficiently manage and transfer data within my storage accounts.
+---
+
+# Copy a blob with Java
+
+
+> 
+>
+> - [.NET](storage-blob-copy.md)
+> - [Java](storage-blob-copy-java.md)
+> - [JavaScript](storage-blob-copy-javascript.md)
+> - [Python](storage-blob-copy-python.md)
+> - [Go](storage-blob-copy-go.md)
+
+This article provides an overview of copy operations using the [Azure Storage client library for Java](https://learn.microsoft.com/java/api/overview/azure/storage-blob-readme).
+
+## About copy operations
+
+Copy operations can be used to move data within a storage account, between storage accounts, or into a storage account from a source outside of Azure. When using the Blob Storage client libraries to copy data resources, it's important to understand the REST API operations behind the client library methods. The following table lists REST API operations that can be used to copy data resources to a storage account. The table also includes links to detailed guidance about how to perform these operations using the [Azure Storage client library for Java](https://learn.microsoft.com/java/api/overview/azure/storage-blob-readme).
+
+| REST API operation | When to use | Client library methods | Guidance |
+| --- | --- | --- | --- |
+| [Put Blob From URL](https://learn.microsoft.com/rest/api/storageservices/put-blob-from-url) | This operation is preferred for scenarios where you want to move data into a storage account and have a URL for the source object. This operation completes synchronously. | [uploadFromUrl](https://learn.microsoft.com/java/api/com.azure.storage.blob.specialized.blockblobclient#method-details) | [Copy a blob from a source object URL with Java](storage-blob-copy-url-java.md) |
+| [Put Block From URL](https://learn.microsoft.com/rest/api/storageservices/put-block-from-url) | For large objects, you can use [Put Block From URL](https://learn.microsoft.com/rest/api/storageservices/put-block-from-url) to write individual blocks to Blob Storage, and then call [Put Block List](https://learn.microsoft.com/rest/api/storageservices/put-block-list) to commit those blocks to a block blob. This operation completes synchronously. | [stageBlockFromUrl](https://learn.microsoft.com/java/api/com.azure.storage.blob.specialized.blockblobclient#method-details) | [Copy a blob from a source object URL with Java](storage-blob-copy-url-java.md) |
+| [Copy Blob](https://learn.microsoft.com/rest/api/storageservices/copy-blob) | This operation can be used when you want asynchronous scheduling for a copy operation. | [beginCopy](https://learn.microsoft.com/java/api/com.azure.storage.blob.specialized.blobclientbase#method-details) | [Copy a blob with asynchronous scheduling using Java](storage-blob-copy-async-java.md) |
+
+For append blobs, you can use the [Append Block From URL](https://learn.microsoft.com/rest/api/storageservices/append-block-from-url) operation to commit a new block of data to the end of an existing append blob. The following client library method wraps this operation:
+
+- [appendBlockFromUrl](https://learn.microsoft.com/java/api/com.azure.storage.blob.specialized.appendblobclient#method-details)
+
+For page blobs, you can use the [Put Page From URL](https://learn.microsoft.com/rest/api/storageservices/put-page-from-url) operation to write a range of pages to a page blob where the contents are read from a URL. The following client library method wraps this operation:
+
+- [uploadPagesFromUrl](https://learn.microsoft.com/java/api/com.azure.storage.blob.specialized.pageblobclient#method-details)
+
+## Client library resources
+
+- [Client library reference documentation](https://learn.microsoft.com/java/api/overview/azure/storage-blob-readme)
+- [Client library source code](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/storage/azure-storage-blob)
+- [Package (Maven)](https://mvnrepository.com/artifact/com.azure/azure-storage-blob)

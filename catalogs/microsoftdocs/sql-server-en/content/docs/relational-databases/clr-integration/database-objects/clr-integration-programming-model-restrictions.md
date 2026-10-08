@@ -1,0 +1,129 @@
+---
+title: CLR Integration Programming Model Restrictions
+description: SQL Server performs code checks on managed database objects when first registered using CREATE ASSEMBLY and at runtime.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/23/2025
+ms.service: sql
+ms.subservice: clr
+ms.topic: "reference"
+helpviewer_keywords:
+  - "common language runtime [SQL Server], programming model restrictions"
+  - "assemblies [CLR integration], CREATE ASSEMBLY checks"
+  - "programming model restrictions [CLR integration]"
+  - "assemblies [CLR integration], runtime checks"
+---
+# CLR integration programming model restrictions
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+When you build a managed stored procedure or other managed database object,  SQL Server 
+ performs certain code checks that need to be considered. These checks are performed on the managed code assembly when first registered in the database, using the `CREATE ASSEMBLY` statement, and also at runtime. The managed code is also checked at runtime because in an assembly there might be code paths that might never actually be reached at runtime.
+
+These code checks provide flexibility for registering third-party assemblies especially, so that an assembly isn't blocked where there's *unsafe* code designed to run in a client environment, but would never be executed in the hosted common language runtime (CLR). The requirements that the managed code must meet depend on whether the assembly is registered as `SAFE`, `EXTERNAL_ACCESS`, or `UNSAFE`. `SAFE` is the strictest security level.
+
+In addition to restrictions being placed on the managed code assemblies, there are also code security permissions that are granted. The CLR supports a security model called code access security (CAS) for managed code. In this model, permissions are granted to assemblies based on the identity of the code. `SAFE`, `EXTERNAL_ACCESS`, and `UNSAFE` assemblies have different CAS permissions. For more information, see [CLR integration code access security](../security/clr-integration-code-access-security.md).
+
+If the [publisher policy](https://learn.microsoft.com/dotnet/framework/configure-apps/how-to-create-a-publisher-policy) is set, `CREATE ASSEMBLY` fails.
+
+## Code access security no longer supported
+
+CLR uses Code Access Security (CAS) in the .NET Framework, which is no longer supported as a security boundary. A CLR assembly created with `PERMISSION_SET = SAFE` might be able to access external system resources, call unmanaged code, and acquire sysadmin privileges. In  SQL Server 2017 (14.x) 
+ and later versions, the `sp_configure` option, [clr strict security](../../../database-engine/configure-windows/clr-strict-security.md), enhances the security of CLR assemblies. `clr strict security` is enabled by default, and treats `SAFE` and `EXTERNAL_ACCESS` assemblies as if they were marked `UNSAFE`. The `clr strict security` option can be disabled for backward compatibility, but isn't recommended.
+
+We recommend that you sign all assemblies by a certificate or asymmetric key, with a corresponding login that has been granted `UNSAFE ASSEMBLY` permission in the `master` database.  SQL Server 
+ administrators can also add assemblies to a list of assemblies, which the Database Engine should trust. For more information, see [sys.sp_add_trusted_assembly](../../system-stored-procedures/sys-sp-add-trusted-assembly-transact-sql.md).
+
+
+## CREATE ASSEMBLY checks
+
+When the `CREATE ASSEMBLY` statement runs, the following checks are performed for each security level. If any check fails, `CREATE ASSEMBLY` fails with an error message.
+
+### Global (any security level)
+
+All referenced assemblies must meet one or more of the following criteria:
+
+- The assembly is already registered in the database.
+
+- The assembly is one of the supported assemblies. For more information, see [Supported .NET Framework libraries](supported-net-framework-libraries.md).
+
+- You're using `CREATE ASSEMBLY FROM <location>`, and all the referenced assemblies and their dependencies are available in `<location>`.
+
+- You're using `CREATE ASSEMBLY FROM <bytes ...>`, and all the references are specified via space separated bytes.
+
+### EXTERNAL_ACCESS
+
+All `EXTERNAL_ACCESS` assemblies must meet the following criteria:
+
+- Static fields aren't used to store information. Read-only static fields are allowed.
+
+- The PEVerify test is passed. The PEVerify tool (`peverify.exe`), which checks that the common intermediate language (CIL) code and associated metadata meet type safety requirements, is provided with the .NET Framework SDK.
+
+- Synchronization, for example with the `SynchronizationAttribute` class, isn't used.
+
+- Finalizer methods aren't used.
+
+The following custom attributes are disallowed in `EXTERNAL_ACCESS` assemblies:
+
+- `System.ContextStaticAttribute`
+- `System.MTAThreadAttribute`
+- `System.Runtime.CompilerServices.MethodImplAttribute`
+- `System.Runtime.CompilerServices.CompilationRelaxationsAttribute`
+- `System.Runtime.Remoting.Contexts.ContextAttribute`
+- `System.Runtime.Remoting.Contexts.SynchronizationAttribute`
+- `System.Runtime.InteropServices.DllImportAttribute`
+- `System.Security.Permissions.CodeAccessSecurityAttribute`
+- `System.Security.SuppressUnmanagedCodeSecurityAttribute`
+- `System.Security.UnverifiableCodeAttribute`
+- `System.STAThreadAttribute`
+- `System.ThreadStaticAttribute`
+
+### SAFE
+
+- All `EXTERNAL_ACCESS` assembly conditions are checked.
+
+## Runtime checks
+
+At runtime, the code assembly is checked for the following conditions. If any of these conditions are found, the managed code isn't allowed to run, and an exception is thrown.
+
+### UNSAFE
+
+You can't load an assembly, either explicitly by calling the `System.Reflection.Assembly.Load()` method from a byte array, or implicitly using `Reflection.Emit` namespace.
+
+### EXTERNAL_ACCESS
+
+All `UNSAFE` conditions are checked.
+
+All types and methods annotated with the following host protection attribute (HPA) values in the supported list of assemblies are disallowed.
+
+- `SelfAffectingProcessMgmt`
+- `SelfAffectingThreading`
+- `Synchronization`
+- `SharedState`
+- `ExternalProcessMgmt`
+- `ExternalThreading`
+- `SecurityInfrastructure`
+- `MayLeakOnAbort`
+- `UI`
+
+For more information about HPAs and a list of disallowed types and members in the supported assemblies, see [Host protection attributes and CLR integration programming](../../clr-integration-security-host-protection-attributes/host-protection-attributes-and-clr-integration-programming.md).
+
+### SAFE
+
+All `EXTERNAL_ACCESS` conditions are checked.
+
+## Related content
+
+- [Supported .NET Framework libraries](supported-net-framework-libraries.md)
+- [CLR integration code access security](../security/clr-integration-code-access-security.md)
+- [Host protection attributes and CLR integration programming](../../clr-integration-security-host-protection-attributes/host-protection-attributes-and-clr-integration-programming.md)
+- [Create an assembly](../assemblies/creating-an-assembly.md)

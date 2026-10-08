@@ -1,0 +1,71 @@
+---
+title: Create a Collection
+description: Create a Collection (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "creating collections [Master Data Services]"
+  - "collections [Master Data Services], creating"
+---
+# Create a Collection (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, create a collection when you want to create flat lists of leaf and consolidated members. Collections do not need to include all members from the entity.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **Explorer** functional area.  
+  
+-   You must have a minimum of **Update** permission to the collection model object for the entity.  
+  
+### To create a collection  
+  
+1.  On the  Master Data Manager 
+ home page, from the **Model** list, select a model.  
+  
+2.  From the **Version** list, select a version.  
+  
+3.  Click **Explorer**.  
+  
+4.  From the menu bar, point to **Collections** and click *entity_name*.  
+  
+5.  Click **Add collection**.  
+  
+6.  On the **Details** tab, in the **Name** box, type a name for the collection.  
+  
+7.  In the **Code** box, type a unique code for the collection.  
+  
+8.  Optionally, in the **Description** box, type a description for the collection.  
+  
+9. Click **OK**.  
+  
+## Related content
+
+- [Collections (Master Data Services)](collections-master-data-services.md)
+- [Delete a Member or Collection (Master Data Services)](delete-a-member-or-collection-master-data-services.md)
+- [Create an Explicit Hierarchy (Master Data Services)](create-an-explicit-hierarchy-master-data-services.md)
+- [Add Members to a Collection (Master Data Services)](add-members-to-a-collection-master-data-services.md)

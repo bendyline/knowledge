@@ -1,0 +1,103 @@
+---
+title: "Add a snapshot to report history - Reporting Services"
+description: Learn details about how to manually add a snapshot to report history in SQL Server Reporting Services (SSRS).
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+
+# Add a snapshot to report history
+
+Report history is a collection of report snapshots that you create over time. A report snapshot is a report that contains layout information and query results retrieved at a specific point in time. Unlike on-demand reports, which get up-to-date query results when you select the report, report snapshots are processed on a schedule and then saved to a report server. When you select a report snapshot for viewing, the report server retrieves the stored report from the report server database. Then, it shows the data and layout that were current for the report at the time the snapshot was created.  
+  
+Report snapshots aren't saved in a particular rendering format. Instead, report snapshots are rendered in a final viewing format (such as HTML) only when a user or an application requests it. Deferred rendering makes a snapshot portable. The report can be rendered in the correct format for the requesting device or Web browser.  
+  
+## Manually add snapshots to report history
+  
+**Applies to: \>=sql-server-2017**
+
+1. In the web portal, navigate to the item that you want to view history for and right-click it.  
+  
+1. In the menu, choose **Manage**.  
+  
+1. Select the **History snapshots** tab.  
+  
+1. On the **History snapshots** page, select the **New history snapshot**. A new snapshot appears with the current date and time in the **Created** column.  
+  
+    > **Note:**
+    > To enable creating snapshots, the administrator must configure the report history to **Allow history to be created manually**. For more information, see [Limit report history (web portal)](../reports/limit-report-history-report-manager.md).
+
+## Add snapshots via a schedule to report history
+
+1. In the web portal, navigate to the item that you want to view history for and right-click it.  
+  
+1. In the menu, choose **Manage**.  
+  
+1. Select the **History snapshots** tab.  
+  
+1. On the **History snapshots** page, select **Schedule and settings**.  
+  
+1. In the **Schedule** section, select one or both of the following options if at least one choice isn't selected:
+    - **Create history snapshots on a schedule**
+    - **Allow people to create snapshots manually**  
+  
+1. In the **Advanced** section, select **Retain all history snapshots**.  
+  
+1. Optionally, select the **Save cache snapshots in report history as well** checkbox.  
+  
+1. Select **Apply** to save the settings.  
+
+    > **Note:**  
+    > To enable creating snapshots, the administrator must configure the report history to **Allow history to be created manually**. For more information, see [Limit report history (web portal)](../reports/limit-report-history-report-manager.md).
+
+1.  Select **Apply**.
+
+## Automatically add all snapshots to report history  
+  
+1. For a report that is already configured to run as a report execution snapshot, you can set other properties to save a copy of the snapshot to report history each time you refresh the snapshot.  
+  
+1. In the web portal, navigate to the item that you want to view history for and right-click it.  
+  
+1. In the menu, choose **Manage**.  
+  
+1. Select the **History snapshots** tab.  
+  
+1. On the **History snapshots** page, select **Schedule and settings**.  
+  
+1. In the **Schedule** section, select one or both of the following options if at least one choice isn't selected:
+    - **Create history snapshots on a schedule**
+    - **Allow people to create snapshots manually**  
+  
+1. In the **Advanced** section, select **Retain all history snapshots**.  
+  
+1. Optionally, select the **Save cache snapshots in report history as well** checkbox.  
+  
+1. Select **Apply** to save the settings.  
+  
+## Automatically add snapshots to report history based on a schedule  
+  
+1. In the web portal, navigate to the item that you want to view history for and right-click it.  
+  
+1. In the menu, choose **Manage**.  
+  
+1. Select the **History snapshots** tab.  
+  
+1. On the **History snapshots** page, select **Schedule and settings**.  
+  
+1. Select the **Use the following schedule to add snapshots to report history** checkbox. Perform one of the following actions:  
+  
+    - Select **Report-specific schedule**. Fill in the schedule details, choose the start and end dates for the schedule, and then select **OK**.  
+
+    - Select **Shared schedule**. From the list, choose the preferred schedule.  
+
+1. Select **Apply**.  
+  
+## Related content
+
+- [Configure Execution Properties for a Report](../reports/configure-execution-properties-for-a-report-report-manager.md)
+- [Limit Report History - Reporting Services](../reports/limit-report-history-report-manager.md)
+- [Schedules in Reporting Services](../subscriptions/schedules.md)
+- [What is the report server web portal (Native mode)?](../web-portal-ssrs-native-mode.md)

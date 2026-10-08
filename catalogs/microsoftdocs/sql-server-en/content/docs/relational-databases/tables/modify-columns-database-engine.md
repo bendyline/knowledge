@@ -1,0 +1,96 @@
+---
+title: "Modify columns"
+description: "This article shows you how to modify columns using SQL Server Management Studio and Transact-SQL."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 01/03/2025
+ms.service: sql
+ms.subservice: table-view-index
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "modifying data types"
+  - "column data types [SQL Server]"
+  - "data types [SQL Server], columns"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Modify columns
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  You can modify the data type of a column in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .  
+  
+> **Warning:**  
+> Modifying the data type of a column that already contains data can result in the permanent loss of data when the existing data is converted to the new type. In addition, code and applications that depend on the modified column can fail. These include queries, views, stored procedures, user-defined functions, and client applications. These failures will cascade. For example, a stored procedure that calls a user-defined function that depends on the modified column can fail. Carefully consider any changes you want to make to a column before making it.  
+
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires ALTER permission on the table.  
+  
+## <a id="SSMSProcedure"></a> Use SQL Server Management Studio (SSMS)
+  
+### <a id="to-modify-the-data-type-of-a-column-using-ssms"></a> Modify the data type of a column using SSMS
+  
+1. In **Object Explorer**, right-click the table with columns for which you want to change the scale and select **Design**.  
+  
+1. Select the column for which you want to modify the data type.  
+  
+1. In the **Column Properties** tab, select the grid cell for the **Data Type** property and choose a new data type from the dropdown list.  
+  
+1. On the **File** menu, select **Save** _table name_.  
+  
+> **Note:**  
+> When you modify the data type of a column, Table Designer applies the default length of the data type you selected, even if you have already specified another. Always set the data type length for to the desired value after specifying the data type.  
+  
+> **Warning:**  
+> If you attempt to modify the data type of a column that relates to other tables, Table Designer asks you to confirm that the change should be made to the columns in the other tables as well.  
+  
+## <a id="TsqlProcedure"></a> Use Transact-SQL
+  
+### <a id="to-modify-the-data-type-of-a-column-using-transact-sql"></a> Modify the data type of a column using Transact-SQL
+  
+1. In **Object Explorer**, connect to an instance of  Database Engine 
+.  
+  
+1. On the Standard bar, select **New Query**.  
+  
+1. Copy and paste the following example into the query window and select **Execute**.  
+  
+    ```sql  
+    CREATE TABLE dbo.doc_exy (column_a INT );  
+    GO  
+    INSERT INTO dbo.doc_exy (column_a) VALUES (10);  
+    GO  
+    ALTER TABLE dbo.doc_exy ALTER COLUMN column_a DECIMAL (5, 2);  
+    GO  
+    ```  
+
+For more information on using `ALTER TABLE` to modify columns, see [ALTER TABLE column_definition](../../t-sql/statements/alter-table-column-definition-transact-sql.md).
+
+## Next step
+
+> 
+> [ALTER TABLE (Transact-SQL)](../../t-sql/statements/alter-table-transact-sql.md)

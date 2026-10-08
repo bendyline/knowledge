@@ -1,0 +1,53 @@
+---
+title: "getParameterMode Method (SQLServerParameterMetaData)"
+description: "getParameterMode Method (SQLServerParameterMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerParameterMetaData.getParameterMode"
+apitype: "Assembly"
+---
+# getParameterMode Method (SQLServerParameterMetaData)
+
+
+  Retrieves the mode of the designated parameter.  
+  
+## Syntax  
+  
+```  
+  
+public int getParameterMode(int param)  
+```  
+  
+#### Parameters  
+ *param*  
+  
+ An **int** that indicates parameter index.  
+  
+## Return Value  
+ An **int** that indicates the mode of the designated parameter, which can be one of the following values:  
+  
+ ParameterMetaData.parameterModeIn  
+  
+ ParameterMetaData.parameterModeInOut  
+  
+ ParameterMetaData.parameterModeOut  
+  
+ ParameterMetaData.parameterModeUnknown  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getParameterMode method is specified by the getParameterMode method in the java.sql.ParameterMetaData interface.  
+  
+## Related content
+
+- [SQLServerParameterMetaData Methods](sqlserverparametermetadata-methods.md)
+- [SQLServerParameterMetaData Members](sqlserverparametermetadata-members.md)
+- [SQLServerParameterMetaData Class](sqlserverparametermetadata-class.md)

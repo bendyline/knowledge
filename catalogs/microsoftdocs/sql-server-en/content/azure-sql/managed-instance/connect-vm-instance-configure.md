@@ -1,0 +1,135 @@
+---
+title: Configure Azure VM Connectivity
+titleSuffix: Azure SQL Managed Instance
+description: Connect to Azure SQL Managed Instance using SQL Server Management Studio from an Azure virtual machine.
+author: zoran-rilak-msft
+ms.author: zoranrilak
+ms.reviewer: mathoma, srbozovi, bonova
+ms.date: 08/26/2025
+ms.service: azure-sql-managed-instance
+ms.subservice: connect
+ms.topic: quickstart
+ms.custom:
+  - mode-other
+  - sfi-image-nochange
+---
+# Quickstart: Configure an Azure VM to connect to Azure SQL Managed Instance
+
+
+
+  **Applies to:**    [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This quickstart shows you how to configure an Azure virtual machine to connect to Azure SQL Managed Instance using SQL Server Management Studio (SSMS).
+
+For a quickstart showing how to connect from an on-premises client computer using a point-to-site connection instead, see [Configure a point-to-site connection](point-to-site-p2s-configure.md).
+
+## Prerequisites
+
+This quickstart uses the resources created in [Create a SQL managed instance](instance-create-quickstart.md) as its starting point.
+
+## Sign in to the Azure portal
+
+Sign in to the [Azure portal](https://portal.azure.com/).
+
+## Create a new subnet VNet
+
+The following steps create a new subnet in the SQL Managed Instance VNet so an Azure virtual machine can connect to the SQL managed instance. The SQL Managed Instance subnet is dedicated to SQL managed instances. You can't create any other resources, like Azure virtual machines, in that subnet.
+
+1. Open the resource group for the SQL managed instance that you created in the [Create a SQL managed instance](instance-create-quickstart.md) quickstart. Select the virtual network for your SQL managed instance.
+
+1. Select **Subnets** and then select **+ Subnet** to create a new subnet.
+
+1. Fill out the form using the information in this table:
+
+   | Setting | Suggested value | Description |
+   | --- | --- | --- |
+   | **Name** | Any valid name | For valid names, see [Naming rules and restrictions](https://learn.microsoft.com/azure/architecture/best-practices/resource-naming). |
+   | **Address range (CIDR block)** | A valid range | Use the default value for this quickstart. |
+   | **Network security group** | None | Use the default value for this quickstart. |
+   | **Route table** | None | Use the default value for this quickstart. |
+   | **Service endpoints** | 0 selected | Use the default value for this quickstart. |
+   | **Subnet delegation** | None | Use the default value for this quickstart. |
+1. Select **OK** to create this additional subnet in the SQL Managed Instance VNet.
+
+## Create a VM in the new subnet
+
+The following steps show you how to create a virtual machine in the new subnet to connect to SQL Managed Instance.
+
+## Prepare the Azure virtual machine
+
+Since SQL Managed Instance is placed in your private virtual network, you need to create an Azure VM with an installed SQL client tool that lets you connect to SQL Managed Instance and execute queries. Example tools are SQL Server Management Studio. This quickstart uses SQL Server Management Studio.
+
+The easiest way to create a client virtual machine with all necessary tools is to use the Azure Resource Manager templates.
+
+1. Make sure that you're signed in to the Azure portal in another browser tab. Then, select the following button to create a client virtual machine and install SQL Server Management Studio:
+
+   [Image showing a button labeled "Deploy to Azure".](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjovanpop-msft%2Fazure-quickstart-templates%2Fsql-win-vm-w-tools%2F201-vm-win-vnet-sql-tools%2Fazuredeploy.json)
+
+1. Fill out the form using the information in the following table:
+
+   | Setting | Suggested value | Description |
+   | --- | --- | --- |
+   | **Subscription** | A valid subscription | Must be a subscription in which you have permission to create new resources. |
+   | **Resource Group** | The resource group that you specified in the [Create SQL Managed Instance](instance-create-quickstart.md) quickstart | This resource group must be the one in which the VNet exists. |
+   | **Location** | The location for the resource group | This value is populated based on the resource group selected. |
+   | **Virtual machine name** | Any valid name | For valid names, see [Naming rules and restrictions](https://learn.microsoft.com/azure/architecture/best-practices/resource-naming). |
+   | **Admin Username** | Any valid username | For valid names, see [Naming rules and restrictions](https://learn.microsoft.com/azure/architecture/best-practices/resource-naming). Don't use "serveradmin" as that is a reserved server-level role.<br />You use this username any time you [connect to the VM](#connect-to-the-virtual-machine). |
+   | **Password** | Any valid password | The password must be at least 12 characters long and meet the [defined complexity requirements](https://learn.microsoft.com/azure/virtual-machines/windows/faq#what-are-the-password-requirements-when-creating-a-vm-).<br />You use this password any time you [connect to the VM](#connect-to-the-virtual-machine). |
+   | **Virtual Machine Size** | Any valid size | The default in this template of **Standard_B2s** is sufficient for this quickstart. |
+   | **Location** | [resourceGroup().location]. | Don't change this value. |
+   | **Virtual Network Name** | The virtual network in which you created the SQL managed instance |
+   | **Subnet name** | The name of the subnet that you created in the previous procedure | Don't choose the subnet in which you created the SQL managed instance. |
+   | **artifacts Location** | [deployment().properties.templateLink.uri] | Don't change this value. |
+   | **artifacts Location Sas token** | Leave blank | Don't change this value. |
+
+   If you used the suggested VNet name and the default subnet in [Creating your SQL Managed Instance](instance-create-quickstart.md), you don't need to change last two parameters. Otherwise you should change these values to the values that you entered when you set up the network environment.
+
+1. Select the **I agree to the terms and conditions stated above** checkbox.
+1. Select **Purchase** to deploy the Azure VM in your network.
+1. Select the **Notifications** icon to view the status of deployment.
+
+> **Important:**  
+> Don't continue until approximately 15 minutes after the virtual machine is created to give time for the post-creation scripts to install SQL Server Management Studio.
+
+## Connect to the virtual machine
+
+The following steps show you how to connect to your newly created virtual machine using a Remote Desktop connection.
+
+1. After deployment completes, go to the virtual machine resource.
+
+1. Select **Connect**.
+
+   A Remote Desktop Protocol file (.rdp file) form appears with the public IP address and port number for the virtual machine.
+
+1. Select **Download RDP File**.
+
+   > **Note:**  
+   > You can also use SSH to connect to your VM.
+
+1. Close the **Connect to virtual machine** form.
+1. To connect to your VM, open the downloaded RDP file.
+1. When prompted, select **Connect**. On a Mac, you need an RDP client such as this [Remote Desktop Client](https://apps.apple.com/app/microsoft-remote-desktop-10/id1295203466?mt=12) from the Mac App Store.
+
+1. Enter the username and password you specified when creating the virtual machine, and then choose **OK**.
+
+1. You might receive a certificate warning during the sign-in process. Choose **Yes** or **Continue** to proceed with the connection.
+
+You're connected to your virtual machine in the Server Manager dashboard.
+
+## Connect to SQL Managed Instance
+
+1. In the virtual machine, open SQL Server Management Studio.
+
+   It takes a few moments to open, since SSMS is being started for the first time and needs to complete its configuration.
+1. In the **Connect to Server** dialog box, enter the fully qualified **host name** for your SQL managed instance in the **Server name** box. Select **SQL Server Authentication**, provide your username and password, and then select **Connect**.
+
+   Screenshot showing how to connect to your SQL managed instance in SSMS.
+
+After you connect, you can view your system and user databases in the Databases node. You can also view various objects in the Security, Server Objects, Replication, Management, SQL Server Agent, and XEvent Profiler nodes.
+
+## Related content
+
+- [Quickstart: Configure a point-to-site connection to Azure SQL Managed Instance from on-premises](point-to-site-p2s-configure.md)
+- [Connect your application to Azure SQL Managed Instance](connect-application-instance.md)
+- [Azure Database Migration Service for migration](https://learn.microsoft.com/azure/dms/tutorial-sql-server-to-managed-instance)
+- [Quickstart: Restore a database to Azure SQL Managed Instance with SSMS](restore-sample-database-quickstart.md)

@@ -1,0 +1,47 @@
+---
+title: "getPrecision Method (SQLServerParameterMetaData)"
+description: "getPrecision Method (SQLServerParameterMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerParameterMetaData.getPrecision"
+apitype: "Assembly"
+---
+# getPrecision Method (SQLServerParameterMetaData)
+
+
+  Retrieves the number of decimal digits of the designated parameter.  
+  
+## Syntax  
+  
+```  
+  
+public int getPrecision(int param)  
+```  
+  
+#### Parameters  
+ *param*  
+  
+ An **int** that indicates parameter index.  
+  
+## Return Value  
+ An **int** that indicates the precision of the designated parameter.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getPrecision method is specified by the getPrecision method in the java.sql.ParameterMetaData interface.  
+  
+ For number types, this method gets the number of decimal digits. For character types, it gets the maximum length in characters. For binary types, it gets the maximum length in bytes. Where the number of digits is unknown, this method returns "0".  
+  
+## Related content
+
+- [SQLServerParameterMetaData Methods](sqlserverparametermetadata-methods.md)
+- [SQLServerParameterMetaData Members](sqlserverparametermetadata-members.md)
+- [SQLServerParameterMetaData Class](sqlserverparametermetadata-class.md)

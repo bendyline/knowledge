@@ -1,0 +1,136 @@
+---
+title: "ALTER SERVICE MASTER KEY (Transact-SQL)"
+description: ALTER SERVICE MASTER KEY (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "ALTER_SERVICE_MASTER_KEY_TSQL"
+  - "ALTER SERVICE MASTER KEY"
+helpviewer_keywords:
+  - "REGENERATE phrase"
+  - "FORCE option"
+  - "ALTER SERVICE MASTER KEY statement"
+  - "cryptography [SQL Server], Service Master Key"
+  - "modifying Service Master Key"
+  - "decryption [SQL Server], Service Master Key"
+  - "encryption [SQL Server], Service Master Key"
+  - "service master key [SQL Server], modifying"
+dev_langs:
+  - "TSQL"
+---
+# ALTER SERVICE MASTER KEY (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Changes the service master key of an instance of  SQL Server 
+.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+ALTER SERVICE MASTER KEY   
+    [ { <regenerate_option> | <recover_option> } ] [;]  
+  
+<regenerate_option> ::=  
+    [ FORCE ] REGENERATE  
+  
+<recover_option> ::=  
+    { WITH OLD_ACCOUNT = 'account_name' , OLD_PASSWORD = 'password' }  
+    |      
+    { WITH NEW_ACCOUNT = 'account_name' , NEW_PASSWORD = 'password' }  
+```  
+  
+
+## Arguments
+ FORCE  
+ Indicates that the service master key should be regenerated, even at the risk of data loss. For more information, see [Changing the SQL Server Service Account](#_changing) later in this topic.  
+  
+ REGENERATE  
+ Indicates that the service master key should be regenerated.  
+  
+ OLD_ACCOUNT **='***account_name***'**  
+ Specifies the name of the old Windows service account.  
+  
+> **Warning:**  
+>  This option is obsolete. Do not use. Use  SQL Server 
+ Configuration Manager instead.  
+  
+ OLD_PASSWORD **='***password***'**  
+ Specifies the password of the old Windows service account.  
+  
+> **Warning:**  
+>  This option is obsolete. Do not use. Use  SQL Server 
+ Configuration Manager instead.  
+  
+ NEW_ACCOUNT **='***account_name***'**  
+ Specifies the name of the new Windows service account.  
+  
+> **Warning:**  
+>  This option is obsolete. Do not use. Use  SQL Server 
+ Configuration Manager instead.  
+  
+ NEW_PASSWORD **='***password***'**  
+ Specifies the password of the new Windows service account.  
+  
+> **Warning:**  
+>  This option is obsolete. Do not use. Use  SQL Server 
+ Configuration Manager instead.  
+  
+## Remarks  
+ The service master key is automatically generated the first time it is needed to encrypt a linked server password, credential, or database master key. The service master key is encrypted using the local machine key or the Windows Data Protection API. This API uses a key that is derived from the Windows credentials of the  SQL Server 
+ service account.  
+  
+  SQL Server 2012 (11.x) 
+ uses the AES encryption algorithm to protect the service master key (SMK) and the database master key (DMK). AES is a newer encryption algorithm than 3DES used in earlier versions. After upgrading an instance of the  Database Engine 
+ to  SQL Server 2012 (11.x) 
+ the SMK and DMK should be regenerated in order to upgrade the master keys to AES. For more information about regenerating the DMK, see [ALTER MASTER KEY (Transact-SQL)](alter-master-key-transact-sql.md).  
+  
+##  <a name="_changing"></a> Changing the SQL Server Service Account  
+ To change the  SQL Server 
+ service account, use  SQL Server 
+ Configuration Manager. To manage a change of the service account,  SQL Server 
+ stores a redundant copy of the service master key protected by the machine account that has the necessary permissions granted to the  SQL Server 
+ service group. If the computer is rebuilt, the same domain user that was previously used by the service account can recover the service master key. This does not work with local accounts or the Local System, Local Service, or Network Service accounts. When you are moving  SQL Server 
+ to another computer, migrate the service master key by using backup and restore.  
+  
+ The REGENERATE phrase regenerates the service master key. When the service master key is regenerated,  SQL Server 
+ decrypts all the keys that have been encrypted with it, and then encrypts them with the new service master key. This is a resource-intensive operation. You should schedule this operation during a period of low demand, unless the key has been compromised. If any one of the decryptions fail, the whole statement fails.  
+  
+ The FORCE option causes the key regeneration process to continue even if the process cannot retrieve the current master key, or cannot decrypt all the private keys that are encrypted with it. Use FORCE only if regeneration fails and you cannot restore the service master key by using the [RESTORE SERVICE MASTER KEY](restore-service-master-key-transact-sql.md) statement.  
+  
+> **Caution:**  
+>  The service master key is the root of the  SQL Server 
+ encryption hierarchy. The service master key directly or indirectly protects all other keys and secrets in the tree. If a dependent key cannot be decrypted during a forced regeneration, the data the key secures will be lost.  
+  
+ If you move SQL to another machine, then you have to use the same service account to decrypt the SMK - SQL Server will fix the Machine account encryption automatically.  
+  
+## Permissions  
+ Requires CONTROL SERVER permission on the server.  
+  
+## Examples  
+ The following example regenerates the service master key.  
+  
+```sql  
+ALTER SERVICE MASTER KEY REGENERATE;  
+GO  
+```  
+  
+## Related content
+
+- [RESTORE SERVICE MASTER KEY (Transact-SQL)](restore-service-master-key-transact-sql.md)
+- [BACKUP SERVICE MASTER KEY (Transact-SQL)](backup-service-master-key-transact-sql.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)

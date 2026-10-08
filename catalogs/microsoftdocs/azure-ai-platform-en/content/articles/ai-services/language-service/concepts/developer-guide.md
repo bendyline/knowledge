@@ -1,0 +1,184 @@
+---
+title: Use Azure Language SDK and REST API
+titleSuffix: Foundry Tools
+description: Learn about how to integrate Azure Language service SDK and REST API into your applications.
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: concept-article
+ms.date: 06/25/2026
+ms.author: lajanuar
+---
+# SDK and REST developer guide for Azure Language
+
+Use this article to find information on integrating Azure Language SDK and REST API into your applications. 
+
+## Development options
+
+Language service supports development through Microsoft Foundry, REST APIs, and client libraries in several languages.
+
+# [Microsoft Foundry](#tab/foundry)
+
+## Microsoft Foundry
+
+Microsoft Foundry provides a guided development experience for building, testing, and deploying Language solutions without writing initial integration code. You can use Foundry to configure resources, create and manage projects, and validate model behavior before integrating with SDK or REST-based production workflows.
+
+To get started with feature-specific Foundry workflows, see:
+
+* [Custom text classification quickstart](../custom-text-classification/quickstart.md)
+* [Custom named entity recognition quickstart](../custom-named-entity-recognition/quickstart.md)
+* [Conversational language understanding quickstart](../conversational-language-understanding/quickstart.md)
+* [Question answering quickstart](../question-answering/quickstart/sdk.md)
+
+---
+
+# [Client libraries (Azure SDK)](#tab/azure-sdk)
+
+## Client libraries (Azure SDK)
+
+The Language provides three namespaces for using the available features. Depending on which features and programming language you're using, you need to download one or more of the following packages, and have the following framework/language version support:
+
+| Framework/Language | Minimum supported version |
+| --- | --- |
+| .NET | .NET Framework `4.6.1` or newer, or .NET (formerly .NET Core) `2.0` or newer. |
+| Java | `v8` or later |
+| JavaScript | `v14 LTS` or later |
+| Python | `v3.7` or later |
+
+### Azure.AI.TextAnalytics  
+
+>**Note:** 
+> If you're using custom named entity recognition or custom text classification, you need to create a project and train a model before using the SDK. The SDK only allows for you to analyze text using models you create. See the following quickstarts for information on creating a model. 
+> * [Custom named entity recognition](../custom-named-entity-recognition/quickstart.md)
+> * [Custom text classification](../custom-text-classification/quickstart.md)
+
+The `Azure.AI.TextAnalytics` namespace enables you to use the following Language features. Use the following links for articles to help you send API requests using the SDK.
+
+* [Custom named entity recognition](../custom-named-entity-recognition/how-to/call-api.md?tabs=client)
+* [Custom text classification](../custom-text-classification/how-to/build-train-deploy-model.md#send-prediction-requests)
+* [Document summarization](../summarization/quickstart.md)
+* [Entity linking](../entity-linking/quickstart.md)
+* [Key phrase extraction](../key-phrase-extraction/quickstart.md)
+* [Named entity recognition (NER)](../named-entity-recognition/quickstart.md)
+* [Personally Identifying Information (PII) detection](../personally-identifiable-information/quickstart.md)
+* [Sentiment analysis and opinion mining](../sentiment-opinion-mining/quickstart.md)
+* [Text analytics for health](../text-analytics-for-health/quickstart.md)
+
+As you use these features in your application, use the following documentation and code samples for additional information.
+
+| Language → Latest GA version | Reference documentation | Samples |
+| --- | --- | --- |
+| [C#/.NET → v5.2.0](https://www.nuget.org/packages/Azure.AI.TextAnalytics/5.2.0) | [C# documentation](https://learn.microsoft.com/dotnet/api/azure.ai.textanalytics) | [C# samples](https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/textanalytics/Azure.AI.TextAnalytics/samples) |
+| [Java → v5.2.0](https://mvnrepository.com/artifact/com.azure/azure-ai-textanalytics/5.2.0) | [Java documentation](https://learn.microsoft.com/java/api/overview/azure/ai-textanalytics-readme) | [Java Samples](https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/textanalytics/azure-ai-textanalytics/src/samples) |
+| [JavaScript → v1.0.0](https://www.npmjs.com/package/@azure/ai-language-text/v/1.0.0) | [JavaScript documentation](https://learn.microsoft.com/javascript/api/overview/azure/ai-language-text-readme) | [JavaScript samples](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/textanalytics/ai-text-analytics/samples/v5) |
+| [Python → v5.2.0](https://pypi.org/project/azure-ai-textanalytics/5.2.0/) | [Python documentation](https://learn.microsoft.com/python/api/overview/azure/ai-language-conversations-readme) | [Python samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples) |
+
+
+### Azure.AI.Language.Conversations 
+
+> **Note:** 
+> If you're using conversational language understanding or orchestration workflow, you need to create a project and train a model before using the SDK. The SDK only allows you to analyze text using models you create. For more information, *see*: 
+> * [Conversational language understanding](../conversational-language-understanding/quickstart.md)
+> * [Orchestration workflow](../orchestration-workflow/quickstart.md)
+
+The `Azure.AI.Language.Conversations` namespace enables you to use the following Language features. Use the following links for articles to help you send API requests using the SDK.
+
+* [Conversational language understanding](../conversational-language-understanding/how-to/build-train-deploy-model.md#send-prediction-requests-to-a-deployment)
+* [Orchestration workflow](../orchestration-workflow/how-to/build-train-deploy-model.md#send-prediction-requests)
+* [Conversation summarization (Python only)](../summarization/quickstart.md?tabs=conversation-summarization&pivots=programming-language-python)
+* [Personally Identifying Information (PII) detection for conversations](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/personally-identifiable-information/how-to-call-for-conversations.md?tabs=client-libraries#examples)
+
+As you use these features in your application, use the following documentation and code samples for additional information.
+
+| Language → Latest GA version | Reference documentation | Samples |
+| --- | --- | --- |
+| [C#/.NET → v1.0.0](https://www.nuget.org/packages/Azure.AI.Language.Conversations/1.0.0) | [C# documentation](https://learn.microsoft.com/dotnet/api/overview/azure/ai.language.conversations-readme) | [C# samples](https://aka.ms/sdk-sample-conversation-dot-net) |
+| [Python → v1.0.0](https://pypi.org/project/azure-ai-language-conversations/) | [Python documentation](https://learn.microsoft.com/python/api/overview/azure/ai-language-conversations-readme) | [Python samples](https://aka.ms/sdk-samples-conversation-python) |
+
+### Azure.AI.Language.QuestionAnswering 
+
+The `Azure.AI.Language.QuestionAnswering` namespace enables you to use the following Language features:
+
+* [Question answering](../question-answering/quickstart/sdk.md?pivots=programming-language-csharp)
+    * Authoring - Automate common tasks like adding new question answer pairs and working with projects/knowledge bases.
+    * Prediction - Answer questions based on passages of text.
+
+As you use these features in your application, use the following documentation and code samples for additional information.
+
+| Language → Latest GA version | Reference documentation | Samples |
+| --- | --- | --- |
+| [C#/.NET → v1.0.0](https://www.nuget.org/packages/Azure.AI.Language.QuestionAnswering/1.0.0#readme-body-tab) | [C# documentation](https://learn.microsoft.com/dotnet/api/overview/azure/ai.language.questionanswering-readme) | [C# samples](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/cognitivelanguage/Azure.AI.Language.QuestionAnswering) |
+| [Python → v1.0.0](https://pypi.org/project/azure-ai-language-questionanswering/1.0.0/) | [Python documentation](https://learn.microsoft.com/python/api/overview/azure/ai-language-questionanswering-readme) | [Python samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering) |
+
+---
+
+# [REST API](#tab/rest-api)
+
+## REST API
+
+The Language provides multiple API endpoints depending on which feature you wish to use.
+
+### Conversation analysis authoring API
+
+The conversation analysis authoring API enables you to author custom models and create/manage projects for the following features.
+* [Conversational language understanding](../conversational-language-understanding/quickstart.md?pivots=rest-api)
+* [Orchestration workflow](../orchestration-workflow/quickstart.md?pivots=rest-api)
+
+For more information, *see* the [reference documentation](https://learn.microsoft.com/rest/api/language/).
+
+### Conversation analysis runtime API
+
+The conversation analysis runtime API enables you to send requests to custom models you create for the following features:
+* [Conversational language understanding](../conversational-language-understanding/how-to/build-train-deploy-model.md#send-prediction-requests-to-a-deployment)
+* [Orchestration workflow](../orchestration-workflow/how-to/build-train-deploy-model.md#send-prediction-requests)
+
+It additionally enables you to use the following features, without creating any models:
+* [Conversation summarization](../summarization/quickstart.md?pivots=rest-api&tabs=conversation-summarization)
+* [Personally Identifiable Information (PII) detection for conversations](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/personally-identifiable-information/how-to-call-for-conversations.md?tabs=rest-api#examples)
+
+For more information, *see* the [reference documentation](https://learn.microsoft.com/rest/api/language).
+
+
+### Text analysis authoring API
+
+The text analysis authoring API enables you to author custom models and create/manage projects for:
+* [Custom named entity recognition](../custom-named-entity-recognition/quickstart.md?pivots=rest-api)
+* [Custom text classification](../custom-text-classification/quickstart.md?pivots=rest-api)
+
+For more information, *see* the [reference documentation](https://learn.microsoft.com/rest/api/language/).
+### Text analysis runtime API
+
+The text analysis runtime API enables you to send requests to custom models you create for the following features:
+
+* [Custom named entity recognition](../custom-named-entity-recognition/quickstart.md?pivots=rest-api)
+* [Custom text classification](../custom-text-classification/quickstart.md?pivots=rest-api)
+
+It additionally enables you to use the following features, without creating any models:
+
+* [Document summarization](../summarization/quickstart.md?tabs=document-summarization&pivots=rest-api)
+* [Entity linking](../entity-linking/quickstart.md?pivots=rest-api)
+* [Key phrase extraction](../key-phrase-extraction/quickstart.md?pivots=rest-api)
+* [Named entity recognition (NER)](../named-entity-recognition/quickstart.md?pivots=rest-api)
+* [Personally Identifying Information (PII) detection](../personally-identifiable-information/quickstart.md?pivots=rest-api)
+* [Sentiment analysis and opinion mining](../sentiment-opinion-mining/quickstart.md?pivots=rest-api)
+* [Text analytics for health](../text-analytics-for-health/quickstart.md?pivots=rest-api)
+
+For more information, *see* the [reference documentation](https://go.microsoft.com/fwlink/?linkid=2239169).
+
+### Question answering APIs
+
+The question answering APIs enables you to use the [question answering](../question-answering/quickstart/sdk.md?pivots=rest) feature. 
+
+#### Reference documentation
+
+For more information, *see* the following reference documentation:
+
+* [Prebuilt API](https://learn.microsoft.com/azure/ai-services/language-service/question-answering/how-to/prebuilt) - Use the prebuilt runtime API to answer specified question using text provided by users.
+* [Custom authoring API](https://learn.microsoft.com/azure/ai-services/language-service/question-answering/how-to/authoring) - Create a knowledge base to answer questions.
+
+
+---
+
+## See also 
+
+[Azure Language in Foundry Tools overview](../overview.md)

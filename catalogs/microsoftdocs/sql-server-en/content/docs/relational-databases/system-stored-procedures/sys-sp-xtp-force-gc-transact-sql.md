@@ -1,0 +1,117 @@
+---
+title: "sys.sp_xtp_force_gc (Transact-SQL)"
+description: "Manually release memory related to deleted rows of in-memory data that are eligible for garbage collection."
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.sp_xtp_force_gc_TSQL"
+  - "sys.sp_xtp_force_gc"
+helpviewer_keywords:
+  - "sys.sp_xtp_force_gc"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_xtp_force_gc (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Causes the in-memory engine to release memory related to deleted rows of in-memory data that are eligible for garbage collection, which haven't yet been released by the process.
+
+In cases where a large volume of in-memory data has been released, and where the memory isn't soon be needed for other in-memory data, this procedure can free up memory for other uses. If you anticipate the memory being used soon for other in-memory data, freeing it here would only cause extra overhead, as it would need to be reallocated for the new data.
+
+For more information on memory-optimized TempDB metadata out of memory errors, see [memory-optimized TempDB metadata (HkTempDB) out of memory errors](https://learn.microsoft.com/troubleshoot/sql/admin/memory-optimized-tempdb-out-of-memory).
+
+The `sys.sp_xtp_force_gc` system stored procedure was introduced in  SQL Server 2022 (16.x) 
+ [CU 1](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate1#2087479) and  SQL Server 2019 (15.x) 
+ [CU 13](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2019/cumulativeupdate13). This stored procedure isn't currently supported on  Azure SQL Database 
+ and Azure SQL Managed Instance.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_xtp_force_gc [ [ @database_name = ] N'database_name' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @database_name = ] N'*database_name*'
+
+The database to release unused memory for memory-optimized tables. *@database_name* is **sysname**.
+
+- When the *@database_name* parameter isn't specified, only system-level memory structures in the instance are considered.
+
+- When the *@database_name* parameter provided is `tempdb`, the memory structures related to [Memory-optimized TempDB metadata](../databases/tempdb-database.md#memory-optimized-tempdb-metadata) are affected.
+
+- When the *@database_name* parameter provided is a user database, the memory structures related memory-optimized tables are affected.
+
+Therefore, you might expect to see different results when executing `sys.sp_xtp_force_gc`: without a parameter, with `@database_name = N'tempdb'`, or with `@database_name =` a user database name.
+
+## Return code values
+
+`0` for success. Nonzero for failure.
+
+## Permissions
+
+Requires membership in the **db_owner** fixed database role.
+
+## Remarks
+
+Memory-optimized garbage collection happens normally and automatically in response to memory pressure. You can manually trigger garbage collection with `sys.sp_xtp_force_gc`. You can observe the reduction in memory cleanup in [sys.dm_xtp_system_memory_consumers](../system-dynamic-management-objects/sys-dm-xtp-system-memory-consumers-transact-sql.md). In  SQL Server 2022 (16.x) 
+, the `sys.dm_xtp_system_memory_consumers` dynamic management view has improved insights specific to [Memory-optimized TempDB metadata](../databases/tempdb-database.md#memory-optimized-tempdb-metadata).
+
+Contrast with [sys.sp_xtp_checkpoint_force_garbage_collection](sys-sp-xtp-checkpoint-force-garbage-collection-transact-sql.md), which marks checkpoint files used in the merge operation with the log sequence number (LSN) after which they aren't needed and can be garbage collected. Also, `sys.sp_xtp_checkpoint_force_garbage_collection` moves the files whose associated LSN is lower than the log truncation point to FILESTREAM garbage collection.
+
+Prior to  SQL Server 2022 (16.x) 
+, execute this stored procedure twice.
+
+## Examples
+
+To execute garbage cleanup on system-level memory structures and memory-optimized TempDB metadata in  SQL Server 2022 (16.x) 
+:
+
+```sql
+EXECUTE sys.sp_xtp_force_gc N'tempdb';
+GO
+
+EXECUTE sys.sp_xtp_force_gc;
+GO
+```
+
+To execute garbage cleanup on system-level memory structures and memory-optimized TempDB metadata prior to  SQL Server 2022 (16.x) 
+:
+
+```sql
+EXECUTE sys.sp_xtp_force_gc N'tempdb';
+GO
+
+EXECUTE sys.sp_xtp_force_gc N'tempdb';
+GO
+
+EXECUTE sys.sp_xtp_force_gc;
+GO
+
+EXECUTE sys.sp_xtp_force_gc;
+GO
+```
+
+## Related content
+
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [sys.sp_xtp_checkpoint_force_garbage_collection (Transact-SQL)](sys-sp-xtp-checkpoint-force-garbage-collection-transact-sql.md)
+- [sys.dm_xtp_system_memory_consumers (Transact-SQL)](../system-dynamic-management-objects/sys-dm-xtp-system-memory-consumers-transact-sql.md)
+- [In-Memory OLTP overview and usage scenarios](../in-memory-oltp/overview-and-usage-scenarios.md)
+- [Memory-optimized TempDB metadata](../databases/tempdb-database.md#memory-optimized-tempdb-metadata)
+- [Memory-optimized tempdb metadata (HkTempDB) out of memory errors](https://learn.microsoft.com/troubleshoot/sql/admin/memory-optimized-tempdb-out-of-memory)

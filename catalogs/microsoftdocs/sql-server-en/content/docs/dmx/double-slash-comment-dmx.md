@@ -1,0 +1,45 @@
+---
+title: "Double Slash (Comment) (DMX)"
+description: "Double Slash (Comment) (DMX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: dmx
+---
+# Double Slash (Comment) (DMX)
+
+**Applies to:**
+ 
+
+  Analysis Services 
+
+
+
+  Indicates a text string that  Analysis Services 
+ should not execute. You can nest comments within a Data Mining Extensions (DMX) statement, include them at the end of a line of code, or insert them on a separate line.  
+  
+## Syntax  
+  
+```  
+  
+// Comment_Text   
+```  
+  
+#### Parameters  
+ *Comment_Text*  
+ The string that contains the text of the comment.  
+  
+## Remarks  
+ Use // for single-line comments only. Comments that are inserted by using // are delimited by the newline character.  
+  
+ There is no maximum length for comments.  
+  
+ For more information about how to use different kinds of comments in DMX, see [Comments (DMX)](comments-dmx.md).  
+  
+## Related content
+
+- [Slash Star (Comment) (DMX)](slash-star-comment-dmx.md)
+- [-- (Comment) (DMX) Summary](comment-dmx-summary.md)
+- [Data Mining Extensions (DMX) Operator Reference](data-mining-extensions-dmx-operator-reference.md)
+- [Operators (DMX)](operators-dmx.md)

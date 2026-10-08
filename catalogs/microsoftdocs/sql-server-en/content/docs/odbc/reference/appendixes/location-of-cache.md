@@ -1,0 +1,23 @@
+---
+title: "Location of Cache"
+description: "Location of Cache"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "ODBC cursor library [ODBC], cache"
+  - "cursor library [ODBC], cache"
+  - "cache [ODBC]"
+---
+# Location of Cache
+> **Important:**  
+>  This feature will be removed in a future version of Windows. Avoid using this feature in new development work and plan to modify applications that currently use this feature. Microsoft recommends using the driver's cursor functionality.  
+  
+ The cursor library caches data in memory and in Windows temporary files. This limits the size of the result set that the cursor library can handle only by available disk space. A temporary file is used when the data to be cached would cross the segment boundary if inserted at the end of the cursor library cache. Instead, the data to be cached is added in place of the last-saved block of data in the cache. The last-saved block of data is saved in a temporary file. If the cursor library terminates abnormally, such as when the power fails, it can leave Windows temporary files on the disk. These are named ~CTT*nnnn*.tmp and are created in the current directory.  
+  
+> **Note:**  
+>  If the cursor library in Microsoft Windows NT/Windows 2000 attempts to cache data in a temporary file on the current directory while the application is running from a read-only share or a compact disk (such as a Microsoft Foundation Class Library sample), SQLSTATE HY000 (General Error-Unable to create a file buffer) will be returned.

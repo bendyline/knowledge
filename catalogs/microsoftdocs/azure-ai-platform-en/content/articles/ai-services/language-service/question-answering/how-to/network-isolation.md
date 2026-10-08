@@ -1,0 +1,59 @@
+---
+title: Network isolation and Private Link - custom question answering
+description: Users can restrict public access to custom question answering resources.
+ms.service: azure-language-foundry-tools
+ms.topic: how-to
+author: laujan
+ms.author: lajanuar
+ms.date: 06/30/2026
+ms.custom: language-service-question-answering
+---
+#  Network isolation and private endpoints
+
+The following steps describe how to restrict public access to custom question answering resources as well as how to enable Azure Private Link. Protect a Foundry resource from public access by [configuring the virtual network](../../../cognitive-services-virtual-networks.md?tabs=portal).
+
+## Private Endpoints
+
+Azure Private Endpoint is a network interface that connects you privately and securely to a service powered by Azure Private Link. Custom question answering provides you support to create private endpoints to the Azure Search Service.
+
+Private endpoints are provided by [Azure Private Link](https://learn.microsoft.com/azure/private-link/private-link-overview), as a separate service. For more information about costs, see the [pricing page.](https://azure.microsoft.com/pricing/details/private-link/)
+
+## Steps to enable private endpoint
+
+1. Assign the *contributor* role to your resource in the Azure Search Service instance. This operation requires *Owner* access to the subscription. Go to Identity tab in the service resource to get the identity.
+
+> 
+> Text Analytics Identity
+
+2. Add the above identity as *Contributor* by going to the Azure Search Service access control tab.
+
+Managed service IAM
+
+3. Select on *Add role assignments*, add the identity and select *Save*.
+
+Managed role assignment
+
+4. Now, go to *Networking* tab in the Azure Search Service instance and switch Endpoint connectivity data from *Public* to *Private*. This operation is a long running process and can take up to 30 mins to complete. 
+
+Managed Azure search networking
+
+5. Go to *Networking* tab of language resource and under the *Allow access from*, select the *Selected Networks and private endpoints* option and select *save*.
+ 
+> 
+> Text Analytics networking
+
+This will establish a private endpoint connection between language resource and Azure AI Search service instance. You can verify the Private endpoint connection on the *Networking* tab of the Azure AI Search service instance. Once the whole operation is completed, you're good to use your language resource with question answering enabled.
+
+Managed Networking Service
+
+## Support details
+ * We don't support changes to Azure AI Search service once you enable private access to your language resources. If you change the Azure AI Search service via 'Features' tab after you have enabled private access, the language resource will become unusable.
+
+ * After establishing Private Endpoint Connection, if you switch Azure AI Search Service Networking to 'Public', you won't be able to use the language resource. Azure Search Service Networking needs to be 'Private' for the Private Endpoint Connection to work.
+
+## Restrict access to Azure AI Search resource
+
+Follow these steps to restrict public access to custom question answering language resources. Protect a Foundry resource from public access by [configuring the virtual network](../../../cognitive-services-virtual-networks.md?tabs=portal).
+
+  > 
+  > [Screenshot of firewall and virtual networks configuration UI](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/network-isolation/firewall.png#lightbox)

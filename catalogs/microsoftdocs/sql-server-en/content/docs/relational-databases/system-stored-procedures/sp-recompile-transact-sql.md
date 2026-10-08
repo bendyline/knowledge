@@ -1,0 +1,106 @@
+---
+title: "sys.sp_recompile (Transact-SQL)"
+description: "Causes stored procedures, triggers, and user-defined functions to be recompiled the next time that they're run."
+author: markingmyname
+ms.author: maghan
+ms.reviewer: wiassaf, randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sp_recompile_TSQL"
+  - "sp_recompile"
+helpviewer_keywords:
+  - "sp_recompile"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.sp_recompile (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Causes stored procedures, triggers, and user-defined functions to be recompiled the next time that they're run. It does this by dropping the existing plan from the procedure cache, forcing a new plan to be created the next time that the procedure or trigger is run. In a  SQL Server Profiler 
+ collection, the event `SP:CacheInsert` is logged instead of the event `SP:Recompile`.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_recompile [ @objname = ] N'objname'
+[ ; ]
+```
+
+## Arguments
+
+#### [ @objname = ] N'*objname*'
+
+The qualified or unqualified name of a stored procedure, trigger, table, view, or user-defined function in the current database. *@objname* is **nvarchar(776)**, with no default.
+
+- If *@objname* is the name of a stored procedure, trigger, or user-defined function, the stored procedure, trigger, or function will be recompiled the next time that it's run.
+
+- If *@objname* is the name of a table or view, all the stored procedures, triggers, or user-defined functions that reference the table or view will be recompiled the next time that they're run.
+
+## Return code values
+
+`0` (success) or a nonzero number (failure).
+
+## Remarks
+
+`sp_recompile` looks for an object in the current database only.
+
+The queries used by stored procedures, or triggers, and user-defined functions are optimized only when they're compiled. As indexes or other changes that affect statistics are made to the database, compiled stored procedures, triggers, and user-defined functions might lose efficiency. By recompiling stored procedures and triggers that act on a table, you can reoptimize the queries.
+
+Proactive execution of this stored procedure is usually unnecessary.  SQL Server 
+ automatically recompiles stored procedures, triggers, and user-defined functions when advantageous. There are various reasons the database engine might choose to recompile objects. Most commonly, automatic recompilation follows changes to the underlying cardinality estimate because of automatic or manual statistics updates.
+
+Recompiling a stored procedure with every execution is one of the less efficient ways to combat query plan issues caused by parameterization. The feature [Parameter Sensitive Plan optimization](../performance/parameter-sensitive-plan-optimization.md) introduced in  SQL Server 2022 (16.x) 
+ attempts to mitigate this problem automatically. In prior versions, instead of calling `sp_recompile` with each execution, consider:
+
+- Append the [WITH RECOMPILE option](../stored-procedures/recompile-a-stored-procedure.md) to the query, requiring a code change.
+- Apply the `WITH RECOMPILE` option with a [plan guide](../performance/plan-guides.md).
+- Apply the `WITH RECOMPILE` option with a [Query Store hint](../performance/query-store-hints.md) without making code changes.
+- For more information, see [Resolving queries with parameter sensitive plan problems](https://learn.microsoft.com/azure/azure-sql/managed-instance/identify-query-performance-issues#resolving-queries-with-suboptimal-query-execution-plans).
+
+## Permissions
+
+Requires ALTER permission on the specified object.
+
+## Examples
+
+The following example causes stored procedures, triggers, and user-defined functions that act on the `Sales.Customer` table to be recompiled the next time that they're run.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_recompile N'Sales.Customer';
+GO
+```
+
+## Related content
+
+- [CREATE PROCEDURE (Transact-SQL)](../../t-sql/statements/create-procedure-transact-sql.md)
+- [CREATE TRIGGER (Transact-SQL)](../../t-sql/statements/create-trigger-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [SQL:StmtRecompile Event Class](../event-classes/sql-stmtrecompile-event-class.md)
+- [Recompile a Stored Procedure](../stored-procedures/recompile-a-stored-procedure.md)

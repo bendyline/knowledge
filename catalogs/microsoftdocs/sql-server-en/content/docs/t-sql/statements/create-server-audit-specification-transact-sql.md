@@ -1,0 +1,103 @@
+---
+title: "CREATE SERVER AUDIT SPECIFICATION (Transact-SQL)"
+description: CREATE SERVER AUDIT SPECIFICATION (Transact-SQL)
+author: sravanisaluru
+ms.author: srsaluru
+ms.date: "03/23/2022"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "CREATE_SERVER_AUDIT_SPECIFICATION_TSQL"
+  - "CREATE SERVER AUDIT SPECIFICATION"
+helpviewer_keywords:
+  - "CREATE SERVER AUDIT SPECIFICATION statement"
+dev_langs:
+  - "TSQL"
+---
+# CREATE SERVER AUDIT SPECIFICATION (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Creates a server audit specification object using the  SQL Server 
+ Audit feature. For more information, see [SQL Server Audit &#40;Database Engine&#41;](../../relational-databases/security/auditing/sql-server-audit-database-engine.md).  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+CREATE SERVER AUDIT SPECIFICATION audit_specification_name  
+FOR SERVER AUDIT audit_name  
+{  
+    { ADD ( { audit_action_group_name } )   
+    } [, ...n]  
+    [ WITH ( STATE = { ON | OFF } ) ]  
+}  
+[ ; ]  
+```  
+  
+## Arguments
+ *audit_specification_name*  
+ Name of the server audit specification.  
+  
+ *audit_name*  
+ Name of the audit to which this specification is applied.  
+  
+ *audit_action_group_name*  
+ Name of a group of server-level auditable actions. For a list of Audit Action Groups, see [SQL Server Audit Action Groups and Actions](../../relational-databases/security/auditing/sql-server-audit-action-groups-and-actions.md).  
+  
+ WITH **(** STATE **=** { ON | OFF } **)**  
+ Enables or disables the audit from collecting records for this audit specification.  
+  
+## Remarks  
+ An audit must exist before creating a server audit specification for it. When a server audit specification is created, it is in a disabled state.  
+  
+## Permissions  
+ Users with the ALTER ANY SERVER AUDIT permission can create server audit specifications and bind them to any audit.  
+  
+ After a server audit specification is created, it can be viewed by users with CONTROL SERVER permission, the sysadmin account, or principals having explicit access to the audit.  
+  
+## Examples  
+ The following example creates a server audit specification called `HIPAA_Audit_Specification` that audits failed logins, for a  SQL Server 
+ Audit called `HIPAA_Audit`.  
+  
+```sql  
+CREATE SERVER AUDIT SPECIFICATION HIPAA_Audit_Specification  
+FOR SERVER AUDIT HIPAA_Audit  
+    ADD (FAILED_LOGIN_GROUP)  
+    WITH (STATE=ON);  
+GO  
+```  
+  
+ For a full example about how to create an audit, see [SQL Server Audit &#40;Database Engine&#41;](../../relational-databases/security/auditing/sql-server-audit-database-engine.md).  
+   
+## Related content
+
+- [CREATE SERVER AUDIT (Transact-SQL)](create-server-audit-transact-sql.md)
+- [ALTER SERVER AUDIT (Transact-SQL)](alter-server-audit-transact-sql.md)
+- [DROP SERVER AUDIT (Transact-SQL)](drop-server-audit-transact-sql.md)
+- [ALTER SERVER AUDIT SPECIFICATION (Transact-SQL)](alter-server-audit-specification-transact-sql.md)
+- [DROP SERVER AUDIT SPECIFICATION (Transact-SQL)](drop-server-audit-specification-transact-sql.md)
+- [CREATE DATABASE AUDIT SPECIFICATION (Transact-SQL)](create-database-audit-specification-transact-sql.md)
+- [ALTER DATABASE AUDIT SPECIFICATION (Transact-SQL)](alter-database-audit-specification-transact-sql.md)
+- [DROP DATABASE AUDIT SPECIFICATION (Transact-SQL)](drop-database-audit-specification-transact-sql.md)
+- [ALTER AUTHORIZATION (Transact-SQL)](alter-authorization-transact-sql.md)
+- [sys.fn_get_audit_file (Transact-SQL)](../../relational-databases/system-functions/sys-fn-get-audit-file-transact-sql.md)
+- [sys.server_audits (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-audits-transact-sql.md)
+- [sys.server_file_audits (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-file-audits-transact-sql.md)
+- [sys.server_audit_specifications (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-audit-specifications-transact-sql.md)
+- [sys.server_audit_specification_details (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-audit-specification-details-transact-sql.md)
+- [sys.database_audit_specifications (Transact-SQL)](../../relational-databases/system-catalog-views/sys-database-audit-specifications-transact-sql.md)
+- [sys.database_audit_specification_details (Transact-SQL)](../../relational-databases/system-catalog-views/sys-database-audit-specification-details-transact-sql.md)
+- [sys.dm_server_audit_status (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-server-audit-status-transact-sql.md)
+- [sys.dm_audit_actions (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-audit-actions-transact-sql.md)
+- [Create a Server Audit and Server Audit Specification](../../relational-databases/security/auditing/create-a-server-audit-and-server-audit-specification.md)

@@ -1,0 +1,67 @@
+---
+title: 'Comparing Container Apps with other Azure container options'
+description: Understand when to use Azure Container Apps and how it compares to other container options including Azure Container Instances, Azure App Service, Azure Functions, and Azure Kubernetes Service.
+services: container-apps
+author: craigshoemaker
+ms.service: azure-container-apps
+ms.topic: quickstart
+ms.date: 07/18/2025
+ms.author: cshoe
+ms.custom: mode-other
+---
+
+# Comparing Container Apps with other Azure container options
+
+There are many options for teams to build and deploy cloud native and containerized applications on Azure. This article helps you understand which scenarios and use cases are best suited for Azure Container Apps and how it compares to other container options on Azure including:  
+- [Azure Container Apps](#azure-container-apps)
+- [Azure App Service](#azure-app-service)
+- [Azure Container Instances](#azure-container-instances)
+- [Azure Kubernetes Service](#azure-kubernetes-service)
+- [Azure Functions](#azure-functions)
+- [Azure Red Hat OpenShift](#azure-red-hat-openshift)
+
+There's no perfect solution for every use case and every team. The following explanation provides general guidance and recommendations as a starting point to help find the best fit for your team and your requirements.
+
+
+## Container option comparisons
+
+### Azure Container Apps
+
+[Azure Container Apps](https://learn.microsoft.com/azure/container-apps/overview) enables you to build serverless microservices and jobs based on containers. Distinctive features of Container Apps include:
+
+- Optimized to run general purpose containers, especially for applications that span many microservices deployed in containers.
+- Powered by Kubernetes and open-source technologies like [Dapr](https://dapr.io/), [KEDA](https://keda.sh/), and [envoy](https://www.envoyproxy.io/).
+- Supports Kubernetes-style apps and microservices with features like [service discovery](https://learn.microsoft.com/azure/container-apps/connect-apps) and [traffic splitting](https://learn.microsoft.com/azure/container-apps/revisions).
+- Enables event-driven application architectures by supporting scale based on traffic and pulling from [event sources like queues](https://learn.microsoft.com/azure/container-apps/scale-app), including [scale to zero](https://learn.microsoft.com/azure/container-apps/scale-app).
+- Supports running on demand, scheduled, and event-driven [jobs](https://learn.microsoft.com/azure/container-apps/jobs).
+- Enables running [Azure Functions](https://learn.microsoft.com/azure/container-apps/functions-overview) for [event-driven scenarios](https://learn.microsoft.com/azure/azure-functions/functions-scenarios) using triggers, bindings and automatic scaling.
+
+Azure Container Apps doesn't provide direct access to the underlying Kubernetes APIs. If you require access to the Kubernetes APIs and control plane, you should use [Azure Kubernetes Service](https://learn.microsoft.com/azure/aks/what-is-aks). However, if you would like to build Kubernetes-style applications and don't require direct access to all the native Kubernetes APIs and cluster management, Container Apps provides a fully managed experience based on best-practices. For these reasons, many teams prefer to start building container microservices with Azure Container Apps.
+
+You can get started building your first container app [using the quickstarts](https://learn.microsoft.com/azure/container-apps/get-started).
+
+### Azure App Service
+
+[Azure App Service](https://learn.microsoft.com/azure/app-service/overview) provides fully managed hosting for web applications including websites and web APIs. You can deploy these web applications using code or containers. Azure App Service is optimized for web applications. Azure App Service is integrated with other Azure services including Azure Container Apps or Azure Functions. When building web apps, Azure App Service is an ideal option.
+
+### Azure Container Instances
+
+[Azure Container Instances (ACI)](https://learn.microsoft.com/azure/container-instances/) provides a single pod of Hyper-V isolated containers on demand. It can be thought of as a lower-level "building block" option compared to Container Apps. Concepts like scale, load balancing, and certificates aren't provided with ACI containers. For example, to scale to five container instances, you create five distinct container instances. Azure Container Apps provide many application-specific concepts on top of containers, including certificates, revisions, scale, and environments. Users often interact with Azure Container Instances through other services. For example, Azure Kubernetes Service can layer orchestration and scale on top of ACI through [virtual nodes](https://learn.microsoft.com/azure/aks/virtual-nodes). If you need a less "opinionated" building block that doesn't align with the scenarios Azure Container Apps is optimizing for, Azure Container Instances is an ideal option.
+
+### Azure Kubernetes Service
+
+[Azure Kubernetes Service (AKS)](https://learn.microsoft.com/azure/aks/what-is-aks) provides a fully managed Kubernetes platform in Azure, with two experience models: AKS Standard and [AKS Automatic](https://learn.microsoft.com/azure/aks/intro-aks-automatic). AKS supports direct access to the Kubernetes API and can run any Kubernetes workload. With AKS Standard, the cluster resides in your subscription and you manage cluster configuration and operations. With AKS Automatic, Azure preconfigures and manages common operational tasks such as node management, scaling, security defaults, and upgrades for a more hands-off, production-ready experience.
+
+### Azure Functions
+
+[Azure Functions](https://learn.microsoft.com/azure/azure-functions/functions-overview) is a serverless Functions-as-a-Service (FaaS) solution. It's optimized for running event-driven applications using the functions programming model. It shares many characteristics with Azure Container Apps around scale and integration with events, but optimized for ephemeral functions deployed as either code or containers. The Azure Functions programming model provides productivity benefits for teams looking to trigger the execution of your functions on events and bind to other data sources. When building FaaS-style functions, Azure Functions is the ideal option. The Azure Functions programming model is available as a base container image, making it portable to other container based compute platforms allowing teams to reuse code as environment requirements change. 
+
+### Azure Red Hat OpenShift
+
+[Azure Red Hat OpenShift](https://learn.microsoft.com/azure/openshift/intro-openshift) is an integrated product with Red Hat and Microsoft jointly engineered, operated, and supported. This collaboration provides an integrated product and support experience for running Kubernetes-powered OpenShift. With Azure Red Hat OpenShift, teams can choose their own registry, networking, storage, and CI/CD solutions. Alternatively, they can use the built-in solutions for automated source code management, container and application builds, deployments, scaling, health management, and more from OpenShift. If your team or organization is using OpenShift, Azure Red Hat OpenShift is an ideal option.
+
+
+## Next steps
+
+> 
+> [Deploy your first container app](get-started.md)

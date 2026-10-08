@@ -1,0 +1,41 @@
+---
+title: "WindowsServiceIdentityConfigured property"
+description: "WindowsServiceIdentityConfigured property"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "WindowsServiceIdentityConfigured property"
+apilocation: "reportingservices.mof"
+apiname: "WindowsServiceIdentityConfigured"
+apitype: MOFDef
+---
+# WindowsServiceIdentityConfigured property
+  Returns the identity that the Report Server Windows service was last configured to run under. Read-only.  
+  
+## Syntax  
+  
+```vb  
+Public Dim WindowsServiceIdentityConfigured As String  
+```  
+  
+```csharp  
+public string WindowsServiceIdentityConfigured;  
+```  
+  
+## Property values  
+ A **String** value containing the identity that the Report Server Windows service was last configured to run under.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

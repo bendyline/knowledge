@@ -1,0 +1,59 @@
+---
+title: "MSSQLSERVER_2574"
+description: "MSSQLSERVER_2574"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "2574 (Database Engine error)"
+---
+# MSSQLSERVER_2574
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 2574 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | DBCC_EMPTY_INDEX_TREE_LEVEL_PAGE |
+| Message Text | Table error: Page P_ID is empty in object ID O_ID, index ID I_ID, partition ID PN_ID, alloc unit ID A_ID (type TYPE). This is not permitted at level LEVEL of the B-tree. |
+  
+## Explanation  
+A B-tree page above the leaf level of the specified index is empty, that is it has no rows. This behavior is possible for leaf-level pages in  SQL Server 2000 (8.x) 
+, but has never been possible in tree levels.  
+  
+## User Action  
+  
+### Look for Hardware Failure  
+Run hardware diagnostics and correct any problems. Also examine the  Microsoft 
+ Windows system and application logs and the  SQL Server 
+ error log to see whether the error occurred as the result of hardware failure. Fix any hardware-related problems that are contained in the logs.  
+  
+If you have persistent data corruption problems, try to swap out different hardware components to isolate the problem. Check to make sure that the system does not have write-caching enabled on the disk controller. If you suspect write-caching to be the problem, contact your hardware vendor.  
+  
+Finally, you might find it useful to switch to a new hardware system. This switch may include reformatting the disk drives and reinstalling the operating system.  
+  
+### Restore from Backup  
+If the problem is not hardware related and a known clean backup is available, restore the database from the backup.  
+  
+### Run DBCC CHECKDB  
+If no clean backup is available, run DBCC CHECKDB without a REPAIR clause to determine the extent of the corruption. DBCC CHECKDB will recommend a REPAIR clause to use. Then, run DBCC CHECKDB with the appropriate REPAIR clause to repair the corruption.  
+  
+> **Caution:**  
+> If you are not sure what effect DBCC CHECKDB with a REPAIR clause has on your data, contact your primary support provider before running this statement.  
+  
+If running DBCC CHECKDB with one of the REPAIR clauses does not correct the problem, contact your primary support provider.  
+  
+### Results of Running REPAIR Options  
+DBCC will rebuild the index.

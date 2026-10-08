@@ -1,0 +1,193 @@
+---
+title: "Quickstart: Build, deploy, and use a custom model - Custom Translator"
+titleSuffix: Foundry Tools
+description: A step-by-step guide to building a translation system using the Custom Translator portal v2.
+author: laujan
+manager: mcleans
+ms.service: azure-translator-foundry-tools
+ms.date: 06/02/2026
+ms.author: lajanuar
+ms.topic: quickstart
+---
+
+# Quickstart: Build, publish, and translate with Custom Translator
+
+Translator is a cloud-based neural machine translation service that's part of the Foundry Tools family of REST API that can be used with any operating system. Translator powers many Microsoft products and services used by thousands of businesses worldwide to perform language translation and other language-related operations. In this quickstart, learn to build custom solutions for your applications across all [supported languages](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-support.md).
+
+## Prerequisites
+
+ To use the [Custom Translator](https://portal.customtranslator.azure.ai/) portal, you need the following resources:
+
+* A [Microsoft account](https://signup.live.com).
+
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+* Once you have an Azure subscription, [create a Translator resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesTextTranslation) in the Azure portal to get your key and endpoint. After it deploys, select **Go to resource**.
+  * You need the key and endpoint from the resource to connect your application to the Translator. Paste your key and endpoint into the code later in the quickstart. You can find these values on the Azure portal **Keys and Endpoint** page:
+
+    Screenshot: Azure portal keys and endpoint page.
+
+For more information, *see* [how to create a Translator resource](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/translator/create-translator-resource.md).
+
+## Custom Translator portal
+
+Once you complete the prerequisites, sign in to the [Custom Translator](https://portal.customtranslator.azure.ai/) portal to create workspaces, build projects, upload files, train models, and publish your custom solution.
+
+You can read an overview of translation and custom translation, learn some tips, and watch a getting started video in the [Azure AI technical blog](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/customize-a-translation-to-make-sense-in-a-specific-context/2811956).
+
+## Process summary
+
+1. [**Create a workspace**](#create-a-workspace). A workspace is a work area for composing and building your custom translation system. A workspace can contain multiple projects, models, and documents. All the work you do in Custom Translator is done inside a specific workspace.
+
+1. [**Create a project**](#create-a-project). A project is a wrapper for models, documents, and tests. Each project includes all documents that are uploaded into that workspace with the correct language pair. For example, if you have both an English-to-Spanish project and a Spanish-to-English project, the same documents are included in both projects.
+
+1. [**Upload parallel documents**](#upload-documents). Parallel documents are pairs of documents where one (target) is the translation of the other (source). One document in the pair contains sentences in the source language and the other document contains sentences translated into the target language. It doesn't matter which language is marked as "source" and which language is marked as "target"—a parallel document can be used to train a translation system in either direction.
+
+1. [**Train your model**](#train-your-model). A model is the system that provides translation for a specific language pair. The outcome of a successful training is a model. When you train a model, three mutually exclusive document types are required: training, tuning, and testing. If only training data is provided when queuing a training, Custom Translator automatically assembles tuning and testing data. It uses a random subset of sentences from your training documents, and excludes these sentences from the training data itself. A 10,000 parallel sentence is the minimum requirement to train a model.
+
+1. [**Test (human evaluate) your model**](#test-your-model). The testing set is used to compute the [`BLEU`](beginners-guide.md#what-is-a-bleu-score) score. This score indicates the quality of your translation system.
+
+1. [**Publish (deploy) your trained model**](#publish-your-model). Your custom model is made available for runtime translation requests.
+
+1. [**Translate text**](#translate-text). Use the cloud-based, secure, high performance, highly scalable Microsoft Translator [Text API v3](../text-translation/reference/v3/translate.md?tabs=curl) to make translation requests.
+
+## Create a workspace
+
+1. After your sign-in to Custom Translator, you'll be asked for permission to read your profile from the Microsoft identity platform to request your user access token and refresh token. Both tokens are needed for authentication and to ensure that you aren't signed out during your live session or while training your models. </br>Select **Yes**.
+
+   Screenshot illustrating how to create a workspace.
+
+1. Select **My workspaces**.
+
+1. Select **Create a new workspace**.
+
+1. Type _Contoso MT models_ for **Workspace name** and select **Next**.
+
+1. Select the **region** where your resource is deployed.
+
+1. Copy/paste your Translator Services key.
+
+1. Select **Next**.
+
+1. Select **Done**.
+
+   >**Note:**
+   > Region must match the region that was selected during the resource creation. You can use **KEY 1** or **KEY 2.**
+
+   Screenshot illustrating the resource key.
+
+   Screenshot illustrating workspace creation.
+
+## Create a project
+
+Once the workspace is created successfully, you see the **Projects** page.
+
+You create English-to-German project to train a custom model with only a [training](concepts/model-training.md#training-document-type-for-custom-translator) document type.
+
+1. Select **Create project**.
+
+1. Type *English-to-German* for **Project name**.
+
+1. Select *English (en)* as **Source language** from the dropdown list.
+
+1. Select *German (de)* as **Target language** from the dropdown list.
+
+1. Select *General* for **Domain** from the dropdown list.
+
+1. Select **Create project**.
+
+   Screenshot illustrating how to create a project.
+
+## Upload documents
+
+In order to create a custom model, you need to upload all or a combination of [training](concepts/model-training.md#training-document-type-for-custom-translator), [tuning](concepts/model-training.md#tuning-document-type-for-custom-translator), [testing](concepts/model-training.md#testing-dataset-for-custom-translator), and [dictionary](concepts/dictionaries.md) document types.
+
+In this quickstart, we show you how to upload [training](concepts/model-training.md#training-document-type-for-custom-translator) documents for customization.
+
+>**Note:**
+> You can use our sample training, phrase, and sentence dictionaries dataset, [Customer sample English-to-German datasets](https://github.com/MicrosoftTranslator/CustomTranslatorSampleDatasets), for this quickstart. However, for production, it's better to upload your own training dataset.
+
+1. Select *English-to-German* project name.
+
+1. Select **Manage documents** from the left pane.
+
+1. Select **Add document set**.
+
+1. Check the  **Training set** box and select **Next**.
+
+1. Keep **Parallel documents** checked and type *sample-English-German*.
+
+1. Under the **Source (English - EN) file**, select **Browse files** and select *sample-English-German-Training-en.txt*.
+
+1. Under **Target (German - EN) file**, select **Browse files** and select *sample-English-German-Training-de.txt*.
+
+1. Select **Upload**
+
+    >**Note:**
+    >You can upload the sample phrase and sentence dictionaries dataset. This step is left for you to complete.
+
+   Screenshot illustrating how to upload documents.
+
+## Train your model
+
+Now you're ready to train your English-to-German model.
+
+1. Select **Train model** from the left pane.
+
+1. Type *en-de with sample data* for **Model name**.
+
+1. Keep **Full training** checked.
+
+1. Under **Select documents**, check *sample-English-German* and review the training cost associated with the selected number of sentences.
+
+1. Select **Train now**.
+
+1. Select **Train** to confirm.
+
+    >**Note:**
+    >**Notifications** displays model training in progress, for example, **Submitting data** state. Training model takes few hours, subject to the number of selected sentences.
+
+    Screenshot illustrating how to create a model.
+
+1. After successful model training, select **Model details** from the left pane.
+
+1. Select the model name *en-de with sample data*. Review training date/time, total training time, number of sentences used for training, tuning, testing, and dictionary. Check whether the system generated the test and tuning sets. You use the `Category ID` to make translation requests.
+
+1. Evaluate the model [`BLEU`](beginners-guide.md#what-is-a-bleu-score) score. The test set **BLEU score** is the custom model score and **Baseline BLEU** is the pretrained baseline model used for customization. A higher **BLEU score** means higher translation quality using the custom model.
+
+    > **Note:**
+    > If you train with our shared customer sample datasets, `BLEU` score can be different than the image.
+
+    Screenshot illustrating model details.
+
+## Test your model
+
+Once the training completes successfully, inspect the test set translated sentences.
+
+1. Select **Test model** from the left pane.
+2. Select "en-de with sample data"
+3. Human evaluate translation from **New model** (custom model), and **Baseline model** (our pretrained baseline used for customization) against **Reference** (target translation from the test set)
+
+## Publish your model
+
+Publishing your model makes it available for use with the Translator API. A project might have one or many successfully trained models. You can only publish one model per project; however, you can publish a model to one or multiple regions depending on your needs. For more information, see [Translator pricing](https://azure.microsoft.com/pricing/details/cognitive-services/translator/#pricing).
+
+1. Select **Publish model** from the left pane.
+
+1. Select *en-de with sample data* and select **Publish**.
+
+1. Check the desired regions.
+
+1. Select **Publish**. The status should transition from _Deploying_ to _Deployed_.
+
+   Screenshot illustrating how to deploy a trained model.
+
+## Translate text
+
+1. Developers should use the `Category ID` when making translation requests with Microsoft Translator [Text API v3](../text-translation/reference/v3/translate.md?tabs=curl). More information about the Translator Text API can be found on the [API Reference](../text-translation/reference/v3/reference.md) webpage.
+
+1. Business users can download and install our free [DocumentTranslator app for Windows](https://github.com/MicrosoftTranslator/DocumentTranslation/releases).
+
+## Next steps
+
+> 
+> [Learn how to manage workspaces](how-to/create-manage-workspace.md)

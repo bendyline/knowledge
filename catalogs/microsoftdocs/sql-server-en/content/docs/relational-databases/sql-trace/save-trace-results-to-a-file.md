@@ -1,0 +1,49 @@
+---
+title: "Save Trace Results to a File"
+description: "Save Trace Results to a File"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.topic: concept-article
+---
+# Save Trace Results to a File
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  You can save trace results to a file. A trace file is a file where the trace results are written. A trace file can be located either in a local directory (such as C:\\*foldername*\\*filename.trc*) or a network directory (such as \\\computername\sharename\filename.trc).  
+  
+ You can use the trace files to do the following:  
+  
+-   Replay traces  
+  
+-   Audit  SQL Server 
+  
+  
+-   Conduct performance analysis  
+  
+-   Correlate trace events with performance counters to enhance problem detection  
+  
+-   Perform Database Engine Tuning Advisor analysis  
+  
+-   Carry out query optimization  
+  
+  SQL Server 
+ saves trace results to a file when a path and file name are specified for the **\@tracefile** argument of the stored procedure **sp_trace_create**.  
+  
+> **Note:**  
+>  If a path is specified to the **sp_trace_create** stored procedure for saving the trace file, the directory must be accessible to the server. Also be aware that if a local directory is specified to **sp_trace_create**, it is a local directory on the server computer.  
+  
+ If  SQL Server Profiler 
+ is used, it allows you to save trace results to a file or to a table. Saving trace results to a table allows the same access as saving the trace to a file plus you can query the table to search for specific events.  
+  
+ For more information about saving trace results, see [Save Trace Results to a Table &#40;SQL Server Profiler&#41;](../../tools/sql-server-profiler/save-trace-results-to-a-table-sql-server-profiler.md) and [Save Trace Results to a File &#40;SQL Server Profiler&#41;](../../tools/sql-server-profiler/save-trace-results-to-a-file-sql-server-profiler.md).  
+  
+## Related content
+
+- [sp_trace_create (Transact-SQL)](../system-stored-procedures/sp-trace-create-transact-sql.md)
+- [Create a Trace (Transact-SQL)](create-a-trace-transact-sql.md)
+- [Create a trace (SQL Server Profiler)](../../tools/sql-server-profiler/create-a-trace-sql-server-profiler.md)

@@ -1,0 +1,84 @@
+---
+title: "sys.fn_trace_getfilterinfo (Transact-SQL)"
+description: "sys.fn_trace_getfilterinfo (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "fn_trace_getfilterinfo"
+  - "fn_trace_getfilterinfo_TSQL"
+helpviewer_keywords:
+  - "status information [SQL Server], filters"
+  - "sys.fn_trace_getfilterinfo function"
+  - "filters [SQL Server], traces"
+  - "fn_trace_getfilterinfo function"
+dev_langs:
+  - "TSQL"
+---
+# sys.fn_trace_getfilterinfo (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns information about the filters applied to a specified trace.  
+  
+> **Important:**  
+>  This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use Extended Events instead.  
+  
+ 
+ 
+  
+## Syntax  
+  
+```  
+  
+fn_trace_getfilterinfo ( trace_id )  
+```  
+  
+## Arguments  
+ *trace_id*  
+ Is the ID of the trace. *trace_id* is **int**, with no default.  
+  
+## Tables Returned  
+ Returns the following information. For more information about the columns, see [sp_trace_setfilter (Transact-SQL)](../system-stored-procedures/sp-trace-setfilter-transact-sql.md).  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **columnid** | **int** | The ID of the column on which the filter is applied. |
+| **logical_operator** | **int** | Specifies whether the AND or OR operator is applied. |
+| **comparison_operator** | **int** | Specifies the type of comparison made:<br /><br /> 0 = Equal<br /><br /> 1 = Not equal<br /><br /> 2 = Greater than<br /><br /> 3 = Less than<br /><br /> 4 = Greater than or equal<br /><br /> 5 = Less than or equal<br /><br /> 6 = Like<br /><br /> 7 = Not like |
+| **value** | **sql_variant** | Specifies the value on which the filter is applied. |
+  
+## Remarks  
+ The user sets *trace_id* value to identify, modify, and control the trace. When passed the ID of a specific trace, **fn_trace_getfilterinfo** returns information about any filter on that trace. If the specified trace does not have a filter, this function returns an empty rowset. When passed an invalid ID, this function returns an empty rowset. For similar information about traces, see [sys.fn_trace_getinfo (Transact-SQL)](sys-fn-trace-getinfo-transact-sql.md).  
+  
+## Permissions  
+ Requires ALTER TRACE permission on the server.  
+  
+## Examples  
+ The following example returns information about all filters on trace number 2.  
+  
+```  
+SELECT * FROM fn_trace_getfilterinfo(2) ;  
+GO  
+  
+```  
+  
+## Related content
+
+- [Create a Trace (Transact-SQL)](../sql-trace/create-a-trace-transact-sql.md)
+- [sp_trace_setfilter (Transact-SQL)](../system-stored-procedures/sp-trace-setfilter-transact-sql.md)
+- [sp_trace_create (Transact-SQL)](../system-stored-procedures/sp-trace-create-transact-sql.md)
+- [sp_trace_generateevent (Transact-SQL)](../system-stored-procedures/sp-trace-generateevent-transact-sql.md)
+- [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md)
+- [sp_trace_setstatus (Transact-SQL)](../system-stored-procedures/sp-trace-setstatus-transact-sql.md)
+- [sys.fn_trace_geteventinfo (Transact-SQL)](sys-fn-trace-geteventinfo-transact-sql.md)
+- [sys.fn_trace_getinfo (Transact-SQL)](sys-fn-trace-getinfo-transact-sql.md)
+- [sys.fn_trace_gettable (Transact-SQL)](sys-fn-trace-gettable-transact-sql.md)

@@ -1,0 +1,55 @@
+---
+title: "getConnection Method (java.lang.String, java.lang.String)"
+description: "getConnection Method (java.lang.String, java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDataSource.getConnection (java.lang.String, java.lang.String)"
+apitype: "Assembly"
+---
+# getConnection Method (java.lang.String, java.lang.String)
+
+
+  Tries to establish a connection with the data source that this [SQLServerDataSource](sqlserverdatasource-class.md) object represents by using the given user name and password.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.Connection getConnection(java.lang.String username,  
+                                         java.lang.String password)  
+```  
+  
+#### Parameters  
+ *username*  
+  
+ A **String** that contains the user name.  
+  
+ *password*  
+  
+ A **String** that contains the password.  
+  
+## Return Value  
+ A [SQLServerConnection](sqlserverconnection-class.md) object.  
+  
+## Exceptions  
+ java.sql.SQLException  
+  
+## Remarks  
+ This getConnection method is specified by the getConnection method in the javax.sql.DataSource interface.  
+  
+ Calling the getConnection method with a non-null user name or password will replace the user name and password properties that are set on the SQLServerDataSource class when initializing the SQLServerConnection object. For example, if the caller has called [setUser](setuser-method-sqlserverdatasource.md) and [setPassword](setpassword-method-sqlserverdatasource.md) on the data source, and then calls getConnection and supplies a non-null user name or a non-null password, the user name and password set by setUser and setPassword will be replaced by the user name and password passed into getConnection.  
+  
+> **Note:**  
+>  The user name and password that are set inside the URL by using a call to the [setURL](seturl-method-sqlserverdatasource.md) method will not be changed in this case.  
+  
+## Related content
+
+- [getConnection Method (SQLServerDataSource)](getconnection-method-sqlserverdatasource.md)
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

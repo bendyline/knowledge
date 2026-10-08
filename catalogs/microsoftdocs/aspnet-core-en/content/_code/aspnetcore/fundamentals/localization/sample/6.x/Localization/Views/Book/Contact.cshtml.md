@@ -1,0 +1,28 @@
+# Source code: aspnetcore/fundamentals/localization/sample/6.x/Localization/Views/Book/Contact.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Contact"];
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<address>
+    One Microsoft Way<br>
+    Redmond, WA 98052-6399<br>
+    <abbr title="@Localizer["Phone"]">@Localizer["P"]:</abbr>
+    425.555.0100
+</address>
+
+<address>
+    <strong>@Localizer["Support"]:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br>
+    <strong>@Localizer["Marketing"]:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+</address>
+
+```

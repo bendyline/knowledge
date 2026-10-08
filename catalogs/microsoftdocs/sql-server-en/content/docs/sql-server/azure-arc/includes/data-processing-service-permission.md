@@ -1,0 +1,29 @@
+---
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 07/23/2024
+ms.topic: include
+---
+
+Arc-enabled  SQL Server 
+ requires outbound connection to Azure Arc Data Processing Service.
+
+Each virtual or physical server needs to communicate with Azure. Specifically, they require connectivity to:
+
+- URL: `*.<region>.arcdataservices.com`
+  - For US Government Virginia regions, use `*.<region>.arcdataservices.azure.us`.
+- Port: 443
+- Direction: Outbound
+- Authentication provider: Microsoft Entra ID
+
+To get the region segment of a regional endpoint, remove all spaces from the Azure region name. For example, *East US 2* region, the region name is `eastus2`.
+
+For example: `*.<region>.arcdataservices.com` should be `*.eastus2.arcdataservices.com` in the East US 2 region.
+
+For a list of supported regions, review [Supported Azure regions](../overview.md#supported-azure-regions).
+
+For a list of all regions, run this command:
+
+```azcli
+az account list-locations -o table
+```

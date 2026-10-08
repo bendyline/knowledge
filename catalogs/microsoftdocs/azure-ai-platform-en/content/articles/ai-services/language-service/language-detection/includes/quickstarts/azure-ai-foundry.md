@@ -1,0 +1,153 @@
+---
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 06/02/2026
+ms.author: lajanuar
+ai-usage: ai-assisted
+---
+## Prerequisites
+
+* **Azure subscription**. If you don't have one, you can [create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+* **Requisite permissions**. Make sure the person establishing the account and project has the Foundry Account Owner role at the subscription level assigned. Alternatively, the **Contributor** or **Cognitive Services Contributor** role at the subscription scope also meets this requirement. For more information, see [Role based access control (RBAC)](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/openai/how-to/role-based-access-control.md#cognitive-services-contributor).
+
+  
+> **Important:**
+> The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+* **Foundry resource**. Create a [Foundry resource](../../../../multi-service-resource.md) or see [Configure a Foundry resource](../../../concepts/configure-azure-resources.md). Alternatively, you can use a [Language resource](https://portal.azure.com/?Microsoft_Azure_PIMCommon=true#create/Microsoft.CognitiveServicesTextAnalytics).
+* **A Foundry project**. For more information, see [Create a Foundry project](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/how-to/create-projects.md).
+
+### [Foundry (classic)](#tab/foundry-classic)
+
+> **Note:**
+> This content refers to the [Foundry (classic)](https://ai.azure.com/) portal, which supports hub-based projects and other resource types. To confirm that you're using Foundry (classic), make sure the version toggle in the portal banner is in the **off** position. 
+
+You can use [Foundry (classic)](https://ai.azure.com/) to:
+
+> 
+>
+> * Detect the language of input text
+> * Review confidence scores and ISO language codes
+> * Configure country/region hints for improved accuracy
+
+## Navigate to the Foundry (classic) playground
+
+1. In the left pane, select **Playgrounds**.
+1. Select the **Try Azure Language Playground** button.
+
+   Screenshot showing the Playgrounds navigation and the Try Azure Language Playground button in Foundry (classic).
+
+## Detect language in the Foundry playground
+
+The **Language playground** consists of four sections:
+
+
+   | Section | Purpose |
+   | --- | --- |
+   | **Top banner** | Select the **Detect language** tile. |
+   | **Left pane** | Set **Configuration** options such as API version, model version, and country/region hint. |
+   | **Center pane** | Enter text for processing and review results. |
+   | **Right pane** | View **Details** for detected language and script. |
+
+1. Select the **Detect language** tile from the top banner.
+1. Enter or paste text in the center pane.
+1. In the **Configuration** pane, set the following options:
+
+   | Option | Description |
+   | --- | --- |
+   | Select API version | Select which version of the API to use. |
+   | Select model version | Select which version of the model to use. |
+   | Select country/region hint | Select the origin country/region of the input text. |
+
+1. Select the **Run** button to detect the language.
+
+After the operation completes, the **Details** section displays the following fields for the detected language and script:
+
+   | Field | Description |
+   | --- | --- |
+   | ISO 639-1 Code | The ISO 639-1 two-letter code for the detected language. |
+   | Confidence Score | The model's level of certainty that the language identification is correct. |
+   | Script Name | The name of the detected script in the text. |
+   | ISO 15924 Script Code | The ISO 15924 code for the detected script (writing system). |
+
+  A screenshot showing language detection results with confidence scores and ISO codes displayed in the Details pane of the Foundry portal.
+
+Verify that the detected language matches the language of your input text. If the result shows `unknown`, provide a longer text sample or set a **Country/region hint** for better accuracy.
+
+### [New Foundry](#tab/new-foundry)
+
+> **Note:**
+> This content refers to the [new Foundry](https://ai.azure.com/) portal, which supports only Foundry projects and provides streamlined access to models, agents, and tools. For more information, see [What is Microsoft Foundry?](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/what-is-foundry.md). To confirm that you're using new Foundry, make sure the version toggle in the portal banner is in the **on** position. 
+
+You can use [new Foundry](https://ai.azure.com/) to:
+
+> 
+>
+> * Detect the language of input text
+> * Review confidence scores and ISO language codes
+> * Configure country/region hints for improved accuracy
+
+## Navigate to the new Foundry playground
+
+The active project appears in the upper-left corner. To create a new project:
+
+1. Open the project drop-down menu.
+1. Enter a project name or select an existing one.
+1. Select **Create project**.
+
+   Screenshot of the new Foundry homepage
+
+There are two ways to access the Language Detection interface:
+
+1. Select the **Discover** tab from the upper right navigation bar to go to the **Models** page.
+   * In the search bar under models, enter **Azure** and press enter.
+   * Next, select **Azure-Language-detection** from the search results.
+   * Finally, select the **Open in Playground** button.
+
+1. Select the **Build** tab from the upper right navigation bar.
+   * From the left navigation bar, select  **Models**.
+   * Select the **AI services** tab.
+   * Next, select  **Azure-Language-detection** to go to the playground.
+
+## Detect language in the Foundry playground
+
+The **Detect Language** feature identifies the language used in written content.
+
+1. On the **Playground** tab, select a text sample from the drop-down menu, use the paperclip icon to upload your text, or enter your own text.
+
+1. Select the **Configure** button. In the **Configure** side panel, set the following options:
+
+  | Option | Description |
+  | --- | --- |
+  | **API version** | Select the API version that you prefer to use. |
+  | **Model version** | Select the model version that you prefer to use. |
+  | **Country/region hint** (optional) | You can select the origin country/region for the source text. |
+
+After you make your selections, choose the **Detect** button. Then review the text and accompanying details written in formatted text or as a JSON response:
+
+  | Field | Description |
+  | --- | --- |
+  | **Confidence** | The model's level of certainty regarding whether it correctly identified a language. |
+  | **ISO 639-1 code** | A two letter code for the detected language. |
+  | **Detected script** | The name of the detected script in the text. |
+  | **Detected script code** | The ISO 15924 script code for the detected script (writing system). |
+
+Verify that the detected language matches the language of your input text. You can use the **Edit** button to modify the **Configure** parameters and rerun detection as needed.
+
+## Open in Visual Studio Code 🆕
+
+After validating your scenario in the playground, select **Open in VS Code** to carry your current configuration directly into a development environment—no manual setup required.
+
+1. Configure your scenario in the playground:
+   - Select your API version and model version.
+   - Enter and test your sample input.
+   - Adjust options such as API version, model version, and country/region hint.
+1. Select **Open in VS Code**.
+1. Visual Studio Code opens with a preconfigured code sample that reflects your playground configuration, including your API version, model, and language detection settings.
+
+> **Tip:**
+> Use the playground to compare outputs across API versions—for example, preview versus GA—before exporting your configuration to code.
+
+---

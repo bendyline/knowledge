@@ -1,0 +1,149 @@
+---
+title: "How To: Configure Initiating Services for Full Dialog Security (Transact-SQL)"
+description: Learn how to configure initiating services in Service Broker for full dialog security.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: maghan
+ms.date: 08/29/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+---
+
+# How to: Configure initiating services for full dialog security (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+SQL Server uses dialog security for any conversation to a service for which a remote service binding exists in the database that hosts the initiating service. If the database that hosts the target service contains a user that corresponds to the user that created the dialog, and the remote service binding doesn't specify anonymous security, then the dialog uses full security.
+
+To make sure that an initiating service uses dialog security, you create a remote service binding for the service. For SQL Server to use full security, the remote service binding must not specify anonymous security, and the target database must be configured to use full security for this service.
+
+## Configure an initiating service for full dialog security
+
+1. Obtain a certificate for the owner of the target service in the remote database from a trusted source. Typically, this step involves sending the certificate using encrypted email, or transferring the certificate on physical media such as a USB drive.
+
+   > **Note:**  
+   > Only install certificates from trusted sources.
+
+   The certificate must be encrypted with the database master key (DMK). For more information, see [CREATE MASTER KEY](../../t-sql/statements/create-master-key-transact-sql.md).
+
+1. Create a user without a login for the remote service.
+
+1. Install the certificate for the remote service user. The user created in the previous step owns the certificate.
+
+1. Create a remote service binding that specifies the remote service user and the service.
+
+1. Create a user without a sign in to own the local service.
+
+1. Create a certificate for the local service. The user created in the previous step owns the certificate.
+
+   The certificate must be encrypted with the DMK. For more information, see [CREATE MASTER KEY](../../t-sql/statements/create-master-key-transact-sql.md).
+
+1. Back up the certificate.
+
+   Only back up the certificate for this user. Don't back up or distribute the private key associated with the certificate.
+
+1. Provide the certificate and the name of the initiating service to the database administrator for the remote database. For example, you can exchange the certificate on physical media such as a USB drive by placing the certificate on a file share, or through secured email.
+
+   For SQL Server to use full dialog security, the certificate must be installed in the remote database, and the user created in step 7 must be the user who begins the conversation.
+
+## Examples
+
+> **Note:**  
+> The code samples in this article were tested using the  `AdventureWorks2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+
+```sql
+USE AdventureWorks2008R2;
+GO
+
+--------------------------------------------------------------------
+-- The first part of the script configures security to allow the
+-- remote service to send messages in this database. The script creates
+-- a user in this database, loads the certificate for the remote service,
+-- grants permission to the user, and creates a remote service binding.
+-- Given a certificate for the owner of the remote target service
+-- SupplierOrders, create a remote service binding for
+-- the service.  The remote user will be granted permission
+-- to send messages to the local service OrderParts.
+-- This example assumes that the certificate for the service
+-- is saved in the file'C:\Certificates\SupplierOrders.cer' and that
+-- the initiating service already exists.
+-- Create a user without a login.  For convenience,
+-- the name of the user is based on the name of the
+-- the remote service.
+CREATE USER [SupplierOrdersUser] WITHOUT LOGIN;
+GO
+
+-- Install a certificate for a user
+-- in the remote database. The certificate is
+-- provided by the owner of the remote service. The
+-- user for the remote service owns the certificate.
+CREATE CERTIFICATE [SupplierOrdersCertificate]
+    AUTHORIZATION [SupplierOrdersUser]
+    FROM FILE = 'C:\Certificates\SupplierOrders.cer';
+GO
+
+-- Create the remote service binding. Notice
+-- that the user specified in the binding
+-- does not own the binding itself.
+-- Creating this binding specifies that messages from
+-- this database are secured using the certificate for
+-- the [SupplierOrdersUser] user.
+-- When the anonymous option is omitted, anonymous is OFF.
+-- Therefore, the credentials for the user that begins
+-- are used in the remote database.
+CREATE REMOTE SERVICE BINDING [SupplierOrdersBinding]
+    TO SERVICE 'SupplierOrders'
+    WITH USER = [SupplierOrdersUser];
+GO
+
+--------------------------------------------------------------------
+-- The second part of the script creates a local user that will begin
+-- conversations to the remote service. The certificate for this
+-- user must be provided to the owner of the remote service.
+-- Create a user without a login for the local service.
+CREATE USER [OrderPartsUser] WITHOUT LOGIN;
+GO
+
+-- Create a certificate for the local service.
+CREATE CERTIFICATE [OrderPartsCertificate]
+    AUTHORIZATION [OrderPartsUser]
+    WITH SUBJECT = 'Certificate for the order service user.';
+GO
+
+-- Make this user the owner of the initiator service.
+ALTER AUTHORIZATION
+    ON SERVICE::OrderParts
+    TO OrderPartsUser;
+
+-- Backup the certificate for the user that initiates the
+-- conversation. This example assumes that the certificate
+-- is named OrderServiceCertificate.
+BACKUP CERTIFICATE [OrderPartsCertificate] TO FILE = 'C:\Certificates\OrderParts.cer';
+GO
+
+-- Grant RECEIVE permissions on the queue for the service.
+-- This allows the local user to begin conversations from
+-- services that use the queue.
+GRANT RECEIVE ON [OrderPartsQueue] TO [OrderPartsUser];
+GO
+```
+
+## Related content
+
+- [How to: Configure target services for full dialog security (Transact-SQL)](how-to-configure-target-services-for-full-dialog-security-transact-sql.md)
+- [How to: Configure permissions for a local service (Transact-SQL)](how-to-configure-permissions-for-a-local-service-transact-sql.md)
+- [CREATE LOGIN (Transact-SQL)](../../t-sql/statements/create-login-transact-sql.md)
+- [CREATE USER (Transact-SQL)](../../t-sql/statements/create-user-transact-sql.md)
+- [CREATE REMOTE SERVICE BINDING (Transact-SQL)](../../t-sql/statements/create-remote-service-binding-transact-sql.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)

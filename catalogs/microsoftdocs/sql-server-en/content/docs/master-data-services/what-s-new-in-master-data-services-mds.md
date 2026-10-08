@@ -1,0 +1,276 @@
+---
+title: "What's New"
+description: Learn about the changes, improvements, and updates in the SQL Server 2019 release of Master Data Services.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: whats-new
+ms.custom:
+  - build-2025
+monikerRange: ">=sql-server-ver16"
+---
+# What's New in Master Data Services (MDS)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  This topic summarizes the changes and updates in the latest release of  SQL Server 
+  Master Data Services 
+. 
+  
+ For an overview of how you organize data in  Master Data Services 
+, see [Master Data Services Overview](master-data-services-overview-mds.md). 
+  
+ **To install Master Data Services, set up the database and Website, and deploy the sample models, see** [Master Data Services Overview (MDS)](master-data-services-overview-mds.md).  
+  
+ **Download**  
+  
+-   To download  SQL Server 2016 (13.x) 
+, go to  **[Evaluation Center](https://www.microsoft.com/evalcenter/evaluate-sql-server-2016)**.  
+  
+-   Have an Azure account? Then go to the **[Azure Marketplace](https://azuremarketplace.microsoft.com/marketplace/apps/microsoftsqlserver.sql2019-ws2019?tab=Overview)** to spin up a Virtual Machine with  SQL Server 
+ already installed.  
+  
+##  Improved Performance  
+  
+ Performance improvements enable you to create larger models, load data more efficiently, and get better overall performance. This performance improvement includes decrease data load times of Microsoft Excel add-in and enable the Microsoft Excel add-in to handle larger entities.  
+  
+ For more information about the add-in for Microsoft Excel, see [Master Data Services Add-in for Microsoft Excel](microsoft-excel-add-in/master-data-services-add-in-for-microsoft-excel.md).  
+  
+ The following feature improvements are included.  
+  
+-   There is data compression on the entity level, which by default is enabled. When data compression is enabled, all the entity related tables and indexes are compressed with SQL Row Level compression. This improvement significantly reduces the disk I/O when reading or updating the master data, especially when the master data has millions of rows and/or has a lot of NULL value columns.  
+  
+     Because there is a slight increase in the CPU usage on the SQL Server engine side, if you have CPU bound on the server you can turn off data compression by editing the entity.  
+  
+     For more information, see [Create an Entity (Master Data Services)](create-an-entity-master-data-services.md) and [Data Compression](../relational-databases/data-compression/data-compression.md).  
+  
+-   The Dynamic Content Compression IIS feature is enabled, by default. It significantly reduces the size of the xml response and saves the network I/O, though CPU usage is increased. If you have CPU bound on the server, you can turn off data compression by adding the following setting to the  Master Data Services 
+ Web.config file.  
+  
+    ```  
+    <configuration>  
+       \<system.webServer>  
+          <urlCompression doStaticCompression="true" doDynamicCompression="false " />  
+       \</system.webServer>  
+    </configuration>  
+  
+    ```  
+  
+     For more information, see [URL Compression](https://www.iis.net/configreference/system.webserver/urlcompression)  
+  
+-   The following new SQL Server Agent jobs do index and log maintenance.  
+  
+    -   MDS_MDM_Sample_Index_maintenance  
+  
+    -   MDS_MDM_Sample_Log_maintenance  
+  
+ By default the MDS_MDM_Sample_Index_Maintenance job runs weekly. You can modify the schedule. You can also manually run the job at any time by using the udpDefragmentation stored procedure. When you insert or update a large volume of master data, or after you create a new version from the existing version, it is recommended that you run the store procure.
+  
+ An index with more than 30% fragmentation is rebuilt online. During the rebuild, the performance is affected on the CRUD operation on the same table. If performance degradation is a concern, it is recommended that you run the store procedure during off business hours. For more information about index fragmentation, see [Reorganize and Rebuild Indexes](../relational-databases/indexes/reorganize-and-rebuild-indexes.md).  
+  
+ For more information, see this post on the Master Data Services Blog, [Performance and Scale Improvement in SQL Server 2016](https://techcommunity.microsoft.com/t5/sql-server-integration-services/performance-and-scale-improvement-in-sql-server-2016/ba-p/388225).  
+  
+##  Improved Security  
+  
+ The new Super User function permission gives a user or group the same permissions as the Server Admin in the previous release of  Master Data Services 
+. The Super User permission can be assigned to multiple users and groups. In the previous release, the user who originally installed  Master Data Services 
+ was the server admin, and it was difficult to transfer this permission to another user or a group. For more information, see [Functional Area Permissions (Master Data Services)](functional-area-permissions-master-data-services.md).  
+  
+ A user can now explicitly be assigned the Admin permission at the model level. This means that if the user is assigned permissions in the model subtree, such as the entity level, they still have this Admin permission.
+  
+ In this release of  Master Data Services 
+, we're providing more levels of permissions by introducing the following new permissions: Read, Create, Update, and Delete. For example, a user that has only the Update permission can now update the master data without creating or deleting the data. When you give a user the Create, Update or Delete permission, the user is automatically assigned the Read permission. You can also combine the Read, Create, Update, and Delete permissions.  
+  
+ When you upgrade to  SQL Server 2016 (13.x) 
+  Master Data Services 
+, old permissions are converted to new permissions as shown in the following table.  
+  
+| Permission in previous release | New permission |
+| --- | --- |
+| User who originally installs  Master Data Services |
+ | has the Server Admin permission. | User has the Super User function permission |
+| User has Update permissions at the model level and no permissions in the model subtree, and so is implicitly a model admin. | User has explicit Admin permissions at the model level. |
+| User has Read-only permissions. | User has Read access permissions. |
+| User has Update permissions. | User has all four access permissions: Create, Update, Delete, and Read. |
+| User has Deny permissions | User has Deny permissions |
+  
+ For more information about permissions, see [Security (Master Data Services)](security-master-data-services.md).  
+  
+##  Improved Transaction Log Maintenance  
+  
+ You can now clean transaction logs at predetermined intervals or on a schedule, using the System settings and at the model level. For an MDS system with lot of data changes and ETL processes, these tables can grow exponentially and lead to performance degradation and storage space issues.  
+  
+ The following types of data can be removed from the logs.  
+  
+-   Transaction history older than a specified number of days.  
+  
+-   Validation issues history older than a specified number of days.  
+  
+-   Staging batches that ran before a specified number of days.  
+  
+ You can configure the frequency that data is removed from the transaction logs, using the System settings and at the model level. For more information, see [System Settings (Master Data Services)](system-settings-master-data-services.md) and [Create a Model (Master Data Services)](create-a-model-master-data-services.md). For more information about transactions, see [Transactions (Master Data Services)](transactions-master-data-services.md).  
+  
+ The SQL Server Agent job, MDS_MDM_Sample_Log_maintenance, triggers cleanup of the transaction logs and runs every night. You can use SQL Server Agent to modify the schedule for this job.  
+  
+ You can also call stored procedures to clean the transaction logs. For more information, see [Transactions (Master Data Services)](transactions-master-data-services.md).  
+  
+## Improved Troubleshooting  
+  
+ In  SQL Server 2016 (13.x) 
+  Master Data Services 
+, added features could improve debugging and make it easier to troubleshoot issues. For more information, see [Tracing (Master Data Services)](tracing-master-data-services.md).  
+  
+## Improved Manageability  
+  
+ Improvements in manageability help to lower maintenance costs and positively affect your return on investment (ROI). These improvements include transaction log maintenance and improvements to security, and the following new features.  
+  
+-   Using attribute names that are longer than 50 characters.  
+  
+-   Renaming and hiding Name and Code attributes.  
+  
+ For more information, see the following topics.  
+  
+-   [Models (Master Data Services)](models-master-data-services.md)  
+  
+-   [Entities (Master Data Services)](entities-master-data-services.md)  
+  
+-   [Transactions (Master Data Services)](transactions-master-data-services.md)  
+  
+-   [Security (Master Data Services)](security-master-data-services.md)  
+
+## Business Rule Improvements
+ **Manage Business Rules (MDS Add-in for Excel)**  
+  
+ In the Master Data Services Add-in for Excel you can manage Business Rules, such as creating and editing business rules. Business rules are used to validate data.  
+ 
+ **Business Rules Extension**  
+  
+ You can apply user-defined SQL scripts as an extension of business rule conditions and actions. SQL functions can be used as a condition. SQL stored procedures can be used as an action. For more information, see [Business Rules Extension (Master Data Services)](business-rules-extension-master-data-services.md). 
+ 
+ **Business Rule Management Experience Redesigned**  
+  
+ The business rule management experience in MDS has been redesigned to improve the experience. For more information about this feature, see [Business Rules (Master Data Services)](business-rules-master-data-services.md).  
+  
+ **Business Rule Management Functionality Removed from the MDS Add-in for Excel**  
+  
+ Business Rule management functionality has been removed from the MDS Add-in for Excel because we redesigned the experience.    
+
+ **New Business Rule Conditions**  
+  
+ Seven new business rule conditions were added to provide a complete set of conditions. For more information, see [Business Rule Conditions (Master Data Services)](business-rule-conditions-master-data-services.md).  
+
+## Derived Hierarchy Improvements
+
+ **Many-to-Many Relationships in Derived Hierarchies**  
+  
+ You can now create a Derived Hierarchy that displays  many-to-many relationships. A many-to-many relationship between two entities may be modeled through by using a third entity that provides a mapping between them. The mapping entity is an entity that has two or more domain-based attributes referencing other entities.  
+  
+ For example, entity M has a domain-based attribute that references A and a domain-based attribute that references B. You can create a hierarchy from A to B using the mapping entity.  
+  
+ For more information, see [Show Many-to-Many Relationships in Derived Hierarchies (Master Data Services)](show-many-to-many-relationships-in-derived-hierarchies-master-data-services.md)  
+ 
+ **Edit Many-to-Many Relationships in Derived Hierarchies**  
+  
+ You can edit the many-to-many relationship by modifying the mapping entity members. For more information, see [Show Many-to-Many Relationships in Derived Hierarchies (Master Data Services)](show-many-to-many-relationships-in-derived-hierarchies-master-data-services.md).  
+ 
+ **Derived Hierarchy Management Experience Improved**  
+  
+ The derived hierarchy management experience in MDS has already been improved. For more information about this feature, see [Create a Derived Hierarchy (Master Data Services)](create-a-derived-hierarchy-master-data-services.md).  
+  
+ Business Rule management functionality has already been removed from the MDS Add-in for Excel because we redesigned the experience.  
+ 
+## Attribute Improvements   
+    
+ **Custom Indexes**  
+  
+ You can create a nonclustered index on one attribute (single index) or on a list of attributes (composite index), in an entity, to help improve the query performance. For more information, see [Custom Index (Master Data Services)](custom-index-master-data-services.md).  
+ 
+  **Attribute Filters**  
+  
+ For a domain-based attribute, for a leaf member, you can use a filter parent attribute to constrain the allowed values for the domain-based attribute. For more information, see [Create a Domain-Based Attribute (Master Data Services)](create-a-domain-based-attribute-master-data-services.md).  
+ 
+## Entity and Member Improvements 
+  
+ **Entity Sync Relationship**  
+  
+ You can share entity data between different models by creating an entity sync relationship. For more information, see [Entity Sync Relationship (Master Data Services)](entity-sync-relationship-master-data-services.md).  
+  
+ **Purge Soft Deleted Members**  
+  
+ You can now purge (permanently delete) all soft-deleted members in a model version. Deleting a member only deactivates, or soft-deletes, the member. For more information, see [Purge Version Members (Master Data Services)](purge-version-members-master-data-services.md).  
+ 
+## Improvements for Managing Changes 
+  
+ **Member Revision History**  
+  
+ A member revision history is recorded when a member is changed. You can roll back a revision history, and view and annotate revisions. Using the **Log Retention Days** property, you can specify how long historical data is retained. For more information, see [Member Revision History (Master Data Services)](member-revision-history-master-data-services.md).  
+  
+ **Merge Conflicts**  
+  
+ If you try to publish data that has been changed by another user, the publish will fail with a conflict error. To resolve this error, you can perform merge conflicts and republish the changes. For more information, see [Merge Conflicts (Master Data Services)](merge-conflicts-master-data-services.md) and [Merge Conflicts (MDS Add-in for Excel)](microsoft-excel-add-in/merge-conflicts-mds-add-in-for-excel.md).  
+  
+ **ChangeSets**  
+  
+ You can use changesets to save pending changes to an entity, and you can view and modify pending changes. If the entity requires approval for changes, you must save the pending changes into a changeset and submit for approval by the administrator. For more information, see [Changesets (Master Data Services)](changesets-master-data-services.md).  
+  
+ **ChangeSet Email and Management**  
+  
+ In this release, you can now view and manage all changes by model and version. You can  also receive email notifications each time a changeset status changes for an entity that requires approval. For more information, see [Manage Changesets (Master Data Services)](manage-changesets-master-data-services.md) and [Notifications (Master Data Services)](notifications-master-data-services.md).  
+  
+ **View and Manage Revision History**  
+  
+ You can view and manage revision history, by entity and by member. If you have update permissions, you can roll back a member to a previous version. For more information, see [Member Revision History (Master Data Services)](member-revision-history-master-data-services.md).  
+ 
+## Tool and Sample Improvements 
+  
+ **Save or Open Query Files in MDS Add-in for Excel**  
+  
+ From the Entity Explorer page, you can click **Excel** to save the shortcut query files. Or you can open the query file stored on your computer, in the MDS Add-in for Excel. The saved file can be opened using QueryOpener application. For more information, see [Shortcut Query Files (MDS Add-in for Excel)](microsoft-excel-add-in/shortcut-query-files-mds-add-in-for-excel.md).  
+  
+ The query file contains the filters and hierarchy information from the explorer page.  
+   
+ **Sample Model Deployment Packages Updated**  
+  
+ The sample packages were updated to support new scenarios. For more information, see [SQL Server Samples: Model Deployment Packages (MDS)](sql-server-samples-model-deployment-packages-mds.md).  
+
+
+##  Get help
+
+- [Ideas for SQL: Have suggestions for improving SQL Server?](https://feedback.azure.com/forums/908035-sql-server)
+- [Microsoft Q & A (SQL Server)](https://learn.microsoft.com/answers/products/sql-server)
+- [DBA Stack Exchange (tag sql-server): Ask SQL Server questions](https://dba.stackexchange.com/questions/tagged/sql-server)
+- [Stack Overflow (tag sql-server): Answers to SQL development questions](https://stackoverflow.com/questions/tagged/sql-server)
+- [Microsoft SQL Server License Terms and Information](https://www.microsoft.com/licensing/product-licensing/sql-server)
+- [Support options for business users](https://support.microsoft.com/support-for-business)
+- [Additional SQL Server help and feedback](../sql-server/sql-server-get-help.md)
+
+##  Contribute to SQL documentation
+
+Did you know that you can edit SQL content yourself? If you do so, not only do you help improve our documentation, but you also get credited as a contributor to the page.
+
+For more information, see [Edit Microsoft Learn documentation](../sql-server/sql-server-docs-contribute.md).
+
+
+
+## Related content
+
+- [Master Data Services and Data Quality Services Features Support](master-data-services-and-data-quality-services-features-support.md)
+- [Deprecated Features of Master Data Services](deprecated-master-data-services-features.md)
+- [Discontinued Features of Master Data Services](discontinued-master-data-services-features.md)

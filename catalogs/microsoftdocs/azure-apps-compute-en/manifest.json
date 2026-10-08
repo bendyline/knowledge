@@ -1,0 +1,200 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-azure-apps-compute-en",
+  "name": "Microsoft technology: Azure applications and compute",
+  "description": "Preserved English Azure applications and compute documentation from MicrosoftDocs/azure-docs, with normalized Markdown, selected complete code examples, source revisions, and license notices.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "git",
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "MicrosoftDocs/azure-docs",
+    "ref": "4260367da6fe93d74e80662f882dd4e9f52b8924",
+    "paths": [
+      "articles/api-center",
+      "articles/api-management",
+      "articles/app-service",
+      "articles/app-testing",
+      "articles/azure-app-configuration",
+      "articles/azure-boost",
+      "articles/azure-compute-fleet",
+      "articles/azure-fluid-relay",
+      "articles/azure-functions",
+      "articles/azure-large-instances",
+      "articles/azure-maps",
+      "articles/azure-relay",
+      "articles/azure-signalr",
+      "articles/azure-web-pubsub",
+      "articles/batch",
+      "articles/business-process-tracking",
+      "articles/cloud-services-extended-support",
+      "articles/communication-services",
+      "articles/connector-namespace",
+      "articles/connectors",
+      "articles/container-apps",
+      "articles/cyclecloud",
+      "articles/deployment-environments",
+      "articles/dev-box",
+      "articles/devtest-labs",
+      "articles/devtest",
+      "articles/durable-task",
+      "articles/event-grid",
+      "articles/event-hubs",
+      "articles/high-performance-computing",
+      "articles/integration-environments",
+      "articles/lab-services",
+      "articles/logic-apps",
+      "articles/notification-hubs",
+      "articles/service-bus-messaging",
+      "articles/service-connector",
+      "articles/spring-apps",
+      "articles/static-web-apps",
+      "includes"
+    ],
+    "include": [
+      "articles/**/*.md",
+      "includes/**/*.md"
+    ],
+    "exclude": [
+      "**/node_modules/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json"
+    ],
+    "transport": "files",
+    "downloadConcurrency": 8,
+    "codeFiles": [
+      "articles/**/*.cs",
+      "articles/**/*.ps1",
+      "articles/**/*.sh",
+      "articles/**/*.py",
+      "articles/**/*.js",
+      "articles/**/*.ts",
+      "articles/**/*.java",
+      "articles/**/*.sql",
+      "articles/**/*.json",
+      "articles/**/*.xml",
+      "articles/**/*.config",
+      "articles/**/*.csproj",
+      "articles/**/*.bicep",
+      "articles/**/*.tf",
+      "articles/**/*.cpp",
+      "articles/**/*.h"
+    ],
+    "docfxRoot": ".",
+    "publishedBaseUrl": "https://learn.microsoft.com/azure/",
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices.md",
+        "sha256": "2ef59328f75d44d3dcf2526630cc6e5985b021bf116ee60c9f0de480d15ab174"
+      }
+    ]
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "articles/**/*.md",
+          "includes/**/*.md"
+        ],
+        "license": "docs"
+      },
+      {
+        "include": [
+          "_code/**/*.md",
+          "articles/**/*.cs",
+          "articles/**/*.ps1",
+          "articles/**/*.sh",
+          "articles/**/*.py",
+          "articles/**/*.js",
+          "articles/**/*.ts",
+          "articles/**/*.java",
+          "articles/**/*.sql",
+          "articles/**/*.json",
+          "articles/**/*.xml",
+          "articles/**/*.config",
+          "articles/**/*.csproj",
+          "articles/**/*.bicep",
+          "articles/**/*.tf",
+          "articles/**/*.cpp",
+          "articles/**/*.h"
+        ],
+        "license": "code"
+      }
+    ]
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true,
+    "docfxReferences": "preserve",
+    "docfxMetadataMaxBytes": 12000,
+    "docfxProfile": "rendered-v1"
+  },
+  "sync": {
+    "maxFileBytes": 20000000,
+    "maxTotalBytes": 1500000000,
+    "maxDeleteFraction": 0.2
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "folders"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "microsoft",
+        "technology",
+        "azure",
+        "apps-compute"
+      ]
+    }
+  }
+}

@@ -1,0 +1,74 @@
+---
+title: "SET REMOTE_PROC_TRANSACTIONS (Transact-SQL)"
+description: SET REMOTE_PROC_TRANSACTIONS (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "07/26/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "REMOTE_PROC_TRANSACTIONS_TSQL"
+  - "SET REMOTE_PROC_TRANSACTIONS"
+  - "REMOTE_PROC_TRANSACTIONS"
+  - "SET_REMOTE_PROC_TRANSACTIONS_TSQL"
+helpviewer_keywords:
+  - "remote stored procedures [SQL Server]"
+  - "SET REMOTE_PROC_TRANSACTIONS statement"
+  - "distributed transactions [SQL Server], starting"
+  - "REMOTE_PROC_TRANSACTIONS option"
+  - "active transactions"
+dev_langs:
+  - "TSQL"
+---
+# SET REMOTE_PROC_TRANSACTIONS (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Specifies that when a local transaction is active, executing a remote stored procedure starts a  Transact-SQL  distributed transaction managed by  Microsoft 
+ Distributed Transaction Coordinator (MS DTC).  
+  
+> **Important:**  
+>  This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  This option is provided for backward compatibility for applications that use remote stored procedures. Instead of issuing remote stored procedure calls, use distributed queries that reference linked servers. These are defined by using [sp_addlinkedserver](../../relational-databases/system-stored-procedures/sp-addlinkedserver-transact-sql.md).  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+  
+SET REMOTE_PROC_TRANSACTIONS { ON | OFF }   
+```  
+  
+## Arguments
+ ON | OFF  
+ When ON, a  Transact-SQL  distributed transaction is started when a remote stored procedure is executed from a local transaction. When OFF, calling remote stored procedures from a local transaction does not start a  Transact-SQL  distributed transaction.  
+  
+## Remarks  
+ When REMOTE_PROC_TRANSACTIONS is ON, calling a remote stored procedure starts a distributed transaction and enlists the transaction with MS DTC. The instance of  SQL Server 
+ making the remote stored procedure call is the transaction originator and controls the completion of the transaction. When a subsequent COMMIT TRANSACTION or ROLLBACK TRANSACTION statement is issued for the connection, the controlling instance requests that MS DTC manage the completion of the distributed transaction across the computers involved.  
+  
+ After a  Transact-SQL  distributed transaction has been started, remote stored procedure calls can be made to other instances of  SQL Server 
+ that have been defined as remote servers. The remote servers are all enlisted in the  Transact-SQL  distributed transaction, and MS DTC ensures that the transaction is completed against each remote server.  
+  
+ REMOTE_PROC_TRANSACTIONS is a connection-level setting that can be used to override the instance-level **sp_configure remote proc trans** option.  
+  
+ When REMOTE_PROC_TRANSACTIONS is OFF, remote stored procedure calls are not made part of a local transaction. The modifications made by the remote stored procedure are committed or rolled back at the time the stored procedure completes. Subsequent COMMIT TRANSACTION or ROLLBACK TRANSACTION statements issued by the connection that called the remote stored procedure have no effect on the processing done by the procedure.  
+  
+ The REMOTE_PROC_TRANSACTIONS option is a compatibility option that affects only remote stored procedure calls made to instances of  SQL Server 
+ defined as remote servers using **sp_addserver**. The option does not apply to distributed queries that execute a stored procedure on an instance defined as a linked server using **sp_addlinkedserver**.  
+  
+ The setting of SET REMOTE_PROC_TRANSACTIONS is set at execute or run time and not at parse time.  
+  
+## Permissions  
+ Requires membership in the **public** role.  
+  
+## Related content
+
+- [BEGIN DISTRIBUTED TRANSACTION (Transact-SQL)](../language-elements/begin-distributed-transaction-transact-sql.md)
+- [SET Statements (Transact-SQL)](set-statements-transact-sql.md)

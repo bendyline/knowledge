@@ -1,0 +1,144 @@
+---
+title: "SET XACT_ABORT (Transact-SQL)"
+description: SET XACT_ABORT (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "10/03/2019"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "XACT_ABORT_TSQL"
+  - "XACT_ABORT"
+  - "SET XACT_ABORT"
+  - "SET_XACT_ABORT_TSQL"
+helpviewer_keywords:
+  - "transaction rollbacks [SQL Server]"
+  - "XACT_ABORT option"
+  - "automatic transaction roll backs"
+  - "transactions [SQL Server], rolling back"
+  - "rolling back transactions, SET XACT_ABORT"
+  - "roll back transactions [SQL Server]"
+  - "SET XACT_ABORT statement"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# SET XACT_ABORT (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+> **Note:**
+> The **THROW** statement honors **SET XACT_ABORT**. **RAISERROR** does not. New applications should use **THROW** instead of **RAISERROR**.
+
+Specifies whether  SQL Server 
+ automatically rolls back the current transaction when a  Transact-SQL  statement raises a run-time error.
+
+
+
+## Syntax
+
+```syntaxsql
+SET XACT_ABORT { ON | OFF }
+```
+
+## Remarks
+
+When SET XACT_ABORT is ON, if a  Transact-SQL  statement raises a run-time error, the entire transaction is terminated and rolled back.
+
+When SET XACT_ABORT is OFF, in some cases only the  Transact-SQL  statement that raised the error is rolled back and the transaction continues processing. Depending upon the severity of the error, the entire transaction may be rolled back even when SET XACT_ABORT is OFF. OFF is the default setting in a T-SQL statement, while ON is the default setting in a trigger.
+
+Compile errors, such as syntax errors, are not affected by SET XACT_ABORT.
+
+XACT_ABORT must be set ON for data modification statements in an implicit or explicit transaction against most OLE DB providers, including  SQL Server 
+. The only case where this option is not required is if the provider supports nested transactions.
+
+When ANSI_WARNINGS=OFF, permissions violations cause transactions to abort.
+
+The setting of SET XACT_ABORT is set at execute or run time and not at parse time.
+
+To view the current setting for this setting, run the following query.
+
+```sql
+DECLARE @XACT_ABORT VARCHAR(3) = 'OFF';
+IF ( (16384 & @@OPTIONS) = 16384 ) SET @XACT_ABORT = 'ON';
+SELECT @XACT_ABORT AS XACT_ABORT;
+
+```
+
+## Examples
+
+The following code example causes a foreign key violation error in a transaction that has other  Transact-SQL  statements. In the first set of statements, the error is generated, but the other statements execute successfully and the transaction is successfully committed. In the second set of statements, `SET XACT_ABORT` is set to `ON`. This causes the statement error to terminate the batch and the transaction is rolled back.
+
+```sql
+IF OBJECT_ID(N't2', N'U') IS NOT NULL
+    DROP TABLE t2;
+GO
+IF OBJECT_ID(N't1', N'U') IS NOT NULL
+    DROP TABLE t1;
+GO  
+CREATE TABLE t1
+    (a INT NOT NULL PRIMARY KEY);
+CREATE TABLE t2
+    (a INT NOT NULL REFERENCES t1(a));
+GO
+INSERT INTO t1 VALUES (1);
+INSERT INTO t1 VALUES (3);
+INSERT INTO t1 VALUES (4);
+INSERT INTO t1 VALUES (6);
+GO
+SET XACT_ABORT OFF;
+GO
+BEGIN TRANSACTION;
+INSERT INTO t2 VALUES (1);
+INSERT INTO t2 VALUES (2); -- Foreign key error.
+INSERT INTO t2 VALUES (3);
+COMMIT TRANSACTION;
+GO
+SET XACT_ABORT ON;
+GO
+BEGIN TRANSACTION;
+INSERT INTO t2 VALUES (4);
+INSERT INTO t2 VALUES (5); -- Foreign key error.
+INSERT INTO t2 VALUES (6);
+COMMIT TRANSACTION;
+GO
+-- SELECT shows only keys 1 and 3 added.
+-- Key 2 insert failed and was rolled back, but
+-- XACT_ABORT was OFF and rest of transaction
+-- succeeded.
+-- Key 5 insert error with XACT_ABORT ON caused
+-- all of the second transaction to roll back.
+SELECT *
+ FROM t2;
+GO
+```
+
+## Related content
+
+- [THROW (Transact-SQL)](../language-elements/throw-transact-sql.md)
+- [BEGIN TRANSACTION (Transact-SQL)](../language-elements/begin-transaction-transact-sql.md)
+- [COMMIT TRANSACTION (Transact-SQL)](../language-elements/commit-transaction-transact-sql.md)
+- [ROLLBACK TRANSACTION (Transact-SQL)](../language-elements/rollback-transaction-transact-sql.md)
+- [SET Statements (Transact-SQL)](set-statements-transact-sql.md)
+- [@@TRANCOUNT (Transact-SQL)](../functions/trancount-transact-sql.md)

@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How does Azure Resource Manager deploy and manage resources through a consistent management layer with resource groups, access control, and tags?",
+    "expectedDocumentIds": [
+      "articles/azure-resource-manager/management/overview"
+    ]
+  }
+]

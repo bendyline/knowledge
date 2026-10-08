@@ -1,0 +1,150 @@
+---
+title: "LOG (Transact-SQL)"
+description: "LOG (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/29/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "LOG"
+  - "LOG_TSQL"
+helpviewer_keywords:
+  - "float expressions"
+  - "logarithm of expression"
+  - "LOG function"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# LOG (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the natural logarithm of the specified **float** expression in  SQL Server 
+.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+-- Syntax for SQL Server, Azure SQL Database  
+  
+LOG ( float_expression [, base ] )  
+```  
+  
+```syntaxsql
+-- Syntax for Azure Synapse SQL 
+  
+LOG ( float_expression )  
+```  
+  
+## Arguments
+ *float_expression*  
+ Is an [expression](../language-elements/expressions-transact-sql.md) of type **float** or of a type that can be implicitly converted to **float**.  
+  
+ *base*  
+ Optional integer argument that sets the base for the logarithm.  
+  
+**Applies to**:  SQL Server 2012 (11.x) 
+ and later
+  
+## Return Types  
+ **float**  
+  
+## Remarks  
+ By default, **LOG()** returns the natural logarithm. Starting with  SQL Server 2012 (11.x) 
+, you can change the base of the logarithm to another value by using the optional *base* parameter.  
+  
+ The natural logarithm is the logarithm to the base **e**, where **e** is an irrational constant approximately equal to 2.718281828.  
+  
+ The natural logarithm of the exponential of a number is the number itself: LOG( EXP( *n* ) ) = *n*. And the exponential of the natural logarithm of a number is the number itself: EXP( LOG( *n* ) ) = *n*.  
+  
+## Examples  
+  
+### A. Calculating the logarithm for a number.  
+ The following example calculates the `LOG` for the specified **float** expression.  
+  
+```sql  
+DECLARE @var FLOAT = 10;  
+SELECT 'The LOG of the variable is: ' + CONVERT(VARCHAR, LOG(@var));  
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+-------------------------------------  
+The LOG of the variable is: 2.30259  
+  
+(1 row(s) affected)  
+```  
+  
+### B. Calculating the logarithm of the exponent of a number.  
+ The following example calculates the `LOG` for the exponent of a number.  
+  
+```sql  
+SELECT LOG (EXP (10));  
+  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+----------------------------------  
+10  
+(1 row(s) affected)  
+```  
+  
+## Examples:  Azure Synapse Analytics 
+  
+### C. Calculating the logarithm for a number  
+ The following example calculates the `LOG` for the specified **float** expression.  
+  
+```sql  
+SELECT LOG(10);  
+```  
+  
+  Here's the result set. 
+  
+  
+ ```
+ ----------------`  
+  
+ 2.30
+ ```  
+  
+## Related content
+
+- [Mathematical functions (Transact-SQL)](mathematical-functions-transact-sql.md)
+- [EXP (Transact-SQL)](exp-transact-sql.md)
+- [LOG10 (Transact-SQL)](log10-transact-sql.md)

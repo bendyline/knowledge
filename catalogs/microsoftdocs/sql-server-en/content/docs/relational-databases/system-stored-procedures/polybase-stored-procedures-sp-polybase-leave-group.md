@@ -1,0 +1,72 @@
+---
+title: "sp_polybase_leave_group (Transact-SQL)"
+description: Removes a SQL Server instance from a PolyBase group for scale-out computation.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.subservice: polybase
+ms.topic: reference
+f1_keywords:
+  - "sp_polybase_leave_group"
+  - "sp_polybase_leave_group_TSQL"
+helpviewer_keywords:
+  - "sp_polybase_leave_group"
+dev_langs:
+  - "TSQL"
+---
+# sp_polybase_leave_group (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions
+
+Removes a SQL Server instance from a PolyBase group for scale-out computation.
+
+The SQL Server instance must have the [PolyBase](../polybase/overview.md) feature installed. PolyBase enables the integration of non-SQL Server data sources, such as Hadoop and Azure Blob Storage. See also [sp_polybase_join_group](polybase-stored-procedures-sp-polybase-join-group.md).
+
+
+
+## Syntax
+
+```syntaxsql
+sp_polybase_leave_group;
+```
+
+## Arguments
+
+None.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Permissions
+
+Requires CONTROL SERVER permission.
+
+## Remarks
+
+You can only remove a compute node from a group.
+
+After running the stored procedure, restart the PolyBase engine and PolyBase Data Movement Service on the machine. To verify, run the following DMV on the head node:
+
+```sql
+EXECUTE sys.dm_exec_compute_nodes;
+```
+
+## Examples
+
+The example removes the current machine from a PolyBase group.
+
+```sql
+EXECUTE sp_polybase_leave_group;
+```
+
+## Related content
+
+- [PolyBase overview](../polybase/overview.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

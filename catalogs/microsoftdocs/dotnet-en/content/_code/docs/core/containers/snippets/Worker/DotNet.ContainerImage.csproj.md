@@ -1,0 +1,21 @@
+# Source code: docs/core/containers/snippets/Worker/DotNet.ContainerImage.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-DotNet.ContainerImage-2e40c179-a00b-4cc9-9785-54266210b7eb</UserSecretsId>
+    <ContainerRepository>dotnet-worker-image</ContainerRepository>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+  </ItemGroup>
+</Project>
+
+```

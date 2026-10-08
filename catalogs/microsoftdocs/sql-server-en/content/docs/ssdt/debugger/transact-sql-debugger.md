@@ -1,0 +1,82 @@
+---
+title: Transact-SQL Debugger
+titleSuffix: T-SQL debugger
+description: Learn how to step through code and view the execution state using the Transact-SQL debugger, and how to do various other debugging tasks.
+author: dzsquared
+ms.author: drskwier
+ms.reviewer: randolphwest
+ms.date: 09/09/2025
+ms.service: sql
+ms.subservice: ssdt
+ms.topic: how-to
+---
+
+# Transact-SQL debugger
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The  Transact-SQL  debugger helps you find errors in  Transact-SQL  code by investigating the run-time behavior of the code. After you set the  Database Engine 
+ Query Editor window to debug mode, you can pause execution on specific lines of code and inspect information and data that is used by or returned by those  Transact-SQL  statements.
+
+T-SQL debugging is available in [SQL Server Data Tools](../sql-server-data-tools.md) for Visual Studio.
+
+## Step through Transact-SQL code
+
+The  Transact-SQL  debugger provides the following options that you can use to navigate through  Transact-SQL  code when the  Database Engine 
+ Query Editor window is in debug mode:
+
+- Set breakpoints on individual  Transact-SQL  statements.
+
+  A breakpoint specifies a point at which you want execution to pause so you can examine data. When you start the debugger, it pauses on the first line of code in the Query Editor window. To run to the first breakpoint, use **Continue**. You can also use **Continue** to run to the next breakpoint from any location at which the window is currently paused. You can edit breakpoints to specify actions such as the conditions under which the breakpoint should pause execution, information to print to the **Output** window, and change the location of the breakpoint.
+
+- Step into the next statement.
+
+  This option enables you to navigate through a set of statements one by one, and to observe their behavior as you go.
+
+- Step either into or over a call to a stored procedure or function.
+
+  If you're sure there are no errors in a stored procedure, you can step over it. The procedure is executed in full, and the results are returned to the code.
+
+  If you want to debug a stored procedure or function, you can step into the module. A new  Database Engine 
+ Query Editor window opens that populates with the source code for the module. The window is in debug mode, and execution pauses on the first statement in the module. You can then navigate through the module code, for example, by setting breakpoints or stepping through the code.
+
+For more information about how the debugger enables you to navigate code, see [Step through Transact-SQL code](step-through-transact-sql-code.md).
+
+## View debugger information
+
+Each time the debugger pauses execution on a specific  Transact-SQL  statement, you can use the following debugger windows to view the current execution state:
+
+- **Locals** and **Watch**. These windows display currently allocated  Transact-SQL  expressions. Expressions are  Transact-SQL  clauses that evaluate to a single, scalar expression. The  Transact-SQL  debugger supports viewing expressions that reference  Transact-SQL  variables, parameters, or the built-in functions that have names that start with @@. These windows also display the data values that are currently assigned to the expressions.
+
+- **QuickWatch**. This window displays the value of a  Transact-SQL  expression, and enables saving that expression to a **Watch** window.
+
+- **Breakpoints**. This window displays the currently set breakpoints and enables you to manage them.
+
+- **Call Stack**. This window displays the current execution location. And also provides information about how execution passed from the original Query Editor window through any functions, stored procedures, or triggers to reach the current execution location.
+
+- **Output**. This window displays various messages and program data, such as system messages from the debugger.
+
+- **Results** and **Messages**. These tabs on the Query Editor window display the results of previously executed  Transact-SQL  statements.
+
+## Known issues and limitations
+
+The T-SQL debugger is applicable only to  SQL Server 
+ instances. The debugger doesn't support debugging  Transact-SQL  code running on  Azure SQL Database 
+, Azure SQL Managed Instance, or SQL database in Fabric.
+
+Under certain conditions, the T-SQL debugger line highlighting and breakpoints can become out of sync with the actual execution point when stepping through a SQL script. The issue can surface in several scenarios, including a comment at the top of the script or empty lines after `GO` statements.
+
+## Transact-SQL debugger tasks
+
+| Task Description | Article |
+| --- | --- |
+| Describes how to configure the  Transact-SQL  debugger for remote debugging. | [Configure firewall rules before running the Transact-SQL debugger](configure-firewall-rules-before-running-tsql-debugger.md) |
+| Describes how to start, stop, and control the operation of the debugger. | [Run the Transact-SQL debugger](run-transact-sql-debugger.md) |
+| Describes how to use the  Transact-SQL  debugger to step through code. | [Step through Transact-SQL code](step-through-transact-sql-code.md) |
+| Describes how to use the  Transact-SQL  debugger to step through stored procedure code. | [Debug stored procedures](debug-stored-procedures.md) |
+| Describes how to use the debugger to view  Transact-SQL  data, such as parameters and variables, and system information. | [Transact-SQL debugger information](transact-sql-debugger-information.md) |

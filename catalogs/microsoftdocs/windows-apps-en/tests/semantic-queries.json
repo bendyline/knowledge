@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How can I choose between installing Node.js on Windows or Windows Subsystem for Linux for web development?",
+    "expectedDocumentIds": [
+      "hub/dev-environment/javascript/nodejs-overview"
+    ]
+  }
+]

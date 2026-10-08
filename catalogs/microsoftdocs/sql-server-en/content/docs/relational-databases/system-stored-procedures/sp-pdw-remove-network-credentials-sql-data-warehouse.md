@@ -1,0 +1,82 @@
+---
+title: "sp_pdw_remove_network_credentials"
+titleSuffix: Azure Synapse Analytics
+description: sp_pdw_remove_network_credentials removes network credentials stored in Azure Synapse Analytics.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sp_pdw_remove_network_credentials (Azure Synapse Analytics)
+
+
+**Applies to:**
+ 
+
+
+ 
+
+
+`sp_pdw_remove_network_credentials` removes network credentials stored in  Azure Synapse Analytics  to access a network file share. For example, use this stored procedure to remove permission for  Azure Synapse Analytics  to perform backup and restore operations on a server that resides within your own network.
+
+
+
+## Syntax
+
+Syntax for Azure Synapse Analytics.
+
+```syntaxsql
+sp_pdw_remove_network_credentials 'target_server_name'
+```
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+## Arguments
+
+#### '*target_server_name*'
+
+Specifies the target server host name or IP address. *target_server_name* is **nvarchar(337)** with no default. Credentials to access this server are removed from  Azure Synapse Analytics . This doesn't change or remove any permissions on the actual target server, which is managed by your own team.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Permissions
+
+Requires `ALTER SERVER STATE` permission.
+
+## Error Handling
+
+An error occurs if removing credentials doesn't succeed on the Control node and all Compute nodes.
+
+## Remarks
+
+This stored procedure removes network credentials from the NetworkService account for  Azure Synapse Analytics . The NetworkService account runs each instance of SMP  SQL Server 
+ on the Control node and the Compute nodes. For example, when a backup operation runs, the Control node and each Compute node use the NetworkService account credentials to access the target server.
+
+## Metadata
+
+To list all credentials and to verify the credentials have been removed, use [sys.dm_pdw_network_credentials](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/system-dynamic-management-objects/sys-dm-pdw-network-credentials-transact-sql.md).
+
+To add credentials, use [sp_pdw_add_network_credentials (Azure Synapse Analytics)](sp-pdw-add-network-credentials-sql-data-warehouse.md).
+
+## Examples: Azure Synapse Analytics
+
+### A. Remove credentials for performing a database backup
+
+The following example removes user name and password credentials for accessing the target server, which has an IP address of `10.192.147.63`.
+
+```sql
+EXECUTE sp_pdw_remove_network_credentials '10.192.147.63';
+```
+
+## Related content
+
+- [sp_pdw_remove_network_credentials (Azure Synapse Analytics)](sp-pdw-remove-network-credentials-sql-data-warehouse.md)

@@ -1,0 +1,64 @@
+---
+title: Enable or Disable Referrals and Client Failback
+description: This article describes how to enable or disable referrals and client failback.
+ms.date: 6/5/2017
+ms.topic: how-to
+author: robinharwood
+ms.author: roharwoo
+---
+# Enable or Disable Referrals and Client Failback
+
+A referral is an ordered list of servers that a client computer receives from a domain controller or namespace server when the user accesses a namespace root or DFS folder with targets. After the computer receives the referral, the computer attempts to access the first server in the list. If the server is not available, the client computer attempts to access the next server. If a server becomes unavailable, you can configure clients to fail back to the preferred server after it becomes available.
+
+The following sections provide information about how to enable or disable referrals or enable client failback:
+
+## Enable or disable referrals
+
+By disabling a namespace server's or folder target's referral, you can prevent users from being directed to that namespace server or folder target. This is useful if you need to temporarily take a server offline for maintenance.
+
+-   To enable or disable referrals to a folder target, use the following steps:
+
+    1.  In the DFS Management console tree, under the **Namespaces** node, click a folder containing targets, and then click the **Folder Targets** tab in the **Details** pane.
+    2.  Right-click the folder target, and then click either **Disable Folder Target** or **Enable Folder Target**.
+
+-   To enable or disable referrals to a namespace server, use the following steps:
+
+    1.  In the DFS Management console tree, select the appropriate namespace and then click the **Namespace Servers** tab.
+    2.  Right-click the appropriate namespace server and then click either **Disable Namespace Server** or **Enable Namespace Server**.
+
+
+> **Tip:**
+> To enable or disable referrals by using Windows PowerShell, use the [Set-DfsnRootTarget –State](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc731089\(v=ws.11\)) or [Set-DfsnServerConfiguration](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc731089\(v=ws.11\)) cmdlets, which were introduced in Windows Server 2012.
+
+## Enable client failback
+
+If a target becomes unavailable, you can configure clients to fail back to the target after it is restored. For failback to work, client computers must meet the requirements listed in the following topic: [Review DFS Namespaces Client Requirements](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc771913\(v=ws.11\)).
+
+
+> **Note:**
+> To enable client failback on a namespace root by using Windows PowerShell, use the [Set-DfsnRoot](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc771913\(v=ws.11\)) cmdlet. To enable client failback on a DFS folder, use the [Set-DfsnFolder](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc771913\(v=ws.11\)) cmdlet.
+
+
+## To enable client failback for a namespace root
+
+1.  Click **Start**, point to **Administrative Tools**, and then click **DFS Management**.
+
+2.  In the console tree, under the **Namespaces** node, right-click a namespace, and then click **Properties**.
+
+3.  On the **Referrals** tab, select the **Clients fail back to preferred targets** check box.
+
+Folders with targets inherit client failback settings from the namespace root. If client failback is disabled on the namespace root, you can use the following procedure to enable the client to fail back on a folder with targets.
+
+## To enable client failback for a folder with targets
+
+1.  Click **Start**, point to **Administrative Tools**, and then click **DFS Management**.
+
+2.  In the console tree, under the **Namespaces** node, right-click a folder with targets, and then click **Properties**.
+
+3.  On the **Referrals** tab, click the **Clients fail back to preferred targets** check box.
+
+## Additional References
+
+-   [Tuning DFS Namespaces](tuning-dfs-namespaces.md)
+-   [Review DFS Namespaces Client Requirements](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc771913\(v=ws.11\))
+-   [Delegate Management Permissions for DFS Namespaces](delegate-management-permissions-for-dfs-namespaces.md)

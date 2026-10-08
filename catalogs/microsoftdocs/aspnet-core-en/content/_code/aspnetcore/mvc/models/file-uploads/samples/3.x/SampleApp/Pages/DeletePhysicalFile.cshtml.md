@@ -1,0 +1,42 @@
+# Source code: aspnetcore/mvc/models/file-uploads/samples/3.x/SampleApp/Pages/DeletePhysicalFile.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "{fileName}"
+@model DeletePhysicalFileModel
+@{
+    ViewData["Title"] = "Delete File";
+}
+
+<h1>Delete File</h1>
+
+<p>Are you sure you want to delete this file?</p>
+
+<dl>
+    <dt>
+        Name
+    </dt>
+    <dd>
+        @Model.RemoveFile.Name
+    </dd>
+    <dt>
+        Physical Path
+    </dt>
+    <dd>
+        @Model.RemoveFile.PhysicalPath
+    </dd>
+    <dt>
+        Size (bytes)
+    </dt>
+    <dd>
+        @Model.RemoveFile.Length.ToString("N1")
+    </dd>
+</dl>
+
+<form method="post">
+    <input type="hidden" asp-for="RemoveFile.Name" />
+    <input type="submit" value="Delete" class="btn btn-default" />
+</form>
+
+```

@@ -1,0 +1,36 @@
+---
+title: "MSdistributor (Transact-SQL)"
+description: MSdistributor (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSdistributor"
+  - "MSdistributor_TSQL"
+helpviewer_keywords:
+  - "MSdistributor system table"
+dev_langs:
+  - "TSQL"
+---
+# MSdistributor (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSdistributor** table contains the Distributor properties. This table is stored in the **msdb** database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **property** | **sysname** | The name of the property |
+| **value** | **nvarchar(3000)** | The value of the property |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

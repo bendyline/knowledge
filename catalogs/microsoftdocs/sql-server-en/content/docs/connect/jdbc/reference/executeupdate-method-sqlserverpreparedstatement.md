@@ -1,0 +1,30 @@
+---
+title: "executeUpdate Method (SQLServerPreparedStatement)"
+description: "executeUpdate Method (SQLServerPreparedStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPreparedStatement.executeUpdate"
+apitype: "Assembly"
+---
+# executeUpdate Method (SQLServerPreparedStatement)
+
+
+  Runs the SQL statement in this [SQLServerPreparedStatement](sqlserverpreparedstatement-class.md) object, which must be a SQL INSERT, UPDATE, MERGE, or DELETE statement; or a SQL statement that returns nothing, such as a DDL statement.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [executeUpdate ()](executeupdate-method.md) | Runs the SQL statement in this [SQLServerPreparedStatement](sqlserverpreparedstatement-class.md) object, which must be a SQL INSERT, UPDATE, MERGE, or DELETE statement; or a SQL statement that returns nothing, such as a DDL statement. |
+| [executeUpdate (java.lang.String)](executeupdate-method-java-lang-string.md) | Runs the given SQL statement, which can be an INSERT, UPDATE, MERGE, or DELETE statement; or a SQL statement that returns nothing, such as a SQL DDL statement. |
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

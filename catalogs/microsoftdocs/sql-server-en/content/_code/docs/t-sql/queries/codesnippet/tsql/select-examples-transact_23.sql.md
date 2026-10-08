@@ -1,0 +1,32 @@
+# Source code: docs/t-sql/queries/codesnippet/tsql/select-examples-transact_23.sql
+
+Complete source file; linked examples may select a region or line range.
+
+```
+USE AdventureWorks2025;
+GO
+
+SELECT pp.FirstName,
+    pp.LastName,
+    e.NationalIDNumber
+FROM HumanResources.Employee AS e WITH (INDEX (AK_Employee_NationalIDNumber))
+INNER JOIN Person.Person AS pp
+    ON e.BusinessEntityID = pp.BusinessEntityID
+WHERE LastName = 'Johnson';
+GO
+
+-- Force a table scan by using INDEX = 0.
+USE AdventureWorks2025;
+GO
+
+SELECT pp.LastName,
+    pp.FirstName,
+    e.JobTitle
+FROM HumanResources.Employee AS e WITH (INDEX = 0)
+INNER JOIN Person.Person AS pp
+    ON e.BusinessEntityID = pp.BusinessEntityID
+WHERE LastName = 'Johnson';
+GO
+
+
+```

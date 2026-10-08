@@ -1,0 +1,61 @@
+---
+title: "sys.database_event_sessions"
+description: The sys.database_event_sessions dynamic management view (DMV) lists all the database-scoped event session definitions that exist in the current database.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/03/2026
+ms.service: azure-sql-database
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.database_event_sessions
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+The `sys.database_event_sessions` dynamic management view (DMV) lists all the database-scoped event session definitions that exist in the current database. For information about *active* database-scoped event sessions, see [sys.dm_xe_database_sessions](../system-dynamic-management-objects/sys-dm-xe-database-sessions-azure-sql-database.md).
+
+- Azure SQL Database and SQL database in Fabric support only [database-scoped sessions](https://learn.microsoft.com/azure/azure-sql/database/xevent-db-diff-from-svr). 
+- Azure SQL Managed Instance supports both database-scoped sessions and [server-scoped sessions](../extended-events/extended-events.md). Server-scoped sessions are recommended for SQL managed instances. For more information, see [CREATE EVENT SESSION code examples](../../t-sql/statements/create-event-session-transact-sql.md#code-examples-can-differ-for-azure-sql-database-and-sql-managed-instance).
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `event_session_id` | **int** | The unique ID of the event session. Is not nullable. |
+| `name` | **sysname** | The user-defined name for identifying the event session. name is unique. Is not nullable. |
+| `event_retention_mode` | **nchar(1)** | Determines how event loss is handled. The default is S. Is not nullable. Is one of:<br /><br /> S. Maps to `event_retention_mode_desc` = ALLOW_SINGLE_EVENT_LOSS<br /><br /> M. Maps to `event_retention_mode_desc` = ALLOW_MULTIPLE_EVENT_LOSS<br /><br /> N. Maps to `event_retention_mode_desc` = NO_EVENT_LOSS |
+| `event_retention_mode_desc` | **sysname** | Describes how event loss is handled. The default is `ALLOW_SINGLE_EVENT_LOSS`. Is not nullable. Is one of:<br /><br /> `ALLOW_SINGLE_EVENT_LOSS`. Events can be lost from the session. Single events are dropped only when all event buffers are full. Losing single events when buffers are full allows for acceptable  SQL Server |
+ | performance characteristics, while minimizing the loss in the processed event stream.<br /><br /> `ALLOW_MULTIPLE_EVENT_LOSS`. Full event buffers can be lost from the session. The number of events lost depends on the memory size allocated to the session, the partitioning of the memory, and the size of the events in the buffer. This option minimizes performance impact on the server when event buffers are quickly filled. However, large numbers of events can be lost from the session.<br /><br /> `NO_EVENT_LOSS`. No event loss is allowed. This option ensures that all events raised are retained. Using this option forces all the tasks that fire events to wait until space is available in an event buffer. This might lead to detectable performance degradation while the event session is active. For event file targets in Azure SQL Database, behaves the same as `ALLOW_SINGLE_EVENT_LOSS`. For more information, see [EVENT_RETENTION_MODE](../../t-sql/statements/create-event-session-transact-sql.md#event_retention_mode---allow_single_event_loss--allow_multiple_event_loss--no_event_loss-). |
+| `max_dispatch_latency` | **int** | The amount of time, in milliseconds, that events are buffered in memory before they're served to session targets. Valid values are from 1 to 2147483648, and -1. A value of -1 indicates that dispatch latency is infinite. Is nullable. |
+| `max_memory` | **int** | The amount of memory allocated to the session for event buffering. The default value is 4 MB. Is nullable. |
+| `max_event_size` | **int** | The amount of memory set aside for events that don't fit in event session buffers. If `max_event_size` exceeds the calculated buffer size, two additional buffers of max_event_size are allocated to the event session. Is nullable. |
+| `memory_partition_mode` | **nchar(1)** | The location in memory where event buffers are created. The default partition mode is G. Is not nullable. `memory_partition_mode` is one of:<br /><br /> G - `NONE`<br /><br /> C - `PER_CPU`<br /><br /> N - `PER_NODE` |
+| `memory_partition_mode_desc` | **sysname** | The default is `NONE`. Is not nullable. Is one of:<br /><br /> `NONE`. A single set of buffers are created within a SQL Server instance.<br /><br /> PER_CPU. A set of buffers is created for each CPU.<br /><br /> `PER_NODE`. A set of buffers is created for each non-uniform memory access (NUMA) node. |
+| `track_causality` | **bit** | Enable or disable causality tracking. If set to 1 (ON), tracking is enabled and related events on different server connections can be correlated. The default setting is 0 (OFF). Is not nullable. |
+| `startup_state` | **bit** | Value determines whether or not session is started automatically when the server starts. The default is 0. Is not nullable. Is one of:<br /><br /> 0 (OFF). The session doesn't start when the server starts.<br /><br /> 1 (ON). The event session starts when the server starts. |
+| `max_duration` | **bigint** | The value that determines the maximum duration of an event session once it's started, in seconds. Set to `0` when `MAX_DURATION` is not specified or is set to `UNLIMITED`. For more information, see [Time-bound event sessions](../extended-events/sql-server-extended-events-sessions.md#time-bound-event-sessions). |
+
+## Permissions
+
+Requires the VIEW DATABASE PERFORMANCE STATE permission.
+
+## Related content
+
+- [sys.server_event_sessions (Transact-SQL)](sys-server-event-sessions-transact-sql.md)
+- [Extended Events in Azure SQL](https://learn.microsoft.com/azure/azure-sql/database/xevent-db-diff-from-svr)
+- [Create an event session with an event_file target in Azure Storage](https://learn.microsoft.com/azure/azure-sql/database/xevent-code-event-file)
+- [sys.database_event_session_actions](sys-database-event-session-actions-azure-sql-database.md)
+- [sys.database_event_session_targets](sys-database-event-session-targets-azure-sql-database.md)
+- [Monitor performance using dynamic management views](https://learn.microsoft.com/azure/azure-sql/database/monitoring-with-dmvs)

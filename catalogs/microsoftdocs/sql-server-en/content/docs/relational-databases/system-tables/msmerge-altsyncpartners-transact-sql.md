@@ -1,0 +1,37 @@
+---
+title: "MSmerge_altsyncpartners (Transact-SQL)"
+description: MSmerge_altsyncpartners (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSmerge_altsyncpartners_TSQL"
+  - "MSmerge_altsyncpartners"
+helpviewer_keywords:
+  - "MSmerge_altsyncpartners system table"
+dev_langs:
+  - "TSQL"
+---
+# MSmerge_altsyncpartners (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSmerge_altsyncpartners** table tracks the association of who the current synchronization partners are for a Publisher. This table is stored in the publication and subscription databases.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **subid** | **uniqueidentifier** | The identifier for the original Publisher. |
+| **alternate_subid** | **uniqueidentifier** | The identifier for the Subscriber who is the alternate synchronization partner. |
+| **description** | **nvarchar(255)** | The description of the alternate synchronization partner. |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

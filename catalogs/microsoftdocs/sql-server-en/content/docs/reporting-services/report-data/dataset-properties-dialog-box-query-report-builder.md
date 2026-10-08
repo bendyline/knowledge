@@ -1,0 +1,63 @@
+---
+title: "Dataset Properties Dialog Box, Query (Report Builder)"
+description: Learn how to use Query on the Dataset Properties dialog box in the Report Builder to choose a shared dataset from a report server or to create an embedded dataset.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "10024"
+  - "sql13.rtp.rptdesigner.datasetproperties.query.f1"
+---
+# Dataset Properties Dialog Box, Query (Report Builder)
+ 
+Select **Query** on the **Dataset Properties** dialog box to choose a shared dataset from a report server or to create an embedded dataset. For an embedded dataset, you must choose a data source and build a query.  
+  
+## Options  
+ **Name**  
+ Type a name for the dataset. The name cannot be the same as a name for any data region or group in the report.  
+  
+ **Use a shared dataset**  
+ Select this option to use a predefined dataset from the report server.  
+  
+ **Browse**  
+ Browse to a folder on a report server or SharePoint site and select a shared dataset (.rsd).  
+  
+ **Use an embedded dataset in my report**  
+ Select this option to create a dataset for use only by this report.  
+  
+ **Data Source**  
+ Select the data source on which to base the dataset. To create a new data source, click **New**.  
+  
+ **Query type**  
+ Select the type of command or query to use for the dataset. Select **Text** to run a query to retrieve data from the database. Select **Table** to use the **TableDirect** feature of  SQL Server 
+ to select all the fields within a table. Select **Stored Procedure** to run a stored procedure by name. **Text** is selected by default and is used for most queries. To edit the selected data source query, click **Query Designer**.  
+  
+> **Note:**  
+>  Not all query types are supported by all data sources. For example, **Table** is supported only by data source types **OLE DB** and **ODBC**.  
+  
+ **Query**  
+ This option appears when you choose the **Text** command type option. Type a query or import a pre-existing query by clicking **Import**. Click the **Expression** (*fx*) button to edit the expression.  
+  
+> **Note:**  
+>  If you use a query designer to build a query, the text of the query appears in this box.  
+  
+**Table name**  
+This option appears when you select **Table**. Enter the name of the table that you want to use as a dataset.   
+  
+**Select or enter stored procedure name**  
+This option appears when you choose the Stored Procedure command type option. Type or choose the name of the stored procedure that you want to use. Click the **Expression** (*fx*) button to edit the expression.   
+  
+ **Time out (in seconds)**  
+ Type the number of seconds until the query times out. The default is 30 seconds. The value for **Time out** must be empty or greater than zero. If it is empty, the query does not time out.  
+  
+ **Refresh Fields**  
+ Run the query command to update the list of fields in the **Dataset Properties Dialog Box, Fields** page.  
+  
+## Related content
+
+- [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md)
+- [Report Datasets (SSRS)](report-datasets-ssrs.md)
+- [Query Design Tools (SSRS)](query-design-tools-ssrs.md)

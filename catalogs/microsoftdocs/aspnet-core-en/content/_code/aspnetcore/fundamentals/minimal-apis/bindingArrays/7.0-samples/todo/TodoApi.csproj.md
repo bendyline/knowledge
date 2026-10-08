@@ -1,0 +1,19 @@
+# Source code: aspnetcore/fundamentals/minimal-apis/bindingArrays/7.0-samples/todo/TodoApi.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+	  <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0-preview.5.22303.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0-preview.5.22302.2" />
+  </ItemGroup>
+</Project>
+```

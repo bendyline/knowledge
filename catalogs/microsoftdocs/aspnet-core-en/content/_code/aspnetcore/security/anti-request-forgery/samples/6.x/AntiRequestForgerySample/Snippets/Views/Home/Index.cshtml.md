@@ -1,0 +1,42 @@
+# Source code: aspnetcore/security/anti-request-forgery/samples/6.x/AntiRequestForgerySample/Snippets/Views/Home/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!-- <snippet_FormRemoveTagHelper> -->
+@removeTagHelper Microsoft.AspNetCore.Mvc.TagHelpers.FormTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers
+<!-- </snippet_FormRemoveTagHelper> -->
+<!-- <snippet_Form> -->
+<form method="post">
+	<!-- ... -->
+</form>
+<!-- </snippet_Form> -->
+<!-- <snippet_FormAntiforgeryFalse> -->
+<form method="post" asp-antiforgery="false">
+	<!-- ... -->
+</form>
+<!-- </snippet_FormAntiforgeryFalse> -->
+<!-- <snippet_FormTagHelperDisabled> -->
+<!form method="post">
+	<!-- ... -->
+</!form>
+<!-- </snippet_FormTagHelperDisabled> -->
+<!-- <snippet_FormControllerExamples> -->
+<form asp-action="Index" asp-controller="Home" method="post">
+	<!-- ... -->
+</form>
+
+@using (Html.BeginForm("Index", "Home"))
+{
+	<!-- ... -->
+}
+<!-- </snippet_FormControllerExamples> -->
+<!-- <snippet_FormExplicit> -->
+<form asp-action="Index" asp-controller="Home" method="post">
+	@Html.AntiForgeryToken()
+
+	<!-- ... -->
+</form>
+<!-- </snippet_FormExplicit> -->
+
+```

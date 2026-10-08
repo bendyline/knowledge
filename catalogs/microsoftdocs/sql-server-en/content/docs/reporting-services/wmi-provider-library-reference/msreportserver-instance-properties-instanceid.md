@@ -1,0 +1,36 @@
+---
+title: "InstanceID property (WMI MSReportServer_Instance)"
+description: "InstanceID property (WMI MSReportServer_Instance)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "InstanceID property"
+apilocation: "reportingservices.mof"
+apiname: "InstanceID Property (WMI MSReportServer_Instance)"
+apitype: MOFDef
+---
+# MSReportServer_Instance properties - InstanceID
+  This object supports the  Reporting Services 
+ infrastructure and isn't intended to be used directly from your code.  
+  
+## Syntax  
+  
+```vb  
+public Dim InstanceID As String  
+```  
+  
+```csharp  
+public string InstanceID;  
+```  
+  
+## Requirements  
+ **Namespace:**  **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13** 
+  
+  
+## Related content
+
+- [MSReportServer_Instance members](msreportserver-instance-members.md)

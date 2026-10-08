@@ -1,0 +1,48 @@
+---
+title: "SQL Server XTP Transaction Log object"
+description: Learn about the SQL Server XTP Transaction Log performance object, which contains counters related to In-Memory OLTP transaction log activity in SQL Server.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "SQL Server 2016 XTP Transaction Log"
+  - "SQL Server 2017 XTP Transaction Log"
+  - "SQL Server XTP Transaction Log"
+---
+# SQL Server XTP Transaction Log object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **SQL Server XTP Transaction Log** performance object contains counters related to In-Memory OLTP transaction log activity in  SQL Server 
+.  
+  
+ This table describes the **SQL Server XTP Transaction Log** counters.  
+  
+| Counter | Description |
+| --- | --- |
+| **Log bytes written/sec** | The number of bytes written to the  SQL Server |
+ | transaction log by the In-Memory OLTP engine (on average), per second. |
+| **Log records written/sec** | The number of records written to the  SQL Server |
+ | transaction log by the In-Memory OLTP engine (on average), per second. |
+  
+ 
+## Examples
+
+You begin to explore the query performance counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT * FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%XTP Transaction Log%';
+``` 
+
+## Related content
+
+- [In-Memory OLTP overview and usage scenarios](../in-memory-oltp/overview-and-usage-scenarios.md)
+- [SQL Server XTP (In-memory OLTP) Performance Counters](sql-server-xtp-in-memory-oltp-performance-counters.md)

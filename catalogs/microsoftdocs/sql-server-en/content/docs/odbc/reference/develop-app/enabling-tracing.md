@@ -1,0 +1,21 @@
+---
+title: "Enabling Tracing"
+description: "Enabling Tracing"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "tracing options [ODBC], enabling"
+---
+# Enabling Tracing
+Tracing can be enabled in the following three ways:  
+  
+-   Set the **Trace** and **TraceFile** keywords in the Odbc.ini registry entry. This enables or disables tracing when **SQLAllocHandle** with a *HandleType* of SQL_HANDLE_ENV is called. These options are set in the Tracing tab of the ODBC Data Source Administrator dialog box displayed during data source setup. For more information, see [Registry Entries for Data Sources](../install/registry-entries-for-data-sources.md).  
+  
+-   Call **SQLSetConnectAttr** to set the SQL_ATTR_TRACE connection attribute to SQL_OPT_TRACE_ON. This enables or disables tracing for the duration of the connection. For more information, see the [SQLSetConnectAttr](../syntax/sqlsetconnectattr-function.md) function description.  
+  
+-   Use **ODBCSharedTraceFlag** to turn tracing on or off dynamically. (For more information, see the next topic, [Dynamic Tracing](dynamic-tracing.md).)

@@ -1,0 +1,17 @@
+# Source code: aspnetcore/security/app-secrets/samples/3.x/UserSecrets/UserSecrets.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!-- <snippet_CsprojFile> -->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- <snippet_PropertyGroup> -->
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>79a3edd0-2092-40a2-a04d-dcb46d5ca9ed</UserSecretsId>
+  </PropertyGroup>
+  <!-- </snippet_PropertyGroup> -->
+</Project>
+<!-- </snippet_CsprojFile> -->
+
+```

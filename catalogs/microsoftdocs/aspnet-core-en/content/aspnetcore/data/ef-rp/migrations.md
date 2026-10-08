@@ -1,0 +1,349 @@
+---
+title: Part 4, Razor Pages with EF Core in ASP.NET Core - Migrations
+author: tdykstra
+description: Part 4 of Razor Pages and Entity Framework tutorial series.
+ms.author: tdykstra
+ms.date: 07/22/2019
+uid: data/ef-rp/migrations
+---
+
+# Part 4, Razor Pages with EF Core migrations in ASP.NET Core
+
+By [Tom Dykstra](https://github.com/tdykstra), [Jon P Smith](https://twitter.com/thereformedprog), and [Rick Anderson](https://twitter.com/RickAndMSFT)
+
+The Contoso University web app demonstrates how to create Razor Pages web apps using EF Core and Visual Studio. For information about the tutorial series, see [the first tutorial](intro.md).
+
+If you run into problems you can't solve, download the [completed app](https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/data/ef-rp/intro/samples) and compare that code to what you created by following the tutorial.
+
+
+**Applies to: \>= aspnetcore-3.0**
+
+This tutorial introduces the EF Core migrations feature for managing data model changes.
+
+When a new app is developed, the data model changes frequently. Each time the model changes, the model gets out of sync with the database. This tutorial series started by configuring the Entity Framework to create the database if it doesn't exist. Each time the data model changes, the database needs to be dropped. The next time the app runs, the call to `EnsureCreated` re-creates the database to match the new data model. The `DbInitializer` class then runs to seed the new database.
+
+This approach to keeping the DB in sync with the data model works well until the app needs to be deployed to production. When the app is running in production, it's usually storing data that needs to be maintained. The app can't start with a test DB each time a change is made (such as adding a new column). The EF Core Migrations feature solves this problem by enabling EF Core to update the DB schema instead of creating a new database.
+
+Rather than dropping and recreating the database when the data model changes, migrations updates the schema and retains existing data.
+
+> **Note:**
+> 
+> **SQLite limitations**
+>
+> This tutorial uses the Entity Framework Core [migrations](https://learn.microsoft.com/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) feature where possible. Migrations updates the database schema to match changes in the data model. However, migrations only does the kinds of changes that the database engine supports, and SQLite's schema change capabilities are limited. For example, adding a column is supported, but removing a column is not supported. If a migration is created to remove a column, the `ef migrations add` command succeeds but the `ef database update` command fails. 
+>
+> The workaround for the SQLite limitations is to manually write migrations code to perform a table rebuild when something in the table changes. The code goes in the `Up` and `Down` methods for a migration and involves:
+>
+> * Creating a new table.
+> * Copying data from the old table to the new table.
+> * Dropping the old table.
+> * Renaming the new table.
+>
+> Writing database-specific code of this type is outside the scope of this tutorial. Instead, this tutorial drops and re-creates the database whenever an attempt to apply a migration would fail. For more information, see the following resources:
+>
+> * [SQLite EF Core Database Provider Limitations](https://learn.microsoft.com/ef/core/providers/sqlite/limitations)
+> * [Customize migration code](https://learn.microsoft.com/ef/core/managing-schemas/migrations/#customize-migration-code)
+> * [Data seeding](https://learn.microsoft.com/ef/core/modeling/data-seeding)
+> * [SQLite ALTER TABLE statement](https://sqlite.org/lang_altertable.html)
+
+## Drop the database
+
+# [Visual Studio](#tab/visual-studio)
+
+Use **SQL Server Object Explorer** (SSOX) to delete the database, or run the following command in the **Package Manager Console** (PMC):
+
+```powershell
+Drop-Database
+```
+
+# [Visual Studio Code](#tab/visual-studio-code)
+
+* Run the following command at a command prompt to install the EF CLI:
+
+  ```dotnetcli
+  dotnet tool install --global dotnet-ef
+  ```
+
+> **Note:**
+> By default, the architecture of the .NET binaries to install represents the currently running operating system architecture.
+> To specify a different architecture, review how to use the `dotnet tool install` command with the ['--arch' option](https://learn.microsoft.com/dotnet/core/tools/dotnet-tool-install#options).
+> For more information, see [GitHub dotnet/aspnetcore.docs issue #29262](https://github.com/dotnet/AspNetCore.Docs/issues/29262) - _Add '-a arm64' on Apple Silicon_.
+
+
+* In the command prompt, navigate to the project folder. The project folder contains the `ContosoUniversity.csproj` file.
+
+* Delete the `CU.db` file, or run the following command:
+
+  ```dotnetcli
+  dotnet ef database drop --force
+  ```
+
+---
+
+## Create an initial migration
+
+# [Visual Studio](#tab/visual-studio)
+
+Run the following commands in the PMC:
+
+```powershell
+Add-Migration InitialCreate
+Update-Database
+ 
+```
+
+# [Visual Studio Code](#tab/visual-studio-code)
+
+Make sure the command prompt is in the project folder, and run the following commands:
+
+```dotnetcli
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+ 
+```
+
+---
+
+### Remove EnsureCreated
+
+This tutorial series started by using [Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated%2A](https://learn.microsoft.com/search/?terms=Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated%252A). `EnsureCreated` doesn't create a migrations history table and so can't be used with migrations. It's designed for testing or rapid prototyping where the database is dropped and re-created frequently.
+
+From this point forward, the tutorials will use migrations.
+
+In `Program.cs`, delete the following line:
+
+```csharp
+context.Database.EnsureCreated();
+```
+
+Run the app and verify that the database is seeded.
+
+## Up and Down methods
+
+The EF Core `migrations add` command generated code to create the database. This migrations code is in the `Migrations\<timestamp>_InitialCreate.cs` file. The `Up` method of the `InitialCreate` class creates the database tables that correspond to the data model entity sets. The `Down` method deletes them, as shown in the following example:
+
+[Code example (complete source file; reference: intro/samples/cu30/Migrations/20190731193522_InitialCreate.cs)](../../../_code/aspnetcore/data/ef-rp/intro/samples/cu30/Migrations/20190731193522_InitialCreate.cs.md)
+
+The preceding code is for the initial migration. The code:
+
+* Was generated by the `migrations add InitialCreate` command.
+* Is executed by the `database update` command.
+* Creates a database for the data model specified by the database context class.
+
+The migration name parameter (`InitialCreate` in the example) is used for the file name. The migration name can be any valid file name. It's best to choose a word or phrase that summarizes what is being done in the migration. For example, a migration that added a department table might be called "AddDepartmentTable."
+
+## The migrations history table
+
+* Use SSOX or SQLite tool to inspect the database.
+* Notice the addition of an `__EFMigrationsHistory` table. The `__EFMigrationsHistory` table keeps track of which migrations have been applied to the database.
+* View the data in the `__EFMigrationsHistory` table. It shows one row for the first migration.
+
+## The data model snapshot
+
+Migrations creates a *snapshot* of the current data model in `Migrations/SchoolContextModelSnapshot.cs`. When add a migration is added, EF determines what changed by comparing the current data model to the snapshot file.
+
+Because the snapshot file tracks the state of the data model, a migration cannot be deleted by deleting the `<timestamp>_<migrationname>.cs` file. To back out the most recent migration, use the [`migrations remove`](https://learn.microsoft.com/ef/core/managing-schemas/migrations/managing#remove-a-migration) command. `migrations remove` deletes the migration and ensures the snapshot is correctly reset. For more information, see [dotnet ef migrations remove](https://learn.microsoft.com/ef/core/miscellaneous/cli/dotnet#dotnet-ef-migrations-remove).
+
+See [Resetting all migrations](https://learn.microsoft.com/ef/core/managing-schemas/migrations/managing?tabs=dotnet-core-cli#resetting-all-migrations) to remove all migrations.
+
+## Applying migrations in production
+
+We recommend that production apps **not** call [Database.Migrate](https://learn.microsoft.com/search/?terms=Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.Migrate%252A) at application startup. `Migrate` shouldn't be called from an app that is deployed to a server farm. If the app is scaled out to multiple server instances, it's hard to ensure database schema updates don't happen from multiple servers or conflict with read/write access.
+
+Database migration should be done as part of deployment, and in a controlled way. Production database migration approaches include:
+
+* Using migrations to create SQL scripts and using the SQL scripts in deployment.
+* Running `dotnet ef database update` from a controlled environment.
+
+## Troubleshooting
+
+If the app uses SQL Server LocalDB and displays the following exception:
+
+```text
+SqlException: Cannot open database "ContosoUniversity" requested by the login.
+The login failed.
+Login failed for user 'user name'.
+```
+
+The solution may be to run `dotnet ef database update` at a command prompt.
+
+### Additional resources
+
+* [EF Core CLI](https://learn.microsoft.com/ef/core/miscellaneous/cli/dotnet).
+* [dotnet ef migrations CLI commands](https://learn.microsoft.com/ef/core/miscellaneous/cli/dotnet)
+* [Package Manager Console (Visual Studio)](https://learn.microsoft.com/ef/core/miscellaneous/cli/powershell)
+
+## Next steps
+
+The next tutorial builds out the data model, adding entity properties and new entities.
+
+> 
+> [Previous tutorial](sort-filter-page.md)
+> [Next tutorial](complex-data-model.md)
+
+
+
+**Applies to: < aspnetcore-3.0**
+
+In this tutorial, the EF Core migrations feature for managing data model changes is used.
+
+If you run into problems you can't solve, download the [completed app](
+https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/data/ef-rp/intro/samples).
+
+When a new app is developed, the data model changes frequently. Each time the model changes, the model gets out of sync with the database. This tutorial started by configuring the Entity Framework to create the database if it doesn't exist. Each time the data model changes:
+
+* The DB is dropped.
+* EF creates a new one that matches the model.
+* The app seeds the DB with test data.
+
+This approach to keeping the DB in sync with the data model works well until the app needs to be deployed to production. When the app is running in production, it's usually storing data that needs to be maintained. The app can't start with a test DB each time a change is made (such as adding a new column). The EF Core Migrations feature solves this problem by enabling EF Core to update the DB schema instead of creating a new DB.
+
+Rather than dropping and recreating the DB when the data model changes, migrations updates the schema and retains existing data.
+
+## Drop the database
+
+Use **SQL Server Object Explorer** (SSOX) or the `database drop` command:
+
+# [Visual Studio](#tab/visual-studio)
+
+In the **Package Manager Console** (PMC), run the following command:
+
+```powershell
+Drop-Database
+```
+
+Run `Get-Help about_EntityFrameworkCore` from the PMC to get help information.
+
+# [Visual Studio Code](#tab/visual-studio-code)
+
+Open a command window and navigate to the project folder. The project folder contains the `Startup.cs` file.
+
+Enter the following in the command window:
+
+ ```dotnetcli
+ dotnet ef database drop
+ ```
+
+---
+
+## Create an initial migration and update the DB
+
+Build the project and create the first migration.
+
+# [Visual Studio](#tab/visual-studio)
+
+```powershell
+Add-Migration InitialCreate
+Update-Database
+```
+
+# [Visual Studio Code](#tab/visual-studio-code)
+
+```dotnetcli
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+---
+
+### Examine the Up and Down methods
+
+The EF Core `migrations add` command generated code to create the database. This migrations code is in the `Migrations\<timestamp>_InitialCreate.cs` file. The `Up` method of the `InitialCreate` class creates the database tables that correspond to the data model entity sets. The `Down` method deletes them, as shown in the following example:
+
+[Code example (complete source file; reference: intro/samples/cu21/Migrations/20180626224812_InitialCreate.cs?range=7-24,77-88)](../../../_code/aspnetcore/data/ef-rp/intro/samples/cu21/Migrations/20180626224812_InitialCreate.cs.md)
+
+Migrations calls the `Up` method to implement the data model changes for a migration. When a command is entered to roll back the update, migrations calls the `Down` method.
+
+The preceding code is for the initial migration. That code was created when the `migrations add InitialCreate` command was run. The migration name parameter ("InitialCreate" in the example) is used for the file name. The migration name can be any valid file name. It's best to choose a word or phrase that summarizes what is being done in the migration. For example, a migration that added a department table might be called "AddDepartmentTable."
+
+If the initial migration is created and the DB exists:
+
+* The DB creation code is generated.
+* The DB creation code doesn't need to run because the DB already matches the data model. If the DB creation code is run, it doesn't make any changes because the DB already matches the data model.
+
+When the app is deployed to a new environment, the DB creation code must be run to create the DB.
+
+Previously the DB was dropped and doesn't exist, so migrations creates the new DB.
+
+### The data model snapshot
+
+Migrations create a *snapshot* of the current database schema in `Migrations/SchoolContextModelSnapshot.cs`. When you add a migration, EF determines what changed by comparing the data model to the snapshot file.
+
+To delete a migration, use the following command:
+
+# [Visual Studio](#tab/visual-studio)
+
+Remove-Migration
+
+# [Visual Studio Code](#tab/visual-studio-code)
+
+```dotnetcli
+dotnet ef migrations remove
+```
+
+For more information, see [dotnet ef migrations remove](https://learn.microsoft.com/ef/core/miscellaneous/cli/dotnet#dotnet-ef-migrations-remove).
+
+---
+
+The remove migrations command deletes the migration and ensures the snapshot is correctly reset.
+
+### Remove EnsureCreated and test the app
+
+For early development, `EnsureCreated` was used. In this tutorial, migrations are used. `EnsureCreated` has the following limitations:
+
+* Bypasses migrations and creates the DB and schema.
+* Doesn't create a migrations table.
+* Can *not* be used with migrations.
+* Is designed for testing or rapid prototyping where the DB is dropped and re-created frequently.
+
+Remove `EnsureCreated`:
+
+```csharp
+context.Database.EnsureCreated();
+```
+
+Run the app and verify the DB is seeded.
+
+### Inspect the database
+
+Use **SQL Server Object Explorer** to inspect the DB. Notice the addition of an `__EFMigrationsHistory` table. The `__EFMigrationsHistory` table keeps track of which migrations have been applied to the DB. View the data in the `__EFMigrationsHistory` table, it shows one row for the first migration. The last log in the preceding CLI output example shows the INSERT statement that creates this row.
+
+Run the app and verify that everything works.
+
+## Applying migrations in production
+
+We recommend production apps should **not** call [Database.Migrate](https://learn.microsoft.com/search/?terms=Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.Migrate%252A) at application startup. `Migrate` shouldn't be called from an app in server farm. For example, if the app has been cloud deployed with scale-out (multiple instances of the app are running).
+
+Database migration should be done as part of deployment, and in a controlled way. Production database migration approaches include:
+
+* Using migrations to create SQL scripts and using the SQL scripts in deployment.
+* Running `dotnet ef database update` from a controlled environment.
+
+EF Core uses the `__MigrationsHistory` table to see if any migrations need to run. If the DB is up-to-date, no migration is run.
+
+## Troubleshooting
+
+Download the [completed app](
+https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/data/ef-rp/intro/samples/cu21snapshots/Part-4-Migrations).
+
+The app generates the following exception:
+
+```text
+SqlException: Cannot open database "ContosoUniversity" requested by the login.
+The login failed.
+Login failed for user 'user name'.
+```
+
+Solution: Run `dotnet ef database update`
+
+### Additional resources
+
+* [YouTube version of this tutorial](https://www.youtube.com/watch?v=OWSUuMLKTJo)
+* [.NET CLI](https://learn.microsoft.com/ef/core/miscellaneous/cli/dotnet).
+* [Package Manager Console (Visual Studio)](https://learn.microsoft.com/ef/core/miscellaneous/cli/powershell)
+
+
+
+> 
+> [Previous](sort-filter-page.md)
+> [Next](complex-data-model.md)

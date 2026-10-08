@@ -1,0 +1,71 @@
+---
+title: "getFunctions Method (SQLServerDatabaseMetaData)"
+description: "getFunctions Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# getFunctions Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves a description of the system and user functions.  
+  
+## Syntax  
+  
+```  
+  
+public ResultSet getFunctions(java.lang.String catalog,  
+                       java.lang.String schemaPattern,  
+                       java.lang.String functionNamePattern)  
+```  
+  
+#### Parameters  
+ *catalog*  
+  
+ The name of a catalog in the database. If it is an empty string "", the result includes the functions without a catalog. If it is **null**, the catalog name is not used for search.  
+  
+ *schemaPattern*  
+  
+ The name of a schema. If it is an empty string "", the result includes the functions without a schema. If it is **null**, the schema name is not used for search.  
+  
+ *functionNamePattern*  
+  
+ The name of a function.  
+  
+## Return Value  
+ A [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getFunctions method is specified by the getFunctions method in the java.sql.DatabaseMetaData interface.  
+  
+ This method returns only the system and user functions that match the specified schema and function name.  
+  
+> **Important:**  
+>  The returned result set can contain functions that the calling user does not have permissions to execute.  
+  
+ Each function description includes the following columns:  
+  
+| Name | Type | Description |
+| --- | --- | --- |
+| FUNCTION_CAT | **String** | The name of the database in which the function resides. |
+| FUNCTION_SCHEM | **String** | The name of the schema in which the function resides. |
+| FUNCTION_NAME | **String** | The name of the function. |
+| NUM_INPUT_PARAMS | **int** | Reserved for future use, currently returns a -1 value. |
+| NUM_OUTPUT_PARAMS | **int** | Reserved for future use, currently returns a -1 value. |
+| NUM_RESULT_SETS | **int** | Reserved for future use, currently returns a -1 value. |
+| REMARKS | **String** | The comments about the function. |
+| FUNCTION_TYPE | **short** | The type of the function. It can be one of the following values:<br /><br /> SQL_PT_UNKNOWN (0)<br /><br /> SQL_PT_PROCEDURE (1)<br /><br /> SQL_PT_FUNCTION (2) |
+  
+ All the descriptions in the returned result set are ordered by FUNCTION_CAT, FUNCTION_SCHEM, FUNCTION_NAME, and SPECIFIC_NAME.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

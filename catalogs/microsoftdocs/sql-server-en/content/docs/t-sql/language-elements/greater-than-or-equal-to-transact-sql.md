@@ -1,0 +1,108 @@
+---
+title: "&gt;= (Greater Than or Equal To) (Transact-SQL)"
+description: "&gt;= (Greater Than or Equal To) (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/13/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - ">="
+  - ">=_TSQL"
+helpviewer_keywords:
+  - "greater than or equal to operator (>=)"
+  - ">= (greater than or equal to operator)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# &gt;= (Greater Than or Equal To) (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Compares two expressions for greater than or equal (a comparison operator).  
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+expression >= expression  
+```  
+  
+## Arguments
+ *expression*  
+ Is any valid [expression](expressions-transact-sql.md). Both expressions must have implicitly convertible data types. The conversion depends on the rules of [data type precedence](../data-types/data-type-precedence-transact-sql.md).  
+  
+## Result Types  
+ Boolean  
+  
+## Remarks  
+ When you compare nonnull expressions, the result is TRUE if the left operand has a greater or equal value than the right operand; otherwise, the result is FALSE.  
+  
+ Unlike the = (equality) comparison operator, the result of the >= comparison of two NULL values does not depend on the ANSI_NULLS setting.  
+  
+## Examples  
+  
+### A. Using >= in a simple query  
+ The following example returns all rows in the `HumanResources.Department` table that have a value in `DepartmentID` that is greater than or equal to the value 13.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT DepartmentID, Name  
+FROM HumanResources.Department  
+WHERE DepartmentID >= 13  
+ORDER BY DepartmentID;   
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+DepartmentID Name  
+------------ --------------------------------------------------  
+13           Quality Assurance  
+14           Facilities and Maintenance  
+15           Shipping and Receiving  
+16           Executive  
+  
+(4 row(s) affected)  
+  
+```  
+  
+## Related content
+
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)
+- [Expressions (Transact-SQL)](expressions-transact-sql.md)
+- [= (Equals) (Transact-SQL)](equals-transact-sql.md)
+- [&gt; (Greater Than) (Transact-SQL)](greater-than-transact-sql.md)
+- [Operators (Transact-SQL)](operators-transact-sql.md)

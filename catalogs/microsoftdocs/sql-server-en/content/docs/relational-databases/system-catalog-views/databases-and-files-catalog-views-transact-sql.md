@@ -1,0 +1,65 @@
+---
+title: "Databases and Files Catalog Views (Transact-SQL)"
+description: Databases and Files Catalog Views (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "01/18/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "file catalog views [SQL Server]"
+  - "catalog views [SQL Server], databases"
+  - "database catalog views [SQL Server]"
+  - "catalog views [SQL Server], files"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Databases and Files Catalog Views (Transact-SQL)
+
+ 
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  This section contains the following catalog views.  
+
+
+
+        [sys.backup_devices &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-backup-devices-transact-sql.md)
+        
+        [sys.database_connection_stats &#40;Azure SQL Database&#41;](../../relational-databases/system-catalog-views/sys-database-connection-stats-azure-sql-database.md)
+        
+        [sys.databases &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-databases-transact-sql.md)
+        
+        [sys.database_files &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-database-files-transact-sql.md)
+        
+        [sys.database_mirroring &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-database-mirroring-transact-sql.md)
+    :::column-end:::
+    :::column:::
+        [sys.database_recovery_status &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-database-recovery-status-transact-sql.md)
+        
+        [sys.database_scoped_configurations &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-database-scoped-configurations-transact-sql.md)
+        
+        [sys.master_files &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-master-files-transact-sql.md)
+    :::column-end:::
+
+
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Transact-SQL reference (Database Engine)](../../t-sql/language-reference.md)

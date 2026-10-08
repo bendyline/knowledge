@@ -1,0 +1,29 @@
+---
+title: "Validate Expressions (XQuery)"
+description: Learn about the validate expression in XQuery.
+author: "rothja"
+ms.author: "jroth"
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: xml
+ms.topic: reference
+helpviewer_keywords:
+  - "expressions [XQuery], validate"
+  - "validate expressions [XQuery]"
+dev_langs:
+  - "XML"
+---
+# Validate Expressions (XQuery)
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  In this implementation, the **validate** expression is not supported. The results of XQuery construction expressions are always untyped. If the result of an XQuery expression should be typed, use the SQL CAST expression to cast the result to an **xml** data type with the preferred schema collection.  
+  
+## Related content
+
+- [Path Expressions (XQuery)](path-expressions-xquery.md)
+- [XQuery Expressions](xquery-expressions.md)

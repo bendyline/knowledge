@@ -1,0 +1,78 @@
+---
+title: "sys.sp_dropapprole (Transact-SQL)"
+description: sp_dropapprole removes an application role from the current database.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_dropapprole_TSQL"
+  - "sp_dropapprole"
+helpviewer_keywords:
+  - "sp_dropapprole"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_dropapprole (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Removes an application role from the current database.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use [DROP APPLICATION ROLE](../../t-sql/statements/drop-application-role-transact-sql.md) instead.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_dropapprole [ @rolename = ] N'rolename'
+[ ; ]
+```
+
+## Arguments
+
+#### [ @rolename = ] N'*rolename*'
+
+The application role to remove. *@rolename* is **sysname**, with no default. *@rolename* must exist in the current database.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_dropapprole` can only be used to remove application roles. If a role owns any securables, the role can't be dropped. Before dropping an application role that owns securables, you must first transfer ownership of the securables, or drop them.
+
+`sp_dropapprole` can't be executed within a user-defined transaction.
+
+## Permissions
+
+Requires `ALTER ANY APPLICATION ROLE` permission on the database.
+
+## Examples
+
+The following example removes the `SalesApp` application role from the current database.
+
+```sql
+EXECUTE sp_dropapprole 'SalesApp';
+```
+
+## Related content
+
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [sys.sp_addapprole (Transact-SQL)](sp-addapprole-transact-sql.md)
+- [DROP APPLICATION ROLE (Transact-SQL)](../../t-sql/statements/drop-application-role-transact-sql.md)
+- [sys.sp_changeobjectowner (Transact-SQL)](sp-changeobjectowner-transact-sql.md)
+- [sys.sp_setapprole (Transact-SQL)](sp-setapprole-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

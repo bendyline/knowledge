@@ -1,0 +1,35 @@
+---
+title: "toString Method (DateTimeOffset)"
+description: "toString Method (DateTimeOffset)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# toString Method (DateTimeOffset)
+
+
+  Returns a string representation of the **DateTimeOffset** object.  
+  
+## Syntax  
+  
+```  
+  
+public String toString()  
+```  
+  
+## Return Value  
+ A string representation of the **DateTimeOffset** object.  
+  
+## Remarks  
+ The string has the format `YYYY-MM-DD HH:mm:ss[.fffffff] [+|-]HH:mm`.  
+  
+ The fractional seconds of the returned string are zero padded to the declared precision. For example, a **datetimeoffset(6)** with a value of "2010-03-10 12:34:56.78 -08:00" will be formatted by DateTimeOffset.toString as "2010-03-10 12:34:56.780000 -08:00".  
+  
+## Related content
+
+- [DateTimeOffset Class](datetimeoffset-class.md)
+- [DateTimeOffset Members](datetimeoffset-members.md)

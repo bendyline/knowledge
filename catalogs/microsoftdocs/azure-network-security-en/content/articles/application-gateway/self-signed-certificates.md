@@ -1,0 +1,307 @@
+---
+title: Generate self-signed certificate with a custom root CA
+titleSuffix: Azure Application Gateway
+description: Learn how to generate an Azure Application Gateway self-signed certificate with a custom root CA
+services: application-gateway
+author: mbender-ms
+ms.service: azure-application-gateway
+ms.topic: how-to
+ms.date: 08/18/2026
+ms.author: mbender
+ms.custom:
+  - devx-track-azurepowershell
+  - sfi-image-nochange
+# Customer intent: As a cloud administrator, I want to generate a self-signed certificate using a custom root CA for my Application Gateway, so that I can securely establish TLS connections with backend servers in a development environment without incurring costs for commercial certificates.
+---
+
+# Generate an Azure Application Gateway self-signed certificate with a custom root CA
+
+The Application Gateway v2 SKU introduces the use of Trusted Root Certificates to allow TLS connections with the backend servers. This feature removes the use of authentication certificates (individual Leaf certificates) that were required in the v1 SKU. The *root certificate* is a Base-64 encoded X.509(.CER) format root certificate from the backend certificate server. It identifies the root certificate authority (CA) that issued the server certificate and the server certificate is then used for the TLS/SSL communication.
+
+Application Gateway trusts your website's certificate by default if a well-known CA (for example, GoDaddy or DigiCert) signs it. Explicitly uploading the root certificate isn't required in that case. For more information, see [Overview of TLS termination and end to end TLS with Application Gateway](ssl-overview.md). However, if you have a dev/test environment and don't want to purchase a verified CA signed certificate, you can create your own custom Root CA and a leaf certificate signed by that Root CA.
+
+> **Note:**
+> Self-generated certificates aren't trusted by default and can be difficult to maintain. Also, they can use outdated hash and cipher suites that aren't strong. For better security, purchase a certificate signed by a well-known certificate authority.
+
+**Use the following options to generate your private certificate for backend TLS connections.**
+1. Use the [**private certificate generator tool**](https://appgwbackendcertgenerator.azurewebsites.net/). By using the domain name (Common Name) that you provide, this tool performs the same steps as documented in this article to generate Root and Server certificates. With the generated certificate files, you can immediately upload the Root certificate (.CER) file to the Backend Setting of your gateway and the corresponding certificate chain (.PFX) to the backend server. The password for the PFX file is also supplied in the downloaded ZIP file.
+
+1. Use OpenSSL commands to customize and generate certificates as per your needs. Continue to follow the instructions in this article if you want to do this process entirely on your own.
+
+In this article, you learn how to:
+
+- Create your own custom Certificate Authority
+- Create a self-signed certificate signed by your custom CA
+- Upload a self-signed root certificate to an Application Gateway to authenticate the backend server
+
+## Prerequisites
+
+- **[OpenSSL](https://www.openssl.org/) on a computer running Windows or Linux**
+
+   While other tools might be available for certificate management, this tutorial uses OpenSSL. You can find OpenSSL bundled with many Linux distributions, such as Ubuntu.
+- **A web server**
+
+   For example, Apache, IIS, or NGINX to test the certificates.
+
+- **An Application Gateway v2 SKU**
+
+  If you don't have an existing application gateway, see [Quickstart: Direct web traffic with Azure Application Gateway - Azure portal](quick-create-portal.md).
+
+## Create a root CA certificate
+
+Create your root CA certificate by using OpenSSL.
+
+### Create the root key
+
+1. Sign in to your computer where OpenSSL is installed and run the following command. This command creates the root private key. The key isn't encrypted and isn't protected by a password, so store the *contoso.key* file securely.
+
+   ```
+   openssl ecparam -out contoso.key -name prime256v1 -genkey
+   ```
+
+### Create a root certificate and self-sign it
+
+1. Use the following command to generate the Certificate Signing Request (CSR).
+
+   ```
+   openssl req -new -sha256 -key contoso.key -out contoso.csr
+   ```
+
+1. When prompted, type the organizational information for the custom CA such as country/region, state, org, OU, and the fully qualified domain name (this domain is the issuer). Because the root key isn't password protected, OpenSSL doesn't prompt you for a password.
+
+   Screenshot of create root certificate.
+
+1. Use the following command to generate the root certificate.
+
+   ```
+   openssl x509 -req -sha256 -days 365 -in contoso.csr -signkey contoso.key -out contoso.crt
+   ```
+   The previous commands create the root certificate. You use this certificate to sign your server certificate.
+
+## Create a server certificate
+
+Next, you create a server certificate by using OpenSSL.
+
+### Create the certificate's key
+
+Use the following command to generate the key for the server certificate.
+
+   ```
+   openssl ecparam -out fabrikam.key -name prime256v1 -genkey
+   ```
+
+### Create the CSR (Certificate Signing Request)
+
+The CSR is a public key that you give to a CA when requesting a certificate. The CA issues the certificate for this specific request.
+
+> **Note:**
+> The CN (Common Name) for the server certificate must be different from the issuer's domain. For example, in this case, the CN for the issuer is `www.contoso.com` and the server certificate's CN is `www.fabrikam.com`.
+
+
+1. Use the following command to generate the CSR:
+
+   ```
+   openssl req -new -sha256 -key fabrikam.key -out fabrikam.csr
+   ```
+
+1. When prompted, type the organizational information for the custom CA: Country/Region, State, Org, OU, and the fully qualified domain name. This domain is the website's domain and it should be different from the issuer. Like the root key, the server key isn't password protected, so OpenSSL doesn't prompt you for a password.
+
+   Screenshot of server certificate.
+
+### Generate the certificate with the CSR and the key and sign it with the CA's root key
+
+1. Use the following command to create the certificate:
+
+   ```
+   openssl x509 -req -in fabrikam.csr -CA  contoso.crt -CAkey contoso.key -CAcreateserial -out fabrikam.crt -days 365 -sha256
+   ```
+### Verify the newly created certificate
+
+1. Use the following command to print the output of the CRT file and verify its content:
+
+   ```
+   openssl x509 -in fabrikam.crt -text -noout
+   ```
+
+   Screenshot of certificate verification.
+
+1. Verify the files in your directory, and ensure you have the following files:
+
+   - contoso.crt
+   - contoso.key
+   - fabrikam.crt
+   - fabrikam.key
+
+## Configure the certificate in your web server's TLS settings
+
+In your web server, configure TLS by using the fabrikam.crt and fabrikam.key files. If your web server can't take two files, you can combine them into a single .pem or .pfx file by using OpenSSL commands.
+
+### IIS
+
+For instructions on how to import certificate and upload them as server certificate on IIS, see [HOW TO: Install Imported Certificates on a Web Server in Windows Server 2003](https://support.microsoft.com/help/816794/how-to-install-imported-certificates-on-a-web-server-in-windows-server).
+
+For TLS binding instructions, see [How to Set Up SSL on IIS 7](https://learn.microsoft.com/iis/manage/configuring-security/how-to-set-up-ssl-on-iis#create-an-ssl-binding-1).
+
+### Apache
+
+The following configuration is an example [virtual host configured for SSL](https://cwiki.apache.org/confluence/display/HTTPD/NameBasedSSLVHosts) in Apache:
+
+```
+<VirtualHost www.fabrikam:443>
+      DocumentRoot /var/www/fabrikam
+      ServerName www.fabrikam.com
+      SSLEngine on
+      SSLCertificateFile /home/user/fabrikam.crt
+      SSLCertificateKeyFile /home/user/fabrikam.key
+</VirtualHost>
+```
+
+### NGINX
+
+The following configuration is an example [NGINX server block](https://nginx.org/docs/http/configuring_https_servers.html) with TLS configuration:
+
+Screenshot of NGINX with TLS.
+
+## Access the server with the self-signed certificate
+
+1. Add the root certificate to your machine's trusted root store. When you access the website, ensure the entire certificate chain is seen in the browser.
+
+   Screenshot of trusted root certificates.
+
+   > **Note:**
+   > DNS should be configured to point the web server name (in this example, `www.fabrikam.com`) to your web server's IP address. If not, you can edit the [hosts file](https://learn.microsoft.com/answers/questions/4310469/host-file) to resolve the name.
+1. Browse to your website, and click the lock icon on your browser's address box to verify the site and certificate information.
+
+## Verify the configuration with OpenSSL
+
+Or, you can use OpenSSL to verify the certificate.
+
+```
+openssl s_client -connect localhost:443 -servername www.fabrikam.com -showcerts
+```
+
+Screenshot of OpenSSL certificate verification.
+
+## Upload the root certificate to Application Gateway's backend settings
+
+Application Gateway accepts a trusted root certificate only as a Base-64 encoded X.509 certificate that uses the *.cer* file name extension. Base-64 encoded X.509 is a text encoding, and it's the encoding that the `openssl x509` command already produced for the *contoso.crt* file earlier in this article.
+
+Because *contoso.crt* already contains the public key in Base-64 encoded format, rename the file name extension from *.crt* to *.cer*. This rename changes the file name extension only. It doesn't convert the certificate's encoding, and no conversion is needed here. A certificate that isn't already Base-64 encoded requires an actual encoding conversion instead of a rename.
+
+### Azure portal
+
+To upload the trusted root certificate from the portal, select the **Backend Settings** and select **HTTPS** in the **Backend protocol**.
+
+Screenshot of adding a certificate using the portal.
+### Azure PowerShell
+
+Or, use Azure CLI or Azure PowerShell to upload the root certificate. The following Azure PowerShell steps add a trusted root certificate to the application gateway, create a health probe, create a backend setting, add a routing rule, and then apply the changes to the gateway.
+
+> **Note:**
+> These steps assume that the application gateway *appgwv2* in the resource group *rgOne*, the backend pool *testbackendpool*, and the listener *basichttps* already exist. Run the steps in order in the same PowerShell session, because each step uses the `$gw` object that the first step retrieves.
+
+#### Step 1: Add the trusted root certificate
+
+This step assumes that the application gateway *appgwv2* already exists in the resource group *rgOne*. It retrieves the gateway into the `$gw` variable that every later step uses, and uploads the *contoso.cer* file that you renamed earlier.
+
+```azurepowershell
+## Add the trusted root certificate to the Application Gateway
+
+$gw=Get-AzApplicationGateway -Name appgwv2 -ResourceGroupName rgOne
+
+Add-AzApplicationGatewayTrustedRootCertificate `
+   -ApplicationGateway $gw `
+   -Name CustomCARoot `
+   -CertificateFile "C:\Users\surmb\Downloads\contoso.cer"
+
+$trustedroot = Get-AzApplicationGatewayTrustedRootCertificate `
+   -Name CustomCARoot `
+   -ApplicationGateway $gw
+```
+
+#### Step 2: Create the health probe
+
+This step assumes that you have the `$gw` variable from step 1. It creates an HTTPS probe for `www.fabrikam.com` and stores it in the `$probe` variable.
+
+```azurepowershell
+Add-AzApplicationGatewayProbeConfig `
+  -ApplicationGateway $gw `
+  -Name testprobe `
+  -Protocol Https `
+  -HostName "www.fabrikam.com" `
+  -Path "/" `
+  -Interval 15 `
+  -Timeout 20 `
+  -UnhealthyThreshold 3
+
+$probe = Get-AzApplicationGatewayProbeConfig `
+  -Name testprobe `
+  -ApplicationGateway $gw
+```
+
+#### Step 3: Create the backend setting
+
+This step assumes that you have the `$gw`, `$trustedroot`, and `$probe` variables from the previous steps. It creates the backend setting that uses the trusted root certificate and the probe.
+
+```azurepowershell
+## Add the configuration to the HTTP Setting and don't forget to set the "hostname" field
+## to the domain name of the server certificate as this will be set as the SNI header and
+## will be used to verify the backend server's certificate. Note that TLS handshake will
+## fail otherwise and might lead to backend servers being deemed as Unhealthy by the probes
+
+Add-AzApplicationGatewayBackendHttpSettings `
+  -ApplicationGateway $gw `
+  -Name testbackend `
+  -Port 443 `
+  -Protocol Https `
+  -Probe $probe `
+  -TrustedRootCertificate $trustedroot `
+  -CookieBasedAffinity Disabled `
+  -RequestTimeout 20 `
+  -HostName www.fabrikam.com
+
+$backendhttp = Get-AzApplicationGatewayBackendHttpSettings `
+  -Name testbackend `
+  -ApplicationGateway $gw
+```
+
+#### Step 4: Create the routing rule
+
+This step assumes that you have the `$gw` variable from step 1 and the `$backendhttp` variable from step 3, and that the listener *basichttps* and the backend pool *testbackendpool* already exist on the gateway.
+
+```azurepowershell
+$listener = Get-AzApplicationGatewayHttpListener `
+   -Name basichttps `
+   -ApplicationGateway $gw
+
+$bepool = Get-AzApplicationGatewayBackendAddressPool `
+  -Name testbackendpool `
+  -ApplicationGateway $gw
+
+Add-AzApplicationGatewayRequestRoutingRule `
+  -ApplicationGateway $gw `
+  -Name testrule `
+  -RuleType Basic `
+  -BackendHttpSettings $backendhttp `
+  -HttpListener $listener `
+  -BackendAddressPool $bepool
+```
+
+#### Step 5: Update the application gateway
+
+The previous steps change the `$gw` object in memory only. This step assumes that you have the `$gw` variable from step 1 with all the previous changes applied, and commits those changes to the gateway in Azure.
+
+```azurepowershell
+Set-AzApplicationGateway -ApplicationGateway $gw
+```
+
+### Verify the application gateway backend health
+
+1. Select the **Backend Health** view of your application gateway to check if the probe is healthy.
+1. You should see that the Status is **Healthy** for the HTTPS probe.
+
+Screenshot of HTTPS probe.
+
+## Next steps
+
+To learn more about SSL\TLS in Application Gateway, see [Overview of TLS termination and end to end TLS with Application Gateway](ssl-overview.md).

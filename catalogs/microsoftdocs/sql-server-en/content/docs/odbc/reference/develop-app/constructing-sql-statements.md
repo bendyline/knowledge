@@ -1,0 +1,21 @@
+---
+title: "Constructing SQL Statements"
+description: "Constructing SQL Statements"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Constructing SQL Statements
+SQL statements can be constructed in one of three ways: hard-coded during development, constructed at run time, or entered directly by the user.  
+  
+ This section contains the following topics.  
+  
+-   [Hard-Coded SQL Statements](hard-coded-sql-statements.md)  
+  
+-   [SQL Statements Constructed at Run Time](sql-statements-constructed-at-run-time.md)  
+  
+-   [SQL Statements Entered by the User](sql-statements-entered-by-the-user.md)

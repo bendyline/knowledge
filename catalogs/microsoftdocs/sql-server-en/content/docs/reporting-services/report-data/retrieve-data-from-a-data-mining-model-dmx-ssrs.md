@@ -1,0 +1,89 @@
+---
+title: "Retrieve Data from a Data Mining Model (DMX)"
+description: Learn how to use the data from a SQL Server Analysis Services (SSAS) data mining model in your report.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "retrieving report data"
+  - "datasets [Reporting Services], with DMX queries"
+  - "datasets [Reporting Services], Analysis Services"
+  - "queries [Reporting Services], data mining prediction"
+---
+# Retrieve Data from a Data Mining Model (DMX) (SSRS)
+  To use data from a  SQL Server 
+  Analysis Services 
+ data mining model in your report, you must define a  SQL Server 
+  Analysis Services 
+ data source and one or more report datasets. When you create the data source definition, you must specify a connection string and credentials so that you can access the data source from your client computer.  
+  
+ You can create an embedded data source definition for use by a single report or a shared data source definition that can be used by multiple reports. The procedures in this topic describe how to create an embedded data source. For more information about shared data sources, see [Embedded and Shared Data Connections or Data Sources (Report Builder and SSRS)](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md) and [Create, Modify, and Delete Shared Data Sources (SSRS)](create-modify-and-delete-shared-data-sources-ssrs.md).  
+  
+ After you create a  SQL Server 
+  Analysis Services 
+ data source, you can create one or more datasets. For each dataset, you use a Data Mining Prediction Expression (DMX) query designer to create a DMX query that specifies the field collection. For more information, see [Analysis Services DMX Query Designer User Interface](analysis-services-dmx-query-designer-user-interface.md).  
+  
+ After you create a dataset, the name of the dataset appears in the Report Data pane as a node under its data source.  
+  
+ After you publish your report, you may need to change the credentials for the data source so that when the report runs on the report server, the permissions to retrieve the data are valid.  
+  
+### To create an embedded Microsoft SQL Server Analysis Services data source  
+  
+1.  On the toolbar in the Report Data pane, click **New**, and then click **Data Source**.  
+  
+2.  In the **Data Source Properties** dialog box, type a name in the **Name** text box, or accept the default name.  
+  
+3.  Verify that **Embedded connection** is selected.  
+  
+4.  From the **Type** dropdown list, select **Microsoft SQL Server Analysis Services**.  
+  
+5.  Specify a connection string that works with your  Analysis Services 
+ data source.  
+  
+     Contact your database administrator for connection information and for the credentials to use to connect to the data source. The following connection string example specifies the sample  `AdventureWorksDW2025`  database on the local client.  
+  
+    ```  
+    Data Source=localhost;Initial Catalog=AdventureWorksDW2022  
+    ```  
+  
+6.  Click **Credentials**.  
+  
+     Set the credentials to use to connect to the data source. For more information, see [Specify Credential and Connection Information for Report Data Sources](specify-credential-and-connection-information-for-report-data-sources.md).  
+  
+    > **Note:**  
+    >  To test the data source connection, click **Edit**. In the **Connection Properties** dialog box, click **Test Connection**. If the test is successful, you will see the information message "Test connection succeeded." If the test fails, you will see a warning message with more information about why the test was not successful.  
+  
+7.  Select **OK**.
+  
+     The data source appears in the Report Data pane.  
+  
+### To create a dataset for a Microsoft SQL Server Analysis Services  
+  
+1.  In the **Report Data** pane, right-click the name of the data source that connects to a  SQL Server 
+  Analysis Services 
+ data source, and then click **Add Dataset**.  
+  
+2.  In the **Dataset Properties** dialog box, type a name in the **Name** text box.  
+  
+3.  In the **Data source box**, verify that the name is the name of a data source that connects to an  Analysis Services 
+ data source.  
+  
+4.  Click **Query Designer** to open the graphical query designer to build a query interactively. If the query designer opens in MDX mode, click **Command Type DMX** (Change to DMX query language view) on the toolbar to switch to the data mining query designer. For more information, see [Analysis Services DMX Query Designer User Interface](analysis-services-dmx-query-designer-user-interface.md).  
+  
+     Alternatively, to import an existing DMX query from another report, click **Import**, and then navigate to the .rdl file with the DMX query. Importing a query from an .dmx file is not supported.  
+  
+5.  After you create and run your query to see sample results, click **OK**.  
+  
+6.  Select **OK**.
+  
+     The dataset and its field collection appear in the Report Data pane under the data source node.  
+  
+## Related content
+
+- [Analysis Services Connection Type for DMX (SSRS)](analysis-services-connection-type-for-dmx-ssrs.md)
+- [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)
+- [Dataset Fields Collection (Report Builder and SSRS)](dataset-fields-collection-report-builder-and-ssrs.md)
+- [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md)

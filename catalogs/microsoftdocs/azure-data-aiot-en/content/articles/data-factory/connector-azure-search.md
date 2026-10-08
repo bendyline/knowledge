@@ -1,0 +1,235 @@
+---
+title: Copy data to Search index
+description: Learn about how to push or copy data to an Azure search index using the Copy Activity in an Azure Data Factory or Synapse Analytics pipeline.
+titleSuffix: Azure Data Factory & Azure Synapse
+ms.author: tinglee
+author: simplywilson
+ms.subservice: data-movement
+ms.topic: how-to
+ms.custom: synapse
+ms.date: 06/22/2026
+ms.update-cycle: 1095-days
+---
+
+# Copy data to an Azure AI Search index using Azure Data Factory or Synapse Analytics
+
+**APPLIES TO:** Azure Data Factory Azure Synapse Analytics
+
+
+
+> **Tip:**
+> [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory) is the next generation of Azure Data Factory, with a simpler architecture, built-in AI, and new features. If you're new to data integration, start with Fabric Data Factory. Existing ADF workloads can upgrade to Fabric to access new capabilities across data science, real-time analytics, and reporting.
+>
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Upgrade from Azure Data Factory to Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/migrate-planning-azure-data-factory).
+
+
+This article outlines how to use the Copy Activity in an Azure Data Factory or Synapse Analytics pipeline to copy data into Azure AI Search index. It builds on the [copy activity overview](copy-activity-overview.md) article that presents a general overview of copy activity.
+
+> **Note:**
+> This connector is also available in [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/data-factory-overview). For Fabric-specific configuration and features, see the [Fabric Azure AI Search connector documentation](https://learn.microsoft.com/fabric/data-factory/connector-azure-search-overview).
+
+
+## Supported capabilities
+
+This Azure AI Search connector is supported for the following capabilities:
+
+| Supported capabilities | IR | Managed private endpoint |
+| --- | --- | --- |
+| [Copy activity](copy-activity-overview.md) (-/sink) | &#9312; &#9313; | ✓ |
+
+*&#9312; Azure integration runtime &#9313; Self-hosted integration runtime*
+
+You can copy data from any supported source data store into search index. For a list of data stores that are supported as sources/sinks by the copy activity, see the [Supported data stores](copy-activity-overview.md#supported-data-stores-and-formats) table.
+
+## Getting started
+
+<!--
+    Separate the generic "Get started" paragraph from each connector-* article in azure-docs-pr/ to ease future central update.
+-->
+
+To perform the copy activity with a pipeline, you can use one of the following tools or SDKs:
+
+- [Copy Data tool](quickstart-hello-world-copy-data-tool.md)
+- [Azure portal](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/data-factory/quickstart-create-data-factory-portal.md)
+- [.NET SDK](quickstart-create-data-factory-dot-net.md)
+- [Python SDK](quickstart-create-data-factory-python.md)
+- [Azure PowerShell](quickstart-create-data-factory-powershell.md)
+- [REST API](quickstart-create-data-factory-rest-api.md)
+- [Azure Resource Manager template](quickstart-create-data-factory-resource-manager-template.md)
+
+
+## Create a linked service to Azure AI Search using UI
+
+Use the following steps to create a linked service to Azure AI Search in the Azure portal UI.
+
+1. Browse to the Manage tab in your Azure Data Factory or Synapse workspace and select Linked Services, then select New:
+
+    # [Azure Data Factory](#tab/data-factory)
+
+    Create a new linked service with Azure Data Factory UI.
+
+    # [Azure Synapse](#tab/synapse-analytics)
+
+    Create a new linked service with Azure Synapse UI.
+
+2. Search for Search and select the Azure AI Search connector.
+
+   Select the Azure AI Search connector.
+
+
+1. Configure the service details, test the connection, and create the new linked service.
+
+   Configure a linked service to Azure AI Search.
+
+## Connector configuration details
+
+The following sections provide details about properties that are used to define Data Factory entities specific to Azure AI Search connector.
+
+## Linked service properties
+
+The following properties are supported for Azure AI Search linked service:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The type property must be set to: **AzureSearch** | Yes |
+| url | URL for the search service. | Yes |
+| key | Admin key for the search service. Mark this field as a SecureString to store it securely, or [reference a secret stored in Azure Key Vault](store-credentials-in-key-vault.md). | Yes |
+| connectVia | The [Integration Runtime](concepts-integration-runtime.md) to be used to connect to the data store. You can use Azure Integration Runtime or Self-hosted Integration Runtime (if your data store is located in private network). If not specified, it uses the default Azure Integration Runtime. | No |
+
+> **Important:**
+> When copying data from a cloud data store into search index, in Azure AI Search linked service, you need to refer an Azure Integration Runtime with explicit region in connectVia. Set the region as the one where your search service resides. Learn more from [Azure Integration Runtime](concepts-integration-runtime.md#azure-integration-runtime).
+
+**Example:**
+
+```json
+{
+    "name": "AzureSearchLinkedService",
+    "properties": {
+        "type": "AzureSearch",
+        "typeProperties": {
+            "url": "https://<service>.search.windows.net",
+            "key": {
+                "type": "SecureString",
+                "value": "<AdminKey>"
+            }
+        },
+        "connectVia": {
+            "referenceName": "<name of Integration Runtime>",
+            "type": "IntegrationRuntimeReference"
+        }
+    }
+}
+```
+
+## Dataset properties
+
+For a full list of sections and properties available for defining datasets, see the [datasets](concepts-datasets-linked-services.md) article. This section provides a list of properties supported by Azure AI Search dataset.
+
+To copy data into Azure AI Search, the following properties are supported:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The type property of the dataset must be set to: **AzureSearchIndex** | Yes |
+| indexName | Name of the search index. The service doesn't create the index. The index must exist in Azure AI Search. | Yes |
+
+**Example:**
+
+```json
+{
+    "name": "AzureSearchIndexDataset",
+    "properties": {
+        "type": "AzureSearchIndex",
+        "typeProperties" : {
+            "indexName": "products"
+        },
+        "schema": [],
+        "linkedServiceName": {
+            "referenceName": "<Azure AI Search linked service name>",
+            "type": "LinkedServiceReference"
+        }
+   }
+}
+```
+
+## Copy activity properties
+
+For a full list of sections and properties available for defining activities, see the [Pipelines](concepts-pipelines-activities.md) article. This section provides a list of properties supported by Azure AI Search source.
+
+### Azure AI Search as sink
+
+To copy data into Azure AI Search, set the source type in the copy activity to **AzureSearchIndexSink**. The following properties are supported in the copy activity **sink** section:
+
+| Property | Description | Required |
+| :--- | :--- | :--- |
+| type | The type property of the copy activity source must be set to: **AzureSearchIndexSink** | Yes |
+| writeBehavior | Specifies whether to merge or replace when a document already exists in the index. See the [WriteBehavior property](#writebehavior-property).<br/><br/>Allowed values are: **Merge** (default), and **Upload**. | No |
+| writeBatchSize | Uploads data into the search index when the buffer size reaches writeBatchSize. See the [WriteBatchSize property](#writebatchsize-property) for details.<br/><br/>Allowed values are: integer 1 to 1,000; default is 1000. | No |
+| maxConcurrentConnections | The upper limit of concurrent connections established to the data store during the activity run. Specify a value only when you want to limit concurrent connections. | No |
+
+### WriteBehavior property
+
+AzureSearchSink upserts when writing data. In other words, when writing a document, if the document key already exists in the search index, Azure AI Search updates the existing document rather than throwing a conflict exception.
+
+The AzureSearchSink provides the following two upsert behaviors (by using AzureSearch SDK):
+
+- **Merge**: combine all the columns in the new document with the existing one. For columns with null value in the new document, the value in the existing one is preserved.
+- **Upload**: The new document replaces the existing one. For columns not specified in the new document, the value is set to null whether there's a non-null value in the existing document or not.
+
+The default behavior is **Merge**.
+
+### WriteBatchSize Property
+
+Azure AI Search service supports writing documents as a batch. A batch can contain 1 to 1,000 Actions. An action handles one document to perform the upload/merge operation.
+
+**Example:**
+
+```json
+"activities":[
+    {
+        "name": "CopyToAzureSearch",
+        "type": "Copy",
+        "inputs": [
+            {
+                "referenceName": "<input dataset name>",
+                "type": "DatasetReference"
+            }
+        ],
+        "outputs": [
+            {
+                "referenceName": "<Azure AI Search output dataset name>",
+                "type": "DatasetReference"
+            }
+        ],
+        "typeProperties": {
+            "source": {
+                "type": "<source type>"
+            },
+            "sink": {
+                "type": "AzureSearchIndexSink",
+                "writeBehavior": "Merge"
+            }
+        }
+    }
+]
+```
+
+## Data type support
+
+The following table specifies whether an Azure AI Search data type is supported or not.
+
+| Azure AI Search data type | Supported in Azure AI Search Sink |
+| --- | --- |
+| String | Y |
+| Int32 | Y |
+| Int64 | Y |
+| Double | Y |
+| Boolean | Y |
+| DataTimeOffset | Y |
+| String Array | N |
+| GeographyPoint | N |
+
+Currently other data types e.g. ComplexType aren't supported. For a full list of Azure AI Search supported data types, see [Supported data types (Azure AI Search)](https://learn.microsoft.com/rest/api/searchservice/supported-data-types).
+
+## Related content
+For a list of data stores supported as sources and sinks by the copy activity, see [supported data stores](copy-activity-overview.md#supported-data-stores-and-formats).

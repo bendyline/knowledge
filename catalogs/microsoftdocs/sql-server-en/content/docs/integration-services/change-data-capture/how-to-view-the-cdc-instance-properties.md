@@ -1,0 +1,37 @@
+---
+title: "How to View the CDC Instance Properties"
+description: "How to View the CDC Instance Properties"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+---
+# How to View the CDC Instance Properties
+
+
+> **Important:**
+> Change Data Capture for Oracle by Attunity is deprecated now. For details, refer to [the announcement](https://www.microsoft.com/sql-server/blog/2024/02/28/sql-server-integration-services-ssis-change-data-capture-attunity-feature-deprecations/).
+
+  This procedure describes how to use the CDC Designer Console to view information about the instances that you create to help manage the operation of the instances.  
+  
+### To view information about a specific instance  
+  
+1.  From the **Start** menu, select the **CDC Designer Console**.  
+  
+2.  In the left pane, expand **Change Data Capture** then expand the service that contains the instance you want to view.  
+  
+3.  Select the name of an instance you want to work with.  
+  
+     The information about the instance is displayed in the center part of the CDC Designer Console. It is divided into four tabs. All of the tabs are read only.  
+  
+     **Status**  
+     This tab displays the information about the current status of the change data capture for the instance. For information about what is displayed in this tab, see the **Viewer Tabs** section in [Manage a CDC Instance](manage-a-cdc-instance.md).  
+  
+     **Oracle**  
+     This tab displays general information about the CDC instance and the Oracle source database. For information about what is displayed in this tab, see [Edit the Oracle Database Properties](edit-the-oracle-database-properties.md).  
+  
+     **Tables**  
+     This tab displays information about the tables included in the change data capture. It also lists the columns that are captured. For information about what is displayed in this tab, see [Edit Tables](edit-tables.md).  
+  
+     **Advanced**  
+     This tab displays a list of advanced properties that you define in the properties editor. For information about what is displayed in this tab, see [Edit the Advanced Properties](edit-the-advanced-properties.md).

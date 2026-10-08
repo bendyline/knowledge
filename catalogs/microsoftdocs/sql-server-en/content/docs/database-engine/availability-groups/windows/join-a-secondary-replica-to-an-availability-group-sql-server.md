@@ -1,0 +1,116 @@
+---
+title: "Join a secondary replica to an availability group"
+description: "Steps to join a secondary replica to an Always On availability group using either Transact-SQL (T-SQL), PowerShell, or SQL Server Management Studio."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "08/25/2025"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: how-to
+f1_keywords:
+  - "sql13.swb.availabilitygroup.joinreplica.f1"
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], availability replicas"
+  - "Availability Groups [SQL Server], joining"
+  - "Availability Groups [SQL Server], configuring"
+---
+# Join a secondary replica to an Always On availability group
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to join a secondary replica to an Always On availability group by using  SQL Server Management Studio 
+,  Transact-SQL , or PowerShell in  SQL Server 
+. After a secondary replica is added to an Always On availability group, the secondary replica must be joined to the availability group. 
+
+<a id="Prerequisites"></a>
+
+## Prerequisites
+
+- The primary replica of the availability group must currently be online.    
+- The instance that you intend on joining to the availability group has already been [added as a secondary replica](add-a-secondary-replica-to-an-availability-group-sql-server.md).
+- To use SQL Server Management Studio (SSMS), you must be connected to the server instance that hosts a primary replica. To use Transact-SQL or PowerShell, you must be connected to, and execute the commands from, the secondary replica.
+- The local server instance must be able to connect to the database mirroring endpoint of the server instance that is hosting the secondary replica.  
+  
+> **Important:**  
+>  If any prerequisite is not met, the join operation fails. After a failed join attempt, you might need to connect to the server instance that hosts the primary replica to remove and re-add the secondary replica before you can join it to the availability group. For more information, see [Remove a Secondary Replica from an Availability Group](remove-a-secondary-replica-from-an-availability-group-sql-server.md) and [Add a Secondary Replica to an Availability Group](add-a-secondary-replica-to-an-availability-group-sql-server.md).  
+  
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires **ALTER AVAILABILITY GROUP** permission on the availability group, **CONTROL AVAILABILITY GROUP** permission, **ALTER ANY AVAILABILITY GROUP** permission, or **CONTROL SERVER** permission.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+ **To join an availability replica to an availability group**  
+  
+1. In **Object Explorer**, connect to the server instance that hosts the primary replica, and expand the server tree.  
+
+1. Expand the **Always On High Availability** node and the **Availability Groups** node.  
+  
+1. Select the availability group of the connected, but not yet joined, secondary replica.  
+
+1. Right-click the secondary replica, and select **Join to Availability Group**.  
+
+1. The **Connect to Server** dialog box appears. Select **Connect** to open the **Join Replica to Availability Group** dialog box.  
+
+1.  To join the secondary replica to the availability group, select **OK**.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+ **To join an availability replica to an availability group**  
+  
+1.  Connect to the server instance that hosts the secondary replica.  
+  
+2.  Use the [ALTER AVAILABILITY GROUP](../../../t-sql/statements/alter-availability-group-transact-sql.md) statement, as follows:  
+  
+     ALTER AVAILABILITY GROUP *group_name* JOIN  
+  
+     where *group_name* is the name of the availability group.  
+  
+     The following example, joins the secondary replica to the `MyAG` availability group.  
+  
+    ```  
+    ALTER AVAILABILITY GROUP MyAG JOIN;  
+    ```  
+  
+    > **Note:**  
+    >  To see this  Transact-SQL  statement used in context, see [Create an Availability Group (Transact-SQL)](create-an-availability-group-transact-sql.md).  
+  
+##  <a name="PowerShellProcedure"></a> Using PowerShell  
+ **To join an availability replica to an availability group**  
+  
+ In the  SQL Server 
+ PowerShell provider:  
+  
+1.  Change directory (**cd**) to the server instance that hosts the secondary replica.  
+  
+2.  Join the secondary replica to the availability group by executing the **Join-SqlAvailabilityGroup** cmdlet with the name of the availability group.  
+  
+     For example, the following command joins a secondary replica hosted by the server instance located at the specified path to the availability group named `MyAg`.  This server instance must host a secondary replica in this availability group.  
+  
+    ```  
+    Join-SqlAvailabilityGroup -Path SQLSERVER:\SQL\SecondaryServer\InstanceName -Name 'MyAg'  
+    ```  
+  
+    > **Note:**  
+    >  To view the syntax of a cmdlet, use the **Get-Help** cmdlet in the  SQL Server 
+ PowerShell environment. For more information, see [Get Help SQL Server PowerShell](https://learn.microsoft.com/powershell/sql-server/sql-server-powershell).  
+  
+ **To set up and use the SQL Server PowerShell provider**  
+  
+-   [SQL Server PowerShell Provider](https://learn.microsoft.com/powershell/sql-server/sql-server-powershell-provider)  
+  
+##  <a name="FollowUp"></a> Follow Up: Configure Secondary Databases  
+ For every database in the availability group, you need a secondary database on the server instance that is hosting the secondary replica. You can configure secondary databases either before or after you join a secondary replica to an availability group, as follows:  
+  
+1.  Restore recent database and log backups of each primary database onto the server instance that hosts the secondary replica, using RESTORE WITH NORECOVERY for every restore operation. For more information, see [Manually Prepare a Secondary Database for an Availability Group (SQL Server)](manually-prepare-a-secondary-database-for-an-availability-group-sql-server.md).  
+  
+2.  Join each secondary database to the availability group. For more information, see [Join a Secondary Database to an Availability Group (SQL Server)](join-a-secondary-database-to-an-availability-group-sql-server.md).  
+  
+## Related content
+
+- [Reference for the creation and configuration of Always On availability groups](creation-and-configuration-of-availability-groups-sql-server.md)
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Troubleshoot Always On Availability Groups Configuration (SQL Server)](troubleshoot-always-on-availability-groups-configuration-sql-server.md)

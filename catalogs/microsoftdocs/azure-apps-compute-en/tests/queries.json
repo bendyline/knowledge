@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Azure Functions overview",
+    "expectedDocumentIds": [
+      "articles/azure-functions/functions-overview"
+    ]
+  }
+]

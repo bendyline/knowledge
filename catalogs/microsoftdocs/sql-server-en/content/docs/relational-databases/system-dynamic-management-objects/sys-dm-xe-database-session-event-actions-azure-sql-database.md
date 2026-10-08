@@ -1,0 +1,60 @@
+---
+title: "sys.dm_xe_database_session_event_actions"
+description: The sys.dm_xe_database_session_event_actions dynamic management view (DMV) returns information about event session actions for active database-scoped sessions.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/29/2025
+ms.service: azure-sql-database
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.dm_xe_database_session_event_actions
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+The `sys.dm_xe_database_session_event_actions` dynamic management view (DMV) returns information about event session actions for *active* database-scoped sessions. Actions are executed when events are fired. This management view aggregates statistics about the number of times an action has run, and the total run time of the action. For information on all actions in database-scoped sessions, see [sys.database_event_session_actions](../system-catalog-views/sys-database-event-session-actions-azure-sql-database.md).
+
+- Azure SQL Database and SQL database in Fabric support only [database-scoped sessions](https://learn.microsoft.com/azure/azure-sql/database/xevent-db-diff-from-svr). 
+- Azure SQL Managed Instance supports both database-scoped sessions and [server-scoped sessions](../extended-events/extended-events.md). Server-scoped sessions are recommended for SQL managed instances. For more information, see [CREATE EVENT SESSION code examples](../../t-sql/statements/create-event-session-transact-sql.md#code-examples-can-differ-for-azure-sql-database-and-sql-managed-instance).
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `event_session_address` | **varbinary(8)** | The memory address of the event session. Is not nullable. |
+| `action_name` | **nvarchar(60)** | The name of the action. Is not nullable. |
+| `action_package_guid` | **uniqueidentifier** | The GUID for the package that contains the action. Is not nullable. |
+| `event_name` | **nvarchar(60)** | The name of the event that the action is bound to. Is not nullable. |
+| `event_package_guid` | **uniqueidentifier** | The GUID for the package that contains the event. Is not nullable. |
+  
+## Permissions  
+
+Requires the VIEW DATABASE STATE permission.  
+  
+### Relationship cardinalities  
+  
+| From | To | Relationship |
+| --- | --- | --- |
+| `sys.dm_xe_database_session_event_actions.event_session_address` | `sys.dm_xe_database_sessions.address` | Many-to-one |
+| `sys.dm_xe_database_session_event_actions.action_name`<br /><br /> `sys.dm_xe_session_event_actions.action_package_guid` | `sys.dm_xe_objects.name`<br /><br /> `sys.dm_xe_database_session_events.event_package_guid` | Many-to-one |
+| `sys.dm_xe_database_session_event_actions.event_name`<br /><br /> `sys.dm_xe_database_session_event_actions.event_package_guid` | `sys.dm_xe_objects.name`<br /><br /> `sys.dm_xe_objects.package_guid` | Many-to-one |
+  
+## Related content
+
+- [Extended Events in Azure SQL](https://learn.microsoft.com/azure/azure-sql/database/xevent-db-diff-from-svr)
+- [Create an event session with an event_file target in Azure Storage](https://learn.microsoft.com/azure/azure-sql/database/xevent-code-event-file)
+- [sys.dm_xe_database_session_targets](sys-dm-xe-database-session-targets-azure-sql-database.md)
+- [sys.dm_xe_database_sessions](sys-dm-xe-database-sessions-azure-sql-database.md)
+- [Monitor performance using dynamic management views](https://learn.microsoft.com/azure/azure-sql/database/monitoring-with-dmvs)

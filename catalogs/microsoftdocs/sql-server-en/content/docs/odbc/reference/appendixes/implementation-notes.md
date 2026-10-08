@@ -1,0 +1,24 @@
+---
+title: "Implementation Notes"
+description: "Implementation Notes"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# Implementation Notes
+> **Important:**  
+>  This feature will be removed in a future version of Windows. Avoid using this feature in new development work and plan to modify applications that currently use this feature. Microsoft recommends using the driver's cursor functionality.  
+  
+ This section describes how the ODBC cursor library is implemented. It describes how the cursor library maintains its cache, executes SQL statements, and implements ODBC functions.  
+  
+ This section contains the following topics.  
+  
+-   [Cursor Library Cache](cursor-library-cache.md)  
+  
+-   [Processing SQL Statements](processing-sql-statements.md)  
+  
+-   [ODBC Functions and the Cursor Library](odbc-functions-and-the-cursor-library.md)

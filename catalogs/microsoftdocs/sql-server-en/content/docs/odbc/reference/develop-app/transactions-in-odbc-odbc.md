@@ -1,0 +1,25 @@
+---
+title: "Transactions in ODBC"
+description: "Transactions in ODBC"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "transactions [ODBC], about transactions"
+---
+# Transactions in ODBC
+Transactions in ODBC are completed at the connection level; that is, when an application completes a transaction, it commits or rolls back all work done through all statement handles on that connection.  
+  
+ This section contains the following topics.  
+  
+-   [Transaction Support](transaction-support.md)  
+  
+-   [Commit Mode](commit-mode.md)  
+  
+-   [Committing and Rolling Back Transactions](committing-and-rolling-back-transactions.md)  
+  
+-   [Effect of Transactions on Cursors and Prepared Statements](effect-of-transactions-on-cursors-and-prepared-statements.md)

@@ -1,0 +1,171 @@
+---
+title: "SQL Server Management Objects support - in-memory OLTP"
+description: Learn which items in SQL Server Management Objects (SMO) support In-Memory OLTP. Review types and members in the Microsoft.SqlServer.Management.Smo namespace.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "08/18/2017"
+ms.service: sql
+ms.subservice: in-memory-oltp
+ms.topic: reference
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# SQL Server Management Objects Support for In-Memory OLTP
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+This topic describes items in SQL Server Management Objects (SMO) that support In-Memory OLTP.  
+
+## SMO types and members
+
+The following types and members are in the namespace **Microsoft.SqlServer.Management.Smo**, and they support In-Memory OLTP:
+
+- **[Microsoft.SqlServer.Management.Smo.DurabilityType](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.DurabilityType)** (enumeration)
+- FileGroup.**[Microsoft.SqlServer.Management.Smo.FileGroup.FileGroupType%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.FileGroup.FileGroupType%252A)** (property)
+- FileGroup.**[Microsoft.SqlServer.Management.Smo.FileGroup.%23ctor%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.FileGroup.%2523ctor%252A)** (constructor)
+- **[Microsoft.SqlServer.Management.Smo.FileGroupType](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.FileGroupType)** (enumeration)
+- Index.**[Microsoft.SqlServer.Management.Smo.Index.BucketCount%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.Index.BucketCount%252A)** (property)
+- IndexType.**[Microsoft.SqlServer.Management.Smo.IndexType.NonClusteredHashIndex](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.IndexType.NonClusteredHashIndex)** (enumeration member)
+- Index.**[Microsoft.SqlServer.Management.Smo.Index.IsMemoryOptimized%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.Index.IsMemoryOptimized%252A)** (property)
+- Server.**[Microsoft.SqlServer.Management.Smo.Server.IsXTPSupported%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.Server.IsXTPSupported%252A)** (property)
+- StoredProcedure.**[Microsoft.SqlServer.Management.Smo.StoredProcedure.IsNativelyCompiled%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure.IsNativelyCompiled%252A)** (property)
+- StoredProcedure.**[Microsoft.SqlServer.Management.Smo.StoredProcedure.IsSchemaBound%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure.IsSchemaBound%252A)** (property)
+- Table.**[Microsoft.SqlServer.Management.Smo.Table.Durability%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.Table.Durability%252A)** (property)
+- Table.**[Microsoft.SqlServer.Management.Smo.Table.IsMemoryOptimized%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.Table.IsMemoryOptimized%252A)** (property)
+- UserDefinedTableType.**[Microsoft.SqlServer.Management.Smo.UserDefinedTableType.IsMemoryOptimized%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.UserDefinedTableType.IsMemoryOptimized%252A)** (property)
+
+## C# code example
+
+#### Assemblies referenced by the compiled code example
+
+- Microsoft.SqlServer.ConnectionInfo.dll
+- Microsoft.SqlServer.Management.Sdk.Sfc.dll
+- Microsoft.SqlServer.Smo.dll
+- Microsoft.SqlServer.SqlEnum.dll
+
+#### Actions taken in the code example
+
+1. Create a database with memory-optimized filegroup and memory-optimized file.  
+2. Create a durable memory-optimized table with a primary key, nonclustered index, and a nonclustered hash index.  
+3. Create columns and indexes.  
+4. Create a user-defined memory-optimized table type.  
+5. Create a natively compiled stored procedure.
+
+#### Source code
+  
+```csharp
+using Microsoft.SqlServer.Management.Smo;  
+using System;  
+  
+public class A {  
+   static void Main(string[] args) {  
+      Server server = new Server("(local)");  
+  
+      // Create a database with memory-optimized filegroup and memory-optimized file.
+      Database db = new Database(server, "MemoryOptimizedDatabase");  
+      db.Create();  
+      FileGroup fg = new FileGroup(
+         db,
+         "memOptFilegroup",
+         FileGroupType.MemoryOptimizedDataFileGroup);  
+      db.FileGroups.Add(fg);  
+      fg.Create();  
+      // Change this path if needed.
+      DataFile file = new DataFile(
+         fg,
+         "memOptFile",
+         @"C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\MSSQLmemOptFileName");  
+      file.Create();  
+  
+      // Create a durable memory-optimized table with primary key, nonclustered index and nonclustered hash index.
+      // Define the table as memory optimized and set the durability.
+      Table table = new Table(db, "memOptTable");  
+      table.IsMemoryOptimized = true;  
+      table.Durability = DurabilityType.SchemaAndData;  
+  
+      // Create columns.
+      Column col1 = new Column(table, "col1", DataType.Int);  
+      col1.Nullable = false;  
+      table.Columns.Add(col1);  
+      Column col2 = new Column(table, "col2", DataType.Float);  
+      col2.Nullable = false;  
+      table.Columns.Add(col2);  
+      Column col3 = new Column(table, "col3", DataType.Decimal(2, 10));  
+      col3.Nullable = false;  
+      table.Columns.Add(col3);  
+  
+      // Create indexes.
+      Index pk = new Index(table, "PK_memOptTable");  
+      pk.IndexType = IndexType.NonClusteredIndex;  
+      pk.IndexKeyType = IndexKeyType.DriPrimaryKey;  
+      pk.IndexedColumns.Add(new IndexedColumn(pk, col1.Name));  
+      table.Indexes.Add(pk);  
+  
+      Index ixNonClustered = new Index(table, "ix_nonClustered");  
+      ixNonClustered.IndexType = IndexType.NonClusteredIndex;  
+      ixNonClustered.IndexKeyType = IndexKeyType.None;  
+      ixNonClustered.IndexedColumns.Add(
+         new IndexedColumn(ixNonClustered, col2.Name));  
+      table.Indexes.Add(ixNonClustered);  
+  
+      Index ixNonClusteredHash = new Index(table, "ix_nonClustered_Hash");  
+      ixNonClusteredHash.IndexType = IndexType.NonClusteredHashIndex;  
+      ixNonClusteredHash.IndexKeyType = IndexKeyType.None;  
+      ixNonClusteredHash.BucketCount = 1024;  
+      ixNonClusteredHash.IndexedColumns.Add(
+         new IndexedColumn(ixNonClusteredHash, col3.Name));  
+      table.Indexes.Add(ixNonClusteredHash);  
+  
+      table.Create();  
+  
+      // Create a user-defined memory-optimized table type.
+      UserDefinedTableType uDTT = new UserDefinedTableType(db, "memOptUDTT");  
+      uDTT.IsMemoryOptimized = true;  
+  
+      // Add columns.
+      Column udTTCol1 = new Column(uDTT, "udtCol1", DataType.Int);  
+      udTTCol1.Nullable = false;  
+      uDTT.Columns.Add(udTTCol1);  
+      Column udTTCol2 = new Column(uDTT, "udtCol2", DataType.Float);  
+      udTTCol2.Nullable = false;  
+      uDTT.Columns.Add(udTTCol2);  
+      Column udTTCol3 = new Column(uDTT, "udtCol3", DataType.Decimal(2, 10));  
+      udTTCol3.Nullable = false;  
+      uDTT.Columns.Add(udTTCol3);  
+  
+      // Add index.
+      Index ix = new Index(uDTT, "IX_UDT");  
+      ix.IndexType = IndexType.NonClusteredHashIndex;  
+      ix.BucketCount = 1024;  
+      ix.IndexKeyType = IndexKeyType.DriPrimaryKey;  
+      ix.IndexedColumns.Add(new IndexedColumn(ix, udTTCol1.Name));  
+      uDTT.Indexes.Add(ix);  
+  
+      uDTT.Create();  
+  
+      // Create a natively compiled stored procedure.
+      StoredProcedure sProc = new StoredProcedure(db, "nCSProc");  
+      sProc.TextMode = false;  
+      sProc.TextBody = "--Type body here";  
+      sProc.IsNativelyCompiled = true;  
+      sProc.IsSchemaBound = true;  
+      sProc.ExecutionContext = ExecutionContext.Owner;  
+      sProc.Create();  
+   }  
+}  
+```  
+  
+## Related content
+
+- [Transact-SQL Support for In-Memory OLTP](transact-sql-support-for-in-memory-oltp.md)
+- [Overview (SMO)](../server-management-objects-smo/overview-smo.md)

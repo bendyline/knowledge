@@ -1,0 +1,71 @@
+---
+title: Remove column from SQL Server table (OLE DB driver)
+description: "The OLE DB Driver for SQL Server exposes the ITableDefinition::DropColumn function, which allows consumers to remove a column from a SQL Server table."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "06/14/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - sfi-ropc-nochange
+  - ignite-2025
+helpviewer_keywords:
+  - "columns [OLE DB]"
+  - "removing columns"
+  - "DropColumn function"
+  - "OLE DB Driver for SQL Server, columns"
+---
+# Removing a Column from a SQL Server Table
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  The OLE DB Driver for SQL Server exposes the **ITableDefinition::DropColumn** function. This allows consumers to remove a column from a  SQL Server 
+ table.  
+  
+ Consumers specify the table name as a Unicode character string in the *pwszName*member of the *uName* union in the *pTableID* parameter. The *eKind*member of *pTableID* must be DBKIND_NAME.  
+  
+ The consumer indicates a column name in the *pwszName*member of the *uName* union in the *pColumnID* parameter. The column name is a Unicode character string. The *eKind* member of *pColumnID* must be DBKIND_NAME.  
+  
+## Example  
+  
+### Code  
+  
+```  
+DBID TableID;  
+DBID ColumnID;  
+HRESULT hr;  
+  
+TableID.eKind = DBKIND_NAME;  
+TableID.uName.pwszName = L"MyTableName";  
+  
+ColumnID.eKind = DBKIND_NAME;  
+ColumnID.uName.pwszName = L"MyColumnName";  
+  
+hr = m_pITableDefinition->DropColumn(&TableID, &ColumnID);  
+```  
+  
+## Related content
+
+- [Tables and Indexes](tables-and-indexes.md)

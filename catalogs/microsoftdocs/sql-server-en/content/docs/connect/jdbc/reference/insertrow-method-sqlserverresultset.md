@@ -1,0 +1,38 @@
+---
+title: "insertRow Method (SQLServerResultSet)"
+description: "insertRow Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.insertRow"
+apitype: "Assembly"
+---
+# insertRow Method (SQLServerResultSet)
+
+
+  Adds the contents of the insert row to this [SQLServerResultSet](sqlserverresultset-class.md) object and to the database.  
+  
+## Syntax  
+  
+```  
+  
+public void insertRow()  
+```  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This insertRow method is specified by the insertRow method in the java.sql.ResultSet interface.  
+  
+ The cursor must be on the insert row when this method is called. After this method is called, the cursor remains on the insert row and the result set remains in insert mode.  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

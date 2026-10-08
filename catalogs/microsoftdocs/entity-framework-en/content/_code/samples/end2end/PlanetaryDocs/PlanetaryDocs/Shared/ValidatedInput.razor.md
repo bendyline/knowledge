@@ -1,0 +1,42 @@
+# Source code: samples/end2end/PlanetaryDocs/PlanetaryDocs/Shared/ValidatedInput.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@inherits ValidatedInputBase
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            @if (UseTextArea)
+            {
+                <textarea @ref="TextAreaControl"
+                          tabindex="@TabIndex"
+                          class="@Error"
+                          rows="10"
+                          cols="40"
+                          @bind-value="@InnerValue"
+                          @bind-value:event="oninput">
+                </textarea>
+            }
+            else
+            {
+                <input @ref="InputControl"
+                       tabindex="@TabIndex"
+                       class="@Error"
+                       type="text"
+                       @bind-value="@InnerValue"
+                       @bind-value:event="oninput" />
+            }
+        </div>
+    </div>
+    @if (Validation != null && Validation.IsValid == false)
+    {
+        <div class="row">
+            <div class="col-12">
+                <p>@Validation.Message</p>
+            </div>
+        </div>
+    }
+</div>
+```

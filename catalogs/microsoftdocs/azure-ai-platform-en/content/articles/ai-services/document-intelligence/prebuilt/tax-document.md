@@ -1,0 +1,155 @@
+---
+title: Document Intelligence US tax documents data extraction
+titleSuffix: Foundry Tools
+description: Automate US tax document data extraction with Document Intelligence US tax document models.
+author: laujan
+manager: mcleans
+ms.service: azure-document-intelligence-foundry-tools
+ms.topic: concept-article
+ms.date: 08/15/2026
+ms.author: lajanuar
+monikerRange: ">=doc-intel-3.0.0"
+---
+
+<!-- markdownlint-disable MD033 -->
+
+# Document Intelligence US tax document models
+
+
+**Applies to: doc-intel-4.0.0**
+**This content applies to:** 🟩 **v4.0 (GA)** | **Previous versions:** 🟦 [**v3.1 (GA)**](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/prebuilt/tax-document.md?view=doc-intel-3.1.0\&preserve-view=true)
+
+
+**Applies to: doc-intel-3.1.0**
+**This content applies to:** 🟩 **v3.1 (GA)** | **Latest version:** 🟪 [**v4.0 (GA)**](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/prebuilt/tax-document.md?view=doc-intel-4.0.0\&preserve-view=true)
+
+
+The Document Intelligence tax model uses powerful Optical Character Recognition (OCR) capabilities to analyze and extract key fields and line items from a select group of tax documents. Tax documents can be of various formats like 1099, 1098, W2, 1040, 1095A, 1095C, W-4, 1099-SSA. Input format can include phone-captured images, scanned documents, and digital PDFs. The API analyzes document text; extracts key information and returns a structured JSON data representation. The model currently supports certain English tax document formats.
+
+**Supported tax form types:**
+
+* Unified tax US
+* W-2
+* 1098
+* 1098-E
+* 1098-T
+* 1099 and variations (added 1099-SSA)
+* 1040 and variations
+* 1095A, 1095C
+* W-4
+
+## Automated tax document processing
+
+Automated tax document processing is the process of extracting key fields from tax documents. Historically, tax documents were processed manually. This model allows for the easy automation of tax scenarios.
+
+## Unified Tax US
+
+The `Unified US Tax` prebuilt model automatically detects and extracts data from `W2`, `1098`, `1040`, and `1099`  tax forms in submitted documents. These documents can be composed of many tax or non-tax-related documents. The model only processes the forms it supports.
+
+Screenshot of a Unified Tax processing diagram.
+
+## Development options
+
+**Applies to: doc-intel-4.0.0**
+
+
+Document Intelligence v4.0: **2024-11-30** (GA) supports the following tools, applications, and libraries:
+
+| Feature | Resources | Model ID |
+| --- | --- | --- |
+| **US tax form models** | &bullet; [**Document Intelligence Studio**](https://formrecognizer.appliedai.azure.com)</br>&bullet;  [**REST API**](https://learn.microsoft.com/rest/api/aiservices/operation-groups?view=rest-aiservices-v4.0%20\(2024-11-30\)\&preserve-view=true)</br>&bullet;  [**C# SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-4.0.0&preserve-view=true)</br>&bullet;  [**Python SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-4.0.0&preserve-view=true)</br>&bullet;  [**Java SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-4.0.0&preserve-view=true)</br>&bullet;  [**JavaScript SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-4.0.0&preserve-view=true) | **&bullet; prebuilt-tax.us</br>&bullet; prebuilt-tax.us.w2</br>&bullet;  prebuilt-tax.us.W-4</br>&bullet;  prebuilt-tax.us.1095A</br>&bullet; prebuilt-tax.us.1095C</br>&bullet; prebuilt-tax.us.1098</br>&bullet; prebuilt-tax.us.1098E</br>&bullet; prebuilt-tax.us.1098T</br>&bullet; prebuilt-tax.us.1099A</br>&bullet; prebuilt-tax.us.1099B</br>&bullet; prebuilt-tax.us.1099C</br>&bullet; prebuilt-tax.us.1099CAP</br>&bullet; prebuilt-tax.us.1099Combo</br>&bullet; prebuilt-tax.us.1099DIV</br>&bullet; prebuilt-tax.us.1099G</br>&bullet; prebuilt-tax.us.1099H</br>&bullet; prebuilt-tax.us.1099INT</br>&bullet; prebuilt-tax.us.1099K</br>&bullet; prebuilt-tax.us.1099LS</br>&bullet; prebuilt-tax.us.1099LTC</br>&bullet; prebuilt-tax.us.1099MISC</br>&bullet; prebuilt-tax.us.1099NEC</br>&bullet; prebuilt-tax.us.1099OID</br>&bullet; prebuilt-tax.us.1099PATR</br>&bullet; prebuilt-tax.us.1099Q</br>&bullet; prebuilt-tax.us.1099QA</br>&bullet; prebuilt-tax.us.1099R</br>&bullet; prebuilt-tax.us.1099S</br>&bullet; prebuilt-tax.us.1099SA</br>&bullet; prebuilt-tax.us.1099SB</br>&bullet; prebuilt-tax.us.1099SSA</br>&bullet; prebuilt-tax.us.1040</br>&bullet; prebuilt-tax.us.1040Schedule1</br>&bullet; prebuilt-tax.us.1040Schedule2</br>&bullet; prebuilt-tax.us.1040Schedule3</br>&bullet; prebuilt-tax.us.1040Schedule8812</br>&bullet; prebuilt-tax.us.1040ScheduleA</br>&bullet; prebuilt-tax.us.1040ScheduleB</br>&bullet; prebuilt-tax.us.1040ScheduleC</br>&bullet; prebuilt-tax.us.1040ScheduleD</br>&bullet; prebuilt-tax.us.1040ScheduleE</br>&bullet; prebuilt-tax.us.1040ScheduleEIC</br>&bullet; prebuilt-tax.us.1040ScheduleF</br>&bullet; prebuilt-tax.us.1040ScheduleH</br>&bullet; prebuilt-tax.us.1040ScheduleJ</br>&bullet; prebuilt-tax.us.1040ScheduleR</br>&bullet; prebuilt-tax.us.1040ScheduleSE</br>&bullet; prebuilt-tax.us.1040Senior** |
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+Document Intelligence v3.1 supports the following tools, applications, and libraries:
+
+| Feature | Resources | Model ID |
+| --- | --- | --- |
+| **US tax form models** | &bullet; [**Document Intelligence Studio**](https://formrecognizer.appliedai.azure.com)</br>&bullet;  [**REST API**](https://learn.microsoft.com/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-2023-07-31\&preserve-view=true\&tabs=HTTP)</br>&bullet;  [**C# SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.1.0&preserve-view=true)</br>&bullet;  [**Python SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.1.0&preserve-view=true)</br>&bullet;  [**Java SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.1.0&preserve-view=true)</br>&bullet;  [**JavaScript SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.1.0&preserve-view=true) | **&bullet; prebuilt-tax.us.w2</br>&bullet; prebuilt-tax.us.1098</br>&bullet; prebuilt-tax.us.1098E</br>&bullet; prebuilt-tax.us.1098T** |
+
+
+**Applies to: doc-intel-3.0.0**
+
+Document Intelligence v3.0 supports the following tools, applications, and libraries:
+
+| Feature | Resources | Model ID |
+| --- | --- | --- |
+| **US tax form models** | &bullet; [**Document Intelligence Studio**](https://formrecognizer.appliedai.azure.com)</br>&bullet;  [**REST API**](https://learn.microsoft.com/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-v3.0%20\(2022-08-31\)\&preserve-view=true\&tabs=HTTP)</br>&bullet;  [**C# SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.0.0&preserve-view=true)</br>&bullet;  [**Python SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.0.0&preserve-view=true)</br>&bullet;  [**Java SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.0.0&preserve-view=true)</br>&bullet;  [**JavaScript SDK**](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.0.0&preserve-view=true) | **&bullet; prebuilt-tax.us.w2</br>&bullet; prebuilt-tax.us.1098</br>&bullet; prebuilt-tax.us.1098E</br>&bullet; prebuilt-tax.us.1098T** |
+
+
+## Input requirements
+
+<!-- markdownlint-disable MD041 -->
+
+The following file formats are supported.
+
+| Model | PDF | Image: </br>JPEG/JPG, PNG, BMP, TIFF, HEIF | Office: </br> Word (DOCX), Excel (XLSX), PowerPoint (PPTX), HTML |
+| --- | :---: | :---: | :---: |
+| Read | ✔ | ✔ | ✔ |
+| Layout | ✔ | ✔ | ✔ |
+| General&nbsp;document | ✔ | ✔ |  |
+| Prebuilt | ✔ | ✔ |  |
+| Custom extraction | ✔ | ✔ |  |
+| Custom classification | ✔ | ✔ | ✔ |
+
+* **Photos and scans**: For best results, provide one clear photo or high-quality scan per document.
+* **PDFs and TIFFs**: For PDFs and TIFFs, up to 2,000 pages can be processed. (With a free-tier subscription, only the first two pages are processed.)
+* **File size**: The file size for analyzing documents is 500 MB for the paid (S0) tier and 4 MB for the free (F0) tier.
+* **Image dimensions**: The dimensions must be between 50 pixels x 50 pixels and 10,000 pixels x 10,000 pixels.
+* **Password locks**: If your PDFs are password-locked, you must remove the lock before submission.
+* **Text height**: The minimum height of the text to be extracted is 12 pixels for a 1024 x 768-pixel image. This dimension corresponds to about 8-point text at 150 dots per inch.
+* **Custom model training**: The maximum number of pages for training data is 500 for the custom template model and 50,000 for the custom neural model.
+* **Custom extraction model training**: The total size of training data is 50 MB for template model and 1 GB for the neural model.
+* **Custom classification model training**: The total size of training data is 1 GB with a maximum of 10,000 pages. For 2024-11-30 (GA), the total size of training data is 2 GB with a maximum of 10,000 pages.
+* **Office file types (DOCX, XLSX, PPTX)**: The maximum string length limit is 8 million characters.
+
+
+## Try tax document data extraction
+
+See how data, including customer information, vendor details, and line items, is extracted from invoices. You need the following resources:
+
+* An Azure subscription—you can [create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+* A [Document Intelligence instance](https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer) in the Azure portal. You can use the free pricing tier (`F0`) to try the service. After your resource deploys, select **Go to resource** to get your key and endpoint.
+
+ Screenshot of keys and endpoint location in the Azure portal.
+
+## Document Intelligence Studio
+
+1. On the [Document Intelligence Studio home page](https://formrecognizer.appliedai.azure.com/studio), select the supported tax document model.
+
+1. You can analyze a sample tax document or upload your own files.
+
+1. Select the **Run analysis** button and, if necessary, configure the **Analyze options** :
+
+    Screenshot of Run analysis and Analyze options buttons in the Document Intelligence Studio.
+
+> 
+> [Try Document Intelligence Studio](https://formrecognizer.appliedai.azure.com/studio/prebuilt?formType=invoice)
+
+## Supported languages and locales
+
+*See* our [Language Support—prebuilt models](../language-support/prebuilt.md) page for a complete list of supported languages.
+
+## Field extraction
+
+For supported document extraction fields, *see* the [**tax document model schema**](https://github.com/Azure-Samples/document-intelligence-code-samples/tree/main/schema/2024-11-30-ga/us-tax) pages in our GitHub sample repository.
+
+The tax documents key-value pairs and line items extracted are in the `documentResults` section of the JSON output.
+
+## Next steps
+
+* Try processing your own forms and documents with the [Document Intelligence Studio](https://formrecognizer.appliedai.azure.com/studio).
+
+* Complete a [Document Intelligence quickstart](../quickstarts/get-started-sdks-rest-api.md?view=doc-intel-3.0.0&preserve-view=true) and get started creating a document processing app in the development language of your choice.
+
+**Applies to: doc-intel-4.0.0**
+
+[Find more samples on GitHub.](https://github.com/Azure-Samples/document-intelligence-code-samples/tree/main/Python(v4.0)/Prebuilt_model)
+
+
+**Applies to: doc-intel-3.1.0**
+
+[Find more samples on GitHub.](https://github.com/Azure-Samples/document-intelligence-code-samples/tree/v3.1(2023-07-31-GA)/Python(v3.1)/Prebuilt_model)

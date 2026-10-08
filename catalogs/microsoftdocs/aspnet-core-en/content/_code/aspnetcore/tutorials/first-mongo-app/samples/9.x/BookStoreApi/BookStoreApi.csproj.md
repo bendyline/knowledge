@@ -1,0 +1,22 @@
+# Source code: aspnetcore/tutorials/first-mongo-app/samples/9.x/BookStoreApi/BookStoreApi.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+    <PackageReference Include="MongoDB.Driver" Version="3.3.0" />
+    <PackageReference Include="NSwag.AspNetCore" Version="14.3.0" />
+  </ItemGroup>
+
+</Project>
+
+```

@@ -1,0 +1,112 @@
+---
+title: "Rename a Stored Procedure"
+description: Learn how to rename a stored procedure in SQL Server 2019 (15.x) by using SQL Server Management Studio or Transact-SQL.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "07/06/2017"
+ms.service: sql
+ms.subservice: stored-procedures
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "stored procedures [SQL Server], renaming"
+  - "renaming stored procedures"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# Rename a Stored Procedure
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This topic describes how to rename a stored procedure in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .  
+  
+<a id="BeforeYouBegin"></a>
+
+##  <a name="Restrictions"></a> Limitations and Restrictions
+  
+-   Procedure names must comply with the rules for [identifiers](../databases/database-identifiers.md).  
+  
+-   Renaming a stored procedure retains the `object_id` and all the permissions that are specifically assigned to the procedure. Dropping and recreating the object creates a new `object_id` and removes any permissions specifically assign to the procedure.
+
+-   Renaming a stored procedure does not change the name of the corresponding object name in the definition column of the **sys.sql_modules** catalog view. To do that, you must drop and re-create the stored procedure with its new name.  
+
+-   Changing the name or definition of a procedure can cause dependent objects to fail when the objects are not updated to reflect the changes that have been made to the procedure. For more information, see [View the Dependencies of a Stored Procedure](view-the-dependencies-of-a-stored-procedure.md).  
+  
+  
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+CREATE PROCEDURE  
+ Requires CREATE PROCEDURE permission in the database and ALTER permission on the schema in which the procedure is being created, or requires membership in the **db_ddladmin** fixed database role.  
+  
+ ALTER PROCEDURE  
+ Requires ALTER permission on the procedure or requires membership in the **db_ddladmin** fixed database role.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To rename a stored procedure  
+  
+1.  In Object Explorer, connect to an instance of  Database Engine 
+ and then expand that instance.  
+2.  Expand **Databases**, expand the database in which the procedure belongs, and then expand **Programmability**.  
+3.  [Determine the dependencies of the stored procedure](view-the-dependencies-of-a-stored-procedure.md).  
+4.  Expand **Stored Procedures**, right-click the procedure to rename, and then click **Rename**.  
+5.  Modify the procedure name.  
+6.  Modify the procedure name referenced in any dependent objects or scripts.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To rename a stored procedure  
+  
+1.  Connect to the  Database Engine 
+.  
+2.  From the Standard bar, click **New Query**.  
+3.  Copy and paste the following example into the query window and click **Execute**. This example shows how to rename a procedure by dropping the procedure and re-creating the procedure with a new name. The first example creates the stored procedure `'HumanResources.uspGetAllEmployeesTest`. The second example renames the stored procedure to `HumanResources.uspEveryEmployeeTest`.  
+  
+```sql  
+--Create the stored procedure.  
+USE AdventureWorks2022;  
+GO  
+
+CREATE PROCEDURE HumanResources.uspGetAllEmployeesTest  
+AS  
+    SET NOCOUNT ON;  
+    SELECT LastName, FirstName, Department  
+    FROM HumanResources.vEmployeeDepartmentHistory;  
+GO  
+  
+--Rename the stored procedure.  
+EXEC sp_rename 'HumanResources.uspGetAllEmployeesTest', 'uspEveryEmployeeTest'; 
+```  
+  
+## Related content
+
+- [ALTER PROCEDURE (Transact-SQL)](../../t-sql/statements/alter-procedure-transact-sql.md)
+- [CREATE PROCEDURE (Transact-SQL)](../../t-sql/statements/create-procedure-transact-sql.md)
+- [Create a stored procedure](create-a-stored-procedure.md)
+- [Modify a stored procedure](modify-a-stored-procedure.md)
+- [Delete a stored procedure](delete-a-stored-procedure.md)
+- [View the definition of a stored procedure](view-the-definition-of-a-stored-procedure.md)
+- [View the Dependencies of a Stored Procedure](view-the-dependencies-of-a-stored-procedure.md)

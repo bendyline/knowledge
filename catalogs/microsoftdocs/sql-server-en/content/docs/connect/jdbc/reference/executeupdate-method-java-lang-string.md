@@ -1,0 +1,53 @@
+---
+title: "executeUpdate Method (java.lang.String, int[])"
+description: "executeUpdate Method (java.lang.String, int[])"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerStatement.executeUpdate (java.lang.String, int[])"
+apitype: "Assembly"
+---
+# executeUpdate Method (java.lang.String, int[])
+
+
+  Runs the given SQL statement and signals  Microsoft JDBC Driver for SQL Server 
+ that the auto-generated keys that are indicated in the given array should be made available for retrieval.  
+  
+## Syntax  
+  
+```  
+  
+public final int executeUpdate(java.lang.String sql,  
+                               int[] columnIndexes)  
+```  
+  
+#### Parameters  
+ *sql*  
+  
+ A **String** that contains a SQL statement.  
+  
+ *columnIndexes*  
+  
+ An array of ints that indicate the column indexes of the auto-generated keys that should be made available.  
+  
+## Return Value  
+ An **int** that indicates the number of rows affected, or 0 if using a DDL statement.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This executeUpdate method is specified by the executeUpdate method in the java.sql.Statement interface.  
+  
+ If executing a stored procedure results in an update count that is greater than one, or that generates more than one result set, use the [execute](execute-method-sqlserverstatement.md) method to execute the stored procedure.  
+  
+## Related content
+
+- [executeUpdate Method (SQLServerStatement)](executeupdate-method-sqlserverstatement.md)
+- [SQLServerStatement Members](sqlserverstatement-members.md)
+- [SQLServerStatement Class](sqlserverstatement-class.md)

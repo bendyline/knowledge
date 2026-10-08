@@ -1,0 +1,91 @@
+---
+title: "Data Conversion Transformation"
+description: "Data Conversion Transformation"
+ms.date: "03/16/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.dataconversiontrans.f1"
+  - "sql13.dts.designer.dataconversiontransformation.f1"
+helpviewer_keywords:
+  - "converting data types [Integration Services]"
+  - "Data Conversion transformation"
+  - "data types [Integration Services], converting"
+---
+# Data Conversion Transformation
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  The Data Conversion transformation converts the data in an input column to a different data type and then copies it to a new output column. For example, a package can extract data from multiple sources, and then use this transformation to convert columns to the data type required by the destination data store. You can apply multiple conversions to a single input column.  
+  
+ Using this transformation, a package can perform the following types of data conversions:  
+  
+-   Change the data type. For more information, see [Integration Services Data Types](../integration-services-data-types.md).  
+  
+    > **Note:**  
+    >  If you are converting data to a date or a datetime data type, the date in the output column is in the ISO format, although the locale preference may specify a different format.  
+  
+-   Set the column length of string data and the precision and scale on numeric data. For more information, see [Precision, Scale, and Length &#40;Transact-SQL&#41;](../../../t-sql/data-types/precision-scale-and-length-transact-sql.md).  
+  
+-   Specify a code page. For more information, see [Comparing String Data](../comparing-string-data.md).  
+  
+    > **Note:**  
+    >  When copying between columns with a string data type, the two columns must use the same code page.  
+  
+ If the length of an output column of string data is shorter than the length of its corresponding input column, the output data is truncated. For more information, see [Error Handling in Data](../error-handling-in-data.md).  
+  
+ This transformation has one input, one output, and one error output.  
+  
+## Related Tasks  
+ You can set properties through the  SSIS 
+ Designer or programmatically. For information about using the Data Conversion Transformation in the SSIS Designer, see [Convert Data to a Different Data Type by Using the Data Conversion Transformation](convert-data-type-by-using-data-conversion-transformation.md). For information about setting properties of this transformation programmatically, see [Common Properties](../set-the-properties-of-a-data-flow-component.md) and [Transformation Custom Properties](transformation-custom-properties.md).  
+  
+## Data Conversion Transformation Editor
+  Use the **Data Conversion Transformation Editor** dialog box to select the columns to convert, select the data type to which the column is converted, and set conversion attributes.  
+  
+> **Note:**  
+>  The **FastParse** property of the output columns of the Data Conversion transformation is not available in the **Data Conversion Transformation Editor**, but can be set by using the **Advanced Editor**. For more information on this property, see the Data Conversion Transformation section of [Transformation Custom Properties](transformation-custom-properties.md).  
+  
+### Options  
+ **Available Input Columns**  
+ Select columns to convert by using the check boxes. Your selections add input columns to the table below.  
+  
+ **Input Column**  
+ Select columns to convert from the list of available input columns. Your selections are reflected in the check box selections above.  
+  
+ **Output Alias**  
+ Type an alias for each new column. The default is **Copy of** followed by the input column name; however, you can choose any unique, descriptive name.  
+  
+ **Data Type**  
+ Select an available data type from the list. For more information, see [Integration Services Data Types](../integration-services-data-types.md).  
+  
+ **Length**  
+ Set the column length for string data.  
+  
+ **Precision**  
+ Set the precision for numeric data.  
+  
+ **Scale**  
+ Set the scale for numeric data.  
+  
+ **Code page**  
+ Select the appropriate code page for columns of type DT_STR.  
+  
+ **Configure error output**  
+ Specify how to handle row-level errors by using the [Configure Error Output](../error-handling-in-data.md) dialog box.  
+  
+## Related content
+
+- [Performance Comparison between Data Type Conversion Techniques in SSIS 2008](https://techcommunity.microsoft.com/t5/datacat/performance-comparison-between-data-type-conversion-techniques/ba-p/305035)
+- [Parsing Data](../parsing-data.md)
+- [Data Flow](../data-flow.md)
+- [Integration Services Transformations](integration-services-transformations.md)

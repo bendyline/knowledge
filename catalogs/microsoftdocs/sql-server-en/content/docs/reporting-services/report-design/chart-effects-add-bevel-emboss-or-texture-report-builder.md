@@ -1,0 +1,66 @@
+---
+title: "Add bevel, emboss, and texture styles to a paginated report chart"
+description: Learn how to specify a drawing effect, such as bevels, embossing, or textures, to increase the visual impact of your paginated report chart in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Chart effects - add bevel, emboss, or texture to a paginated report chart (Report Builder)
+
+  **Applies to:**
+ 
+
+
+  When using certain chart types in a paginated report, you can specify a drawing effect to increase the visual impact of your chart. These drawing effects are only applied to the series of your chart. They have no effect on any other chart element.  
+  
+ When you are using any variant of a pie or donut chart, you can specify a soft edge or concave drawing style, similar to bevel or emboss effects that can be applied to an image.  
+  
+ When you are using any variant of a bar or column chart, you can apply texture styles, such as cylinder, wedge, and light-to-dark, to the individual bars or columns.  
+  
+ In addition to these drawing styles, you can add borders and shadows to many chart elements to give the illusion of depth. For more information on other ways to format the chart, see [Formatting a Chart (Report Builder and SSRS)](formatting-a-chart-report-builder-and-ssrs.md).  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+<a id="to-add-bevel-or-emboss-styles-to-a-pie-or-doughnut-chart"></a>
+
+## Add bevel or emboss styles to a pie or donut chart
+  
+1.  On the **View** tab, select **Properties** to open the Properties pane.  
+  
+2.  Select the pie or donut chart that you want to enhance. Select a data field in the chart, not the entire chart.  
+  
+3.  In the Properties pane, expand the **CustomAttributes** node.  
+  
+4.  For PieDrawingStyle, select a style from the dropdown list.  
+  
+> **Note:**  
+>  You can't have 3D and bevel or emboss styles on the same chart. If you have enabled 3D for the chart, you will not see the PieDrawingStyle property.  
+  
+ Pie chart with concave drawing style  
+  
+## Add texture styles to a bar or column chart  
+  
+1.  Select the bar or column chart that you want to enhance. Select a data field in the chart, not the entire chart.  
+  
+2.  Open the Properties pane.  
+  
+3.  Expand the **CustomAttributes** node.  
+  
+4.  For DrawingStyle, select a style from the dropdown list.  
+  
+> **Note:**  
+>  You can't have 3D and bevel or emboss styles on the same chart. If you have enabled 3D for the chart, you will not see the PieDrawingStyle property.  
+  
+ Bar chart with LightToDark drawing effect  
+  
+## Related content
+
+- [Bar charts in a paginated report (Report Builder)](bar-charts-report-builder-and-ssrs.md)
+- [Column charts in a paginated report (Report Builder)](column-charts-report-builder-and-ssrs.md)
+- [Pie charts in a paginated report (Report Builder)](pie-charts-report-builder-and-ssrs.md)
+- [Formatting a chart in a paginated report (Report Builder)](formatting-a-chart-report-builder-and-ssrs.md)

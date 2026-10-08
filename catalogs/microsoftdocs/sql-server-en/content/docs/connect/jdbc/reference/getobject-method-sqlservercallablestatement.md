@@ -1,0 +1,32 @@
+---
+title: "getObject Method (SQLServerCallableStatement)"
+description: "getObject Method (SQLServerCallableStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.getObject"
+apitype: "Assembly"
+---
+# getObject Method (SQLServerCallableStatement)
+
+
+  Retrieves the value of the designated parameter as an object in the Java programming language.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [getObject (int)](getobject-method-int.md) | Retrieves the value of the designated parameter as an object in the Java programming language given the parameter index. |
+| [getObject (int, java.util.Map)](getobject-method-int-java-util-map.md) | Retrieves the value of the designated parameter as an object in the Java programming language given the parameter index, using the given Map object. |
+| [getObject (java.lang.String)](getobject-method-java-lang-string.md) | Retrieves the value of the designated parameter as an object in the Java programming language given the parameter name. |
+| [getObject (java.lang.String, java.util.Map)](getobject-method-java-lang-string-java-util-map.md) | Retrieves the value of the designated parameter as an object in the Java programming language given the parameter name, using the given Map object. |
+  
+## Related content
+
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

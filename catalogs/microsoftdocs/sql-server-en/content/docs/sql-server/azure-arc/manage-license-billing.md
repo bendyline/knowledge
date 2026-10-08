@@ -1,0 +1,506 @@
+---
+title: Manage Licensing and Billing
+description: This article explains how to manage SQL Server licensing options. It also demonstrates how SQL Server enabled by Azure Arc can be billed from Microsoft Azure.
+author: pochiraju
+ms.author: rajpo
+ms.reviewer: randolphwest, maghan, mathoma
+ms.date: 04/01/2026
+ai-usage: ai-assisted
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+---
+
+# Manage licensing and billing of SQL Server enabled by Azure Arc
+
+This article explains how to manage licensing and billing of SQL Server enabled by Azure Arc. SQL Server enabled by Azure Arc directly supports only the core-based licensing methods. For information about how you can manage SQL Server instances with a Server+CAL license, see [Manage SQL Server instances with a Server+CAL license](manage-license-billing.md#server-cal).
+
+The full range of the licensing options is described in the [SQL Server licensing guide (download link)](https://go.microsoft.com/fwlink/p/?linkid=2215573).
+
+<a id="licensing-and-billing-in-the-production-environment"></a>
+
+## License and billing in the production environment
+
+You can use one of the following three licensing options. The links in the list take you to sections in this article that provide more details.
+
+The diagrams in the list use normalized cores (NCs) to illustrate the cost implications of the licensing options. One core license for the Standard edition is equivalent to one NC. One core license for the Enterprise edition is equivalent to four NCs. For more information, see [How licenses apply to Azure resources](https://learn.microsoft.com/azure/cost-management-billing/scope-level/overview-azure-hybrid-benefit-scope#how-licenses-apply-to-azure-resources).
+
+- [License by virtual cores](#license-vcores)
+
+  Use an Enterprise or Standard license for the vCPUs (virtual cores) of the virtual machine (VM) that runs one or multiple instances of SQL Server. Each virtual machine is billed individually for the virtual cores allocated to it.
+
+  The following diagram illustrates this licensing method and the cost implications.
+
+  Diagram that illustrates the virtual core licensing option.
+
+- [License by physical cores without virtual machines](#license-pcores-without-vms)
+
+  Use an Enterprise or Standard license for the physical cores of the host that runs one or multiple instances of SQL Server installed directly on the host without using VMs. Each instance has access to all physical cores supported by the installed edition limits, up to all physical cores of the host. Regardless of the instance limits, the host is billed for all the physical cores based on the highest SQL Server edition installed on it. For details, review [Compute capacity limits by edition of SQL Server](../compute-capacity-limits-by-edition-of-sql-server.md).
+
+  The following diagram illustrates the cost implications of deploying two Standard instances on a physical host without using VMs.
+
+  Diagram that illustrates physical core licensing without using virtual machines.
+
+- [License by physical cores with unlimited virtualization](#unlimited-virtualization)
+
+  Use an Enterprise license for the physical cores of the host that runs any number of virtual machines with any number of SQL Server instances. A single physical core license is a separate Azure resource that represents all licensed physical cores and is billed independently.
+
+  The following diagram illustrates the cost implications of licensing a physical host and using unlimited virtualization.
+
+  Diagram that illustrates physical core licensing with unlimited virtualization.
+
+For each of these options, you have to decide how you want to pay for the license. The following table shows your payment options:
+
+| Payment option | Virtual core licensing | Physical core licensing without VMs | Physical core licensing with unlimited virtualization |
+| --- | --- | --- | --- |
+| Subscribe to the service through Microsoft Azure by using a pay-as-you-go method | Yes | Yes | Yes |
+| Bring your own license with Software Assurance or a SQL Server subscription <sup>1</sup> | Yes | Yes | Yes |
+| Bring your own license without Software Assurance <sup>2</sup> | Yes | Yes | No |
+
+<sup>1</sup> You already have a license with active Software Assurance or an active SQL Server subscription.
+
+<sup>2</sup> You own a perpetual license or use a free SQL Server edition.
+
+Your choice of payment option might affect your outsourcing options. For more information, see the [service-specific terms](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/eaeas#ServiceSpecificTerms) and the [Flexible Virtualization Benefit licensing guide](https://www.microsoft.com/licensing/docs/view/Virtualization).
+
+For information about licensing your non-production or test SQL Server instances through Azure Arc, see [Manage SQL Server licensed for non-production use](manage-license-billing.md#non-production-licensing).
+
+<a id="license-vcores"></a>
+
+## License SQL Server instances by virtual cores
+
+When you license SQL Server by virtual cores, you can limit the scope of the license to a specific virtual machine and one or more SQL Server instances that you install on the operating system environment (OSE) of that machine. This licensing model is optimized for the following scenarios:
+
+- Your SQL Server VMs are mixed with the VMs running other software on the same physical servers.
+- You deploy your VMs to a hosting partner or a non-Microsoft cloud where you don't control your physical infrastructure.
+
+Choose virtual core licensing to license both SQL Server software and SQL Server Extended Security Updates. Use the [SQL Server configuration](manage-configuration.md) areas of the Azure portal to manage a virtual core license independently for each VM. The **Overview** pane for each Azure Arc-enabled SQL Server resource shows the configured license under **Host License Type**.
+
+The Standard edition is limited to a maximum of 24 virtual cores, even if the OSE is configured with more virtual cores. For more information about limits, see [Compute capacity limits by edition of SQL Server](../compute-capacity-limits-by-edition-of-sql-server.md).
+
+For more information about licensing SQL Server by virtual cores, see the section "Licensing individual virtual machines" in the [SQL Server licensing guide (download link)](https://go.microsoft.com/fwlink/p/?linkid=2215573).
+
+### License types
+
+The following license types are supported when you license virtual cores:
+
+| License type | Description | Value |
+| --- | --- | --- |
+| Pay-as-you-go | Subscribe to the Standard or Enterprise edition of the service and be billed on an hourly meter. See [SQL Server pricing and licensing](https://www.microsoft.com/sql-server/sql-server-2022-pricing). | `PAYG` |
+| License with Software Assurance | Bring your own Standard or Enterprise license with Software Assurance or a SQL Server subscription. Your software usage is reported through a free hourly meter according to the metering rules. See [Metering software usage](#usage-metering) later in this article. | `Paid` |
+| License only | You use a perpetual license for Standard or Enterprise edition, or you use the free Developer, Evaluation, or Express editions. Your software usage is reported according to the metering rules. See [Metering software usage](#usage-metering) later in this article. | `LicenseOnly` |
+
+#### Important pay-as-you-go considerations
+
+- If you're using an Azure subscription managed by a Cloud Service Provider (CSP), enabling pay-as-you-go requires that you or the CSP consents to recurrent billing. For details, review [Manage recurrent billing for SQL Server enabled by Azure Arc with pay-as-you-go license](manage-pay-as-you-go-transition.md).
+
+> **Important:**
+> **Pay-as-you-go on Linux**: The following PAYG limitations apply to SQL Server on Linux:
+>
+> - **Passive instance detection**: Automatic detection of passive replicas in availability groups or failover cluster instances isn't available. All instances are billed as active.
+> - **Core visibility**: Core count is based on the operating system environment. Database Engine-level core verification isn't available.
+> - **Connected user detection**: Verification of active user connections on readable secondary replicas isn't available.
+>
+> These limitations don't affect license compliance or the ability to use PAYG billing on Linux. However, you should account for the billing differences when planning PAYG deployments on Linux. For more information about feature availability by operating system, see [Feature availability by operating system](overview.md#feature-availability-by-operating-system).
+
+- By selecting a license with Software Assurance, you attest that you have Enterprise or Standard licenses with active Software Assurance or an active SQL Server subscription license, and that the device is in compliance with the [Product Terms outsourcing restrictions](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/allprograms#:~:text=When%20using%20SQL%20Server%20enabled%20by%20Azure%20Arc%20with%20a,%2C%20regardless%20of%20whether%20those%20Servers%20are%20dedicated%20to%20Customer).
+
+- For SQL Server Enterprise, Standard, or Web edition instances of SQL Server licensed from cloud service providers or hosting service providers using the Service Provider Licensing Agreement (SPLA), use `license only` for the license type. Web edition isn't available in  SQL Server 2025 (17.x) 
+ and later versions.
+
+- [Microsoft.AzureArcData tag support](https://learn.microsoft.com/azure/azure-resource-manager/management/tag-support#microsoftazurearcdata) explains what types of tags are currently supported for Arc data resources.
+
+#### Pay-as-you-go networking requirements
+
+The pay-as-you-go subscription requires the hosting machine to maintain connectivity with Azure. Hourly charges apply only when SQL Server is running on the machine during any part of an hour and the machine is online.
+
+Built-in resilience tolerates intermittent connectivity disruptions for up to 30 consecutive days without affecting billing accuracy. This means that as long as connectivity isn't interrupted for more than 30 days, your billing remains correct, even if there are short, intermittent disconnections. If the machine stays disconnected for more than 30 days, the pay-as-you-go subscription expires, and you're no longer authorized to use the software.
+
+SQL Server pay-as-you-go licensing depends on successful communication with Microsoft usage reporting services. 
+
+Periodically verify that usage reporting is functioning correctly by reviewing the **Last Usage Upload Time** in the Azure portal. A recent timestamp indicates that usage records are received and processed.
+
+If usage uploads aren't received for more than 24 hours, check the following things:
+
+- Review and implement all [Azure Arc network requirements](prerequisites.md).
+- Ensure all required HTTPS outbound endpoints for Azure Arc and SQL Server usage reporting remain accessible.
+- Verify that proxy, firewall, DNS, and other network security configurations aren't blocking or interfering with usage reporting traffic.
+- Review Azure Arc Activity Logs for warning or informational events indicating that usage records aren't received within the expected timeframe.
+- Resolve any identified connectivity or configuration issues and confirm that usage uploads resume successfully.
+
+Blocking or restricting required outbound connectivity can prevent usage data from being uploaded, which can affect licensing and billing accuracy.
+
+#### Available benefits
+
+In addition to different billing methods, the license type determines which benefits are included.
+
+
+The following table identifies the capabilities and use rights offered with each license type:
+
+| Capability and use rights | License only | License with Software Assurance<br />or SQL Server subscription | Pay-as-you-go subscription |
+| --- | --- | --- | --- |
+| [Free new version upgrade](https://download.microsoft.com/download/9/3/d/93d32de6-f268-45ed-ba25-2f9a6756b6af/SQL_Server_2022_Licensing_guide.pdf) | No | Yes | Yes |
+| [High availability and disaster recovery benefit](https://download.microsoft.com/download/9/3/d/93d32de6-f268-45ed-ba25-2f9a6756b6af/SQL_Server_2022_Licensing_guide.pdf) | No | Yes | Yes |
+| [Unlimited virtualization with Enterprise edition](https://download.microsoft.com/download/9/3/d/93d32de6-f268-45ed-ba25-2f9a6756b6af/SQL_Server_2022_Licensing_guide.pdf) | No | Yes | Yes |
+| [Flexible Virtualization Benefit licensing guide](https://download.microsoft.com/download/9/3/d/93d32de6-f268-45ed-ba25-2f9a6756b6af/SQL_Server_2022_Licensing_guide.pdf) | No | Yes | Yes |
+| [Option to license by virtual machine](https://download.microsoft.com/download/9/3/d/93d32de6-f268-45ed-ba25-2f9a6756b6af/SQL_Server_2022_Licensing_guide.pdf) | No | Yes | Yes |
+| [Free Power BI Report Server license](manage-license-billing.md#manage-ssxs) | Yes<sup>1</sup> | Yes | Yes |
+| [180-day dual-use benefit](manage-license-billing.md#180-day-dual-use-benefit) | No | Yes | Yes |
+| [Connect your SQL Server to Azure Arc](connect.md)<sup>2</sup> | Yes | Yes | Yes |
+| [ESU Subscription](extended-security-updates.md) | No | Yes | Yes |
+| [SQL Server inventory](overview.md#manage-your-sql-server-instances-at-scale-from-a-single-point-of-control) | Yes | Yes | Yes |
+| [Best practices assessment](assess.md) | No | Yes | Yes |
+| [Migration readiness](migration-assessment.md) | Yes | Yes | Yes |
+| [Database migration](migrate-to-azure-sql-managed-instance.md) | Yes | Yes | Yes |
+| [Detailed inventory](view-inventory.md#inventory-databases) | Yes | Yes | Yes |
+| [Microsoft Entra authentication](../../relational-databases/security/authentication-access/azure-ad-authentication-sql-server-overview.md) | Yes | Yes | Yes |
+| [Microsoft Defender for Cloud](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-sql-usage) | Yes | Yes | Yes |
+| [Govern through Microsoft Purview](https://learn.microsoft.com/azure/purview/tutorial-register-scan-on-premises-sql-server) | Yes | Yes | Yes |
+| [Automated backups to local storage (preview)](backup-local.md) | No | Yes | Yes |
+| [Point-in-time restore](point-in-time-restore.md) | No | Yes | Yes |
+| [Automatic updates](update.md) | No | Yes | Yes |
+| [Failover cluster instances](support-for-fci.md) | Yes | Yes | Yes |
+| [Always On availability groups](manage-availability-group.md) | Yes | Yes | Yes |
+| [Monitoring (preview)](sql-monitoring.md) | No | Yes | Yes |
+| [Client connection summary](sql-connection-summary.md) | No | Yes | Yes |
+| [Operate with least privilege](configure-least-privilege.md) | Yes | Yes | Yes |
+
+<sup>1</sup> For  SQL Server 2022 (16.x) 
+ and earlier versions, the free Power BI Report Server license is limited to Enterprise Edition (EE) customers with Software Assurance (SA) or subscriptions. For  SQL Server 2025 (17.x) 
+, the free Power BI Report Server license is available to both Standard Edition (SE) and Enterprise Edition (EE) customers with all license types.   
+<sup>2</sup> Connecting SQL Server to Azure Arc is subject to [outsourcing rules](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/allprograms#:~:text=Azure%20Arc%F0%9F%94%97-,Outsourcing,%2C%20regardless%20of%20whether%20those%20Servers%20are%20dedicated%20to%20Customer.,-Unlimited%20Virtualization).
+
+> **Note:**  
+> - The license type is a required parameter when you install the Azure Extension for SQL Server. Each supported onboarding method includes the license type options.
+> -  SQL Server 2022 (16.x) 
+ allows you to select the license type during setup. See [Install SQL Server from the Installation Wizard](../../database-engine/install-windows/install-sql-server-from-the-installation-wizard-setup.md#azure-extension-for-sql-server-2022).
+
+<a id="license-pcores-without-vms"></a>
+
+## License SQL Server instances by physical cores without using VMs
+
+The option of licensing SQL Server by physical cores without using VMs is optimized for the following scenarios:
+
+- You control your physical environment and install the SQL Server instances on a physical server to maximize the performance of your database application.
+- Your SQL Server instance uses a license without Software Assurance.
+
+In this option, the licensing requirements are identical to [licensing SQL Server by virtual cores](#license-vcores), but the SQL Server software usage is reported based on the physical cores available to the OSE of that server. For details, see [Metering software usage](#usage-metering) later in this article.
+
+The Standard edition is limited to a maximum of 24 physical cores, even if the OSE is installed on a larger machine. For more information about limits, see [Compute capacity limits by edition of SQL Server](../compute-capacity-limits-by-edition-of-sql-server.md).
+
+> **Important:**  
+> If a physical machine without VMs is connected to Azure Arc in the scope that a SQL Server physical core license covers, the unlimited virtualization benefit doesn't apply to that machine. It's licensed and billed separately.
+
+For more information about licensing SQL Server on a physical OSE, see the section "Core-based licensing" in the [SQL Server licensing guide (download link)](https://go.microsoft.com/fwlink/p/?linkid=2215573).
+
+<a id="unlimited-virtualization"></a>
+
+## License SQL Server instances by physical cores with unlimited virtualization
+
+The option of licensing SQL Server by physical cores with unlimited virtualization is most effective when:
+
+- You control your physical environment and install the SQL Server instances on different VMs for security isolation and better resource management.
+- Your infrastructure and the selected payment method support the unlimited virtualization benefit.
+- Find that licensing your SQL Server instances by virtual cores is more expensive than licensing the physical cores of the host.
+
+To use the unlimited virtualization benefit, create a *SQLServerLicense* resource that represents one or more physical hosts. Connect the covered SQL Server instances to Azure Arc and configure them to use the physical core license. For details about creating *SQLServerLicense* resources, see [Create a SQL Server license](manage-configuration.md#create-a-sql-server-license).
+
+> **Caution:**  
+> The unlimited virtualization benefit isn't available to VMs running on infrastructure from any of the [listed providers](https://aka.ms/listedproviders). You can license these VMs only by virtual cores. If you create a *SQLServerLicense* resource with the intent of licensing these VMs by using unlimited virtualization, you pay for the consumption of virtual cores based on the SQL Server configuration of the host. Any existing physical core licenses don't apply to offset such charges.
+
+For more information about licensing by physical cores with unlimited virtualization, see the section "Licensing for maximum virtualization" in the [SQL Server licensing guide (download link)](https://go.microsoft.com/fwlink/p/?linkid=2215573).
+
+A single *SqlServerLicense* resource can cover multiple virtual machines connected to Azure Arc. Its properties define how the license is applied and billed.
+
+### License category
+
+The `licenseCategory` property is set to `Core` to represent a SQL Server physical core license.
+
+### Scope
+
+The `scopeType` property sets the Azure scope in which the license covers all qualified *Machine - Azure Arc* resources. The following Azure scopes are supported:
+
+- Azure tenant
+- Azure subscription
+- Resource group
+
+To qualify, each *Machine - Azure Arc* resource must be configured to use a physical core license. Otherwise, the *Machine - Azure Arc* resource must be licensed for SQL Server individually.
+
+### Size
+
+The `Size` property of the license resource represents the sum of physical cores of the servers to which the license applies. The minimum size of the license is 16 physical cores.
+
+### Subscription
+
+The `Subscription` property defines which Azure subscription will be used for billing and invoicing when the license is active.
+
+You can create the license resource in a resource group in any of the [supported regions](overview.md#supported-azure-regions). The location of the resource is set to the location of the selected resource group.
+
+The location of the license resource doesn't affect the scope. It applies to all *Machine - Azure Arc* resources in the scope of the license, regardless of the regions where these resources are onboarded.
+
+> **Important:**  
+> You can associate multiple license resources with the same scope or overlapping scopes. For example, you can add a new license when you deploy additional physical servers during temporary bursts of activity, or to reflect unexpected growth. All the virtual machines running on these physical servers must be connected to Azure Arc in the scope of the license resource.
+
+### Billing plan
+
+The `billingPlan` property provides a choice between paying for the license on an hourly meter or by bringing your own license.
+
+| Billing&nbsp;plan&nbsp;&nbsp; | Description | Value |
+| --- | --- | --- |
+| Pay-as-you-go | By selecting this option, you subscribe to unlimited virtualization service that's billed on an hourly meter for the Enterprise edition. See [SQL Server prices and licensing](https://www.microsoft.com/sql-server/sql-server-2022-pricing). | `PAYG` |
+| Bring your own license | By selecting this option, you attest that you have an active Enterprise license with Software Assurance or a SQL Server subscription for the same or a greater number of cores. You also attest that you want to use that license to cover the usage of the SQL Server software on each VM in its scope by using the unlimited virtualization benefit. | `Paid` |
+
+To ensure the correct application of the physical core license, make sure that each VM in the scope that you want to license:
+
+- Has the `UsePhysicalCoreLicense` property set to `True`.
+- Has the `LicenseType` property set to match the selected `billingPlan` property of the physical core license.
+
+For more information, see [Use a physical core license](manage-configuration.md#use-physical-core-license).
+
+### Activation state
+
+The `activationState` property controls when the license takes effect. You can activate the license during creation, or you can create the license first and then activate it later. Delaying the activation helps you coordinate it with other events in the licensing life cycle, such as the expiration of an existing Enterprise Agreement. The `activatedAt` and `deactivatedAt` time-stamp properties show when the license was last activated and deactivated. For more information, see [Update a SQL Server license resource](manage-configuration.md#change-license-resource).
+
+### Tenant ID
+
+The `TenantID` property is automatically set when you select a tenant scope.
+
+<a id="non-production-licensing"></a>
+
+## Manage SQL Server licensed for non-production use
+
+If you're using one of the supported licensing options to manage your production environment through Azure Arc, you can use SQL Server for non-production purposes for free. You can take advantage of this benefit in the following two ways when you're using SQL Server enabled by Azure Arc.
+
+### Use SQL Server Developer edition
+
+The SQL Server Developer edition is free and can be used in any Azure subscription. Azure Extension for SQL Server detects it and reports the usage via a $0 *Dev edition* meter, even if the license type of the host is set to `Paid` or `PAYG`. The Developer edition has the same feature set as the Enterprise edition. For more information, see [Metering software usage](manage-license-billing.md#usage-metering) later in this article.
+
+### Use an Azure dev/test subscription
+
+If you configure the non-production environment as a mirror of the production environment, and you want to use the same editions that you use in production, you must connect the hosting machines and SQL Server instances to an Azure dev/test subscription. The SQL Server meters in a dev/test subscription are nullified.
+
+For information, see:
+
+- [Creating Enterprise and Organization Azure Dev/Test Subscriptions](https://learn.microsoft.com/azure/devtest/offer/quickstart-create-enterprise-devtest-subscriptions).
+- The section "Licensing SQL Server for non-production use" in the [SQL Server licensing guide (download link)](https://go.microsoft.com/fwlink/p/?linkid=2215573).
+
+<a id="free-dr"></a>
+
+## Manage passive license for high availability and disaster recovery
+
+
+SQL Server licenses with Software Assurance or pay-as-you-go (`PAYG`) can benefit from free passive instances of SQL Server for high availability and disaster recovery (HADR) configurations. For more information about the failover rights, see the section "Licensing SQL Server for high availability and disaster recovery" in the [SQL Server licensing guide](https://go.microsoft.com/fwlink/p/?linkid=2215573).
+
+To help you manage the failover rights and remain compliant, Azure Extension for SQL Server automatically detects the passive instances for availability groups (AGs) or failover clustered instances (FCIs) and reflects the use of the SQL Server software by emitting special $0 meters for disaster recovery, as long as you configured the LicenseType property to `Paid` or `PAYG`. For more information, see [Manage licensing and billing of SQL Server enabled by Azure Arc](manage-license-billing.md#usage-metering).
+
+
+### Qualify as passive instance for an availability group (AG)
+
+- All replicas present in the operating system environment (OSE) must be a secondary replica of an Always On availability group or the forwarder of a distributed availability group.
+- No standalone database outside of an AG irrespective of [database state](../../relational-databases/databases/database-states.md#database-state-definitions).
+- No active connections to any database except `master`, `msdb`, `tempdb`, or `model` databases.
+- No instances of [associated services](#manage-ssxs) in the same OSE.
+
+If there are multiple SQL Server instances on the OSE, all instances and replicas must meet the conditions above.
+
+> **Note:**  
+> You can query DMVs or issue `DATABASE BACKUP` commands as long as your connections are limited to `master`, `msdb`, `tempdb`, or `model` databases. These operations will not disqualify your passive instances.
+
+#### Detailed passive replica eligibility criteria for disaster recovery
+
+A SQL Server instance is eligible for disaster recovery licensing if it satisfies the following availability group and connection requirements.
+
+**Always On role eligibility**
+
+The following table shows which Always On roles can qualify for passive disaster recovery licensing:
+
+| Always On role | Description | Passive DR license eligible? |
+| --- | --- | --- |
+| AvailabilityGroupReplica | Instance is part of an availability group | Depends on replica role and connections |
+| FailoverClusterInstance | Active FCI instance | No |
+| FailoverClusterNode | Passive FCI node | Yes (if service isn't running) |
+| None | Standalone instance | No |
+
+**Replica role requirements**
+
+For an availability group replica to qualify for passive disaster recovery licensing, it must meet the requirements shown in the following table:
+
+| Role | Readable secondary? | Active user connections? | Passive DR eligible? |
+| --- | --- | --- | --- |
+| Secondary | No (non-readable) | N/A | Yes |
+| Secondary | Yes (readable) | No connections | Yes |
+| Secondary | Yes (readable) | Has connections | No |
+| Primary (standalone AG) | N/A | N/A | No |
+| Primary (in DAG, primary AG) | N/A | N/A | No |
+| Forwarder (primary in secondary AG of DAG) | No (not in use) | N/A | Yes |
+| Forwarder | Yes (readable) | Has connections | No |
+
+**Summary of passive disaster recovery licensing criteria for availability group replicas**
+
+- Non-readable secondary replicas always qualify for passive disaster recovery licensing.
+- Readable secondary replicas qualify only when they have no active user connections.
+- Forwarders in distributed availability groups qualify when they aren't readable or aren't in use.
+- Primary replicas never qualify for passive disaster recovery licensing because they actively serve the workload.
+- No active or sleeping user sessions connected to user databases (`sys.dm_exec_sessions WHERE is_user_process = 1`).
+
+### Qualify as passive node of failover clustered instance (FCI)
+
+- No instances of the SQL Server service — whether as standalone or as an active node of an FCI — can be in a running state on the node, unless those instances qualify as free passive replicas of availability groups (AGs).
+
+### Associated SQL Server services on HADR servers
+
+SQL Server associated services, such as SQL Server Integration Services (SSIS), are evaluated separately from the SQL Server Database Engine for licensing and billing purposes. Configuring a Database Engine instance as an HADR or passive instance doesn't automatically establish the same passive status for other SQL Server associated services installed on the server.
+
+For regular pay-as-you-go usage, associated service running state is considered when determining usage. For Extended Security Updates (ESU), running state is not considered. An installed associated service can result in ESU billing even when the associated service isn't running.
+
+When multiple SQL Server versions are installed on the same server, eligibility should not be inferred solely from the Database Engine version. Associated services can have a different version and are evaluated according to the applicable eligibility requirements.
+
+
+### Limitations
+
+The current passive instance detection logic has the following limitations:
+
+- The checks are hourly. A failover within the hour might or might not bill both replicas.
+- Passive instances for other disaster recovery technologies like log shipping or mirroring aren't automatically detected at this time.
+- The detection logic doesn't support free disaster recovery testing.
+- The detection logic doesn't support monitoring connections like database consistency checks, backups, or monitoring resource usage data.
+- On Linux, passive instance detection isn't available. All SQL Server instances on Linux are billed as active, regardless of their HA/DR role.
+
+If you're unable to work within these limitations, you can use volume licensing instead of `PAYG`. For details, review [Configure SQL Server enabled by Azure Arc](manage-configuration.md).
+
+### Billing after failover
+
+During failovers, the extension detects the role transition and automatically switches billing to the active replica without duplicate charges.
+
+<a id="server-cal"></a>
+
+## Manage SQL Server instances that use a Server+CAL license
+
+You can connect any licensed SQL Server instance to Azure Arc, including instances that use the Server+CAL licensing model. If your instance uses this license, you must set the license type to `LicenseOnly`, even if you have active Software Assurance for it.
+
+If you converted your Enterprise Server+CAL license to a core-based license, you should set the license type to `Paid` or `PAYG`. The best practice is to also upgrade the SQL Server edition from Enterprise to Enterprise Core, because the latter provides the complete set of SQL Server capabilities. But even if you didn't upgrade the instances, Azure Extension for SQL Server monitors software usage as Enterprise Core.
+
+<a id="manage-ssxs"></a>
+
+## Manage SQL Server associated services
+
+ SQL Server 
+ enabled by Azure Arc provides license management for the following associated services:
+
+
+- [ SQL Server
+Analysis Services
+](https://learn.microsoft.com/azure/analysis-services/)
+- [ SQL Server
+Integration Services
+](../../integration-services/sql-server-integration-services.md)
+- [ SQL Server
+Reporting Services
+](../../reporting-services/create-deploy-and-manage-mobile-and-paginated-reports.md)
+- [Power BI Report Server](https://learn.microsoft.com/power-bi/report-server/get-started)
+
+For details, see [Feature availability by service type](overview.md#feature-availability-by-service-type).
+
+The SQL Server associated services are represented and managed for licensing purposes as SQL Server instances. Their usage is reported using the metering rules described in [Metering software usage](manage-license-billing.md#usage-metering).
+
+If you use pay-as-you-go (`PAYG`) licensing for SQL Server enabled by Azure Arc, you might be entitled to use Power BI Report Server (PBIRS) or SQL Server Reporting Services (SSRS) based on your licensing eligibility.
+
+Currently, pay-as-you-go activation or installation isn't available for PBIRS or SSRS, and you might need to provide a product key during deployment.
+
+If you're an eligible pay-as-you-go Azure Arc customer and need a PBIRS or SSRS product key, open a Microsoft Support request to validate eligibility and coordinate issuing the required product key.
+
+> **Important:**  
+>
+> The SQL Server associated service installations require a separate license only when they are installed on the machine as a standalone instance (without SQL Server database engine). Otherwise, separate license isn't required.
+>
+> When the SQL Server associated service is a standalone instance (without SQL Server database engine) and the machine is configured using a pay-as-you-go subscription, the corresponding pay-as-you-go meters are activated for the instance.
+>
+> If you activate a physical core license as a pay-as-you-go subscription in the corresponding scope, and you configure the machine to use it, the SQL Server associated service isn't individually billed for the pay-as-you-go subscription when it's a standalone instance (without SQL Server engine). For details, see [Use a physical core license](manage-configuration.md#use-physical-core-license).
+
+## 180-day dual-use benefit
+
+Azure provides 180 days of dual-use rights to apply to current deployments and deployments in Azure to allow for data migration.
+
+For details, review the [licensing guide](https://download.microsoft.com/download/9/3/d/93d32de6-f268-45ed-ba25-2f9a6756b6af/SQL_Server_2022_Licensing_guide.pdf).
+
+To use the 180-day dual use benefit and avoid double billing while migrating to Azure, follow these steps:
+1. Enable pay-as-you-go on the source SQL Server instance after it's enabled by Arc.
+1. Deploy your Azure SQL resource, such as Azure SQL Managed Instance or SQL Server on Azure VM, and choose **Azure Hybrid Benefit** as the license type.
+1. Migrate your data from the source SQL Server instance to the Azure SQL resource within the 180-day dual-use period.
+1. Disconnect the source SQL Server instance from Azure Arc after the migration is complete, or change the license type to `LicenseOnly`.
+1. Switch the Azure SQL resource to pay-as-you-go.
+
+<a id="usage-metering"></a>
+
+## Metering and reporting software usage
+
+The system reports the usage of the SQL Server software once an hour. It automatically selects the specific meter based on the SQL Server edition and the number of virtual cores or physical cores visible to the OSE. The following rules apply:
+
+- If you install one or several instances of SQL Server or SQL Server associated services on a virtual machine and don't specify the use of a physical core license, SQL Server software usage is metered based on the total number of virtual cores available to the OSE. The minimum is four cores per OSE.
+
+- If you install one or several instances of SQL Server or SQL Server associated services on a physical server without using virtual machines, SQL Server software usage is metered based on the total number physical cores available to the OSE. The minimum is four cores per OSE.
+
+- SQL Server software usage is reported per OSE whether one or multiple instances of SQL Server or SQL Server associated services are installed on the same OSE.
+
+- If two or more instances of SQL Server or SQL Server associated services with the same edition are installed, the first instance in alphabetical order reports usage.
+
+- If two or more instances of SQL Server or SQL Server associated services are installed on the same OSE the instance with the highest edition will be billed.
+
+- The combination of the selected `LicenseType` value and the highest SQL Server edition installed on the OSE defines which meter is sent.
+
+For more information, see [SQL Server Licensing Resources and Documents](https://www.microsoft.com/licensing/docs/view/SQL-Server).
+
+The following table shows the meter product tiers (also called *SKUs*) that are used for metering and billing for SQL Server software installed on a single OSE:
+
+| Installed edition | Projected edition | Host license type | Failover replica | Use physical core license | Meter SKU |
+| --- | --- | --- | --- | --- | --- |
+| Enterprise Core | Enterprise | `PAYG` | No | No | `Ent edition - PAYG` |
+| Enterprise Core | Enterprise | `PAYG` | No | Yes | `Ent edition - Virtual license` <sup>2</sup> |
+| Enterprise Core | Enterprise | `Paid` | No | No | `Ent edition - AHB` |
+| Enterprise Core | Enterprise | `Paid` | No | Yes | `Ent edition - Virtual license` <sup>2</sup> |
+| Enterprise Core | Enterprise | `LicenseOnly` | Yes or no | Not applicable | `Ent edition - License only` |
+| Enterprise Core | Enterprise | `PAYG` or `Paid` | Yes | Yes or no | `Ent edition - DR replica` |
+| Enterprise <sup>1</sup> | Enterprise | `PAYG` | No | No | `Ent edition - PAYG` |
+| Enterprise <sup>1</sup> | Enterprise | `PAYG` | No | Yes | `Ent edition - Virtual license` <sup>2</sup> |
+| Enterprise <sup>1</sup> | Enterprise | `Paid` | No | No | `Ent edition - AHB` |
+| Enterprise <sup>1</sup> | Enterprise | `Paid` | No | Yes | `Ent edition - Virtual license` <sup>2</sup> |
+| Enterprise <sup>1</sup> | Enterprise | `LicenseOnly` | Yes or no | Not applicable | `Ent edition - License only` |
+| Enterprise <sup>1</sup> | Enterprise | `PAYG` or `Paid` | Yes | Yes or no | `Ent edition - DR replica` |
+| Standard | Standard | `PAYG` | No | No | `Std edition - PAYG` |
+| Standard | Standard | `PAYG` | No | Yes | `Std edition - Virtual license` <sup>2</sup> |
+| Standard | Standard | `Paid` | No | No | `Std edition - AHB` |
+| Standard | Standard | `Paid` | No | Yes | `Std edition - Virtual license` <sup>2</sup> |
+| Standard | Standard | `LicenseOnly` | No | Not applicable | `Std edition - Virtual license` <sup>2</sup> |
+| Standard | Standard | `PAYG` or `Paid` | Yes | Yes or no | `Std edition - DR replica` |
+| Evaluation | Evaluation | Any | Yes or no | Not applicable | `Eval edition` |
+| Developer | Developer | Any | Yes or no | Not applicable | `Dev edition` |
+| Web <sup>3</sup> | Web | `PAYG` or `Paid` | Not applicable | Not applicable | `Web edition - PAYG` |
+| Web <sup>4</sup> | Web | `LicenseOnly` | Not applicable | Not applicable | `Web edition - License only` |
+| Express | Express | Any | Not applicable | Not applicable | `Express edition` |
+
+<sup>1</sup> Installation of the Enterprise edition indicates use of the Server+CAL licensing model.
+
+<sup>2</sup> This meter reflects the software usage covered by the physical core license and the unlimited virtualization benefit. For the SQL Server instance to be covered, it must be installed on a virtual machine.
+
+<sup>3</sup> Web edition isn't available in  SQL Server 2025 (17.x) 
+ and later versions. It's only available through hosting provider programs, and only up to SQL Server 2022.
+
+<sup>4</sup> This configuration applies when Web edition is licensed through a hosting provider, but the SQL Server instance is connected to Azure Arc and uses a limited set of Azure features. See [Feature availability by license type](overview.md#feature-availability-depending-on-license-type).
+
+The following table shows the meter SKUs that are used for metering and billing for SQL Server software covered by a physical core license with unlimited virtualization:
+
+| License category | Projected edition | Billing plan | Meter SKU |
+| --- | --- | --- | --- |
+| Physical core license | Enterprise | `PAYG` | `Ent edition - Host - PAYG` |
+| Physical core license | Enterprise | `Paid` | `Ent edition - AHB` |
+
+
+
+## Related content
+
+- [Product terms for SQL Server enabled by Azure Arc](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/eaeas#ServiceSpecificTerms)
+- [SQL Server Licensing Resources and Documents](https://www.microsoft.com/licensing/docs/view/SQL-Server)
+- [SQL Server 2022 pricing and licensing](https://www.microsoft.com/sql-server/sql-server-2022-pricing)
+- [Configure SQL Server enabled by Azure Arc](manage-configuration.md)
+- [Frequently asked questions](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/sql-server/azure-arc/faq.yml#recurring-pay-as-you-go-billing)
+- [Microsoft.AzureArcData tag support](https://learn.microsoft.com/azure/azure-resource-manager/management/tag-support#microsoftazurearcdata)

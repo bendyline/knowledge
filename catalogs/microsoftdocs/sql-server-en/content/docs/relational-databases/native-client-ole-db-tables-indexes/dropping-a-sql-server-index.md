@@ -1,0 +1,38 @@
+---
+title: "Drop SQL Server index (Native Client OLE DB provider)"
+description: "Drop SQL Server index (Native Client OLE DB provider)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "removing indexes"
+  - "deleting indexes"
+  - "DropIndex function"
+  - "dropping indexes"
+  - "SQL Server Native Client OLE DB provider, indexes"
+  - "indexes [OLE DB]"
+---
+# Dropping a SQL Server Native Client Index
+
+  The  SQL Server 
+ Native Client OLE DB provider exposes the **IIndexDefinition::DropIndex** function. This allows consumers to remove an index from a  SQL Server 
+ table.  
+  
+ The  SQL Server 
+ Native Client OLE DB provider exposes some  SQL Server 
+ PRIMARY KEY and UNIQUE constraints as indexes. The table owner, database owner, and some administrative role members can modify a  SQL Server 
+ table, dropping a constraint. By default, only the table owner can drop an existing index. Therefore, **DropIndex** success or failure depends not only on the application user's access rights but also on the type of index indicated.  
+  
+ Consumers specify the table name as a Unicode character string in the *pwszName* member of the *uName* union in the *pTableID* parameter. The *eKind* member of *pTableID* must be DBKIND_NAME.  
+  
+ Consumers specify the index name as a Unicode character string in the *pwszName* member of the *uName* union in the *pIndexID* parameter. The *eKind* member of *pIndexID* must be DBKIND_NAME. The  SQL Server 
+ Native Client OLE DB provider does not support the OLE DB feature of dropping all indexes on a table when *pIndexID* is null. If *pIndexID* is null, E_INVALIDARG is returned.  
+  
+## Related content
+
+- [Tables and Indexes in SQL Server Native Client](tables-and-indexes.md)
+- [ALTER TABLE (Transact-SQL)](../../t-sql/statements/alter-table-transact-sql.md)
+- [DROP INDEX (Transact-SQL)](../../t-sql/statements/drop-index-transact-sql.md)

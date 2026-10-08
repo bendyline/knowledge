@@ -1,0 +1,42 @@
+---
+title: "Interoperability"
+description: "Interoperability"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "interoperability [ODBC]"
+  - "interoperability [ODBC], about interoperability"
+---
+# Interoperability
+*Interoperability* is the ability of a single application to operate with many different DBMSs. The need to write generic, interoperable applications was one of the major factors leading to the development of ODBC. However, interoperability is not a simple path followed from "not interoperable" to "completely interoperable." The path has many branches, and each requires trade-offs among features, speed, code complexity, and development time.  
+  
+ The process of writing an interoperable application follows several steps:  
+  
+1.  Deciding whether the application will use ODBC.  
+  
+2.  Choosing a level of interoperability and deciding which trade-offs are necessary to reach that level.  
+  
+3.  Writing interoperable code and testing it as fully as possible.  
+  
+ It should be noted that interoperability is primarily the domain of the application writer. Drivers are designed to work with a single DBMS and, by definition, are not interoperable. They play a role in interoperability by correctly implementing and exposing ODBC over a single DBMS.  
+  
+ This section contains the following topics.  
+  
+-   [Is ODBC the Answer?](is-odbc-the-answer.md)  
+  
+-   [Choosing a Level of Interoperability](choosing-a-level-of-interoperability.md)  
+  
+-   [Determining the Target DBMSs and Drivers](determining-the-target-dbmss-and-drivers.md)  
+  
+-   [Considering Database Features to Use](considering-database-features-to-use.md)  
+  
+-   [Length of the Product Cycle](length-of-the-product-cycle.md)  
+  
+-   [Writing an Interoperable Application](writing-an-interoperable-application.md)  
+  
+-   [Testing Interoperable Applications](testing-interoperable-applications.md)

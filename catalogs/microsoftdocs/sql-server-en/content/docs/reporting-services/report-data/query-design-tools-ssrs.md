@@ -1,0 +1,133 @@
+---
+title: "Query Design Tools"
+description: Learn about query design tools and also learn the type of data source each query design tool supports.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "graphical query designer [Reporting Services]"
+  - "MDX query designer [Reporting Services]"
+  - "text-based query designer [Reporting Services]"
+  - "DMX [Reporting Services]"
+  - "query designers [Reporting Services]"
+  - "generic query designer See text-based query designer"
+  - "Reporting Services, query designers"
+  - "semantic queries [Reporting Services]"
+  - "Report Model Query Designer"
+---
+# Query Design Tools (SSRS)
+   Reporting Services 
+ provides a variety of query design tools that you can use to create dataset queries in Report Designer. Some query designers provide alternate modes so that you can choose whether to work in visual mode or directly in the query language. This topic introduces each tool and describes the type of data source each one supports. The following tools are described in this topic:  
+  
+-   [Text-based Query Designer](#Textbased)  
+  
+-   [Graphical Query Designer](#Graphical)  
+  
+-   [Report Model Query Designer](#Model)  
+  
+-   [MDX Query Designer](#MDX)  
+  
+-   [DMX Query Designer](#DMX)  
+  
+-   [SapNetWeaver BI Query Designer](#SAPBW)  
+  
+-   [Hyperion Essbase Query Designer](#Hyperion)  
+  
+ All of the query design tools run in the data design environment of  SQL Server Data Tools (SSDT) 
+ when you work with a Report Server project template or Report Server Wizard project template. For more information about working with the query designers, see [Reporting Services Query Designers](https://learn.microsoft.com/previous-versions/sql/).  
+  
+ The type of data source that you are working with determines the availability of a particular query designer.  
+  
+ The data source types that are available in your report are determined by the  Reporting Services 
+ data extensions installed on your client or report server. For more information, see [RSReportDesigner Configuration File](../report-server/rsreportdesigner-configuration-file.md) and [RsReportServer.config Configuration File](../report-server/rsreportserver-config-configuration-file.md).  
+  
+ A data processing extension and its associated query designer can differ in support for data sources in the following ways:  
+  
+-   **By query designer type.** For example, a  SQL Server 
+ data source supports both the graphical and text-based query designers.  
+  
+-   **By query language variation.** For example, a query language such as  Transact-SQL  can differ in syntax depending on the data source type. The  Microsoft 
+  Transact-SQL  language and the Oracle SQL language have some variation in syntax for a query command.  
+  
+-   **By support for the schema part of a database object name.** When a data source uses schemas as part of the database object identifier, the schema name must be supplied as part of the query for any names that do not use the default schema. For example, `SELECT FirstName, LastName FROM [Person].[Person]`.  
+  
+-   **By support for query parameters.** Data providers differ in support for parameters. Some data providers support named parameters; for example, `SELECT Col1, Col2 FROM Table WHERE <parameter identifier><parameter name> = <value>`. Some data providers support unnamed parameters; for example, `SELECT Col1, Col2 FROM Table WHERE <column name> = ?`. The parameter identifier might differ by data provider; for example,  SQL Server 
+ uses the "at" (@) symbol, Oracle uses the colon (:). Some data providers do not support parameters.  
+  
+-   **By ability to import queries.** For example, for a  SQL Server 
+ data source, you can import a query from a report definition file (.rdl) or from a .sql file.  
+  
+##  <a name="Textbased"></a> Text-based Query Designer  
+ The text-based query designer is the default query building tool for most supported relational data sources, including  Microsoft 
+  SQL Server 
+, Oracle, Teradata, OLE DB, XML, and ODBC. In contrast with the graphical query designer, this query design tool does not validate query syntax during query design. The following image provides an illustration of the text-based query designer.  
+  
+ Generic query designer, for relational data query  
+  
+ The text-based query designer is recommended for creating complex queries, using stored procedures, querying XML data, and for writing dynamic queries. Depending on the data source, you may be able to toggle the **Edit As Text** button on the toolbar to switch between the graphical query designer and the text-based query designer. For more information, see [Text-based Query Designer User Interface](https://learn.microsoft.com/previous-versions/sql/).  
+  
+##  <a name="Graphical"></a> Graphical Query Designer  
+ The graphical query designer is used to create or modify  Transact-SQL  queries that run against a relational database. This query design tool is used in several  Microsoft 
+ products and in other  SQL Server 
+ components. Depending on the data source type, it supports Text, StoredProcedure, and TableDirect modes. The following image provides an illustration of the graphical query designer.  
+  
+ Graphical query designer for sql query  
+  
+ You can toggle the **Edit As Text** button on the toolbar to switch between the graphical query designer and the text-based query designer. For more information, see [Graphical Query Designer User Interface](graphical-query-designer-user-interface.md).  
+  
+##  <a name="Model"></a> Report Model Query Designer  
+ The Report Model query designer is used to create or modify queries that run against a SMDL report model that has been published to a report server. Reports that run against models support clickthrough data exploration. The query determines the path of data exploration at run time. The following image provides an illustration of the Report Model query designer.  
+  
+ Semantic Model Query Designer UI  
+  
+ To use the Report Model query designer, you must define a data source that points to a published model. When you define a dataset for the data source, you can open the dataset query in the Report Model query designer. The Report Model query designer can be used in graphical or text-based modes. You can toggle the **Edit As Text** button on the toolbar to switch between the graphical query designer and the text-based query designer.
+  
+##  <a name="MDX"></a> MDX Query Designer  
+ The Multidimensional Expression (MDX) query designer is used to create or modify queries that run against an  Analysis Services 
+ data source with multidimensional cubes. The following image provides an illustration of the MDX query designer after the query and filter are defined.  
+  
+ Analysis Services MDX query designer, design view  
+  
+ To use the MDX query designer, you must define a data source that has an Analysis Services cube available that is valid and has been processed. When you define a dataset for the data source, you can open the query in the MDX query designer. If necessary, use the MDX and DMX buttons on the toolbar to switch between MDX and DMX modes. For more information, see [Analysis Services MDX Query Designer User Interface](analysis-services-mdx-query-designer-user-interface.md).  
+  
+##  <a name="DMX"></a> DMX Query Designer  
+ The Data Mining Prediction Expression (DMX) query designer is used to create or modify queries that run against an  Analysis Services 
+ data source with mining models. The following image provides an illustration of the DMX query designer after the model and input tables are selected.  
+  
+ Analysis Services DMX query designer, design view  
+  
+ To use the DMX query designer, you must define a data source that has a valid, data mining model available. When you define a dataset for the data source, you can open the query in the DMX query designer. If necessary, use the MDX and DMX buttons on the toolbar to switch between MDX and DMX modes. After you select the model, you can create data mining prediction queries that provide data to a report. For more information, see [Analysis Services DMX Query Designer User Interface](analysis-services-dmx-query-designer-user-interface.md).  
+  
+##  <a name="SAPBW"></a> Sap NetWeaver BI Query Designer  
+ The  SAP NetWeaver Business Intelligence 
+ query designer is used to retrieve data from a  SAP NetWeaver Business Intelligence 
+ database. To use this query designer, you must have an  SAP NetWeaver Business Intelligence 
+ data source that has at least one InfoCube, MultiProvider, or Web-enabled query defined. The following image provides an illustration of the  SAP NetWeaver Business Intelligence 
+ query designer. For more information, see [SAP NetWeaver BI Query Designer User Interface](sap-netweaver-bi-query-designer-user-interface.md).  
+  
+ Query Designer using MDX in Design Mode  
+  
+##  <a name="Hyperion"></a> Hyperion Essbase Query Designer  
+ The  Hyperion Essbase 
+ query designer is used to retrieve data from  Hyperion Essbase 
+ databases and applications. The following image provides an illustration of the  Hyperion Essbase 
+ query designer.  
+  
+ Query Designer for Hyperion Essbase data source  
+  
+ To use this query designer, you must have a  Hyperion Essbase 
+ data source that has at least one database.  
+  
+ For more information, see [Hyperion Essbase Query Designer User Interface](hyperion-essbase-query-designer-user-interface.md).  
+  
+## Related content
+
+- [SQL Server Reporting Services tools](../tools/reporting-services-tools.md)
+- [Report Datasets (SSRS)](report-datasets-ssrs.md)
+- [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)
+- [Reporting Services tutorials (SSRS)](../reporting-services-tutorials-ssrs.md)
+- [Data Sources Supported by Reporting Services (SSRS)](data-sources-supported-by-reporting-services-ssrs.md)
+- [Create an Embedded or Shared Data Source (SSRS)](https://learn.microsoft.com/previous-versions/sql/)

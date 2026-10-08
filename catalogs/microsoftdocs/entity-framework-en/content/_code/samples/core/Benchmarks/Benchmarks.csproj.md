@@ -1,0 +1,20 @@
+# Source code: samples/core/Benchmarks/Benchmarks.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="11.0.0-preview.7.26381.103" />
+  </ItemGroup>
+</Project>
+
+```

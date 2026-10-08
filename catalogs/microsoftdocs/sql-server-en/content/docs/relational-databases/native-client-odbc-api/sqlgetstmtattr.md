@@ -1,0 +1,66 @@
+---
+title: "SQLGetStmtAttr"
+description: "SQLGetStmtAttr"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQLGetStmtAttr function"
+apitype: "DLLExport"
+---
+# SQLGetStmtAttr
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The  SQL Server 
+ Native Client ODBC driver extends SQLGetStmtAttr to expose driver-specific statement attributes.  
+  
+ [SQLSetStmtAttr](sqlsetstmtattr.md) lists statement attributes that are both read and write. This topic lists the read only statement attributes.  
+  
+## SQL_SOPT_SS_CURRENT_COMMAND  
+ The SQL_SOPT_SS_CURRENT_COMMAND attribute exposes the current command of a command batch. The return is an integer that specifies the location of the command in the batch. The *ValuePtr* value is of type SQLLEN.  
+  
+## SQL_SOPT_SS_NOCOUNT_STATUS  
+ The SQL_SOPT_SS_NOCOUNT_STATUS attribute indicates the current setting of the NOCOUNT option, which controls whether  SQL Server 
+ reports the numbers of rows affected by a statement when [SQLRowCount](sqlrowcount.md) is called. The *ValuePtr* value is of type SQLLEN.  
+  
+| Value | Description |
+| --- | --- |
+| SQL_NC_OFF | NOCOUNT is OFF. SQLRowCount returns number of rows affected. |
+| SQL_NC_ON | NOCOUNT is ON. The number of rows affected is not returned by SQLRowCount and the returned value is 0. |
+  
+ If SQLRowCount returns 0, the application should test SQL_SOPT_SS_NOCOUNT_STATUS. If SQL_NC_ON is returned, the value of 0 from SQLRowCount only indicates that  SQL Server 
+ has not returned a row count. If SQL_NC_OFF is returned, it means that NOCOUNT is off and the value of 0 from SQLRowCount indicates that the statement did not affect any rows.  
+  
+ Applications should not display the value of SQLRowCount when SQL_SOPT_SS_NOCOUNT_STATUS is SQL_NC_OFF. Large batches or stored procedures can contain multiple SET NOCOUNT statements, so it cannot be assumed that SQL_SOPT_SS_NOCOUNT_STATUS remains constant. This option should be tested each time SQLRowCount returns 0.  
+  
+## SQL_SOPT_SS_QUERYNOTIFICATION_MSGTEXT  
+ The SQL_SOPT_SS_QUERYNOTIFICATION_MSGTEXT attribute returns the message text for the query notification request.  
+  
+## SQLGetStmtAttr and Table-valued Parameters  
+ SQLGetStmtAttr can be called to get the value of SQL_SOPT_SS_PARAM_FOCUS in the application parameter descriptor (APD) when working with table-valued parameters. For more information on SQL_SOPT_SS_PARAM_FOCUS, see [SQLSetStmtAttr](sqlsetstmtattr.md).  
+  
+ For more information about table-valued parameters, see [Table-Valued Parameters (ODBC)](../native-client-odbc-table-valued-parameters/table-valued-parameters-odbc.md).  
+  
+## Related content
+
+- [SQLSetStmtAttr Function](../../odbc/reference/syntax/sqlsetstmtattr-function.md)
+- [ODBC API implementation details](odbc-api-implementation-details.md)

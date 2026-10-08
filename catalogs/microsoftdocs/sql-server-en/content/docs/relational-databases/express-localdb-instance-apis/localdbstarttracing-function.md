@@ -1,0 +1,48 @@
+---
+title: "LocalDBStartTracing Function"
+description: LocalDBStartTracing enables tracing of API calls for all the SQL Server Express LocalDB instances owned by the current Windows user.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 07/14/2025
+ms.service: sql
+ms.topic: "reference"
+apilocation: "sqluserinstance.dll"
+apiname: "LocalDBStartTracing"
+apitype: "DLLExport"
+---
+# LocalDBStartTracing function
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Enables tracing of API calls for all the SQL Server Express LocalDB instances owned by the current Windows user.
+
+**Header file:** `msoledbsql.h`
+
+## Syntax
+
+```cpp
+HRESULT LocalDBStartTracing();
+```
+
+## Returns
+
+`S_OK`: The function succeeded.
+
+| Error | Description |
+| --- | --- |
+| [LOCALDB_ERROR_XEVENT_FAILED](../express-localdb-error-messages/localdb-error-xevent-failed.md) | Failed to start XEvent engine within the LocalDB Instance API. |
+| [LOCALDB_ERROR_INTERNAL_ERROR](../express-localdb-error-messages/localdb-error-internal-error.md) | An unexpected error occurred. See the event log for details. |
+
+## Remarks
+
+For a code sample that uses LocalDB API, see [SQL Server Express LocalDB reference](../sql-server-express-localdb-reference.md).
+
+## Related content
+
+- [SQL Server Express LocalDB header and version information](sql-server-express-localdb-header-and-version-information.md)

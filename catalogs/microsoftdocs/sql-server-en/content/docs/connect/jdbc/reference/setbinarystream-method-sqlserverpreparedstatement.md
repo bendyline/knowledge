@@ -1,0 +1,28 @@
+---
+title: "setBinaryStream Method (SQLServerPreparedStatement)"
+description: "setBinaryStream Method (SQLServerPreparedStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# setBinaryStream Method (SQLServerPreparedStatement)
+
+
+  Sets the designated parameter to the specified input stream.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [setBinaryStream Method (int, java.io.InputStream)](setbinarystream-method-int-java-io-inputstream.md) | Sets the designated parameter to the specified input stream. |
+| [setBinaryStream Method (int, java.io.InputStream, int)](setbinarystream-method-int-java-io-inputstream-int.md) | Sets the designated parameter to the specified input stream, which will have the specified number of bytes. |
+| [setBinaryStream Method (int, java.io.InputStream, long)](setbinarystream-method-int-java-io-inputstream-long.md) | Sets the designated parameter to the specified input stream, which will have the specified number of bytes. |
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

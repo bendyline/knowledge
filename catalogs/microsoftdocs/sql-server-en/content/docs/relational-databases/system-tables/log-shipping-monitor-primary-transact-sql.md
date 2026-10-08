@@ -1,0 +1,58 @@
+---
+title: "log_shipping_monitor_primary (Transact-SQL)"
+description: log_shipping_monitor_primary (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "log_shipping_monitor_primary"
+  - "log_shipping_monitor_primary_TSQL"
+helpviewer_keywords:
+  - "log_shipping_monitor_primary system table"
+dev_langs:
+  - "TSQL"
+---
+# log_shipping_monitor_primary (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Stores one monitor record per primary database in each log shipping configuration. This table is stored in the **msdb** database.  
+  
+ The tables related to history and monitoring are also used at the primary server and the secondary servers.   
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **primary_id** | **uniqueidentifier** | The ID of the primary database for the log shipping configuration. |
+| **primary_server** | **sysname** | The name of the primary instance of the  Microsoft |
+  | SQL Server Database Engine |
+ | in the log shipping configuration. |
+| **primary_database** | **sysname** | The name of the primary database in the log shipping configuration. |
+| **backup_threshold** | **int** | The number of minutes allowed to elapse between backup operations before an alert is generated. |
+| **threshold_alert** | **int** | The alert to be raised when the backup threshold is exceeded. |
+| **threshold_alert_enabled** | **bit** | Determines if backup threshold alerts are enabled. 1 = Enabled.<br /><br /> 0 = Disabled. |
+| **last_backup_file** | **nvarchar(500)** | The absolute path of the most recent transaction log backup. |
+| **last_backup_date** | **datetime** | The time and date of the last transaction log backup operation on the primary database. |
+| **last_backup_date_utc** | **datetime** | The time and date of the last transaction log backup operation on the primary database, expressed in Coordinated Universal Time. |
+| **history_retention_period** | **int** | The amount of time, in minutes, that log shipping history records are retained for a given primary database before being deleted. |
+  
+## Remarks  
+ In addition to being stored on the remote monitor server, the information related to the primary server is stored on the primary server in its **log_shipping_monitor_primary** table.  
+  
+## Related content
+
+- [About log shipping (SQL Server)](../../database-engine/log-shipping/about-log-shipping-sql-server.md)
+- [sys.sp_add_log_shipping_primary_database (Transact-SQL)](../system-stored-procedures/sp-add-log-shipping-primary-database-transact-sql.md)
+- [sys.sp_change_log_shipping_primary_database (Transact-SQL)](../system-stored-procedures/sp-change-log-shipping-primary-database-transact-sql.md)
+- [sys.sp_delete_log_shipping_primary_database (Transact-SQL)](../system-stored-procedures/sp-delete-log-shipping-primary-database-transact-sql.md)
+- [sys.sp_help_log_shipping_primary_database (Transact-SQL)](../system-stored-procedures/sp-help-log-shipping-primary-database-transact-sql.md)
+- [sys.sp_refresh_log_shipping_monitor (Transact-SQL)](../system-stored-procedures/sp-refresh-log-shipping-monitor-transact-sql.md)
+- [sys.sp_help_log_shipping_monitor_primary (Transact-SQL)](../system-stored-procedures/sp-help-log-shipping-monitor-primary-transact-sql.md)
+- [sp_delete_log_shipping_alert_job (Transact-SQL)](../system-stored-procedures/sp-delete-log-shipping-alert-job-transact-sql.md)
+- [System Tables (Transact-SQL)](system-tables-transact-sql.md)

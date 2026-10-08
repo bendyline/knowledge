@@ -1,0 +1,63 @@
+---
+title: "Example: Specifying the CDATA Directive"
+description: View an example of how to specify the CDATA directive to wrap the specified data in a CDATA section.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 05/05/2022
+ms.service: sql
+ms.subservice: xml
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "CDATA directive"
+---
+# Example: Specify the CDATA directive
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+If the directive is set to **CDATA**, the contained data isn't entity encoded, but is put in the CDATA section. The **CDATA** attributes must be nameless.
+
+The following query wraps the product model summary description in a CDATA section.
+
+```sql
+USE AdventureWorks2022;
+GO
+SELECT  1 as Tag,
+        0 as Parent,
+        ProductModelID  as [ProductModel!1!ProdModelID],
+        Name            as [ProductModel!1!Name],
+        '<Summary>This is summary description</Summary>'
+            as [ProductModel!1!!CDATA] -- no attribute name so ELEMENT assumed
+FROM    Production.ProductModel
+WHERE   ProductModelID = 19
+FOR XML EXPLICIT;
+```
+
+This is the result:
+
+```xml
+<ProductModel ProdModelID="19" Name="Mountain-100">
+   <![CDATA[<Summary>This is summary description</Summary>]]>
+</ProductModel>
+```
+
+## Related content
+
+- [Use EXPLICIT mode with FOR XML](use-explicit-mode-with-for-xml.md)

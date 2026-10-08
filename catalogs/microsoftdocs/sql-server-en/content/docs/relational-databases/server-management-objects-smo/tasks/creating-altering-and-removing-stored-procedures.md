@@ -1,0 +1,167 @@
+---
+title: "Creating, Altering, and Removing Stored Procedures"
+description: "Creating, Altering, and Removing Stored Procedures"
+author: "markingmyname"
+ms.author: "maghan"
+ms.date: "08/06/2017"
+ms.service: sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "stored procedures [SMO]"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Creating, Altering, and Removing Stored Procedures
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  In  SQL Server 
+ Management Objects (SMO), stored procedures are represented by the [Microsoft.SqlServer.Management.Smo.StoredProcedure](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure) object.  
+  
+ Creating a [Microsoft.SqlServer.Management.Smo.StoredProcedure](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure) object in SMO requires setting the [Microsoft.SqlServer.Management.Smo.StoredProcedure.TextBody%2A](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure.TextBody%252A) property to the  Transact-SQL  script that defines the stored procedure. Parameters require the \@ prefix and must be created individually by using [Microsoft.SqlServer.Management.Smo.StoredProcedureParameter](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedureParameter) objects and adding to the [Microsoft.SqlServer.Management.Smo.StoredProcedureParameter](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedureParameter) collection of the [Microsoft.SqlServer.Management.Smo.StoredProcedure](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure) object.  
+  
+## Example  
+ To use any code example that is provided, you will have to choose the programming environment, the programming template, and the programming language in which to create your application. For more information, see [Create a Visual C# SMO Project in Visual Studio .NET](../how-to-create-a-visual-csharp-smo-project-in-visual-studio-net.md).  
+  
+## Creating, Altering, and Removing a Stored Procedure in Visual Basic  
+ This code example shows how to create a stored procedure for the  AdventureWorks2025  database. The example returns the last name of an employee when it is given the employee ID number. The stored procedure requires one input parameter to specify the employee ID number and one output parameter to return the last name of the employee.  
+  
+```VBNET
+'Connect to the local, default instance of SQL Server.
+Dim srv As Server
+srv = New Server
+'Reference the AdventureWorks2022 database.
+Dim db As Database
+db = srv.Databases("AdventureWorks2022")
+'Define a StoredProcedure object variable by supplying the parent database and name arguments in the constructor.
+Dim sp As StoredProcedure
+sp = New StoredProcedure(db, "GetLastNameByEmployeeID")
+'Set the TextMode property to false and then set the other object properties.
+sp.TextMode = False
+sp.AnsiNullsStatus = False
+sp.QuotedIdentifierStatus = False
+'Add two parameters.
+Dim param As StoredProcedureParameter
+param = New StoredProcedureParameter(sp, "@empval", DataType.Int)
+sp.Parameters.Add(param)
+Dim param2 As StoredProcedureParameter
+param2 = New StoredProcedureParameter(sp, "@retval", DataType.NVarChar(50))
+param2.IsOutputParameter = True
+sp.Parameters.Add(param2)
+'Set the TextBody property to define the stored procedure.
+Dim stmt As String
+stmt = " SELECT @retval = (SELECT LastName FROM Person.Person AS p JOIN HumanResources.Employee AS e ON p.BusinessEntityID = e.BusinessEntityID AND e.BusinessEntityID = @empval )"
+sp.TextBody = stmt
+'Create the stored procedure on the instance of SQL Server.
+sp.Create()
+'Modify a property and run the Alter method to make the change on the instance of SQL Server.   
+sp.QuotedIdentifierStatus = True
+sp.Alter()
+'Remove the stored procedure.
+sp.Drop()
+``` 
+  
+## Creating, Altering, and Removing a Stored Procedure in Visual C#  
+ This code example shows how to create a stored procedure for the  AdventureWorks2025  database. The example returns the last name of an employee when it is given the employee ID number (`BusinessEntityID`). The stored procedure requires one input parameter to specify the employee ID number and one output parameter to return the last name of the employee.  
+  
+```csharp  
+{  
+            //Connect to the local, default instance of SQL Server.   
+            Server srv;  
+            srv = new Server();  
+            //Reference the AdventureWorks2022 database.   
+            Database db;  
+            db = srv.Databases["AdventureWorks2022"];  
+            //Define a StoredProcedure object variable by supplying the parent database and name arguments in the constructor.   
+            StoredProcedure sp;  
+            sp = new StoredProcedure(db, "GetLastNameByBusinessEntityID");  
+            //Set the TextMode property to false and then set the other object properties.   
+            sp.TextMode = false;  
+            sp.AnsiNullsStatus = false;  
+            sp.QuotedIdentifierStatus = false;  
+            //Add two parameters.   
+            StoredProcedureParameter param;  
+            param = new StoredProcedureParameter(sp, "@empval", DataType.Int);  
+            sp.Parameters.Add(param);  
+            StoredProcedureParameter param2;  
+            param2 = new StoredProcedureParameter(sp, "@retval", DataType.NVarChar(50));  
+            param2.IsOutputParameter = true;  
+            sp.Parameters.Add(param2);  
+            //Set the TextBody property to define the stored procedure.   
+            string stmt;  
+            stmt = " SELECT @retval = (SELECT LastName FROM Person.Person,HumanResources.Employee WHERE Person.Person.BusinessEntityID = HumanResources.Employee.BusinessentityID AND HumanResources.Employee.BusinessEntityID = @empval )";  
+            sp.TextBody = stmt;  
+            //Create the stored procedure on the instance of SQL Server.   
+            sp.Create();  
+            //Modify a property and run the Alter method to make the change on the instance of SQL Server.   
+            sp.QuotedIdentifierStatus = true;  
+            sp.Alter();  
+            //Remove the stored procedure.   
+            sp.Drop();  
+        }  
+```  
+  
+## Creating, Altering, and Removing a Stored Procedure in PowerShell  
+ This code example shows how to create a stored procedure for the  AdventureWorks2025  database. The example returns the last name of an employee when it is given the employee ID number (`BusinessEntityID`). The stored procedure requires one input parameter to specify the employee ID number and one output parameter to return the last name of the employee.  
+  
+```powershell  
+# Set the path context to the local, default instance of SQL Server and get a reference to AdventureWorks2022  
+CD \sql\localhost\default\databases  
+$db = get-item AdventureWorks2022  
+  
+# Define a StoredProcedure object variable by supplying the parent database and name arguments in the constructor.   
+$sp  = New-Object -TypeName Microsoft.SqlServer.Management.SMO.StoredProcedure `  
+-argumentlist $db, "GetLastNameByBusinessEntityID"  
+  
+#Set the TextMode property to false and then set the other object properties.   
+$sp.TextMode = $false  
+$sp.AnsiNullsStatus = $false  
+$sp.QuotedIdentifierStatus = $false  
+  
+# Add two parameters  
+$type = [Microsoft.SqlServer.Management.SMO.Datatype]::Int  
+$param  = New-Object -TypeName Microsoft.SqlServer.Management.SMO.StoredProcedureParameter `  
+-argumentlist $sp,"@empval",$type  
+$sp.Parameters.Add($param)  
+  
+$type = [Microsoft.SqlServer.Management.SMO.DataType]::NVarChar(50)  
+$param2  = New-Object -TypeName Microsoft.SqlServer.Management.SMO.StoredProcedureParameter `  
+-argumentlist $sp,"@retval",$type  
+$param2.IsOutputParameter = $true  
+$sp.Parameters.Add($param2)  
+  
+#Set the TextBody property to define the stored procedure.   
+$sp.TextBody =  " SELECT @retval = (SELECT LastName FROM Person.Person,HumanResources.Employee WHERE Person.Person.BusinessEntityID = HumanResources.Employee.BusinessentityID AND HumanResources.Employee.BusinessEntityID = @empval )"  
+  
+# Create the stored procedure on the instance of SQL Server.   
+$sp.Create()  
+  
+# Modify a property and run the Alter method to make the change on the instance of SQL Server.   
+$sp.QuotedIdentifierStatus = $true  
+$sp.Alter()  
+  
+#Remove the stored procedure.   
+$sp.Drop()  
+```  
+  
+## Related content
+
+- [Microsoft.SqlServer.Management.Smo.StoredProcedure](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Management.Smo.StoredProcedure)

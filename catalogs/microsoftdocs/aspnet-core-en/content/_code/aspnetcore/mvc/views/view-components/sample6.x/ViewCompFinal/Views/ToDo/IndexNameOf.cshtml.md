@@ -1,0 +1,56 @@
+# Source code: aspnetcore/mvc/views/view-components/sample6.x/ViewCompFinal/Views/ToDo/IndexNameOf.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using ViewComponentSample.Models
+@using ViewComponentSample.ViewComponents
+@model IEnumerable<TodoItem>
+
+<h2>ToDo nameof</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.IsDone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Priority)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            </tr>
+    }
+        <!-- <snippet> -->
+</table>
+
+<div>
+    Testing nameof(PriorityList) <br />
+
+    Maxium Priority: @ViewData["maxPriority"] <br />
+    Is Complete:  @ViewData["isDone"]
+    @await Component.InvokeAsync(nameof(PriorityList),
+                     new { 
+                         maxPriority =  ViewData["maxPriority"],
+                         isDone = ViewData["isDone"]  }
+                     )
+</div>
+ <!-- </snippet> -->
+
+```

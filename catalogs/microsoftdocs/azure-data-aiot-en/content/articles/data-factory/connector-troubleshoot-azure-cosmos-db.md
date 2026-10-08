@@ -1,0 +1,146 @@
+---
+title: Troubleshoot the Azure Cosmos DB connector
+titleSuffix: Azure Data Factory & Azure Synapse
+description: Learn how to troubleshoot issues with the Azure Cosmos DB and Azure Cosmos DB for NoSQL connectors in Azure Data Factory and Azure Synapse Analytics.
+author: simplywilson
+ms.subservice: data-movement
+ms.topic: troubleshooting
+ms.date: 06/22/2026
+ms.update-cycle: 1095-days
+ms.author: tinglee
+ms.custom: has-adal-ref, synapse
+---
+
+# Troubleshoot the Azure Cosmos DB connector in Azure Data Factory and Azure Synapse
+
+**APPLIES TO:** Azure Data Factory Azure Synapse Analytics
+
+
+
+> **Tip:**
+> [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory) is the next generation of Azure Data Factory, with a simpler architecture, built-in AI, and new features. If you're new to data integration, start with Fabric Data Factory. Existing ADF workloads can upgrade to Fabric to access new capabilities across data science, real-time analytics, and reporting.
+>
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Upgrade from Azure Data Factory to Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/migrate-planning-azure-data-factory).
+
+
+This article provides suggestions to troubleshoot common problems with the Azure Cosmos DB and Azure Cosmos DB for NoSQL connectors in Azure Data Factory and Azure Synapse.
+
+## Error message: Request size is too large
+
+- **Symptoms**: When you copy data into Azure Cosmos DB with a default write batch size, you receive the following error: `Request size is too large.`
+
+- **Cause**: Azure Cosmos DB limits the size of a single request to 2 MB. The formula is *request size = single document size \* write batch size*. If your document size is large, the default behavior will result in a request size that's too large.
+
+- **Resolution**: <br />
+You can tune the write batch size. In the copy activity sink, reduce the *write batch size* value (the default value is 10000). <br />
+If reducing the *write batch size* value to 1 still doesn't work, change your Azure Cosmos DB SQL API from V2 to V3. To complete this configuration, you have two options:
+
+     - **Option 1**: Change your authentication type to service principal or system-assigned managed identity or user-assigned managed identity.
+     - **Option 2**: If you still want to use account key authentication, follow these steps:
+         1. Create an Azure Cosmos DB for NoSQL linked service.
+         2. Update the linked service with the following template. 
+         
+            ```json
+            {
+              "name": "<CosmosDbV3>",
+              "type": "Microsoft.DataFactory/factories/linkedservices",
+              "properties": {
+                "annotations": [],
+                "type": "CosmosDb",
+                "typeProperties": {
+                  "useV3": true,
+                  "accountEndpoint": "<account endpoint>",
+                  "database": "<database name>",
+                  "accountKey": {
+                    "type": "SecureString",
+                    "value": "<account key>"
+                  }
+                }
+              }
+            }
+            ```
+
+## Error message: Unique index constraint violation
+
+- **Symptoms**: When you copy data into Azure Cosmos DB, you receive the following error message:
+
+    `Message=Partition range id 0 | Failed to import mini-batch. 
+    Exception was Message: {"Errors":["Encountered exception while executing function. Exception = Error: {\"Errors\":[\"Unique index constraint violation.\"]}...`
+
+- **Cause**: Two possible causes exist:
+
+    - Cause 1: If you use **Insert** as the write behavior, this error means that your source data has rows or objects with duplicate IDs.
+    - Cause 2: If you use **Upsert** as the write behavior and you set another unique key to the container, this error means that your source data has rows or objects with different IDs but the same value for the defined unique key.
+
+- **Resolution**: 
+
+    - For cause 1, set **Upsert** as the write behavior.
+    - For cause 2, make sure that each document has a different value for the defined unique key.
+
+## Error message: Request rate is large
+
+- **Symptoms**: When you copy data into Azure Cosmos DB, you receive the following error:
+
+    `Type=Microsoft.Azure.Documents.DocumentClientException,
+    Message=Message: {"Errors":["Request rate is large"]}`
+
+- **Cause**: The number of used request units (RUs) is greater than the available RUs configured in Azure Cosmos DB. To learn how
+Azure Cosmos DB calculates RUs, see [Request units in Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/request-units#request-unit-considerations).
+
+- **Resolution**: Try either of the following two solutions:
+
+    - Increase the *container RUs* number to a greater value in Azure Cosmos DB. This solution will improve the copy activity performance, but it will incur more cost in Azure Cosmos DB. 
+    - Decrease *writeBatchSize* to a lesser value, such as 1000, and decrease *parallelCopies* to a lesser value, such as 1. This solution will reduce copy run performance, but it won't incur more cost in Azure Cosmos DB.
+
+## Columns missing in column mapping
+
+- **Symptoms**: When you import a schema for Azure Cosmos DB for column mapping, some columns are missing. 
+
+- **Cause**: Azure Data Factory and Synapse pipelines infer the schema from the first 10 Azure Cosmos DB documents. If some document columns or properties don't contain values, the schema isn't detected and consequently isn't displayed.
+
+- **Resolution**: You can tune the query as shown in the following code to force the column values to be displayed in the result set with empty values. Assume that the *impossible* column is missing in the first 10 documents). Alternatively, you can manually add the column for mapping.
+
+    ```sql
+    select c.company, c.category, c.comments, (c.impossible??'') as impossible from c
+    ```
+
+## Error message: The GuidRepresentation for the reader is CSharpLegacy
+
+- **Symptoms**: When you copy data from Azure Cosmos DB for MongoDB, Azure DocumentDB (with MongoDB compatibility), or MongoDB with the universally unique identifier (UUID) field, you receive the following error message:
+
+    `Failed to read data via MongoDB client., 
+    Source=Microsoft.DataTransfer.Runtime.MongoDbV2Connector,Type=System.FormatException, 
+    Message=The GuidRepresentation for the reader is CSharpLegacy which requires the binary sub type to be UuidLegacy not UuidStandard.,Source=MongoDB.Bson,’“,`
+
+- **Cause**: Two ways exist to represent the UUID in Binary JSON (BSON): UuidStandard and UuidLegacy. By default, the system uses UuidLegacy to read data. You receive an error if your UUID data in MongoDB uses UuidStandard.
+
+- **Resolution**: In the Azure DocumentDB or MongoDB connection string, add the *uuidRepresentation=standard* option. For more information, see [MongoDB connection string](connector-mongodb.md#linked-service-properties).
+
+## Error code: CosmosDbSqlApiOperationFailed
+
+- **Message**: `CosmosDbSqlApi operation Failed. ErrorMessage: %msg;.`
+
+- **Cause**: A problem with the CosmosDbSqlApi operation. This problem specifically applies to the Azure Cosmos DB for NoSQL connector.
+
+- **Recommendation**: To check the error details, see [Azure Cosmos DB help document](https://learn.microsoft.com/azure/cosmos-db/troubleshoot-dot-net-sdk). For further help, contact the Azure Cosmos DB team.
+
+## Error code: CosmosDbSqlApiPartitionKeyExceedStorage
+
+- **Message**: `The size of data each logical partition can store is limited, current partitioning design and workload failed to store more than the allowed amount of data for a given partition key value.`
+
+- **Cause**: The data size of each logical partition is limited, and the partition key reached the maximum size of your logical partition.
+
+- **Recommendation**: Check your Azure Cosmos DB partition design. For more information, see [Logical partitions](https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#logical-partitions).
+
+## Related content
+
+For more troubleshooting help, try these resources:
+
+- [Connector troubleshooting guide](connector-troubleshoot-guide.md)
+- [Data Factory blog](https://techcommunity.microsoft.com/t5/azure-data-factory-blog/bg-p/AzureDataFactoryBlog)
+- [Data Factory feature requests](https://learn.microsoft.com/answers/topics/azure-data-factory.html)
+- [Azure videos](https://learn.microsoft.com/shows/data-exposed/?products=azure\&terms=data-factory)
+- [Microsoft Q\&A page](https://learn.microsoft.com/answers/topics/azure-data-factory.html)
+- [Stack Overflow forum for Data Factory](https://stackoverflow.com/questions/tagged/azure-data-factory)
+- [X information about Data Factory](https://x.com/hashtag/DataFactory)

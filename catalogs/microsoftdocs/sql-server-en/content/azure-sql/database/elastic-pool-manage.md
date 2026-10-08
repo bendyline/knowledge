@@ -1,0 +1,119 @@
+---
+title: Manage elastic pools
+description: Create and manage Azure SQL Database elastic pools using the Azure portal, PowerShell, the Azure CLI, Transact-SQL (T-SQL), and REST API.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: mathoma
+ms.date: 04/04/2024
+ms.service: azure-sql-database
+ms.subservice: elastic-pools
+ms.topic: concept-article
+ms.custom:
+  - sqldbrb=1
+  - devx-track-azurecli
+---
+
+# Manage elastic pools in Azure SQL Database
+
+
+
+  **Applies to:**    [Azure SQL Database](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+With an elastic pool, you determine the amount of resources that the elastic pool requires to handle the workload of its databases, and the amount of resources for each pooled database.
+
+## Azure portal
+
+All pool settings can be found in one place: the **Configure pool** pane. To get here, find an elastic pool in the Azure portal and select **Configure** either from the **Overview** page menu, or from the resource menu under **Settings**.
+
+From here you can make any combination of the following changes and save them all in one batch:
+
+- Change the service tier of the pool.
+- Scale the performance (DTU or vCores) and storage up or down.
+- Add or remove databases to/from the pool.
+- Set a min (guaranteed) and max performance limit for the databases in the pools.
+- Review the cost summary to view any changes to your bill as a result of your new selections.
+
+## PowerShell
+
+> **Note:**
+> This article uses the Azure Az PowerShell module, which is the recommended PowerShell module for interacting with Azure. To get started with the Az PowerShell module, see [Install Azure PowerShell](https://learn.microsoft.com/powershell/azure/install-az-ps). To learn how to migrate to the Az PowerShell module, see [Migrate Azure PowerShell from AzureRM to Az](https://learn.microsoft.com/powershell/azure/migrate-from-azurerm-to-az).
+
+> **Important:**
+> The PowerShell Azure Resource Manager (AzureRM) module was deprecated on February 29, 2024. All future development should use the Az.Sql module. Users are advised to migrate from AzureRM to the Az PowerShell module to ensure continued support and updates. The AzureRM module is no longer maintained or supported. The arguments for the commands in the Az PowerShell module and in the AzureRM modules are substantially identical. For more about their compatibility, see [Introducing the new Az PowerShell module](https://learn.microsoft.com/powershell/azure/new-azureps-module-az).
+
+To create and manage SQL Database elastic pools and pooled databases with Azure PowerShell, use the following PowerShell cmdlets. If you need to install or upgrade PowerShell, see [Install Azure PowerShell module](https://learn.microsoft.com/powershell/azure/install-az-ps). To create and manage the servers for an elastic pool, see [Create and manage servers](logical-servers.md). To create and manage firewall rules, see [Create and manage firewall rules using PowerShell](firewall-configure.md#use-powershell-to-manage-server-level-ip-firewall-rules).
+
+> **Tip:**  
+> For PowerShell example scripts, see [Create elastic pools and move databases between pools and out of a pool using PowerShell](scripts/move-database-between-elastic-pools-powershell.md) and [Use PowerShell to monitor and scale a SQL elastic pool in Azure SQL Database](scripts/monitor-and-scale-pool-powershell.md).
+>
+
+| Cmdlet | Description |
+| --- | --- |
+| [New-AzSqlElasticPool](https://learn.microsoft.com/powershell/module/az.sql/new-azsqlelasticpool) | Creates an elastic pool. |
+| [Get-AzSqlElasticPool](https://learn.microsoft.com/powershell/module/az.sql/get-azsqlelasticpool) | Gets elastic pools and their property values. |
+| [Set-AzSqlElasticPool](https://learn.microsoft.com/powershell/module/az.sql/set-azsqlelasticpool) | Modifies properties of an elastic pool For example, use the **StorageMB** property to modify the max storage of an elastic pool. |
+| [Remove-AzSqlElasticPool](https://learn.microsoft.com/powershell/module/az.sql/remove-azsqlelasticpool) | Deletes an elastic pool. |
+| [Get-AzSqlElasticPoolActivity](https://learn.microsoft.com/powershell/module/az.sql/get-azsqlelasticpoolactivity) | Gets the status of operations on an elastic pool |
+| [Stop-AzSqlElasticPoolActivity](https://learn.microsoft.com/powershell/module/az.sql/stop-azsqlelasticpoolactivity) | Cancels the asynchronous update operation on an elastic pool. |
+| [New-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/new-azsqldatabase) | Creates a new database in an existing pool or as a single database. |
+| [Get-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/get-azsqldatabase) | Gets one or more databases. |
+| [Set-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/set-azsqldatabase) | Sets properties for a database, or moves an existing database into, out of, or between elastic pools. |
+| [Remove-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/remove-azsqldatabase) | Removes a database. |
+
+> **Tip:**  
+> Creation of many databases in an elastic pool can take time when done using the portal or PowerShell cmdlets that create only a single database at a time. To automate creation into an elastic pool, see [CreateOrUpdateElasticPoolAndPopulate](https://gist.github.com/billgib/d80c7687b17355d3c2ec8042323819ae).
+
+## Azure CLI
+
+To create and manage SQL Database elastic pools with [Azure CLI](https://learn.microsoft.com/cli/azure), use the following [Azure CLI SQL Database](https://learn.microsoft.com/cli/azure/sql/db) commands. Use the [Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/overview) to run Azure CLI in your browser, or [install](https://learn.microsoft.com/cli/azure/install-azure-cli) it on macOS, Linux, or Windows.
+
+> **Tip:**  
+> For Azure CLI example scripts, see [Use CLI to move a database in SQL Database in a SQL elastic pool](scripts/move-database-between-elastic-pools-cli.md) and [Use Azure CLI to scale a SQL elastic pool in Azure SQL Database](scripts/scale-pool-cli.md).
+>
+
+| Cmdlet | Description |
+| --- | --- |
+| [az sql elastic-pool create](https://learn.microsoft.com/cli/azure/sql/elastic-pool#az-sql-elastic-pool-create) | Creates an elastic pool. |
+| [az sql elastic-pool list](https://learn.microsoft.com/cli/azure/sql/elastic-pool#az-sql-elastic-pool-list) | Returns a list of elastic pools in a server. |
+| [az sql elastic-pool list-dbs](https://learn.microsoft.com/cli/azure/sql/elastic-pool#az-sql-elastic-pool-list-dbs) | Returns a list of databases in an elastic pool. |
+| [az sql elastic-pool list-editions](https://learn.microsoft.com/cli/azure/sql/elastic-pool#az-sql-elastic-pool-list-editions) | Also includes available pool DTU settings, storage limits, and per database settings. In order to reduce verbosity, additional storage limits and per database settings are hidden by default. |
+| [az sql elastic-pool update](https://learn.microsoft.com/cli/azure/sql/elastic-pool#az-sql-elastic-pool-update) | Updates an elastic pool. |
+| [az sql elastic-pool delete](https://learn.microsoft.com/cli/azure/sql/elastic-pool#az-sql-elastic-pool-delete) | Deletes the elastic pool. |
+
+## Transact-SQL (T-SQL)
+
+To create and move databases within existing elastic pools or to return information about a SQL Database elastic pool with Transact-SQL, use the following T-SQL commands. You can issue these commands using the Azure portal, [SQL Server Management Studio](https://learn.microsoft.com/sql/ssms/use-sql-server-management-studio), [Visual Studio Code](https://code.visualstudio.com/docs), or any other program that can connect to a server and pass Transact-SQL commands. To create and manage firewall rules using T-SQL, see [Manage firewall rules using Transact-SQL](firewall-configure.md#use-transact-sql-to-manage-ip-firewall-rules).
+
+> **Important:**  
+> You cannot create, update, or delete an Azure SQL Database elastic pool using Transact-SQL. You can add or remove databases from an elastic pool, and you can use DMVs to return information about existing elastic pools.
+
+| Command | Description |
+| --- | --- |
+| [CREATE DATABASE (Azure SQL Database)](https://learn.microsoft.com/sql/t-sql/statements/create-database-azure-sql-database) | Creates a new database in an existing pool or as a single database. You must be connected to the `master` database to create a new database. |
+| [ALTER DATABASE (Azure SQL Database)](https://learn.microsoft.com/sql/t-sql/statements/alter-database-azure-sql-database) | Move a database into, out of, or between elastic pools. |
+| [DROP DATABASE (Transact-SQL)](https://learn.microsoft.com/sql/t-sql/statements/drop-database-transact-sql) | Deletes a database. |
+| [sys.elastic_pool_resource_stats (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-elastic-pool-resource-stats-azure-sql-database) | Returns resource usage statistics for all the elastic pools on a server. For each elastic pool, there is one row for each 15 second reporting window (four rows per minute). This includes CPU, IO, Log, storage consumption and concurrent request/session utilization by all databases in the pool. |
+| [sys.dm_elastic_pool_resource_stats (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-elastic-pool-resource-stats-azure-sql-database) | Returns resource usage statistics for the elastic pool containing the current database on an Azure SQL Database [logical server](logical-servers.md). This includes CPU, Data IO, Log IO, storage consumption and concurrent request/session utilization by the pool. This data is retained for roughly 40 minutes. |
+| [sys.database_service_objectives (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-database-service-objectives-azure-sql-database) | Returns the edition (service tier), service objective (pricing tier), and elastic pool name, if any, for a database in Azure SQL Database or Azure Synapse Analytics. If logged on to the `master` database in a server, returns information on all databases. For Azure Synapse Analytics, you must be connected to the `master` database. |
+
+## REST API
+
+To create and manage SQL Database elastic pools and pooled databases, use these REST API requests.
+
+| Command | Description |
+| --- | --- |
+| [Elastic pools - Create or update](https://learn.microsoft.com/rest/api/sql/elastic-pools/create-or-update) | Creates a new elastic pool or updates an existing elastic pool. |
+| [Elastic pools - Delete](https://learn.microsoft.com/rest/api/sql/elastic-pools/delete) | Deletes the elastic pool. |
+| [Elastic pools - Get](https://learn.microsoft.com/rest/api/sql/elastic-pools/get) | Gets an elastic pool. |
+| [Elastic pools - List by server](https://learn.microsoft.com/rest/api/sql/elastic-pools/list-by-server) | Returns a list of elastic pools in a server. |
+| [Elastic pools - Update](https://learn.microsoft.com/rest/api/sql/elastic-pools/update) | Updates an existing elastic pool. |
+| [Elastic pool operations](https://learn.microsoft.com/rest/api/sql/2021-11-01/elastic-pool-operations) | Returns elastic pool operations. |
+| [Databases - Create or update](https://learn.microsoft.com/rest/api/sql/databases/create-or-update) | Creates a new database or updates an existing database. |
+| [Databases - Get](https://learn.microsoft.com/rest/api/sql/databases/get) | Gets a database. |
+| [Databases - List by elastic pool](https://learn.microsoft.com/rest/api/sql/databases/list-by-elastic-pool) | Returns a list of databases in an elastic pool. |
+| [Databases - List by server](https://learn.microsoft.com/rest/api/sql/databases/list-by-server) | Returns a list of databases in a server. |
+| [Databases - Update](https://learn.microsoft.com/rest/api/sql/databases/update) | Updates an existing database. |
+
+## Related content
+
+- To learn more about design patterns for SaaS applications using elastic pools, see [Design Patterns for multitenant SaaS Applications with Azure SQL Database](saas-tenancy-app-design-patterns.md).

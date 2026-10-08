@@ -1,0 +1,24 @@
+# Source code: samples/core/Miscellaneous/ConfiguringDbContext/ConfiguringDbContext.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net11.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace />
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="11.0.0-preview.7.26381.103" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="11.0.0-preview.7.26381.103" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="11.0.0-preview.7.26381.103" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.7.26381.103" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
+    </ItemGroup>
+
+</Project>
+
+```

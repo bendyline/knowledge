@@ -1,0 +1,42 @@
+# Source code: aspnetcore/migration/1x-to-2x/samples/AspNetCoreDotNetFx2.0App/AspNetCoreDotNetFx2.0App/Views/Manage/ChangePassword.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@model ChangePasswordViewModel
+@{
+    ViewData["Title"] = "Change password";
+    ViewData.AddActivePage(ManageNavPages.ChangePassword);
+}
+
+<h4>@ViewData["Title"]</h4>
+@Html.Partial("_StatusMessage", Model.StatusMessage)
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="OldPassword"></label>
+                <input asp-for="OldPassword" class="form-control" />
+                <span asp-validation-for="OldPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewPassword"></label>
+                <input asp-for="NewPassword" class="form-control" />
+                <span asp-validation-for="NewPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-default">Update password</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+
+```

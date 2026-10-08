@@ -1,0 +1,11 @@
+---
+author: ralphe
+manager: cpoulain
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 01/15/2020
+ms.author: pafarley
+---
+
+> 
+> [Explore C# samples on GitHub](https://aka.ms/speech/github-csharp)

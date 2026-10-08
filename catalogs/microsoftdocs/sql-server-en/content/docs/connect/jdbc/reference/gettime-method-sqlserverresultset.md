@@ -1,0 +1,32 @@
+---
+title: "getTime Method (SQLServerResultSet)"
+description: "getTime Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.getTime"
+apitype: "Assembly"
+---
+# getTime Method (SQLServerResultSet)
+
+
+  Retrieves the value of the designated column in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a java.sql.Time object in the Java programming language.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [getTime (int)](gettime-method-int-sqlserverresultset.md) | Retrieves the value of the designated column index in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a java.sql.Time object in the Java programming language. |
+| [getTime (int, java.util.Calendar)](gettime-method-int-java-util-calendar-sqlserverresultset.md) | Retrieves the value of the designated column index in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a java.sql.Time object in the Java programming language, using the given Calendar object. |
+| [getTime (java.lang.String)](gettime-method-java-lang-string-sqlserverresultset.md) | Retrieves the value of the designated column name in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a java.sql.Time object in the Java programming language. |
+| [getTime (java.lang.String, java.util.Calendar)](gettime-method-java-lang-string-java-util-calendar-sqlserverresultset.md) | Retrieves the value of the designated column name in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a java.sql.Time object in the Java programming language, using the given Calendar object. |
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

@@ -1,0 +1,21 @@
+---
+author: laujan
+ms.service: azure-translator-foundry-tools
+ms.topic: include
+ms.date: 04/28/2026
+ms.author: lajanuar
+---
+## Set up
+
+### Create a Translator resource
+
+Foundry Tools are represented by Azure resources that you subscribe to. Create a resource for Translator using the [Azure portal](../../multi-service-resource.md?pivots=azportald) or [Azure CLI](../../multi-service-resource.md?pivots=azcli) on your local machine. You can also:
+
+* View an existing resource in the [Azure portal](https://portal.azure.com/).
+
+After you get a key from your trial subscription or resource, create two [environment variables](../../multi-service-resource.md?pivots=azportal#configure-an-environment-variable-for-authentication):
+
+* `TRANSLATOR_TEXT_KEY` - The key for your Translator resource.
+* `TRANSLATOR_TEXT_ENDPOINT` - The global endpoint for Translator. Use `https://api.cognitive.microsofttranslator.com/`.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/azure-key-vault.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/translator/includes/setup-env-variables.md)

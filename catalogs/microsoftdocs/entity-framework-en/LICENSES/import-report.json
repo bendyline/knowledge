@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "repository": "dotnet/EntityFramework.Docs",
+  "revision": "fce62a889ce5d100d7961a638dd01dbe2d6c598c",
+  "documents": 1158,
+  "codeDocuments": 848,
+  "unresolved": [],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

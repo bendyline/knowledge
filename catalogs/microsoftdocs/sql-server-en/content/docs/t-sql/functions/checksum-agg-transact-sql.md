@@ -1,0 +1,121 @@
+---
+title: "CHECKSUM_AGG (Transact-SQL)"
+description: "CHECKSUM_AGG (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "CHECKSUM_AGG"
+  - "CHECKSUM_AGG_TSQL"
+helpviewer_keywords:
+  - "checksum values"
+  - "CHECKSUM_AGG function"
+  - "groups [SQL Server], checksum values"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# CHECKSUM_AGG (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+This function returns the checksum of the values in a group. `CHECKSUM_AGG` ignores null values. The [OVER clause](../queries/select-over-clause-transact-sql.md) can follow `CHECKSUM_AGG`.
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+CHECKSUM_AGG ( [ ALL | DISTINCT ] expression )  
+```  
+  
+## Arguments
+**ALL**  
+Applies the aggregate function to all values. ALL is the default argument.
+  
+DISTINCT  
+Specifies that `CHECKSUM_AGG` returns the checksum of unique values.
+  
+*expression*  
+An integer [expression](../language-elements/expressions-transact-sql.md). `CHECKSUM_AGG` does not allow use of aggregate functions or subqueries.
+  
+## Return types
+Returns the checksum of all *expression* values as **int**.
+  
+## Remarks  
+`CHECKSUM_AGG` can detect changes in a table.
+  
+The `CHECKSUM_AGG` result does not depend on the order of the rows in the table. Also, `CHECKSUM_AGG` functions allow the use of the `DISTINCT` keyword and the `GROUP BY` clause.
+  
+If an expression list value changes, the list checksum value list will also probably change. However, a small possibility exists that the calculated checksum will not change.
+  
+`CHECKSUM_AGG` has functionality similar to that of other aggregate functions. For more information, see [Aggregate Functions (Transact-SQL)](aggregate-functions-transact-sql.md).
+  
+## Examples  
+These examples use `CHECKSUM_AGG` to detect changes in the `Quantity` column of the `ProductInventory` table in the  AdventureWorks2025  database.
+  
+```sql
+--Get the checksum value before the column value is changed.  
+
+SELECT CHECKSUM_AGG(CAST(Quantity AS INT))  
+FROM Production.ProductInventory;  
+GO  
+```  
+  
+ Here's the result set. 
+
+  
+```
+------------------------  
+262  
+```  
+  
+```sql
+UPDATE Production.ProductInventory   
+SET Quantity=125  
+WHERE Quantity=100;  
+GO  
+
+--Get the checksum of the modified column.  
+SELECT CHECKSUM_AGG(CAST(Quantity AS INT))  
+FROM Production.ProductInventory;  
+```  
+  
+ Here's the result set. 
+
+  
+```
+------------------------  
+287  
+```  
+  
+## Related content
+
+- [CHECKSUM (Transact-SQL)](checksum-transact-sql.md)
+- [HASHBYTES (Transact-SQL)](hashbytes-transact-sql.md)
+- [BINARY_CHECKSUM (Transact-SQL)](binary-checksum-transact-sql.md)
+- [SELECT - OVER clause (Transact-SQL)](../queries/select-over-clause-transact-sql.md)

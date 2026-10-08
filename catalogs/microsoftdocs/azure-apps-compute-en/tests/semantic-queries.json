@@ -1,0 +1,14 @@
+[
+  {
+    "query": "How does Azure Functions run serverless event-driven code with triggers and bindings without managing server infrastructure?",
+    "expectedDocumentIds": [
+      "articles/azure-functions/functions-triggers-bindings"
+    ]
+  },
+  {
+    "query": "What capabilities, programming languages, and hosting options does Azure Functions offer for building serverless applications?",
+    "expectedDocumentIds": [
+      "articles/azure-functions/functions-overview"
+    ]
+  }
+]

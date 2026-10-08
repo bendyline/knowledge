@@ -1,0 +1,72 @@
+---
+title: "sys.plan_guides (Transact-SQL)"
+description: sys.plan_guides (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sys.planguides_TSQL"
+  - "plan_guides"
+  - "sys.planguides"
+  - "plan_guides_TSQL"
+helpviewer_keywords:
+  - "sys.plan_guides catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.plan_guides (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Contains a row for each plan guide in the database.  
+
+> **Important:**
+> [Query Store hints](../performance/query-store-hints.md) provide an easier-to-use method for shaping query plans without changing application code. Query Store hints are simpler than plan guides. Query Store hints are available in  Azure SQL Database 
+, SQL database in Microsoft Fabric
+, Azure SQL Managed Instance, and in  SQL Server 2022 (16.x) 
+ and later versions.
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **plan_guide_id** | **int** | Unique identifier of the plan guide in the database. |
+| **name** | **sysname** | Name of the plan guide. |
+| **create_date** | **datetime** | Date and time the plan guide was created. |
+| **modify_date** | **Datetime** | Date the plan guide was last modified. |
+| **is_disabled** | **bit** | 1 = Plan guide is disabled.<br /><br /> 0 = Plan guide is enabled. |
+| **query_text** | **nvarchar(max)** | Text of the query on which the plan guide is created. |
+| **scope_type** | **tinyint** | Identifies the scope of the plan guide.<br /><br /> 1 = OBJECT<br /><br /> 2 = SQL<br /><br /> 3 = TEMPLATE |
+| **scope_type_desc** | **nvarchar(60)** | Description of scope of the plan guide.<br /><br /> OBJECT<br /><br /> SQL<br /><br /> TEMPLATE |
+| **scope_object_id** | **Int** | object_id of the object defining the scope of the plan guide, if the scope is OBJECT.<br /><br /> NULL if the plan guide is not scoped to OBJECT. |
+| **scope_batch** | **nvarchar(max)** | Batch text, if **scope_type** is SQL.<br /><br /> NULL if batch type is not SQL.<br /><br /> If NULL and **scope_type** is SQL, the value of **query_text** applies. |
+| **parameters** | **nvarchar(max)** | The string defining the list of parameters associated with the plan guide.<br /><br /> NULL = No parameter list is associated with the plan guide. |
+| **hints** | **nvarchar(max)** | The OPTION clause hints associated with the plan guide. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [sys.sp_create_plan_guide (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-transact-sql.md)
+- [sys.sp_create_plan_guide_from_handle (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-from-handle-transact-sql.md)

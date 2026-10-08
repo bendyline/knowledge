@@ -1,0 +1,41 @@
+---
+title: "Replica does not have a healthy role for an availability group"
+description: "Identify possible causes for why an availability replica does not have a healthy role within an Always On availability group."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: troubleshooting
+f1_keywords:
+  - "sql13.swb.agdashboard.arp1rolehealthy.issues.f1"
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], policies"
+---
+# Availability replica does not have a healthy role for an Always On availability group
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+    
+## Introduction  
+  
+- **Policy Name**: Availability Replica Role State
+- **Issue**: Availability replica does not have a healthy role.
+- **Category**: **Critical**
+- **Facet**: Availability replica  
+  
+## Description  
+ This policy checks the state of the role of the availability replica. The policy is in an unhealthy state when the role of the availability replica is neither primary nor secondary. The policy is otherwise in a healthy state.  
+  
+## Possible Causes  
+ The role of this availability replica is unhealthy. The replica does not have either the primary or secondary role.  
+  
+## Possible Solution: Information_still_to_come  
+  
+## Related content
+
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Use the Always On Availability Group dashboard (SQL Server Management Studio)](use-the-always-on-dashboard-sql-server-management-studio.md)

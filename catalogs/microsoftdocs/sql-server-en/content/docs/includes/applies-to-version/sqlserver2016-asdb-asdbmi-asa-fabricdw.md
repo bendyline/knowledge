@@ -1,0 +1,24 @@
+---
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 07/05/2024
+ms.service: sql
+ms.topic: include
+---
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)

@@ -1,0 +1,73 @@
+---
+description: "Learn more about: IHostControl::SetAppDomainManager Method"
+title: "IHostControl::SetAppDomainManager Method"
+ms.date: "03/30/2017"
+api_name: 
+  - "IHostControl.SetAppDomainManager"
+api_location: 
+  - "mscoree.dll"
+api_type: 
+  - "COM"
+f1_keywords: 
+  - "IHostControl::SetAppDomainManager"
+helpviewer_keywords: 
+  - "IHostControl::SetAppDomainManager method [.NET Framework hosting]"
+  - "SetAppDomainManager method [.NET Framework hosting]"
+ms.assetid: 6562bbe7-0d67-4c50-a958-3a18cf680375
+topic_type: 
+  - "apiref"
+---
+# IHostControl::SetAppDomainManager Method
+
+Notifies the host that an application domain has been created.  
+  
+## Syntax  
+  
+```cpp  
+HRESULT SetAppDomainManager (  
+    [in] DWORD     dwAppDomainID,  
+    [in] IUnknown* pUnkAppDomainManager  
+);  
+```  
+  
+## Parameters  
+
+ `dwAppDomainID`  
+ [in] The numeric identifier of the selected [System.AppDomain](https://learn.microsoft.com/search/?terms=System.AppDomain).  
+  
+ `pUnkAppDomainManager`  
+ [in] A pointer to the [System.AppDomainManager](https://learn.microsoft.com/search/?terms=System.AppDomainManager) object that the host implements as `IUnknown`.  
+  
+## Return Value  
+  
+| HRESULT | Description |
+| --- | --- |
+| S_OK | `SetAppDomainManager` returned successfully. |
+| HOST_E_CLRNOTAVAILABLE | The common language runtime (CLR) has not been loaded into a process, or the CLR is in a state in which it cannot run managed code or process the call successfully. |
+| HOST_E_TIMEOUT | The call timed out. |
+| HOST_E_NOT_OWNER | The caller does not own the lock. |
+| HOST_E_ABANDONED | An event was canceled while a blocked thread or fiber was waiting on it. |
+| E_FAIL | An unknown catastrophic failure occurred. When a method returns E_FAIL, the CLR is no longer usable within the process. Subsequent calls to hosting methods return HOST_E_CLRNOTAVAILABLE. |
+  
+## Remarks  
+
+ The [System.AppDomainManager](https://learn.microsoft.com/search/?terms=System.AppDomainManager) provides the host with a mechanism to bootstrap into managed code and to control the creation and settings of each [System.AppDomain](https://learn.microsoft.com/search/?terms=System.AppDomain). The [System.AppDomainManager](https://learn.microsoft.com/search/?terms=System.AppDomainManager) is loaded into each [System.AppDomain](https://learn.microsoft.com/search/?terms=System.AppDomain) when that [System.AppDomain](https://learn.microsoft.com/search/?terms=System.AppDomain) is created. If it chooses, the CLR notifies the host that the application domain has been created by setting the value of the `pUnkAppDomainManager` parameter.  
+  
+ In its implementation of the `SetAppDomainManager` method, the host can set the assembly name and type for the application domain manager.  
+  
+## Requirements  
+
+ **Platforms:** See [System Requirements](../../get-started/system-requirements.md).  
+  
+ **Header:** MSCorEE.h  
+  
+ **Library:** Included as a resource in MSCorEE.dll  
+  
+ **.NET Framework Versions:** Available since 2.0
+  
+  
+## See also
+
+- [System.AppDomain](https://learn.microsoft.com/search/?terms=System.AppDomain)
+- [System.AppDomainManager](https://learn.microsoft.com/search/?terms=System.AppDomainManager)
+- [IHostControl Interface](ihostcontrol-interface.md)

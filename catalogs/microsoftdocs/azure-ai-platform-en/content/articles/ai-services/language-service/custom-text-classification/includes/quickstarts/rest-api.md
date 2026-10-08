@@ -1,0 +1,799 @@
+---
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 06/30/2026
+ms.author: lajanuar
+ms.custom: language-service-custom-classification
+---
+<!-- markdownlint-disable MD041 -->
+## Prerequisites
+
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+## Create a new Azure Language in Foundry Tools resource and Azure storage account
+
+Before you can use custom text classification, you'll need to create a Language resource, which will give you the credentials that you need to create a project and start training a model. You'll also need an Azure storage account, where you can upload your dataset used in building your model.
+
+> **Important:**
+> To get started quickly, we recommend creating a new Language resource using the steps provided in this article, which lets you create Azure Language resource, and create and/or connect a storage account at the same time, which is easier than doing it later.
+>
+> If you have a [pre-existing resource](../../how-to/create-project.md#using-a-preexisting-language-resource) that you'd like to use, you need to connect it to storage account.
+
+### Create a new resource from the Azure portal
+
+1. Go to the [Azure portal](https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics) to create a new Azure Language in Foundry Tools resource. 
+
+1. In the window that appears, select **Custom text classification & custom named entity recognition** from the custom features. Select **Continue to create your resource** at the bottom of the screen. 
+
+    A screenshot showing the selection option for custom text classification and custom named entity recognition in Azure portal.
+
+
+1. Create a Language resource with following details.
+
+    | Name | Required value |
+    | --- | --- |
+    | Subscription | Your Azure subscription. |
+    | Resource group | A resource group that will contain your resource. You can use an existing one, or create a new one. |
+    | Region | One of the [supported regions](../../service-limits.md#regional-availability). For example "West US 2". |
+    | Name | A name for your resource. |
+    | Pricing tier | One of the [supported pricing tiers](../../service-limits.md#pricing-tiers). You can use the Free (F0) tier to try the service. |
+
+    If you get a message saying "*your login account is not an owner of the selected storage account's resource group*", your account needs to have an owner role assigned on the resource group before you can create a Language resource. Contact your Azure subscription owner for assistance. 
+    
+    You can determine your Azure subscription owner by [searching your resource group](https://ms.portal.azure.com/#view/HubsExtension/BrowseResourceGroups) and following the link to its associated subscription. Then: 
+    1. Select the **Access Control (IAM)** tab
+    2. Select **Role assignments** 
+    3. Filter by **Role:Owner**.
+
+1. In the **Custom text classification & custom named entity recognition** section, select an existing storage account or select **New storage account**. Note that these values are to help you get started, and not necessarily the [storage account values](https://learn.microsoft.com/azure/storage/common/storage-account-overview) you'll want to use in production environments. To avoid latency during building your project connect to storage accounts in the same region as your Language resource.
+
+    | Storage account value | Recommended value |
+    | --- | --- |
+    | Storage account name | Any name |
+    | Storage account type | Standard LRS |
+
+1. Make sure the **Responsible AI Notice** is checked. Select **Review + create** at the bottom of the page.
+
+
+## Upload sample data to blob container
+
+After you create an Azure storage account and connected it to your Language resource, you need to upload the documents from the sample dataset to the root directory of your container. These documents are used to train your model.
+
+# [Multi label classification](#tab/multi-classification)
+
+1. [Download the sample dataset for multi label classification projects](https://github.com/Azure-Samples/cognitive-services-sample-data-files/raw/master/language-service/Custom%20text%20classification/Custom%20multi%20classification%20-%20movies%20summary.zip).
+
+1. Open the .zip file, and extract the folder containing the documents. 
+
+The provided sample dataset contains about 200 documents,  each of which is a summary for a movie. Each document belongs to one or more of the following classes: 
+* "Mystery"
+* "Drama"
+* "Thriller"
+* "Comedy"
+* "Action"
+
+# [Single label classification](#tab/single-classification)
+
+1. [Download the sample dataset for single label classification projects](https://github.com/Azure-Samples/cognitive-services-sample-data-files/raw/master/language-service/Custom%20text%20classification/Custom%20single%20classification%20-%20WebOfScience.zip). 
+
+1. Open the .zip file, and extract the folder containing the documents. 
+
+The provided sample dataset contains about 210 documents, each of which is an abstract of a scientific paper. Each document is labeled with only one class of the following classes: 
+* "Computer_science"
+* "Electrical_engineering"
+* "Psychology"
+* "Mechanical_engineering"
+* "Civil_engineering"
+* "Medical"
+* "Biochemistry"
+
+---
+
+### Azure portal
+
+1. In the [Azure portal](https://portal.azure.com), navigate to the storage account you created, and select it by selecting **Storage accounts** and typing your storage account name into **Filter for any field**.
+
+    if your resource group doesn't show up, make sure the **Subscription equals** filter is set to **All**.
+
+1. In your storage account, select **Containers** from the left menu, located below **Data storage**. On the screen that appears, select **+ Container**. Give the container the name **example-data** and leave the default **Public access level**.
+
+    A screenshot showing the main page for a storage account.
+
+1. After your container is created, select it. Then select **Upload** button to select the `.txt` and `.json` files you downloaded earlier. 
+
+    A screenshot showing the button for uploading files to the storage account.
+
+
+### Get your resource keys and endpoint
+
+* Go to your resource overview page in the [Azure portal](https://portal.azure.com/#home)
+
+* From the menu on the left side, select **Keys and Endpoint**. The endpoint and key are used for API requests.
+
+Screenshot that shows the key and endpoint page in the Azure portal.
+
+
+## Create a custom text classification project
+
+Once your resource and storage container are configured, create a new custom text classification project. A project is a work area for building your custom ML models based on your data. Your project can only be accessed by you and others who have access to Azure Language resource being used.
+
+### Trigger import project job
+
+Submit a **POST** request using the following URL, headers, and JSON body to import your labels file. Make sure that your labels file follow the [accepted format](../../concepts/evaluation-metrics.md#accepted-data-formats).
+
+If a project with the same name already exists, the data of that project is replaced.
+
+```rest
+{Endpoint}/language/authoring/analyze-text/projects/{projectName}/:import?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name for your project. This value is case-sensitive. | `myProject` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+
+### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| `Ocp-Apim-Subscription-Key` | The key to your resource. Used for authenticating your API requests. |
+
+
+### Body
+
+Use the following JSON in your request. Replace the placeholder values with your own values. 
+
+# [Multi label classification](#tab/multi-classification)
+
+```json
+{
+  "projectFileVersion": "{API-VERSION}",
+  "stringIndexType": "Utf16CodeUnit",
+  "metadata": {
+    "projectName": "{PROJECT-NAME}",
+    "storageInputContainerName": "{CONTAINER-NAME}",
+    "projectKind": "customMultiLabelClassification",
+    "description": "Trying out custom multi label text classification",
+    "language": "{LANGUAGE-CODE}",
+    "multilingual": true,
+    "settings": {}
+  },
+  "assets": {
+    "projectKind": "customMultiLabelClassification",
+    "classes": [
+      {
+        "category": "Class1"
+      },
+      {
+        "category": "Class2"
+      }
+    ],
+    "documents": [
+      {
+        "location": "{DOCUMENT-NAME}",
+        "language": "{LANGUAGE-CODE}",
+        "dataset": "{DATASET}",
+        "classes": [
+          {
+            "category": "Class1"
+          },
+          {
+            "category": "Class2"
+          }
+        ]
+      },
+      {
+        "location": "{DOCUMENT-NAME}",
+        "language": "{LANGUAGE-CODE}",
+        "dataset": "{DATASET}",
+        "classes": [
+          {
+            "category": "Class2"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+```
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| api-version | `{API-VERSION}` | The version of the API you're calling. The version used here must be the same API version in the URL. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+| projectName | `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| projectKind | `customMultiLabelClassification` | Your project kind. | `customMultiLabelClassification` |
+| language | `{LANGUAGE-CODE}` | A string specifying the language code for the documents used in your project. If your project is a multilingual project, choose the language code for most of the documents. See [language support](../../language-support.md#multi-lingual-option) to learn more about multilingual support. | `en-us` |
+| multilingual | `true` | A boolean value that enables you to have documents in multiple languages in your dataset and when your model is deployed you can query the model in any supported language (not necessarily included in your training documents. See [language support](../../language-support.md#multi-lingual-option) to learn more about multilingual support. | `true` |
+| storageInputContainerName | `{CONTAINER-NAME}` | The name of your Azure storage container for your uploaded documents. | `myContainer` |
+| classes | [] | Array containing all the classes you have in the project. | [] |
+| documents | [] | Array containing all the documents in your project and what the classes labeled for this document. | [] |
+| location | `{DOCUMENT-NAME}` | The location of the documents in the storage container. Since all the documents are in the root of the container, it should be the document name. | `doc1.txt` |
+| dataset | `{DATASET}` | The test set to which this document goes to when split before training. See [How to train a model](../../how-to/build-train-deploy-model.md#data-splitting). Possible values for this field are `Train` and `Test`. | `Train` |
+
+
+# [Single label classification](#tab/single-classification)
+
+```json
+{
+  "projectFileVersion": "{API-VERSION}",
+  "stringIndexType": "Utf16CodeUnit",
+  "metadata": {
+    "projectName": "{PROJECT-NAME}",
+    "storageInputContainerName": "{CONTAINER-NAME}",
+    "projectKind": "customSingleLabelClassification",
+    "description": "Trying out custom multi label text classification",
+    "language": "{LANGUAGE-CODE}",
+    "multilingual": true,
+    "settings": {}
+  },
+  "assets": {
+    "projectKind": "customSingleLabelClassification",
+        "classes": [
+            {
+                "category": "Class1"
+            },
+            {
+                "category": "Class2"
+            }
+        ],
+        "documents": [
+            {
+                "location": "{DOCUMENT-NAME}",
+                "language": "{LANGUAGE-CODE}",
+                "dataset": "{DATASET}",
+                "class": {
+                    "category": "Class2"
+                }
+            },
+            {
+                "location": "{DOCUMENT-NAME}",
+                "language": "{LANGUAGE-CODE}",
+                "dataset": "{DATASET}",
+                "class": {
+                    "category": "Class1"
+                }
+            }
+        ]
+    }
+}
+```
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| api-version | `{API-VERSION}` | The version of the API you're calling. The version used here must be the same API version in the URL. | `2022-05-01` |
+| projectName | `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| projectKind | `customSingleLabelClassification` | Your project kind. | `customSingleLabelClassification` |
+| language | `{LANGUAGE-CODE}` | A string specifying the language code for the documents used in your project. If your project is a multilingual project, choose the language code for most of the documents. See [language support](../../language-support.md) to learn more about supported language codes. | `en-us` |
+| multilingual | `true` | A boolean value that enables you to have documents in multiple languages in your dataset and when your model is deployed you can query the model in any supported language (not necessarily included in your training documents. See [language support](../../language-support.md#multi-lingual-option) to learn more about multilingual support. | `true` |
+| storageInputContainerName | `{CONTAINER-NAME}` | The name of your Azure storage container for your uploaded documents. | `myContainer` |
+| classes | [] | Array containing all the classes you have in the project. | [] |
+| documents | [] | Array containing all the documents in your project and which class this document belongs to. | [] |
+| location | `{DOCUMENT-NAME}` | The location of the documents in the storage container. Since all the documents are in the root of the container, it should be the document name. | `doc1.txt` |
+| dataset | `{DATASET}` | The test set to which this document goes to when split before training. See [How to train a model](../../how-to/build-train-deploy-model.md#data-splitting) to learn more about data splitting. Possible values for this field are `Train` and `Test`. | `Train` |
+
+---
+
+Once you send your API request, you receive a `202` response indicating that the job was submitted correctly. In the response headers, extract the `operation-location` value formatted like this: 
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/import/jobs/{JOB-ID}?api-version={API-VERSION}
+``` 
+
+`{JOB-ID}` is used to identify your request, since this operation is asynchronous. You use this URL to get the import job status.
+
+Possible error scenarios for this request:
+
+* The selected resource doesn't have [proper permissions](../../how-to/create-project.md#using-a-preexisting-language-resource) for the storage account.
+* The `storageInputContainerName` specified doesn't exist.
+* Invalid language code is used, or if the language code type isn't string.
+* `multilingual` value is a string and not a boolean.
+
+
+### Get import job Status
+
+ Use the following **GET** request to get the status of your importing your project. Replace the placeholder values with your own values. 
+
+### Request URL
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/import/jobs/{JOB-ID}?api-version={API-VERSION}
+``` 
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| `{JOB-ID}` | The ID for locating your model's training status. This value is in the `location` header value you received in the previous step. | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+
+#### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| `Ocp-Apim-Subscription-Key` | The key to your resource. Used for authenticating your API requests. |
+
+
+## Train your model
+
+Typically after you create a project, you go ahead and start [tagging the documents](../../how-to/build-train-deploy-model.md#label-your-data) you have in the container connected to your project. For this quickstart, you have imported a sample tagged dataset and initialized your project with the sample JSON tags file.
+
+### Start training your model
+
+After your project has been imported, you can start training your model.
+
+Submit a **POST** request using the following URL, headers, and JSON body to submit a training job. Replace the placeholder values with your own values. 
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/:train?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+
+#### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| `Ocp-Apim-Subscription-Key` | The key to your resource. Used for authenticating your API requests. |
+
+#### Request body
+
+Use the following JSON in your request body. The model will be given the `{MODEL-NAME}` once training is complete. Only successful training jobs will produce models. 
+
+
+```json
+{
+    "modelLabel": "{MODEL-NAME}",
+    "trainingConfigVersion": "{CONFIG-VERSION}",
+    "evaluationOptions": {
+        "kind": "percentage",
+        "trainingSplitPercentage": 80,
+        "testingSplitPercentage": 20
+    }
+}
+```
+
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| modelLabel | `{MODEL-NAME}` | The model name that is assigned to your model once trained successfully. | `myModel` |
+| trainingConfigVersion | `{CONFIG-VERSION}` | This is the [model version](../../../concepts/model-lifecycle.md) used to train the model. | `2022-05-01` |
+| evaluationOptions |  | Option to split your data across training and testing sets. | `{}` |
+| kind | `percentage` | Split methods. Possible values are `percentage` or `manual`. See [How to train a model](../../how-to/build-train-deploy-model.md#data-splitting) for more information. | `percentage` |
+| trainingSplitPercentage | `80` | Percentage of your tagged data to be included in the training set. Recommended value is `80`. | `80` |
+| testingSplitPercentage | `20` | Percentage of your tagged data to be included in the testing set. Recommended value is `20`. | `20` |
+
+  > **Note:**
+  > The `trainingSplitPercentage` and `testingSplitPercentage` are only required if `Kind` is set to `percentage` and the sum of both percentages should be equal to 100.
+
+Once you send your API request, you receive a `202` response indicating that the job was submitted correctly. In the response headers, extract the `location` value formatted like this: 
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/train/jobs/{JOB-ID}?api-version={API-VERSION}
+``` 
+
+{JOB-ID} is used to identify your request, since this operation is asynchronous. You can use this URL to get the training status.  
+
+
+### Get training job status
+
+Training could take sometime between 10 and 30 minutes. You can use the following request to keep polling the status of the training job until it's successfully completed.
+
+Use the following **GET** request to get the status of your model's training progress. Replace the placeholder values with your own values. 
+
+### Request URL
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/train/jobs/{JOB-ID}?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| `{JOB-ID}` | The ID for locating your model's training status. This value is in the `location` header value you received in the previous step. | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. For more information, *see* [Model lifecycle](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data). | `2022-05-01` |
+
+#### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| `Ocp-Apim-Subscription-Key` | The key to your resource. Used for authenticating your API requests. |
+
+#### Response Body
+
+Once you send the request, you get the following response. 
+
+```json
+{
+  "result": {
+    "modelLabel": "{MODEL-NAME}",
+    "trainingConfigVersion": "{CONFIG-VERSION}",
+    "estimatedEndDateTime": "2022-04-18T15:47:58.8190649Z",
+    "trainingStatus": {
+      "percentComplete": 3,
+      "startDateTime": "2022-04-18T15:45:06.8190649Z",
+      "status": "running"
+    },
+    "evaluationStatus": {
+      "percentComplete": 0,
+      "status": "notStarted"
+    }
+  },
+  "jobId": "{JOB-ID}",
+  "createdDateTime": "2022-04-18T15:44:44Z",
+  "lastUpdatedDateTime": "2022-04-18T15:45:48Z",
+  "expirationDateTime": "2022-04-25T15:44:44Z",
+  "status": "running"
+}
+
+```
+
+
+## Deploy your model
+
+Generally after training a model you would review it's [evaluation details](../../how-to/build-train-deploy-model.md#view-model-details) and [make improvements](../../how-to/build-train-deploy-model.md#view-model-details) if necessary. In this quickstart, you will just deploy your model and make it available for you to try in Microsoft Foundry, or you can call the [prediction API](https://aka.ms/ct-runtime-swagger).
+
+### Submit deployment job
+
+Submit a **PUT** request using the following URL, headers, and JSON body to submit a deployment job. Replace the placeholder values with your own values. 
+
+```rest
+{Endpoint}/language/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| `{DEPLOYMENT-NAME}` | The name of your deployment. This value is case-sensitive. | `staging` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+
+#### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| `Ocp-Apim-Subscription-Key` | The key to your resource. Used for authenticating your API requests. |
+
+#### Request body
+
+Use the following JSON in the body of your request. Use the name of the model you to assign to the deployment.  
+
+```json
+{
+  "trainedModelLabel": "{MODEL-NAME}"
+}
+```
+
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| trainedModelLabel | `{MODEL-NAME}` | The model name that is assigned to your deployment. You can only assign successfully trained models. This value is case-sensitive. | `myModel` |
+
+Once you send your API request, you receive a `202` response indicating that the job was submitted correctly. In the response headers, extract the `operation-location` value formatted like this: 
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/deployments/{DEPLOYMENT-NAME}/jobs/{JOB-ID}?api-version={API-VERSION}
+``` 
+
+{JOB-ID} is used to identify your request, since this operation is asynchronous. You can use this URL to get the deployment status.  
+
+
+### Get deployment job status
+
+Use the following **GET** request to query the status of the deployment job. You can use the URL you received from the previous step, or replace the placeholder values with your own values. 
+
+```rest
+{ENDPOINT}/language/authoring/analyze-text/projects/{PROJECT-NAME}/deployments/{DEPLOYMENT-NAME}/jobs/{JOB-ID}?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name of your project. This value is case-sensitive. | `myProject` |
+| `{DEPLOYMENT-NAME}` | The name of your deployment. This value is case-sensitive. | `staging` |
+| `{JOB-ID}` | The ID for locating your model's training status. It's in the `location` header value you received in the previous step. | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+
+#### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| `Ocp-Apim-Subscription-Key` | The key to your resource. Used for authenticating your API requests. |
+
+
+### Response Body
+
+Once you send the request, you get the following response. Keep polling this endpoint until the **status** parameter changes to "succeeded". You should get a `200` code to indicate the success of the request. 
+
+```json
+{
+    "jobId":"{JOB-ID}",
+    "createdDateTime":"{CREATED-TIME}",
+    "lastUpdatedDateTime":"{UPDATED-TIME}",
+    "expirationDateTime":"{EXPIRATION-TIME}",
+    "status":"running"
+}
+```
+
+
+## Classify text
+
+After your model is deployed successfully, you can start using it to classify your text via [Prediction API](https://aka.ms/ct-runtime-swagger). In the sample dataset you downloaded earlier you can find some test documents that you can use in this step.
+
+### Submit a custom text classification task
+
+Use this **POST** request to start a text classification task.
+
+```rest
+{ENDPOINT}/language/analyze-text/jobs?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. For more information, *see* [Model lifecycle](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data). | `2022-05-01` |
+
+#### Headers
+
+| Key | Value |
+| --- | --- |
+| Ocp-Apim-Subscription-Key | Your key that provides access to this API. |
+
+#### Body
+
+# [Multi label classification](#tab/multi-classification)
+
+```json
+{
+  "displayName": "Classifying documents",
+  "analysisInput": {
+    "documents": [
+      {
+        "id": "1",
+        "language": "{LANGUAGE-CODE}",
+        "text": "Text1"
+      },
+      {
+        "id": "2",
+        "language": "{LANGUAGE-CODE}",
+        "text": "Text2"
+      }
+    ]
+  },
+  "tasks": [
+     {
+      "kind": "CustomMultiLabelClassification",
+      "taskName": "Multi Label Classification",
+      "parameters": {
+        "projectName": "{PROJECT-NAME}",
+        "deploymentName": "{DEPLOYMENT-NAME}"
+      }
+    }
+  ]
+}
+```
+
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| `displayName` | `{JOB-NAME}` | Your job name. | `MyJobName` |
+| `documents` | [{},{}] | List of documents to run tasks on. | `[{},{}]` |
+| `id` | `{DOC-ID}` | Document name or ID. | `doc1` |
+| `language` | `{LANGUAGE-CODE}` | A string specifying the language code for the document. If this key isn't specified, the service will assume the default language of the project that was selected during project creation. See [language support](../../language-support.md) for a list of supported language codes. | `en-us` |
+| `text` | `{DOC-TEXT}` | Document task to run the tasks on. | `Lorem ipsum dolor sit amet` |
+| `tasks` |  | List of tasks we want to perform. | `[]` |
+| `taskName` | CustomMultiLabelClassification | The task name | CustomMultiLabelClassification |
+| `parameters` |  | List of parameters to pass to the task. |  |
+| `project-name` | `{PROJECT-NAME}` | The name for your project. This value is case-sensitive. | `myProject` |
+| `deployment-name` | `{DEPLOYMENT-NAME}` | The name of your deployment. This value is case-sensitive. | `prod` |
+
+# [Single label classification](#tab/single-classification)
+
+```json
+{
+  "displayName": "Classifying documents",
+  "analysisInput": {
+    "documents": [
+      {
+        "id": "1",
+        "language": "{LANGUAGE-CODE}",
+        "text": "Text1"
+      },
+      {
+        "id": "2",
+        "language": "{LANGUAGE-CODE}",
+        "text": "Text2"
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "kind": "CustomSingleLabelClassification",
+      "taskName": "Single Classification Label",
+      "parameters": {
+        "projectName": "{PROJECT-NAME}",
+        "deploymentName": "{DEPLOYMENT-NAME}"
+      }
+    }
+  ]
+}
+```
+
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| displayName | `{JOB-NAME}` | Your job name. | `MyJobName` |
+| documents |  | List of documents to run tasks on. |  |
+| `id` | `{DOC-ID}` | Document name or ID. | `doc1` |
+| `language` | `{LANGUAGE-CODE}` | A string specifying the language code for the document. If this key isn't specified, the service will assume the default language of the project that was selected during project creation. See [language support](../../language-support.md) for a list of supported language codes. | `en-us` |
+| `text` | `{DOC-TEXT}` | Document task to run the tasks on. | `Lorem ipsum dolor sit amet` |
+| `taskName` | CustomSingleLabelClassification | The task name | CustomSingleLabelClassification |
+| `tasks` | [] | Array of tasks we want to perform. | [] |
+| `parameters` |  | List of parameters to pass to the task. |  |
+| `project-name` | `{PROJECT-NAME}` | The name for your project. This value is case-sensitive. | `myProject` |
+| `deployment-name` | `{DEPLOYMENT-NAME}` | The name of your deployment. This value is case-sensitive. | `prod` |
+
+---
+
+#### Response
+
+You receive a 202 response indicating success. In the response **headers**, extract `operation-location`.
+`operation-location` is formatted like this:
+
+`{ENDPOINT}/language/analyze-text/jobs/{JOB-ID}?api-version={API-VERSION}`
+
+You can use this URL to query the task completion status and get the results when task is completed.
+
+
+### Get task results
+
+Use the following **GET** request to query the status/results of the text classification task. 
+
+```rest
+{ENDPOINT}/language/analyze-text/jobs/{JOB-ID}?api-version={API-VERSION}
+```
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest released [model version](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) version. | `2022-05-01` |
+
+#### Headers
+
+| Key | Value |
+| --- | --- |
+| Ocp-Apim-Subscription-Key | Your key that provides access to this API. |
+
+### Response body
+
+The response will be a JSON document with the following parameters.
+
+# [Multi label classification](#tab/multi-classification)
+
+```json
+{
+  "createdDateTime": "2021-05-19T14:32:25.578Z",
+  "displayName": "MyJobName",
+  "expirationDateTime": "2021-05-19T14:32:25.578Z",
+  "jobId": "xxxx-xxxxxx-xxxxx-xxxx",
+  "lastUpdateDateTime": "2021-05-19T14:32:25.578Z",
+  "status": "succeeded",
+  "tasks": {
+    "completed": 1,
+    "failed": 0,
+    "inProgress": 0,
+    "total": 1,
+    "items": [
+      {
+        "kind": "customMultiClassificationTasks",
+        "taskName": "Classify documents",
+        "lastUpdateDateTime": "2020-10-01T15:01:03Z",
+        "status": "succeeded",
+        "results": {
+          "documents": [
+            {
+              "id": "{DOC-ID}",
+              "classes": [
+                  {
+                      "category": "Class_1",
+                      "confidenceScore": 0.0551877357
+                  }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2020-04-01"
+        }
+      }
+    ]
+  }
+}
+
+```
+
+# [Single label classification](#tab/single-classification)
+
+
+```json
+{
+  "createdDateTime": "2021-05-19T14:32:25.578Z",
+  "displayName": "MyJobName",
+  "expirationDateTime": "2021-05-19T14:32:25.578Z",
+  "jobId": "xxxx-xxxxxx-xxxxx-xxxx",
+  "lastUpdateDateTime": "2021-05-19T14:32:25.578Z",
+  "status": "succeeded",
+  "tasks": {
+    "completed": 1,
+    "failed": 0,
+    "inProgress": 0,
+    "total": 1,
+    "items": [
+      {
+        "kind": "customSingleClassificationTasks",
+        "taskName": "Classify documents",
+        "lastUpdateDateTime": "2020-10-01T15:01:03Z",
+        "status": "succeeded",
+        "results": {
+          "documents": [
+            {
+              "id": "{DOC-ID}",
+              "class": [
+                  {
+                      "category": "Class_1",
+                      "confidenceScore": 0.0551877357
+                  }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2020-04-01"
+        }
+      }
+    ]
+  }
+}
+
+```
+
+---
+
+
+## Clean up resources
+
+When you no longer need your project, you can delete it with the following **DELETE** request. Replace the placeholder values with your own values.   
+
+```rest
+{Endpoint}/language/authoring/analyze-text/projects/{projectName}?api-version={API-VERSION}
+```
+
+| Placeholder | Value | Example |
+| --- | --- | --- |
+| `{ENDPOINT}` | The endpoint for authenticating your API request. | `https://<your-custom-subdomain>.cognitiveservices.azure.com` |
+| `{PROJECT-NAME}` | The name for your project. This value is case-sensitive. | `myProject` |
+| `{API-VERSION}` | The version of the API you're calling. The value referenced is for the latest version released. Learn more about other available [API versions](../../../concepts/model-lifecycle.md#choose-the-model-version-used-on-your-data) | `2022-05-01` |
+
+### Headers
+
+Use the following header to authenticate your request. 
+
+| Key | Value |
+| --- | --- |
+| Ocp-Apim-Subscription-Key | The key to your resource. Used for authenticating your API requests. |
+
+
+Once you send your API request, you receive a `202` response indicating success, which means your project is deleted. A successful call results with an `Operation-Location` header used to check the status of the job.

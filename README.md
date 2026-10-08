@@ -190,6 +190,12 @@ conversion, and the guide format.
 
 ## Azure AI Search example
 
+The [Microsoft technology preservation catalogs](docs/microsoft-technology.md)
+extend this with .NET, Entity Framework, PowerShell, Windows Server, SQL Server,
+ASP.NET Core, Windows app development, Microsoft 365, and Azure service-family
+catalogs. Their commit-pinned Markdown and source evidence are stored in
+Git so the accepted content survives retirement of the upstream repositories.
+
 ```sh
 npm run sync -- --catalog microsoftdocs/azure-ai-search-en --apply
 npm run build -- --catalog microsoftdocs/azure-ai-search-en --version 2026.10.1

@@ -1,0 +1,165 @@
+---
+title: "sys.sp_fkeys (Transact-SQL)"
+description: sp_fkeys returns logical foreign key information for the current environment.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sp_fkeys"
+  - "sp_fkeys_TSQL"
+helpviewer_keywords:
+  - "sp_fkeys"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# sys.sp_fkeys (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns logical foreign key information for the current environment. This procedure shows foreign key relationships including disabled foreign keys.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_fkeys
+    [ [ @pktable_name = ] N'pktable_name' ]
+    [ , [ @pktable_owner = ] N'pktable_owner' ]
+    [ , [ @pktable_qualifier = ] N'pktable_qualifier' ]
+    [ , [ @fktable_name = ] N'fktable_name' ]
+    [ , [ @fktable_owner = ] N'fktable_owner' ]
+    [ , [ @fktable_qualifier = ] N'fktable_qualifier' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @pktable_name = ] N'*pktable_name*'
+
+The name of the table, with the primary key, used to return catalog information. *@pktable_name* is **sysname**, with a default of `NULL`. Wildcard pattern matching isn't supported. This parameter or the *@fktable_name* parameter, or both, must be supplied.
+
+#### [ @pktable_owner = ] N'*pktable_owner*'
+
+The name of the owner of the table (with the primary key) used to return catalog information. *@pktable_owner* is **sysname**, with a default of `NULL`. Wildcard pattern matching isn't supported. If *@pktable_owner* isn't specified, the default table visibility rules of the underlying database management system (DBMS) apply.
+
+In  SQL Server 
+, if the current user owns a table with the specified name, that table's columns are returned. If *@pktable_owner* isn't specified and the current user doesn't own a table with the specified *@pktable_name*, the procedure looks for a table with the specified *@pktable_name* owned by the database owner. If one exists, that table's columns are returned.
+
+#### [ @pktable_qualifier = ] N'*pktable_qualifier*'
+
+The name of the table (with the primary key) qualifier. *@pktable_qualifier* is **sysname**, with a default of `NULL`. Various DBMS products support three-part naming for tables (*qualifier.owner.name*). In  SQL Server 
+, the qualifier represents the database name. In some products, it represents the server name of the table's database environment.
+
+#### [ @fktable_name = ] N'*fktable_name*'
+
+The name of the table (with a foreign key) used to return catalog information. *@fktable_name* is **sysname**, with a default of `NULL`. Wildcard pattern matching isn't supported. This parameter or the *@pktable_name* parameter, or both, must be supplied.
+
+#### [ @fktable_owner = ] N'*fktable_owner*'
+
+The name of the owner of the table (with a foreign key) used to return catalog information. *@fktable_owner* is **sysname**, with a default of `NULL`. Wildcard pattern matching isn't supported. If *@fktable_owner* isn't specified, the default table visibility rules of the underlying DBMS apply.
+
+In  SQL Server 
+, if the current user owns a table with the specified name, that table's columns are returned. If *@fktable_owner* isn't specified and the current user doesn't own a table with the specified *@fktable_name*, the procedure looks for a table with the specified *@fktable_name* owned by the database owner. If one exists, that table's columns are returned.
+
+#### [ @fktable_qualifier = ] N'*fktable_qualifier*'
+
+The name of the table (with a foreign key) qualifier. *@fktable_qualifier* is **sysname**, with a default of `NULL`. In  SQL Server 
+, the qualifier represents the database name. In some products, it represents the server name of the table's database environment.
+
+## Return code values
+
+None.
+
+## Result set
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `PKTABLE_QUALIFIER` | **sysname** | Name of the table (with the primary key) qualifier. This field can be `NULL`. |
+| `PKTABLE_OWNER` | **sysname** | Name of the table (with the primary key) owner. This field always returns a value. |
+| `PKTABLE_NAME` | **sysname** | Name of the table (with the primary key). This field always returns a value. |
+| `PKCOLUMN_NAME` | **sysname** | Name of the primary key columns, for each column of the `TABLE_NAME` returned. This field always returns a value. |
+| `FKTABLE_QUALIFIER` | **sysname** | Name of the table (with a foreign key) qualifier. This field can be `NULL`. |
+| `FKTABLE_OWNER` | **sysname** | Name of the table (with a foreign key) owner. This field always returns a value. |
+| `FKTABLE_NAME` | **sysname** | Name of the table (with a foreign key). This field always returns a value. |
+| `FKCOLUMN_NAME` | **sysname** | Name of the foreign key column, for each column of the `TABLE_NAME` returned. This field always returns a value. |
+| `KEY_SEQ` | **smallint** | Sequence number of the column in a multicolumn primary key. This field always returns a value. |
+| `UPDATE_RULE` | **smallint** | Action applied to the foreign key when the SQL operation is an update. Possible values:<br />`0` = `CASCADE` changes to foreign key.<br />`1` = `NO ACTION` changes if foreign key is present.<br />`2` = `SET_NULL`<br />3 = set default |
+| `DELETE_RULE` | **smallint** | Action applied to the foreign key when the SQL operation is a deletion. Possible values:<br />`0` = `CASCADE` changes to foreign key.<br />`1` = `NO ACTION` changes if foreign key is present.<br />`2` = `SET_NULL`<br />`3` = set default |
+| `FK_NAME` | **sysname** | Foreign key identifier. It's `NULL` if not applicable to the data source.  SQL Server |
+ | returns the `FOREIGN KEY` constraint name. |
+| `PK_NAME` | **sysname** | Primary key identifier. It's `NULL` if not applicable to the data source.  SQL Server |
+ | returns the `PRIMARY KEY` constraint name. |
+
+The results returned are ordered by `FKTABLE_QUALIFIER`, `FKTABLE_OWNER`, `FKTABLE_NAME`, and `KEY_SEQ`.
+
+## Remarks
+
+Application coding that includes tables with disabled foreign keys can be implemented by the following methods:
+
+- Temporarily disabling constraint checking (`ALTER TABLE NOCHECK` or `CREATE TABLE NOT FOR REPLICATION`) while working with the tables, and then enabling it again later.
+
+- Using triggers or application code to enforce relationships.
+
+If the primary key table name is supplied and the foreign key table name is `NULL`, `sp_fkeys` returns all tables that include a foreign key to the given table. If the foreign key table name is supplied and the primary key table name is `NULL`, `sp_fkeys` returns all tables related by a primary key/foreign key relationship to foreign keys in the foreign key table.
+
+The `sp_fkeys` stored procedure is equivalent to SQLForeignKeys in ODBC.
+
+## Permissions
+
+Requires `SELECT` permission on the schema.
+
+## Examples
+
+The following example retrieves a list of foreign keys for the `HumanResources.Department` table in the  `AdventureWorks2025`  database.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_fkeys
+    @pktable_name = N'Department',
+    @pktable_owner = N'HumanResources';
+```
+
+## Examples: Azure Synapse Analytics
+
+The following example retrieves a list of foreign keys for the `DimDate` table in the `AdventureWorksPDW2012` database. No rows are returned because  Azure Synapse Analytics  doesn't support foreign keys.
+
+```sql
+EXECUTE sp_fkeys @pktable_name = N'DimDate';
+```
+
+## Related content
+
+- [Catalog stored procedures (Transact-SQL)](catalog-stored-procedures-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [sys.sp_pkeys (Transact-SQL)](sp-pkeys-transact-sql.md)

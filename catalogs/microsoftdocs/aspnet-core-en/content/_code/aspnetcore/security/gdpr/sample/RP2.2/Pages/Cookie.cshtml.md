@@ -1,0 +1,32 @@
+# Source code: aspnetcore/security/gdpr/sample/RP2.2/Pages/Cookie.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model Cookie
+@{
+    ViewData["Title"] = "Cookie";
+}
+<h2>@ViewData["Title"]</h2>
+
+<form method="post">
+
+    <div class="form-group">
+        <input type="submit" value="Create non-essential" asp-page-handler="Create" class="btn btn-default" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Create essential" asp-page-handler="CreateEssential" class="btn btn-default" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Delete Non-essential and essential" asp-page-handler="Delete" class="btn btn-default" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Delete All" asp-page-handler="DeleteAll" class="btn btn-default" />
+    </div>
+</form>
+
+```

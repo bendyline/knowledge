@@ -1,0 +1,38 @@
+---
+title: "MSdistributiondbs (Transact-SQL)"
+description: MSdistributiondbs (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSdistributiondbs_TSQL"
+  - "MSdistributiondbs"
+helpviewer_keywords:
+  - "MSdistributiondbs system table"
+dev_langs:
+  - "TSQL"
+---
+# MSdistributiondbs (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSdistributiondbs** table contains one row for each distribution database defined on the local Distributor. This table is stored in the **msdb** database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **name** | **sysname** | The name of the distribution database. |
+| **min_distretention** | **int** | The minimum retention period, in hours, before transactions are deleted. |
+| **max_distretention** | **int** | The maximum retention period, in hours, before transactions are deleted. |
+| **history_retention** | **int** | The number of hours to retain history. |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

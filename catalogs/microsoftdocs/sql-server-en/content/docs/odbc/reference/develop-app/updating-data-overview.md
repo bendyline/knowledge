@@ -1,0 +1,36 @@
+---
+title: "Updating Data Overview"
+description: "Updating Data Overview"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "updating data [ODBC], about updating data"
+  - "data updates [ODBC]"
+  - "updating data [ODBC]"
+  - "data updates [ODBC], about data updates"
+---
+# Updating Data Overview
+Applications can update data either by executing SQL statements or by calling **SQLSetPos** or **SQLBulkOperations**. **UPDATE**, **DELETE**, and **INSERT** statements act directly on the data source and are usually supported by drivers. Searched update and delete statements contain a specification of the rows to change. Positioned update and delete statements and **SQLSetPos** act on the data source through a cursor and are less widely supported.  
+  
+ Whether cursors can detect changes made to the result set with the methods described in this section depends on the type of the cursor and how it is implemented. Forward-only cursors do not revisit rows and therefore will not detect any changes. For information about whether scrollable cursors can detect changes, see [Scrollable Cursors](scrollable-cursors.md).  
+  
+ This section contains the following topics.  
+  
+-   [UPDATE, DELETE, and INSERT Statements](update-delete-and-insert-statements.md)  
+  
+-   [Positioned Update and Delete Statements](positioned-update-and-delete-statements.md)  
+  
+-   [Simulating Positioned Update and Delete Statements](simulating-positioned-update-and-delete-statements.md)  
+  
+-   [Determining the Number of Affected Rows](determining-the-number-of-affected-rows.md)  
+  
+-   [Updating Data with SQLSetPos](updating-data-with-sqlsetpos.md)  
+  
+-   [Updating Data with SQLBulkOperations](updating-data-with-sqlbulkoperations.md)  
+  
+-   [Long Data and SQLSetPos and SQLBulkOperations](long-data-and-sqlsetpos-and-sqlbulkoperations.md)

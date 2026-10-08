@@ -1,0 +1,17 @@
+---
+title: "Network Example"
+description: "Network Example"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "drivers [ODBC], examples"
+---
+# Network Example
+This illustration shows how each of the preceding configurations could appear in a single network.  
+  
+ Various configurations in a single network

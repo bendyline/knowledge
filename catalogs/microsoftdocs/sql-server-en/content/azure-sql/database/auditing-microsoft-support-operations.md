@@ -1,0 +1,55 @@
+---
+title: Auditing Microsoft Support Operations
+titleSuffix: Azure SQL Database & Azure Synapse Analytics
+description: How to use Auditing to audit Microsoft support operations.
+author: sravanisaluru
+ms.author: srsaluru
+ms.reviewer: mathoma, vanto
+ms.date: 11/24/2025
+ms.service: azure-sql-database
+ms.subservice: security
+ms.topic: concept-article
+---
+# Auditing Microsoft support operations
+
+
+
+  **Applies to:**    [Azure SQL Database](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)  [Azure Synapse Analytics](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+Auditing of Microsoft support operations for your [logical server](logical-servers.md) in Azure SQL Database allows you to audit Microsoft support engineers' operations when they need to access your server during a support request. The use of this capability, along with your auditing, enables more transparency into your workforce and allows for anomaly detection, trend visualization, and data loss prevention.
+
+Auditing of Microsoft support operations includes the following set of action groups, which audit all queries executed against the database, as well as successful and failed logins by Microsoft support engineers:
+
+- BATCH_COMPLETED_GROUP
+- SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+- FAILED_DATABASE_AUTHENTICATION_GROUP
+
+## Enable auditing
+
+To enable auditing of Microsoft support operations, Go to the [Azure portal](https://portal.azure.com). Navigate to **Auditing** under the **Security** heading in your Azure **SQL server** pane, and switch **Enable Auditing of Microsoft support operations** to **ON**. Configure audit logs to be sent to one or more of the following destinations: Storage Account, Log Analytics, or Event Hubs
+
+Screenshot of the Azure portal showing the Auditing page with Enable Auditing of Microsoft support operations toggle highlighted.
+
+To review the audit logs of Microsoft support operations in your Log Analytics workspace, use the following query:
+
+```kusto
+AzureDiagnostics
+| where Category == "DevOpsOperationsAudit"
+```
+
+You have the option of choosing a different storage destination for this auditing log, or use the same auditing configuration for your server.
+
+> **Note:**
+> DevOps audit logs stored in Azure Storage may contain sensitive operational details. If a malicious actor within your environment accesses these logs, they could gain insights into system operations, which may lead to unauthorized access or data breaches.
+>
+> **Customer responsibility -** Secure these logs by:
+> - Restricting access to authorized personnel only
+> - Applying strong Azure role-based access control (RBAC) and network controls
+> - Monitoring and auditing storage access regularly
+
+## Related content
+
+- [Auditing for Azure SQL Database and Azure Synapse Analytics](auditing-overview.md)
+- [What's New in Azure SQL Auditing](https://learn.microsoft.com/Shows/Data-Exposed/Whats-New-in-Azure-SQL-Auditing)
+- [Get started with Azure SQL Managed Instance auditing](../managed-instance/auditing-configure.md)
+- [Auditing for SQL Server](https://learn.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-database-engine)

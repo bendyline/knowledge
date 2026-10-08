@@ -1,0 +1,56 @@
+---
+title: Azure services that support Azure Data Lake Storage
+titleSuffix: Azure Storage
+description: "Discover which Azure services integrate with Azure Data Lake Storage for data ingestion, analytics, and visualization."
+author: normesta
+
+ms.service: azure-data-lake-storage
+ms.topic: concept-article
+ms.date: 07/09/2026
+ms.author: normesta
+# Customer intent: "As a data engineer, I want to understand how different Azure services integrate with Azure Data Lake Storage, so that I can efficiently use these services for data ingestion, analytics, and visualization in my data pipeline."
+---
+
+# Azure services that support Azure Data Lake Storage
+
+Use Azure services with Azure Data Lake Storage to ingest data, perform analytics, and visualize data. This article lists supported Azure services, their level of support, and links to articles that help you use these services with Azure Data Lake Storage.
+
+## Supported Azure services
+
+This table lists the Azure services you can use with Azure Data Lake Storage. The items in this table change over time as support expands.
+
+> **Note:**
+> Support level refers only to how the service supports Azure Data Lake Storage.
+
+The **Microsoft Entra ID** and **Shared Key** columns indicate whether the service supports those authentication methods when accessing Azure Data Lake Storage.
+
+| Azure service | Support level | Microsoft Entra ID | Shared Key | Related articles |
+| --- | --- | --- | --- | --- |
+| Azure Data Factory | Generally available | Yes | Yes | <ul><li>[Load data into Azure Data Lake Storage with Azure Data Factory](../../data-factory/load-azure-data-lake-storage-gen2.md?toc=/azure/storage/blobs/toc.json)</li></ul> |
+| Azure Databricks | Generally available | Yes | Yes | <ul><li>[Use with Azure Databricks](https://learn.microsoft.com/azure/databricks/data/data-sources/azure/azure-datalake-gen2)</li><br><li>[Tutorial: Extract, transform, and load data by using Azure Databricks](https://learn.microsoft.com/azure/databricks/scenarios/databricks-extract-load-sql-data-warehouse)</li><br><li>[Tutorial: Access Data Lake Storage data with Azure Databricks using Spark](data-lake-storage-use-databricks-spark.md)</li></ul> |
+| Azure Event Hubs | Generally available | No | Yes | <ul><li>[Capture events through Azure Event Hubs in Azure Blob Storage or Azure Data Lake Storage](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/event-hubs/event-hubs-capture-overview.md)</li></ul> |
+| Azure Event Grid | Generally available | Yes | Yes | <ul><li>[Tutorial: Implement the data lake capture pattern to update a Databricks Delta table](data-lake-storage-events.md)</li></ul> |
+| Azure Logic Apps | Generally available | No | Yes | <ul><li>[Overview - What is Azure Logic Apps?](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/logic-apps/logic-apps-overview.md)</li></ul> |
+| Azure Machine Learning | Generally available | Yes | Yes | <ul><li>[Access data in Azure storage services](https://learn.microsoft.com/azure/machine-learning/how-to-access-data)</li></ul> |
+| Azure Stream Analytics | Generally available | Yes | Yes | <ul><li>[Quickstart: Create a Stream Analytics job by using the Azure portal](../../stream-analytics/stream-analytics-quick-create-portal.md)</li><br><li>[Egress to Azure Data Lake](../../stream-analytics/stream-analytics-define-outputs.md)</li></ul> |
+| Data Box | Generally available | No | Yes | <ul><li>[Use Azure Data Box to migrate data from an on-premises HDFS store to Azure Storage](data-lake-storage-migrate-on-premises-HDFS-cluster.md)</li></ul> |
+| HDInsight | Generally available | Yes | Yes | <ul><li>[Azure Storage overview in HDInsight](../../hdinsight/overview-azure-storage.md)</li><br><li>[Use Azure storage with Azure HDInsight clusters](../../hdinsight/hdinsight-hadoop-use-blob-storage.md)</li><br><li>[Use Azure Data Lake Storage with Azure HDInsight clusters](../../hdinsight/hdinsight-hadoop-use-data-lake-storage-gen2.md)</li><br><li>[Using the HDFS CLI with Data Lake Storage](data-lake-storage-use-hdfs-data-lake-storage.md)</li><br><li>[Tutorial: Extract, transform, and load data by using Apache Hive on Azure HDInsight](data-lake-storage-tutorial-extract-transform-load-hive.md)</li></ul> |
+| IoT Hub | Generally available | Yes | Yes | <ul><li>[Use IoT Hub message routing to send device-to-cloud messages to different endpoints](../../iot-hub/iot-hub-devguide-messages-d2c.md)</li></ul> |
+| Power BI | Generally available | Yes | Yes | <ul><li>[Analyze data in Data Lake Storage using Power BI](https://learn.microsoft.com/power-query/connectors/datalakestorage)</li></ul> |
+| Azure Synapse Analytics | Generally available | Yes | Yes | <ul><li>[Analyze data in a storage account](../../synapse-analytics/get-started-analyze-storage.md)</li></ul> |
+| SQL Server Integration Services (SSIS) | Generally available | Yes | Yes | <ul><li>[Azure Storage connection manager](https://learn.microsoft.com/sql/integration-services/connection-manager/azure-storage-connection-manager)</li></ul> |
+| Azure Data Explorer | Generally available | Yes | Yes | <ul><li>[Query data in Azure Data Lake using Azure Data Explorer](https://learn.microsoft.com/azure/data-explorer/data-lake-query-data)</li></ul> |
+| Azure AI Search | Generally available | Yes | Yes | <ul><li>[Index and search Azure Data Lake Storage documents](https://learn.microsoft.com/azure/search/search-howto-index-azure-data-lake-storage)</li></ul> |
+| Azure SQL Managed Instance | Preview | No | Yes | <ul><li>[Data virtualization with Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/data-virtualization-overview)</li></ul> |
+
+
+> **Tip:**
+> To see how services are organized into categories such as ingest, download, process, and visualize, see [Ingest, process, and analyze](data-lake-storage-best-practices.md#ingest-process-and-analyze).
+
+## See also
+
+- [Known issues with Azure Data Lake Storage](data-lake-storage-known-issues.md)
+- [Blob Storage feature support in Azure Storage accounts](storage-feature-support-in-storage-accounts.md)
+- [Open source platforms that support Azure Data Lake Storage](data-lake-storage-supported-open-source-platforms.md)
+- [Multi-protocol access on Azure Data Lake Storage](data-lake-storage-multi-protocol-access.md)
+- [Best practices for using Azure Data Lake Storage](data-lake-storage-best-practices.md)

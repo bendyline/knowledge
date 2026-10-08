@@ -1,0 +1,45 @@
+---
+title: "Add an external image to a paginated report"
+description: Learn how to add an image to your paginated report from an external source with appropriate verification and permissions in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Add an external image to a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+External images can be on a report server in native mode or any other web site, including a report server in SharePoint integrated mode (SQL Server 2016 or prior). When you include external images in your paginated report, you must verify that the image exists and that the report reader has permissions to access the image. For more information, see [Images (Report Builder)](images-report-builder-and-ssrs.md).  
+ 
+## Add an external image  
+  
+1.  In report design view, on the **Insert** tab, select **Image**.  
+  
+1.  On the design surface, select and then drag a box to the desired size of the image.  
+  
+1.  On the **General** tab of the **Image Properties** dialog, enter a name in the **Name** text box or accept the default.  
+  
+1.  (Optional) In the **Tooltip** text box, type text to display when the user hovers over the image in a report rendered for HTML.  
+  
+1.  In **Select the image source**, select **External**.  
+  
+    For an image on a report server in native mode, enter a relative path to the image in the **Use this image** box. For example, use `../images/image1.jpg`.  
+  
+    For an image on any web site (including a report server in SharePoint integrated mode), enter a full URL to the image in the **Use this image** box. For example, use `https://\<SharePointservername>/\<site>/Documents/images/image1.jpg`.  
+  
+    For more information, see [Specify paths to external items (Report Builder)](specifying-paths-to-external-items-report-builder-and-ssrs.md).  
+  
+1.  (Optional) Select **Size**, **Visibility**, **Action**, or **Border** to set other properties for the image report item.  
+  
+1.  Select **OK**.
+  
+## Related content
+
+- [Embed an image in a paginated report (Report Builder)](embed-an-image-in-a-report-report-builder-and-ssrs.md)
+- [Add a background image to a paginated report (Report Builder)](add-a-background-image-report-builder-and-ssrs.md)
+- [Images in paginated reports (Report Builder)](images-report-builder-and-ssrs.md)

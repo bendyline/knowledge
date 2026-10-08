@@ -1,0 +1,149 @@
+---
+description: How surfaces are arranged to create depth and hierarchy in Windows
+title: Layering and elevation in Windows
+ms.assetid: E00B6D9A-C8AA-4E6E-ADC4-13303AC290D9
+ms.date: 06/24/2021
+ms.topic: concept-article
+keywords: windows 11, design, ui, uiux, layering, elevation, shadows, z-depth, shadow, ThemeShadow, DropShadow
+ms.localizationpriority: medium
+---
+
+# Elevation in Windows
+
+Windows 11 uses layering and elevation as its foundation for app hierarchy. Hierarchy communicates important information about how to navigate within an app while keeping the user's attention focused on the most important content. Layering and elevation are powerful visual cues that modernize experiences and help them feel coherent within Windows.
+
+> **Tip:**
+> This article describes how the [Fluent Design language](https://fluent2.microsoft.design/) is applied to Windows apps. For more information, see [**Fluent Design - Elevation**](https://fluent2.microsoft.design/elevation).
+
+## Elevation
+
+A variety of overlapping UI elements, each at a different elevation
+
+Elevation is the depth component of the spatial relationship one surface has to another with respect to their position on the desktop. When two or more objects occupy the same location on the screen, only the object with the highest elevation will be rendered at that location.
+
+Shadows and contour (outlines) are used on controls and surfaces to subtly communicate an object's elevation, and to help draw focus where needed within an experience. Windows 11 uses the following values to express elevation with shadow and contour.
+
+
+
+An application window
+
+
+**Window**<br>Elevation value: 128<br>Stroke width: 1
+
+
+
+
+
+A modal dialog box
+
+
+**Dialog**<br>Elevation value: 128<br>Stroke width: 1
+
+
+
+
+
+A flyout menu
+
+
+**Flyout**<br>Elevation value: 32<br>Stroke width: 1
+
+
+
+
+
+A tooltip for a combo box
+
+
+**Tooltip**<br>Elevation value: 16<br>Stroke width: 1
+
+
+
+
+
+A UI surface that contains several content areas
+
+
+**Card**<br>Elevation value: 8<br>Stroke width: 1
+
+
+
+
+
+A combo box
+
+
+**Control**<br>Elevation value: 2<br>Stroke width: 1
+
+
+
+
+
+An empty UI surface
+
+
+**Layer**<br>Elevation value: 1<br>Stroke width: 1
+
+
+
+
+
+Controls in Windows 11 vary their elevation and contour to indicate state. The intensity of the rendered shadow changes depending on the theme at parity of value.
+
+
+
+A button in the default state
+
+
+**Rest**<br>Elevation value: 2<br>Stroke width: 1
+
+
+
+
+
+A button in the hover state
+
+
+**Hover**<br>Elevation value: 2<br>Stroke width: 1
+
+
+
+
+
+A button in the pressed state
+
+
+**Pressed**<br>Elevation value: 1<br>Stroke width: 1
+
+
+
+## Layering
+
+
+
+An application window with a single content area
+
+
+An application window with multiple content areas
+
+
+
+Layering is the concept of overlapping one surface with another, creating two or more visually distinguished areas within the same application.  
+
+> **Note:**
+> Layering in Windows is tightly coupled with the use of materials. Please reference the [materials section](materials.md) for specific guidance on how those are applied.
+
+Windows 11 uses a two-layer system for applications. These two layers create hierarchy and provide clarity, keeping users focused on what's most important.
+
+- The **base** layer is an app's foundation. It is the bottommost layer of every app, and contains controls related to app menus, commands, and navigation.
+- The **content** layer focuses the user on the app's central experience. The content layer may be on contiguous element, or separated into cards that segment content.
+
+## Shadows
+
+Shadows are a key visual cue that reinforces the concept of elevation. When a surface is elevated above another, it casts a shadow on the layer beneath it — just as objects do in the physical world. The higher the elevation, the larger and softer the shadow becomes. This relationship between elevation and shadow helps users intuitively understand the spatial hierarchy of your app's interface.
+
+In Windows 11, shadows work together with contour (outlines) to communicate depth. Standard controls like flyouts, dialogs, and tooltips already include appropriate shadows based on their elevation values. Using shadows purposefully — rather than decoratively — ensures they remain an effective signal for drawing focus to the most important elements.
+
+When designing your app's layout, consider how shadows can clarify the relationship between overlapping surfaces. For example, a dialog that appears over the base layer should cast a noticeable shadow to clearly separate it from the content behind it. Overusing shadows, however, can diminish their impact and create visual noise.
+
+To learn how to implement shadows using ThemeShadow and DropShadow in your app, see [Shadows in Windows apps](../../develop/ui/shadows.md).

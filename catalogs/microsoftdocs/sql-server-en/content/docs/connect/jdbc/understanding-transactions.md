@@ -1,0 +1,48 @@
+---
+title: Understanding transactions
+description: Learn about transactions and how to group logical units of work that need to maintain consistent data across multiple database operations.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "08/12/2019"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+
+# Understanding transactions
+
+
+
+Transactions are groups of operations that are combined into logical units of work. They are used to control and maintain the consistency and integrity of each action in a transaction, despite errors that might occur in the system.
+
+With the  Microsoft JDBC Driver for SQL Server 
+, transactions can be either local or distributed. Transactions can also use isolation levels. For more information about the isolation levels supported by the JDBC driver, see [Understanding Isolation Levels](understanding-isolation-levels.md).
+
+Applications should control transactions by either using Transact-SQL statements or the methods provided by the JDBC driver, but not both. Using both Transact-SQL statements and JDBC API methods on the same transaction might lead to problems, such as a transaction cannot be committed when expected, a transaction is committed or rolled back and a new one starts unexpectedly, or "Failed to resume the transaction" exceptions.
+
+## Using local transactions
+
+A transaction is considered to be local when it is a single-phase transaction, and it is handled by the database directly. The JDBC driver supports local transactions by using various methods of the [SQLServerConnection](reference/sqlserverconnection-class.md) class, including [setAutoCommit](reference/setautocommit-method-sqlserverconnection.md), [commit](reference/commit-method-sqlserverconnection.md), and [rollback](reference/rollback-method.md). Local transactions are typically managed explicitly by the application or automatically by the Java Platform, Enterprise Edition (Java EE) application server.
+
+The following example performs a local transaction that consists of two separate statements in the `try` block. The statements are run against the Production.ScrapReason table in the  AdventureWorks2025  sample database, and they are committed if no exceptions are thrown. The code in the `catch` block rolls back the transaction if an exception is thrown.
+
+[!code[JDBC#UnderstandingTransactions1](../../../_code/docs/connect/jdbc/codesnippet/Java/understanding-transactions_1.java.md)]
+
+## Using distributed transactions
+
+A distributed transaction updates data on two or more networked databases while retaining the important atomic, consistent, isolated, and durable (ACID) properties of transaction processing. Distributed transaction support was added to the JDBC API in the JDBC 2.0 Optional API specification. The management of distributed transactions is typically performed automatically by the Java Transaction Service (JTS) transaction manager in a Java EE application server environment. However, the  Microsoft JDBC Driver for SQL Server 
+ supports distributed transactions under any Java Transaction API (JTA) compliant transaction manager.
+
+The JDBC driver seamlessly integrates with  Microsoft 
+ Distributed Transaction Coordinator (MS DTC) to provide true distributed transaction support with  SQL Server 
+. MS DTC is a distributed transaction facility provided by  Microsoft 
+ for  Microsoft 
+ Windows systems. MS DTC uses proven transaction processing technology from  Microsoft 
+ to support XA features such as the complete two-phase distributed commit protocol and the recovery of distributed transactions.
+
+For more information about how to use distributed transactions, see [Understanding XA transactions](understanding-xa-transactions.md).
+
+## Related content
+
+- [Performing transactions with the JDBC driver](performing-transactions-with-the-jdbc-driver.md)

@@ -1,0 +1,74 @@
+---
+title: "ReorientObject (geography Data Type)"
+description: "ReorientObject (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "ReorientObject"
+  - "ReorientObject_TSQL"
+helpviewer_keywords:
+  - "ReorientObject method (geography)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# ReorientObject (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **geography** instance with interchanged interior regions and exterior regions.  
+  
+This **geography** data type method supports **FullGlobe** instances or spatial instances that are larger than a hemisphere.  
+  
+## Syntax  
+  
+```syntaxsql
+.ReorientObject (geography)  
+```  
+  
+## Arguments
+_geography_  
+Is another **geography** instance on which `ReorientObject()` is invoked.  
+  
+## Return Value  
+ SQL Server 
+ return type: **geography**  
+  
+CLR return type: **SqlGeography**  
+  
+## Remarks  
+This method changes the ring orientation of all **Polygons** in a **GeometryCollection** but doesn't remove or change any **Points** or **LineStrings** in the given collection.  
+  
+If you pass a **GeometryCollection** to this method, each instance in the collection reorients as a result, but the whole collection doesn't reorient.  
+  
+## Examples  
+  
+```sql
+DECLARE @R GEOGRAPHY = GEOGRAPHY::Parse('Polygon((-10 -10, -10 10, 10 10, 10 -10, -10 -10))');  
+SELECT @R.ReorientObject().STAsText();  
+--Result: POLYGON ((10 10, -10 10, -10 -10, 10 -10, 10 10))  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)

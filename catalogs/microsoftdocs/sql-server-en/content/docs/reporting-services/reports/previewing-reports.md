@@ -1,0 +1,50 @@
+---
+title: Preview Reports
+description: Learn how to preview reports in SQL Server Reporting Services before publishing to a production environment.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reports
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Preview Reports in SQL Server Reporting Services (SSRS)
+
+  When you design a  Reporting Services 
+ report, you may want to view it before publishing it to a production environment. You can do this in several ways: by switching to Preview mode in Report Designer, by using the preview window in Report Designer, and by publishing the report to a report server in a test environment.  
+  
+> **Note:**  
+> When you preview a report, the data for the report is cached to a file on the local computer. When you preview the same report again using the same query, parameters, and credentials, Report Designer retrieves the cached copy rather than rerunning the query. The data file is saved as *\<reportname>*.rdl.data in the same directory as the report definition file. The file is not deleted when you close Report Designer.  
+  
+## Preview Mode
+
+ You can preview a report in Report Designer by clicking ssrs_ssdt_preview. This runs the report locally, using the same report processing and rendering functionality that is provided with the report server. The report that is displayed is an interactive image; you can select parameters, click links, view the document map, and expand and collapse hidden areas of the report. You can also export the report to any of the installed rendering formats.  
+  
+## Standalone Preview
+
+ Another way to preview a report is to run the report project in a debug configuration, for example, to debug custom assemblies that you write. The report is opened in your default browser. There are three ways to run a project:  
+  
+- By clicking **Start Debugging** on the **Debug** menu.  
+  
+- By clicking the **Start** button on the  Visual Studio 
+ standard toolbar ssrs_ssdt_startdebug.  
+  
+- By pressing **F5**.  
+  
+ If you use a project configuration that builds the report but does not deploy it, the report that is specified in the **StartItem** property of the current configuration opens in a separate preview window. The preview window displays the report in the same way and has the same functionality as Preview mode.  
+  
+> **Note:**  
+> Before debugging a report, you must set a start item. For example, if you run debug mode and the browser opens the main report server page and not your report in preview mode. To set a start item, in Solution Explorer, right-click the report project, click **Properties**, and then in **StartItem**, select the name of the report to display.  
+  
+ If you wish to preview a particular report that is not the start item for the project, select a configuration that builds the report but does not deploy it (for example, the DebugLocal configuration), right-click the report, and then click **Run**. You must choose a configuration that does not deploy the report; otherwise, the report will be published to the report server instead of displayed locally in a preview window.  
+  
+## Publish to a Test Server
+
+ You can also test reports by publishing them to a test server, browse to the report  and preview. Publishing a report to a test server is the same as publishing to a production server. For information about publishing a report, see [Publishing Reports to a Report Server](publishing-reports-to-a-report-server.md).  
+  
+## Related content
+
+- [Print reports](../report-builder/print-reports-report-builder-and-ssrs.md)
+- [Print a report (Report Builder)](../report-builder/print-a-report-report-builder-and-ssrs.md)
+- [Publish Reports](https://learn.microsoft.com/previous-versions/sql/sql-server-2016/ms159615\(v=sql.130\))
+- [Using custom assemblies with reports](../custom-assemblies/using-custom-assemblies-with-reports.md)

@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How do clustered and nonclustered SQL Server indexes store rows and row locators?",
+    "expectedDocumentIds": [
+      "docs/relational-databases/indexes/clustered-and-nonclustered-indexes-described"
+    ]
+  }
+]

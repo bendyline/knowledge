@@ -1,0 +1,127 @@
+---
+title: "PowerShell Cmdlets for availability groups"
+description: "A reference for the different PowerShell cmdlets available to manage Always On availability groups. "
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "08/30/2017"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: language-reference
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], PowerShell cmdlets"
+  - "Availability Groups [SQL Server], about"
+  - "PowerShell [SQL Server], cmdlets"
+---
+# Overview of PowerShell Cmdlets for Always On Availability Groups
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+   Microsoft 
+ PowerShell is a task-based command-line shell and scripting language designed especially for system administration.  Always On availability groups 
+ provides a set of PowerShell cmdlets in  SQL Server 
+ that enable you to deploy, manage, and monitor availability groups, availability replicas, and availability databases.  
+  
+> **Note:**  
+>  A PowerShell cmdlet can complete by successfully initiating an action. This does not indicate that the intended work, such as the fail over of an availability group, has completed. When scripting a sequence of actions, you might have to check the status of actions, and wait for them to complete.  
+  
+> **Note:**  
+>  For a list of topics in  SQL Server 
+ Books Online that describe how to use cmdlets to perform  Always On availability groups 
+ tasks, see the "Related Tasks" section of [Overview of Always On Availability Groups (SQL Server)](overview-of-always-on-availability-groups-sql-server.md).  
+  
+##  <a name="ConfiguringServerInstance"></a> Configuring a Server Instance for Always On Availability Groups  
+  
+| Cmdlets | Description | Supported on |
+| --- | --- | --- |
+| [**Disable-SqlAlwaysOn**](https://learn.microsoft.com/powershell/module/sqlserver/disable-sqlalwayson) | Disables the  Always On availability groups |
+ | feature on a server instance. | The server instance that is specified by the **Path**, **InputObject**, or **Name** parameter. (Must be an edition of  SQL Server |
+ | that supports  Always On availability groups |
+| .) |
+| [**Enable-SqlAlwaysOn**](https://learn.microsoft.com/powershell/module/sqlserver/enable-sqlalwayson) | Enables  Always On availability groups |
+ | on an instance of  SQL Server |
+ | that supports the  Always On availability groups |
+ | feature. For information about support for  Always On availability groups |
+| , see [Prerequisites, Restrictions, and Recommendations for Always On Availability Groups (SQL Server)](prereqs-restrictions-recommendations-always-on-availability.md). | Any edition of  SQL Server |
+ | that supports  Always On availability groups |
+| . |
+| [**New-SqlHadrEndPoint**](https://learn.microsoft.com/powershell/module/sqlserver/new-sqlhadrendpoint) | Creates a new database mirroring endpoint on a server instance. This endpoint is required for data movement between primary and secondary databases. | Any instance of  SQL Server |
+|  |
+| [**Set-SqlHadrEndpoint**](https://learn.microsoft.com/powershell/module/sqlserver/set-sqlhadrendpoint) | Changes the properties of an existing database mirroring endpoint, such as the name, state, or authentication properties. | A server instance that supports  Always On availability groups |
+ | and lacks a database mirroring endpoint |
+
+  
+##  <a name="BnRcmdlets"></a> Backing Up and Restoring Databases and Transaction Logs  
+  
+| Cmdlets | Description | Supported on |
+| --- | --- | --- |
+| [**Backup-SqlDatabase**](https://learn.microsoft.com/powershell/module/sqlserver/backup-sqldatabase) | Creates a data or log backup. | Any online database (for  Always On availability groups |
+| , a database on the server instance that hosts the primary replica) |
+| [**Restore-SqlDatabase**](https://learn.microsoft.com/powershell/module/sqlserver/restore-sqldatabase) | Restores a backup. | Any instance of  SQL Server |
+ | (for  Always On availability groups |
+| , a server instance that hosts a secondary replica)<br /><br /> |
+
+  >**Important:**
+  >When preparing a secondary database, you must use the **-NoRecovery** parameter in every **Restore-SqlDatabase** command. 
+  
+ For information about using these cmdlets to prepare a secondary database, see [Manually Prepare a Secondary Database for an Availability Group (SQL Server)](manually-prepare-a-secondary-database-for-an-availability-group-sql-server.md).  
+  
+##  <a name="DeployManageAGs"></a> Creating and Managing an Availability Group  
+  
+| Cmdlets | Description | Supported on |
+| --- | --- | --- |
+| [**New-SqlAvailabilityGroup**](https://learn.microsoft.com/powershell/module/sqlserver/new-sqlavailabilitygroup) | Creates a new availability group. | Server instance to host primary replica |
+| [**Remove-SqlAvailabilityGroup**](https://learn.microsoft.com/powershell/module/sqlserver/remove-sqlavailabilitygroup) | Deletes availability group. | HADR-enabled server instance |
+| [**Set-SqlAvailabilityGroup**](https://learn.microsoft.com/powershell/module/sqlserver/set-sqlavailabilitygroup) | Sets the properties of an availability group; take an availability group online/offline | Server instance that hosts primary replica |
+| [**Switch-SqlAvailabilityGroup**](https://learn.microsoft.com/powershell/module/sqlserver/switch-sqlavailabilitygroup) | Initiates one of the following forms of failover:<br /><br /> A forced failover of an availability group (with possible data loss).<br /><br /> A manual failover of an availability group. | Server instance that hosts target secondary replica |
+  
+##  <a name="AGlisteners"></a> Creating and Managing an Availability Group Listener  
+  
+| Cmdlet | Description | Supported on |
+| --- | --- | --- |
+| [**New-SqlAvailabilityGroupListener**](https://learn.microsoft.com/powershell/module/sqlserver/new-sqlavailabilitygrouplistener) | Creates a new availability group listener and attaches it to an existing availability group. | Server instance that hosts primary replica |
+| [**Set-SqlAvailabilityGroupListener**](https://learn.microsoft.com/powershell/module/sqlserver/set-sqlavailabilitygrouplistener) | Modifies the port setting on an existing availability group listener. | Server instance that hosts primary replica |
+| [**Add-SqlAvailabilityGroupListenerStaticIp**](https://learn.microsoft.com/powershell/module/sqlserver/add-sqlavailabilitygrouplistenerstaticip) | Adds a static IP address to an existing availability group listener configuration. The IP address can be an IPv4 address with subnet, or an IPv6 address. | Server instance that hosts primary replica |
+  
+##  <a name="DeployManageARs"></a> Creating and Managing an Availability Replica  
+  
+| Cmdlets | Description | Supported on |
+| --- | --- | --- |
+| [**New-SqlAvailabilityReplica**](https://learn.microsoft.com/powershell/module/sqlserver/new-sqlavailabilityreplica) | Creates a new availability replica. You can Use the **-AsTemplate** parameter to create an in-memory availability-replica object for each new availability replica. | Server instance that hosts primary replica |
+| [**Join-SqlAvailabilityGroup**](https://learn.microsoft.com/powershell/module/sqlserver/join-sqlavailabilitygroup) | Joins a secondary replica to the availability group. | Server instance that hosts secondary replica |
+| [**Remove-SqlAvailabilityReplica**](https://learn.microsoft.com/powershell/module/sqlserver/remove-sqlavailabilityreplica) | Deletes an availability replica. | Server instance that hosts primary replica |
+| [**Set-SqlAvailabilityReplica**](https://learn.microsoft.com/powershell/module/sqlserver/set-sqlavailabilityreplica) | Sets the properties of an availability replica. | Server instance that hosts primary replica |
+  
+##  <a name="DeployManageDbs"></a> Adding and Managing an Availability Database  
+  
+| Cmdlets | Description | Supported on |
+| --- | --- | --- |
+| [**Add-SqlAvailabilityDatabase**](https://learn.microsoft.com/powershell/module/sqlserver/add-sqlavailabilitydatabase) | On the primary replica, adds a database to an availability group.<br /><br /> On a secondary replica, joins a secondary database to an availability group. | Any server instance that hosts an availability replica (behavior differs for primary and secondary replicas) |
+| [**Remove-SqlAvailabilityDatabase**](https://learn.microsoft.com/powershell/module/sqlserver/remove-sqlavailabilitydatabase) | On the primary replica, removes the database from the availability group.<br /><br /> On a secondary replica, removes the local secondary database from the local secondary replica. | Any server instance that hosts an availability replica (behavior differs for primary and secondary replicas) |
+| [**Resume-SqlAvailabilityDatabase**](https://learn.microsoft.com/powershell/module/sqlserver/resume-sqlavailabilitydatabase) | Resumes the data movement for a suspended availability database. | The server instance on which the database was suspended. |
+| [**Suspend-SqlAvailabilityDatabase**](https://learn.microsoft.com/powershell/module/sqlserver/suspend-sqlavailabilitydatabase) | Suspends the data movement for an availability database. | Any server instance that hosts an availability replica. |
+  
+##  <a name="MonitorTblshtAGs"></a> Monitoring Availability Group Health  
+ The following  SQL Server 
+ cmdlets enable you to monitor the health of an availability group and its replicas and databases.  
+  
+> **Important:**  
+>  You must have CONNECT, VIEW SERVER STATE, and VIEW ANY DEFINITION permissions to execute these cmdlets.  
+  
+| Cmdlet | Description | Supported on |
+| --- | --- | --- |
+| [**Test-SqlAvailabilityGroup**](https://learn.microsoft.com/powershell/module/sqlserver/test-sqlavailabilitygroup) | Assesses the health of an availability group by evaluating SQL Server policy based management (PBM) policies. | Any server instance that hosts an availability replica.* |
+| [**Test-SqlAvailabilityReplica**](https://learn.microsoft.com/powershell/module/sqlserver/test-sqlavailabilityreplica) | Assesses the health of availability replicas by evaluating SQL Server policy based management (PBM) policies. | Any server instance that hosts an availability replica.* |
+| [**Test-SqlDatabaseReplicaState**](https://learn.microsoft.com/powershell/module/sqlserver/test-sqldatabasereplicastate) | Assesses the health of an availability database on all joined availability replicas by evaluating SQL Server policy based management (PBM) policies. | Any server instance that hosts an availability replica.* |
+  
+ *To view information about all of the availability replicas in an availability group, use to the server instance that hosts the primary replica.  
+  
+ For more information, see [Use Always On Policies to View the Health of an Availability Group (SQL Server)](use-always-on-policies-to-view-the-health-of-an-availability-group-sql-server.md).  
+  
+## Related content
+
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Get Help SQL Server PowerShell](https://learn.microsoft.com/powershell/sql-server/sql-server-powershell)

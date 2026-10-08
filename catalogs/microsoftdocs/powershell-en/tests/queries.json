@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Get Command",
+    "expectedDocumentIds": [
+      "reference/7.6/Microsoft.PowerShell.Core/Get-Command"
+    ]
+  }
+]

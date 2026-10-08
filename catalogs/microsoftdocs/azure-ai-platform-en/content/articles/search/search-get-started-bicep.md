@@ -1,0 +1,116 @@
+---
+title: 'Quickstart: Deploy Using a Bicep File'
+description: Learn how to deploy an Azure AI Search service instance using Bicep.
+author: mattwojo
+ms.author: mattwoj
+ms.service: azure-ai-search
+ms.topic: quickstart
+ms.custom:
+  - subject-armqs
+  - mode-arm
+  - devx-track-bicep
+  - ignite-2023
+ms.date: 07/20/2026
+ms.update-cycle: 365-days
+---
+
+# Quickstart: Deploy Azure AI Search using Bicep
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+In this quickstart, use a Bicep file to deploy an Azure AI Search service in the Azure portal.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-bicep-introduction.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/search-get-started-bicep.md)
+
+The deployment uses only the properties included in the template. If you need more customization, such as [setting up network security](search-security-best-practices.md#configure-network-security), you can update the service as a post-deployment task. To customize an existing service with the fewest steps, use [Azure CLI](search-manage-azure-cli.md) or [Azure PowerShell](search-manage-powershell.md). If you're evaluating preview features, use the [Management REST API](search-manage-rest.md).
+
+> **Tip:**
+> For an alternative Bicep template that deploys Azure AI Search with a preconfigured indexer to Cosmos DB for NoSQL, see [Bicep deployment of Azure AI Search](https://github.com/Azure-Samples/azure-search-deployment-template). There's no Bicep template support for Azure AI Search data plane operations like creating an index, but you can add a module that calls REST APIs. The sample includes a module that creates an index, data source connector, and an indexer that refreshes from Cosmos DB at 5-minute intervals.
+
+## Prerequisites
+
+If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) before you begin.
+
+## Review the Bicep file
+
+This quickstart uses a Bicep file from [Azure Quickstart Templates](https://azure.microsoft.com/resources/templates/azure-search-create/).
+
+[Code reference unavailable in this source snapshot: ~/quickstart-templates/quickstarts/microsoft.search/azure-search-create/main.bicep](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/search/search-get-started-bicep.md)
+
+The Bicep file defines the following Azure resource:
+
+- [Microsoft.Search/searchServices](https://learn.microsoft.com/azure/templates/Microsoft.Search/searchServices): create an Azure AI Search service
+
+## Deploy the Bicep file
+
+1. Save the Bicep file as **main.bicep** on your local computer.
+1. Deploy the Bicep file by using either Azure CLI or Azure PowerShell.
+
+    # [CLI](#tab/CLI)
+
+    ```azurecli
+    az group create --name exampleRG --location eastus
+    az deployment group create --resource-group exampleRG --template-file main.bicep --parameters serviceName=<service-name>
+    ```
+
+    # [PowerShell](#tab/PowerShell)
+
+    ```azurepowershell
+    New-AzResourceGroup -Name exampleRG -Location eastus
+    New-AzResourceGroupDeployment -ResourceGroupName exampleRG -TemplateFile ./main.bicep -serviceName "<service-name>"
+    ```
+
+    ---
+
+    > **Note:**
+    > Replace **\<service-name\>** with the name of the Search service. The service name must only contain lowercase letters, digits, or dashes. You can't use a dash as the first two characters or the last character. The name has a minimum length of 2 characters and a maximum length of 60 characters.
+
+    When the deployment finishes, you see a message indicating the deployment succeeded.
+
+## Review deployed resources
+
+Use the Azure portal, Azure CLI, or Azure PowerShell to list the deployed resources in the resource group.
+
+# [CLI](#tab/CLI)
+
+```azurecli-interactive
+az resource list --resource-group exampleRG
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell-interactive
+Get-AzResource -ResourceGroupName exampleRG
+```
+
+---
+
+## Clean up resources
+
+Azure AI Search is a billable resource. If you no longer need it, delete it from your subscription to avoid charges. You can use the Azure portal, Azure CLI, or Azure PowerShell to delete the resource group and its resources.
+
+# [CLI](#tab/CLI)
+
+```azurecli-interactive
+az group delete --name exampleRG
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell-interactive
+Remove-AzResourceGroup -Name exampleRG
+```
+
+---
+
+## Related content
+
+In this quickstart, you created an Azure AI Search service using a Bicep file and then validated the deployment. To learn more about Azure AI Search and Azure Resource Manager, see the following articles:
+
+- [What is Azure AI Search?](search-what-is-azure-search.md)
+- [Quickstart: Full-text search in the Azure portal](search-get-started-portal.md)
+- [Quickstart: Create a demo search app in the Azure portal](search-create-app-portal.md)
+- [Quickstart: Create a skillset in the Azure portal](search-get-started-skillset.md)

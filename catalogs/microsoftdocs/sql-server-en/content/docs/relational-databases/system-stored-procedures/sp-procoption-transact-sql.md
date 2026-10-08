@@ -1,0 +1,98 @@
+---
+title: "sys.sp_procoption (Transact-SQL)"
+description: "sp_procoption sets or clears a stored procedure for automatic execution."
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 05/29/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_procoption"
+  - "sp_procoption_TSQL"
+helpviewer_keywords:
+  - "sp_procoption"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_procoption (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Sets or clears a stored procedure for automatic execution. A stored procedure that is set to automatic execution runs every time an instance of  SQL Server 
+ is started.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_procoption
+    [ @ProcName = ] N'ProcName'
+    , [ @OptionName = ] 'OptionName'
+    , [ @OptionValue = ] 'OptionValue'
+[ ; ]
+```
+
+## Arguments
+
+#### [ @ProcName = ] N'*ProcName*'
+
+The name of the procedure for which to set an option. *@ProcName* is **nvarchar(776)**, with no default.
+
+#### [ @OptionName = ] '*OptionName*'
+
+The name of the option to set. *@OptionName* is **varchar(35)**, and the only value possible is `startup`.
+
+#### [ @OptionValue = ] '*OptionValue*'
+
+Specifies whether to enable or disable the option. *@OptionValue* is **varchar(12)**, with no default, and can be one of the following values:
+
+| Enabled | Disabled |
+| --- | --- |
+| `true` | `false` |
+| `on` | `off` |
+| `yes` | `no` |
+| `1` | `0` |
+
+## Return code values
+
+`0` (success) or error number (failure).
+
+## Remarks
+
+Startup procedures must be in the `dbo` schema of the `master` database, and can't contain `INPUT` or `OUTPUT` parameters. Execution of the stored procedures starts when all databases are recovered and the "Recovery is completed" message is logged at startup.
+
+## Permissions
+
+Requires membership in the **sysadmin** fixed server role.
+
+## Examples
+
+The following example sets a procedure for automatic execution.
+
+```sql
+EXECUTE sp_procoption
+    @ProcName = N'<procedure name>',
+    @OptionName = 'startup',
+    @OptionValue = 'on';
+```
+
+The following example stops a procedure from executing automatically.
+
+```sql
+EXECUTE sp_procoption
+    @ProcName = N'<procedure name>',
+    @OptionName = 'startup',
+    @OptionValue = 'off';
+```
+
+## Related content
+
+- [Execute a stored procedure](../stored-procedures/execute-a-stored-procedure.md)

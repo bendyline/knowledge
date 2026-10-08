@@ -6,7 +6,7 @@ import { fixture, githubManifest } from './helpers.mjs';
 import { expandIncludes, githubSnapshot } from '../src/sources/github.mjs';
 import { applySnapshot, importDocument } from '../src/sync.mjs';
 import { sha256, inventory, removeWork } from '../src/files.mjs';
-import { validateCatalog } from '../src/catalogs.mjs';
+import { hasUnresolvedDocfx, validateCatalog } from '../src/catalogs.mjs';
 
 test('include expansion rebases fragment links and leaves code samples alone', () => {
   const files = new Map([['includes/fragment.md', Buffer.from('[Guide](../docs/guide.md)\n')]]);
@@ -18,6 +18,14 @@ test('include expansion rebases fragment links and leaves code samples alone', (
 });
 
 const revision = 'a'.repeat(40);
+test('rendered include mode keeps commented examples literal while expanding real includes', () => {
+  const fragment = 'Preserved text.\n\n<!-- Example: [!INCLUDE [](fragment.md)] -->\n';
+  const files = new Map([['docs/fragment.md', Buffer.from(fragment)]]);
+  const input = '[!INCLUDE [](fragment.md)]\n\n`[!INCLUDE [](missing.md)]`\n';
+  assert.equal(expandIncludes(input, 'docs/page.md', files, [], undefined, { skipComments: true }), fragment + '\n\n`[!INCLUDE [](missing.md)]`\n');
+  assert.throws(() => expandIncludes(input, 'docs/page.md', files), /Cyclic/);
+  assert.throws(() => expandIncludes('[!INCLUDE [](page.md)]', 'docs/page.md', new Map([['docs/page.md', Buffer.from('[!INCLUDE [](page.md)]')]]), [], undefined, { skipComments: true }), /Cyclic/);
+});
 const snapshot = (text = '# First\n', rev = revision) => ({ revision: rev, legal: [], files: [{ path: 'docs/first.md', bytes: Buffer.from(text), provenance: { path: 'docs/first.md', sha256: sha256(text), sourceSha256: sha256(text), sourceUrl: 'https://example.com/first.md', sourceRevision: rev, license: 'mit', attribution: 'Example author', transformation: 'none' } }] });
 
 async function syncedFixture() {
@@ -82,4 +90,70 @@ test('manual import previews and writes Markdown, never raw HTML', async () => {
   assert.ok(files.some((f) => f.path === 'imported.md'));
   assert.ok(!files.some((f) => f.path.endsWith('.html')));
   await validateCatalog(c);
+});
+
+test('DocFX preservation keeps complete code files, resolves local UIDs, and reports missing dependencies', async () => {
+  const c = await fixture(); c.manifest = githubManifest(c.manifest);
+  c.manifest.normalization = { images: 'omit', docfx: true, docfxReferences: 'preserve', docfxMetadataMaxBytes: 1024 };
+  c.manifest.source.codeFiles = ['docs/*.cs'];
+  c.manifest.source.docfxRoot = 'fallback';
+  c.manifest.source.publishedBaseUrl = 'https://learn.microsoft.com/example/';
+  const raw = new Map([
+    ['docfx.json', '{}'],
+    ['page.md', '# Page\n\n[!code-csharp[Sample](Sample.CS?name=snippet)]\n\n<xref:local.topic>\n\n[!INCLUDE [missing](external.md)]\n\n[Outside](../other/page.md)\n\n[Learn](/dotnet/overview)\n\n[Root](~/Target.md)\n\n[Mixed case](Target.MD)\n'],
+    ['target.md', '---\nuid: local.topic\n---\n\n# Target\n'],
+    ['sample.cs', 'Console.WriteLine("Preserved");\n'],
+    ['unicode.cs', Buffer.from('\ufeff// München 東京\r\n', 'utf16le')],
+    ['metadata.md', `---\naliases: [${'old-url,'.repeat(300)}last-url]\n---\n# Metadata\nOriginal body.\n`],
+  ]);
+  const api = async path => {
+    if (path === '/repos/example/docs') return { private: false };
+    if (path.includes('/commits/')) return { sha: revision, commit: { tree: { sha: 'root' } } };
+    if (path.endsWith('/trees/root')) return { tree: [{ path: 'docs', type: 'tree', sha: 'docs' }] };
+    return { tree: [...raw].map(([path,text]) => ({ path, type: 'blob', mode: '100644', size: Buffer.byteLength(text) })) };
+  };
+  const download = async url => ({ bytes: Buffer.from(url.endsWith('/LICENSE') ? 'MIT example' : raw.get(url.split('/').at(-1))) });
+  const result = await githubSnapshot(c, { api, download });
+  const content = new Map(result.files.map(f => [f.path, f.bytes.toString()]));
+  assert.match(content.get('docs/page.md'), /\.\.\/_code\/docs\/sample\.cs\.md/);
+  assert.match(content.get('docs/page.md'), /\[local\.topic\]\(target\.md\)/);
+  assert.match(content.get('docs/page.md'), /Include unavailable in this source snapshot/);
+  assert.ok(content.get('docs/page.md').includes(`https://github.com/example/docs/blob/${revision}/other/page.md`));
+  assert.match(content.get('docs/page.md'), /https:\/\/learn\.microsoft\.com\/dotnet\/overview/);
+  assert.match(content.get('docs/page.md'), /\[Root\]\(target\.md\)/);
+  assert.match(content.get('docs/page.md'), /\[Mixed case\]\(target\.md\)/);
+  assert.match(content.get('_code/docs/sample.cs.md'), /Console\.WriteLine\("Preserved"\);/);
+  assert.match(content.get('_code/docs/unicode.cs.md'), /München 東京\n/);
+  assert.match(result.files.find(f => f.path === '_code/docs/unicode.cs.md').provenance.transformation, /decoded from utf-16le/);
+  const report = JSON.parse(result.legal.find(f => f.path.endsWith('import-report.json')).bytes);
+  assert.ok(report.unresolved.some(e => e.path === 'docs/page.md' && e.kind === 'Include' && e.target === 'external.md'));
+  assert.ok(report.unresolved.some(e => e.path === 'docs/metadata.md' && e.kind === 'Original metadata retained as code'));
+  assert.match(content.get('docs/metadata.md'), /Original body\./);
+  assert.match(content.get('docs/metadata.md'), /```text\n---\naliases:/);
+  // The versioned profile leaves legacy snapshots unchanged while accepting
+  // source-empty fragments and long DocFX files with sibling version sections.
+  c.manifest.normalization.docfxProfile = 'rendered-v1';
+  raw.set('empty.md', '\n');
+  raw.set('boundary.md', '---\ntitle: Whitespace boundary\n--- \n# Original body\n\n---\nMore body.\n');
+  raw.set('versions.md', Array.from({ length: 160 }, (_, i) => `:::moniker range="v${i}"\nText ${i}.\n:::moniker-end\n`).join('\n'));
+  const rendered = await githubSnapshot(c, { api, download });
+  const empty = rendered.files.find(f => f.path === 'docs/empty.md');
+  assert.match(empty.bytes.toString(), /Empty source document/);
+  assert.equal(empty.provenance.sourceSha256, sha256('\n'));
+  assert.match(rendered.files.find(f => f.path === 'docs/versions.md').bytes.toString(), /Text 159\./);
+  assert.match(rendered.files.find(f => f.path === 'docs/boundary.md').bytes.toString(), /^---\ntitle: Whitespace boundary\n---\n# Original body/);
+  c.manifest.normalization.docfxProfile = 'rendered-v2';
+  raw.set('malformed.md', '# Article\nBody. [!INCLUDE public preview disclaimer]\n\n<!--::: zone-end\n');
+  const tolerant = await githubSnapshot(c, { api, download });
+  const malformed = tolerant.files.find(f => f.path === 'docs/malformed.md').bytes.toString();
+  assert.match(malformed, /Body\./);
+  assert.equal(hasUnresolvedDocfx(malformed), false);
+  assert.ok(JSON.parse(tolerant.legal.find(f => f.path.endsWith('import-report.json')).bytes).unresolved.some(e => e.path === 'docs/malformed.md' && e.kind === 'Malformed reference retained as code'));
+});
+
+test('DocFX validation checks rendered text separately from YAML metadata', () => {
+  assert.equal(hasUnresolvedDocfx('---\ndescription: See <xref:System.String>\n---\n# Article\n'), false);
+  assert.equal(hasUnresolvedDocfx('---\ntitle: Article\n---\nSee <xref:System.String>\n'), true);
+  assert.equal(hasUnresolvedDocfx('<!--::: zone-end\n'), false);
+  assert.equal(hasUnresolvedDocfx('`<!--`\n\n<xref:Live.Reference>\n'), true);
 });

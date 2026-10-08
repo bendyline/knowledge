@@ -1,0 +1,34 @@
+# Source code: aspnetcore/mvc/views/partial/sample/PartialViewsSample/Pages/ArticlesRP/ReadRP.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+<!-- <snippet_ReadPartialViewRP> -->
+@model ReadRPModel
+
+<h2>@Model.Article.Title</h2>
+@* Pass the author's name to Pages\Shared\_AuthorPartialRP.cshtml *@
+@await Html.PartialAsync("../Shared/_AuthorPartialRP", Model.Article.AuthorName)
+@Model.Article.PublicationDate
+
+@* Loop over the Sections and pass in a section and additional ViewData to 
+   the strongly typed Pages\ArticlesRP\_ArticleSectionRP.cshtml partial view. *@
+@{
+    var index = 0;
+
+    foreach (var section in Model.Article.Sections)
+    {
+        await Html.PartialAsync("_ArticleSectionRP", 
+                                section,
+                                new ViewDataDictionary(ViewData)
+                                {
+                                    { "index", index }
+                                });
+
+        index++;
+    }
+}
+<!-- </snippet_ReadPartialViewRP> -->
+
+```

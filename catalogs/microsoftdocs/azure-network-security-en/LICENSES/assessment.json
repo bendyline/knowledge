@@ -1,0 +1,30 @@
+{
+  "policy": "standard-open-v1",
+  "approved": true,
+  "evidence": [
+    {
+      "path": "LICENSE",
+      "license": "docs",
+      "spdx": "CC-BY-4.0",
+      "sha256": "15c406491bac79b9344852d0dc85a3345528dbdadf2c812f9468e0629258be90",
+      "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+      "obligations": [
+        "retain-license-and-notices",
+        "attribute-source",
+        "mark-modifications"
+      ]
+    },
+    {
+      "path": "LICENSE-CODE",
+      "license": "code",
+      "spdx": "MIT",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+      "obligations": [
+        "retain-license-and-notices",
+        "attribute-source",
+        "mark-modifications"
+      ]
+    }
+  ]
+}

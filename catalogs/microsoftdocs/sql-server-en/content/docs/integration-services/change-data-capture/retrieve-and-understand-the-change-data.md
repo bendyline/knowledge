@@ -1,0 +1,62 @@
+---
+title: "Retrieve and Understand the Change Data"
+description: "Retrieve and Understand the Change Data"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+helpviewer_keywords:
+  - "incremental load [Integration Services],retrieving data"
+---
+# Retrieve and Understand the Change Data
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  In the data flow of an  Integration Services 
+ package that performs an incremental load of change data, the first task is to run the query that retrieves the change data. You execute this query inside a source component in a Data Flow task. You can then use downstream transformations and destinations to apply the change data to your destination.  
+  
+> **Note:**  
+>  The creation of a query that contains a table-valued function is the third step in the process of creating a package that performs an incremental load of change data. For more information about this query, see, [Create the Function to Retrieve the Change Data](create-the-function-to-retrieve-the-change-data.md). For a description of the overall process for creating a package that performs an incremental load of change data, see [Change Data Capture (SSIS)](change-data-capture-ssis.md).  
+  
+## Adding the Data Flow Task  
+ In the data flow of the package, you retrieve the change data, separate the rows based on the type of change that occurred, and then apply the changes to the destination.  
+  
+#### To add a Data Flow task to the package  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, on the **Control Flow** tab, add a Data Flow task.  
+  
+2.  Connect the preceding task that prepared the query string to the Data Flow task.  
+  
+## Configuring the Source Component to Query for Changes  
+ The source component uses the query string that was prepared and stored in a variable to calls the table-valued function that retrieves the changed data.  
+  
+> **Note:**  
+>  For more information about the query string that was prepared and stored in a variable, see [Prepare to Query for the Change Data](prepare-to-query-for-the-change-data.md). For more information about the table-valued function that retrieves the change data, see [Create the Function to Retrieve the Change Data](create-the-function-to-retrieve-the-change-data.md).  
+  
+#### To configure an OLE DB source to retrieve the change data  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, on the **Data Flow** tab, add an OLE DB source.  
+  
+2.  In the **OLE DB Source Editor**, on the **Connection Manager** page, select the following options:  
+  
+    1.  Configure a valid connection to the source database.  
+  
+    2.  For **Data access mode**, select **SQL command from variable**.  
+  
+    3.  For **Variable name**, select **User::SqlDataQuery**.  
+  
+3.  In the **OLE DB Source Editor**, on the **Columns** page, make sure that all the columns that you want are mapped to output columns.  
+  
+## Related content
+
+- [Process Inserts, Updates, and Deletes](process-inserts-updates-and-deletes.md)

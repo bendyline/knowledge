@@ -1,0 +1,39 @@
+---
+title: "Publishing Data Sources and Reports"
+description: Learn how to publish data sources and reports so that individuals who have permissions to the report server or the SharePoint site can run your report.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reports
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "publishing data sources [Reporting Services]"
+  - "publishing reports [Reporting Services]"
+  - "data sources [Reporting Services], managing"
+---
+# Publishing Data Sources and Reports
+  Before publishing your report, you should preview the report to see how it will look when it is run. You can continue to refine the design until you are satisfied with the results.  
+  
+ After you design and test your report, you may want to share it with other individuals. To share your report, you need to publish, or *deploy*, it to a report server or SharePoint site. After it has been published, individuals who have permissions to the report server or the SharePoint site can run your report. In addition, a person with administrator permissions on the report server can create subscriptions to your report so that the report can be updated and sent to users on a regular schedule.  
+  
+ If you used a shared data source to create your report, you need to publish it to the same location as the report. Like reports, shared data sources can be managed separately on the report server.  
+  
+## In This Section  
+ [Previewing Reports](previewing-reports.md)  
+ Describes how to preview a report before you publish it.  
+  
+ [Publishing Reports to a Report Server](publishing-reports-to-a-report-server.md)  
+ Describes how to publish a report to a report server.  
+  
+ [URL Examples for Published Report Items on a Report Server in SharePoint Mode (SSRS)](../tools/url-examples-for-items-on-a-report-server-sharepoint-mode.md)  
+ Describes how to publish a report to a SharePoint site.  
+  
+## Related content
+
+- [Create data connection strings in Report Builder](../report-data/data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)
+- [Report Datasets (SSRS)](../report-data/report-datasets-ssrs.md)
+- [Page layout and rendering in paginated reports (Report Builder)](../report-design/page-layout-and-rendering-report-builder-and-ssrs.md)
+- [Find, view, and manage reports (Report Builder and SSRS)](../report-builder/finding-viewing-and-managing-reports-report-builder-and-ssrs.md)
+- [Export paginated reports (Report Builder)](../report-builder/export-reports-report-builder-and-ssrs.md)
+- [Print reports](../report-builder/print-reports-report-builder-and-ssrs.md)

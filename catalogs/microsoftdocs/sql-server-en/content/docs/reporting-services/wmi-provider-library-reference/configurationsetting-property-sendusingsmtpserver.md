@@ -1,0 +1,41 @@
+---
+title: "SendUsingSMTPServer property (WMI MSReportServer_ConfigurationSetting)"
+description: "SendUsingSMTPServer property (WMI MSReportServer_ConfigurationSetting)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "SendUsingSMTPServer property"
+apilocation: "reportingservices.mof"
+apiname: "SendUsingSMTPServer"
+apitype: MOFDef
+---
+# ConfigurationSetting property - SendUsingSMTPServer
+  Specifies whether the *SendUsing* element in the email configuration for the report server is set to **true**.  
+  
+## Syntax  
+  
+```vb  
+Public Dim SendUsingSMTPServer As Boolean  
+```  
+  
+```csharp  
+public Boolean SendUsingSMTPServer;  
+```  
+  
+## Property values  
+ A read-only **Boolean** object.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

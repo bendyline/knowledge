@@ -1,0 +1,75 @@
+---
+title: "Rebuild Index Task"
+description: "Rebuild Index Task"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.rebuildindextask.f1"
+helpviewer_keywords:
+  - "rebuilding indexes"
+  - "indexes [Integration Services]"
+  - "Rebuild Index task"
+---
+# Rebuild Index Task
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  The Rebuild Index task rebuilds indexes in  SQL Server 
+ database tables and views. For more information about managing indexes, see [Reorganize and Rebuild Indexes](../../relational-databases/indexes/reorganize-and-rebuild-indexes.md).  
+  
+ By using the Rebuild Index task, a package can rebuild indexes in a single database or multiple databases. If the task rebuilds only the indexes in a single database, you can choose the views and tables whose indexes the task rebuilds.  
+  
+ This task encapsulates an ALTER INDEX REBUILD statement with the following index rebuild options:  
+  
+-   Specify a FILLFACTOR percentage or use the original FILLFACTOR amount.  
+  
+-   Set SORT_IN_TEMPDB = ON to store the intermediate sort result used to rebuild the index in tempdb. When the intermediate sort result is set to OFF, the result is stored in the same database as the index.  
+  
+-   Set PAD_INDEX = ON to allocate the free space specified by FILLFACTOR to the intermediate-level pages of the index.  
+  
+-   Set IGNORE_DUP_KEY = ON to allow a multirow insert operation that includes records that violate unique constraints to insert the records that do not violate the unique constraints.  
+  
+-   Set ONLINE = ON to not hold table locks so that queries or updates to the underlying table can proceed during re-indexing.  
+  
+    > **Note:**  
+    > Online index operations are not available in every edition of  SQL Server 
+. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+  
+-   Specify a value for MAXDOP to limit the number of processors used in a parallel plan execution.  
+  
+-   Specify WAIT_AT_LOW_PRIORITY, MAX_DURATION, and ABORT_AFTER_WAIT to control how long the index operation waits for low priority locks.  
+  
+ For more information about the ALTER INDEX statement and index rebuild options, see [ALTER INDEX &#40;Transact-SQL&#41;](../../t-sql/statements/alter-index-transact-sql.md).  
+  
+> **Important:**  
+>  The time the task takes to create the  Transact-SQL  statement that the task runs is proportionate to the number of indexes the task rebuilds. If the task is configured to rebuild indexes in all the tables and views in a database with a large number of indexes, or to rebuild indexes in multiple databases, the task can take a considerable amount of time to generate the Transact-SQL statement.  
+  
+## Configuration of the Rebuild Index Task  
+ You can set properties through  SSIS 
+ Designer. This task is in the **Maintenance Plan Tasks** section of the **Toolbox** in  SSIS 
+ Designer.  
+  
+ For more information about the properties that you can set in  SSIS 
+ Designer, click the following topic:  
+  
+ [Rebuild Index Task &#40;Maintenance Plan&#41;](../../relational-databases/maintenance-plans/rebuild-index-task-maintenance-plan.md)  
+  
+## Related Tasks  
+ For more about how to set these properties in  SSIS 
+ Designer, see [Set the Properties of a Task or Container](add-or-delete-a-task-or-a-container-in-a-control-flow.md).  
+  
+## Related content
+
+- [Integration Services Tasks](integration-services-tasks.md)
+- [Control Flow](control-flow.md)

@@ -1,0 +1,13 @@
+# Source code: samples/snippets/xml/VS_Snippets_Data/XSDInference Examples/XML/item2.xml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!--<snippet14>-->
+<?xml version="1.0" encoding="utf-8"?>
+<item xmlns="http://www.contoso.com/items" productID="A53-246">
+	<name>Paint</name>
+	<price>12.50</price>
+</item>
+<!--</snippet14>-->
+```

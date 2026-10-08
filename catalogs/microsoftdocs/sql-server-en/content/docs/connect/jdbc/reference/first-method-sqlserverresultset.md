@@ -1,0 +1,39 @@
+---
+title: "first Method (SQLServerResultSet)"
+description: "first Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.first"
+apitype: "Assembly"
+---
+# first Method (SQLServerResultSet)
+
+
+  Moves the cursor to the first row of this [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public boolean first()  
+```  
+  
+## Return Value  
+ **true** if the cursor is moved to the first row. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This first method is specified by the first method in the java.sql.ResultSet interface.  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

@@ -1,0 +1,61 @@
+---
+title: "sys.dm_resource_governor_external_resource_pool_affinity (Transact-SQL)"
+description: sys.dm_resource_governor_external_resource_pool_affinity (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 02/11/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.dm_resource_governor_external_resource_pool_affinity"
+  - "sys.dm_resource_governor_external_resource_pool_affinity_TSQL"
+  - "dm_resource_governor_external_resource_pool_affinity"
+  - "dm_resource_governor_external_resource_pool_affinity_TSQL"
+helpviewer_keywords:
+  - "sys.dm_resource_governor_external_resource_pool_affinity"
+  - "dm_resource_governor_external_resource_pool_affinity"
+dev_langs:
+  - "TSQL"
+---
+
+# sys.dm_resource_governor_external_resource_pool_affinity (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions
+
+**Applies to:**  SQL Server 2016 (13.x) 
+  R Services (In-Database) 
+ and  SQL Server 2017 (14.x) 
+ Machine Learning Services 
+
+
+Returns CPU affinity information about the current external resource pool configuration.
+
+| Column name | Data type | Description |
+| :--- | :--- | :--- |
+| `pool_id` | **int** | The ID of the external resource pool. Not nullable. |
+| `processor_group` | **smallint** | The ID of the Windows logical processor group. Not nullable. |
+| `cpu_mask` | **bigint** | The binary mask representing the CPUs associated with this pool. Not nullable. |
+
+## Remarks
+
+Pools that are created with an affinity of `AUTO` do not appear in this view because they have no affinity. For more information, see the [CREATE EXTERNAL RESOURCE POOL (Transact-SQL)](../../t-sql/statements/create-external-resource-pool-transact-sql.md) and [ALTER EXTERNAL RESOURCE POOL (Transact-SQL)](../../t-sql/statements/alter-external-resource-pool-transact-sql.md) statements.
+
+## Permissions
+
+Requires the `VIEW SERVER STATE` permission.
+
+### Permissions for SQL Server 2022 and later
+
+Requires the `VIEW SERVER PERFORMANCE STATE` permission on the server.
+
+## Related content
+
+- [Manage Python and R workloads with Resource Governor in SQL Server Machine Learning Services](../../machine-learning/administration/resource-governor.md)
+- [sys.dm_resource_governor_resource_pool_affinity (Transact-SQL)](sys-dm-resource-governor-resource-pool-affinity-transact-sql.md)
+- [Server configuration: external scripts enabled](../../database-engine/configure-windows/external-scripts-enabled-server-configuration-option.md)
+- [ALTER EXTERNAL RESOURCE POOL (Transact-SQL)](../../t-sql/statements/alter-external-resource-pool-transact-sql.md)

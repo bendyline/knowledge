@@ -1,0 +1,20 @@
+---
+author: ggailey777
+ms.service: azure-functions
+ms.custom:
+ms.topic: include
+ms.date: 07/26/2023
+ms.author: glenga
+---
+
++ An Azure account with an active subscription. [Create an account for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
++ [PowerShell 7.6](https://learn.microsoft.com/powershell/scripting/install/installing-powershell)
+
++ [.NET 10 runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
+
++ [Visual Studio Code](https://code.visualstudio.com/) on one of the [supported platforms](https://code.visualstudio.com/docs/supporting/requirements#_platforms).    
+
++ The [PowerShell extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell).  
+
++ The [Azure Functions extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions) for Visual Studio Code.

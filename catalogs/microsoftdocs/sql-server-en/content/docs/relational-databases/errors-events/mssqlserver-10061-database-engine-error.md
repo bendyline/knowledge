@@ -1,0 +1,62 @@
+---
+title: "MSSQLSERVER_10061"
+description: The server did not respond to the client request in SQL Server. See an explanation of the error and possible resolutions.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "10061"
+helpviewer_keywords:
+  - "10061 (Database Engine error)"
+---
+
+# MSSQLSERVER_10061
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 10061 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name |  |
+| Message Text | An error has occurred while establishing a connection to the server.  When connecting to SQL Server, this failure may be caused by the fact that under the default settings SQL Server does not allow remote connections. (provider: TCP Provider, error: 0 - No connection could be made because the target machine actively refused it.) (Microsoft SQL Server, Error: 10061) |
+  
+## Explanation
+
+The server did not respond to the client request. This error could occur because the server is not started.  
+  
+## User Action
+
+Make sure that the server is started.  
+  
+## Related content
+
+- [Manage the Database Engine services](../../database-engine/configure-windows/manage-the-database-engine-services.md)
+- [Configure client protocols](../../database-engine/configure-windows/configure-client-protocols.md)
+- [Network protocols and network libraries](../../sql-server/install/network-protocols-and-network-libraries.md)
+- [Client network configuration](../../database-engine/configure-windows/client-network-configuration.md)
+- [Enable or disable a server network protocol](../../database-engine/configure-windows/enable-or-disable-a-server-network-protocol.md)

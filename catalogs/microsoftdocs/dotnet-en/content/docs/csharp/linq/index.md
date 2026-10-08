@@ -1,0 +1,48 @@
+---
+title: Language Integrated Query (LINQ)
+description: Introduces Language Integrated Query (LINQ) in C#.
+ms.topic: concept-article
+ms.date: 12/01/2025
+ai-usage: ai-assisted
+---
+# Language Integrated Query (LINQ)
+
+Language-Integrated Query (LINQ) is the name for a set of technologies based on the integration of query capabilities directly into the C# language. Traditionally, queries against data are expressed as simple strings without type checking at compile time or IntelliSense support. Furthermore, you have to learn a different query language for each type of data source: SQL databases, XML documents, various Web services, and so on. With LINQ, a query is a first-class language construct, just like classes, methods, and events.
+
+When you write queries, the most visible "language-integrated" part of LINQ is the query expression. You write query expressions in a declarative *query syntax*. By using query syntax, you perform filtering, ordering, and grouping operations on data sources with a minimum of code. You use the same query expression patterns to query and transform data from any type of data source.
+
+The following example shows a complete query operation. The complete operation includes creating a data source, defining the query expression, and executing the query in a [`foreach`](../language-reference/statements/iteration-statements.md#the-foreach-statement) statement.
+
+[language="csharp" source="./snippets/linq-index/Index.cs" id="intro"::: (complete source file; reference: ./snippets/linq-index/Index.cs)](../../../_code/docs/csharp/linq/snippets/linq-index/Index.cs.md)
+
+You might need to add a [`using`](../language-reference/keywords/using-directive.md) directive, `using System.Linq;`, for the preceding example to compile. The most recent versions of .NET make use of [implicit usings](../../core/project-sdk/overview.md#implicit-using-directives) to add this directive as a [global using](../language-reference/keywords/using-directive.md#the-global-modifier). Older versions require you to add it in your source.
+
+## Query expression overview
+
+- Query expressions examine and transform data from any LINQ-enabled data source. For example, a single query can retrieve data from a SQL database and produce an XML stream as output.
+- Query expressions use many familiar C# language constructs, which make them easy to read.
+- The variables in a query expression are all strongly typed.
+- A query isn't executed until you iterate over the query variable, for example in a `foreach` statement.
+- At compile time, the compiler converts query expressions to standard query operator method calls according to the rules defined in the C# specification. You can express any query that uses query syntax by using method syntax. In some cases, query syntax is more readable and concise. In others, method syntax is more readable. There's no semantic or performance difference between the two different forms. For more information, see [C# language specification](https://github.com/dotnet/docs/blob/77bc2511d224447ac13474e7757e3600ad30c3de/_csharpstandard/standard/expressions.md#1223-query-expressions) and [Standard query operators overview](standard-query-operators/index.md).
+- Some query operations, such as [System.Linq.Enumerable.Count*](https://learn.microsoft.com/search/?terms=System.Linq.Enumerable.Count*) or [System.Linq.Enumerable.Max*](https://learn.microsoft.com/search/?terms=System.Linq.Enumerable.Max*), have no equivalent query expression clause and must be expressed as a method call. You can combine method syntax with query syntax in various ways.
+- Query expressions can be compiled to expression trees or to delegates, depending on the type that the query is applied to. The compiler compiles [System.Collections.Generic.IEnumerable`1](https://learn.microsoft.com/search/?terms=System.Collections.Generic.IEnumerable%601) queries to delegates. The compiler compiles [System.Linq.IQueryable](https://learn.microsoft.com/search/?terms=System.Linq.IQueryable) and [System.Linq.IQueryable`1](https://learn.microsoft.com/search/?terms=System.Linq.IQueryable%601) queries to expression trees. For more information, see [Expression trees](https://learn.microsoft.com/dotnet/csharp/advanced-topics/expression-trees).
+
+## How to enable LINQ querying of your data source
+
+### In-memory data
+
+You can enable LINQ querying of in-memory data in two ways. If the data is of a type that implements [System.Collections.Generic.IEnumerable`1](https://learn.microsoft.com/search/?terms=System.Collections.Generic.IEnumerable%601), query the data by using LINQ to Objects. If it doesn't make sense to enable enumeration by implementing the [System.Collections.Generic.IEnumerable`1](https://learn.microsoft.com/search/?terms=System.Collections.Generic.IEnumerable%601) interface, define LINQ standard query operator methods either in that type or as [extension members](../programming-guide/classes-and-structs/extension-methods.md) for that type. Custom implementations of the standard query operators should use deferred execution to return the results.
+
+### Remote data
+
+The best option for enabling LINQ querying of a remote data source is to implement the [System.Linq.IQueryable`1](https://learn.microsoft.com/search/?terms=System.Linq.IQueryable%601) interface.
+
+## IQueryable LINQ providers
+
+LINQ providers that implement [System.Linq.IQueryable`1](https://learn.microsoft.com/search/?terms=System.Linq.IQueryable%601) can vary widely in their complexity.
+
+A less complex `IQueryable` provider might access a single method from a Web service. This type of provider is specific to the data source because it expects specific information in the queries that it handles. It has a closed type system, perhaps exposing a single result type. Most of the execution of the query occurs locally, for example by using the [System.Linq.Enumerable](https://learn.microsoft.com/search/?terms=System.Linq.Enumerable) implementations of the standard query operators. A less complex provider might examine only one method call expression in the expression tree that represents the query and let the remaining logic of the query be handled elsewhere.
+
+An `IQueryable` provider of medium complexity might target a data source that has a partially expressive query language. If it targets a Web service, it might access more than one method of the Web service and select which method to call based on the information that the query seeks. A provider of medium complexity has a richer type system than a simple provider, but it's still a fixed type system. For example, the provider might expose types that have one-to-many relationships that can be traversed, but it doesn't provide mapping technology for user-defined types.
+
+A complex `IQueryable` provider, such as the [Entity Framework Core](https://learn.microsoft.com/ef/core/) provider, might translate complete LINQ queries to an expressive query language, such as SQL. A complex provider is more general because it can handle a wider variety of questions in the query. It also has an open type system and therefore must contain extensive infrastructure to map user-defined types. Developing a complex provider requires a significant amount of effort.

@@ -1,0 +1,35 @@
+# Source code: samples/snippets/csharp/VS_Snippets_CFX/lockdownvalidation/cs/app.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <system.serviceModel>
+    <services>
+      <service>
+        <endpoint
+           address="http://localhost:8080/Service"
+           binding="wsHttpBinding"
+           contract="Microsoft.WCF.Documentation.ISampleService, HostApplication"
+           behaviorConfiguration="wsHttpBindingValidator"
+         />
+      </service>
+    </services>
+    <!--
+    <commonBehaviors>
+      <endpointBehaviors>
+        <internetClientValidator/>
+      </endpointBehaviors>
+    </commonBehaviors>
+    <extensions>
+      <behaviorExtensions>
+        <add 
+          name="internetClientValidator" 
+          type="Microsoft.WCF.Documentation.InternetClientValidatorElement, HostApplication"/>
+      </behaviorExtensions>
+    </extensions>
+    -->
+  </system.serviceModel>
+</configuration>
+```

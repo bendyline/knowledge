@@ -1,0 +1,41 @@
+---
+title: "View Policy-Based Management facets on an object"
+description: Describes how to view all of the Policy-Based Management facts applied to a specific SQL Server object in SQL Server Management Studio (SSMS).
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: security
+ms.topic: how-to
+helpviewer_keywords:
+  - "Policy-Based Management, view facets"
+---
+# View Policy-Based Management facets on a SQL Server Object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to view all of the Policy-Based Management facets applied to a specific SQL Server object in  SQL Server 
+ by using  SQL Server Management Studio 
+.  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the PolicyAdministratorRole role in the msdb database.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To view all of the facets in an object  
+  
+1.  In Object Explorer, right-click an instance of  SQL Server 
+, instance object, database, or database object, and then click **Facets**.  
+  
+2.  In the **View Facets -**_object_name_ dialog box, in the **Facet** list, select a facet to view its properties. For more information on the available options in this dialog box, see [View Facets Dialog Box](view-facets-dialog-box.md).  
+  
+3.  When finished, click **OK**.

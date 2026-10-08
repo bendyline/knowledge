@@ -1,0 +1,148 @@
+---
+title: Create and access an environment by using the Azure CLI
+titleSuffix: Azure Deployment Environments
+description: Learn how to create and access an environment in an Azure Deployment Environments project by using the Azure CLI.
+author: RoseHJM
+ms.author: rosemalcolm
+ms.service: azure-deployment-environments
+ms.custom: devx-track-azurecli, build-2023
+ms.topic: how-to
+ms.date: 05/22/2026
+
+#customer-intent: As a developer, I want to deploy an environment so that I can create resources and a resource group.
+---
+
+# Create and access an environment by using the Azure CLI
+
+
+> **Note:**
+> Transition your [Azure Deployment Environments](deployment-environments-retirement-guide.md) workflows to a Microsoft service, Azure service, or partner solution by 22 February 2027. Azure Deployment Environments retires on this date.
+
+This article explains how to create and access an [environment](concept-environments-key-concepts.md#environments) in an existing Azure Deployment Environments project by using the Azure CLI.
+
+## Prerequisites
+
+| Category | Requirement |
+| --- | --- |
+| Installation | [Install the Azure CLI extension for Azure Deployment Environments](how-to-install-devcenter-cli-extension.md). |
+| Procedure | Completion of [Create and configure a dev center by using the Azure CLI](how-to-create-configure-dev-center.md). |
+| Procedure | Completion of [Create and configure a project by using the Azure CLI](how-to-create-configure-projects.md). |
+| Permissions | To create an environment: The [Deployment Environments User](how-to-manage-deployment-environments-access.md) role, the [DevCenter Project Admin](how-to-manage-deployment-environments-access.md) role, or a built-in role that has appropriate permissions. |
+
+## Create an environment
+
+Creating an environment automatically creates the required resources and a resource group to store them. The resource group name follows the pattern `{projectName}-{environmentName}`. You can view the resource group in the Azure portal.
+
+To create an environment and configure resources, complete the following steps in the Azure CLI. You can view the outputs as defined in the specific Azure Resource Manager template (ARM template).
+
+
+> **Note:**
+> Only users who have the [Deployment Environments User](how-to-manage-deployment-environments-access.md) role, the [DevCenter Project Admin](how-to-manage-deployment-environments-access.md) role, or a built-in role that has appropriate permissions can create an environment. Users who have the [Deployment Environments Reader](how-to-manage-deployment-environments-access.md) role can view their own environments and environments created by others.
+
+1. Sign in to the Azure CLI:
+
+    ```azurecli
+    az login
+    ```
+
+1. Install or upgrade the Azure Dev Center extension for the CLI:
+
+    ```azurecli
+    az extension add --name devcenter --upgrade
+    ```
+
+1. List all the Azure Deployment Environments projects that you have access to:
+
+    ```azurecli
+    az graph query -q "Resources | where type =~ 'microsoft.devcenter/projects'" -o table
+    ```
+
+1. Configure the default subscription as the subscription that contains the project:
+
+    ```azurecli
+    az account set --subscription <subscriptionName>
+    ```
+
+1. Configure the default resource group as the resource group that contains the project:
+
+    ```azurecli
+    az config set defaults.group=<resourceGroupName>
+    ```
+
+1. List the type of environments that you can create in a specific project:
+
+    ```azurecli
+    az devcenter dev environment-type list --dev-center-name <devcenterName> --project-name <projectName> -o table
+    ```
+
+1. List the [environment definitions](concept-environments-key-concepts.md#environment-definitions) that are available to a specific project:
+
+    ```azurecli
+    az devcenter dev environment-definition list --dev-center-name <devcenterName> --project-name <projectName> -o table
+    ```
+
+1. An *environment-definition* is an infrastructure-as-code template that's defined in the [environment.yaml](configure-environment-definition.md#add-a-new-environment-definition) file. Create an environment by using an environment-definition from the list of available environment-definitions:
+
+    ```azurecli
+    az devcenter dev environment create --dev-center-name <devcenterName>
+        --project-name <projectName> --environment-name <environmentName> --environment-type <environmentType>
+        --environment-definition-name <environmentDefinitionName> --catalog-name <catalogName>
+    ```
+
+    If the specific environment-definition* requires any parameters, use `--parameters` and provide the parameters as a JSON string or a JSON file. For example:
+
+    ```json
+    $params = "{ 'name': 'firstMsi', 'location': 'northeurope' }"
+    az devcenter dev environment create --dev-center-name <devcenterName>
+        --project-name <projectName> --environment-name <environmentName> --environment-type <environmentType>
+        --environment-definition-name <environmentDefinitionName> --catalog-name <catalogName>
+        --parameters $params
+    ```
+
+> **Note:**
+> You can use `--help` to view more details about any command, accepted arguments, and examples. For example, use `az devcenter dev environment create --help` to view more details about creating an environment.
+
+### Troubleshoot a permissions error
+
+You must have the [Deployment Environments User](how-to-manage-deployment-environments-access.md#grant-permissions-for-developers) role, the [DevCenter Project Admin](how-to-manage-deployment-environments-access.md#grant-permissions-for-dev-team-leads) role, or a [built-in role](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/built-in-roles.md) that has the required permissions to create an environment.
+
+If you don't have the correct permissions, the environment isn't created. An error message like the following example might appear:
+
+```output
+(EnvironmentNotFound) The environment resource was not found.
+Code: EnvironmentNotFound
+Message: The environment resource was not found.
+```
+
+To resolve the issue, assign the correct permissions. See [Give access to the development team](quickstart-create-and-configure-devcenter.md#give-access-to-the-development-team).
+
+## Access an environment
+
+To access an environment:
+
+1. List existing environments that are available in a specific project:
+
+    ```azurecli
+    az devcenter dev environment list --dev-center-name <devcenterName> --project-name <projectName>
+    ```
+
+1. View the access endpoints to various resources as defined in the ARM template outputs.
+1. Access the specific resources by using the endpoints.
+
+### Deploy an environment
+
+```azurecli
+az devcenter dev environment deploy --action-id "deploy" --dev-center-name <devcenterName> \
+    -g <resourceGroupName> --project-name <projectName> --environment-name <environmentName> --parameters <parametersJsonString>
+```
+
+### Delete an environment
+
+```azurecli
+az devcenter dev environment delete --dev-center-name <devcenterName>  --project-name <projectName> --environment-name <environmentName> --user-id "me"
+```
+
+## Related content
+
+- [Add and configure a catalog from GitHub or Azure DevOps](how-to-configure-catalog.md)
+- [Add and configure an environment definition](configure-environment-definition.md)

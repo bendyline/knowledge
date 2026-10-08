@@ -1,0 +1,40 @@
+---
+title: "sys.dm_pdw_nodes (Transact-SQL)"
+description: sys.dm_pdw_nodes (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/07/2017"
+ms.service: sql
+ms.subservice: data-warehouse
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sys.dm_pdw_nodes (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+ 
+
+
+  Holds information about all of the nodes in  Azure Synapse Analytics . It lists one row per node in the appliance.
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+  
+  
+| Column Name | Data Type | Description | Range |
+| --- | --- | --- | --- |
+| pdw_node_id | **int** | Unique numeric id associated with the node.<br /><br /> Key for this view. | Unique across the appliance, regardless of type. |
+| type | **nvarchar(32)** | Type of the node. | 'COMPUTE', 'CONTROL',  'MANAGEMENT' |
+| name | **nvarchar(32)** | Logical name of the node. | Any string of appropriate length. |
+| address | **nvarchar(32)** | IP address of this node. | In the format of [0-255].[0-255].[0-255].[0-255]. |
+| is_passive | **int** | Indicates whether the virtual machine running the node is running on the assigned server or has failed over to the spare server. | 0 - node VM is running on the original server.<br /><br /> 1 - node VM is running on the spare server. |
+| region | **nvarchar(32)** | The region where the node is running. | 'PDW', 'HDINSIGHT' |
+  
+## Related content
+
+- [Azure Synapse Analytics dynamic management objects](azure-synapse-analytics-dynamic-management-objects.md)

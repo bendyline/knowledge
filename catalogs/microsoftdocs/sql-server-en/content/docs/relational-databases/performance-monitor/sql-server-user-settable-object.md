@@ -1,0 +1,90 @@
+---
+title: "SQL Server, User Settable object"
+description: Learn about the User Settable object, which creates custom counter instances in SQL Server to monitor server aspects not monitored by existing counters.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "User Settable object"
+  - "SQLServer:User Settable"
+---
+# SQL Server, User Settable object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **User Settable** object in Microsoft  SQL Server 
+ allows you to create custom counter instances. Use custom counter instances to monitor aspects of the server not monitored by existing counters, such as components unique to your  SQL Server 
+ database (for example, the number of customer orders logged or the product inventory).  
+  
+ The **User Settable** object contains 10 instances of the query counter: **User counter 1** through **User counter 10**. These counters map to the  SQL Server 
+ stored procedures `sp_user_counter1` through `sp_user_counter10`. As these stored procedures are executed by user applications, the values set by the stored procedures are displayed in System Monitor. A counter can monitor any single **integer** value (for example, a stored procedure that counts how many orders for a particular product have occurred in one day).  
+  
+> **Note:**  
+>  The user counter stored procedures are not polled automatically by System Monitor. They must be explicitly executed by a user application for the counter values to be updated. Use a trigger to update the value of the counter automatically. 
+  
+ This table describes the  SQL Server 
+ **User Settable** object.  
+  
+| SQL Server User Settable counters | Description |
+| --- | --- |
+| **Query** | The **User Settable** object contains the query counter. Users configure each **User counter** within the query object. Each counter is an **integer** data type. |
+  
+ This table describes the **instances** of the **Query** counter.  
+  
+| Query counter instances | Description |
+| --- | --- |
+| **User counter 1** | Defined using `sp_user_counter1`. |
+| **User counter 2** | Defined using `sp_user_counter2`. |
+| **User counter 3** | Defined using `sp_user_counter3`. |
+| ... |  |
+| **User counter 10** | Defined using `sp_user_counter10`. |
+  
+
+## Set user counter value
+
+ To make use of the user counter stored procedures, execute them from your own application with a single integer parameter representing the new value for the counter. For example, to set **User counter 1** to the value 10, execute this Transact-SQL statement:  
+  
+```sql  
+EXECUTE dbo.sp_user_counter1 10;
+```  
+  
+ The user counter stored procedures can be called from anywhere other stored procedures can be called, such as your own stored procedures. For example, you can create the following stored procedure to count the number of connections and attempted connections since an instance of  SQL Server 
+ was started:  
+  
+```sql  
+DROP PROC My_Proc;  
+GO  
+CREATE PROC My_Proc  
+AS   
+   EXECUTE dbo.sp_user_counter1 @@CONNECTIONS;  
+GO  
+```  
+  
+ The @@CONNECTIONS function returns the number of connections or attempted connections since an instance of  SQL Server 
+ started. This value is passed to the `sp_user_counter1` stored procedure as the parameter.  
+  
+> **Important:**  
+>  Make the queries defined in the user counter stored procedures as simple as possible. Memory-intensive queries that perform substantial sort or hash operations or queries that perform large amounts of I/O are expensive to execute and can affect performance.  
+  
+## <a id="monitoring-example"></a> Monitor example
+
+You begin to explore the counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT * FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%User Settable%';
+```  
+
+## Permissions
+The stored procedure `sp_user_counter` is available for all users but can be restricted for any query counter.  
+  
+## Related content
+
+- [Monitor Resource Usage (Performance Monitor)](monitor-resource-usage-system-monitor.md)

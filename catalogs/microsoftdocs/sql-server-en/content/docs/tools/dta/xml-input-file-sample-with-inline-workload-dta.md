@@ -1,0 +1,38 @@
+---
+title: XML Input File Sample with Inline Workload
+titleSuffix: DTA
+description: This article contains a sample XML input file sample with inline workload to use for tuning workloads to use with Database Engine Tuning Advisor.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/14/2017
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: reference
+ms.collection:
+  - data-tools
+---
+
+# XML Input File Sample with Inline Workload (DTA)
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Copy and paste this sample of an XML input file that specifies a workload with the **EventString** element into your favorite XML editor or text editor. You can use the **EventString** element to specify a  Transact-SQL  script workload in the XML input file instead of using a separate workload file. After copying this sample into your editing tool, replace the values specified for the **Server**, **Database**, **Schema**, **Table**, **Workload**, **EventString**, and **TuningOptions** elements with those for your specific tuning session. For more information about all of the attributes and child elements that you can use with these elements, see the [XML Input File Reference (Database Engine Tuning Advisor)](xml-input-file-reference-database-engine-tuning-advisor.md). The following sample uses only a subset of available attribute and child element options.
+
+## Code
+
+[InputFileSamples#InlineWorkloadInputFile (complete source file; reference: ../../tools/dta/codesnippet/xml/xml-input-file-sample-wi_1.xml)](../../../_code/docs/tools/dta/codesnippet/xml/xml-input-file-sample-wi_1.xml.md)
+
+## Comments
+
+`USE database_name` statements can be specified in the inline workload that is contained in the **EventString** element.
+
+## Related content
+
+- [Start and use the Database Engine Tuning Advisor](../../relational-databases/performance/start-and-use-the-database-engine-tuning-advisor.md)
+- [View and Work with the Output from the Database Engine Tuning Advisor (DTA)](../../relational-databases/performance/view-and-work-with-the-output-from-the-database-engine-tuning-advisor.md)
+- [XML Input File Reference (Database Engine Tuning Advisor)](xml-input-file-reference-database-engine-tuning-advisor.md)

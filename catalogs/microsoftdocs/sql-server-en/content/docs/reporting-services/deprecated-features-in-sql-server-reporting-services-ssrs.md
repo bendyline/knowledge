@@ -1,0 +1,105 @@
+---
+title: "Deprecated features in SQL Server Reporting Services"
+description: Learn about the deprecated features in the different versions of SQL Server Reporting Services. The features are still available in the release in which they are deprecated.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Reporting Services, backward compatibility"
+  - "deprecated features [Reporting Services]"
+  - "HTML OWC rendering extension [Reporting Services]"
+  - "Report Server Web service, endpoints"
+---
+
+# Deprecated features in SQL Server Reporting Services
+
+This article describes deprecated features in the different versions of SQL Server Reporting Services. The features are still available in the release in which they are deprecated; however the features are scheduled to be removed in a future release of  SQL Server 
+. Don't use deprecated features in new applications.
+
+When we mark a feature as deprecated, it means:
+
+- The feature is in maintenance mode only. We'll make no new changes, including changes related to interoperability with new features.
+- We strive not to remove a deprecated feature from future releases, to make upgrades easier. However, in rare situations, we may choose to permanently remove the feature from Reporting Services if it limits future innovations.
+- For new development work, we don't recommend using deprecated features.
+
+**Applies to: \>=sql-server-ver16**
+## Deprecated features in SQL Server 2022 Reporting Services
+
+  **Applies to:**
+ 
+
+SQL Server 2022 Reporting Services and Power BI Report Server September 2022 support the following features, but they are now deprecated. These features will be removed in a future release, however, the specific version of SQL Server and Power BI Report Server hasn't been determined.
+
+| **Category** | **Deprecated feature** | **Replacement** |
+| --- | --- | --- |
+| Report Server | Report Part Gallery | None |
+
+
+
+**Applies to: \>= sql-server-ver15**
+## Deprecated features in SQL Server 2019 Reporting Services
+
+  **Applies to:**
+ 
+
+**Features deprecated in a future version of SQL Server**
+
+SQL Server Reporting Services supports the following features in the next version of SQL Server, but will deprecate them in a later version. The specific version of SQL Server hasn't been determined.
+
+| **Category** | **Deprecated feature** | **Replacement** |
+| --- | --- | --- |
+| Report Server | Report Part Gallery | None |
+| Report Server | Mobile Reports and Mobile Report Publisher | Power BI reports in Power BI Report Server offer mobile capabilities. |
+| Report Server | XLS and DOC render formats | XLSX and DOCX formats are available and supported. |
+| Report Server | Atom Data Feed | oData feed support is available for shared datasets in SSRS and Power BI Report Server. |
+| Report Server | Pin to Power BI | Paginated report support is now available directly in the Power BI service. |
+
+
+
+**Applies to: \>= sql-server-2017**
+## Deprecated features in SQL Server 2017 Reporting Services
+
+  **Applies to:**
+ Not supported
+
+The following SQL Server 2017 Reporting Services features will be deprecated in the next version of SQL Server. Don't use these features in new development work, and modify applications that currently use these features as soon as possible.
+
+> **Note:**
+> This list is identical to the SQL Server 2016 Reporting Services (13.x) list. There are no new deprecated or discontinued features announced for SQL Server 2017 Reporting Services (14.x).
+
+| **Category** | **Deprecated feature** | **Replacement** |
+| --- | --- | --- |
+| Report Server | HTML 4.0 Renderer. | HTML 5 renderer |
+
+
+
+## Deprecated features in SQL Server 2016 Reporting Services
+
+  **Applies to:**
+ Not supported
+
+
+For content related to previous versions of SQL Server Reporting Services (SSRS), see [What is SQL Server Reporting Services?](create-deploy-and-manage-mobile-and-paginated-reports.md)
+
+
+The following SQL Server Reporting Services features won't be supported in the next version of SQL Server. Don't use these features in new development work, and modify applications that currently use these features as soon as possible.
+
+| Category | Deprecated feature |
+| --- | --- |
+| Report Server | HTML4.0 renderer. Use the HTML5 renderer. |
+
+## Features not supported in previous versions of SQL Server Reporting Services
+
+SQL Server 2014 Reporting Services Deprecated Features
+- [SQL Server 2014 Reporting Services deprecated features](deprecated-features-in-sql-server-reporting-services-ssrs.md)
+
+## Related content
+
+- [What's new in SQL Server Reporting Services (SSRS)](what-s-new-in-sql-server-reporting-services-ssrs.md)
+- [Reporting Services backward compatibility](reporting-services-backward-compatibility.md)
+- [Behavior changes to SQL Server Reporting Services in SQL Server 2016](https://learn.microsoft.com/previous-versions/sql/reporting-services/behavior-changes-to-sql-server-reporting-services-in-sql-server-2016)
+- [Discontinued functionality in SQL Server Reporting Services (SSRS)](discontinued-functionality-to-sql-server-reporting-services-in-sql-server.md)
+- [Try asking the Reporting Services forum](https://learn.microsoft.com/answers/search.html?c=\&f=\&includeChildren=\&q=ssrs+OR+reporting+services\&redirect=search%2fsearch\&sort=relevance\&type=question+OR+idea+OR+kbentry+OR+answer+OR+topic+OR+user)

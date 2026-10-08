@@ -1,0 +1,23 @@
+# Source code: samples/end2end/PlanetaryDocs/PlanetaryDocs/appsettings.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "CosmosSettings": {
+    "EndPoint": "https://localhost:8081/",
+    "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+    "EnableMigration": true,
+    "DocumentToCheck": "web-api_index"
+  }
+}
+
+```

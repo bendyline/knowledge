@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How do I use the Microsoft 365 admin center to manage users, subscriptions, billing, and service health?",
+    "expectedDocumentIds": [
+      "microsoft-365/admin/admin-overview/admin-center-overview"
+    ]
+  }
+]

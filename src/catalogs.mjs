@@ -4,7 +4,7 @@ import { parseDocument } from 'yaml';
 import { CatalogSchema, ProvenanceSchema, SourceLockSchema } from './schema.mjs';
 import { digest, exists, inside, inventory, readJson, sha256, walk } from './files.mjs';
 import { NORMALIZER_VERSION } from './normalize.mjs';
-import { parseMarkdown, walkMarkdownTree } from '@bendyline/squisq/markdown';
+import { parseMarkdown, splitFrontmatterBlock, walkMarkdownTree } from '@bendyline/squisq/markdown';
 import { automaticLicensing, validateAutomaticLicensing } from './licensing.mjs';
 import { validateWikipediaSelection } from './wikipedia-selection.mjs';
 import { toolchainIdentity } from './toolchain.mjs';
@@ -12,17 +12,27 @@ import { CASELAW_NORMALIZER } from './sources/caselaw-normalize.mjs';
 import { GUTENBERG_NORMALIZER } from './sources/gutenberg-normalize.mjs';
 import { checkGuideDefinitions, validateGutenbergSelection } from './gutenberg-selection.mjs';
 import { workspaceDefinitionFiles } from './catalog-workspace.mjs';
+import docfxPreservation from '../vendor/squisq/source-preservation.json' with { type: 'json' };
+import docfxRendered from '../vendor/squisq/source-rendered.json' with { type: 'json' };
+import docfxRenderedV2 from '../vendor/squisq/source-rendered-v2.json' with { type: 'json' };
 
 export function hasUnresolvedDocfx(text) {
+  // Frontmatter values are metadata, not rendered DocFX directives. YAML
+  // validity is checked independently by validateCatalog.
+  text = splitFrontmatterBlock(text).body;
   const directives = [...text.matchAll(/\[!INCLUDE\b|\[!code-|<xref:|:::\s*(?:image|zone|code|row|column)\b/gi)];
   // Most catalogs have no DocFX syntax. Avoid parsing every large Wikipedia
   // article merely to establish that there are no directives to inspect.
   if (!directives.length) return false;
   const spans = [];
-  for (const comment of text.matchAll(/<!--[\s\S]*?-->/g)) spans.push([comment.index, comment.index + comment[0].length]);
   walkMarkdownTree(parseMarkdown(text), (node) => {
     if (['code', 'inlineCode'].includes(node.type) && node.position) spans.push([node.position.start.offset, node.position.end.offset]);
   });
+  const comments = /<!--[\s\S]*?(?:-->|$)/g;
+  for (let comment; (comment = comments.exec(text));) {
+    if (spans.some(([start, end]) => comment.index >= start && comment.index < end)) { comments.lastIndex = comment.index + 4; continue; }
+    spans.push([comment.index, comment.index + comment[0].length]);
+  }
   return directives.some((m) => !spans.some(([start, end]) => m.index >= start && m.index < end));
 }
 
@@ -33,7 +43,8 @@ export function parseYaml(text, label) {
   return doc.toJS({ maxAliasCount: 0 });
 }
 export function licenseFor(manifest, path) {
-  const rules = manifest.licensing.rules.filter((r) => r.include.some((glob) => matchesGlob(path, glob)));
+  const preserve = manifest.normalization.docfxReferences === 'preserve';
+  const rules = manifest.licensing.rules.filter((r) => r.include.some((glob) => matchesGlob(preserve ? path.toLowerCase() : path, preserve ? glob.toLowerCase() : glob)));
   const ids = [...new Set(rules.map((r) => r.license))];
   if (ids.length !== 1) throw new Error(`${path}: expected exactly one applicable license, found ${ids.length}`);
   return manifest.licensing.licenses.find((l) => l.id === ids[0]);
@@ -116,7 +127,7 @@ export async function validateCatalog(catalog, { allowEmpty = false, definitionO
   }
   return { catalog: catalog.key, files: files.length, documents: files.filter((f) => /\.md$/i.test(f.path)).length, contentDigest: digest(files) };
 }
-export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION, ...(m.source.type.startsWith('caselaw') ? { caselawNormalizer: CASELAW_NORMALIZER } : {}), ...(m.source.type === 'gutenberg' ? { gutenbergNormalizer: GUTENBERG_NORMALIZER } : {}) });
+export const sourceConfigDigest = (m) => digest({ source: m.source, normalization: m.normalization, licensing: m.licensing, normalizer: NORMALIZER_VERSION, ...(m.normalization.docfxReferences ? { docfxPreservation: m.normalization.docfxProfile === 'rendered-v2' ? docfxRenderedV2.sha256 : m.normalization.docfxProfile ? docfxRendered.sha256 : docfxPreservation.sha256, githubDocfxProfile: m.normalization.docfxProfile === 'rendered-v2' ? 4 : m.normalization.docfxProfile ? 3 : 2 } : {}), ...(m.source.type.startsWith('caselaw') ? { caselawNormalizer: CASELAW_NORMALIZER } : {}), ...(m.source.type === 'gutenberg' ? { gutenbergNormalizer: GUTENBERG_NORMALIZER } : {}) });
 export async function buildDigest(catalog, packaging) {
   const files = await inventory(catalog.dir);
   const relevant = files.filter((f) => f.path !== 'manifest.json');

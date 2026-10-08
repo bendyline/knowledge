@@ -1,0 +1,467 @@
+---
+title: Upgrade Power Pivot for SharePoint
+description: Upgrade Power Pivot for SharePoint
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: maghan
+ms.date: 06/03/2025
+ms.service: sql
+ms.topic: upgrade-and-migration-article
+monikerRange: ">=sql-server-2017"
+---
+
+# Upgrade Power Pivot for SharePoint
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+
+  This article summarizes the steps required to upgrade a deployment of  Power Pivot for SharePoint 
+ to  Microsoft  SQL Server 2016 (13.x) 
+ Power Pivot for SharePoint 
+. The specific steps depend on the version of SharePoint your environment is currently running and include the  Power Pivot 
+ for SharePoint Add-in (**spPowerPivot.msi**).
+
+****Applies to:**
+** SharePoint 2010 | SharePoint 2013
+
+For release notes, see [SQL Server 2016 release notes](../../sql-server/sql-server-2016-release-notes.md).
+
+## Background
+
+- If you're upgrading a multi-server SharePoint 2010 farm that has two or more  Power Pivot for SharePoint 
+ instances, you must fully upgrade each server **before** continuing to the next server. A full upgrade includes running SQL Server Setup to upgrade  Power Pivot for SharePoint 
+ program files, followed by SharePoint upgrade actions that configure the upgraded services. Server availability is limited until you run upgrade actions in the appropriate  Power Pivot 
+ Configuration Tool or Windows PowerShell.
+
+- All instances of  Power Pivot 
+ System Service and Analysis Services in a SharePoint 2010 farm must be the same version. For information on how to verify the version, see the section [Verify the Versions of Power Pivot Components and Services](#bkmk_verify_versions) in this article.
+
+- The  Power Pivot 
+ configuration tools are one of the SQL Server shared features and all shared features upgrade at the same time. If during an upgrade process you select other SQL Server instances or features that require a shared feature upgrade, then the  Power Pivot 
+ configuration tool is also upgraded. You might have issues if the  Power Pivot 
+ configuration tool is upgraded but your  Power Pivot 
+ instance isn't. For more information about SQL Server shared features, see [Upgrade SQL Server Using the Installation Wizard (Setup)](upgrade-sql-server-using-the-installation-wizard-setup.md).
+
+- The  Power Pivot 
+ for SharePoint Add-in (**spPowerPivot.msi**) installs side by side with previous versions. For example, the add-in installs to the folder `c:\Program Files\Microsoft SQL Server\nnn\Tools\PowerPivotTools`. See [File locations](../../sql-server/install/file-locations-for-default-and-named-instances-of-sql-server.md#shared-files-for-all-instances-of-) for information about SQL Server installation files.
+
+<a id="bkmk_prereq"></a>
+
+## Prerequisites
+
+### Permissions
+
+You must be a farm administrator to upgrade a  Power Pivot 
+ for SharePoint installation. You must be a local administrator to run SQL Server Setup.
+
+You must have **db_owner** permissions on the farm configuration database.
+
+### SQL Server
+
+If the existing  Power Pivot 
+ installation is  SQL Server 2008 R2 (10.50.x) 
+, the  SQL Server 2008 R2 (10.50.x) 
+ Service Pack 2 (SP2) is required for an upgrade to  SQL Server 
+  Power Pivot for SharePoint 
+.
+
+If the existing  Power Pivot 
+ installation is  SQL Server 2012 (11.x) 
+, the  SQL Server 2012 (11.x) 
+ Service Pack 1 (SP1) is required for an upgrade to  SQL Server 
+  Power Pivot for SharePoint 
+.
+
+### SharePoint 2010
+
+If the existing installation is running SharePoint 2010, install the SharePoint 2010 Service Pack 2 before upgrading to  SQL Server 
+  Power Pivot for SharePoint 
+. For more information, see [Service Pack 2 for Microsoft SharePoint 2010](https://www.microsoft.com/download/details.aspx?id=39672). Use the PowerShell command `(Get-SPfarm).BuildVersion.ToString()` to verify the version. To reference the build version to release date, see [SharePoint 2010 Build Numbers](https://learn.microsoft.com/officeupdates/sharepoint-updates#sharepoint-2010-update-history).
+
+<a id="bkmk_uprgade_sharepoint2013"></a>
+
+## Upgrade an existing SharePoint 2013 farm
+
+To upgrade  Power Pivot for SharePoint 
+ deployed in SharePoint 2013, perform the following steps:
+
+Screenshot of PowerPivot for SharePoint 2013 upgrade.
+
+1. Run  SQL Server 
+ Setup on backend servers that run  Analysis Services 
+ in SharePoint mode. If the server hosts multiple instances of  Analysis Services 
+, upgrade at least the **POWERPIVOT** instance. The following list is a summary of setup wizard steps related to a  Power Pivot 
+ upgrade:
+
+   1. In the  SQL Server 
+ Setup Wizard, select **Installation**.
+
+   1. Select **Upgrade from SQL Server.....**.
+
+   1. On the **Select Instance** page, select the **POWERPIVOT** instance name and then select **Next**.
+
+   1. For more information, see [Upgrade SQL Server Using the Installation Wizard (Setup)](upgrade-sql-server-using-the-installation-wizard-setup.md)
+
+1. Restart the server.
+
+1. Run the  Power Pivot 
+ for SharePoint add-in (**spPowerPivot.msi**) on each server in the SharePoint 2013 farm to install the data providers. The exception is servers where you ran the SQL Server setup wizard, which also upgrades data providers. For more information, see [Download Microsoft SQL Server 2014 Power Pivot for Microsoft SharePoint 2013](https://www.microsoft.com/download/details.aspx?id=42300) and [Install or Uninstall the Power Pivot for SharePoint Add-in (SharePoint 2013)](https://learn.microsoft.com/analysis-services/instances/install-windows/install-or-uninstall-the-power-pivot-for-sharepoint-add-in-sharepoint-2013).
+
+1. **Run the  Power Pivot 
+ for SharePoint 2013 Configuration** tool on one of the SharePoint application servers to configure the SharePoint farm with the updated solution files that the add-in installed. You can't use Central SharePoint Administration for this step. For more information, see:
+
+   1. From the Windows Start page, type ** Power Pivot 
+** and in the search results, select ** Power Pivot 
+ for SharePoint 2013 Configuration**. Note the search might return both versions of the configuration tool.
+
+      Or
+
+      On the **Start** menu, point to **All Programs**, select   **Microsoft SQL Server**  
+, select **Configuration Tools**, and then select ** Power Pivot 
+ for SharePoint 2013 Configuration Tool**. This tool is listed only when  Power Pivot for SharePoint 
+ is installed on the local server.
+
+   1. At startup, the configuration tool checks the upgrade status of the  Power Pivot 
+ farm solution and  Power Pivot 
+ web application solutions. If older versions of these solutions are detected, you see the message "**Newer versions of the  Power Pivot 
+ solution files have been detected. Please select the upgrade option to upgrade your farm**." Select **OK** to close the system validation message.
+
+   1. Select **Upgrade Features, Services, Applications and Solutions**, and then select **OK**.
+
+   1. Review the actions in the left pane task list and exclude any that you don't want the tool to perform. All actions are included by default. To remove an action, select it in the left task list, and then on the **Parameters** page, clear the **Include this action in the task list** checkbox.
+
+   1. Optionally, review detailed information in the **Script** or **Output** tab.
+
+      The Output tab is a summary of the actions that are performed by the tool. This information is saved in log files at `C:\Program Files\Microsoft SQL Server\130\Tools\PowerPivotTools\SPAddinConfiguration\Log`.
+
+      The Script tab shows the PowerShell cmdlets or references the PowerShell script files that the tool runs.
+
+   1. Select **Validate** to check whether each action is valid. If **Validate** isn't available, it means that all of the actions are valid for your system. If **Validate** is available, you might have modified an input value (for example, the Excel service application name), or the tool might have determined that a particular action can't be performed. If an action can't be performed, you must exclude it or fix the underlying conditions that cause the action to be flagged as invalid.
+
+      The first action, **Upgrade Farm Solution**, must always be processed first. It registers the PowerShell cmdlets that are used to configure the server. If you get an error on this action, don't continue. Instead, use the information provided by the error to diagnose and resolve the problem before processing more actions in the task list.
+
+   1. Select **Run** to perform all of the actions that are valid for this task. **Run** is available only after the validation check is passed. When you select **Run**, the following warning appears, reminding you that actions are processed in batch mode: "**All of the configuration settings that are flagged as valid in the tool will be applied to the SharePoint farm. Do you want to continue?**"
+
+   1. Select **Yes** to continue.
+
+   1. Upgrading solutions and features in the farm can take several minutes to complete. During this time, connection requests for  Power Pivot 
+ data **fails** with errors similar to "**Unable to refresh data**" or "**An error has occurred trying to perform the requested action. Please try again**." After upgrade is finished, the server becomes available, and these errors no longer occur.
+
+   For more information, see the following articles:
+
+   - [Power Pivot Configuration Tools](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/power-pivot-configuration-tools)
+   - [Configure or Repair Power Pivot for SharePoint 2013 (Power Pivot Configuration Tool)](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/configure-or-repair-power-pivot-for-sharepoint-2013)
+   - [Power Pivot Configuration using Windows PowerShell](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/power-pivot-configuration-using-windows-powershell)
+   - [PowerShell Reference for Power Pivot for SharePoint](https://learn.microsoft.com/analysis-services/powershell/powershell-reference-for-power-pivot-for-sharepoint)
+
+1. Verify that upgrade succeeded by performing the post-upgrade steps and by checking the version of  Power Pivot 
+ servers in the farm. For more information, see [Post-upgrade verification tasks](#verify) in this article and the following section.
+
+<a id="bkmk_uprgade_sharepoint2010"></a>
+
+## Upgrade an existing SharePoint 2010 farm
+
+To upgrade  Power Pivot for SharePoint 
+ deployed in SharePoint 2010, perform the following steps:
+
+Screenshot of PowerPivot for SharePoint 2010 upgrade.
+
+1. Download [Service Pack 2 for Microsoft SharePoint 2010](https://www.microsoft.com/download/details.aspx?id=39672) and apply it on all servers in the farm. Verify that SharePoint SP2 installation succeeded. In Central Administration, on the Upgrade and Migration page, open the **Check product and patch installation status** page to view status messages related to SP2.
+
+1. Verify that the SharePoint 2010 Administration Windows service is running.
+
+   ```powershell
+   Get-Service | where {$_.displayname -like "*SharePoint*"}
+   ```
+
+1. Verify the **SharePoint** services **SQL Server Analysis Services** and **SQL Server  Power Pivot 
+ System Service** are started in SharePoint Central Administration or use the following PowerShell command:
+
+   ```powershell
+   Get-SPserviceinstance | where {$_.typename -like "*sql*"}
+   ```
+
+1. Verify the **Windows** service **SQL Server Analysis Services ( Power Pivot 
+)** is running.
+
+   ```powershell
+   Get-Service | where {$_.displayname -like "*powerpivot*"}
+   ```
+
+1. **Run  SQL Server 
+ Setup** on the first SharePoint application server that runs the **SQL Server Analysis Services ( Power Pivot 
+)** Windows service to upgrade the POWERPIVOT instance. On the Installation page of the SQL Server Setup Wizard, choose the upgrade option. For more information, see [Upgrade SQL Server Using the Installation Wizard (Setup)](upgrade-sql-server-using-the-installation-wizard-setup.md).
+
+1. **Restart the server** before running the configuration tool. This step ensures that any updates or prerequisites installed by SQL Server Setup are fully configured on the system.
+
+1. **Run the  Power Pivot 
+ Configuration Tool** on the first SharePoint application server that runs SQL Server Analysis Services ( Power Pivot 
+) service to upgrade the solutions and Web services in SharePoint. You can't use Central Administration for this step.
+
+   1. On the **Start** menu, point to **All Programs**, select   **Microsoft SQL Server**  
+, select **Configuration Tools**, and then select ** Power Pivot 
+ Configuration Tool**. This tool is listed only when  Power Pivot for SharePoint 
+ is installed on the local server.
+
+   1. At startup, the configuration tool checks the upgrade status of the  Power Pivot 
+ farm solution and  Power Pivot 
+ web application solutions. If older versions of these solutions are detected, you see the message "Newer versions of the  Power Pivot 
+ solution files have been detected. elect the upgrade option to upgrade your farm." Select **OK** to close the message.
+
+   1. Select **Upgrade Features, Services, Applications and Solutions**, and then select **OK** to continue.
+
+   1. The following warning appears: "Workbooks in the  Power Pivot 
+ Management Dashboard are about to be upgraded to the latest version. Any customizations you made to the existing workbooks are lost. Do you want to continue?"
+
+      This warning refers to workbooks in the  Power Pivot 
+ Management Dashboard that report on data refresh activity. If you customized these workbooks, any changes you made to those workbooks are lost when existing files are replaced with newer versions.
+
+      Select **Yes** to overwrite the workbooks with newer versions. Otherwise, select **No** to return to the home page. Save the workbooks to a different location so that you have a copy, and then return to this step when you're ready to continue.
+
+      For more information about customizing workbooks used in the dashboard, see [Customizing the Power Pivot Management Dashboard](https://learn.microsoft.com/previous-versions/sql/sql-server-2008-r2/ff718155\(v=sql.105\)).
+
+   1. Review the actions in the task list and exclude any that you don't want the tool to perform. All actions are included by default. To remove an action, select it in the task list, and then clear the **Include this action in the task list** checkbox on the Parameters page.
+
+   1. Optionally, review detailed information in the **Output** tab or **Script** tab.
+
+      The Output tab is a summary of the actions to be performed by the tool. This information is saved in log files at `c:\Program Files\Microsoft SQL Server\130\Tools\PowerPivotTools\ConfigurationTool\Log`.
+
+      The Script tab shows the PowerShell cmdlets or references the PowerShell script files that the tool runs.
+
+   1. Select **Validate** to check whether each action is valid. If **Validate** isn't available, it means that all of the actions are valid for your system. If **Validate** is available, you might have modified an input value (for example, the Excel service application name), or the tool might have determined that a particular action can't be performed. If an action can't be performed, you must exclude it or fix the underlying conditions that cause the action to be flagged as invalid.
+
+      > **Important:**  
+      > The first action, **Upgrade Farm Solution**, must always be processed first. It registers the PowerShell cmdlets that are used to configure the server. If you get an error on this action, don't continue. Instead, use the information provided by the error to diagnose and resolve the problem before processing more actions in the task list.
+
+   1. Select **Run** to perform all of the actions that are valid for this task. **Run** is available only after the validation check is passed. When you select **Run**, the following warning appears, reminding you that actions are processed in batch mode: "All of the configuration settings that are flagged as valid in the tool will be applied to the SharePoint farm. Do you want to continue?"
+
+   1. Select **Yes** to continue.
+
+   1. Upgrading solutions and features in the farm can take several minutes to complete. During this time, connection requests for  Power Pivot 
+ data fail with errors like "Unable to refresh data" or "An error has occurred trying to perform the requested action. Try again." After upgrade is finished, the server becomes available, and these errors no longer occur.
+
+1. **Repeat the process** for each SQL Server Analysis Services ( Power Pivot 
+) service in the farm:
+   1. Run SQL Server Setup.
+   1. Run the  Power Pivot 
+ Configuration tool.
+
+1. Verify that upgrade succeeded by performing the post-upgrade steps and by checking the version of  Power Pivot 
+ servers in the farm. For more information, see [Post-upgrade verification tasks](#verify) in this article and the following section.
+
+1. **Troubleshooting errors**
+
+   You can view error information in the Parameters pane for each action.
+
+   For problems related to solution deployment or retraction, verify the SharePoint 2010 Administrator service is started. This service runs the timer jobs that trigger configuration changes in a farm. If the service isn't running, solution deployment or retraction fails. Persistent errors indicate that an existing deployment or retraction job is already in the queue and blocking further action from the configuration tool.
+
+   1. Start the SharePoint 2010 Management Shell as an administrator and then run the following command to view jobs in the queue:
+
+      ```console
+      Stsadm -o enumdeployments
+      ```
+
+   1. Review existing deployments for the following information: **Type** is Retraction or Deployment, **File** is powerpivotwebapp.wsp or powerpivotfarm.wsp.
+
+   1. For deployments or retractions related to  Power Pivot 
+ solutions, copy the GUID value for **JobId** and then paste it into the following command (use the Mark, Copy, and Paste commands on the Shell's Edit menu to copy the GUID):
+
+      ```console
+      Stsadm -o canceldeployment -id "<GUID>"
+      ```
+
+   1. Retry the task in the configuration tool by selecting **Validate** followed by **Run**.
+
+   For all other errors, check the ULS logs. For more information, see [Configure and View SharePoint Log Files and Diagnostic Logging (Power Pivot for SharePoint)](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/configure-and-view-sharepoint-and-diagnostic-logging).
+
+<a id="bkmk_workbooks"></a>
+
+## Workbooks
+
+Upgrading a server doesn't necessarily upgrade the  Power Pivot 
+ workbooks that run on it, but older workbooks created in the previous version of  Power Pivot 
+ for Excel continue to work as before, using the features available in that release. Workbooks remain functional because an upgraded server has the version of the Analysis Services OLE DB provider that was part of the previous installation.
+
+<a id="bkmk_datarefresh"></a>
+
+## Data refresh
+
+Upgrade affects data refresh operations. Scheduled data refresh on the server is available only for workbooks that match the server version. If you're hosting workbooks from the previous version, data refresh might no longer work for those workbooks. To re-enable data refresh, you must upgrade the workbooks. You can upgrade each workbook manually in  Power Pivot 
+ for Excel, or enable the auto-upgrade for data refresh feature in SharePoint 2010. Auto-upgrade upgrades a workbook to the current version before running data refresh, allowing data refresh operations to remain on schedule.
+
+<a id="bkmk_verify_versions"></a>
+
+## Verify the versions of Power Pivot components and services
+
+All instances of  Power Pivot 
+ System Service and Analysis Services must be the same version. To verify that all server components are at the same version, check version information for the following:
+
+### Verify the version of Power Pivot Solutions and the Power Pivot System service
+
+Run the following PowerShell command:
+
+```powershell
+Get-PowerPivotSystemService
+```
+
+Verify the **CurrentSolutionVersion**.  SQL Server 
+ is version 13.0.\<major build>.\<minor build>
+
+### Verify the version of the Analysis Services Windows service
+
+If you upgraded only some of your  Power Pivot for SharePoint 
+ servers in a SharePoint 2010 farm, the instance of  Analysis Services 
+ on unupgraded servers is older than the version expected in the farm. You'll need to upgrade all of your servers to the same version in order for them to be usable. Use one of the following methods to verify the version of the SQL Server Analysis Services (  Power Pivot 
+) Windows service on each computer.
+
+#### Windows File Explorer
+
+1. Navigate to the **Bin** folder for the  Power Pivot 
+ instance. For example `C:\Program Files\Microsoft SQL Server\MSAS13.POWERPIVOT\OLAP\bin`.
+
+1. Right-click `msmdsrv.exe`, and select **Properties**.
+
+1. Select **Details**.
+
+1.  SQL Server 
+ file version should be 13.00.\<major build>.\<minor build>.
+
+1. Verify that this number is identical to the  Power Pivot 
+ solution and system service version.
+
+#### Service start information
+
+When the  Power Pivot 
+ service starts, it writes version information into the Windows event log.
+
+1. Run Windows `eventvwr`
+
+1. Create a filter for source `MSOLAP$POWERPIVOT`.
+
+1. Look for an information level event similar to the following
+
+     Service started. Microsoft SQL Server Analysis Services 64 Bit Evaluation (x64) RTM **13.0.2000.8**.
+
+#### Use PowerShell to verify file version
+
+You can use PowerShell to verify the product version. PowerShell is a good option if you want to script or automate version verification.
+
+```powershell
+(Get-childitem "C:\Program Files\Microsoft SQL Server\MSAS13.POWERPIVOT2000\OLAP\bin\msmdsrv.exe").VersionInfo
+```
+
+The previous PowerShell command returns information similar to the following:
+
+ProductVersion   FileVersion           FileName
+
+**13.0.2000.8** 2016.0130.200    C:\Program Files\Microsoft SQL Server\MSAS13.POWERPIVOT2000\OLAP\bin\msmdsrv.exe
+
+### Verify the MSOLAP Data Provider version on SharePoint
+
+Use the following instructions to check which versions of the Analysis Services OLE DB providers are trusted by Excel Services. You must be a farm or service application administrator to check the trusted data provider settings of Excel Services.
+
+1. In Central Administration, in Application Management, select **Manage service applications**.
+
+1. Select the name of the Excel Services service application, for example **ExcelServiceApp1**.
+
+1. Select **Trusted Data Providers**. You should see MSOLAP.5 (Microsoft OLE DB Provider for OLAP Services 11.0). If you upgraded your  Power Pivot for SharePoint 
+ installation, you also see MSOLAP.4 from the previous version.
+
+1. For more information, see [Add MSOLAP.5 as a Trusted Data Provider in Excel Services](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/add-msolap-5-as-a-trusted-data-provider-in-excel-services).
+
+MSOLAP.4 is described as the Microsoft OLE DB Provider for OLAP Services 10.0. This version might be the default version from  SQL Server 2008 (10.0.x) 
+ that is installed with Excel Services, or it might be the  SQL Server 2008 R2 (10.50.x) 
+ version. The default version that SharePoint installs doesn't support  Power Pivot 
+ data access. You must have the  SQL Server 2008 R2 (10.50.x) 
+ version or later to connect to  Power Pivot 
+ workbooks on SharePoint. To verify you have the  SQL Server 2008 R2 (10.50.x) 
+ version, use the instructions in the previous section that explain how to verify the version by viewing file properties.
+
+### Verify the ADOMD.NET Data Provider version
+
+Use the following instructions to check which version of ADOMD.NET is installed. You must be a farm or service application administrator to check the trusted data provider settings of Excel Services.
+
+1. On your SharePoint application server, browse to `c:\Windows\Assembly`.
+
+1. Sort by assembly name and find the **Microsoft.Analysis Services.Adomd.Client**.
+
+1. Verify you have version 13.0.\<build number>.
+
+<a id="geminifarm"></a>
+
+## Upgrade multiple Power Pivot for SharePoint servers in a SharePoint farm
+
+In a multi-server topology that includes more than one  Power Pivot for SharePoint 
+ server, all server instances and components must be the same version. The server that runs the highest version of the software sets the level for all servers in the farm. If you upgrade just some of the servers, the ones that are running older versions of the software become unavailable until they're also upgraded.
+
+After you upgrade the first server, additional servers that aren't yet upgraded **will become unavailable**. Availability is restored after all servers run at the same level.
+
+SQL Server Setup upgrades the  Power Pivot 
+ solution files in place on the physical computer, but to upgrade the solutions in use by the farm, you must use the  Power Pivot 
+ Configuration Tool described in a previous section of this article.
+
+<a id="qfe"></a>
+
+## Apply a QFE to a Power Pivot instance in the farm
+
+Patching a  Power Pivot 
+ for SharePoint server updates existing program files with a newer version that includes a fix for a specific problem. When you apply a QFE to a multi-server topology, there's no primary server that you must begin with. You can start with any server as long as you apply the same QFE to the other  Power Pivot 
+ servers in the farm.
+
+When you apply the QFE, you must also perform a configuration step that updates the server version information in the farm configuration database. The version of the patched server becomes the new expected version for the farm. Until the QFE is applied and configured across all machines, the  Power Pivot 
+ for SharePoint instances that don't have the QFE are unavailable to handle requests for  Power Pivot 
+ data.
+
+To ensure the QFE is applied and configured correctly, follow these instructions:
+
+1. Install the patch using the instructions that are provided with the QFE.
+
+1. Start the  Power Pivot 
+ Configuration Tool.
+
+1. Select **Upgrade Features, Services, Applications and Solutions**, and then select **OK**.
+
+1. Review the actions that are included in the upgrade task, and then select **Validate**.
+
+1. Select **Run** to apply the actions.
+
+1. Repeat for additional  Power Pivot 
+ for SharePoint instances in the farm.
+
+    > **Important:**  
+    > In a multi-server deployment, be sure to both patch and configure each instance before continuing to the next machine. The  Power Pivot 
+ Configuration Tool must complete the upgrade task for the current instance before you move on to the next instance.
+
+To check version information for services in the farm, use the **Check product and patch installation status** page in the Upgrade and Patch Management section in Central Administration.
+
+<a id="verify"></a>
+
+## Post-upgrade verification tasks
+
+After upgrade is complete, use the following steps to verify the server is operational.
+
+| Task | Link |
+| --- | --- |
+| Verify the service is running on all computers that run  Power Pivot |
+ | for SharePoint. | [Start or Stop a Power Pivot for SharePoint Server](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/start-or-stop-a-power-pivot-for-sharepoint-server) |
+| Verify feature activation at the site collection level. | [Activate Power Pivot Feature Integration for Site Collections in Central Administration](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/activate-power-pivot-integration-for-site-collections-in-ca) |
+| Verify individual  Power Pivot |
+ | workbooks are loading properly by opening a workbook and selecting on filters and slicers to initiate a query. | Check for the presence of cached files on the hard drive. A cached file confirms that the data file was loaded on that physical server. Look for cached files in the c:\Program Files\Microsoft SQL Server\MSAS13.POWERPIVOT\OLAP\Backup folder. |
+| Test data refresh on selected workbooks that are configured for data refresh. | The easiest way to test data refresh is to modify a data refresh schedule, choosing the **Also refresh as soon as possible** checkbox so that data refresh runs immediately. This step determines whether data refresh is successful for the current workbook. Repeat these steps for other frequently used workbooks to ensure that data refresh is functional. For more information about scheduling data refresh, see [Schedule a Data Refresh (Power Pivot for SharePoint)](https://learn.microsoft.com/sharepoint/administration/data-refresh-using-the-unattended-data-refresh-account). |
+| Over time, monitor the data refresh reports in  Power Pivot |
+ | Management Dashboard to confirm there are no data refresh errors. | [Power Pivot Management Dashboard and Usage Data](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/power-pivot-management-dashboard-and-usage-data) |
+
+For more information about how to configure  Power Pivot 
+ settings and features, see [Power Pivot Server Administration and Configuration in Central Administration](https://learn.microsoft.com/analysis-services/power-pivot-sharepoint/power-pivot-server-administration-and-configuration-in-central-administration).
+
+For step-by-step instructions that guide you through all of the post-installation configuration tasks, see [Initial Configuration (Power Pivot for SharePoint)](https://learn.microsoft.com/sharepoint/administration/configure-power-pivot-for-sharepoint-2013).
+
+## Related content
+
+- [Editions and supported features of SQL Server 2016](https://learn.microsoft.com/previous-versions/sql/sql-server/editions-and-components-of-sql-server-2016)
+- [Power Pivot for SharePoint 2010 Installation](https://sharepointgeorge.com/2012/installing-sql-server-powerpivot-sharepointstep-step-guide/)

@@ -1,0 +1,96 @@
+---
+title: Overlapping User and Group Permissions
+description: Learn about how permissions from group membership and permissions assigned to users interact in the Models and Hierarchy Members tabs in Master Data Services.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "users [Master Data Services], resolving permissions"
+  - "permissions [Master Data Services], user and group overlaps"
+  - "groups [Master Data Services], resolving permissions"
+---
+# Overlapping User and Group Permissions (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  A user's permissions are based on:  
+  
+-   Permissions from group memberships.  
+  
+-   Permissions assigned explicitly to the user.  
+  
+ If a user is a member of multiple groups, and those groups have access to  Master Data Manager 
+, the following rules apply:  
+  
+-   **Deny** overrides all other permissions. If the object permission is **Deny** in one group, the effective permission is deny.  
+  
+-   Access permission is a union all effective permissions on a group. If the object permission is **Create** from one group and **Update** from other group, the effective permission is **Create** and **Update**.  
+  
+ These rules apply to both the **Models** and **Hierarchy Members** tabs. Permissions are resolved for each tab and then combined. For more information, see [How Permissions Are Determined (Master Data Services)](how-permissions-are-determined-master-data-services.md).  
+  
+> **Note:**  
+>  You can view the resolution of user and group overlapping permissions in the user interface. Both the **Models** and **Hierarchy Members** tab have a dropdown list from which you can choose **Effective** to view effective permissions.  
+  
+## Example 1  
+ mds_conc_user_group_ex_1  
+  
+ The user belongs to Group 1 and Group 2.  
+  
+ The user has **Read** permission to the Product entity.  
+  
+ Group 1 has **Update** permission to the Product entity.  
+  
+ Group 2 has **Read** permission to the Product entity.  
+  
+ Result: The user's effective permission is **Update** to the Product entity.  
+  
+## Example 2  
+ mds_conc_user_group_ex_2  
+  
+ The user belongs to Group 1 and Group 2.  
+  
+ The user has **Read** permission to the Product entity.  
+  
+ Group 1 has **Update** permission to Product entity.  
+  
+ Group 2 has **Deny** permission to the Product entity.  
+  
+ Result: The user's effective permission is **Deny** to the Product entity.  
+  
+## Example 3  
+ mds_conc_user_group_ex_3  
+  
+ The user belongs to Group 1 and Group 2.  
+  
+ The user has **Update** permission to a group of members in a hierarchy node.  
+  
+ Group 1 has **Read** permission to a group of members in a hierarchy node.  
+  
+ Group 2 has **Read** permission to a group of members in a hierarchy node.  
+  
+ Result: The user's effective permission is **Update** to the members.  
+  
+## Related content
+
+- [How Permissions Are Determined (Master Data Services)](how-permissions-are-determined-master-data-services.md)
+- [Overlapping Model and Member Permissions (Master Data Services)](overlapping-model-and-member-permissions-master-data-services.md)

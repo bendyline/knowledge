@@ -1,0 +1,92 @@
+---
+title: Azure Communication Services - Email events
+description: Azure Communication Services email events integrate with Event Grid for delivery and engagement tracking. Learn about supported event types, schemas, and responses.
+#customer intent: As a developer, I want to know which email events Azure Communication Services supports through Event Grid so that I can determine which events to subscribe to in my application.
+ms.topic: concept-article
+ms.date: 03/27/2026
+author: spelluru
+ms.author: spelluru
+ms.reviewr: osaghaso
+# Customer intent: I want to learn about what email events from Azure Communication Servics are supported through Azure Event Grid. 
+---
+
+# Azure Communication Services - Email events
+
+This article provides the properties and schema for communication services email events. For an introduction to event schemas, see [Azure Event Grid event schema](event-schema.md).
+
+## Event types
+
+Azure Communication Services emits the following telephony and Short Message Service (SMS) event types:
+
+| Event type | Description |
+| --- | --- |
+| Microsoft.Communication.EmailDeliveryReportReceived | Published when a delivery report is received for an Email sent by the Communication Service. |
+| Microsoft.Communication.EmailEngagementTrackingReportReceived | Published when the Email sent is either opened or the link, if applicable is clicked. |
+
+## Event responses
+
+When an event is triggered, the Event Grid service sends data about that event to subscribing endpoints.
+
+This section contains an example of what that data looks like for each event.
+
+### Microsoft.Communication.EmailDeliveryReportReceived event
+
+```json
+[{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "topic": "/subscriptions/{subscription-id}/resourceGroups/{group-name}/providers/microsoft.communication/communicationservices/{communication-services-resource-name}",
+  "subject": "sender/senderid@azure.com/message/00000000-0000-0000-0000-000000000000",
+  "data": {
+    "sender": "senderid@azure.com", 
+    "recipient": "receiver@azure.com",
+    "messageId": "00000000-0000-0000-0000-000000000000",
+    "status": "Delivered",
+    "deliveryStatusDetails": {
+      "statusMessage": "Status Message"
+    },
+    "deliveryAttemptTimeStamp": "2020-09-18T00:22:20.2855749+00:00",
+  },
+  "eventType": "Microsoft.Communication.EmailDeliveryReportReceived",
+  "dataVersion": "1.0",
+  "metadataVersion": "1",
+  "eventTime": "2020-09-18T00:22:20.822Z"
+}]
+```
+
+> **Note:**
+> Possible values for `Status` are:
+> - `Delivered`: The message was successfully handed over to the intended destination (recipient Mail Transfer Agent).
+> - `Suppressed`: The recipient email previously hard bounced, so all subsequent emails to this recipient are temporarily suppressed.
+> - `Bounced`: The email hard bounced, which might happen because the email address doesn't exist or the domain is invalid.
+> - `Quarantined`: The message was quarantined (as spam, bulk mail, or phishing).
+> - `FilteredSpam`: The message was identified as spam, and was rejected or blocked (not quarantined).
+> - `Expanded`: A distribution group recipient was expanded before delivery to the individual members of the group.
+> - `Failed`: The message wasn't delivered.
+
+### Microsoft.Communication.EmailEngagementTrackingReportReceived event
+
+```json
+[{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "topic": "/subscriptions/{subscription-id}/resourceGroups/{group-name}/providers/microsoft.communication/communicationservices/{communication-services-resource-name}",
+  "subject": "sender/senderid@azure.com/message/00000000-0000-0000-0000-000000000000",
+  "data": {
+    "sender": "senderid@azure.com", 
+    "messageId": "00000000-0000-0000-0000-000000000000",
+    "userActionTimeStamp": "2022-09-06T22:34:52.1303595+00:00",
+    "engagementContext": "",
+    "userAgent": "",
+    "engagementType": "view"
+  },
+  "eventType": "Microsoft.Communication.EmailEngagementTrackingReportReceived",
+  "dataVersion": "1.0",
+  "metadataVersion": "1",
+  "eventTime": "2022-09-06T22:34:52.688Z"
+}]
+```
+
+> **Note:**
+> Possible values for `engagementType` are `View` and `Click`. When the `engagementType` is `Click`, `engagementContext` is the link in the Email sent which was clicked.
+
+## Tutorial
+For a tutorial that shows how to subscribe for email events using web hooks, see [Quickstart: Handle email events](../communication-services/quickstarts/email/handle-email-events.md).

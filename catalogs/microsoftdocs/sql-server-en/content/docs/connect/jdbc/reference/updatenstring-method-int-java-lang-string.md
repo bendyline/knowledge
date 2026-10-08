@@ -1,0 +1,46 @@
+---
+title: "updateNString Method (int, java.lang.String)"
+description: "updateNString Method (int, java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# updateNString Method (int, java.lang.String)
+
+
+  Updates the designated column with a **String** value using the specified column index.  
+  
+## Syntax  
+  
+```  
+  
+public void updateNString(int columnIndex,  
+                        java.lang.String nString)  
+```  
+  
+#### Parameters  
+ *columnIndex*  
+  
+ An **int** that indicates the column index.  
+  
+ *nString*  
+  
+ A **String** object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This updateNString method is specified by the updateNString method in the java.sql.ResultSet interface.  
+  
+ This method passes Java **String** to selected **nchar**, **nvarchar(max)**, **ntext**, and **xml** columns. Using this method on other data type columns will throw an exception.  
+  
+## Related content
+
+- [updateNString Method (SQLServerResultSet)](updatenstring-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

@@ -1,0 +1,72 @@
+---
+title: "ToString (geography Data Type)"
+description: "ToString (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "ToString (geography Data Type)"
+helpviewer_keywords:
+  - "ToString method"
+dev_langs:
+  - "TSQL"
+---
+# ToString (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a **geography** instance augmented with any Z (elevation) and M (measure) values carried by the instance.  
+  
+ This geography data type method supports **FullGlobe** instances or spatial instances that are larger than a hemisphere.  
+  
+## Syntax  
+  
+```  
+  
+.ToString ()  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **nvarchar(max)**  
+  
+ CLR return type: **SqlString**  
+  
+## Remarks  
+ This method returns the string "Null" when called on null instances. In  SQL Server 2012 (11.x) 
+, the set of possible results on the server has been extended to **FullGlobe** instances. This method will return the same value as `AsTextZM()`.  
+  
+ This method is not precise.  
+  
+## Examples  
+ The following example create a `LineString` instance and uses `ToString()` to return the text description of the instance.  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('LINESTRING(-122.360 47.656, -122.343 47.656)', 4326);  
+SELECT @g.ToString();  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)
+- [AsTextZM (geography Data Type)](astextzm-geography-data-type.md)

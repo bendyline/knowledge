@@ -1,0 +1,48 @@
+---
+title: "Export a Policy-Based Management Policy"
+description: "Export a Policy-Based Management Policy"
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: security
+ms.topic: how-to
+helpviewer_keywords:
+  - "Policy-Based Management, export policy"
+---
+# Export a Policy-Based Management Policy
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to export a Policy-Based Management policy in  SQL Server 
+ by using  SQL Server Management Studio 
+.  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the PolicyAdministratorRole role in the msdb database.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To export a policy  
+  
+1.  In Object Explorer, click the plus sign to expand the server that contains the Policy-Based Management policy that you want to export.  
+  
+2.  Click the plus sign to expand the **Management** folder.  
+  
+3.  Click the plus sign to expand **Policy Management**.  
+  
+4.  Click the plus sign to expand the **Policies** folder.  
+  
+5.  Right-click the policy that you want to export and select **Export Policy**.  
+  
+6.  In the **Export Policy** dialog box, type the path and name of the file in the address bar. Alternately, find a suitable location for the file in the dialog box's navigation pane, and then type the name of the XML file in the **File Name** box.  
+  
+7.  When finished, click **Save**.

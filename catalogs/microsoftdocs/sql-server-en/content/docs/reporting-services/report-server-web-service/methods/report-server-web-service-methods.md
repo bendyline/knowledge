@@ -1,0 +1,46 @@
+---
+title: "Report Server Web service methods"
+description: Report Server Web services include methods based on component features provided through Web service endpoints, which are exposed through generated classes.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server-web-service
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Report Server Web service, methods"
+  - "Web service [Reporting Services], methods"
+  - "XML Web service [Reporting Services], features"
+  - "Web service [Reporting Services], features"
+  - "Report Server Web service, features"
+  - "XML Web service [Reporting Services], methods"
+---
+# Report Server Web service methods
+  The Report Server Web services include several categories of methods that are based on component features. These methods are provided through several Web service endpoints (three for report management and one for report execution) which are exposed as members of the [ReportService2010.ReportingService2010](https://learn.microsoft.com/search/?terms=ReportService2010.ReportingService2010) and [ReportExecution2005.ReportExecutionService](https://learn.microsoft.com/search/?terms=ReportExecution2005.ReportExecutionService) classes. These classes can be generated through a proxy class tool such as wsdl.exe, which is included with the  Microsoft 
+  .NET Framework 
+ SDK. For more information about the Report Server Web services and the  .NET Framework 
+, see [Building Applications Using the Web Service and the .NET Framework](../net-framework/building-applications-using-the-web-service-and-the-net-framework.md).  
+  
+## Endpoints and methods  
+ The following table lists the endpoints of the Report Server Web service, and the categories of methods provided by the [ReportService2010.ReportingService2010](https://learn.microsoft.com/search/?terms=ReportService2010.ReportingService2010) endpoint. For information on the methods available in the other endpoints, see [Technical Reference (SSRS)](../../technical-reference-ssrs.md).  
+  
+| Article | Description |
+| --- | --- |
+| [Report Server Web Service Endpoints](report-server-web-service-endpoints.md) | Describes the management and execution endpoints of the Report Server Web service. |
+| [Report Server Namespace Management Methods](report-server-namespace-management-methods.md) | Describes methods that you can use to manage the report server database. Specifically you can manage folders and resources and set item properties. |
+| [Authorization Methods](authorization-methods.md) | Describes methods that you can use to manage tasks, roles, and policies. |
+| [Data Sources and Connection Methods](data-sources-and-connection-methods.md) | Describes methods that you can use to set and manage data source connection and credential information for reports. |
+| [Report Parameters Methods](report-parameters-methods.md) | Describes methods that you can use to set and retrieve parameters for reports. |
+| [Model Methods - Report Server Web Service](model-methods-report-server-web-service.md) | Describes methods that you can use to manage models. |
+| [Rendering and Execution Methods](rendering-and-execution-methods.md) | Describes methods that you can use to manage report execution, rendering, and caching. |
+| [Report History Methods](report-history-methods.md) | Describes methods that you can use to create and manage report history snapshots. |
+| [Scheduling Methods](scheduling-methods.md) | Describes methods that you can use to create and manage shared schedules and cache refresh plans that are used by the report server. |
+| [Subscription and Delivery Methods](subscription-and-delivery-methods.md) | Describes methods that you can use to create and manage subscriptions and report delivery. |
+| [Linked Reports Methods](linked-reports-methods.md) | Describes methods that you can use to create and manage linked reports. |
+  
+## Related content
+
+- [Accessing the SOAP API](../accessing-the-soap-api.md)
+- [Building Applications Using the Web Service and the .NET Framework](../net-framework/building-applications-using-the-web-service-and-the-net-framework.md)
+- [Report Server Web service](../report-server-web-service.md)
+- [Technical reference (SSRS)](../../technical-reference-ssrs.md)

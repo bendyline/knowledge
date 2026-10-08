@@ -1,0 +1,174 @@
+---
+title: "CREATE EXTERNAL RESOURCE POOL (Transact-SQL)"
+description: CREATE EXTERNAL RESOURCE POOL (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "08/06/2020"
+ms.service: sql
+ms.subservice: machine-learning-services
+ms.topic: reference
+f1_keywords:
+  - "CREATE EXTERNAL RESOURCE POOL"
+  - "CREATE EXTERNAL_RESOURCE_POOL_TSQL"
+  - "EXTERNAL RESOURCE POOL"
+  - "EXTERNAL_RESOURCE_POOL_TSQL"
+  - "EXTERNAL RESOURCE"
+  - "EXTERNAL_RESOURCE_TSQL"
+helpviewer_keywords:
+  - "CREATE EXTERNAL RESOURCE POOL statement"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-ver15"
+---
+# CREATE EXTERNAL RESOURCE POOL (Transact-SQL)
+
+**Applies to:**
+ 
+
+ and later versions
+
+Creates an external pool to define resources for external processes. A resource pool represents a subset of the physical resources (memory and CPUs) of a Database Engine instance. A Resource Governor can distribute server resources among resource pools, up to a maximum of 64 pools.
+
+**Applies to: \>=sql-server-2017 || >=sql-server-linux-ver15**
+For Machine Learning Services 
+, the external pool governs `rterm.exe`, `python.exe`, `BxlServer.exe`, and other processes spawned by them.
+
+  
+
+ 
+
+## Syntax  
+
+**Applies to: \>=sql-server-ver15 || >=sql-server-linux-ver15**
+
+```syntaxsql
+CREATE EXTERNAL RESOURCE POOL pool_name  
+[ WITH (  
+    [ MAX_CPU_PERCENT = value ]  
+    [ [ , ] MAX_MEMORY_PERCENT = value ]  
+    [ [ , ] MAX_PROCESSES = value ]   
+    )   
+]  
+[ ; ]  
+  
+<CPU_range_spec> ::=    
+{ CPU_ID | CPU_ID  TO CPU_ID } [ ,...n ]  
+```  
+
+
+**Applies to: \=sql-server-2017**
+```syntaxsql
+CREATE EXTERNAL RESOURCE POOL pool_name  
+[ WITH (  
+    [ MAX_CPU_PERCENT = value ]  
+    [ [ , ] AFFINITY CPU =    
+            {  
+                AUTO   
+              | ( <cpu_range_spec> )   
+              | NUMANODE = ( <NUMA_node_id> )   
+            } ]   
+    [ [ , ] MAX_MEMORY_PERCENT = value ]  
+    [ [ , ] MAX_PROCESSES = value ]   
+    )   
+]  
+[ ; ]  
+  
+<CPU_range_spec> ::=    
+{ CPU_ID | CPU_ID  TO CPU_ID } [ ,...n ]  
+```  
+
+
+## Arguments
+
+*pool_name*  
+Is the user-defined name for the external resource pool. *pool_name* is alphanumeric and can be up to 128 characters. This argument must be unique within an instance of  SQL Server 
+ and must fulfill the rules for [identifiers](../../relational-databases/databases/database-identifiers.md).  
+
+**Applies to: \>=sql-server-ver15 || >=sql-server-linux-ver15**
+MAX_CPU_PERCENT =*value*  
+The maximum average CPU bandwidth for all requests that the external resource pool can receive when there's CPU contention. *value* is an integer. The allowed range for *value* is from 1 through 100.
+
+
+MAX_MEMORY_PERCENT =*value*  
+Specifies the total server memory that can be used by requests in this external resource pool. *value* is an integer. The allowed range for *value* is from 1 through 100.
+
+MAX_PROCESSES =*value*  
+The maximum number of processes allowed for the external resource pool. 0 = unlimited threshold for the pool, which is thereafter bound only by computer resources.
+
+
+**Applies to: \=sql-server-2017**
+MAX_CPU_PERCENT =*value*  
+The maximum average CPU bandwidth for all requests that the external resource pool can receive when there's CPU contention. *value* is an integer. The allowed range for *value* is from 1 through 100.
+
+AFFINITY {CPU = AUTO | ( <CPU_range_spec>) | NUMANODE = (\<NUMA_node_range_spec>)}
+Attach the external resource pool to specific CPUs.
+
+AFFINITY CPU = **(** <CPU_range_spec> **)** maps the external resource pool to the  SQL Server 
+ CPUs identified by the given CPU_IDs.
+
+When you use AFFINITY NUMANODE = **(\<NUMA_node_range_spec> **)**, the external resource pool is affinitized to the  SQL Server 
+ physical CPUs that correspond to the given NUMA node or range of nodes. 
+
+MAX_MEMORY_PERCENT =*value*  
+Specifies the total server memory that can be used by requests in this external resource pool. *value* is an integer. The allowed range for *value* is from 1 through 100.
+
+MAX_PROCESSES =*value*  
+The maximum number of processes allowed for the external resource pool. 0 = unlimited threshold for the pool, which is thereafter bound only by computer resources.
+
+
+## Remarks
+
+The  Database Engine 
+ implements the resource pool when you execute the [ALTER RESOURCE GOVERNOR RECONFIGURE](alter-resource-governor-transact-sql.md) statement.
+
+For general information about resource pools, see [Resource Governor Resource Pool](../../relational-databases/resource-governor/resource-governor-resource-pool.md), [sys.resource_governor_external_resource_pools &#40;Transact-SQL&#41;](../../relational-databases/system-catalog-views/sys-resource-governor-external-resource-pools-transact-sql.md), and [sys.dm_resource_governor_external_resource_pool_affinity &#40;Transact-SQL&#41;](../../relational-databases/system-dynamic-management-objects/sys-dm-resource-governor-external-resource-pool-affinity-transact-sql.md).
+
+For information specific to managing external resource pools that are used for machine learning, see [Resource governance for machine learning in SQL Server](../../machine-learning/administration/resource-governor.md). 
+
+## Permissions
+
+Requires `CONTROL SERVER` permission.
+
+## Examples
+
+The external pool has restricted CPU usage to 75 percent. The maximum memory is 30 percent of the available memory on the computer.
+
+**Applies to: \>=sql-server-ver15 || >=sql-server-linux-ver15**
+```sql
+CREATE EXTERNAL RESOURCE POOL ep_1
+WITH (  
+    MAX_CPU_PERCENT = 75
+    , MAX_MEMORY_PERCENT = 30
+);
+GO
+ALTER RESOURCE GOVERNOR RECONFIGURE;
+GO
+```
+
+
+**Applies to: \=sql-server-2017**
+```sql
+CREATE EXTERNAL RESOURCE POOL ep_1
+WITH (  
+    MAX_CPU_PERCENT = 75
+    , AFFINITY CPU = AUTO
+    , MAX_MEMORY_PERCENT = 30
+);
+GO
+ALTER RESOURCE GOVERNOR RECONFIGURE;
+GO
+```
+
+
+## Related content
+
+- [Server configuration: external scripts enabled](../../database-engine/configure-windows/external-scripts-enabled-server-configuration-option.md)
+- [sp_execute_external_script (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-execute-external-script-transact-sql.md)
+- [ALTER EXTERNAL RESOURCE POOL (Transact-SQL)](alter-external-resource-pool-transact-sql.md)
+- [DROP EXTERNAL RESOURCE POOL (Transact-SQL)](drop-external-resource-pool-transact-sql.md)
+- [CREATE RESOURCE POOL (Transact-SQL)](create-resource-pool-transact-sql.md)
+- [CREATE WORKLOAD GROUP (Transact-SQL)](create-workload-group-transact-sql.md)
+- [Resource governor resource pool](../../relational-databases/resource-governor/resource-governor-resource-pool.md)
+- [sys.resource_governor_external_resource_pools (Transact-SQL)](../../relational-databases/system-catalog-views/sys-resource-governor-external-resource-pools-transact-sql.md)
+- [sys.dm_resource_governor_external_resource_pool_affinity (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-resource-governor-external-resource-pool-affinity-transact-sql.md)
+- [ALTER RESOURCE GOVERNOR (Transact-SQL)](alter-resource-governor-transact-sql.md)

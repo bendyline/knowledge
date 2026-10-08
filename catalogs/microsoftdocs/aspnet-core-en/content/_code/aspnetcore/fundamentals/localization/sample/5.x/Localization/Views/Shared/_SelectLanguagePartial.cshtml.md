@@ -1,0 +1,34 @@
+# Source code: aspnetcore/fundamentals/localization/sample/5.x/Localization/Views/Shared/_SelectLanguagePartial.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Http.Features
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div title="@Localizer["Request culture provider:"] @requestCulture?.Provider?.GetType().Name">
+    <form id="selectLanguage" asp-controller="Home" 
+          asp-action="SetLanguage" asp-route-returnUrl="@returnUrl" 
+          method="post" class="form-horizontal" role="form">
+        <label asp-for="@requestCulture.RequestCulture.UICulture.Name">@Localizer["Language:"]</label> <select name="culture"
+          onchange="this.form.submit();"
+          asp-for="@requestCulture.RequestCulture.UICulture.Name" asp-items="cultureItems">
+        </select>
+    </form>
+</div>
+
+```

@@ -1,0 +1,73 @@
+---
+title: Manage your Azure Maps account in the Azure portal | Microsoft Azure Maps 
+description: Learn how to use the Azure portal to manage an Azure Maps account. See how to create a new account and how to delete an existing account.
+author: pbrasil
+ms.author: peterbr
+ms.date: 08/28/2026
+ms.topic: how-to
+ms.service: azure-maps
+ms.subservice: manage-account
+ms.custom: sfi-image-nochange
+---
+
+# Manage your Azure Maps account
+
+You can manage your Azure Maps account through the Azure portal. After you have an account, you can implement the APIs in your website or mobile application.
+
+## Prerequisites
+
+- If you don't already have an Azure account, [sign up for a free account] before you continue.
+- For picking account location, if you're unfamiliar with managed identities for Azure resources, see [managed identities for Azure resources].
+
+## Account location
+
+Picking a location for your Azure Maps account that aligns with other resources in your subscription, like managed identities, may help to improve the level of service for [control-plane] operations.
+
+As an example, the managed identity infrastructure notifies the Azure Maps management services for changes to the identity resource such as credential renewal or deletion. Sharing the same Azure location enables a consistent infrastructure provisioning for all resources.
+
+An Azure Maps account, regardless of location, can access any endpoint belonging to the Azure data-plane, such as `atlas.microsoft.com` and `*.atlas.microsoft.com`, when using Azure Maps REST API.
+
+Read more about data-plane service coverage for Azure Maps services on [geographic coverage].
+
+## Create a new account
+
+1. Sign in to the [Azure portal].
+
+2. Select **Create a resource** in the upper-left corner of the Azure portal.
+
+3. Search for and select **Maps**. Then select **Create**.
+
+4. Enter the information for your new account.
+
+A screenshot of the Create an Azure Maps Account resource page in the Azure portal.
+
+## Delete an account
+
+You can delete an account from the Azure portal. Navigate to the account overview page and select **Delete**.
+
+[Delete your Azure Maps account in the Azure portal](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-maps/media/how-to-manage-account-keys/account-delete-portal.png#lightbox)
+
+You then see a confirmation page. You can confirm the deletion of your account by typing its name.
+
+## Next steps
+
+Set up authentication with Azure Maps and learn how to get an Azure Maps subscription key:
+> 
+> [Manage authentication]
+
+Learn about Azure Maps account pricing:
+> 
+> [Azure Maps account pricing]
+
+Learn how to see the API usage metrics for your Azure Maps account:
+> 
+> [View usage metrics]
+
+[Azure portal]: https://portal.azure.com
+[control-plane]: https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/control-plane-and-data-plane.md
+[geographic coverage]: geographic-coverage.md
+[Azure Maps account pricing]: how-to-manage-pricing-tier.md
+[Manage authentication]: how-to-manage-authentication.md
+[managed identities for Azure resources]: https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/managed-identities-azure-resources/overview.md
+[sign up for a free account]: https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn
+[View usage metrics]: how-to-view-api-usage.md

@@ -1,0 +1,64 @@
+---
+title: "Insert or delete a row in a paginated report"
+description: Find out about adding or deleting rows in a tablix data region in a paginated report in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Insert or delete a row in a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+You can add or delete rows in a tablix data region in a paginated report. The tablix data region can be a table, a matrix, or a list. The following procedures do not apply to the chart and gauge data regions.  
+  
+ In a tablix data region, you can add rows that are associated with a group (inside a group) or that are not associated with a group (outside a group). A row that is inside a group repeats once per unique group value. For example, a row inside a group based on the value in a data column that contains color names, repeats once per distinct color name. For nested groups, a row can be outside the child group but inside the parent group. In this case, the row repeats once for each unique value in the parent group.  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## To select a data region so the row and column handles appear  
+  
+-   In Design view, click the upper left corner of the tablix data region so that column and row handles appear above and next to it.  
+  
+     For more information about data region areas, see [Tables, Matrices, and Lists (Report Builder and SSRS)](tables-matrices-and-lists-report-builder-and-ssrs.md).  
+  
+## To insert a row in a selected data region  
+  
+-   Right-click a row handle where you want to insert a row, click **Insert Row**, and then click **Above** or **Below**.  
+  
+     \- or -  
+  
+-   Right-click a cell in the data region where you want to insert a row, click **Insert Row**, and then click **Above** or **Below**.  
+  
+## To delete a row from a selected data region  
+  
+-   Select the row or rows that you want to delete, right-click the handle for one of the rows you selected, and then click **Delete Rows**.  
+  
+     \- or -  
+  
+-   Right-click a cell in the data region where you want to delete a row, and then click **Delete Rows**.  
+  
+## To insert a row in a group in a selected data region  
+  
+-   Right-click a row group cell in the row group area of a tablix data region where you want to insert a row, click **Insert Row**, and then click **Above - Outside Group**, **Above - Inside Group**, **Below - Inside Group**, or **Below - Outside Group**.  
+  
+     A row is added either inside or outside the group represented by the row group cell you clicked on.  
+  
+## To delete a row from a group in a selected data region  
+  
+-   Right-click a row group cell in the row group area of a tablix data region where you want to delete a row, and then click **Delete Rows**.  
+  
+## Related content
+
+- [Tablix data region in a paginated report (Report Builder)](tablix-data-region-report-builder-and-ssrs.md)
+- [Groups in a Report Builder paginated report](understanding-groups-report-builder-and-ssrs.md)
+- [Tables in paginated reports (Report Builder)](tables-report-builder-and-ssrs.md)
+- [Create a matrix in a paginated report (Report Builder)](create-a-matrix-report-builder-and-ssrs.md)
+- [Create invoices and forms with lists in a paginated report (Report Builder)](create-invoices-and-forms-with-lists-report-builder-and-ssrs.md)
+- [Tables, matrices, and lists in Report Builder paginated reports](tables-matrices-and-lists-report-builder-and-ssrs.md)

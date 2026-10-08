@@ -1,0 +1,94 @@
+---
+title: Include file
+description: Include file
+author: sdgilley
+ms.reviewer: sgilley
+ms.author: sgilley
+ms.service: microsoft-foundry
+ms.topic: include
+ms.date: 09/03/2026
+ms.custom: include
+ai-usage: ai-assisted
+---
+
+Make sure you install the correct version of the packages as shown here.
+
+# [Python](#tab/python)
+
+1. Install the current version of `azure-ai-projects`. This version uses the **Foundry projects (new) API**. The samples authenticate by using `DefaultAzureCredential`, which comes from `azure-identity`.
+
+    ```
+    pip install "azure-ai-projects>=2.3.0" azure-identity
+    ```
+
+1. Sign in using the CLI `az login` command to authenticate before running your Python scripts.
+
+# [C#](#tab/csharp)
+
+1. Install packages:
+
+    Add NuGet packages using the .NET CLI in the integrated terminal: These packages use the **Foundry projects (new) API**.
+        
+    ```bash
+    dotnet add package Azure.AI.Projects
+    dotnet add package Azure.AI.Projects.Agents
+    dotnet add package Azure.AI.Extensions.OpenAI
+    dotnet add package Azure.Identity
+    ```
+
+1. Sign in using the CLI `az login` command to authenticate before running your C# scripts.
+
+
+# [TypeScript](#tab/typescript)
+
+1. Install the current version of `@azure/ai-projects`. This version uses the **Foundry projects (new) API**.:
+
+    ```bash
+    npm install @azure/ai-projects @azure/identity
+    ```
+
+1. Sign in using the CLI `az login` command to authenticate before running your TypeScript scripts.
+
+# [Java](#tab/java)
+
+```xml
+<dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-ai-agents</artifactId>
+    <version>2.2.0</version>
+</dependency>
+<dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-core</artifactId>
+    <version>1.57.0</version>
+</dependency>
+<dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-identity</artifactId>
+    <version>1.18.1</version>
+</dependency>
+```
+
+1. Sign in using the CLI `az login` command to authenticate before running your Java scripts.
+
+# [REST API](#tab/rest)
+
+1. Sign in using the CLI `az login` command to authenticate before running the next command.
+1. Get a temporary access token. It will expire in 60-90 minutes, you'll need to refresh after that.
+
+    ```azurecli
+    az account get-access-token --scope https://ai.azure.com/.default
+    ```
+    
+1. Save the results as the environment variable `AZURE_AI_AUTH_TOKEN`.  
+
+
+# [Foundry portal](#tab/portal)
+
+No installation is necessary to use the Foundry portal.
+
+---
+
+
+> **Tip:**
+> Code uses **Azure AI Projects 2.x** and is incompatible with Azure AI Projects 1.x. [See the Foundry (classic) documentation](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/foundry-classic/index.yml)  for the Azure AI Projects 1.x version.

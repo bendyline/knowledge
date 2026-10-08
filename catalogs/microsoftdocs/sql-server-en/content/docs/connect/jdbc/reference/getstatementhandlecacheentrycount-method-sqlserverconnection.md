@@ -1,0 +1,39 @@
+---
+title: "getStatementHandleCacheEntryCount Method (SQLServerConnection)"
+description: "getStatementHandleCacheEntryCount Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.getStatementHandleCacheEntryCount"
+apitype: "Assembly"
+---
+# getStatementHandleCacheEntryCount Method (SQLServerConnection)
+
+
+ Returns the current number of pooled prepared statement handles.
+
+## Syntax  
+  
+```  
+  
+public int getStatementHandleCacheEntryCount()  
+```  
+
+## Return Value
+ An **int** that contains the current number of pooled prepared statement handles.
+
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+ 
+## Remarks  
+ This method is available from JDBC driver version 6.4 and onward.
+ 
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

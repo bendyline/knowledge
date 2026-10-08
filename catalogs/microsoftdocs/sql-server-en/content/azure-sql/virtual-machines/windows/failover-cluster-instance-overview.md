@@ -1,0 +1,212 @@
+---
+title: Failover Cluster Instances
+description: "Learn about failover cluster instances (FCIs) with SQL Server on Azure Virtual Machines."
+author: AbdullahMSFT
+ms.author: amamun
+ms.reviewer: randolphwest, mathoma
+ms.date: 09/15/2025
+ms.service: azure-vm-sql-server
+ms.subservice: hadr
+ms.topic: overview
+editor: monicar
+tags: azure-service-management
+---
+
+# Failover cluster instances with SQL Server on Azure Virtual Machines
+
+
+
+  **Applies to:**    [SQL Server on Azure VM](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This article introduces feature differences when you're working with failover cluster instances (FCI) for SQL Server on Azure Virtual Machines (VMs).
+
+To get started, [prepare your virtual machine](failover-cluster-instance-prepare-vm.md).
+
+## Overview
+
+SQL Server on Azure VMs uses [Windows Server Failover Clustering (WSFC)](hadr-windows-server-failover-cluster-overview.md) functionality to provide local high availability through redundancy at the server-instance level: a failover cluster instance. An FCI is a single instance of SQL Server that's installed across WSFC (or simply the cluster) nodes and, possibly, across multiple subnets. On the network, an FCI appears to be a single instance of SQL Server running on a single computer. But the FCI provides failover from one WSFC node to another if the current node becomes unavailable.
+
+The rest of this article focuses on the differences for failover cluster instances when they're used with SQL Server on Azure VMs. To learn more about the failover clustering technology, see:
+
+- [Windows cluster technologies](https://learn.microsoft.com/windows-server/failover-clustering/failover-clustering-overview)
+- [SQL Server failover cluster instances](https://learn.microsoft.com/sql/sql-server/failover-clusters/windows/always-on-failover-cluster-instances-sql-server)
+
+> **Note:**  
+> It's now possible to lift and shift your failover cluster instance solution to SQL Server on Azure VMs using Azure Migrate. To learn more, see [Migrate failover cluster instance](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/migration-guides/virtual-machines/sql-server-failover-cluster-instance-to-sql-on-azure-vm.md).
+
+## Quorum
+
+Failover cluster instances with SQL Server on Azure Virtual Machines support using a disk witness, a cloud witness, or a file share witness for cluster quorum.
+
+To learn more, see [Quorum best practices with SQL Server VMs in Azure](hadr-cluster-best-practices.md#quorum).
+
+## Storage
+
+In traditional on-premises clustered environments, a Windows Server failover cluster uses a storage area network (SAN) that's accessible by all nodes as the shared storage. SQL Server files are hosted on the shared storage, and only the active node can access the files at one time.
+
+SQL Server on Azure VMs offers various options as a shared storage solution for a deployment of SQL Server failover cluster instances:
+
+|  | [Azure shared disks](https://learn.microsoft.com/azure/virtual-machines/disks-shared) | [Premium file shares](https://learn.microsoft.com/azure/storage/files/storage-how-to-create-file-share) | [Storage Spaces Direct (S2D)](https://learn.microsoft.com/windows-server/storage/storage-spaces/storage-spaces-direct-overview) | [Azure Elastic SAN](https://learn.microsoft.com/azure/storage/elastic-san/elastic-san-introduction) |
+| --- | --- | --- | --- | --- |
+| **Minimum OS version** | All | Windows Server 2012 | Windows Server 2016 | Windows Server 2022 |
+| **Minimum SQL Server version** | All | SQL Server 2012 | SQL Server 2016 | SQL Server 2022 |
+| **Supported VM availability** | [Premium SSD LRS](https://learn.microsoft.com/azure/virtual-machines/disks-redundancy#locally-redundant-storage-for-managed-disks): Availability Sets with or without [proximity placement group](https://learn.microsoft.com/azure/virtual-machines/windows/proximity-placement-groups-portal)<br />[Premium SSD ZRS](https://learn.microsoft.com/azure/virtual-machines/disks-redundancy#zone-redundant-storage-for-managed-disks): Availability zones<br />[Ultra Disks](https://learn.microsoft.com/azure/virtual-machines/disks-enable-ultra-ssd): Same availability zone | Availability sets and availability zones | Availability sets | Availability zones |
+| **Supports FileStream** | Yes | No | Yes | No |
+| **Supports MSDTC** | Yes | No | No | No |
+
+The rest of this section lists the benefits and limitations of each storage option available for SQL Server on Azure VMs.
+
+### Azure shared disks
+
+[Azure shared disks](https://learn.microsoft.com/azure/virtual-machines/disks-shared) are a feature of [Azure managed disks](https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview). Windows Server Failover Clustering supports using Azure shared disks with a failover cluster instance.
+
+**Supported OS**: All   
+**Supported SQL version**: All
+
+**Benefits**:
+
+- Useful for applications looking to migrate to Azure while keeping their high-availability and disaster recovery (HADR) architecture as is.
+- Can migrate clustered applications to Azure as is because of SCSI Persistent Reservations (SCSI PR) support.
+- Supports shared Azure Premium SSD, Premium SSD v2, and Azure Ultra Disk storage.
+- Can use a single shared disk or stripe multiple shared disks to create a shared storage pool.
+- Supports FILESTREAM.
+- Premium SSDs support availability sets.
+- Premium SSDs Zone Redundant Storage (ZRS) supports availability zones. VMs part of FCI can be placed in different availability zones.
+- Supports Microsoft Distributed Transaction Coordinator (MSDTC) starting with Windows Server 2019.
+
+> **Note:**  
+> While Azure shared disks also support [Standard SSD sizes](https://learn.microsoft.com/azure/virtual-machines/disks-shared#disk-sizes), we don't recommend using Standard SSDs for SQL Server workloads due to the performance limitations.
+
+**Limitations**:
+
+- Premium SSD caching isn't supported.
+- Ultra Disks don't support availability sets or Zone Redundant Storage (ZRS).
+- Availability zones are supported for Ultra Disks, but the VMs must be in the same availability zone, which reduces the availability of the virtual machine.
+
+To get started, see [Configure failover cluster instance with Azure shared disks](failover-cluster-instance-azure-shared-disks-manually-configure.md).
+
+### Storage Spaces Direct
+
+[Storage Spaces Direct](https://learn.microsoft.com/windows-server/storage/storage-spaces/storage-spaces-direct-overview) is a Windows Server feature that is supported with failover clustering on Azure Virtual Machines. It provides a software-based virtual SAN.
+
+**Supported OS**: Windows Server 2016 and later   
+**Supported SQL version**: SQL Server 2016 and later
+
+**Benefits:**
+
+- Sufficient network bandwidth enables a robust and highly performant shared storage solution.
+- Supports Azure blob cache, so reads can be served locally from the cache. (Updates are replicated simultaneously to both nodes.)
+- Supports FileStream.
+
+**Limitations:**
+
+- Available only for Windows Server 2016 and later.
+- Availability zones aren't supported.
+- Requires the same disk capacity attached to both virtual machines.
+- High network bandwidth is required to achieve high performance because of ongoing disk replication.
+- Requires a larger VM size and double pay for storage, because storage is attached to each VM.
+- Microsoft Distributed Transaction Coordinator (MSDTC) isn't supported.
+
+To get started, see [Configure failover cluster instance with Storage Spaces Direct](failover-cluster-instance-storage-spaces-direct-manually-configure.md).
+
+### Premium file share
+
+[Premium file shares](https://learn.microsoft.com/azure/storage/files/storage-how-to-create-file-share) are a feature of [Azure Files](https://learn.microsoft.com/azure/storage/files/index). Premium file shares are SSD backed and have consistently low latency. They're fully supported for use with failover cluster instances for SQL Server 2012 or later on Windows Server 2012 or later. Premium file shares give you greater flexibility, because you can resize and scale a file share without any downtime.
+
+**Supported OS**: Windows Server 2012 and later   
+**Supported SQL version**: SQL Server 2012 and later
+
+**Benefits:**
+
+- Shared storage solution for virtual machines spread over multiple availability zones.
+- Fully managed file system with single-digit latencies and burstable I/O performance.
+- Not all SQL Server features are supported - such as database snapshots, filestream, and CHECKDB without TABLOCK. Review [Limitations](failover-cluster-instance-premium-file-share-manually-configure.md#limitations) for details.
+
+**Limitations:**
+
+- Available only for Windows Server 2012 and later.
+- FileStream isn't supported.
+- Microsoft Distributed Transaction Coordinator (MSDTC) isn't supported.
+
+To get started, see [Configure failover cluster instance with Premium file share](failover-cluster-instance-premium-file-share-manually-configure.md).
+
+### Azure Elastic SAN
+
+[Azure Elastic SAN](https://learn.microsoft.com/azure/storage/elastic-san/elastic-san-introduction) is a network-attached storage offering that provides customers a flexible and scalable solution with the potential to reduce cost through storage consolidation. Azure Elastic SAN delivers a cost-effective, performant, and reliable block storage solution that connects to a variety of Azure compute services over the iSCSI protocol. Elastic SAN enables a seamless transition from an existing SAN storage estate to the cloud without having to refactor application architecture.
+
+**Supported OS**: Windows Server 2019 and later   
+**Supported SQL version**: SQL Server 2022 and later
+
+**Benefits:**
+
+- Elastic SAN isn't limited by VM disk throughput limits, which means you can save on cost by achieving a desired throughput with smaller VMs.
+- Storage consolidation and dynamic performance sharing - it's possible to save on cost by consolidating low to mid-tier performant workloads with SQL Server workloads since the storage pool is provisioned at the SAN level and performance is shared across workloads.
+- Supports SCSI Persistent Reservations (SCSI PR), which means you can migrate clustered applications to Azure as is.
+- Can use a single shared volume, or stripe multiple shared volumes to create a shared storage pool.
+- Elastic SAN zone-redundant storage supports availability zones. VMs part of a failover cluster instance can be placed in different availability zones.
+
+**Limitations:**
+
+- Cloud witness isn't currently supported.
+- Doesn't support submillisecond latency workloads.
+- Filestream isn't supported.
+- Microsoft Distributed Transaction Coordinator (MSDTC) isn't supported.
+
+### Partner
+
+There are partner clustering solutions with supported storage.
+
+**Supported OS**: All   
+**Supported SQL version**: All
+
+One example uses SIOS DataKeeper as the storage. For more information, see [SIOS DataKeeper](https://us.sios.com/products/sios-datakeeper/).
+
+### iSCSI and ExpressRoute
+
+You can also expose an iSCSI target shared block storage via Azure ExpressRoute.
+
+**Supported OS**: All   
+**Supported SQL version**: All
+
+For example, NetApp Private Storage (NPS) exposes an iSCSI target via ExpressRoute with Equinix to Azure VMs.
+
+For shared storage and data replication solutions from Microsoft partners, contact the vendor for any issues related to accessing data on failover.
+
+## Connectivity
+
+To match the on-premises experience for connecting to your failover cluster instance, deploy your SQL Server VMs to [multiple subnets](failover-cluster-instance-prepare-vm.md#subnets) within the same virtual network. Having multiple subnets negates the need for the extra dependency on an Azure Load Balancer, or a distributed network name (DNN) to route your traffic to your FCI.
+
+If you deploy your SQL Server VMs to a single subnet, you can configure a virtual network name (VNN) and an Azure Load Balancer, or a distributed network name (DNN) to route traffic to your failover cluster instance. [Review the differences between the two](hadr-windows-server-failover-cluster-overview.md#virtual-network-name-vnn) and then deploy either a [distributed network name](failover-cluster-instance-distributed-network-name-dnn-configure.md) or a [virtual network name](failover-cluster-instance-vnn-azure-load-balancer-configure.md) for your failover cluster instance.
+
+The distributed network name is recommended, if possible, as failover is faster, and the overhead and cost of managing the load balancer is eliminated.
+
+Most SQL Server features work transparently with FCIs when using the DNN, but there are certain features that might require special consideration. For more information, see [FCI and DNN interoperability](failover-cluster-instance-dnn-interoperability.md).
+
+> **Note:**  
+> If you have multiple availability groups or FCIs on the same cluster and you use either a DNN or VNN listener, then each availability group or FCI needs its own independent connection point.
+
+## Limitations
+
+
+### Limited extension support
+
+At this time, SQL Server failover cluster instances on Azure virtual machines registered with the [SQL IaaS Agent extension](sql-server-iaas-agent-extension-automate-management.md) only support a limited number of features available through basic registration, and not those that require the agent, such as automated backup, patching, Microsoft Entra authentication and advanced portal management. See the [table of benefits](sql-server-iaas-agent-extension-automate-management.md#feature-benefits) to learn more. 
+
+If your SQL Server VM has already been registered with the SQL IaaS Agent extension and you've enabled any features that require the agent, you need to [delete the extension](sql-agent-extension-manually-register-single-vm.md#delete-the-extension) from the SQL Server VM by deleting the **SQL virtual machine** resource for the corresponding VMs, and then registering it with the SQL IaaS Agent extension again. When you're deleting the **SQL virtual machine** resource by using the Azure portal, clear the check box next to the correct virtual machine to avoid deleting the virtual machine.
+
+
+
+### MSDTC
+
+Azure Virtual Machines supports Microsoft Distributed Transaction Coordinator (MSDTC) on Windows Server 2019 with storage on Clustered Shared Volumes (CSVs) and [Azure Standard Load Balancer](https://learn.microsoft.com/azure/load-balancer/load-balancer-overview) or on SQL Server VMs that are using Azure shared disks.
+
+On Azure Virtual Machines, MSDTC isn't supported for Windows Server 2016 or earlier with Clustered Shared Volumes because:
+
+- The clustered MSDTC resource can't be configured to use shared storage. On Windows Server 2016, if you create an MSDTC resource, it doesn't show any shared storage available for use, even if storage is available. This issue was fixed in Windows Server 2019.
+
+## Related content
+
+- [HADR configuration best practices (SQL Server on Azure VMs)](hadr-cluster-best-practices.md)
+- [Prepare virtual machines for an FCI (SQL Server on Azure VMs)](failover-cluster-instance-prepare-vm.md)
+- [Windows Server Failover Cluster with SQL Server on Azure VMs](hadr-windows-server-failover-cluster-overview.md)
+- [Failover cluster instance overview](https://learn.microsoft.com/sql/sql-server/failover-clusters/windows/always-on-failover-cluster-instances-sql-server)

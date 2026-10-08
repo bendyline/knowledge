@@ -1,0 +1,66 @@
+---
+title: "Monitoring the Error Logs"
+description: Use the SQL Server error log, the Windows application log, and the SQL Server Management Studio Log File Viewer to troubleshoot problems related to SQL Server.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/15/2025
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: how-to
+ms.collection:
+  - data-tools
+helpviewer_keywords:
+  - "logs [SQL Server]"
+  - "database performance [SQL Server], errors"
+  - "Windows application logs [SQL Server]"
+  - "monitoring performance [SQL Server], errors"
+  - "server performance [SQL Server], errors"
+  - "comparing error and application log output"
+  - "errors [SQL Server], logs"
+  - "tuning databases [SQL Server], errors"
+  - "database monitoring [SQL Server], errors"
+  - "SQL Server error log"
+  - "logs [SQL Server], SQL Server error logs"
+  - "error logs [SQL Server]"
+  - "logs [SQL Server], Windows application logs"
+monikerRange: ">=sql-server-2017"
+---
+# Monitor the error logs
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+
+ SQL Server 
+ logs certain system events and user-defined events to the  SQL Server 
+ error log and the Windows application log. Both logs automatically timestamp all recorded events. Use the information in the  SQL Server 
+ error log to troubleshoot problems related to  SQL Server 
+.
+
+The Windows application log provides an overall picture of events that occur on the Windows operating system, as well as events in  SQL Server 
+ and  SQL Server 
+ Agent. Use the Windows Event Viewer to view the Windows application log and to filter the information. For example, you can filter events, such as information, warning, error, success audit, and failure audit.
+
+## Compare error and application log output
+
+You can use both the  SQL Server 
+ error log and the Windows application log to identify the cause of problems. For example, while monitoring the  SQL Server 
+ error log, you might encounter error messages that don't contain cause information. By comparing the dates and times for events between these logs, you can narrow the list of probable causes.
+
+The  SQL Server Management Studio 
+ Log File Viewer lets you integrate  SQL Server 
+,  SQL Server 
+ Agent, and the Windows logs into a single list, making it easy to understand related server events and  SQL Server 
+ events. For more information, see [View the SQL Server error log in SQL Server Management Studio (SSMS)](../../relational-databases/performance/view-the-sql-server-error-log-sql-server-management-studio.md).
+
+## In this section
+
+| Article | Description |
+| --- | --- |
+| [View the SQL Server error log](viewing-the-sql-server-error-log.md) | Contains information about the  SQL Server |
+ | error log and how to view it. |
+| [View the Windows Application log to troubleshoot SQL Server](viewing-the-windows-application-log.md) | Contains information about the Windows application log and how to view it. |

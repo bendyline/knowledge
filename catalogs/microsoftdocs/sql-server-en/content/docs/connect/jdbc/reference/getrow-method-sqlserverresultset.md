@@ -1,0 +1,39 @@
+---
+title: "getRow Method (SQLServerResultSet)"
+description: "getRow Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.getRow"
+apitype: "Assembly"
+---
+# getRow Method (SQLServerResultSet)
+
+
+  Retrieves the current row number.  
+  
+## Syntax  
+  
+```  
+  
+public int getRow()  
+```  
+  
+## Return Value  
+ An **int** that indicates the current row number, 0 if there is no row.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getRow method is specified by the getRow method in the java.sql.ResultSet interface.  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

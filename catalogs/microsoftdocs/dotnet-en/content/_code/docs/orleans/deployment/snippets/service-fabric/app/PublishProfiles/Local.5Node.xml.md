@@ -1,0 +1,17 @@
+# Source code: docs/orleans/deployment/snippets/service-fabric/app/PublishProfiles/Local.5Node.xml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<PublishProfile xmlns="http://schemas.microsoft.com/2015/05/fabrictools">
+  <!-- ClusterConnectionParameters allows you to specify the PowerShell parameters to use when connecting to the Service Fabric cluster.
+       Valid parameters are any that are accepted by the Connect-ServiceFabricCluster cmdlet.
+
+       For a local cluster, you would typically not use any parameters.
+         For example: <ClusterConnectionParameters />
+  -->
+  <ClusterConnectionParameters />
+  <ApplicationParameterFile Path="..\ApplicationParameters\Local.5Node.xml" />
+</PublishProfile>
+```

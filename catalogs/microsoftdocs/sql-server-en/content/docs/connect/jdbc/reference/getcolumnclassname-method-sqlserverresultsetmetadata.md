@@ -1,0 +1,45 @@
+---
+title: "getColumnClassName Method (SQLServerResultSetMetaData)"
+description: "getColumnClassName Method (SQLServerResultSetMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSetMetaData.getColumnClassName"
+apitype: "Assembly"
+---
+# getColumnClassName Method (SQLServerResultSetMetaData)
+
+
+  Returns the fully-qualified name of the Java class whose instances are manufactured if the [getObject](getobject-method-sqlserverresultset.md) method of the [SQLServerResultSet](sqlserverresultset-class.md) class is called to retrieve a value from the column.  
+  
+## Syntax  
+  
+```  
+  
+public java.lang.String getColumnClassName(int column)  
+```  
+  
+#### Parameters  
+ *column*  
+  
+ An **int** that indicates the column index.  
+  
+## Return Value  
+ A **String** that contains the fully-qualified name of the class.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getColumnClassName method is specified by the getColumnClassName method in the java.sql.ResultSetMetaData interface.  
+  
+## Related content
+
+- [SQLServerResultSetMetaData Methods](sqlserverresultsetmetadata-methods.md)
+- [SQLServerResultSetMetaData Members](sqlserverresultsetmetadata-members.md)
+- [SQLServerResultSetMetaData Class](sqlserverresultsetmetadata-class.md)

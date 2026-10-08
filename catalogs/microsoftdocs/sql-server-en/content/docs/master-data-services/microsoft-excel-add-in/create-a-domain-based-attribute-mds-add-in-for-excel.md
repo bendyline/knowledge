@@ -1,0 +1,78 @@
+---
+title: Create a Domain-Based Attribute
+description: Create a Domain-based Attribute (MDS Add-in for Excel)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - microsoft-excel-add-in
+  - build-2025
+---
+# Create a Domain-based Attribute (MDS Add-in for Excel)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In the  Master Data Services 
+  Add-in for Excel 
+, administrators can create a domain-based attribute when they want to constrain the values in a column to a specific set of values.  
+  
+ The values can already be in the worksheet or they can come from an existing entity.  
+  
+> **Note:**  
+>  If users type a value in the constrained column, rather than selecting from the list, errors are displayed in the **$InputStatus$** column when they publish.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **System Administration** and **Explorer** functional areas.  
+  
+-   You must be a model administrator. For more information, see [Administrators (Master Data Services)](../administrators-master-data-services.md).  
+  
+-   The model and entity must already exist.  
+  
+### To perform this procedure:  
+  
+1.  In Excel, load the entity that contains the column (attribute) you want to constrain. For more information, see [Export Data to Excel from Master Data Services](export-data-to-excel-from-master-data-services.md).  
+  
+2.  Click any cell in the column you want to constrain.  
+  
+3.  In the **Build Model** group, click **Attribute Properties**.  
+  
+4.  In the **Attribute Properties** dialog box, in the **Attribute type** list, choose **Constrained list (domain-based)**.  
+  
+5.  In the **Populate the attribute with values from** list:  
+  
+    -   To use values from the worksheet, choose **the selected column**. A new entity and new staging table will be created with the values from the selected column.  
+  
+    -   To use values from an existing entity, choose the name of the entity.
+    
+    If there are more than fifty entities, you can filter and search for an entity. Otherwise, select an entity from the dropdown list.  
+  
+6.  If you chose **the selected column** in the previous step, in the **New entity name** box, type a name for the new entity. This can be the same as the column (attribute) name.  
+  
+7.  Click **OK**. Each cell in the column now has a list of values for users to choose from.  
+  
+## Related content
+
+- [Domain-Based Attributes (Master Data Services)](../domain-based-attributes-master-data-services.md)
+- [Create an Entity (MDS Add-in for Excel)](create-an-entity-mds-add-in-for-excel.md)
+- [Building a Model (MDS Add-in for Excel)](building-a-model-mds-add-in-for-excel.md)
+- [Export Data to Excel from Master Data Services](export-data-to-excel-from-master-data-services.md)

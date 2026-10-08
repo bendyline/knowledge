@@ -1,0 +1,165 @@
+---
+title: Manage Customer-Managed Keys - Azure Elastic SAN
+description: Learn how to manage customer-managed keys for Azure Elastic SAN, allowing you to control all aspects of your encryption keys.
+author: roygara
+ms.service: azure-elastic-san
+ms.topic: how-to
+ms.date: 01/13/2026
+ms.author: rogarana
+ms.reviewer: jaylansdaal
+ms.custom: references_regions
+# Customer intent: As an IT administrator, I want to manage customer-managed keys for Azure Elastic SAN, so that I can control encryption key access and comply with security regulations and compliance mandates.
+---
+
+# Manage customer-managed keys for Azure Elastic SAN
+
+All data written to an Elastic SAN volume is automatically encrypted-at-rest with a data encryption key (DEK). Azure DEKs are always *platform-managed* (managed by Microsoft). Azure uses [envelope encryption](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/security/fundamentals/encryption-atrest.md#envelope-encryption-with-a-key-hierarchy), also referred to as wrapping, which involves using a Key Encryption Key (KEK) to encrypt the DEK. By default, the KEK is platform-managed, but you can create and manage your own KEK. [Customer-managed keys](elastic-san-encryption-overview.md#customer-managed-keys) offer greater flexibility to manage access controls and can help you meet your organization security and compliance requirements.
+
+You control all aspects of your key encryption keys, including:
+
+- Which key is used
+- Where your keys are stored
+- How the keys are rotated
+- The ability to switch between customer-managed and platform-managed keys
+
+This article explains how to manage your customer-managed KEKs.
+
+> **Note:**
+> Envelope encryption allows you to change your key configuration without impacting your Elastic SAN volumes. When you make a change, the Elastic SAN service re-encrypts the data encryption keys by using the new keys. The protection of the data encryption key changes, but the data in your Elastic SAN volumes remains encrypted at all times. There's no extra action required on your part to ensure that your data is protected. Changing the key configuration doesn't impact performance, and there's no downtime associated with such a change.
+
+## Limitations
+
+The following table contains the regions where Elastic SAN is currently available and the supported redundancy options.
+
+| Redundancy options | Regions |
+| --- | --- |
+| LRS only - with Availability Zone support | India South |
+| LRS and ZRS - with Availability Zone support | Australia East<br/>Brazil South<br/>Canada Central<br/>Central US, East US, East US 2, South Central US, West US 2, West US 3<br/>East Asia, Southeast Asia<br/>France Central<br/>Germany West Central<br/>India Central<br/>Italy North<br/>Japan East<br/>Korea Central<br/>Mexico Central<br/>North Europe, West Europe<br/>Norway East<br/>Poland Central<br/>Qatar Central<br/>South Africa North<br/>Spain Central<br/>Sweden Central<br/>Switzerland North<br/>UAE North<br/>UK South |
+| LRS - no Availability Zone support (must use either the Azure PowerShell module or Azure CLI to deploy in these regions) | Australia Central, Australia Central 2, Australia Southeast<br/>Brazil Southeast<br/>Canada East<br/>France South<br/>Germany North<br/>Japan West<br/>Korea South<br/>Malaysia South<br/>North Central US, West Central US, West US<br/>Norway West<br/>South Africa West<br/>Sweden South<br/>Switzerland West<br/>Taiwan North<br/>UAE Central<br/>UK West |
+
+
+## Change the key
+
+You can change the key that you're using for Azure Elastic SAN encryption at any time.
+
+# [PowerShell](#tab/azure-powershell)
+
+To change the key by using PowerShell, call [Update-AzElasticSanVolumeGroup](https://learn.microsoft.com/powershell/module/az.elasticsan/update-azelasticsanvolumegroup) and provide the new key name and version. If the new key is in a different key vault, update the key vault URI.
+
+# [Azure CLI](#tab/azure-cli)
+
+To change the key by using Azure CLI, call [az elastic-san volume-group update](https://learn.microsoft.com/cli/azure/elastic-san/volume-group#az-elastic-san-volume-group-update) and provide the new key name and version. If the new key is in a different key vault, update the key vault URI.
+
+---
+
+If the new key is in a different key vault, [grant the managed identity access to the key in the new vault](elastic-san-configure-customer-managed-keys.md#choose-a-managed-identity-to-authorize-access-to-the-key-vault). If you opt for manual updating of the key version, you'll also need to [update the key vault URI](elastic-san-configure-customer-managed-keys.md#manual-key-version-rotation).
+
+## Update the key version
+
+Following cryptographic best practices means rotating the key that protects your Elastic SAN volume group on a regular schedule, typically at least every two years. Azure Elastic SAN never modifies the key in the key vault, but you can configure a key rotation policy to rotate the key according to your compliance requirements. For more information, see [Configure cryptographic key auto-rotation in Azure Key Vault](https://learn.microsoft.com/azure/key-vault/keys/how-to-configure-key-rotation).
+
+After the key is rotated in the key vault, update the customer-managed KEK configuration for your Elastic SAN volume group to use the new key version. Customer-managed keys support both automatic and manual updating of the KEK version. You can decide which approach you want to use when you initially configure customer-managed keys or when you update your configuration.
+
+When you modify the key or the key version, the protection of the root encryption key changes, but the data in your Azure Elastic SAN volume group remains encrypted at all times. There's no extra action required on your part to ensure that your data is protected. Rotating the key version doesn't impact performance, and there's no downtime associated with rotating the key version.
+
+> **Important:**
+> To rotate a key, create a new version of the key in the key vault according to your compliance requirements. Azure Elastic SAN doesn't handle key rotation, so you need to manage rotation of the key in the key vault.
+>
+> When you rotate the key used for customer-managed keys, that action isn't currently logged to the Azure Monitor logs for Azure Elastic SAN.
+
+### Automatically update the key version
+
+To automatically update a customer-managed key when a new version is available, omit the key version when you enable encryption with customer-managed keys for the Elastic SAN volume group. If the key version is omitted, then Azure Elastic SAN checks the key vault daily for a new version of a customer-managed key. If a new key version is available, then Azure Elastic SAN automatically uses the latest version of the key.
+
+Azure Elastic SAN checks the key vault for a new key version only once daily. When you rotate a key, wait 24 hours before disabling the older version.
+
+If you previously configured the Elastic SAN volume group for manual updating of the key version and you want to change it to update automatically, you might need to explicitly change the key version to an empty string. For details on how to do this, see [Manual key version rotation](elastic-san-configure-customer-managed-keys.md#manual-key-version-rotation).
+
+### Manually update the key version
+
+To use a specific version of a key for Azure Elastic SAN encryption, specify that key version when you enable encryption by using customer-managed keys for the Elastic SAN volume group. If you specify the key version, Azure Elastic SAN uses that version for encryption until you manually update the key version.
+
+When you explicitly specify the key version, you must manually update the Elastic SAN volume group to use the new key version URI when a new version is created. For more information about how to update the Elastic SAN volume group to use a new version of the key, see [Configure encryption with customer-managed keys stored in Azure Key Vault](elastic-san-configure-customer-managed-keys.md).
+
+## Revoke access to a volume group that uses customer-managed keys
+
+To temporarily revoke access to an Elastic SAN volume group that uses customer-managed keys, disable the key currently used in the key vault. Disabling and reenabling the key has no performance impact or downtime.
+
+After you disable the key, clients can't call operations that read from or write to volumes in the volume group or their metadata.
+
+<!--- For information about which operations will fail, see [Revoke access to a Elastic SAN volume group that uses customer-managed keys](../articles/storage/common/customer-managed-keys-overview.md).
+--->
+
+> **Caution:**
+> When you disable the key in the key vault, the data in your Azure Elastic SAN volume group remains encrypted, but it becomes inaccessible until you reenable the key.
+
+# [PowerShell](#tab/azure-powershell)
+
+To revoke a customer-managed key with PowerShell, call the [Update-AzKeyVaultKey](https://learn.microsoft.com/powershell/module/az.keyvault/update-azkeyvaultkey) command, as shown in the following example. Remember to replace the placeholder values in brackets with your own values to define the variables, or use the variables defined in the previous examples.
+
+```azurepowershell
+$KvName  = "<key-vault-name>"
+$KeyName = "<key-name>"
+$enabled = $false
+# $false to disable the key / $true to enable it
+
+# Check the current state of the key (before and after enabling/disabling it)
+Get-AzKeyVaultKey -Name $KeyName -VaultName $KvName
+
+# Disable (or enable) the key
+Update-AzKeyVaultKey -VaultName $KvName -Name $KeyName -Enable $enabled
+```
+
+# [Azure CLI](#tab/azure-cli)
+
+To revoke a customer-managed key with Azure CLI, call the [az keyvault key set-attributes](https://learn.microsoft.com/cli/azure/keyvault/key#az-keyvault-key-set-attributes) command, as shown in the following example. Remember to replace the placeholder values with your own values to define the variables, or use the variables defined in the previous examples.
+
+```azurecli
+KvName="key-vault-name"
+KeyName="key-name"
+enabled="false"
+# "false" to disable the key / "true" to enable it:
+
+# Check the current state of the key (before and after enabling/disabling it)
+az keyvault key show \
+    --vault-name $KvName \
+    --name $KeyName
+
+# Disable (or enable) the key
+az keyvault key set-attributes \
+    --vault-name $KvName \
+    --name $KeyName \
+    --enabled $enabled
+```
+
+---
+
+## Switch back to platform-managed keys
+
+You can switch from customer-managed keys back to platform-managed keys at any time, using the Azure PowerShell module or the Azure CLI.
+
+# [PowerShell](#tab/azure-powershell)
+
+To switch from customer-managed keys back to platform-managed keys with PowerShell, call [Update-AzElasticSanVolumeGroup](https://learn.microsoft.com/powershell/module/az.elasticsan/update-azelasticsanvolumegroup) with the `-Encryption` option, as shown in the following example. Remember to replace the placeholder values with your own values and to use the variables defined in the previous examples.
+
+```azurepowershell
+Update-AzElasticSanVolumeGroup -ResourceGroupName "ResourceGroupName" -ElasticSanName "ElasticSanName" -Name "ElasticSanVolumeGroupName" -Encryption EncryptionAtRestWithPlatformKey 
+```
+
+# [Azure CLI](#tab/azure-cli)
+
+To switch from customer-managed keys back to platform-managed keys with the Azure CLI, call [az elastic-san volume-group update](https://learn.microsoft.com/cli/azure/storage/account#az-storage-account-update) and set the `--encryption` parameter to `EncryptionAtRestWithPlatformKey`, as shown in the following example. Replace all placeholder text with your own values, then run the command:
+
+```azurecli
+az elastic-san volume-group update \
+    --elastic-san-name <ElasticSanName> \
+    --name <ElasticSanVolumeGroupName> \
+    --resource-group <ResourceGroupName> \
+    --encryption EncryptionAtRestWithPlatformKey
+```
+
+---
+
+## See also
+
+- [Configure customer-managed keys for An Azure Elastic SAN using Azure Key Vault](elastic-san-configure-customer-managed-keys.md)

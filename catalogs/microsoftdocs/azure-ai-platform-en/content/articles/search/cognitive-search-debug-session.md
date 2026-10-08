@@ -1,0 +1,120 @@
+---
+title: Debug Sessions Concepts
+description: Debug Sessions, accessed through the Azure portal, provides an IDE-like environment where you can identify and fix errors, validate changes, and push changes to skillsets in an Azure AI Search enrichment pipeline.
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ms.topic: concept-article
+ms.date: 07/21/2026
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Debug Sessions in Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+Debug Sessions is a visual editor that works with an existing skillset in the Azure portal, exposing the structure and content of a single enriched document as it's produced by an indexer and skillset for the duration of the session. Because you're working with a live document, the session is interactive - you can identify errors, modify and invoke skill execution, and validate the results in real time. If your changes resolve the problem, you can commit them to a published skillset to apply the fixes globally.
+
+This article explains supported scenarios and how the editor is organized. Tabs and sections of the editor unpack different layers of the skillset so that you can examine skillset structure, flow, and the content it generates at run time.
+
+## Supported scenarios
+
+Use Debug Sessions to investigate and resolve problems with:
+
++ Built-in skills used for [AI enrichment](cognitive-search-concept-intro.md), such as OCR, image analysis, entity recognition, and keyword extraction.
+
++ Built-in skills used for [integrated vectorization](vector-search-integrated-vectorization.md), with data chunking through Text Split, and vectorization through an embedding skill.
+
++ Custom skills used to integrate external processing that you provide.
+
+Compare the following debug session images for the first two scenarios. For both scenarios, the surface area shows the progression of skills that generate or transform content en route from the source document to the search index. The flow includes index mapping options, and you can trace the arrows to follow the processing trail. The details pane to the right is context-sensitive. It shows a representation of the enriched document that's created by the pipeline, or the details of a skill or mapping.
+
+The first image shows a pattern for applied AI enrichment (no vectors). Skills can run sequentially or in parallel if there are no dependencies. Index mappings show how enriched or generated content travels from in-memory data structures to fields in an index. Enriched document shows the data structure that the skillset creates.
+
+Screenshot of a debug session for OCR and image analysis.
+
+The second image shows a typical pattern for integrated vectorization. Skills for integrated vectorization usually include a Text Split skill and an embedding skill. A Text Split skill divides a document into chunks. An embedding skill calls an embedding API to vectorize those chunks. This particular skillset chunks content into an array of "pages". For integrated vectorization, projection mappings control how chunks are mapped to fields in the index.
+
+Screenshot of a debug session for integrated vectorization.
+
+## Limitations
+
+Debug Sessions work with all generally available [indexer data sources](search-data-sources-gallery.md) and most preview data sources, with the following exceptions:
+
++ SharePoint indexer.
+
++ Azure Cosmos DB for MongoDB indexer.
+
++ For the Azure Cosmos DB for NoSQL, if a row fails during index and there's no corresponding metadata, the debug session might not pick the correct row.
+
++ For the SQL API of Azure Cosmos DB, if a partitioned collection was previously non-partitioned, the debug session won't find the document.
+
++ For custom skills, a user-assigned managed identity isn't supported for a debug session connection to Azure Storage. As stated in the prerequisites, you can use a system managed identity, or specify a full access connection string that includes a key. For more information, see [Connect a search service to other Azure resources using a managed identity](search-how-to-managed-identities.md).
+
++ Data sources with encryption enabled via [customer managed keys (CMK)](search-security-manage-encryption-keys.md).
+
++ Shared private links aren't supported. If your search service uses private endpoint connectivity to reach data sources or other resources, debug sessions can't access those resources. For a workaround, see [Debug sessions and private connectivity](#debug-sessions-and-private-connectivity).
+
++ Currently, the ability to select which document to debug is unavailable. This limitation isn't permanent and should be lifted soon. At this time, Debug Sessions selects the first document in the source data container or folder.
+
+## How a debug session works
+
+When you start a session, the search service creates a copy of the skillset, indexer, and a data source containing a single document used to test the skillset. The Azure AI Search service saves all session state to a new blob container that it creates in an Azure Storage account you provide. The generated container name has a prefix of `ms-az-cognitive-search-debugsession`. This prefix reduces the chance of accidentally exporting session data to another container in your account.
+
+If you configure the storage account connection by using a [managed identity](search-how-to-managed-identities.md), assign the `Storage Blob Data Contributor` role to your search service identity on the storage account. In your storage account, [enable trusted services](search-indexer-howto-access-trusted-service-exception.md) to allow write access from Azure AI Search.
+
+A cached copy of the enriched document and skillset is loaded into the visual editor so that you can inspect the content and metadata of the enriched document, with the ability to check each document node and edit any aspect of the skillset definition. Any changes made within the session are cached. Those changes won't affect the published skillset unless you commit them. Committing changes will overwrite the production skillset.
+
+If the enrichment pipeline doesn't have any errors, a debug session can be used to incrementally enrich a document, test and validate each change before committing the changes.
+
+Debug sessions help identify the root cause of errors or warnings by analyzing data, skill inputs and outputs, and field mappings. Use the skill details pane to inspect what each skill receives as input and produces as output. This inspection helps verify that skill definitions, expressions, and field mappings are correctly formed. If the indexer encounters configuration problems, such as incorrect network setup or permission-related access errors, review the specific error message and the linked documentation. For troubleshooting guidance, see [Common indexer errors and warnings](cognitive-search-common-errors-warnings.md).
+
+## Debug sessions and private connectivity
+
+Debug sessions don't support shared private links. If your production search service uses private endpoint connectivity to access data sources or other resources, debug sessions can't run against that service.
+
+**Workaround: use a test search service**
+
+To debug your skillset, create a separate Azure AI Search service without private connectivity restrictions. To keep production data and schema details out of a non-private environment, build your test setup with synthetic documents:
+
+- Create test documents that match the field types and structure of your production data, but use generic field names (for example, `content`, `title`, `category`) and placeholder values instead of real data. Skillset logic depends on content types and structure, not specific field names.
+- Copy the skillset JSON from your production service. If skill inputs reference production field names, update those references to match your generic test field names. Use [field mappings](search-indexer-field-mappings.md) in the test indexer to align test field names with skillset inputs.
+- Configure an indexer to run against the test data source.
+
+Run the debug session on the test service to inspect skill inputs and outputs, validate skill expressions and field mappings, and identify errors. When your changes are validated, restore the original production field name references in the skillset JSON and apply it back to your production service.
+
+
+## Debug session layout
+
+The visual editor is organized into a surface area showing a progression of operations, starting with document cracking, followed by skills, mappings, and an index.
+
+Select any skill or mapping, and a pane opens to side showing relevant information.
+
+Screenshot showing a skill details pane with drilldown for more information.
+
+Follow the links to drill further into skills processing. For example, the following screenshot shows the output of the first iteration of the Text Split skill. 
+
+Screenshot showing a skill details pane with Expression Evaluator for a given output.
+
+### Skill details pane
+
+The **Skill details** pane has the following sections:
+
++ **Iterations**: Shows you how many times a skill executes. You can check the inputs and outputs of each one.
++ **Skill Settings**: View or edit the JSON skillset definition.
++ **Errors and warnings**: Shows the errors or warnings specific to this skill.
+
+### Enriched data structure pane
+
+The **Enriched Data Structure** pane slides out to the side when you select the blue show or hide arrow symbol. It's a human readable representation of what the enriched document contains. Previous screenshots in this article show examples of the enriched data structure.
+
+## Next steps
+
+Now that you understand the elements of debug sessions, start your first debug session on an existing skillset.
+
+> 
+> [How to debug a skillset](cognitive-search-how-to-debug-skillset.md)

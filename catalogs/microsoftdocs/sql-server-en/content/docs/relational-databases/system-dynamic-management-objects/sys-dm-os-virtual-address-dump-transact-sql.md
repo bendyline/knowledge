@@ -1,0 +1,66 @@
+---
+title: "sys.dm_os_virtual_address_dump (Transact-SQL)"
+description: sys.dm_os_virtual_address_dump (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "02/27/2023"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "dm_os_virtual_address_dump"
+  - "sys.dm_os_virtual_address_dump_TSQL"
+  - "sys.dm_os_virtual_address_dump"
+  - "dm_os_virtual_address_dump_TSQL"
+helpviewer_keywords:
+  - "sys.dm_os_virtual_address_dump dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# sys.dm_os_virtual_address_dump (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+ 
+
+
+
+
+
+  Returns information about a range of pages in the virtual address space of the calling process.  
+  
+> **Note:**  
+>  This information is also returned by the **VirtualQuery** Windows API.  
+  
+> **Note:**  
+>  To call this from  Azure Synapse Analytics , use the name **sys.dm_pdw_nodes_os_virtual_address_dump**.  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+ 
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **region_base_address** | **varbinary(8)** | Pointer to the base address of the region of pages. Is not nullable. |
+| **region_allocation_base_address** | **varbinary(8)** | Pointer to the base address of a range of pages allocated by the VirtualAlloc Windows API function. The page pointed to by the BaseAddress member is contained within this allocation range. Is not nullable. |
+| **region_allocation_protection** | **varbinary(8)** | Protection attributes when the region was first allocated. The value is one of the following:<br /><br /> -   PAGE_READONLY<br />-   PAGE_READWRITE<br />-   PAGE_NOACCESS<br />-   PAGE_WRITECOPY<br />-   PAGE_EXECUTE<br />-   PAGE_EXECUTE_READ<br />-   PAGE_EXECUTE_READWRITE<br />-   PAGE_EXECUTE_WRITECOPY<br />-   PAGE_GUARD<br />-   PAGE_NOCACHE<br /><br /> Is not nullable. |
+| **region_size_in_bytes** | **bigint** | Size of the region, in bytes, starting at the base address in which all the pages have the same attributes. Is not nullable. |
+| **region_state** | **varbinary(8)** | Current state of the region. This is one of the following:<br /><br /> -   MEM_COMMIT<br />-   MEM_RESERVE<br />-   MEM_FREE<br /><br /> Is not nullable. |
+| **region_current_protection** | **varbinary(8)** | Protection attributes. The value is one of the following:<br /><br /> -   PAGE_READONLY<br />-   PAGE_READWRITE<br />-   PAGE_NOACCESS<br />-   PAGE_WRITECOPY<br />-   PAGE_EXECUTE<br />-   PAGE_EXECUTE_READ<br />-   PAGE_EXECUTE_READWRITE<br />-   PAGE_EXECUTE_WRITECOPY<br />-   PAGE_GUARD<br />-   PAGE_NOCACHE<br /><br /> Is not nullable. |
+| **region_type** | **varbinary(8)** | Identifies the types of pages in the region. The value can be one of the following:<br /><br /> -   MEM_PRIVATE<br />-   MEM_MAPPED<br />-   MEM_IMAGE<br /><br /> Is not nullable. |
+| **pdw_node_id** | **int** | **Applies to**:  Azure Synapse Analytics <br /><br /> The identifier for the node that this distribution is on. |
+  
+## Permissions  
+ Requires VIEW SERVER STATE permission on the server.  
+  
+### Permissions for SQL Server 2022 and later
+
+Requires VIEW SERVER PERFORMANCE STATE permission on the server.
+
+## Related content
+
+- [System dynamic management views and functions](system-dynamic-management-objects.md)
+- [SQL Server Operating System related dynamic management views (Transact-SQL)](sql-server-operating-system-related-dynamic-management-views-transact-sql.md)

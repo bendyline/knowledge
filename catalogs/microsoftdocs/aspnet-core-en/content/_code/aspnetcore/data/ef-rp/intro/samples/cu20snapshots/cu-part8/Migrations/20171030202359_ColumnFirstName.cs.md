@@ -1,0 +1,68 @@
+# Source code: aspnetcore/data/ef-rp/intro/samples/cu20snapshots/cu-part8/Migrations/20171030202359_ColumnFirstName.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.EntityFrameworkCore.Migrations;
+using System;
+using System.Collections.Generic;
+
+namespace ContosoUniversity.Migrations
+{
+    public partial class ColumnFirstName : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "FirstMidName",
+                table: "Student",
+                newName: "FirstName");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "Student",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "Student",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldNullable: true);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "FirstName",
+                table: "Student",
+                newName: "FirstMidName");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "Student",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstMidName",
+                table: "Student",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50,
+                oldNullable: true);
+        }
+    }
+}
+
+```

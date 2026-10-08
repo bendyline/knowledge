@@ -1,0 +1,48 @@
+---
+title: "Empty and null data points in paginated report charts"
+description: Learn about paginated report chart processing for empty values, use of placeholders, and how empty and null data points display in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+
+# Empty and null data points in paginated report charts (Report Builder)
+
+  **Applies to:**
+ 
+
+
+  If you are displaying fields with empty or null values in a chart in your paginated report, the chart may not look as you expect. Charts process empty values differently depending on the specified chart type:  
+  
+-   If the chart type is a linear chart type (bar, column, scatter, line, area, range), empty values are displayed as empty spaces or "gaps" in the chart. If you want to indicate empty points, you must add empty point placeholders. For more information, see [Add Empty Points to a Chart (Report Builder and SSRS)](add-empty-points-to-a-chart-report-builder-and-ssrs.md).  
+  
+-   If the chart type is a contiguous, linear chart type (area, bar, column, line, scatter), empty data points are added to the chart to maintain continuity in the series.  
+  
+-   If the chart type is a nonlinear chart type (polar, pie, donut, funnel or pyramid), empty values are omitted from display on the chart.  
+  
+-   In shape chart types, null values are omitted.  
+  
+ An example of a chart with empty data points is available as a sample report. For more information about downloading this sample report and others, see [Report Builder and Report Designer sample reports](../tools/reporting-services-tools.md).
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Removing Empty or Null Values  
+ To avoid obscuring important data, consider removing empty values from your dataset. To filter nulls, you can use the NOT IS NULL clause in your query. Alternatively, you can add a filtering expression that specifies that you only want to display values not equal to zero. For more information, see [Add Dataset Filters, Data Region Filters, and Group Filters (Report Builder and SSRS)](add-dataset-filters-data-region-filters-and-group-filters.md).  
+  
+## Fields with No Values in a Chart  
+ If a field does not contain any values in the returned dataset, the chart displays an empty chart with no data points, but the series name (typically the field name) is added as a legend item.  
+  
+ This behavior differs from the case where there are zero rows of data in the returned dataset, which can occur when the report is parameterized and the selected value returns an empty result set. If your dataset query returns zero rows of data, a message is displayed at run time to indicate that no data can be shown. You can customize this message by modifying the NoDataMessage caption for the report in the **Properties** pane. For more information, see [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](../report-data/report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md).  
+
+## Related content
+
+- [Charts in a paginated report (Report Builder)](charts-report-builder-and-ssrs.md)
+- [Formatting a chart in a paginated report (Report Builder)](formatting-a-chart-report-builder-and-ssrs.md)
+- [Add a chart to a paginated report (Report Builder)](add-a-chart-to-a-report-report-builder-and-ssrs.md)
+- [Troubleshoot charts in a paginated report (Report Builder)](troubleshoot-charts-report-builder-and-ssrs.md)
+- [Try asking the Reporting Services forum](https://go.microsoft.com/fwlink/?LinkId=620231)

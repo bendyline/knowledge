@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "repository": "MicrosoftDocs/microsoft-365-docs",
+  "revision": "eab9d7696cdff87474698b08a1fb328091102a2f",
+  "documents": 1309,
+  "codeDocuments": 0,
+  "unresolved": [
+    {
+      "path": "microsoft-365/enterprise/add-a-domain-to-a-client-tenancy-with-windows-powershell-for-delegated-access-pe.md",
+      "kind": "Include",
+      "target": "~/../microsoft-365/reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    },
+    {
+      "path": "microsoft-365/enterprise/dns-records-for-office-365-dod.md",
+      "kind": "Include",
+      "target": "~/../microsoft-365/reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    },
+    {
+      "path": "microsoft-365/enterprise/dns-records-for-office-365-gcc-high.md",
+      "kind": "Include",
+      "target": "~/../microsoft-365/reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    },
+    {
+      "path": "microsoft-365/enterprise/m365-multi-geo-user-testing.md",
+      "kind": "Include",
+      "target": "~/../microsoft-365/reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    },
+    {
+      "path": "microsoft-365/enterprise/why-you-need-to-use-microsoft-365-powershell.md",
+      "kind": "Include",
+      "target": "~/../microsoft-365/reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    }
+  ],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

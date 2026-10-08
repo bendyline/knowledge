@@ -1,0 +1,27 @@
+---
+title: "Change Data Capture Designer for Oracle by Attunity How to Guide"
+description: "Change Data Capture Designer for Oracle by Attunity How to Guide"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+---
+# Change Data Capture Designer for Oracle by Attunity How to Guide
+
+
+> **Important:**
+> Change Data Capture for Oracle by Attunity is deprecated now. For details, refer to [the announcement](https://www.microsoft.com/sql-server/blog/2024/02/28/sql-server-integration-services-ssis-change-data-capture-attunity-feature-deprecations/).
+
+  This section describes how to carry out tasks in the Change Data Capture Designer for Oracle by Attunity.  
+  
+## Learn how to use the Oracle CDC Designer Console  
+  
+-   [How to Manage a CDC Service from the CDC Designer Console](how-to-manage-a-cdc-service-from-the-cdc-designer-console.md)  
+  
+-   [How to Create the SQL Server Change Database Instance](how-to-create-the-sql-server-change-database-instance.md)  
+  
+-   [How to Manage a CDC Instance](how-to-manage-a-cdc-instance.md)  
+  
+-   [How to Edit the CDC Instance Properties](how-to-edit-the-cdc-instance-properties.md)  
+  
+-   [How to View the CDC Instance Properties](how-to-view-the-cdc-instance-properties.md)

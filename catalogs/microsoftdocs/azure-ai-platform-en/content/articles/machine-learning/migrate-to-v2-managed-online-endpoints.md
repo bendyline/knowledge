@@ -1,0 +1,119 @@
+---
+title: Upgrade steps for Azure Container Instances web services to managed online endpoints
+titleSuffix: Azure Machine Learning
+description: Upgrade steps for Azure Container Instances web services to managed online endpoints in Azure Machine Learning
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: core
+ms.topic: how-to
+author: s-polly
+ms.author: scottpolly
+ms.date: 03/26/2026
+ms.reviewer: sehan
+ms.custom: upgrade, dev-focus
+ai-usage: ai-assisted
+monikerRange: 'azureml-api-1 || azureml-api-2'
+---
+
+# Upgrade steps for Azure Container Instances web services to managed online endpoints
+
+[Managed online endpoints](concept-endpoints-online.md) help to deploy your ML models in a turnkey manner. Managed online endpoints work with powerful CPU and GPU machines in Azure in a scalable, fully managed way. Managed online endpoints take care of serving, scaling, securing, and monitoring your models, freeing you from the overhead of setting up and managing the underlying infrastructure. Details can be found on [Deploy and score a machine learning model by using an online endpoint](how-to-deploy-online-endpoints.md).
+
+You can deploy directly to the new compute target with your previous models and environments, or use the [scripts](https://aka.ms/moeonboard) to export the current services and then deploy to the new compute without affecting your existing services. If you regularly create and delete Azure Container Instances (ACI) web services, we strongly recommend deploying directly and not using the scripts.
+
+> **Important:**
+> **The scoring URL will be changed after upgrade**. For example, the scoring url for ACI web service is like `http://aaaaaa-bbbbb-1111.westus.azurecontainer.io/score`. The scoring URI for a managed online endpoint is like `https://endpoint-name.westus.inference.ml.azure.com/score`.
+
+## Supported scenarios and differences
+
+### Auth mode
+No auth isn't supported for managed online endpoint. If you use the upgrade scripts, it converts it to key auth.
+For key auth, the original keys are used. Token-based auth is also supported.
+
+### TLS
+For ACI service secured with HTTPS, you don't need to provide your own certificates anymore, all the managed online endpoints are protected by TLS.
+
+Custom DNS name **isn't** supported.
+
+### Resource requirements
+[ContainerResourceRequirements](https://learn.microsoft.com/python/api/azureml-core/azureml.core.webservice.aci.containerresourcerequirements) isn't supported. You can choose the proper [SKU](reference-managed-online-endpoints-vm-sku-list.md) for your inferencing.
+The upgrade tool maps the CPU/Memory requirement to corresponding SKU. If you choose to redeploy manually through CLI/SDK V2, we also suggest the corresponding SKU for your new deployment.
+
+| CPU request | Memory request in GB | Suggested SKU |
+| :--- | :--- | :--- |
+| (0, 1] | (0, 1.2] | DS1 V2 |
+| (1, 2] | (1.2, 1.7] | F2s V2 |
+| (1, 2] | (1.7, 4.7] | DS2 V2 |
+| (1, 2] | (4.7, 13.7] | E2s V3 |
+| (2, 4] | (0, 5.7] | F4s V2 |
+| (2, 4] | (5.7, 11.7] | DS3 V2 |
+| (2, 4] | (11.7, 16] | E4s V3 |
+
+"(" means greater than and "]" means less than or equal to. For example, "(0, 1]" means "greater than 0 and less than or equal to 1".
+
+> **Important:**
+> When upgrading from ACI, there will be some changes in how you'll be charged. See [our blog](https://aka.ms/acimoemigration) for a rough cost comparison to help you choose the right VM SKUs for your workload.
+
+### Network isolation
+For private workspace and virtual network scenarios, see [Use network isolation with managed online endpoints](how-to-secure-online-endpoint.md?tabs=model).
+
+> **Important:**
+> As there are many settings for your workspace and virtual network, we strongly suggest that redeploy through the Azure CLI extension v2 for machine learning instead of the script tool.
+
+## Not supported
++ [EncryptionProperties](https://learn.microsoft.com/python/api/azureml-core/azureml.core.webservice.aci.encryptionproperties) for ACI container isn't supported.
++ ACI web services deployed through deploy_from_model and deploy_from_image isn't supported by the upgrade tool. Redeploy manually through CLI/SDK V2.
+
+## Upgrade steps
+
+### With our [CLI](how-to-deploy-online-endpoints.md) or [SDK](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-deploy-managed-online-endpoint-sdk-v2.md)
+Redeploy manually with your model files and environment definition.
+You can find our examples on [azureml-examples](https://github.com/Azure/azureml-examples). Specifically, this is the [SDK example for managed online endpoint](https://github.com/Azure/azureml-examples/tree/main/sdk/python/endpoints/online/managed).
+
+### With our [upgrade tool](https://github.com/Azure/azureml-examples/tree/main/cli/endpoints/online/managed/migration)
+This tool will automatically create new managed online endpoint based on your existing web services. Your original services won't be affected. You can safely route the traffic to the new endpoint and then delete the old one.
+
+> **Warning:**
+> The Azure CLI ML extension v1 (`azure-cli-ml`) reached end-of-support on September 30, 2025. The migration script was authored when CLI v1 was current. If the script uses `azure-cli-ml` commands, it might not function as expected. We recommend verifying the script contents before running it. For a fully supported path, redeploy manually using the [CLI v2 or SDK v2 method](#with-our-cli-or-sdk).
+
+> **Note:**
+> The upgrade script is a sample script and is provided without a service level agreement (SLA).
+
+Use the following steps to run the scripts:
+
+> **Tip:**
+> The new endpoint created by the scripts will be created under the same workspace.
+
+1. Use a bash shell to run the scripts. For example, a terminal session on Linux or the Windows Subsystem for Linux (WSL).
+2. Install [Python SDK V1](https://learn.microsoft.com/python/api/overview/azure/ml/install) to run the Python script.
+
+   > **Warning:**
+   > Python SDK V1 (`azureml-core`) was deprecated on March 31, 2025, with support ending June 30, 2026. [Migrate to SDK v2](how-to-migrate-from-v1.md) before that date.
+
+   > **Note:**
+   > Use Python 3.10 or later. Python 3.7 and 3.8, which are referenced on the SDK V1 install page, have reached end-of-life and are no longer supported.
+
+3. Install [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli).
+4. Clone [the repository](https://github.com/Azure/azureml-examples/tree/main/cli/endpoints/online/managed/migration) to your local env. For example, `git clone https://github.com/Azure/azureml-examples`.
+5. Edit the following values in the `migrate-service.sh` file. Replace the values with ones that apply to your configuration.
+
+    * `<SUBSCRIPTION_ID>` - The subscription ID of your Azure subscription that contains your workspace.
+    * `<RESOURCEGROUP_NAME>` - The resource group that contains your workspace.
+    * `<WORKSPACE_NAME>` - The workspace name.
+    * `<SERVICE_NAME>` - The name of your existing ACI service.
+    * `<LOCAL_PATH>` - A local path where resources and templates used by the script are downloaded.
+    * `<NEW_ENDPOINT_NAME>` - The name of the new endpoint that will be created. We recommend that the new endpoint name is different from the previous service name. Otherwise, the original service won't be displayed if you check your endpoints on the portal.
+    * `<NEW_DEPLOYMENT_NAME>` - The name of the deployment to the new endpoint.
+6. Run the bash script. For example, `./migrate-service.sh`. It takes about 5-10 minutes to finish the new deployment.
+
+    > **Tip:**
+    > If you receive an error that the script isn't executable, or an editor opens when you try to run the script, use the following command to mark the script as executable:
+    > ```bash
+    > chmod +x migrate-service.sh
+    > ```
+7. After the deployment is completes successfully, you can verify the endpoint with the [az ml online-endpoint invoke](https://learn.microsoft.com/cli/azure/ml/online-endpoint#az-ml-online-endpoint-invoke) command.
+
+## Next steps
+
+* [What are Azure Machine Learning endpoints?](concept-endpoints.md)
+* [Deploy and score a model with an online endpoint](how-to-deploy-online-endpoints.md)

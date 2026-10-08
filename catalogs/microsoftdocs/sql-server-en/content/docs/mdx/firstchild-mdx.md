@@ -1,0 +1,37 @@
+---
+title: "FirstChild (MDX)"
+description: "FirstChild (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# FirstChild (MDX)
+
+
+  Returns the first child of a specified member.  
+  
+## Syntax  
+  
+```  
+  
+Member_Expression.FirstChild   
+```  
+  
+## Arguments  
+ *Member_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a member.  
+  
+### Example  
+ The following query returns the first child of fiscal year 2003 in the Fiscal hierarchy, which is the first semester of Fiscal Year 2003.  
+  
+```  
+SELECT [Date].[Fiscal].[Fiscal Year].&[2003].FirstChild ON 0  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [LastChild (MDX)](lastchild-mdx.md)
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

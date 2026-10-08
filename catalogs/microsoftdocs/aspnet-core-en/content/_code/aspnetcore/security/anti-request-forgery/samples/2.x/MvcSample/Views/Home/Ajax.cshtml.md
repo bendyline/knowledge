@@ -1,0 +1,48 @@
+# Source code: aspnetcore/security/anti-request-forgery/samples/2.x/MvcSample/Views/Home/Ajax.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    ViewData["Title"] = "AJAX Demo";
+}
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<input type="hidden" id="RequestVerificationToken" 
+       name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">
+
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<div class="row">
+    <p><input type="button" id="antiforgery" value="Antiforgery"></p>
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == XMLHttpRequest.DONE) {
+                if (xhttp.status == 200) {
+                    alert(xhttp.responseText);
+                } else {
+                    alert('There was an error processing the AJAX request.');
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("antiforgery").onclick = function () {
+                xhttp.open('POST', '@Url.Action("Antiforgery", "Home")', true);
+                xhttp.setRequestHeader("RequestVerificationToken", 
+                    document.getElementById('RequestVerificationToken').value);
+                xhttp.send();
+            }
+        });
+    </script>
+</div>
+
+```

@@ -1,0 +1,205 @@
+---
+title: "- (Unary Negative) (Transact-SQL)"
+description: Returns the negative of the value of a numeric expression (a unary operator).
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/15/2025
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "negative"
+helpviewer_keywords:
+  - "- (negative)"
+  - "negative operator (-)"
+  - "negative values"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# Unary operators - Negative (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns the negative of the value of a numeric expression (a unary operator). Unary operators perform an operation on only one expression of any one of the data types of the numeric data type category.
+
+| Operator | Meaning |
+| --- | --- |
+| [+ (Unary positive)](unary-operators-positive.md) | Numeric value is positive. |
+| [- (Unary negative)](unary-operators-negative.md) | Numeric value is negative. |
+| [~ (Bitwise NOT)](bitwise-not-transact-sql.md) | Returns the ones' complement of the number. |
+
+The `+` (positive) and `-` (negative) operators can be used on any expression of any one of the data types of the numeric data type category. The `~` (bitwise `NOT`) operator can be used only on expressions of any one of the data types of the integer data type category.
+
+
+
+## Syntax
+
+```syntaxsql
+- numeric_expression
+```
+
+## Arguments
+
+#### *numeric_expression*
+
+Any valid [expression](expressions-transact-sql.md) of any one of the data types of the numeric data type category, except the date and time category.
+
+## Return types
+
+Returns the data type of *numeric_expression*, except that an unsigned **tinyint** expression is promoted to a signed **smallint** result.
+
+## Examples
+
+### A. Set a variable to a negative value
+
+The following example sets a variable to a negative value.
+
+```sql
+USE tempdb;
+GO
+
+DECLARE @MyNumber DECIMAL(10, 2);
+SET @MyNumber = -123.45;
+
+SELECT @MyNumber AS NegativeValue;
+GO
+```
+
+ Here's the result set. 
+
+
+```output
+NegativeValue
+--------------
+-123.45
+```
+
+### B. Change a variable to a negative value
+
+The following example changes a variable to a negative value.
+
+```sql
+USE tempdb;
+GO
+
+DECLARE @Num1 INT;
+SET @Num1 = 5;
+
+SELECT @Num1 AS VariableValue,
+    -@Num1 AS NegativeValue;
+GO
+```
+
+ Here's the result set. 
+
+
+```output
+VariableValue NegativeValue
+------------- -------------
+5             -5
+```
+
+## Examples: Azure Synapse Analytics
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+### C. Return the negative of a positive constant
+
+The following example returns the negative of a positive constant.
+
+```sql
+USE ssawPDW;
+GO
+
+SELECT TOP (1) - 17 FROM DimEmployee;
+```
+
+ Here's the result set. 
+
+
+```output
+-17
+```
+
+The same result is returned as if the unary negative is applied to a value with unary [Unary operators - Positive](unary-operators-positive.md) applied.
+
+```sql
+USE ssawPDW;
+GO
+
+SELECT TOP (1) - (+ 17)
+FROM DimEmployee;
+```
+
+ Here's the result set. 
+
+
+```output
+-17
+```
+
+### D. Return the positive of a negative constant
+
+The following example returns the positive of a negative constant.
+
+```sql
+USE ssawPDW;
+GO
+
+SELECT TOP (1) - (- 17)
+FROM DimEmployee;
+```
+
+ Here's the result set. 
+
+
+```output
+17
+```
+
+### E. Return the negative of a column
+
+The unary negative reverses the numeric operator of a column's values. As result, the negative values are returned from positive values, and positive values are returned from negative values.
+
+The following example returns the negative of the `BaseRate` value for each employee in the `DimEmployee` table.
+
+```sql
+USE ssawPDW;
+GO
+
+SELECT - BaseRate
+FROM DimEmployee;
+```
+
+## Related content
+
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)
+- [Expressions (Transact-SQL)](expressions-transact-sql.md)
+- [Operators (Transact-SQL)](operators-transact-sql.md)

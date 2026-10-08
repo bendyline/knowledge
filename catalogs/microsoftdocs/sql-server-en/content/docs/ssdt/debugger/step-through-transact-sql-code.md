@@ -1,0 +1,64 @@
+---
+title: Step Through Transact-SQL Code
+description: Learn how to use the Transact-SQL debugger to control which Transact-SQL statements are run in a Database Engine Query Editor window.
+author: dzsquared
+ms.author: drskwier
+ms.reviewer: randolphwest
+ms.date: 09/09/2025
+ms.service: sql
+ms.subservice: ssdt
+ms.topic: how-to
+---
+
+# Step through Transact-SQL code
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The  Transact-SQL  debugger enables you to control which  Transact-SQL  statements are run in a  Database Engine 
+ Query Editor window. You can pause the debugger on individual statements and then view the state of the code elements at that point.
+
+## Breakpoints
+
+A breakpoint signals the debugger to pause execution on a specific  Transact-SQL  statement. For more information about breakpoints, see [Transact-SQL breakpoints](transact-sql-breakpoints.md).
+
+## Control statement execution
+
+In the  Transact-SQL  debugger, you can specify the following options for executing from the current statement in  Transact-SQL  code:
+
+- Run to the next breakpoint.
+
+- Step into the next statement.
+
+  If the next statement invokes a  Transact-SQL  stored procedure, function, or trigger, the debugger displays a new Query Editor window that contains the code of the module. The window is in debug mode, and execution pauses on the first statement in the module. You can then move through the module code, for example, by setting breakpoints or stepping through the code.
+
+- Step over the next statement.
+
+  The next statement is executed. If the statement invokes a stored procedure, function, or trigger, the module code runs until it finishes, returning the results to the calling code. If you're confident there are no errors in a stored procedure, you can step over it. Execution pauses on the statement that follows the call to the stored procedure, function, or trigger.
+
+- Step out of a stored procedure, function, or trigger.
+
+  Execution pauses on the statement that follows the call to the stored procedure, function, or trigger.
+
+- Run from the current location to the current location of the pointer, and ignore all breakpoints.
+
+The following table lists the various ways in which you can control how statements execute in the  Transact-SQL  debugger.
+
+| Action | Perform action: |
+| --- | --- |
+| Run all statements from the current statement to the next breakpoint | Select **Continue** on the **Debug** menu. Select the **Continue** button on the **Debug** toolbar. Press **F5**. |
+| Step into the next statement or module | Select **Step Into** on the **Debug** menu. Select the **Step Into** button on the **Debug** toolbar. Press **F11**. |
+| Step over the next statement or module | Select **Step Over** on the **Debug** menu. Select the **Step Over** button on the **Debug** toolbar. Press **F10**. |
+| Step out of a module | Select **Step Out** on the **Debug** menu. Select the **Step Out** button on the **Debug** toolbar. Press **Shift**+**F11**. |
+| Run to the current cursor location | Right-click in the Query Editor window, and then select **Run To Cursor**. Press **Ctrl**+**F10**. |
+
+## Related content
+
+- [Transact-SQL debugger](transact-sql-debugger.md)
+- [Run the Transact-SQL debugger](run-transact-sql-debugger.md)
+- [Debug stored procedures](debug-stored-procedures.md)
+- [Transact-SQL debugger information](transact-sql-debugger-information.md)

@@ -1,0 +1,46 @@
+---
+title: "setClob Method (int, java.sql.Clob)"
+description: "setClob Method (int, java.sql.Clob)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPreparedStatement.setClob"
+apitype: "Assembly"
+---
+# setClob Method (int, java.sql.Clob)
+
+
+  Sets the designated parameter to the given Clob object.  
+  
+## Syntax  
+  
+```  
+  
+public final void setClob(int parameterIndex,  
+                          java.sql.Clob clobValue)  
+```  
+  
+#### Parameters  
+ *parameterIndex*  
+  
+ An **int** that indicates the parameter number.  
+  
+ *clobValue*  
+  
+ A Clob object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setClob method is specified by the setClob method in the java.sql.PreparedStatement interface.  
+  
+## Related content
+
+- [SQLServerPreparedStatement Methods](sqlserverpreparedstatement-methods.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

@@ -1,0 +1,45 @@
+---
+title: "setNCharacterStream Method to Reader object - string"
+description: "setNCharacterStream Method (java.lang.String, java.io.Reader)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# setNCharacterStream Method (java.lang.String, java.io.Reader)
+
+
+  Sets the designated parameter to the specified Reader object.  
+  
+## Syntax  
+  
+```  
+  
+public final void setNCharacterStream(java.lang.String parameterName,  
+                       java.io.Reader value)  
+```  
+  
+#### Parameters  
+ *parameterName*  
+  
+ A **String** that indicates the parameter name.  
+  
+ *value*  
+  
+ A Reader object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setNCharacterStream method is specified by the setNCharacterStream method in the java.sql.CallableStatement interface.  
+  
+ This method should be used for **NCHAR**, **NVARCHAR**, **NTEXT**, and **XML** data types.  
+  
+## Related content
+
+- [setNCharacterStream Method (SQLServerCallableStatement)](setncharacterstream-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)

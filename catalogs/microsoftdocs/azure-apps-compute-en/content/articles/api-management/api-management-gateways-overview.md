@@ -1,0 +1,267 @@
+---
+title: API Gateway Overview | Azure API Management
+description: Learn more about the features of the API gateway component of Azure API Management. API Management offers both Azure-managed and self-hosted gateways.
+services: api-management
+
+ms.service: azure-api-management
+ms.custom:
+  - build-2024
+ms.topic: concept-article
+ms.date: 05/14/2026
+---
+
+# API gateway in Azure API Management
+
+**APPLIES TO: All API Management tiers**
+
+
+
+This article describes the roles and features of the API Management *gateway* component. It also compares the gateways you can deploy.
+
+Related information:
+
+* For an overview of API Management scenarios, components, and concepts, see [What is Azure API Management?](api-management-key-concepts.md)
+
+* For more information about the API Management service tiers and features, see [Feature-based comparison of the Azure API Management tiers](api-management-features.md).
+
+## Role of the gateway
+
+The API Management *gateway* (also called *data plane* or *runtime*) is the service component that's responsible for proxying API requests, applying policies, and collecting telemetry. 
+
+
+Specifically, the gateway:
+
+* Acts as a facade to backend services by accepting API calls and routing them to appropriate backends
+* Verifies [API keys](api-management-subscriptions.md) and other credentials such as [JWTs and certificates](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/api-management/api-management-access-restriction-policies.md) presented with requests
+* Enforces [usage quotas and rate limits](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/api-management/api-management-access-restriction-policies.md)
+* Optionally transforms requests and responses as specified in [policy statements](api-management-howto-policies.md)
+* If configured, [caches responses](api-management-howto-cache.md) to improve response latency and minimize the load on backend services
+* Emits logs, metrics, and traces for [monitoring, reporting, and troubleshooting](observability.md) 
+
+
+> **Note:**
+> All requests to the API Management gateway, including those rejected by policy configurations, count toward configured rate limits, quotas, and billing limits if the service tier applies them. 
+
+
+## Managed and self-hosted gateways in API Management
+
+API Management offers both managed and self-hosted gateways:
+
+* **Built-in managed gateway** - API Management provides a single, default built-in managed gateway for every API Management instance in every service tier. When the managed gateway is used, all API traffic flows through Azure regardless of where backends implementing the APIs are hosted. In the Premium tier, optionally add and distribute gateway capacity across multiple regions.
+
+    > **Note:**
+    > Because of differences in the underlying service architecture, the gateways provided in the different API Management service tiers have some differences in capabilities. For details, see the section [Feature comparison: Managed versus self-hosted gateways](#feature-comparison-managed-versus-self-hosted-gateways).
+    >    
+ 
+* **Managed workspace gateway** - Traffic of APIs managed in [workspaces](workspaces-overview.md) can flow through the default managed gateway (in v2 tiers) or an associated workspace gateway (in Premium tiers only). Workspace gateways enable isolation of runtime traffic between workspaces, increasing the reliability of APIs. A workspace gateway is a standalone Azure resource with the same core functionality as the default managed gateway, but it doesn't support some of its features. A workspace can be associated with one or more [workspace gateways](workspaces-overview.md#workspace-gateway).
+
+* **Self-hosted gateway** - In select service tiers, the [self-hosted gateway](self-hosted-gateway-overview.md) is an optional, containerized version of the default managed gateway. Different tiers support different numbers of self-hosted gateways. It's useful for hybrid and multicloud scenarios where there's a requirement to run the gateways off of Azure in the same environments where API backends are hosted. The self-hosted gateway enables customers with hybrid IT infrastructure to manage APIs hosted on-premises and across clouds from a single API Management service in Azure. 
+
+    * The self-hosted gateway is [packaged](self-hosted-gateway-overview.md#packaging) as a Linux-based Docker container and is commonly deployed to Kubernetes, including to [Azure Kubernetes Service](how-to-deploy-self-hosted-gateway-azure-kubernetes-service.md) and [Azure Arc-enabled Kubernetes](how-to-deploy-self-hosted-gateway-azure-arc.md).
+
+    * Each self-hosted gateway is associated with a **Gateway** resource in a cloud-based API Management instance from which it receives configuration updates and communicates status. 
+
+> **Tip:**
+> For managing AI backends such as LLM APIs, API Management also provides a set of [AI gateway capabilities](genai-gateway-capabilities.md) that can be used with both managed and self-hosted gateways. These capabilities extend the existing API gateways; the AI gateway isn't a separate gateway type.
+
+## Feature comparison: Managed versus self-hosted gateways
+
+The following tables compare features available in the following API Management gateways:
+
+* **Classic** - the managed gateway available in the Developer, Basic, Standard, and Premium service tiers (formerly grouped as *dedicated* tiers)
+* **V2** - the managed gateway available in the Basic v2, Standard v2, and Premium v2 tiers
+* **Consumption** - the managed gateway available in the Consumption tier
+* **Self-hosted** - the optional self-hosted gateway available in select service tiers
+* **Workspace** - the managed gateway available in a [workspace](workspaces-overview.md) in select service tiers
+
+> **Note:**
+> * Some features of managed and self-hosted gateways are supported only in certain [service tiers](api-management-features.md) or with certain [deployment environments](self-hosted-gateway-overview.md#packaging) for self-hosted gateways.
+> * To see the current supported features of the self-hosted gateway, make sure you upgraded to the latest major version of the self-hosted gateway [container image](self-hosted-gateway-overview.md#container-images).
+> * See also self-hosted gateway [limitations](self-hosted-gateway-overview.md#limitations).
+
+### Infrastructure
+
+| Feature support | Classic | V2 | Consumption | Self-hosted | Workspace |
+| --- | --- | --- | --- | --- | --- |
+| [Custom domains](configure-custom-domain.md) | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| [Built-in cache](api-management-howto-cache.md) | ✔️ | ✔️ | ❌ | ❌ | ✔️ |
+| [External Redis-compatible cache](api-management-howto-cache-external.md) | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| [Virtual network injection](virtual-network-concepts.md) | Developer, Premium | Premium v2 | ❌ | ✔️<sup>1,2</sup> | ✔️ |
+| [Inbound private endpoints](private-endpoint.md) | ✔️ | Standard v2, Premium v2 | ❌ | ❌ | ❌ |
+| [Outbound virtual network integration](integrate-vnet-outbound.md) | ❌ | Standard  v2, Premium v2 | ❌ | ❌ | ✔️ |
+| [Availability zones](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/api-management/zone-redundancy.md) | Premium | Premium v2 | ❌ | ✔️<sup>1</sup> | ❌ |
+| [Multi-region deployment](api-management-howto-deploy-multi-region.md) | Premium | ❌ | ❌ | ✔️<sup>1</sup> | ❌ |
+| [CA root certificates](api-management-howto-ca-certificates.md) for certificate validation | ✔️ | ✔️<sup>6</sup> | ❌ | ✔️<sup>3</sup> | ❌ |
+| [Managed domain certificates](configure-custom-domain.md?tabs=managed#domain-certificate-options) | ✔️ | ❌ | ✔️ | ❌ | ❌ |
+| [TLS settings](api-management-howto-manage-protocols-ciphers.md) | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| **HTTP/2** (Client-to-gateway) | ✔️<sup>4</sup> | ✔️<sup>4</sup> | ❌ | ✔️ | ❌ |
+| **HTTP/2** (Gateway-to-backend) | ✔️<sup>7</sup> | ❌ | ❌ | ✔️<sup>5</sup> | ❌ |
+| API threat detection with [Defender for APIs](protect-with-defender-for-apis.md) | ✔️ | ✔️ | ❌ | ❌ | ❌ |
+
+<sup>1</sup> Depends on how the gateway is deployed, but is the responsibility of the customer.<br/>
+<sup>2</sup> Connectivity to the self-hosted gateway v2 [configuration endpoint](self-hosted-gateway-overview.md#fqdn-dependencies) requires DNS resolution of the endpoint hostname.<br/>
+<sup>3</sup> CA root certificates for self-hosted gateway are managed separately per gateway.<br/>
+<sup>4</sup> Client protocol needs to be enabled.<br/>
+<sup>5</sup> Configure using the [forward-request](forward-request-policy.md) policy.<br/>
+<sup>6</sup> Configure CA certificate details for backend certificate authentication in [backend](backends.md) settings.<br/>
+<sup>7</sup> In preview for classic tier instances created starting January 2026. Contact support to enable for existing classic tier instances.
+
+### Backend APIs
+
+| Feature support | Classic | V2 | Consumption | Self-hosted | Workspace |
+| --- | --- | --- | --- | --- | --- |
+| [OpenAPI specification](import-api-from-oas.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [WSDL specification](import-soap-api.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| WADL specification | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Logic App](import-logic-app-as-api.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [App Service](import-app-service-as-api.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Function App](import-function-app-as-api.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Container App](import-container-app-with-oas.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Service Fabric](https://learn.microsoft.com/azure/service-fabric/service-fabric-api-management-overview) | Developer, Premium | ❌ | ❌ | ❌ | ❌ |
+| [Pass-through GraphQL](graphql-apis-overview.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Synthetic GraphQL](graphql-apis-overview.md) | ✔️ | ✔️ | ✔️<sup>1</sup> | ✔️<sup>1</sup> | ❌ |
+| [Pass-through WebSocket](websocket-api.md) | ✔️ | ✔️ | ❌ | ✔️ | ✔️ |
+| [Pass-through gRPC](grpc-api.md) | ✔️<sup>1</sup> | ❌ | ❌ | ✔️ | ❌ |
+| [OData](import-api-from-odata.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Microsoft Foundry LLMs and models from non-Microsoft providers](azure-ai-foundry-api.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Pass-through MCP server](expose-existing-mcp-server.md) | ✔️ | ✔️ | ❌ | ✔️ | ❌ |
+| [Export REST API as MCP server](export-rest-mcp-server.md) | ✔️ | ✔️ | ❌ | ✔️ | ❌ |
+| [A2A agent](agent-to-agent-api.md) | ✔️ | ✔️ | ❌ | ❌ | ❌ |
+| [Circuit breaker in backend](backends.md#circuit-breaker) | ✔️ | ✔️ | ❌ | ✔️ | ✔️ |
+| [Load-balanced backend pool](backends.md#load-balanced-pool) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+
+<sup>1</sup> In preview for classic tier instances created starting January 2026. Contact support to enable for existing classic tier instances.
+
+
+### Policies
+
+Managed and self-hosted gateways support all available [policies](api-management-policies.md) in policy definitions with the following exceptions. See the policy reference for details about each policy.
+
+| Feature support | Classic | V2 | Consumption | Self-hosted<sup>1</sup> | Workspace |
+| --- | --- | --- | --- | --- | --- |
+| [Dapr integration](api-management-policies.md#integration-and-external-communication) | ❌ | ❌ | ❌ | ✔️ | ❌ |
+| [Service Bus integration](send-service-bus-message-policy.md) (preview) | ✔️ | ✔️ | ✔️ | ❌ | ❌ |
+| [GraphQL resolvers](api-management-policies.md#graphql-resolvers) and [GraphQL validation](api-management-policies.md#content-validation) | ✔️ | ✔️ | ✔️ | ❌ | ❌ |
+| [Get authorization context](get-authorization-context-policy.md) | ✔️ | ✔️ | ✔️ | ❌ | ❌ |
+| [Authenticate with managed identity](authentication-managed-identity-policy.md) | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| [LLM semantic caching](api-management-policies.md#caching) | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| [Quota and rate limit](api-management-policies.md#rate-limiting-and-quotas) | ✔️ | ✔️ | ✔️<sup>2</sup> | ✔️<sup>3</sup> | ✔️ |
+
+<sup>1</sup> Configured policies that aren't supported by the self-hosted gateway are skipped during policy execution.<br/>
+<sup>2</sup> The rate limit by key, quota by key, and LLM token limit policies aren't available in the Consumption tier.<br/>
+<sup>3</sup> Rate limit counts in a self-hosted gateway can be configured to synchronize locally (among gateway instances across cluster nodes), for example, through Helm chart deployment for Kubernetes or using the Azure portal [deployment templates](how-to-deploy-self-hosted-gateway-kubernetes.md). However, rate limit counts don't synchronize with other gateway resources configured in the API Management instance, including the managed gateway in the cloud.  [Learn more](how-to-self-hosted-gateway-on-kubernetes-in-production.md#request-throttling)
+
+
+### API monitoring
+
+For details about monitoring options, see [Observability in Azure API Management](observability.md).
+
+| Feature support | Classic | V2 | Consumption | Self-hosted | Workspace |
+| --- | --- | --- | --- | --- | --- |
+| [API analytics](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/api-management/howto-use-analytics.md) | ✔️ | ✔️<sup>1</sup> | ❌ | ❌ | ❌ |
+| [Application Insights](api-management-howto-app-insights.md) | ✔️ | ✔️ | ✔️ | ✔️<sup>2</sup> | ✔️ |
+| [Logging through Event Hubs](api-management-howto-log-event-hubs.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| [Metrics in Azure Monitor](api-management-howto-use-azure-monitor.md#view-metrics-of-your-apis) | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| [OpenTelemetry Collector](how-to-deploy-self-hosted-gateway-kubernetes-opentelemetry.md) | ❌ | ❌ | ❌ | ✔️ | ❌ |
+| [Request logs in Azure Monitor and Log Analytics](api-management-howto-use-azure-monitor.md#resource-logs) | ✔️ | ✔️ | ❌ | ❌<sup>3</sup> | ❌ |
+| [Local metrics and logs](how-to-configure-local-metrics-logs.md) | ❌ | ❌ | ❌ | ✔️ | ❌ |
+| [Request tracing](api-management-howto-api-inspector.md) | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+
+<sup>1</sup> The v2 tiers support Azure Monitor-based analytics.<br/>
+<sup>2</sup> Gateway uses [Azure Application Insight's built-in memory buffer](https://learn.microsoft.com/azure/azure-monitor/app/telemetry-channels#built-in-telemetry-channels) and doesn't provide delivery guarantees.<br/>
+<sup>3</sup> The self-hosted gateway currently doesn't send resource logs (diagnostic logs) to Azure Monitor. Optionally [send metrics](how-to-configure-cloud-metrics-logs.md) to Azure Monitor, or [configure and persist logs locally](how-to-configure-local-metrics-logs.md) where the self-hosted gateway is deployed.<br/>
+
+### Authentication and authorization
+
+Managed and self-hosted gateways support all available [API authentication and authorization options](authentication-authorization-overview.md) with the following exceptions.
+
+| Feature support | Classic | V2 | Consumption | Self-hosted | Workspace |
+| --- | --- | --- | --- | --- | --- |
+| [Credential manager](credentials-overview.md) | ✔️ | ✔️ | ✔️ | ❌ | ❌ |
+
+
+## Gateway throughput and scaling
+
+> **Important:**
+> Throughput depends on many factors, including the number and rate of concurrent client connections, the kind and number of configured policies, payload sizes, backend API performance, and other factors. Self-hosted gateway throughput also depends on the compute capacity (CPU and memory) of the host where it runs. To accurately determine expected throughput, perform gateway load testing by using anticipated production conditions.
+
+### Managed gateway
+
+For estimated maximum gateway throughput in the API Management service tiers, see [API Management pricing](https://azure.microsoft.com/pricing/details/api-management/).
+
+> **Important:**
+> Use the throughput figures for information only. Don't rely on them for capacity and budget planning. See [API Management pricing](https://azure.microsoft.com/pricing/details/api-management/) for details.
+
+* **Classic tiers**
+    * Scale gateway capacity by adding and removing scale [units](upgrade-and-scale.md), or upgrade the service tier. (Scaling isn't available in the Developer tier.)
+    * In the Basic, Standard, and Premium tiers, optionally configure [Azure Monitor autoscale](api-management-howto-autoscale.md).
+    * In the Premium tier, optionally add and distribute gateway capacity across multiple [regions](api-management-howto-deploy-multi-region.md).
+
+* **v2 tiers**
+    * Scale gateway capacity by adding and removing scale [units](upgrade-and-scale.md), or upgrade the service tier.
+    * Optionally configure [Azure Monitor autoscale](api-management-howto-autoscale.md).
+
+* **Consumption tier**
+    * API Management instances in the Consumption tier scale automatically based on the traffic.
+
+### Self-hosted gateway
+* In environments such as [Kubernetes](how-to-self-hosted-gateway-on-kubernetes-in-production.md), add multiple gateway replicas to handle expected usage.
+* Optionally [configure autoscaling](how-to-self-hosted-gateway-on-kubernetes-in-production.md#autoscaling) to meet traffic demands.
+
+### Workspace gateway
+
+Scale capacity by adding and removing scale [units](upgrade-and-scale.md) in the workspace gateway.
+
+## Gateway runtime limits
+
+The following table lists limits that apply to the API Management gateway when it handles API requests and responses.
+
+
+<!-- Constraints - API Management gateways  -->
+
+
+| Runtime limit | Classic | V2 | Consumption |
+| --- | --- | --- | --- |
+| Concurrent back-end connections<sup>1</sup> per HTTP authority | 2,048<sup>2</sup> per unit | 2,048 | Unlimited |
+| Cached response size | 2 MiB | 2 MiB | 2 MiB |
+| Policy document size | 512 KiB | 512 KiB | 16 KiB |
+| Request payload size | Unlimited | 1 GiB | 1 GiB |
+| Buffered payload size | 500 MiB | 2 MiB | 2 MiB |
+| Request/response payload size in diagnostic logs | 8,192 bytes | 8,192 bytes | 8,192 bytes |
+| Request URL size<sup>3</sup> | Unlimited | 16,384 bytes | 16,384 bytes |
+| Length of URL path segment | 1,024 characters | 1,024 characters | 1,024 characters |
+| Length of named value | 4,096 characters | 4,096 characters | 4,096 characters |
+| Size of request or response body in [validate-content policy](https://learn.microsoft.com/azure/api-management/validate-content-policy) | 100 KiB | 100 KiB | 100 KiB |
+| Size of API schema used by [validation policy](https://learn.microsoft.com/azure/api-management/validation-policies) | 4 MB | 4 MB | 4 MB |
+| Total request duration | Unlimited | Unlimited | 30 seconds |
+| Active WebSocket connections per unit<sup>4</sup> | 5,000 | 5,000 | N/A |
+
+<sup>1</sup> Connections are pooled and reused unless explicitly closed by the backend.<br/>
+<sup>2</sup> Limit is 1,024 in the Developer tier.<br/>
+<sup>3</sup> Includes an up to 2048-bytes long query string.<br/>
+<sup>4</sup> Up to a maximum of 60,000 connections per service instance.
+
+
+
+
+## Gateway health check endpoint
+
+In all tiers except the Consumption tier, Azure API Management provides a built-in gateway health check endpoint at path `/status-0123456789abcdef`. Reach this endpoint to help confirm that the API gateway is available and functioning correctly. It doesn't test backend APIs, only the gateway itself.
+
+A request to the endpoint returns a `200 OK` HTTP response when the gateway is healthy; failures indicate networking or gateway issues.  
+
+* Azure uses this endpoint internally for continuous SLA monitoring and gateway health validation.
+* Customers can integrate requests to this endpoint into their own monitoring tools and probes.
+* The endpoint is available for managed gateways (including regional gateways in multi-region deployments), self-hosted gateways, and workspace gateways. 
+
+> **Tip:**
+> When you [integrate Azure Application Insights](api-management-howto-app-insights.md) with API Management, you can optionally enable availability monitoring of the gateway. This setting regularly polls the gateway health check endpoint and reports results on the **Availability** tab in Application Insights.
+
+## Related content
+
+Learn more about:
+
+-   [API Management in a Hybrid and multicloud World](https://aka.ms/hybrid-and-multi-cloud-api-management)
+-   [Capacity metric](api-management-capacity.md) for scaling decisions
+-   [Observability capabilities](observability.md) in API Management
+-   [AI gateway capabilities](genai-gateway-capabilities.md) in API Management

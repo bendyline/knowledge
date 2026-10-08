@@ -1,0 +1,23 @@
+# Source code: aspnetcore/fundamentals/routing/samples/3.x/RoutingSample/Pages/Edit.cshtml.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace RoutingSample
+{
+    public class EditModel : PageModel
+    {
+        public void OnGet()
+        {
+
+        }
+    }
+}
+```

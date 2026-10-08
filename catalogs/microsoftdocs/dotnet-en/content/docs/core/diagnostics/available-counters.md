@@ -1,0 +1,147 @@
+---
+title: Well-known EventCounters in .NET
+description: Review EventCounters published by the .NET runtime and libraries.
+ms.topic: reference
+ms.date: 12/17/2020
+---
+
+# Well-known EventCounters in .NET
+
+The .NET runtime and libraries implement and publish several [EventCounters](event-counters.md) that can be used to identify and diagnose various performance issues. This article is a reference on the providers that can be used to monitor these counters and their descriptions.
+See the [well-known metrics reference](built-in-metrics.md) instead if you are working with .NET's newer [System.Diagnostics.Metrics API](metrics.md).
+
+## System.Runtime counters
+
+The following counters are published as part of .NET runtime (CoreCLR) and are maintained in the [_RuntimeEventSource.cs_](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/Diagnostics/Tracing/RuntimeEventSource.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| % Time in GC since last GC (`time-in-gc`) | The percent of time in GC since the last GC | .NET Core 3.1 |
+| Allocation Rate (`alloc-rate`) | The number of bytes allocated per update interval | .NET Core 3.1 |
+| CPU Usage (`cpu-usage`) | The percent of the process's CPU usage relative to all of the system CPU resources | .NET Core 3.1 |
+| Exception Count (`exception-count`) | The number of exceptions that have occurred | .NET Core 3.1 |
+| GC Heap Size (`gc-heap-size`) | The number of megabytes thought to be allocated based on [System.GC.GetTotalMemory(System.Boolean)](https://learn.microsoft.com/search/?terms=System.GC.GetTotalMemory(System.Boolean)) | .NET Core 3.1 |
+| Gen 0 GC Count (`gen-0-gc-count`) | The number of times GC has occurred for Gen 0 per update interval | .NET Core 3.1 |
+| Gen 0 Size (`gen-0-size`) | The number of bytes for Gen 0 GC | .NET Core 3.1 |
+| Gen 1 GC Count (`gen-1-gc-count`) | The number of times GC has occurred for Gen 1 per update interval | .NET Core 3.1 |
+| Gen 1 Size (`gen-1-size`) | The number of bytes for Gen 1 GC | .NET Core 3.1 |
+| Gen 2 GC Count (`gen-2-gc-count`) | The number of times GC has occurred for Gen 2 per update interval | .NET Core 3.1 |
+| Gen 2 Size (`gen-2-size`) | The number of bytes for Gen 2 GC | .NET Core 3.1 |
+| LOH Size (`loh-size`) | The number of bytes for the large object heap | .NET Core 3.1 |
+| POH Size (`poh-size`) | The number of bytes for the pinned object heap (available on .NET 5 and later versions) | .NET Core 3.1 |
+| GC Fragmentation (`gc-fragmentation`) | The GC Heap Fragmentation (available on .NET 5 and later versions) | .NET Core 3.1 |
+| Monitor Lock Contention Count (`monitor-lock-contention-count`) | The number of times there was contention when trying to take the monitor's lock, based on [System.Threading.Monitor.LockContentionCount](https://learn.microsoft.com/search/?terms=System.Threading.Monitor.LockContentionCount) | .NET Core 3.1 |
+| Number of Active Timers (`active-timer-count`) | The number of [System.Threading.Timer](https://learn.microsoft.com/search/?terms=System.Threading.Timer) instances that are currently active, based on [System.Threading.Timer.ActiveCount](https://learn.microsoft.com/search/?terms=System.Threading.Timer.ActiveCount) | .NET Core 3.1 |
+| Number of Assemblies Loaded (`assembly-count`) | The number of [System.Reflection.Assembly](https://learn.microsoft.com/search/?terms=System.Reflection.Assembly) instances loaded into a process at a point in time | .NET Core 3.1 |
+| ThreadPool Completed Work Item Count (`threadpool-completed-items-count`) | The number of work items that have been processed so far in the [System.Threading.ThreadPool](https://learn.microsoft.com/search/?terms=System.Threading.ThreadPool) | .NET Core 3.1 |
+| ThreadPool Queue Length (`threadpool-queue-length`) | The number of work items that are currently queued to be processed in the [System.Threading.ThreadPool](https://learn.microsoft.com/search/?terms=System.Threading.ThreadPool) | .NET Core 3.1 |
+| ThreadPool Thread Count (`threadpool-thread-count`) | The number of thread pool threads that currently exist in the [System.Threading.ThreadPool](https://learn.microsoft.com/search/?terms=System.Threading.ThreadPool), based on [System.Threading.ThreadPool.ThreadCount](https://learn.microsoft.com/search/?terms=System.Threading.ThreadPool.ThreadCount) | .NET Core 3.1 |
+| Working Set (`working-set`) | The number of megabytes of physical memory mapped to the process context at a point in time based on [System.Environment.WorkingSet](https://learn.microsoft.com/search/?terms=System.Environment.WorkingSet) | .NET Core 3.1 |
+| IL Bytes Jitted (`il-bytes-jitted`) | The total size of ILs that are JIT-compiled, in bytes | .NET 5 |
+| Methods Jitted Count (`methods-jitted-count`) | The number of methods that are JIT-compiled | .NET 5 |
+| GC Committed Bytes (`gc-committed`) | The number of bytes committed by the GC | .NET 6 |
+| Time paused by GC (`total-pause-time-by-gc`) | The total amount of time program execution was paused by the GC | .NET 8 |
+| Gen 0 GC Budget (`gen-0-gc-budget`) | The Gen 0 memory budget | .NET 8 |
+
+## Microsoft.AspNetCore.Hosting counters
+
+The following counters are published as part of [ASP.NET Core](https://learn.microsoft.com/aspnet/core) and are maintained in [_HostingEventSource.cs_](https://github.com/dotnet/aspnetcore/blob/main/src/Hosting/Hosting/src/Internal/HostingEventSource.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| Current Requests (`current-requests`) | The total number of requests that have started, but not yet stopped | .NET Core 3.1 |
+| Failed Requests (`failed-requests`) | The total number of failed requests that have occurred for the life of the app | .NET Core 3.1 |
+| Request Rate (`requests-per-second`) | The number of requests that occur per update interval | .NET Core 3.1 |
+| Total Requests (`total-requests`) | The total number of requests that have occurred for the life of the app | .NET Core 3.1 |
+
+## Microsoft.AspNetCore.Http.Connections counters
+
+The following counters are published as part of [ASP.NET Core SignalR](https://learn.microsoft.com/aspnet/core/signalr/introduction) and are maintained in [_HttpConnectionsEventSource.cs_](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/common/Http.Connections/src/Internal/HttpConnectionsEventSource.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| Average Connection Duration (`connections-duration`) | The average duration of a connection in milliseconds | .NET Core 3.1 |
+| Current Connections (`current-connections`) | The number of active connections that have started, but not yet stopped | .NET Core 3.1 |
+| Total Connections Started (`connections-started`) | The total number of connections that have started | .NET Core 3.1 |
+| Total Connections Stopped (`connections-stopped`) | The total number of connections that have stopped | .NET Core 3.1 |
+| Total Connections Timed Out (`connections-timed-out`) | The total number of connections that have timed out | .NET Core 3.1 |
+
+## Microsoft-AspNetCore-Server-Kestrel counters
+
+The following counters are published as part of the [ASP.NET Core Kestrel web server](https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel) and are maintained in [_KestrelEventSource.cs_](https://github.com/dotnet/aspnetcore/blob/main/src/Servers/Kestrel/Core/src/Internal/Infrastructure/KestrelEventSource.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| Connection Queue Length (`connection-queue-length`) | The current length of the connection queue | .NET 5 |
+| Connection Rate (`connections-per-second`) | The number of connections per update interval to the web server | .NET 5 |
+| Current Connections (`current-connections`) | The current number of active connections to the web server | .NET 5 |
+| Current TLS Handshakes (`current-tls-handshakes`) | The current number of TLS handshakes | .NET 5 |
+| Current Upgraded Requests (WebSockets) (`current-upgraded-requests`) | The current number of upgraded requests (WebSockets) | .NET 5 |
+| Failed TLS Handshakes (`failed-tls-handshakes`) | The total number of failed TLS handshakes | .NET 5 |
+| Request Queue Length (`request-queue-length`) | The current length of the request queue | .NET 5 |
+| TLS Handshake Rate (`tls-handshakes-per-second`) | The number of TLS handshakes per update interval | .NET 5 |
+| Total Connections (`total-connections`) | The total number of connections to the web server | .NET 5 |
+| Total TLS Handshakes (`total-tls-handshakes`) | The total number of TLS handshakes with the web server | .NET 5 |
+
+## System.Net.Http counters
+
+The following counters are published by the HTTP stack and are maintained in [_HttpTelemetry.AnyOS.cs_](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Http/src/System/Net/Http/HttpTelemetry.AnyOS.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| Requests Started (`requests-started`) | The number of requests started since the process started | .NET 5 |
+| Requests Started Rate (`requests-started-rate`) | The number of requests started per update interval | .NET 5 |
+| Requests Failed (`requests-failed`) | The number of failed requests since the process started | .NET 5 |
+| Requests Failed Rate (`requests-failed-rate`) | The number of failed requests per update interval | .NET 5 |
+| Current Requests (`current-requests`) | The current number of active HTTP requests that have started but not yet completed or failed | .NET 5 |
+| Current HTTP 1.1 Connections (`http11-connections-current-total`) | The current number of HTTP 1.1 connections that have started but not yet completed or failed | .NET 5 |
+| Current HTTP 2.0 Connections (`http20-connections-current-total`) | The current number of HTTP 2.0 connections that have started but not yet completed or failed | .NET 5 |
+| Current HTTP 3.0 Connections (`http30-connections-current-total`) | The current number of HTTP 3.0 connections that have started but not yet completed or failed | .NET 7 |
+| HTTP 1.1 Requests Queue Duration (`http11-requests-queue-duration`) | The average duration of the time HTTP 1.1 requests spent in the request queue | .NET 5 |
+| HTTP 2.0 Requests Queue Duration (`http20-requests-queue-duration`) | The average duration of the time HTTP 2.0 requests spent in the request queue | .NET 5 |
+| HTTP 3.0 Requests Queue Duration (`http30-requests-queue-duration`) | The average duration of the time HTTP 3.0 requests spent in the request queue | .NET 7 |
+
+## System.Net.NameResolution counters
+
+The following counters track metrics related to DNS lookups and are maintained in [_NameResolutionTelemetry.cs_](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.NameResolution/src/System/Net/NameResolutionTelemetry.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| DNS Lookups Requested (`dns-lookups-requested`) | The number of DNS lookups requested since the process started | .NET 5 |
+| Average DNS Lookup Duration (`dns-lookups-duration`) | The average time taken for a DNS lookup | .NET 5 |
+| Current DNS Lookups (`current-dns-lookups`) | The current number of DNS lookups that have started but not yet completed or failed | .NET 6 |
+
+## System.Net.Security counters
+
+The following counters track metrics related to the Transport Layer Security protocol and are maintained in [_NetSecurityTelemetry.cs_](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Security/src/System/Net/Security/NetSecurityTelemetry.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| TLS handshakes completed (`tls-handshake-rate`) | The number of TLS handshakes completed per update interval | .NET 5 |
+| Total TLS handshakes completed (`total-tls-handshakes`) | The total number of TLS handshakes completed since the process started | .NET 5 |
+| Current TLS handshakes (`current-tls-handshakes`) | The current number of TLS handshakes that have started but not yet completed | .NET 5 |
+| Total TLS handshakes failed (`failed-tls-handshakes`) | The total number of failed TLS handshakes since the process started | .NET 5 |
+| All TLS Sessions Active (`all-tls-sessions-open`) | The number of active TLS sessions of any version | .NET 5 |
+| TLS 1.0 Sessions Active (`tls10-sessions-open`) | The number of active TLS 1.0 sessions | .NET 5 |
+| TLS 1.1 Sessions Active (`tls11-sessions-open`) | The number of active TLS 1.1 sessions | .NET 5 |
+| TLS 1.2 Sessions Active (`tls12-sessions-open`) | The number of active TLS 1.2 sessions | .NET 5 |
+| TLS 1.3 Sessions Active (`tls13-sessions-open`) | The number of active TLS 1.3 sessions | .NET 5 |
+| TLS Handshake Duration (`all-tls-handshake-duration`) | The average duration of all TLS handshakes | .NET 5 |
+| TLS 1.0 Handshake Duration (`tls10-handshake-duration`) | The average duration of TLS 1.0 handshakes | .NET 5 |
+| TLS 1.1 Handshake Duration (`tls11-handshake-duration`) | The average duration of TLS 1.1 handshakes | .NET 5 |
+| TLS 1.2 Handshake Duration (`tls12-handshake-duration`) | The average duration of TLS 1.2 handshakes | .NET 5 |
+| TLS 1.3 Handshake Duration (`tls13-handshake-duration`) | The average duration of TLS 1.3 handshakes | .NET 5 |
+
+## System.Net.Sockets counters
+
+The following counters track metrics related to [System.Net.Sockets.Socket](https://learn.microsoft.com/search/?terms=System.Net.Sockets.Socket) and are maintained in [_SocketsTelemetry_](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Sockets/src/System/Net/Sockets/SocketsTelemetry.cs).
+
+| Counter | Description | First available in |
+| --- | --- | --- |
+| Outgoing Connections Established (`outgoing-connections-established`) | The total number of outgoing connections established since the process started | .NET 5 |
+| Incoming Connections Established (`incoming-connections-established`) | The total number of incoming connections established since the process started | .NET 5 |
+| Current Outgoing Connect Attempts (`current-outgoing-connect-attempts`) | The current number of outgoing connect attempts that have started but not yet completed or failed | .NET 7 |
+| Bytes Received (`bytes-received`) | The total number of bytes received since the process started | .NET 5 |
+| Bytes Sent (`bytes-sent`) | The total number of bytes sent since the process started | .NET 5 |
+| Datagrams Received (`datagrams-received`) | The total number of datagrams received since the process started | .NET 5 |
+| Datagrams Sent (`datagrams-sent`) | The total number of datagrams sent since the process started | .NET 5 |

@@ -1,0 +1,173 @@
+---
+title: "ALTER SERVER ROLE (Transact-SQL)"
+description: ALTER SERVER ROLE (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: 07/13/2023
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "ALTER_SERVER_ROLE_TSQL"
+  - "ALTER SERVER ROLE"
+helpviewer_keywords:
+  - "SERVER ROLE, ALTER"
+  - "ALTER SERVER ROLE statement"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =azuresqldb-current"
+---
+# ALTER SERVER ROLE (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+Changes the membership of a server role or changes name of a user-defined server role. Fixed server roles cannot be renamed.  
+  
+
+  
+## Syntax
+  
+```syntaxsql
+-- Syntax for SQL Server, Azure SQL Database, Azure SQL Managed Instance
+  
+ALTER SERVER ROLE server_role_name   
+{  
+    [ ADD MEMBER server_principal ]  
+  | [ DROP MEMBER server_principal ]  
+  | [ WITH NAME = new_server_role_name ]  
+} [ ; ]  
+```  
+  
+## Arguments
+
+#### *server_role_name*
+Is the name of the server role to be changed.  
+  
+#### ADD MEMBER *server_principal*
+Adds the specified server principal to the server role. *server_principal* can be a login or a user-defined server role. *server_principal* cannot be a fixed server role, a database role, or sa.  
+  
+#### DROP MEMBER *server_principal*
+Removes the specified server principal from the server role. *server_principal* can be a login or a user-defined server role. *server_principal* cannot be a fixed server role, a database role, or sa.  
+  
+#### WITH NAME =_new_server_role_name_
+Specifies the new name of the user-defined server role. This name cannot already exist in the server.  
+  
+## Remarks
+Changing the name of a user-defined server role does not change ID number, owner, or permissions of the role.  
+  
+For changing role membership, `ALTER SERVER ROLE` replaces sp_addsrvrolemember and sp_dropsrvrolemember. These stored procedures are deprecated.  
+  
+You can view server roles by querying the `sys.server_role_members` and `sys.server_principals` catalog views.  
+  
+To change the owner of a user-defined server role, use [ALTER AUTHORIZATION (Transact-SQL)](alter-authorization-transact-sql.md).  
+
+In  Azure SQL Database 
+, `ALTER SERVER ROLE` must be run in the `master` database.
+  
+## Permissions
+Requires `ALTER ANY SERVER ROLE` permission on the server to change the name of a user-defined server role.  
+  
+**Fixed server roles**  
+  
+To add a member to a fixed server role, you must be a member of that fixed server role, or be a member of the `sysadmin` fixed server role.  
+  
+> **Note:**  
+>  The `CONTROL SERVER` and `ALTER ANY SERVER ROLE` permissions are not sufficient to execute `ALTER SERVER ROLE` for a fixed server role, and `ALTER` permission cannot be granted on a fixed server role.  
+  
+**User-defined server roles**  
+  
+To add a member to a user-defined server role, you must be a member of the `sysadmin` fixed server role or have `CONTROL SERVER` or `ALTER ANY SERVER ROLE` permission. Or you must have `ALTER` permission on that role.  
+  
+> **Note:**  
+>  Unlike fixed server roles, members of a user-defined server role do not inherently have permission to add members to that same role.  
+  
+## Examples
+  
+### A. Change the name of a server role
+The following example creates a server role named `Product`, and then changes the name of server role to `Production`.  
+  
+```sql
+CREATE SERVER ROLE Product ;  
+ALTER SERVER ROLE Product WITH NAME = Production ;  
+GO  
+```  
+  
+### B. Add a domain account to a server role
+The following example adds a domain account named `adventure-works\roberto0` to the user-defined server role named `Production`.  
+  
+```sql
+ALTER SERVER ROLE Production ADD MEMBER [adventure-works\roberto0] ;  
+```  
+  
+### C. Add a SQL Server login to a server role
+The following example adds a  SQL Server 
+ login named `Ted` to the `diskadmin` fixed server role.  
+  
+```sql
+ALTER SERVER ROLE diskadmin ADD MEMBER Ted ;  
+GO  
+```  
+  
+### D. Remove a domain account from a server role
+The following example removes a domain account named `adventure-works\roberto0` from the user-defined server role named `Production`.  
+  
+```sql
+ALTER SERVER ROLE Production DROP MEMBER [adventure-works\roberto0] ;  
+```  
+  
+### E. Remove a SQL Server login from a server role
+The following example removes the  SQL Server 
+ login `Ted` from the `diskadmin` fixed server role.  
+  
+```sql
+ALTER SERVER ROLE Production DROP MEMBER Ted ;  
+GO  
+```  
+  
+### F. Grant a login the permission to add logins to a user-defined server role
+The following example allows `Ted` to add other logins to the user-defined server role named `Production`.  
+  
+```sql
+GRANT ALTER ON SERVER ROLE::Production TO Ted ;  
+GO  
+```  
+  
+### G. View role membership
+To view role membership, use the **Server Role (Members)** page in  SQL Server Management Studio 
+ or execute the following query:  
+  
+```sql
+SELECT SRM.role_principal_id, SP.name AS Role_Name,   
+SRM.member_principal_id, SP2.name  AS Member_Name  
+FROM sys.server_role_members AS SRM  
+JOIN sys.server_principals AS SP  
+    ON SRM.Role_principal_id = SP.principal_id  
+JOIN sys.server_principals AS SP2   
+    ON SRM.member_principal_id = SP2.principal_id  
+ORDER BY  SP.name,  SP2.name  
+```  
+  
+## Related content
+
+- [CREATE SERVER ROLE (Transact-SQL)](create-server-role-transact-sql.md)
+- [DROP SERVER ROLE (Transact-SQL)](drop-server-role-transact-sql.md)
+- [CREATE ROLE (Transact-SQL)](create-role-transact-sql.md)
+- [ALTER ROLE (Transact-SQL)](alter-role-transact-sql.md)
+- [DROP ROLE (Transact-SQL)](drop-role-transact-sql.md)
+- [Security stored procedures (Transact-SQL)](../../relational-databases/system-stored-procedures/security-stored-procedures-transact-sql.md)
+- [Security Functions (Transact-SQL)](../functions/security-functions-transact-sql.md)
+- [Principals (Database Engine)](../../relational-databases/security/authentication-access/principals-database-engine.md)
+- [sys.server_role_members (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-role-members-transact-sql.md)
+- [sys.server_principals (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-principals-transact-sql.md)

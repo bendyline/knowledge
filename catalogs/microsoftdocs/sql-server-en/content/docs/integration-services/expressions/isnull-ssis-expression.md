@@ -1,0 +1,62 @@
+---
+title: "ISNULL (SSIS Expression)"
+description: "ISNULL (SSIS Expression)"
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "null values [Integration Services]"
+  - "ISNULL function"
+---
+# ISNULL (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns a Boolean result based on whether an expression is null.  
+  
+## Syntax  
+  
+```  
+  
+ISNULL(expression)  
+```  
+  
+## Arguments  
+ *expression*  
+ Is a valid expression of any data type.  
+  
+## Result Types  
+ DT_BOOL  
+  
+## Expression Examples  
+ This example returns TRUE if the **DiscontinuedDate** column contains a null value.  
+  
+```  
+ISNULL(DiscontinuedDate)  
+```  
+  
+ This example returns "Unknown last name" if the value in the **LastName** column is null, otherwise it returns the value in **LastName**.  
+  
+```  
+ISNULL(LastName)? "Unknown last name":LastName  
+```  
+  
+ This example always returns TRUE if the **DaysToManufacture** column is null, regardless of the value of the variable **AddDays**.  
+  
+```  
+ISNULL(DaysToManufacture + @AddDays)  
+```  
+  
+## Related content
+
+- [Functions (SSIS Expression)](functions-ssis-expression.md)
+- [COALESCE (Transact-SQL)](../../t-sql/language-elements/coalesce-transact-sql.md)

@@ -1,0 +1,98 @@
+---
+title: "DATEPART (SSIS Expression)"
+description: "DATEPART (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "dates [Integration Services], DATEPART"
+  - "DATEPART function"
+---
+# DATEPART (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns an integer representing a datepart of a date.  
+  
+## Syntax  
+  
+```  
+  
+DATEPART(datepart, date)  
+```  
+  
+## Arguments  
+ *datepart*  
+ Is the parameter that specifies for which part of the date to return a new value.  
+  
+ *date*  
+ Is an expression that returns a valid date or a string in date format.  
+  
+## Result Types  
+ DT_I4  
+  
+## Remarks  
+ DATEPART returns a null result if the argument is null.  
+  
+ A date literal must be explicitly cast to one of the date data types. For more information, see [Integration Services Data Types](../data-flow/integration-services-data-types.md).  
+  
+ The following table lists the dateparts and abbreviations recognized by the expression evaluator. Datepart names are not case sensitive.  
+  
+| Datepart | Abbreviations |
+| --- | --- |
+| Year | yy, yyyy |
+| Quarter | qq, q |
+| Month | mm, m |
+| Dayofyear | dy, y |
+| Day | dd, d |
+| Week | wk, ww |
+| Weekday | dw |
+| Hour | Hh, hh, HH |
+| Minute | mi, n |
+| Second | ss, s |
+| Millisecond | Ms |
+  
+## SSIS Expression Examples  
+ This example returns the integer that represents the month in a date literal. If the date is in mm/dd/yyyy" format, this example returns 11.  
+  
+```  
+DATEPART("month", (DT_DBTIMESTAMP)"11/04/2002")  
+```  
+  
+ This example returns the integer that represents the day in the **ModifiedDate** column.  
+  
+```  
+DATEPART("dd", ModifiedDate)  
+```  
+  
+ This example returns the integer that represents the year of the current date.  
+  
+```  
+DATEPART("yy",GETDATE())  
+```  
+  
+ These examples all return 19. 
+  
+```  
+DATEPART("HH", (DT_DATE) "2020-09-02 19:24" )
+DATEPART("hh", (DT_DATE) "2020-09-02 19:24" )
+DATEPART("Hh", (DT_DATE) "2020-09-02 19:24" )
+```  
+  
+## Related content
+
+- [DATEADD (SSIS Expression)](dateadd-ssis-expression.md)
+- [DATEDIFF (SSIS Expression)](datediff-ssis-expression.md)
+- [DAY (SSIS Expression)](day-ssis-expression.md)
+- [MONTH (SSIS Expression)](month-ssis-expression.md)
+- [YEAR (SSIS Expression)](year-ssis-expression.md)
+- [Functions (SSIS Expression)](functions-ssis-expression.md)

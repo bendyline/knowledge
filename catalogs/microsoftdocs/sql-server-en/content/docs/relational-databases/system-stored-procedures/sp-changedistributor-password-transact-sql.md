@@ -1,0 +1,70 @@
+---
+title: "sys.sp_changedistributor_password (Transact-SQL)"
+description: sp_changedistributor_password changes the password for a Distributor.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "sp_changedistributor_password"
+  - "sp_changedistributor_password_TSQL"
+helpviewer_keywords:
+  - "sp_changedistributor_password"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_changedistributor_password (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Changes the password for a Distributor. This stored procedure is executed at the Distributor on any database. If this is a remote Distributor, then it needs to be run on all the Publisher servers that are using this Distributor. If the distribution or Publisher database is in an availability group, then it needs to be run on all the Distributor and Publisher nodes. It doesn't matter if the node is primary or secondary.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_changedistributor_password [ @password = ] N'password'
+[ ; ]
+```
+
+## Arguments
+
+#### [ @password = ] N'*password*'
+
+The new password. *@password* is **sysname**, with no default. If the Distributor is local, the password of the `distributor_admin` system login is changed.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_changedistributor_password` is used in all types of replication.
+
+## Examples
+
+[language="sql" source="../replication/codesnippet/tsql/sp-changedistributor-pas_1.sql"::: (complete source file; reference: ../replication/codesnippet/tsql/sp-changedistributor-pas_1.sql)](../../../_code/docs/relational-databases/replication/codesnippet/tsql/sp-changedistributor-pas_1.sql.md)
+
+## Permissions
+
+Only members of the **sysadmin** fixed server role can execute `sp_changedistributor_password`.
+
+## Related content
+
+- [View and modify replication security settings](../replication/security/view-and-modify-replication-security-settings.md)
+- [Secure the Distributor](../replication/security/secure-the-distributor.md)
+- [sys.sp_adddistributor (Transact-SQL)](sp-adddistributor-transact-sql.md)
+- [Replication stored procedures (Transact-SQL)](replication-stored-procedures-transact-sql.md)

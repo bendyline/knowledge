@@ -1,0 +1,232 @@
+---
+title: Get Started with Performance Features of SQL Server on Linux
+description: This article provides an introduction of SQL Server performance features for Linux users who are new to SQL Server. Many of these examples work on all platforms, but the context of this article is Linux.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/03/2025
+ms.service: sql
+ms.subservice: linux
+ms.topic: get-started
+ms.custom:
+  - intro-get-started
+  - linux-related-content
+---
+# Walkthrough for the performance features of SQL Server on Linux
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Linux
+
+
+If you're a Linux user who is new to SQL Server, the following tasks walk you through some of the performance features. These aren't unique or specific to Linux, but it helps to give you an idea of areas to investigate further. In each example, a link is provided to in-depth documentation for that area.
+
+> **Note:**  
+> The following examples use the `AdventureWorks2022` sample database. For instructions on how to obtain and install this sample database, see [Migrate a SQL Server database from Windows to Linux using backup and restore](migrate/restore-database.md).
+
+## Create a columnstore index
+
+A [columnstore index](../relational-databases/indexes/columnstore-indexes-overview.md) is a technology for storing and querying large stores of data in a columnar data format, called a columnstore.
+
+1. Add a columnstore index to the `SalesOrderDetail` table by executing the following Transact-SQL (T-SQL) commands:
+
+   ```sql
+   CREATE NONCLUSTERED COLUMNSTORE INDEX [IX_SalesOrderDetail_ColumnStore]
+       ON Sales.SalesOrderDetail(UnitPrice, OrderQty, ProductID);
+   GO
+   ```
+
+1. Execute the following query that uses the columnstore index to scan the table:
+
+   ```sql
+   SELECT ProductID,
+          SUM(UnitPrice) AS SumUnitPrice,
+          AVG(UnitPrice) AS AvgUnitPrice,
+          SUM(OrderQty) AS SumOrderQty,
+          AVG(OrderQty) AS AvgOrderQty
+   FROM Sales.SalesOrderDetail
+   GROUP BY ProductID
+   ORDER BY ProductID;
+   ```
+
+1. Verify that the columnstore index was used by looking up the `object_id` for the columnstore index and confirming that it appears in the usage stats for the `SalesOrderDetail` table:
+
+   ```sql
+   SELECT *
+   FROM sys.indexes
+   WHERE name = 'IX_SalesOrderDetail_ColumnStore';
+   GO
+
+   SELECT *
+   FROM sys.dm_db_index_usage_stats
+   WHERE database_id = DB_ID('AdventureWorks2022')
+         AND object_id = OBJECT_ID('AdventureWorks2022.Sales.SalesOrderDetail');
+   ```
+
+## Use In-Memory OLTP
+
+SQL Server provides [In-Memory OLTP](../relational-databases/in-memory-oltp/overview-and-usage-scenarios.md) features that can greatly improve the performance of application systems. This section walks you through the steps to create a memory-optimized table stored in memory and a natively compiled stored procedure that can access the table.
+
+### Configure database for In-Memory OLTP
+
+1. You should set the database to a compatibility level of at least 130 to use In-Memory OLTP. Use the following query to check the current compatibility level of `AdventureWorks2022`:
+
+   ```sql
+   USE AdventureWorks2022;
+   GO
+
+   SELECT d.compatibility_level
+   FROM sys.databases AS d
+   WHERE d.name = DB_NAME();
+   GO
+   ```
+
+   If necessary, update the level to 130:
+
+   ```sql
+   ALTER DATABASE CURRENT
+       SET COMPATIBILITY_LEVEL = 130;
+   GO
+   ```
+
+1. When a transaction involves both a disk-based table and a memory-optimized table, it's essential that the memory-optimized portion of the transaction operates at the transaction isolation level named SNAPSHOT. To reliably enforce this level for memory-optimized tables in a cross-container transaction, execute the following:
+
+   ```sql
+   ALTER DATABASE CURRENT
+       SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;
+   GO
+   ```
+
+1. Before you can create a memory-optimized table, you must first create a memory-optimized filegroup, and a container for data files:
+
+   ```sql
+   ALTER DATABASE AdventureWorks2022
+       ADD FILEGROUP AdventureWorks_mod CONTAINS MEMORY_OPTIMIZED_DATA;
+   GO
+
+   ALTER DATABASE AdventureWorks2022
+       ADD FILE (NAME = 'AdventureWorks_mod', FILENAME = '/var/opt/mssql/data/AdventureWorks_mod') TO FILEGROUP AdventureWorks_mod;
+   GO
+   ```
+
+### Create a memory-optimized table
+
+The primary store for memory-optimized tables is main memory and so unlike disk-based tables, data doesn't need to be read in from disk into memory buffers. To create a memory-optimized table, use the MEMORY_OPTIMIZED = ON clause.
+
+1. Execute the following query to create the memory-optimized table dbo.ShoppingCart. As a default, the data is persisted on disk for durability purposes (DURABILITY can also be set to persist the schema only).
+
+   ```sql
+   CREATE TABLE dbo.ShoppingCart
+   (
+       ShoppingCartId INT IDENTITY (1, 1) PRIMARY KEY NONCLUSTERED,
+       UserId INT NOT NULL INDEX ix_UserId NONCLUSTERED HASH WITH (BUCKET_COUNT = 1000000),
+       CreatedDate DATETIME2 NOT NULL,
+       TotalPrice MONEY
+   )
+   WITH (MEMORY_OPTIMIZED = ON);
+   GO
+   ```
+
+1. Insert some records into the table:
+
+   ```sql
+   INSERT dbo.ShoppingCart
+   VALUES (8798, SYSDATETIME(), NULL);
+
+   INSERT dbo.ShoppingCart
+   VALUES (23, SYSDATETIME(), 45.4);
+
+   INSERT dbo.ShoppingCart
+   VALUES (80, SYSDATETIME(), NULL);
+
+   INSERT dbo.ShoppingCart
+   VALUES (342, SYSDATETIME(), 65.4);
+   ```
+
+### Natively compiled stored procedures
+
+SQL Server supports natively compiled stored procedures that access memory-optimized tables. The T-SQL statements are compiled to machine code and stored as native DLLs, enabling faster data access and more efficient query execution than traditional T-SQL. Stored procedures that are marked with NATIVE_COMPILATION are natively compiled.
+
+1. Execute the following script to create a natively compiled stored procedure that inserts a large number of records into the ShoppingCart table:
+
+   ```sql
+   CREATE PROCEDURE dbo.usp_InsertSampleCarts
+   @InsertCount INT
+   WITH NATIVE_COMPILATION, SCHEMABINDING
+   AS
+   BEGIN ATOMIC
+   WITH (TRANSACTION ISOLATION LEVEL = SNAPSHOT, LANGUAGE = N'us_english')
+       DECLARE @i AS INT = 0;
+       WHILE @i < @InsertCount
+           BEGIN
+               INSERT INTO dbo.ShoppingCart
+               VALUES (1, SYSDATETIME(), NULL);
+               SET @i += 1;
+           END
+   END;
+   ```
+
+1. Insert 1,000,000 rows:
+
+   ```sql
+   EXECUTE usp_InsertSampleCarts 1000000;
+   ```
+
+1. Verify the rows have been inserted:
+
+   ```sql
+   SELECT COUNT(*)
+   FROM dbo.ShoppingCart;
+   ```
+
+## Use Query Store
+
+[Query Store](../relational-databases/performance/monitoring-performance-by-using-the-query-store.md) collects detailed performance information about queries, execution plans, and runtime statistics.
+
+Before  SQL Server 2022 (16.x) 
+, Query Store isn't enabled by default, and can be enabled with ALTER DATABASE:
+
+```sql
+ALTER DATABASE AdventureWorks2022
+    SET QUERY_STORE = ON;
+```
+
+Run the following query to return information about queries and plans in the Query Store:
+
+```sql
+SELECT Txt.query_text_id,
+       Txt.query_sql_text,
+       Pl.plan_id,
+       Qry.*
+FROM sys.query_store_plan AS Pl
+     INNER JOIN sys.query_store_query AS Qry
+         ON Pl.query_id = Qry.query_id
+     INNER JOIN sys.query_store_query_text AS Txt
+         ON Qry.query_text_id = Txt.query_text_id;
+```
+
+## Query dynamic management views
+
+[Dynamic management views and functions](../relational-databases/system-dynamic-management-objects/system-dynamic-management-objects.md) return server state information that can be used to monitor the health of a server instance, diagnose problems, and tune performance.
+
+To query the [sys.dm_os_wait_stats](../relational-databases/system-dynamic-management-objects/sys-dm-os-wait-stats-transact-sql.md) dynamic management view:
+
+```sql
+SELECT wait_type,
+       wait_time_ms
+FROM sys.dm_os_wait_stats;
+```
+
+## Related content
+
+- [Survey of Initial Areas in In-Memory OLTP](../relational-databases/in-memory-oltp/survey-of-initial-areas-in-in-memory-oltp.md)
+- [Plan your adoption of In-Memory OLTP Features in SQL Server](../relational-databases/in-memory-oltp/plan-your-adoption-of-in-memory-oltp-features-in-sql-server.md)
+- [Faster temp table and table variable by using memory optimization](../relational-databases/in-memory-oltp/faster-temp-table-and-table-variable-by-using-memory-optimization.md)
+- [Monitor and troubleshoot memory usage with in-memory OLTP](../relational-databases/in-memory-oltp/monitor-and-troubleshoot-memory-usage.md)
+- [In-Memory OLTP overview and usage scenarios](../relational-databases/in-memory-oltp/overview-and-usage-scenarios.md)
+- [Performance monitoring and tuning tools](../relational-databases/performance/performance-monitoring-and-tuning-tools.md)
+- [Performance best practices: Storage, kernel, CPU, and network for SQL Server on Linux](configure/performance-best-practices-operating-system.md)
+- [Performance best practices: SQL Server memory on Linux](configure/performance-best-practices-sql-server-memory.md)
+- [Quickstart: Install SQL Server and create a database on Red Hat Enterprise Linux](install-upgrade/quickstart-install-red-hat.md)

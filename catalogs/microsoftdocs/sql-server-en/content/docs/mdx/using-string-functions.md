@@ -1,0 +1,78 @@
+---
+title: "Using String Functions"
+description: "Using String Functions"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Using String Functions
+
+
+  You can use string functions on nearly every object in Multidimensional Expressions (MDX). In stored procedures, you use string functions primarily to convert the object to a string representation. You also use string functions to evaluate a string expression over an object in order to return a value.  
+  
+ The most widely used string functions are **Name** and **Uniquename**. Respectively, these functions return the name and unique name of an object. Mostly, they are used when debugging calculations to discover what member a function is returning.  
+  
+## Examples  
+ The following example queries show how to use these functions:  
+  
+```  
+WITH  
+//Returns the name of the current Product on rows  
+MEMBER [Measures].[ProductName] AS [Product].[Product].CurrentMember.Name  
+//Returns the uniquename of the current Product on rows  
+MEMBER [Measures].[ProductUniqueName] AS [Product].[Product].CurrentMember.Uniquename  
+//Returns the name of the Product dimension  
+MEMBER [Measures].[ProductDimensionName] AS [Product].Name  
+SELECT  {[Measures].[ProductName],[Measures].[ProductUniqueName],[Measures].[ProductDimensionName]}  
+ON COLUMNS,  
+[Product].[Product].MEMBERS  ON ROWS  
+FROM [Adventure Works]  
+```  
+  
+ The **Generate** function can be used to execute a string function on every member of a set and concatenate the results. This also can be useful when debugging calculations as it allows you to visualize the contents of a set. The following example shows how to use it in this way:  
+  
+```  
+WITH  
+//Returns the names of the current Product and its ancestors up to the All Member  
+MEMBER [Measures].[AncestorNames] AS  
+GENERATE(  
+ASCENDANTS([Product].[Product Categories].CurrentMember)  
+, [Product].[Product Categories].CurrentMember.Name, ", ")  
+SELECT  
+{[Measures].[AncestorNames]}  
+ON COLUMNS,  
+[Product].[Product Categories].MEMBERS  ON ROWS  
+FROM [Adventure Works]  
+```  
+  
+ Another group of widely used string functions are those that enable you to cast a string containing the uniquename of an object or an expression which resolves to the object into the object itself. The following example query demonstrates how the **StrToMember** and **StrToSet** functions do this:  
+  
+```  
+SELECT  
+{StrToMember("[Measures].[Inter" + "net Sales Amount]")}  
+ON COLUMNS,  
+StrToSet("{  
+[Product].[Product Categories].[Category].&[3],  
+[Product].[Product Categories].[Product].&[477],  
+[Product].[Product Categories].[Product].&[788],  
+[Product].[Product Categories].[Product].&[708],  
+[Product].[Product Categories].[Product].&[711]  
+}")  
+ON ROWS  
+FROM [Adventure Works]  
+```  
+  
+> **Note:**  
+>  The **StrToMember** and **StrToSet** functions should be used with caution. They can lead to poor query performance if they are used within calculation definitions.  
+  
+## Related content
+
+- [Generate (MDX)](generate-mdx.md)
+- [Name (MDX)](name-mdx.md)
+- [UniqueName (MDX)](uniquename-mdx.md)
+- [Functions (MDX Syntax)](functions-mdx-syntax.md)
+- [Using Stored Procedures (MDX)](using-stored-procedures-mdx.md)
+- [StrToMember (MDX)](strtomember-mdx.md)
+- [StrToSet (MDX)](strtoset-mdx.md)

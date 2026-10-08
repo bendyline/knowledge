@@ -1,0 +1,46 @@
+---
+title: "MSSQLSERVER_1401"
+description: "MSSQLSERVER_1401"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "1401 (Database Engine error)"
+---
+# MSSQLSERVER_1401
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 1401 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | DBM_MASTERSTARTUP |
+| Message Text | Startup of the database-mirroring master thread routine failed for the following reason: %ls. Correct the cause of this error, and restart the SQL Server service. |
+  
+## Explanation  
+Startup of the mirroring control thread failed.  
+  
+## User Action  
+In the  SQL Server 
+ error log, look for the associated error that preceded this message. Correct the cause of this error, and then restart the  SQL Server 
+ service (MSSQLSERVER).  
+  
+## Related content
+
+- [Start, stop, pause, resume, and restart SQL Server services](../../database-engine/configure-windows/start-stop-pause-resume-restart-sql-server-services.md)

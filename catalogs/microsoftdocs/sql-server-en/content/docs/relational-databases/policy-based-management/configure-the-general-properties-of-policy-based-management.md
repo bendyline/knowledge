@@ -1,0 +1,82 @@
+---
+title: "Configure general properties of Policy-Based Management"
+description: Learn how to configure the properties for Policy-Based Management using SQL Server Management Studio (SSMS) or Transact-SQL (T-SQL).
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: security
+ms.topic: how-to
+f1_keywords:
+  - "sql13.swb.dmf.PolicyManagement.f1"
+helpviewer_keywords:
+  - "Policy-Based Management, configure properties"
+---
+# Configure the General Properties of Policy-Based Management
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to configure the properties for Policy-Based Management in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the PolicyAdministratorRole fixed database role.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To configure Policy-Based Management  
+  
+1.  In **Object Explorer**, click the plus sign to expand the server where you want to configure Policy-Based Management properties.  
+  
+2.  Click the plus sign to expand the **Management** folder.  
+  
+3.  Right-click **Policy Management** and select **Properties**.  
+  
+     The following options are available in **Policy Management Properties** dialog box.  
+  
+     **Enabled**  
+     Specifies whether Policy-Based Management is enabled.  
+  
+     **HistoryRetentionInDays**  
+     Specifies the number of days that policy evaluation history should be retained. If this value is 0 (the default), the history will not be automatically removed.  
+  
+     **LogOnSuccess**  
+     Specifies whether Policy-Based Management logs successful policy evaluations.  
+  
+    -   When this value is false (the default), only failed policy evaluations are logged.  
+  
+    -   When this value is true, both successful and failed policy evaluations are logged.  
+  
+4.  When finished, click **OK**.  
+
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To configure Policy-Based Management  
+  
+1.  In **Object Explorer**, connect to an instance of  Database Engine 
+.  
+  
+2.  On the Standard bar, click **New Query**.  
+  
+3.  Copy and paste the following example into the query window and click **Execute**.  
+  
+    ```  
+    -- enables Policy-Based Management   
+    USE msdb;  
+    GO  
+    EXEC dbo.sp_syspolicy_configure   
+         @name = N'Enabled',   
+         @value = 1;  
+    GO  
+    ```  
+  
+ For more information, see [sp_syspolicy_configure (Transact-SQL)](../system-stored-procedures/sp-syspolicy-configure-transact-sql.md).

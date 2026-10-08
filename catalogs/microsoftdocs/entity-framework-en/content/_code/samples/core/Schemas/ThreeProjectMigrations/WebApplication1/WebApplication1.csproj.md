@@ -1,0 +1,26 @@
+# Source code: samples/core/Schemas/ThreeProjectMigrations/WebApplication1/WebApplication1.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <UserSecretsId>aspnet-WebApplication1-1FCCDCDB-A580-40BC-B4DC-17498EB689D9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.7.26381.103" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebApplication1.Data\WebApplication1.Data.csproj" />
+    <ProjectReference Include="..\WebApplication1.Migrations\WebApplication1.Migrations.csproj" />
+  </ItemGroup>
+
+</Project>
+
+```

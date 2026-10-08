@@ -1,0 +1,82 @@
+---
+title: Hierarchy Member Permissions
+description: Hierarchy Member Permissions (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "members [Master Data Services], permissions"
+  - "permissions [Master Data Services], members"
+---
+# Hierarchy Member Permissions (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Hierarchy member permissions are optional and should be used only when you want a user to have limited access to specific members. If you do not assign permissions on the **Hierarchy Members** tab, then the user's permissions are based solely on the permissions assigned on the **Models** tab.  
+  
+ Hierarchy member permissions are assigned in the  Master Data Manager 
+ user interface (UI), in the **User and Group Permissions** functional area on the **Hierarchy Members** tab. These permissions determine which members a user can access in the **Explorer** functional area of the UI.  
+  
+ On the **Hierarchy Members** tab, each hierarchy is represented as a tree structure. When you assign permission to a node in the tree, all children inherit that permission unless permission is explicitly assigned at a lower level.  
+  
+> **Note:**  
+>  When you assign permission to a node in a hierarchy, all members in other nodes at the same level or higher are implicitly denied.  
+  
+ In **Explorer**, the member permissions are applied everywhere the member is displayed. For example, a member with **Read** permission can read any entities, hierarchies, and collections to which it belongs.  
+  
+ Hierarchy member permissions apply to the model version you assign them to, and to any future copies of the version. They do not apply to versions earlier than the one you assign them to.  
+  
+| Permission | Description |
+| --- | --- |
+| **Read** | The members are displayed.<br /><br /> <br /><br /> Note: If you assign only **Read** permission to **Root**, the members under **Root** are read-only; however, in explicit hierarchies and collections, the user can move members to **Root** and can add new members to **Root**. |
+| **Create** | Create permission is not available in hierarchy member permission. |
+| **Update** | The members are displayed and the user can change them. The user can also move the members in any explicit hierarchies or collections the members belong to. |
+| **Delete** | The members are displayed, and the user can delete them. |
+| **Deny** | The members are not displayed. |
+  
+ On the **Hierarchy Members** tab, the permissions you assign do not take effect immediately. The frequency that the permissions are applied depends on the **Member security processing interval setting** in the System Settings table in the  Master Data Services 
+ database. You can apply member permissions immediately by following the steps in [Immediately Apply Member Permissions (Master Data Services)](immediately-apply-member-permissions-master-data-services.md).  
+  
+> **Note:**  
+>  You cannot assign hierarchy member permissions to recursive hierarchies, derived hierarchies with explicit caps, and derived hierarchies with hidden levels.  
+  
+## Possible Overlapping Permissions  
+ When assigning permission to members, you may have to resolve overlapping permissions.  
+  
+### When a member belongs to multiple hierarchies  
+ Two or more hierarchies can contain the same member.  
+  
+-   If one hierarchy node is assigned **Update** permission and another is assigned **Read**, then the members in the node are **Read**.  
+  
+-   If one hierarchy node is assigned **Update** and **Create** permissions and another is assigned **Update** and **Delete** permissions, then the members in the node can be updated.  
+  
+-   If one hierarchy node is assigned any combination of **Create**/**Read**/**Update**/**Delete** permissions and another node is assigned **Deny** permissions, access to the members in the node is denied.  
+  
+## Related content
+
+- [Security Improvements](https://learn.microsoft.com/archive/blogs/e7/improvements-to-autoplay)
+- [Assign Hierarchy Member Permissions (Master Data Services)](assign-hierarchy-member-permissions-master-data-services.md)
+- [How Permissions Are Determined (Master Data Services)](how-permissions-are-determined-master-data-services.md)
+- [Members (Master Data Services)](members-master-data-services.md)
+- [Hierarchies (Master Data Services)](hierarchies-master-data-services.md)
+- [Immediately apply member permissions (Master Data Services)](immediately-apply-member-permissions-master-data-services.md)

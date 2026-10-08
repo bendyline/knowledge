@@ -1,0 +1,64 @@
+---
+title: "New Agent Profile"
+description: "New Agent Profile"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.profiles.newperfprofile.f1"
+helpviewer_keywords:
+  - "New Agent Profile dialog box"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# New Agent Profile
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  Use the **New Agent Profile** dialog box to create a new profile. New profiles are always based on existing profiles, but they can be modified to meet application requirements. After a profile has been created, it can be applied to existing and future agent jobs in the **Agent Profiles** dialog box. Agent parameter values can be edited in the \<**AgentProfileName> Properties** dialog box.  
+  
+## Options  
+ **Name**  
+ Enter a name for the profile.  
+  
+ **Description**  
+ Enter a description for the profile.  
+  
+ **Parameter**  
+ The agent parameters included in the profile. The profile on which the new profile is based does not necessarily specify a value for each parameter. To see all parameters that are valid for a given agent, clear the **Show only parameters used in this profile** check box. For descriptions of each parameter, see:  
+  
+-   [Replication Snapshot Agent](agents/replication-snapshot-agent.md)  
+  
+-   [Replication Log Reader Agent](agents/replication-log-reader-agent.md)  
+  
+-   [Replication Distribution Agent](agents/replication-distribution-agent.md)  
+  
+-   [Replication Merge Agent](agents/replication-merge-agent.md)  
+  
+-   [Replication Queue Reader Agent](agents/replication-queue-reader-agent.md)  
+  
+ **Default Value**  
+ The default value for each agent parameter.  
+  
+ **Value**  
+ The value specified for the parameter in the profile on which the new profile is based. Edit this field for any parameter values you want to change.  
+  
+ **Show only parameters used in this profile**  
+ Clear to show all valid parameters for a given agent.  
+  
+## Related content
+
+- [Work with Replication Agent Profiles](agents/work-with-replication-agent-profiles.md)
+- [Replication Agents Overview](agents/replication-agents-overview.md)
+- [Replication Agent Profiles](agents/replication-agent-profiles.md)

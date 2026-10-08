@@ -1,0 +1,39 @@
+---
+title: "addConnectionEventListener Method (SQLServerPooledConnection)"
+description: "addConnectionEventListener Method (SQLServerPooledConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPooledConnection.addConnectionEventListener"
+apitype: "Assembly"
+---
+# addConnectionEventListener Method (SQLServerPooledConnection)
+
+
+  Registers the given event listener so that it will be notified when an event occurs on this [SQLServerPooledConnection](sqlserverpooledconnection-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public void addConnectionEventListener(javax.sql.ConnectionEventListener listener)  
+```  
+  
+#### Parameters  
+ *listener*  
+  
+ A ConnectionEventListener object.  
+  
+## Remarks  
+ This addConnectionEventListener method is specified by the addConnectionEventListener method in the javax.sql.PooledConnection interface.  
+  
+## Related content
+
+- [SQLServerPooledConnection Methods](sqlserverpooledconnection-methods.md)
+- [SQLServerPooledConnection Members](sqlserverpooledconnection-members.md)
+- [SQLServerPooledConnection Class](sqlserverpooledconnection-class.md)

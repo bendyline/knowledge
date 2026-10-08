@@ -1,0 +1,19 @@
+---
+author: simplywilson
+ms.topic: include
+ms.date: 10/20/2023
+ms.author: tinglee
+---
+<!--
+    Separate the generic "Get started" paragraph from each connector-* article in azure-docs-pr/ to ease future central update.
+-->
+
+To perform the copy activity with a pipeline, you can use one of the following tools or SDKs:
+
+- [Copy Data tool](../quickstart-hello-world-copy-data-tool.md)
+- [Azure portal](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/data-factory/quickstart-create-data-factory-portal.md)
+- [.NET SDK](../quickstart-create-data-factory-dot-net.md)
+- [Python SDK](../quickstart-create-data-factory-python.md)
+- [Azure PowerShell](../quickstart-create-data-factory-powershell.md)
+- [REST API](../quickstart-create-data-factory-rest-api.md)
+- [Azure Resource Manager template](../quickstart-create-data-factory-resource-manager-template.md)

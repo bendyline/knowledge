@@ -1,0 +1,16 @@
+---
+title: Find your Language resource endpoint and key - v3 client library
+titleSuffix: Foundry Tools
+description: Learn how to create an Azure Language in Foundry Tools resource.
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 06/20/2026
+ms.author: lajanuar
+---
+> **Important:**
+> Go to the Azure portal. If Azure Language resource you created in the **Prerequisites** section deployed successfully, click the **Go to Resource** button under **Next Steps**. You can find your key and endpoint by navigating to your resource's **Keys and Endpoint** page, under **Resource Management**. 
+
+> **Important:**
+> Remember to remove the key from your code when you're done, and never post it publicly. For production, use a secure way of storing and accessing your credentials like [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview). See the Foundry Tools [security](../../security-features.md) article for more information.

@@ -1,0 +1,54 @@
+---
+title: "Modify an Existing Trace (Transact-SQL)"
+description: "Modify an Existing Trace (Transact-SQL)"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: "03/06/2017"
+ms.service: sql
+ms.topic: language-reference
+helpviewer_keywords:
+  - "traces [SQL Server], modifying"
+  - "modifying traces"
+---
+# Modify an Existing Trace (Transact-SQL)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to use stored procedures to modify an existing trace.  
+  
+### To modify an existing trace  
+  
+1.  If the trace is already running, execute **sp_trace_setstatus** by specifying **@status = 0** to stop the trace.  
+  
+2.  To modify trace events, execute **sp_trace_setevent** by specifying the changes through the parameters. Listed in order, the parameters are:  
+
+    -   **\@traceid** (Trace ID)  
+  
+    -   **\@eventid** (Event ID)  
+  
+    -   **\@columnid** (Column ID)  
+  
+    -   **\@on** (ON)  
+  
+     When you modify the **\@on** parameter, keep in mind its interaction with the **\@columnid** parameter:  
+  
+    | ON | Column ID | Result |
+    | --- | --- | --- |
+    | ON (**1**) | NULL | Event is turned on. All columns are cleared. |
+    |  | NOT NULL | Column is turned on for the specified event. |
+    | OFF (**0**) | NULL | Event is turned off. All columns are cleared. |
+    |  | NOT NULL | Column is turned off for the specified event. |
+  
+> **Important:**
+>  Unlike regular stored procedures, parameters of all  SQL Server Profiler 
+ stored procedures (<strong>sp_trace_*xx*</strong>) are strictly typed and do not support automatic data type conversion. If these parameters are not called with the correct input parameter data types, as specified in the argument description, the stored procedure returns an error.  
+  
+## Related content
+
+- [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md)
+- [sp_trace_setstatus (Transact-SQL)](../system-stored-procedures/sp-trace-setstatus-transact-sql.md)
+- [System stored procedures (Transact-SQL)](../system-stored-procedures/system-stored-procedures-transact-sql.md)
+- [SQL Server Profiler stored procedures (Transact-SQL)](../system-stored-procedures/sql-server-profiler-stored-procedures-transact-sql.md)

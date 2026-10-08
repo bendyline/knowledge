@@ -1,0 +1,20 @@
+---
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 05/09/2026
+ms.author: lajanuar
+ms.custom: sfi-image-nochange
+---
+### Get your key and endpoint
+
+Next you will need the key and endpoint from the resource to connect your application to the API. You'll paste your key and endpoint into the code later in the quickstart.
+
+1. After Azure Language resource deploys successfully, click the **Go to Resource** button under **Next Steps**.
+
+    A screenshot showing the next steps after a resource has deployed.
+
+1. On the screen for your resource, select **Keys and endpoint** on the left pane. You will use one of your keys and your endpoint in the steps below. 
+
+    A screenshot showing the keys and endpoint section for a resource.

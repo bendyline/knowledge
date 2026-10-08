@@ -1,0 +1,63 @@
+---
+title: "othersInsertsAreVisible Method (SQLServerDatabaseMetaData)"
+description: "othersInsertsAreVisible Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.othersInsertsAreVisible"
+apitype: "Assembly"
+---
+# othersInsertsAreVisible Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether inserts that are made by others are visible.  
+  
+## Syntax  
+  
+```  
+  
+public boolean othersInsertsAreVisible(int type)  
+```  
+  
+#### Parameters  
+ *type*  
+  
+ An **int** that indicates the result set type, which can be one of the following values as defined in java.sql.ResultSet or SQLServerResultSet:  
+  
+## java.sql.ResultSet Types  
+ TYPE_FORWARD_ONLY  
+  
+ TYPE_SCROLL_SENSITIVE  
+  
+ TYPE_SCROLL_INSENSITIVE  
+  
+## SQLServerResultSet Types  
+ TYPE_SS_SCROLL_STATIC  
+  
+ TYPE_SS_SCROLL_KEYSET  
+  
+ TYPE_SS_DIRECT_FORWARD_ONLY  
+  
+ TYPE_SS_SERVER_CURSOR_FORWARD_ONLY  
+  
+ TYPE_SS_SCROLL_DYNAMIC  
+  
+## Return Value  
+ **true** if the inserts are visible. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This othersInsertsAreVisible method is specified by the othersInsertsAreVisible method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

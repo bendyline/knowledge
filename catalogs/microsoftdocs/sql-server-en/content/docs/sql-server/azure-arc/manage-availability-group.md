@@ -1,0 +1,93 @@
+---
+title: Manage Always On availability groups
+description: Describes how to manage Always On availability groups in Azure portal
+author: AbdullahMSFT
+ms.author: amamun 
+ms.reviewer: randolphwest
+ms.date: 10/20/2023
+ms.topic: how-to
+ms.custom: ignite-2023
+---
+
+# Manage Always On availability groups
+
+
+**Applies to:**
+ 
+
+](../sql-docs-navigation-guide.md#applies-to)
+ 
+
+An Always On availability group is an enterprise level high availability and disaster recovery solution for SQL Server. This article describes how to manage a 
+ SQL Server 
+ enabled by Azure Arc instance, in Azure portal. Specifically you can:
+
+- [View list of availability groups and status](#view-list-of-availability-groups-and-status)
+- [Failover](#failover)
+
+## Prerequisite
+
+You have a [Contributor role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#contributor) or a [Custom role](https://learn.microsoft.com/azure/role-based-access-control/custom-roles) with `Microsoft.AzureArcData/SqlServerInstances/AvailabilityGroups` permissions in at least one of the Azure subscriptions that your organization created. 
+
+[Learn how to create a new subscription](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/initial-subscriptions).
+
+## View list of availability groups and status
+
+Follow the steps to view the availability groups that are configured for the 
+ SQL Server 
+ enabled by Azure Arc:
+
+1. In your Azure portal, browse to the overview page of the SQL Server enabled by Azure Arc
+1. Select **Availability Groups**
+
+   Azure portal will display the availability groups configured for the SQL Server instance on the right
+
+1. Select the availability group that you want to review
+
+Azure portal displays the health and status of the Always on Availability Group similar to the Availability Group dashboard shown in SQL Server Management Studio. This includes:
+
+- The current primary replica
+- Availability group state
+- Availability group replicas
+- Failover mode
+- Synchronization state
+
+When the availability group (AG) dashboard loads, fetching the dashboard details is done via a roundtrip down to the 
+ SQL Server 
+ enabled by Azure Arc instance. The Azure Extension for SQL Server connects to the SQL Server instance, queries the AG related DMV (Dynamic Management Views) metadata, and sends the information back to the Azure portal where it is displayed.
+
+## Failover
+
+Always On availability groups support different failover modes depending on the data synchronization mode.
+
+- Synchronous-commit mode supports two forms of failover
+  - Planned manual failover
+  - Automatic failover
+- Asynchronous-commit mode supports forced manual failover (with possible data loss), typically called, forced failover
+
+SQL Server enabled by Azure Arc supports planned manual failover.
+
+Follow the steps below to initiate a planned manual failover:
+
+1. In Azure portal, browse to the overview page of the SQL Server for the secondary replica where you want to fail over
+1. Select **Availability Groups** tab on the left
+
+   Azure portal will display the availability groups configured for the SQL Server instance on the right
+
+1. Select the availability group that you want to perform a failover on
+1. In the Availability Group dashboard on the right, select **Failover**
+
+This will initiate a planned, manual failover on the AG replica.
+
+### Considerations
+
+- Currently, manual planned failover is the only mode of failover supported
+- 
+ SQL Server 
+ enabled by Azure Arc features are not supported for availability groups on failover cluster instances.
+
+## Related content
+
+- [What is an Always On availability group?](../../database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server.md)
+- [Manage inventory of SQL Server resources with Azure Arc](view-inventory.md)
+- [Recovery models (SQL Server)](../../relational-databases/backup-restore/recovery-models-sql-server.md)

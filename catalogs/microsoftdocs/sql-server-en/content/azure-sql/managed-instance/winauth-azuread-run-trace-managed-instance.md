@@ -1,0 +1,81 @@
+---
+title: Run a trace against Azure SQL Managed Instance using Windows Authentication for Microsoft Entra principals
+description: Learn how to run a trace against Azure SQL Managed Instance using Authentication for Microsoft Entra principals
+author: sravanisaluru
+ms.author: srsaluru
+ms.reviewer: mathoma, bonova, urmilano, wiassaf
+ms.date: 09/27/2023
+ms.service: azure-sql-managed-instance
+ms.topic: how-to
+ms.custom: template-how-to
+---
+
+# Run a trace against Azure SQL Managed Instance using Windows Authentication for Microsoft Entra principals
+
+This article shows how to connect and run a trace against Azure SQL Managed Instance using Windows Authentication for principals in Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)). Windows authentication provides a convenient way for customers to connect to a managed instance, especially for database administrators and developers who are accustomed to launching [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/sql-server-management-studio-ssms) with their Windows credentials.
+
+This article shares two options to run a trace against a managed instance: you can trace with [extended events](https://learn.microsoft.com/sql/relational-databases/extended-events/extended-events) or with  [SQL Server Profiler](https://learn.microsoft.com/sql/tools/sql-server-profiler/sql-server-profiler). While SQL Server Profiler may still be used, the trace functionality used by SQL Server Profiler is deprecated and will be removed in a future version of Microsoft SQL Server.
+
+
+> **Note:**  
+> [Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/new-name) was previously known as Azure Active Directory (Azure AD).
+
+## Prerequisites
+
+To use Windows Authentication to connect to and run a trace against a managed instance, you must first meet the following prerequisites:
+
+- [Set up Windows Authentication for Azure SQL Managed Instance using Microsoft Entra ID and Kerberos](winauth-azuread-setup.md).
+- Install [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/install/install) on the client that is connecting to the managed instance. The SSMS installation includes SQL Server Profiler and built-in components to create and run extended events traces.
+- Enable tooling on your client machine to connect to the managed instance. This may be done by any of the following:
+    - [Configure an Azure VM to connect to Azure SQL Managed Instance](connect-vm-instance-configure.md).
+    - [Configure a point-to-site connection to Azure SQL Managed Instance from on-premises](point-to-site-p2s-configure.md).
+    - [Configure a public endpoint in Azure SQL Managed Instance](public-endpoint-configure.md).
+- To create or modify extended events sessions, ensure that your account has the [server permission](https://learn.microsoft.com/sql/t-sql/statements/grant-server-permissions-transact-sql) of ALTER ANY EVENT SESSION on the managed instance.
+- To create or modify traces in SQL Server Profiler, ensure that your account has the [server permission](https://learn.microsoft.com/sql/t-sql/statements/grant-server-permissions-transact-sql) of ALTER TRACE on the managed instance.
+
+If you have not yet enabled Windows authentication for Microsoft Entra principals against your managed instance, you may run a trace against a managed instance using a [Microsoft Entra authentication](../database/authentication-aad-overview.md) option, including:
+
+- **Password** offers authentication with Microsoft Entra credentials
+- **Universal with MFA** adds multifactor authentication
+- **Integrated** uses federation providers like [Active Directory Federation Services](https://learn.microsoft.com/windows-server/identity/active-directory-federation-services) (ADFS) to enable single sign-on (SSO) experiences
+- **Service Principal** enables authentication from Azure applications
+- **Managed Identity** enables authentication from applications assigned Microsoft Entra identities 
+
+
+## Run a trace with extended events
+
+To run a trace with extended events against a managed instance using Windows Authentication, you will first connect Object Explorer to your managed instance using Windows Authentication.
+
+1. Launch SQL Server Management Studio from a client machine where you have logged in using Windows Authentication.
+1. The 'Connect to Server' dialog box should automatically appear. If it does not, ensure that **Object Explorer** is open and select **Connect**.
+1. Enter the name of your managed instance as the **Server name**. The name of your managed instance should be in a format similar to `managedinstancename.12a34b5c67ce.database.windows.net`.
+1. After **Authentication**, select **Windows Authentication**.
+
+    Dialog box from SQL Server Management Studio with a managed instance name in the 'Server Name' area and 'Authentication' set to 'Windows Authentication'.
+    
+1. Select **Connect**.
+
+Now that **Object Explorer** is connected, you can create and run an extended events trace. Follow the steps in [Quick Start: Extended events in SQL Server](https://learn.microsoft.com/sql/relational-databases/extended-events/quick-start-extended-events-in-sql-server) to learn how to create, test, and display the results of an extended events session.
+
+## Run a trace with Profiler 
+
+To run a trace with SQL Server Profiler against a managed instance using Windows Authentication, launch the Profiler application. Profiler may be [run from the Windows Start menu or from SQL Server Management Studio](https://learn.microsoft.com/sql/tools/sql-server-profiler/start-sql-server-profiler).
+
+1. On the File menu, select **New Trace**.
+1. Enter the name of your managed instance as the **Server name**. The name of your managed instance should be in a format similar to `managedinstancename.12a34b5c67ce.database.windows.net`.
+1. After **Authentication**, select **Windows Authentication**.
+
+    Dialog box from SQL Server Management Studio with a managed instance name in the 'Server Name' area and 'Authentication' set to 'Windows Authentication'.
+    
+1. Select **Connect**.
+1. Follow the steps in [Create a Trace (SQL Server Profiler)](https://learn.microsoft.com/sql/tools/sql-server-profiler/create-a-trace-sql-server-profiler) to configure the trace.
+1. Select **Run** after configuring the trace.
+
+## Next steps
+
+Learn more about Windows Authentication for Microsoft Entra principals with Azure SQL Managed Instance:
+
+- [What is Windows Authentication for Microsoft Entra principals on Azure SQL Managed Instance?](winauth-azuread-overview.md)
+- [How to set up Windows Authentication for Azure SQL Managed Instance using Microsoft Entra ID and Kerberos](winauth-azuread-setup.md)
+- [How Windows Authentication for Azure SQL Managed Instance is implemented with Microsoft Entra ID and Kerberos](winauth-implementation-aad-kerberos.md)
+- [Extended Events](https://learn.microsoft.com/sql/relational-databases/extended-events/extended-events)

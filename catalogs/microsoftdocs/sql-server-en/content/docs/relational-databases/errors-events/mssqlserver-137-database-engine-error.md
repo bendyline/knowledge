@@ -1,0 +1,88 @@
+---
+title: "MSSQLSERVER_137"
+description: "MSSQLSERVER_137"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "137 (Database Engine error)"
+---
+# MSSQLSERVER_137
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 137 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | P_SCALAR_VAR_NOTFOUND |
+| Message Text | Must declare the scalar variable "%.*ls". |
+  
+## Explanation  
+This error occurs when a variable is used in a SQL script without first declaring the variable. The following example returns error 137 for both the SET and SELECT statements because **\@mycol** is not declared.  
+  
+```sql
+SET @mycol = 'ContactName';  
+  
+SELECT @mycol; 
+```
+  
+One of the more complicated causes of this error includes the use of a variable that is declared outside the EXECUTE statement. For example, the variable **\@mycol** specified in the SELECT statement is local to the SELECT statement; thus it is outside the EXECUTE statement.  
+  
+```sql
+USE AdventureWorks2022;  
+  
+GO  
+  
+DECLARE @mycol nvarchar(20);  
+  
+SET @mycol = 'Name';  
+  
+EXECUTE ('SELECT @mycol FROM Production.Product;'); 
+```
+  
+## User Action  
+Verify that any variables used in a SQL script are declared before being used elsewhere in the script.  
+  
+Rewrite the script so that it does not reference variables in the EXECUTE statement that are declared outside of it. For example:  
+  
+```sql
+USE AdventureWorks2022;  
+  
+GO  
+  
+DECLARE @mycol nvarchar(20) ;  
+  
+SET @mycol = 'Name';  
+  
+EXECUTE ('SELECT ' + @mycol + ' FROM Production.Product;') ;
+```
+  
+## Related content
+
+- [EXECUTE (Transact-SQL)](../../t-sql/language-elements/execute-transact-sql.md)
+- [SET Statements (Transact-SQL)](../../t-sql/statements/set-statements-transact-sql.md)
+- [DECLARE @local_variable (Transact-SQL)](../../t-sql/language-elements/declare-local-variable-transact-sql.md)

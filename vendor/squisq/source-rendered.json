@@ -1,0 +1,10 @@
+{
+  "sources": [
+    {
+      "source": "packages/core/src/markdown/docfxMarkdown.ts",
+      "sha256": "e9678d6b23b20475f6a4255c865200d56d18a3973bc86a4ffeba28e5ac6c5d8e"
+    }
+  ],
+  "sha256": "d7ee0220b570e4116c3416c5bc90b279d815695fc968a243eda44e22ecd0bfbf",
+  "removeAfter": "First @bendyline/squisq release exporting the corresponding Markdown normalization API"
+}

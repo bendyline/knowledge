@@ -1,0 +1,40 @@
+---
+title: "MSrepl_originators (Transact-SQL)"
+description: MSrepl_originators (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSrepl_originators_TSQL"
+  - "MSrepl_originators"
+helpviewer_keywords:
+  - "MSrepl_originators system table"
+dev_langs:
+  - "TSQL"
+---
+# MSrepl_originators (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **MSrepl_originators** table contains one row for each updatable Subscriber from which the transaction originated. This table is stored in the distribution database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **id** | **int** | Identifies the updating Subscriber. |
+| **publisher_database_id** | **int** | Identifies the publication database. |
+| **srvname** | **sysname** | The name of the updating server. |
+| **dbname** | **sysname** | The name of the updating database. |
+| **publication_id** | **int** | Identifies the publication. |
+| **dbversion** | **int** | Identifies the database version. |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

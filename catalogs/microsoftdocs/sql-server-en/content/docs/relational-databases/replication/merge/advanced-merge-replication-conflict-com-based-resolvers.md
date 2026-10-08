@@ -1,0 +1,74 @@
+---
+title: "Microsoft COM-Based Resolvers"
+description: "Advanced Merge Replication Conflict - COM-Based Resolvers"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "COM-based resolvers [SQL Server replication]"
+  - "custom resolvers [SQL Server replication]"
+---
+# Advanced Merge Replication Conflict - COM-Based Resolvers
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  All of the COM-based resolvers supplied with  SQL Server 
+ handle update conflicts, and where indicated, they also handle insert and delete conflicts. They all handle column tracking; most also handle row tracking. These and all other COM-based resolvers declare the types of conflict they can handle, and the Merge Agent uses the default resolver for all other conflict types.  
+  
+ The resolvers are installed during the installation process for  SQL Server 
+. Execute the **sp_enumcustomresolvers** stored procedure to view all the conflict resolvers registered on a computer. Executing the procedure displays the description and globally unique identifier (GUID) for each resolver in a separate result set.  
+  
+ To specify a resolver, see [Specify a Merge Article Resolver](../publish/specify-a-merge-article-resolver.md).  
+  
+ The following table describes the attributes of the specific resolvers.  
+  
+| Name | Required input | Description | Comments |
+| --- | --- | --- | --- |
+| Microsoft |
+  | SQL Server |
+ | Additive Conflict Resolver | Name of the column to be summed. It must have an arithmetic data type (such as **int**, **smallint**, **numeric**, and so on). | Conflict winner is determined from the priority value. Specified column values are set to the sum of the source and the destination column values. If one is set to NULL, they are set to the value of the other column. | Supports update conflicts, column tracking only. |
+| Microsoft |
+  | SQL Server |
+ | Averaging Conflict Resolver | Name of the column to be averaged. It must have an arithmetic data type (such as **int**, **smallint**, **numeric**, and so on). | Conflict winner is determined from the priority value. The resulting column values are set to the average of the source and the destination column values. If one is set to NULL, they are set to the value of the other column. | Supports update conflicts, column tracking only. |
+| Microsoft |
+  | SQL Server |
+ | DATETIME (Earlier Wins) Conflict Resolver | Name of the column to be used to determine the conflict winner. It must have a **datetime** data type. | Column with the earlier **datetime** value determines the conflict winner. If one is set to NULL, the row containing the other is the winner. | Supports update conflicts, row, and column tracking. The column values are compared directly and an adjustment is not made for different time zones. |
+| Microsoft |
+  | SQL Server |
+ | DATETIME (Later Wins) Conflict Resolver | Name of the column to be used to determine the conflict winner. It must have **datetime** data type. | Column with the later **datetime** value determines the conflict winner. If one is set to NULL, the row containing the other is the winner. | Supports update conflicts, row, and column tracking. |
+| Microsoft |
+  | SQL Server |
+ | Maximum Conflict Resolver | Name of the column to be used to determine the conflict winner. It must have an arithmetic data type (such as **int**, **smallint**, **numeric**, and so on). | Column with the larger numeric value determines the conflict winner. If one is set to NULL, the row containing the other is the winner. | Supports row and column tracking. |
+| Microsoft |
+  | SQL Server |
+ | Minimum Conflict Resolver | Name of the column to be used to determine the conflict winner. It must have an arithmetic data type (such as **int**, **smallint**, **numeric**, and so on). | Column with the smaller numeric value determines the conflict winner. If one is set to NULL, the row containing the other is the winner. | Supports update conflicts, row and column tracking. |
+| Microsoft |
+  | SQL Server |
+ | Merge Text Conflict Resolver | Name of the text column and delimiter, for example, `@resolver_info = '[col1][===]'`. | Conflict winner is determined from the priority value. The text columns in conflict are set to the merged value, consisting of the common prefix followed by the unique part from the Publisher, then by the delimiter, and finally by the unique part from the Subscriber. | Supports update conflicts, column tracking only. |
+| Microsoft |
+  | SQL Server |
+ | Subscriber Always Wins Conflict Resolver | No inputs. | Subscriber, regardless of whether it is the source or destination, is the winner. | Supports all conflict types. |
+| Microsoft |
+  | SQL Server |
+ | Priority Column Resolver | Name of the column to be used to determine the conflict winner. It must have an arithmetic data type (such as **int**, **smallint**, **numeric**, and so on). | Column with the larger numeric value determines the conflict winner. If one is set to NULL, the row containing the other is the winner. | Supports update conflicts, row and column tracking. |
+| Microsoft |
+  | SQL Server |
+ | Upload Only Conflict Resolver | No inputs. | Changes uploaded to the Publisher are accepted; changes are not downloaded to the Subscriber. | Supports all conflict types. |
+| Microsoft |
+  | SQL Server |
+ | Download Only Conflict Resolver | No inputs. | Changes uploaded to the Publisher are rejected; changes are downloaded to the Subscriber. | Supports all conflict types. |
+| Microsoft |
+ | SQLServer Stored Procedure Resolver | Name of the stored procedure the resolver should call to handle the conflict. | Conflict resolution depends on the logic in the stored procedure you specify. | Supports update conflicts. For more information, see [Implement a Custom Conflict Resolver for a Merge Article](../implement-a-custom-conflict-resolver-for-a-merge-article.md) |
+  
+## Related content
+
+- [Advanced Merge Replication - Conflict Detection and Resolution](advanced-merge-replication-conflict-detection-and-resolution.md)
+- [sys.sp_enumcustomresolvers (Transact-SQL)](../../system-stored-procedures/sp-enumcustomresolvers-transact-sql.md)

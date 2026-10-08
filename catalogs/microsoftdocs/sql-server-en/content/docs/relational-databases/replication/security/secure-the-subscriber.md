@@ -1,0 +1,96 @@
+---
+title: "Secure the Subscriber"
+description: "Secure the Subscriber"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "subscriptions [SQL Server replication], security"
+  - "Subscribers [SQL Server replication], security"
+  - "security [SQL Server replication], Subscribers"
+monikerRange: "=azuresqldb-current || >=sql-server-2017"
+---
+# Secure the Subscriber
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Merge Agents and Distribution Agents connect to the Subscriber. These connections can be made under the context of a  SQL Server 
+ login or a Windows login. It is important to provide an appropriate login for these agents while following the principle of granting the minimal rights necessary and also protecting the storage of all passwords. For information about the permissions required for each agent, see [Replication Agent Security Model](replication-agent-security-model.md).  
+
+  > **Note:** 
+  > Azure SQL Managed Instance can be a publisher, distributor, and subscriber for snapshot and transactional replication. Databases in Azure SQL Database can only be push subscribers for snapshot and transactional replication. For more information, see Transactional replication with [Azure SQL Database](https://learn.microsoft.com/azure/azure-sql/database/replication-to-sql-database) and [Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/replication-transactional-overview).
+
+  
+## Distribution Agent  
+ There is either one Distribution Agent per subscription (an independent agent, the default for publications created in the New Publication Wizard) or one Distribution Agent per publication database and subscription database pair (a shared agent). T  
+  
+ To specify connection information for push subscriptions, see [Create a Push Subscription](../create-a-push-subscription.md).  
+  
+ To specify connection information for pull subscriptions, see [Create a Pull Subscription](../create-a-pull-subscription.md)  
+  
+## Merge Agent  
+ Each merge subscription has its own Merge Agent that connects to and updates both the Publisher and the Subscriber.  
+  
+ To specify connection information for push subscriptions, see [Create a Push Subscription](../create-a-push-subscription.md).  
+  
+ To specify connection information for pull subscriptions, see [Create a Pull Subscription](../create-a-pull-subscription.md).  
+  
+## Immediate Updating Subscriptions  
+ When you configure an immediate updating subscription, you specify an account at the Subscriber under which connections to the Publisher are made. Connections are used by the triggers that fire at the Subscriber and propagate changes to the Publisher. There are three options available for the type of connection:  
+  
+-   A linked server that replication creates; the connection is made with the credentials you specify at configuration time.  
+  
+-   A linked server that replication creates; the connection is made with the credentials of the user making the change at the Subscriber.  
+  
+-   A linked server or remote server that you have already defined.  
+  
+> **Important:**  
+>  To specify connection information, use the stored procedure [sp_link_publication (Transact-SQL)](../../system-stored-procedures/sp-link-publication-transact-sql.md). You can also use the **Login for Updatable Subscriptions** page of the New Subscription Wizard, which calls **sp_link_publication**. Under certain conditions, this stored procedure can fail if the Subscriber is running  SQL Server 2005 (9.x) 
+ Service Pack 1 (SP1) or later, and the Publisher is running an earlier version. If the stored procedure fails in this scenario, upgrade the Publisher to  SQL Server 2005 (9.x) 
+ SP1 or later.  
+  
+ For more information, see [Create an Updatable Subscription to a Transactional Publication](../publish/create-an-updatable-subscription-to-a-transactional-publication.md) and [View and Modify Replication Security Settings](view-and-modify-replication-security-settings.md).  
+  
+> **Important:**  
+>  The account specified for the connection should only be granted permission to insert, update, and delete data on the views that replication creates in the publication database; it should not be given any additional permissions. Grant permissions on views in the publication database that are named in the form **syncobj_**_\<HexadecimalNumber>_ to the account you configured at each Subscriber.  
+  
+## Queued Updating Subscriptions  
+ When you configure queued updating subscriptions, there are two areas to keep in mind that relate to security:  
+  
+-   There is only one Queue Reader Agent for each Distributor. It is recommended that for each Distributor, you configure at most one publication that is enabled for queued updating subscriptions.  
+  
+-   The Queue Reader agent makes connections to the Distributor, Publisher, and each Subscriber:  
+  
+    -   The account under which the agent runs and makes connections to the Distributor is specified when you create the agent (if you use the New Publication Wizard, the agent is created when you create a publication that is enabled for updating subscriptions).  
+  
+    -   The account under which the agent makes connections to the Publisher is specified when you configure distribution for a Publisher. Specify the Windows account under which the agent runs or a  SQL Server 
+ account.  
+  
+    -   The account under which the agent makes connections to the Subscriber is specified when you create the subscription.  
+  
+    > **Important:**  
+    >  Use  SQL Server 
+ Authentication for connections to Subscribers, and specify a different account for the connection to each Subscriber. If you use a pull subscription, replication always sets the connection to use Windows Authentication (for pull subscriptions, replication cannot access metadata at the Subscriber required to use  SQL Server 
+ Authentication). In this case, change the connection to use  SQL Server 
+ Authentication after the subscription is configured.  
+  
+     For more information, see How to: Create an Updating Subscription to a Transactional Publication (SQL Server Management Studio) and [View and Modify Replication Security Settings](view-and-modify-replication-security-settings.md).  
+  
+## Related content
+
+- [Encrypt connections to SQL Server by importing a certificate](../../../database-engine/configure-windows/configure-sql-server-encryption.md)
+- [Replication Security Best Practices](replication-security-best-practices.md)
+- [View and modify replication security settings](view-and-modify-replication-security-settings.md)

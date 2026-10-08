@@ -1,0 +1,45 @@
+---
+title: "Implicit Cursor Conversions (ODBC)"
+description: "Implicit Cursor Conversions (ODBC)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "ODBC cursors, implicit cursor conversions"
+  - "implicit cursor conversions"
+  - "cursors [ODBC], implicit cursor conversions"
+---
+# Implicit Cursor Conversions (ODBC)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  Applications can request a cursor type through [SQLSetStmtAttr](../../native-client-odbc-api/sqlsetstmtattr.md) and then execute a SQL statement that is not supported by server cursors of the type requested. A call to **SQLExecute** or **SQLExecDirect** returns SQL_SUCCESS_WITH_INFO and **SQLGetDiagRec** returns:  
+  
+```  
+szSqlState = "01S02", *pfNativeError = 0,  
+szErrorMsg="[Microsoft][SQL Server Native Client] Cursor type changed"  
+```  
+  
+ The application can determine what type of cursor is now being used by calling **SQLGetStmtOption** set to SQL_CURSOR_TYPE. The cursor type conversion applies to only one statement. The next **SQLExecDirect** or **SQLExecute** will be done using the original statement cursor settings.  
+  
+## Related content
+
+- [Cursor Programming Details (ODBC)](cursor-programming-details-odbc.md)

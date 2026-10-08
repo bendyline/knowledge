@@ -1,0 +1,37 @@
+---
+title: "Configure Peer-to-Peer Topology Wizard"
+description: "Configure Peer-to-Peer Topology Wizard"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Configure Peer-to-Peer Topology Wizard"
+---
+# Configure Peer-to-Peer Topology Wizard
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This section provides information on all pages of the Configure Peer-to-Peer Topology Wizard:  
+  
+-   [Publication (Peer-to-Peer Replication)](publication-peer-to-peer-replication.md)  
+  
+-   [Configure Topology (Peer-to-Peer Replication)](configure-topology-peer-to-peer-replication.md)  
+  
+-   [Log Reader Agent Security (Peer-to-Peer Replication)](log-reader-agent-security-peer-to-peer-replication.md)  
+  
+-   [Distribution Agent Security (Peer-to-Peer Replication)](distribution-agent-security-peer-to-peer-replication.md)  
+  
+-   [New Peer Initialization (Peer-to-Peer Replication)](new-peer-initialization-peer-to-peer-replication.md)  
+  
+## Related content
+
+- [Administer a Peer-to-Peer Topology (Replication Transact-SQL Programming)](administration/administer-a-peer-to-peer-topology-replication-transact-sql-programming.md)
+- [Peer-to-Peer - Transactional Replication](transactional/peer-to-peer-transactional-replication.md)

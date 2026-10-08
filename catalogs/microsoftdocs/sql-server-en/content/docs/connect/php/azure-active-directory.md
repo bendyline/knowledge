@@ -1,0 +1,290 @@
+---
+title: Microsoft Entra ID
+description: Learn how to use Microsoft Entra authentication with the Microsoft Drivers for PHP for SQL Server.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 09/17/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+helpviewer_keywords:
+  - "azure active directory, authentication, access token"
+---
+# Connect Using Microsoft Entra authentication
+
+
+
+
+[Microsoft Entra ID](https://learn.microsoft.com/azure/active-directory/active-directory-whatis) is a central user ID management technology that operates as an alternative to [SQL Server authentication](how-to-connect-using-sql-server-authentication.md). Microsoft Entra ID allows connections to Azure SQL Database, Azure SQL Managed Instance, and Azure Synapse Analytics with [federated](https://learn.microsoft.com/azure/active-directory/hybrid/connect/whatis-fed) identities in Microsoft Entra ID using a username and password, Windows Integrated Authentication, or a Microsoft Entra access token. The PHP drivers for SQL Server offer partial support for these features.
+
+Before you can use Microsoft Entra authentication, you must [Configure and manage Microsoft Entra authentication with Azure SQL](https://learn.microsoft.com/azure/azure-sql/database/authentication-aad-configure).
+
+To use Microsoft Entra ID, use the **Authentication** or **AccessToken** keywords (they are mutually exclusive), as shown in the following table. For more technical details, refer to [Using Microsoft Entra ID with the ODBC Driver](../odbc/using-azure-active-directory.md).
+
+| Keyword | Values | Description |
+| --- | --- | --- |
+| **AccessToken** | Not set (default) | Authentication mode determined by other keywords. For more information, see [Connection Options](connection-options.md). |
+|  | A byte string | The Microsoft Entra access token extracted from an OAuth JSON response. The connection string must not contain user ID, password, or the `Authentication` keyword (requires ODBC Driver version 17 or above in Linux or macOS). |
+| **Authentication** | Not set (default) | Authentication mode determined by other keywords. For more information, see [Connection Options](connection-options.md). |
+|  | `SqlPassword` | Directly authenticate to a SQL Server instance (which may be an Azure instance) using a username and password. The username and password must be passed into the connection string using the **UID** and **PWD** keywords. |
+|  | `ActiveDirectoryIntegrated` | Authenticate by using the signed-in Windows account. On Linux and macOS, this option requires ODBC Driver 17.6 or later, a federated Microsoft Entra account, and a suitable Kerberos ticket. |
+|  | `ActiveDirectoryPassword` [DEPRECATED] | ActiveDirectoryPassword is deprecated. For more information, see [Example - connect using SqlPassword and ActiveDirectoryPassword](#example---connect-using-sqlpassword-and-activedirectorypassword).<br/>Authenticate with a Microsoft Entra identity using a username and password. The username and password must be passed into the connection string using the **UID** and **PWD** keywords. |
+|  | `ActiveDirectoryMsi` | Authenticate using either a Microsoft Entra system-assigned user-assigned managed identity (requires ODBC Driver version 17.3.1.1 or above). For an overview and tutorials, refer to [What are managed identities for Azure resources?](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview). |
+|  | `ActiveDirectoryServicePrincipal` | Authenticate using service principal objects (requires ODBC Driver version 17.7 or above). For more details and examples, refer to [Application and service principal objects in Microsoft Entra ID](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals). |
+
+The **Authentication** keyword affects the connection security settings. If it is set in the connection string, then by default the **Encrypt** keyword is set to true, which means the client will request encryption. Moreover, the server certificate will be validated irrespective of the encryption setting unless **TrustServerCertificate** is set to true (**false** by default). This feature is distinguished from the old, less secure login method, in which the server certificate is validated only when encryption is specifically requested in the connection string.
+
+## Example - connect using SqlPassword and ActiveDirectoryPassword
+
+
+> **Important:**
+> The ActiveDirectoryPassword authentication option (Microsoft Entra ID password authentication) is deprecated in the Microsoft SQL drivers. This high-risk authentication flow is incompatible with [mandatory Microsoft Entra multifactor authentication (MFA)](https://learn.microsoft.com/entra/identity/authentication/concept-mandatory-multifactor-authentication) and might not work in tenants where MFA is enforced. Plan to migrate to a different Microsoft Entra authentication method.
+
+Microsoft Entra ID password authentication is based on the [OAuth 2.0 Resource Owner Password Credentials (ROPC) grant](https://learn.microsoft.com/entra/identity-platform/v2-oauth-ropc), which allows an application to sign in the user by directly handling their password.
+
+Microsoft recommends that you don't use the ROPC flow because it's incompatible with MFA. In most scenarios, more secure alternatives are available and recommended. This flow requires a high degree of trust in the application, and carries risks that aren't present in other flows. Use this flow only when more secure flows aren't viable. Microsoft is moving away from this high-risk authentication flow to protect users from malicious attacks. For more information, see [Planning for mandatory multifactor authentication for Azure](https://learn.microsoft.com/entra/identity/authentication/concept-mandatory-multifactor-authentication).
+
+When a user is present at sign-in, use ActiveDirectoryInteractive or ActiveDirectoryIntegrated authentication so the audit trail attributes to the signed-in user and Conditional Access policies apply.
+
+For unattended service-to-service scenarios, follow the [Microsoft Entra service account guidance](https://learn.microsoft.com/entra/architecture/secure-service-accounts):
+
+- If your application runs on Azure infrastructure, use ActiveDirectoryMSI (or ActiveDirectoryManagedIdentity in some drivers). Managed identities eliminate the overhead of maintaining and rotating secrets and certificates.
+- If managed identity isn't available (for example, the application runs outside Azure), use ActiveDirectoryServicePrincipal. Where the driver supports it, prefer a client certificate over a client secret. With a certificate, the private key stays on the client and only a signed assertion is sent to Microsoft Entra to authenticate the client. If the key is stored in hardware (such as a TPM or HSM) or marked nonexportable, it can't be copied out as a string the way a client secret can.
+- Don't use a Microsoft Entra user account as a service account.
+
+
+```php
+<?php
+// First connect to a local SQL Server instance by setting Authentication to SqlPassword
+$serverName = "<server>";
+$user       = "<user_id>";
+$password   = "<password>";
+
+$connectionInfo = array("UID"=>$user, "PWD"=>$password, "Authentication"=>'SqlPassword');
+
+$conn = sqlsrv_connect($serverName, $connectionInfo);
+if ($conn === false) {
+    echo "Could not connect with Authentication=SqlPassword.\n";
+    print_r(sqlsrv_errors());
+} else {
+    echo "Connected successfully with Authentication=SqlPassword.\n";
+    sqlsrv_close($conn);
+}
+
+// Now connect to an Azure SQL database by setting Authentication to ActiveDirectoryPassword
+$azureServer = "<server>.database.windows.net";
+$azureDatabase = "<database>";
+$azureUsername = "<user_id>";
+$azurePassword = "<password>";
+$connectionInfo = array("Database"=>$azureDatabase,
+                        "UID"=>$azureUsername,
+                        "PWD"=>$azurePassword,
+                        "Authentication"=>'ActiveDirectoryPassword');
+
+$conn = sqlsrv_connect($azureServer, $connectionInfo);
+if ($conn === false) {
+    echo "Could not connect with Authentication=ActiveDirectoryPassword.\n";
+    print_r(sqlsrv_errors());
+} else {
+    echo "Connected successfully with Authentication=ActiveDirectoryPassword.\n";
+    sqlsrv_close($conn);
+}
+
+?>
+```
+
+## Example - connect using the PDO_SQLSRV driver
+
+```php
+<?php
+// First connect to a local SQL Server instance by setting Authentication to SqlPassword
+$serverName   = "<server>";
+$databaseName = "<database>";
+$user         = "<user_id>";
+$password     = "<password>";
+
+$connectionInfo = "Database = $databaseName; Authentication = SqlPassword;";
+
+try {
+    $conn = new PDO("sqlsrv:server = $serverName ; $connectionInfo", $user, $password);
+    echo "Connected successfully with Authentication=SqlPassword.\n";
+    $conn = null;
+} catch (PDOException $e) {
+    echo "Could not connect with Authentication=SqlPassword.\n";
+    print_r($e->getMessage());
+    echo "\n";
+}
+
+// Now connect to an Azure SQL database by setting Authentication to ActiveDirectoryPassword
+$azureServer = "<server>.database.windows.net";
+$azureDatabase = "<database>";
+$azureUsername = "<user_id>";
+$azurePassword = "<password>";
+$connectionInfo = "Database = $azureDatabase; Authentication = ActiveDirectoryPassword;";
+
+try {
+    $conn = new PDO("sqlsrv:server = $azureServer ; $connectionInfo", $azureUsername, $azurePassword);
+    echo "Connected successfully with Authentication=ActiveDirectoryPassword.\n";
+    unset($conn);
+} catch (PDOException $e) {
+    echo "Could not connect with Authentication=ActiveDirectoryPassword.\n";
+    print_r($e->getMessage());
+    echo "\n";
+}
+?>
+```
+
+<a name='example---connect-using-azure-ad-access-token'></a>
+
+## Example - connect using Microsoft Entra access token
+
+
+### SQLSRV driver
+
+```php
+<?php
+// Using an access token to connect: do not use UID or PWD connection options
+// Assume $accToken is the valid byte string extracted from an OAuth JSON response
+$azureAdServer   = "<server>.database.windows.net";
+$azureAdDatabase = "<database>";
+$accToken        = "<access-token>";
+
+$connectionInfo = array("Database"=>$azureAdDatabase, "AccessToken"=>$accToken);
+$conn = sqlsrv_connect($azureAdServer, $connectionInfo);
+if ($conn === false) {
+    echo "Could not connect with Azure AD Access Token.\n";
+    print_r(sqlsrv_errors());
+} else {
+    echo "Connected successfully with Azure AD Access Token.\n";
+    sqlsrv_close($conn);
+}
+?>
+```
+
+### PDO_SQLSRV driver
+
+```php
+<?php
+$azureAdServer   = "<server>.database.windows.net";
+$azureAdDatabase = "<database>";
+$accToken        = "<access-token>";
+
+try {
+    // Using an access token to connect: do not pass in $uid or $pwd
+    // Assume $accToken is the valid byte string extracted from an OAuth JSON response
+    $connectionInfo = "Database = $azureAdDatabase; AccessToken = $accToken;";
+    $conn = new PDO("sqlsrv:server = $azureAdServer; $connectionInfo");
+    echo "Connected successfully with Azure AD Access Token\n";
+    unset($conn);
+} catch (PDOException $e) {
+    echo "Could not connect with Azure AD Access Token.\n";
+    print_r($e->getMessage());
+    echo "\n";
+}
+?>
+```
+
+## Example - connect using managed identities for Azure resources
+
+### Using the system-assigned managed identity with SQLSRV driver
+
+When connecting using the system-assigned managed identity, do not use the UID or PWD options.
+
+```php
+<?php
+
+$azureServer = '<server>.database.windows.net';
+$azureDatabase = '<database>';
+$connectionInfo = array('Database'=>$azureDatabase,
+                        'Authentication'=>'ActiveDirectoryMsi');
+$conn = sqlsrv_connect($azureServer, $connectionInfo);
+
+if ($conn === false) {
+    echo "Could not connect with Authentication=ActiveDirectoryMsi (system-assigned).\n";
+    print_r(sqlsrv_errors());
+} else {
+    echo "Connected successfully with Authentication=ActiveDirectoryMsi (system-assigned).\n";
+    
+    $tsql = "SELECT @@Version AS SQL_VERSION";
+    $stmt = sqlsrv_query($conn, $tsql);
+    if ($stmt === false) {
+        echo "Failed to run the simple query (system-assigned).\n";
+        print_r(sqlsrv_errors());
+    } else {
+        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            echo $row['SQL_VERSION'] . PHP_EOL;
+        }
+
+        sqlsrv_free_stmt($stmt);
+    }
+    
+    sqlsrv_close($conn);
+}
+?>
+```
+
+<a name='example---connect-using-service-principal-objects-in-azure-active-directory'></a>
+
+## Example - connect using Microsoft Entra service principal 
+
+
+To authenticate using a service principal object, you will need the corresponding [application client ID](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) and the [client secret](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).
+
+
+### SQLSRV driver
+
+```php
+<?php
+
+$adServer = '<server>.database.windows.net';
+$adDatabase = '<database>';
+$adSPClientId = '<client-id>';
+$adSPClientSecret = '<client-secret>';
+
+$conn = false;
+$connectionInfo = array("Database"=>$adDatabase, 
+                        "Authentication"=>"ActiveDirectoryServicePrincipal",
+                        "UID"=>$adSPClientId,
+                        "PWD"=>$adSPClientSecret);
+
+$conn = sqlsrv_connect($adServer, $connectionInfo);
+if ($conn === false) {
+    echo "Could not connect using Azure AD Service Principal." . PHP_EOL;
+    print_r(sqlsrv_errors());
+}
+
+sqlsrv_close($conn);
+
+?>
+```
+
+### PDO_SQLSRV driver
+
+```php
+<?php
+
+$adServer = '<server>.database.windows.net';
+$adDatabase = '<database>';
+$adSPClientId = '<client-id>';
+$adSPClientSecret = '<client-secret>';
+
+$conn = false;
+try {
+    $connectionInfo = "Database = $adDatabase; Authentication = ActiveDirectoryServicePrincipal;";
+    $conn = new PDO("sqlsrv:server = $adServer; $connectionInfo", $adSPClientId, $adSPClientSecret);
+} catch (PDOException $e) {
+    echo "Could not connect using Azure AD Service Principal.\n";
+    print_r($e->getMessage());
+    echo PHP_EOL;
+}
+
+unset($conn);
+?>
+```
+
+
+## Related content
+
+- [Using Microsoft Entra ID with the ODBC Driver](../odbc/using-azure-active-directory.md)
+- [What is managed identities for Azure resources?](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)

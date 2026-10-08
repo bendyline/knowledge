@@ -1,0 +1,147 @@
+---
+title: "Using Integrated Authentication"
+description: The Microsoft ODBC Driver for SQL Server on Linux and macOS supports connections that use Kerberos integrated authentication.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, davidengel, sunilbs, mcimfl
+ms.date: 08/26/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.custom: linux-related-content
+ms.topic: concept-article
+helpviewer_keywords:
+  - "integrated authentication"
+---
+# Using Integrated Authentication
+
+
+
+The  Microsoft 
+ ODBC Driver for  SQL Server 
+ on Linux and macOS supports connections that use Kerberos integrated authentication. It supports the MIT Kerberos Key Distribution Center (KDC), and works with Generic Security Services Application Program Interface (GSSAPI) and Kerberos v5 libraries.
+
+As of version 17.6, the driver also supports integrated authentication with Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)) using a [federated account](https://learn.microsoft.com/azure/active-directory/hybrid/connect/whatis-fed), system library limitations notwithstanding. See [Using Microsoft Entra ID](../using-azure-active-directory.md) for more information.
+
+
+## Using Integrated Authentication to Connect to  SQL Server 
+ from an ODBC Application  
+
+You can enable Kerberos integrated authentication by specifying **Trusted_Connection=yes** in the connection string of **SQLDriverConnect** or **SQLConnect**. For example:  
+
+```
+Driver='ODBC Driver 18 for SQL Server';Server=your_server;Encrypt=yes;Trusted_Connection=yes  
+```
+  
+When connecting with a DSN, you can also add **Trusted_Connection=yes** to the DSN entry in `odbc.ini`.
+  
+To specify integrated authentication, use the `-E` option of **sqlcmd** or the `-T` option of **bcp**. For more information, see [sqlcmd utility](../../../tools/sqlcmd/sqlcmd-utility.md) and [bcp utility](../../../tools/bcp/bcp-utility.md).
+
+Ensure that the client principal which is going to connect to  SQL Server 
+ is already authenticated with the Kerberos KDC.
+  
+**ServerSPN** and **FailoverPartnerSPN** are not supported.  
+  
+## Deploying a Linux or macOS ODBC Driver Application Designed to Run as a Service
+
+A system administrator can deploy an application to run as a service that uses Kerberos Authentication to connect to  SQL Server 
+.  
+  
+You first need to configure Kerberos on the client and then ensure that the application can use the Kerberos credential of the default principal.
+
+Ensure that you use `kinit` or PAM (Pluggable Authentication Module) to obtain and cache the TGT for the principal that the connection uses, via one of the following methods:  
+  
+-   Run `kinit`, passing in a principal name and password.  
+  
+-   Run `kinit`, passing in a principal name and a location of a keytab file that contains the principal's key created by `ktutil`.  
+  
+-   Ensure that the login to the system was done using the Kerberos PAM (Pluggable Authentication Module).
+
+When an application runs as a service, because Kerberos credentials expire by design, renew the credentials to ensure continued service availability. The ODBC driver does not renew credentials itself; ensure that there is a `cron` job or script that periodically runs to renew the credentials before their expiration. To avoid requiring the password for each renewal, you can use a keytab file.  
+  
+[Kerberos Configuration and Use](https://www.oreilly.com/library/view/linux-in-a/0596007582/ch09.html) provides details on ways to Kerberize services on Linux.
+  
+## Tracking Access to a Database
+
+A database administrator can create an audit trail of access to a database when using system accounts to access  SQL Server 
+ using Integrated Authentication.  
+  
+Logging in to  SQL Server 
+ uses the system account and there is no functionality on Linux to impersonate security context. Therefore, more is required to determine the user.
+  
+To audit activities in  SQL Server 
+ on behalf of users other than the system account, the application must use  Transact-SQL  **EXECUTE AS**.  
+  
+To improve application performance, an application can use connection pooling with Integrated Authentication and auditing. However, combining connection pooling, Integrated Authentication, and auditing creates a security risk because the unixODBC driver manager permits different users to reuse pooled connections. For more information, see [ODBC Connection Pooling](http://www.unixodbc.org/doc/conn_pool.html).  
+
+Before reuse, an application must reset pooled connections by executing `sp_reset_connection`.  
+
+## Using Active Directory to Manage User Identities
+
+An application system administrator does not have to manage separate sets of login credentials for  SQL Server 
+. It is possible to configure Active Directory as a key distribution center (KDC) for Integrated Authentication. See [Microsoft Kerberos](https://learn.microsoft.com/windows/desktop/SecAuthN/microsoft-kerberos) for more information.
+
+## Using Linked Server and Distributed Queries
+
+Developers can deploy an application that uses a linked server or distributed queries without a database administrator who maintains separate sets of SQL credentials. In this situation, a developer must configure an application to use integrated authentication:  
+  
+-   User logs in to a client machine and authenticates to the application server.  
+  
+-   The application server authenticates as a different database and connects to  SQL Server 
+.  
+  
+-    SQL Server 
+ authenticates as a database user to another database ( SQL Server 
+.  
+  
+After integrated authentication is configured, credentials will be passed to the linked server.  
+  
+## Integrated Authentication and sqlcmd
+To access  SQL Server 
+ using integrated authentication, use the `-E` option of `sqlcmd`. Ensure that the account which runs `sqlcmd` is associated with the default Kerberos client principal.
+
+## Integrated Authentication and bcp
+To access  SQL Server 
+ using integrated authentication, use the `-T` option of `bcp`. Ensure that the account which runs `bcp` is associated with the default Kerberos client principal. 
+  
+It is an error to use `-T` with the `-U` or `-P` option.
+  
+## Supported Syntax for an SPN Registered by  SQL Server 
+
+
+The syntax that SPNs use in the connection string or connection attributes is as follows:  
+
+| Syntax | Description |
+| --- | --- |
+| MSSQLSvc/*fqdn*:*port* | The provider-generated, default SPN when TCP is used. *port* is a TCP port number. *fqdn* is a fully qualified domain name. |
+  
+## Authenticating a Linux or macOS Computer with Active Directory
+
+<a name="configure-kerberos"></a>To configure Kerberos, enter data into the `krb5.conf` file. `krb5.conf` is in `/etc/` but you can refer to another file using the syntax e.g. `export KRB5_CONFIG=/home/dbapp/etc/krb5.conf`. The following is an example `krb5.conf` file:  
+  
+```  
+[libdefaults]  
+default_realm = YYYY.CORP.CONTOSO.COM  
+dns_lookup_realm = false  
+dns_lookup_kdc = true  
+ticket_lifetime = 24h  
+forwardable = yes  
+  
+[domain_realm]  
+.yyyy.corp.contoso.com = YYYY.CORP.CONTOSO.COM  
+.zzzz.corp.contoso.com = ZZZZ.CORP.CONTOSO.COM  
+```  
+  
+If your Linux or macOS computer is configured to use the Dynamic Host Configuration Protocol (DHCP) with a Windows DHCP server providing the DNS servers to use, you can use **dns_lookup_kdc=true**. Now, you can use Kerberos to sign in to your domain by issuing the command `kinit alias@YYYY.CORP.CONTOSO.COM`. Parameters passed to `kinit` are case-sensitive and the  SQL Server 
+ computer configured to be in the domain must have that user `alias@YYYY.CORP.CONTOSO.COM` added for login. Now, you can use trusted connections (**Trusted_Connection=YES** in a connection string, **bcp -T**, or **sqlcmd -E**).  
+  
+The time on the Linux or macOS computer and the time on the Kerberos Key Distribution Center (KDC) must be close. Ensure that your system time is set correctly, e.g. by using the Network Time Protocol (NTP).  
+
+If Kerberos authentication fails, the ODBC driver on Linux or macOS does not use NTLM authentication.  
+
+For more information about authenticating Linux or macOS computers with Active Directory, see [Authenticate Linux Clients with Active Directory](https://learn.microsoft.com/previous-versions/technet-magazine/dd228986\(v=msdn.10\)#id0060048). For more information about configuring Kerberos, see the [MIT Kerberos Documentation](https://web.mit.edu/kerberos/krb5-1.12/doc/index.html).
+
+## Related content
+
+- [Programming Guidelines](programming-guidelines.md)
+- [Release notes for the Microsoft ODBC Driver for SQL Server on Linux and macOS](release-notes-odbc-sql-server-linux-mac.md)
+- [Using Microsoft Entra ID with the ODBC Driver](../using-azure-active-directory.md)

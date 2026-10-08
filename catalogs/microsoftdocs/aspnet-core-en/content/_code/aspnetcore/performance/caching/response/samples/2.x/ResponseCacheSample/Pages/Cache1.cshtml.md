@@ -1,0 +1,24 @@
+# Source code: aspnetcore/performance/caching/response/samples/2.x/ResponseCacheSample/Pages/Cache1.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model Cache1Model
+@{
+    ViewData["Title"] = "Cache 1";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Vary caching by User Agent 30 seconds</h3>
+    </div>
+    <div class="panel-body">
+        <h4><code>Cache1Model</code> attribute:</h4>
+        <pre><code>[ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]</code></pre>
+    </div>
+</div>
+
+```

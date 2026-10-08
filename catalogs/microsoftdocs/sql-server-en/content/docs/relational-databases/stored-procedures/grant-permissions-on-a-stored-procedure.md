@@ -1,0 +1,138 @@
+---
+title: "Grant Permissions on a Stored Procedure"
+description: Learn how to grant permissions on a stored procedure in SQL Server by using SQL Server Management Studio or Transact-SQL.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: vanto
+ms.date: 09/30/2026
+ms.service: sql
+ms.subservice: stored-procedures
+ms.topic: how-to
+ms.custom:
+  - "UpdateFrequency5"
+  - "ignite-2025"
+helpviewer_keywords:
+  - "stored procedures [SQL Server], permissions"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# Grant Permissions on a Stored Procedure
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This article describes how to grant permissions on a stored procedure by using  SQL Server Management Studio 
+ or  Transact-SQL . Permissions can be granted to an existing user, database role, or application role in the database.
+
+<a id="Restrictions"></a>
+
+## Limitations
+
+- You can't use  SQL Server Management Studio 
+ to grant permissions on system procedures or system functions. Use [GRANT object permissions (Transact-SQL)](../../t-sql/statements/grant-object-permissions-transact-sql.md) instead.
+
+<a id="Security"></a>
+
+<a id="Permissions"></a>
+
+## Permissions
+
+The grantor (or the principal specified with the `AS` option) must have either the permission itself with `GRANT OPTION`, or a higher permission that implies the permission being granted. Requires `ALTER` permission on the schema to which the procedure belongs, or `CONTROL` permission on the procedure. For more information, see [GRANT object permissions (Transact-SQL)](../../t-sql/statements/grant-object-permissions-transact-sql.md).
+
+<a id="SSMSProcedure"></a>
+
+## Use SQL Server Management Studio
+
+<a id="to-grant-permissions-on-a-stored-procedure"></a>
+
+#### Grant permissions on a stored procedure
+
+1. In **Object Explorer**, connect to an instance of  Database Engine 
+ and then expand that instance.
+
+1. Expand **Databases**, expand the database in which the procedure belongs, and then expand **Programmability**.
+
+1. Expand **Stored Procedures**, right-click the procedure to grant permissions on, and then select **Properties**.
+
+1. From **Stored Procedure Properties**, select the **Permissions** page.
+
+1. To grant permissions to a user, database role, or application role, select **Search**.
+
+1. In **Select Users or Roles**, select **Object Types** to add or clear the users and roles you want.
+
+1. Select **Browse** to display the list of users or roles. Select the users or roles to whom permissions should be granted.
+
+1. In the **Explicit Permissions** grid, select the permissions to grant to the specified user or role. For a description of the permissions, see [Permissions (Database Engine)](../security/permissions-database-engine.md).
+
+Selecting **Grant** indicates the grantee will be given the specified permission. Selecting **Grant With** indicates that the grantee will also be able to grant the specified permission to other principals.
+
+<a id="TsqlProcedure"></a>
+
+## Use Transact-SQL
+
+<a id="to-grant-permissions-on-a-stored-procedure"></a>
+
+### Grant permissions on a stored procedure
+
+1. Connect to the  Database Engine 
+.
+
+1. From the tool bar, select **New Query**.
+
+1. Copy and paste the following example into the query window and select **Execute**. This example grants `EXECUTE` permission on the stored procedure `HumanResources.uspUpdateEmployeeHireInfo` to an application role named `Recruiting11`.
+
+```sql
+USE AdventureWorks2022;
+GRANT EXECUTE ON OBJECT::HumanResources.uspUpdateEmployeeHireInfo
+    TO Recruiting11;
+GO
+```
+
+<a id="to-grant-permissions-on-all-stored-procedures-in-a-schema"></a>
+
+### Grant permissions on all stored procedures in a schema
+
+1. Connect to the  Database Engine 
+.
+
+1. From the Standard bar, select **New Query**.
+
+1. Copy and paste the following example into the query window and select **Execute**. This example grants `EXECUTE` permission to all stored procedures that exist, or will exist, in the `HumanResources` schema, to an application role named `Recruiting11`.
+
+```sql
+USE AdventureWorks2022;
+GRANT EXECUTE ON SCHEMA::HumanResources
+    TO Recruiting11;
+GO
+```
+
+## Related content
+
+- [sys.fn_builtin_permissions (Transact-SQL)](../system-functions/sys-fn-builtin-permissions-transact-sql.md)
+- [GRANT object permissions (Transact-SQL)](../../t-sql/statements/grant-object-permissions-transact-sql.md)
+- [Create a stored procedure](create-a-stored-procedure.md)
+- [Modify a stored procedure](modify-a-stored-procedure.md)
+- [Delete a stored procedure](delete-a-stored-procedure.md)
+- [Rename a Stored Procedure](rename-a-stored-procedure.md)

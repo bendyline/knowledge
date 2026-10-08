@@ -1,0 +1,152 @@
+---
+title: "OLE Automation Sample Script"
+description: Learn how to use an example of a Transact-SQL statement batch that uses the OLE Automation stored procedures to create and use a SQL-DMO SQLServer object.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/10/2022"
+ms.service: sql
+ms.subservice: stored-procedures
+ms.topic: sample
+helpviewer_keywords:
+  - "OLE Automation [SQL Server], examples"
+monikerRange: ">=sql-server-2017"
+---
+# OLE Automation Sample Script
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This article contains an example of a  Transact-SQL  statement batch that uses the OLE Automation stored procedures to create and use a SQL-DMO SQLServer object in the local instance of the  Database Engine 
+. Parts of the code are used as examples in the reference articles for the OLE Automation system stored procedures.  
+  
+```sql  
+USE AdventureWorks2022;  
+GO  
+DECLARE @Object int;  
+DECLARE @HR int;  
+DECLARE @Property nvarchar(255);  
+DECLARE @Return nvarchar(255);  
+DECLARE @Source nvarchar(255), @Desc nvarchar(255);  
+  
+-- Create a SQLServer object.  
+SET NOCOUNT ON;  
+  
+-- First, create the object.  
+EXEC @HR = sp_OACreate N'SQLDMO.SQLServer',  
+    @Object OUT;  
+IF @HR <> 0  
+BEGIN  
+    -- Report the error.  
+    EXEC sp_OAGetErrorInfo @Object,  
+        @Source OUT,  
+        @Desc OUT;  
+    SELECT HR = convert(varbinary(4),@HR),  
+        Source=@Source,  
+        Description=@Desc;  
+    GOTO END_ROUTINE  
+END  
+ELSE  
+-- A DMO.SQLServer object has been successfully created.  
+BEGIN  
+    -- Specify Windows Authentication for connections.  
+    EXEC @HR = sp_OASetProperty @Object,  
+        N'LoginSecure',  
+        N'TRUE';  
+    IF @HR <> 0 GOTO CLEANUP  
+  
+    -- Set a property.  
+    EXEC @HR = sp_OASetProperty @Object,  
+        N'HostName',  
+        N'SampleScript';  
+    IF @HR <> 0 GOTO CLEANUP  
+  
+    -- Get a property using an output parameter.  
+    EXEC @HR = sp_OAGetProperty @Object, N'HostName', @Property OUT;  
+    IF @HR <> 0   
+        GOTO CLEANUP  
+    ELSE  
+        PRINT @Property;  
+  
+    -- Get a property using a result set.  
+    EXEC @HR = sp_OAGetProperty @Object,  
+        N'HostName';  
+    IF @HR <> 0 GOTO CLEANUP  
+  
+    -- Get a property by calling the method.  
+    EXEC @HR = sp_OAMethod @Object,  
+        N'HostName',  
+        @Property OUT;  
+    IF @HR <> 0   
+        GOTO CLEANUP  
+    ELSE  
+        PRINT @Property;  
+  
+    -- Call the connect method.  
+    -- SECURITY NOTE - When possible, use Windows Authentication.  
+    EXEC @HR = sp_OAMethod @Object,  
+        N'Connect',  
+        NULL,  
+        N'localhost',  
+        NULL,  
+        NULL;  
+    IF @HR <> 0 GOTO CLEANUP  
+  
+    -- Call a method that returns a value.  
+    EXEC @HR = sp_OAMethod @Object,  
+        N'VerifyConnection',  
+        @Return OUT;  
+    IF @HR <> 0  
+        GOTO CLEANUP  
+    ELSE  
+        PRINT @Return;  
+END  
+  
+CLEANUP:  
+-- Check whether an error occurred.  
+IF @HR <> 0  
+BEGIN  
+    -- Report the error.  
+    EXEC sp_OAGetErrorInfo @Object,  
+        @Source OUT,  
+        @Desc OUT;  
+    SELECT HR = convert(varbinary(4),@HR),  
+        Source=@Source,  
+        Description=@Desc;  
+END  
+  
+-- Destroy the object.  
+BEGIN  
+    EXEC @HR = sp_OADestroy @Object;  
+    -- Check if an error occurred.  
+    IF @HR <> 0   
+    BEGIN  
+        -- Report the error.  
+        EXEC sp_OAGetErrorInfo @Object,  
+        @Source OUT,  
+        @Desc OUT;  
+        SELECT HR = convert(varbinary(4),@HR),  
+        Source=@Source,  
+        Description=@Desc;  
+    END  
+END  
+  
+END_ROUTINE:  
+RETURN;  
+GO  
+```  
+
+## Supported platforms
+
+OLE Automation objects aren't available in Azure SQL Database, Azure SQL Managed Instance, SQL database in Fabric, or Fabric Data Warehouse.
+
+## Related content
+
+- [OLE Automation Objects in Transact-SQL](ole-automation-objects-in-transact-sql.md)
+- [sp_OACreate (Transact-SQL)](../system-stored-procedures/sp-oacreate-transact-sql.md)
+- [sp_OAGetProperty (Transact-SQL)](../system-stored-procedures/sp-oagetproperty-transact-sql.md)
+- [sp_OASetProperty (Transact-SQL)](../system-stored-procedures/sp-oasetproperty-transact-sql.md)
+- [sp_OAMethod (Transact-SQL)](../system-stored-procedures/sp-oamethod-transact-sql.md)
+- [sp_OADestroy (Transact-SQL)](../system-stored-procedures/sp-oadestroy-transact-sql.md)

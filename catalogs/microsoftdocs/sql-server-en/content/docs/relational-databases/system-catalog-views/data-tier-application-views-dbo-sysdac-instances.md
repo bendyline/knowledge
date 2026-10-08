@@ -1,0 +1,58 @@
+---
+title: "dbo.sysdac_instances (Transact-SQL)"
+description: Displays one row for each data-tier application (DAC) instance deployed to an instance of the Database Engine.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/28/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "dbo.sysdac_instances_TSQL"
+  - "sysdac_instances"
+  - "sysdac_instances_TSQL"
+  - "dbo.sysdac_instances"
+helpviewer_keywords:
+  - "dbo.sysdac_instances"
+  - "sysdac_instances"
+dev_langs:
+  - "TSQL"
+---
+# Data-tier Application Views - dbo.sysdac_instances
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Displays one row for each data-tier application (DAC) instance deployed to an instance of the  Database Engine 
+. sysdac_instances belongs to the dbo schema in the `msdb` database. The following table describes the columns in the sysdac_instances view.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `instance_id` | **uniqueidentifier** | Identifier of the DAC instance. |
+| `instance_name` | **sysname** | Name of the DAC instance specified when the DAC was deployed. |
+| `type_name` | **sysname** | Name of the DAC specified when the DAC package was created. |
+| `type_version` | **nvarchar(64)** | Version of the DAC specified when the DAC package was created. |
+| `description` | **nvarchar(4000)** | A description of the DAC written when the DAC package was created. |
+| `type_stream` | **varbinary(max)** | A bit stream that contains an encoded representation of the logical objects, such as tables and views, contained in the DAC. |
+| `date_created` | **datetime** | Date and time the DAC instance was created. |
+| `created_by` | **sysname** | Login that created the DAC instance. |
+| `database_name` | **sysname** | Name of the database created for the DAC instance. |
+
+## Remarks
+
+A DAC includes a DAC type, which is a definition of the logical data-tier objects used by an application, such as tables and views. A DAC package is a file used to deploy a DAC. The DAC package contains a representation of all the logical objects contained in the DAC type.
+
+The DAC package can be used to deploy one or more copies, or instances, of the DAC to an instance of the  Database Engine 
+. Each DAC instance deployed from the same DAC package shares the same type, but is assigned a unique instance name and identifier.
+
+## Permissions
+
+Requires membership in the **sysadmin** fixed server role to view all of the columns. Members of the public role can view the `instance_name`, description, and type_version columns.
+
+## Related content
+
+- [Data-tier applications (DAC) overview](../../tools/sql-database-projects/concepts/data-tier-applications/overview.md)

@@ -1,0 +1,32 @@
+---
+title: "SQLTransact Function"
+description: "SQLTransact Function"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+f1_keywords:
+  - "SQLTransact"
+helpviewer_keywords:
+  - "SQLTransact function [ODBC]"
+apilocation: "sqlsrv32.dll"
+apiname: "SQLTransact"
+apitype: "dllExport"
+---
+# SQLTransact Function
+**Conformance**  
+ Version Introduced: ODBC 1.0 Standards Compliance: Deprecated  
+  
+ **Summary**  
+ In ODBC *3.x*, the ODBC *2.x* function **SQLTransact** has been replaced by **SQLEndTran**. For more information, see [SQLEndTran](sqlendtran-function.md).  
+  
+> **Note:**  
+>  The attribute SQL_ASYNC_DBC_FUNCTION_ENABLE, which was introduced in ODBC 3.8, is not supported by **SQLTransact**. Applications using an asynchronous operation on a connection handle must use **SQLEndTran**.  
+  
+## Related content
+
+- [ODBC API reference](odbc-api-reference.md)
+- [ODBC Header Files](../install/odbc-header-files.md)

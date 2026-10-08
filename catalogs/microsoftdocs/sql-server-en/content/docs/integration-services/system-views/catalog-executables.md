@@ -1,0 +1,45 @@
+---
+title: "catalog.executables"
+description: "catalog.executables"
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: reference
+---
+# catalog.executables 
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+  This view displays a row for each executable in the specified execution.  
+  
+ An executable is a task or container that you add to the control flow of a package.  
+  
+| Column name | **Data type** | Description |
+| --- | --- | --- |
+| executable_id | **bigint** | The unique identifier for the executable. |
+| execution_id | **bigint** | The unique identifier for the instance of execution. |
+| executable_name | **nvarchar(4000)** | The name of the executable. |
+| executable_guid | **nvarchar(38)** | The GUID of the executable. |
+| package_name | **nvarchar(260)** | The name of the package. |
+| package_path | **nvarchar(max)** | The path of the package. |
+  
+## Permissions  
+ This view requires one of the following permissions:  
+  
+-   READ permission on the instance of execution  
+  
+-   Membership to the **ssis_admin** database role  
+  
+-   Membership to the **sysadmin** server role  
+  
+> **Note:**  
+>  When you have permission to perform an operation on the server, you also have permission to view information about the operation. Row-level security is enforced; only rows that you have permission to view are displayed.  
+  
+## Remarks

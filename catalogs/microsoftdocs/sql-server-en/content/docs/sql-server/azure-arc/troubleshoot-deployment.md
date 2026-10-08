@@ -1,0 +1,107 @@
+---
+title: Troubleshoot Deployment
+description: Describes how to troubleshoot SQL Server enabled by Azure Arc deployment.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 04/13/2026
+ms.topic: troubleshooting-general
+---
+
+# Troubleshoot Azure extension for SQL Server deployment
+
+
+**Applies to:**
+ 
+
+](../sql-docs-navigation-guide.md#applies-to)
+ 
+
+Before you start, note the logs locations.
+
+## Log file locations
+
+### Extension log
+
+
+The extension log file is at:
+
+   `C:\ProgramData\GuestConfig\extension_logs\Microsoft.AzureData.WindowsAgent.SqlServer\`
+
+The log file name depends on the version Azure Extension for SQL Server, for the latest version of Azure Extension for SQL Server, the log file is:
+
+   `unifiedagent.log`
+
+For extension version `1.1.24724.69` and earlier, the log file is:
+
+   `ExtensionLog_0.log`
+
+### Deployer logs
+
+The deployer logs are deployed at:
+
+`C:\ProgramData\GuestConfig\extension_logs\Microsoft.AzureData.WindowsAgent.SqlServer\<extension version>\deployer.log`
+
+Replace `<extension version>` with your extension version. For example:
+
+`C:\ProgramData\GuestConfig\extension_logs\Microsoft.AzureData.WindowsAgent.SqlServer\1.1.0.0\deployer.log`
+
+The failure to create the Arc-enabled SQL Server resource could be caused by several issues.
+
+## Extension installation failed
+
+Go to the connected server and check the deployer log. You should see the below messages.
+
+```output
+[YY/MM/DDDD HH:MM:SS UTC] [INFO]          Status of service 'SqlServerExtension' before attempting start: Stopped
+[YY/MM/DDDD HH:MM:SS UTC] [INFO]          Status of service 'SqlServerExtension' after attempting start: Stopped
+```
+
+If you can't see it, the extension didn't install properly. Try the following steps.
+
+1. Check event logs to see if anything preventing installation. Try installing SqlServerExtension.msi from the following folder `C:\Packages\Plugins\Microsoft.AzureData.WindowsAgent.SqlServer{version}`. The installation UI might provide the error details.
+
+1. Close services app, server manager and retry using [connection method](connect-already-enabled.md) to install the extension, and see if that helps.
+
+## Extension installed but didn't start
+
+Check the log files for any application errors.
+
+## Server - Azure Arc ARM resource was manually deleted
+
+Check the extension log for the following record:
+
+```output
+[YY/MM/DDDD HH:MM:SS PM UTC] [ERROR]   [UploadServiceProvider]      [ExtensionHandlerStatusQueryError] ArcSqlInstancesRequest request is null, not sending data to RP.
+```
+
+This means the machine is no longer recognized as a connected server. [Onboard the server to Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/onboard-portal) and retry one of the [connection methods](connect.md) to install the extension.
+
+## Server managed identity has insufficient permissions
+
+Check the extension log for the following record:
+
+```output
+[INFO] [UploadServiceProvider] [ExtensionHandlerArcUploadServicesNotifications] [AzureUpload] Arc post request failed with error: Forbidden message: {"ErrorDescription":{"ErrorCode":6,"Message":"The user has no access to the provided Azure resource."},"ResponseUrl":null}
+```
+
+Make sure the machine's managed identity has been assigned the *Azure Connected SQL Server Onboarding* role. See [When machine already connected to Arc-enabled Server](connect-already-enabled.md) role assignment instructions.
+
+## The user didn't migrate the Arc-enabled SQL Server resource to the new resource provider
+
+Check the extension log for the following record:
+
+```output
+[YY/MM/DDDD HH:MM:SS PM UTC] [INFO] [UploadServiceProvider] [ExtensionHandlerArcUploadServicesNotifications] [AzureUpload] Arc for Sql Server upload response status: InternalServerError.`
+```
+
+Make sure to migrate the Arc-enabled SQL Server resource to `Microsoft.AzureArcData`.
+
+## If extension is stuck in an odd state (Creating/Deleting) for long time
+
+[Disconnect your SQL Server instances from Azure Arc](delete-from-azure-arc.md)
+
+## Deleted resource still appears in the Azure portal
+
+
+> **Note:**
+> After you [delete](delete-from-azure-arc.md) a *SQL Server - Azure Arc* resource, the resource might continue to appear in the Azure portal for a period of time. This behavior is expected and is caused by Azure Resource Manager caching. The resource typically disappears after the cache refreshes. If the resource still appears after several hours, you can verify that it was successfully deleted by querying Azure Resource Graph or by using the Azure CLI. No further action is required — the resource isn't functional and doesn't incur charges after deletion.

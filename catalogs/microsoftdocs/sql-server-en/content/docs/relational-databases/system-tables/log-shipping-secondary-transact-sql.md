@@ -1,0 +1,60 @@
+---
+title: "log_shipping_secondary (Transact-SQL)"
+description: log_shipping_secondary (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "08/11/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "log_shipping_secondary"
+  - "log_shipping_secondary_TSQL"
+helpviewer_keywords:
+  - "log_shipping_secondary system table"
+dev_langs:
+  - "TSQL"
+---
+# log_shipping_secondary (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Stores one record per secondary ID. This table is stored in the **msdb** database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **secondary_id** | **uniqueidentifier** | The ID for the secondary server in the log shipping configuration. |
+| **primary_server** | **sysname** | The name of the primary instance of the SQL Server Database Engine in the log shipping configuration. |
+| **primary_database** | **sysname** | The name of the primary database in the log shipping configuration. |
+| **backup_source_directory** | **nvarchar(500)** | The directory where transaction log backup files from the primary server are stored. |
+| **backup_destination_directory** | **nvarchar(500)** | The directory on the secondary server where backup files are copied to. |
+| **file_retention_period** | **int** | The length of time, in minutes, that a backup file is retained on the secondary server before being deleted. |
+| **copy_job_id** | **uniqueidentifier** | The ID associated with the copy job on the secondary server. |
+| **restore_job_id** | **uniqueidentifier** | The ID associated with the restore job on the secondary server. |
+| **monitor_server** | **sysname** | The name of the instance of the  Microsoft |
+  | SQL Server Database Engine |
+ | being used as a monitor server in the log shipping configuration. |
+| **monitor_server_security_mode** | **bit** | The security mode used to connect to the monitor server.<br /><br /> 1 = Windows Authentication.<br /><br /> 0 =  SQL Server |
+ | Authentication. |
+| **last_copied_file** | **nvarchar(500)** | The filename of the last backup file copied to the secondary server. |
+| **last_copied_date** | **datetime** | The time and date of the last copy operation to the secondary server. |
+| **secondary_connection_options** | **nvarchar(4000)** | Additional connection options for the connection made between the log shipping executable and the secondary replica instance. <br /><br /> Available starting with  SQL Server 2025 (17.x) |
+ | and later versions. |
+| **monitor_connection_options** | **nvarchar(4000)** | Additional connection options for the connection made between the secondary replica instance and the remote monitor. <br /><br /> Available starting with  SQL Server 2025 (17.x) |
+ | and later versions. |
+
+## Remarks  
+ Multiple secondary databases on the same secondary server for a given primary database share some settings in the **log_shipping_secondary** table. If a shared setting is altered for one of them, the setting is altered for all of them.  
+  
+## Related content
+
+- [About log shipping (SQL Server)](../../database-engine/log-shipping/about-log-shipping-sql-server.md)
+- [sys.sp_add_log_shipping_secondary_database (Transact-SQL)](../system-stored-procedures/sp-add-log-shipping-secondary-database-transact-sql.md)
+- [sys.sp_change_log_shipping_secondary_database (Transact-SQL)](../system-stored-procedures/sp-change-log-shipping-secondary-database-transact-sql.md)
+- [sys.sp_delete_log_shipping_secondary_database (Transact-SQL)](../system-stored-procedures/sp-delete-log-shipping-secondary-database-transact-sql.md)
+- [sys.sp_help_log_shipping_secondary_database (Transact-SQL)](../system-stored-procedures/sp-help-log-shipping-secondary-database-transact-sql.md)
+- [System Tables (Transact-SQL)](system-tables-transact-sql.md)

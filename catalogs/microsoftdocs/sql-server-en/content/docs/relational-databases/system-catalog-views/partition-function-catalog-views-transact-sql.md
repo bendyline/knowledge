@@ -1,0 +1,40 @@
+---
+title: "Partition Function Catalog Views (Transact-SQL)"
+description: Partition Function Catalog Views (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+helpviewer_keywords:
+  - "catalog views [SQL Server], partition function"
+  - "partition function catalog views [SQL Server]"
+dev_langs:
+  - "TSQL"
+---
+# Partition Function Catalog Views (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This section contains the following catalog views.  
+
+
+
+        [sys.partition_functions](../../relational-databases/system-catalog-views/sys-partition-functions-transact-sql.md)
+        
+        [sys.partition_parameters](../../relational-databases/system-catalog-views/sys-partition-parameters-transact-sql.md)
+    :::column-end:::
+    :::column:::
+        [sys.partition_range_values](../../relational-databases/system-catalog-views/sys-partition-range-values-transact-sql.md)
+    :::column-end:::
+
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Transact-SQL reference (Database Engine)](../../t-sql/language-reference.md)

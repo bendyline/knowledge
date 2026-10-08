@@ -1,0 +1,44 @@
+---
+author: PatrickFarley
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 08/13/2024
+ms.author: pafarley
+ai-usage: ai-assisted
+---
+
+
+[Speech to text REST API reference](../../../rest-speech-to-text.md) | [Speech to text REST API for short audio reference](../../../rest-speech-to-text-short.md) | [Additional samples on GitHub](https://github.com/Azure-Samples/cognitive-services-speech-sdk)
+
+
+
+In this how-to guide, you learn how to use Azure Speech in Foundry Tools for real-time speech to text conversion. Real-time speech recognition is ideal for applications requiring immediate transcription, such as dictation, call center assistance, and captioning for live meetings.
+
+To learn how to set up the environment for a sample application, see [Quickstart: Recognize and convert speech to text](../../../get-started-speech-to-text.md).
+
+## Convert speech to text
+
+At a command prompt, run the following command. Insert the following values into the command:
+- Your API key for the Speech resource
+- Your Speech service region
+- The path for input audio file
+
+```curl
+curl --location --request POST 'https://YourResourceName.cognitiveservices.azure.com/stt/speech/recognition/conversation/cognitiveservices/v1?language=en-US' \
+--header 'Ocp-Apim-Subscription-Key: INSERT_SUBSCRIPTION_KEY_HERE' \
+--header 'Content-Type: audio/wav' \
+--data-binary @'INSERT_AUDIO_FILE_PATH_HERE'
+```
+
+You should receive a response like the following example:
+
+```json
+{
+    "RecognitionStatus": "Success",
+    "DisplayText": "My voice is my passport, verify me.",
+    "Offset": 6600000,
+    "Duration": 32100000
+}
+```
+
+For more information, see the [Speech to text REST API reference](../../../rest-speech-to-text.md).

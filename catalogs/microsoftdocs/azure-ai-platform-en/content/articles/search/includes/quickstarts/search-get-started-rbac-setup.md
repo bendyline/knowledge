@@ -1,0 +1,43 @@
+---
+ms.service: azure-ai-search
+ms.topic: include
+ms.date: 03/25/2026
+---
+
+## Configure role-based access
+
+In this section, you enable RBAC on your Azure AI Search service and assign the necessary roles for creating, loading, and querying search objects. For more information about these steps, see [Connect to Azure AI Search using roles](../../search-security-rbac.md).
+
+To configure access:
+
+1. Go to your search service in the [Azure portal](https://portal.azure.com).
+
+1. From the left pane, select **Settings > Keys**.
+
+1. Select **Role-based access control** or **Both** if you need time to transition clients to RBAC.
+
+   Screenshot of the access control options in the Azure portal.
+
+1. From the left pane, select **Access control (IAM)**.
+
+1. Select **Add** > **Add role assignment**.
+
+   Screenshot of the dropdown menu for adding a role assignment in the Azure portal.
+
+1. Assign the **Search Service Contributor** role to your user account or managed identity.
+
+1. Repeat the role assignment for **Search Index Data Contributor**.
+
+## Get service information
+
+In this section, you retrieve the subscription ID and endpoint of your Azure AI Search service. If you only have one subscription, skip the subscription ID and only retrieve the endpoint. You use these values in the remaining sections of this quickstart.
+
+To get your service information:
+
+1. Go to your search service in the [Azure portal](https://portal.azure.com).
+
+1. From the left pane, select **Overview**.
+
+1. Make a note of the subscription ID and endpoint.
+
+   Screenshot of the subscription ID and endpoint in the Azure portal.

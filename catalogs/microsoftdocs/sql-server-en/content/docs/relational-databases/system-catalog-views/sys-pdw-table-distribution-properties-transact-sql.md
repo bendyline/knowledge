@@ -1,0 +1,33 @@
+---
+title: "sys.pdw_table_distribution_properties (Transact-SQL)"
+description: sys.pdw_table_distribution_properties (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "12/03/2019"
+ms.service: sql
+ms.subservice: data-warehouse
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sys.pdw_table_distribution_properties (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+ 
+
+
+  Holds distribution information for tables.  
+  
+| Column Name | Data Type | Description | Range |
+| --- | --- | --- | --- |
+| **object_id** | **int** | ID of the table for which the properties were specified. |  |
+| **distribution_policy** | **tinyint** | 0 = UNDEFINED<br /><br /> 1 = NONE<br /><br /> 2 = HASH<br /><br /> 3 = REPLICATE<br /><br /> 4 = ROUND_ROBIN |  |
+| **distribution_policy_desc** | **nvarchar(60)** | UNDEFINED, NONE, HASH, REPLICATE, ROUND_ROBIN | Azure Synapse Analytics  returns either HASH, ROUND_ROBIN or REPLICATE. |
+  
+## Related content
+
+- [Azure Synapse Analytics catalog views](azure-synapse-analytics-catalog-views.md)

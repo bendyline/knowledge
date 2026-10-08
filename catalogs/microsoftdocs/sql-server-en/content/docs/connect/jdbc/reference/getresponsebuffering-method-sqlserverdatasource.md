@@ -1,0 +1,41 @@
+---
+title: "getResponseBuffering Method (SQLServerDataSource)"
+description: "getResponseBuffering Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "SQLServerDataSource.getResponseBuffering()"
+apiname: "SQLServerDataSource.getResponseBuffering()"
+apitype: "Assembly"
+---
+# getResponseBuffering Method (SQLServerDataSource)
+
+
+  Returns the response buffering mode for this [SQLServerDataSource](sqlserverdatasource-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public java.lang.String getResponseBuffering()  
+```  
+  
+## Return Value  
+ A **String** that contains a lower-case **full** or **adaptive**.  
+  
+## Remarks  
+ The **full** value specifies reading the entire result from the server at run time.  
+  
+ The **adaptive** value specifies buffering the minimum possible data when necessary. The **adaptive** value is the default buffering mode.  
+  
+ For more information about using the response buffering mode, see [Using Adaptive Buffering](../using-adaptive-buffering.md).  
+  
+## Related content
+
+- [setResponseBuffering Method (SQLServerDataSource)](setresponsebuffering-method-sqlserverdatasource.md)
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

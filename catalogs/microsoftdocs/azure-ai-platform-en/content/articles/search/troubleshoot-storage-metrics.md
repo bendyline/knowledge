@@ -1,0 +1,107 @@
+---
+title: Troubleshoot Storage and Metric Discrepancies
+description: Learn why Azure AI Search storage metrics appear inconsistent across the Azure portal, REST APIs, and SDKs, and how to resolve discrepancies.
+author: mattwojo
+ms.author: mattwoj
+ms.service: azure-ai-search
+ms.topic: troubleshooting-general
+ms.date: 07/21/2026
+ai-usage: ai-assisted
+---
+
+# Troubleshoot storage and metric discrepancies in Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+This article answers common questions about storage metrics that appear inconsistent across the Azure portal, REST APIs, and Azure SDKs.
+
+Storage values in Azure AI Search are collected periodically and might not reflect the real-time state. Therefore, short-term discrepancies are expected in most scenarios.
+
+For background on how metrics are collected and reported, see [Monitor Azure AI Search](monitor-azure-cognitive-search.md).
+
+## Why doesn't storage change immediately when I delete or update documents?
+
+When you delete documents, Azure AI Search acknowledges the deletion immediately, but physical storage reclamation happens through background merge operations. The underlying document is marked as deleted and skipped during subsequent queries. As new documents are indexed and the internal index grows, the system cleans up deleted documents and reclaims the resources. This means you're likely to observe a lag between deleting documents and the underlying resources being freed.
+
+Document updates have a similar effect on storage. Because documents are immutable, an update is internally a delete-and-insert operation: the old version is marked as deleted, and a new version is inserted. Until background merge operations clean up the old version, you might observe that storage increases temporarily rather than staying the same.
+
+These merge operations typically complete within 24 to 72 hours, depending on the amount of load on the service. If you're close to your pricing tier's storage limit, factor in this temporary increase when you plan large-scale updates or document replacements.
+
+For more information, see [Delete documents in a search index](search-how-to-delete-documents.md) and [Overhead from deleting or updating documents within the index](vector-search-index-size.md#overhead-from-deleting-or-updating-documents-within-the-index).
+
+## Why do portal and API values differ at the same point in time?
+
+The Azure portal and REST APIs might report different values because they have different refresh cadences. Specifically:
+
+- The **Usage** tab on the portal **Overview** page refreshes periodically, typically every few minutes.
+- [GET Service Statistics](https://learn.microsoft.com/rest/api/searchservice/get-service-statistics/get-service-statistics) returns service-level counters, including `storageSize`, `vectorIndexSize`, and `documentCount`.
+- [GET Index Statistics](https://learn.microsoft.com/rest/api/searchservice/indexes/get-statistics) returns per-index counters.
+
+Service-level and index-level statistics are collected independently and at different intervals. A snapshot from one surface might not align with a snapshot from the other if they weren't captured at the same time. This behavior is normal and doesn't indicate a defect.
+
+For more information about monitoring surfaces, see [Monitor Azure AI Search](monitor-azure-cognitive-search.md).
+
+## Why is a rebuilt index larger than an older index with similar content?
+
+A rebuilt index might temporarily show a different storage profile because background merge operations haven't finished cleaning up the old document versions. Depending on service load, these merges typically take 24 to 72 hours. During this period, storage might appear larger than expected, which is especially important to consider if you're near your pricing tier's storage limit. Plan large rebuild or migration operations during periods of lower indexing activity, and monitor storage metrics until merges are finished.
+
+Even after merge operations complete, the final size of a rebuilt index might differ slightly from the original. Index storage size is nondeterministic, and several factors affect the outcome:
+
+- Schema changes, such as adding fields, analyzers, or vector configurations.
+- Ingestion and update patterns that affect the deleted documents ratio.
+- [Vector optimization settings](vector-search-how-to-configure-compression-storage.md), such as quantization or storage reduction options.
+
+For more information about factors that affect size, see [Vector index size and limits](vector-search-index-size.md) and [Service limits in Azure AI Search](search-limits-quotas-capacity.md).
+
+## Why doesn't total storage match vector index size?
+
+`storageSize` and `vectorIndexSize` measure different things:
+
+- `storageSize` is the total disk footprint of an index, including content of all data types, such as text, metadata, and vectors.
+- `vectorIndexSize` is a limit on the size of a vector index loaded into memory. Vector fields that use the exhaustive KNN algorithm don't consume vector index quota and report zero for `vectorIndexSize`. For more information, see [Vector index size and limits](vector-search-index-size.md).
+
+On disk, the total storage consumed by vectors might be larger than the in-memory vector index size because Azure AI Search stores multiple copies of vector fields for different purposes. For information about what these copies are and how to reduce disk consumption, see [Eliminate optional vector instances from storage](vector-search-how-to-storage-options.md).
+
+## How should I compare metrics correctly?
+
+To determine if a discrepancy is real or a timing artifact, capture values from the same surface within a consistent UTC time window:
+
+1. Call [GET Service Statistics](https://learn.microsoft.com/rest/api/searchservice/get-service-statistics/get-service-statistics) and [GET Index Statistics](https://learn.microsoft.com/rest/api/searchservice/indexes/get-statistics) within the same five-minute window.
+1. Repeat sampling on a fixed cadence, such as every 20 to 30 minutes.
+1. Compare at least three consecutive windows before you conclude that values aren't converging.
+1. Evaluate `storageSize` separately from `vectorIndexSize` because they track different physical structures.
+
+## When is a discrepancy expected vs. an actual defect?
+
+Most discrepancies are expected and resolve without intervention. If the defect criteria are met, open a support request with the evidence described in the next section.
+
+### Expected divergence
+
+- You recently performed heavy indexing, updates, or deletions, and values are still converging.
+- Portal and API values differ, but the gap narrows across repeated samples.
+- `storageSize` and `vectorIndexSize` don't match, which is by design because they measure different things.
+
+### Possible defect
+
+- The discrepancy persists across at least three aligned sampling windows during a period of low write or delete activity.
+- No convergence trend is visible despite repeated sampling.
+- Reported values lead to incorrect operational decisions, such as delayed autoscale triggering or quota enforcement failures.
+
+## What should I include in a support request?
+
+Include the following information in your [support request](https://portal.azure.com/#view/Microsoft_Azure_Support/HelpAndSupportBlade/~/overview/newsupportrequest/):
+
+- UTC timestamps for each portal and API sample.
+- Raw JSON responses from [GET Service Statistics](https://learn.microsoft.com/rest/api/searchservice/get-service-statistics/get-service-statistics) and [GET Index Statistics](https://learn.microsoft.com/rest/api/searchservice/indexes/get-statistics).
+- Approximate ingest, update, and delete volume during the observation period.
+- Description of the operational impact, such as a scaling delay, quota block, or incorrect capacity reporting.
+
+## Related content
+
+- [Monitor Azure AI Search](monitor-azure-cognitive-search.md)
+- [Vector index size and limits](vector-search-index-size.md)
+- [Service limits in Azure AI Search](search-limits-quotas-capacity.md)
+- [Delete documents in a search index](search-how-to-delete-documents.md)

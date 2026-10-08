@@ -1,0 +1,51 @@
+---
+title: "getPooledConnection Method (java.lang.String, java.lang.String)"
+description: "getPooledConnection Method (java.lang.String, java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnectionPoolDataSource.getPooledConnection (java.lang.String, java.lang.String)"
+apitype: "Assembly"
+---
+# getPooledConnection Method (java.lang.String, java.lang.String)
+
+
+  Tries to establish a physical database connection that can be used as a pooled connection based on the given user name and password.  
+  
+## Syntax  
+  
+```  
+  
+public javax.sql.PooledConnection getPooledConnection(java.lang.String user,  
+                                                      java.lang.String password)  
+```  
+  
+#### Parameters  
+ *user*  
+  
+ A **String** that contains the user name.  
+  
+ *password*  
+  
+ A **String** that contains the password.  
+  
+## Return Value  
+ A [SQLServerPooledConnection](sqlserverpooledconnection-class.md) object.  
+  
+## Exceptions  
+ java.sql.SQLException  
+  
+## Remarks  
+ This getPooledConnection method is specified by the getPooledConnection method in the javax.sql.ConnectionPoolDataSource interface.  
+  
+## Related content
+
+- [getPooledConnection Method (SQLServerConnectionPoolDataSource)](getpooledconnection-method-sqlserverconnectionpooldatasource.md)
+- [SQLServerConnectionPoolDataSource Methods](sqlserverconnectionpooldatasource-methods.md)
+- [SQLServerConnectionPoolDataSource Members](sqlserverconnectionpooldatasource-members.md)
+- [SQLServerConnectionPoolDataSource Class](sqlserverconnectionpooldatasource-class.md)

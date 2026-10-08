@@ -1,0 +1,200 @@
+---
+title: "Manage Transaction Log File Size"
+description: Learn how to monitor SQL Server transaction log size, shrink the log, enlarge a log, optimize the tempdb log growth rate, and control transaction log growth.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.reviewer: wiassaf, maghan
+ms.date: 08/25/2025
+ms.service: sql
+ms.subservice: supportability
+ms.topic: concept-article
+helpviewer_keywords:
+  - "transaction logs [SQL Server], size management"
+  - "manage log size"
+  - "log size, manage"
+---
+
+# Manage the size of the transaction log file
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This article describes how to monitor  SQL Server 
+ transaction log size, shrink the transaction log, add to or enlarge a transaction log file, optimize the `tempdb` transaction log growth rate, and control the growth of a transaction log file.
+
+This article applies to  SQL Server 
+. Although the process is similar, for file space management in Azure SQL, see: 
+- [Manage file space for databases in Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/file-space-manage?view=azuresql-mi\&preserve-view=true).
+- [Manage file space for databases in Azure SQL Database](https://learn.microsoft.com/azure/azure-sql/database/file-space-manage?view=azuresql-db\&preserve-view=true).
+
+## Understand types of storage space for a database
+
+Understanding the following storage space quantities is important for managing the file space of a database.
+
+| Database quantity | Definition | Comments |
+| --- | --- | --- |
+| **Data space used** | The space used to store database data. | Generally, space used increases on inserts and decreases on deletes. In some cases, the space used doesn't change on inserts or deletes, depending on the amount and pattern of data involved in the operation and any fragmentation. For example, deleting one row from every data page doesn't necessarily decrease the space used. |
+| **Data space allocated** | The formatted file space made available for storing database data. | The amount of space allocated grows automatically but never decreases after deletes. This behavior ensures that future inserts are faster because space doesn't need to be reformatted. |
+| **Data space allocated but unused** | The difference between the amount allocated and data space used. | This quantity represents the maximum free space that shrinking database data files can reclaim. |
+| **Data max size** | The maximum amount of space for storing database data. | The amount of data space allocated can't grow beyond the data max size. |
+
+The following diagram illustrates the relationships between the different types of storage space for a database.
+
+Diagram that illustrates the relationships between the different types of storage space for a database.
+
+### Query a single database for file space information
+
+Use the following query to return the amount of database file space allocated and the amount of unused space allocated. Units of the query result are in MB.
+
+```sql
+-- Connect to a user database
+SELECT file_id, type_desc,
+       CAST(FILEPROPERTY(name, 'SpaceUsed') AS decimal(19,4)) * 8 / 1024. AS space_used_mb,
+       CAST(size/128.0 - CAST(FILEPROPERTY(name, 'SpaceUsed') AS int)/128.0 AS decimal(19,4)) AS space_unused_mb,
+       CAST(size AS decimal(19,4)) * 8 / 1024. AS space_allocated_mb,
+       CAST(max_size AS decimal(19,4)) * 8 / 1024. AS max_size_mb
+FROM sys.database_files;
+```
+
+<a id="MonitorSpaceUse"></a>
+
+## Monitor log space use
+
+Monitor log space use by using [sys.dm_db_log_space_usage](../system-dynamic-management-objects/sys-dm-db-log-space-usage-transact-sql.md). This DMV returns information about the amount of log space currently used, and indicates when the transaction log needs truncation.
+
+For information about the current log file size, its maximum size, and the autogrowth option for the file, you can also use the `size`, `max_size`, and `growth` columns for that log file in [sys.database_files](../system-catalog-views/sys-database-files-transact-sql.md).
+
+> **Important:**  
+> Avoid overloading the log disk. Ensure the log storage can withstand the [IOPS](https://wikipedia.org/wiki/IOPS) and low latency requirements for your transactional load.
+
+<a id="ShrinkSize"></a>
+
+## Shrink a log file
+
+Shrink the log file to reduce its physical size by returning free space to the operating system. A shrink only makes a difference when a transaction log file contains unused space.
+
+If the log file is full, probably because of open transactions, investigate [what's preventing transaction log truncation](troubleshoot-a-full-transaction-log-sql-server-error-9002.md#how-to-resolve-a-full-transaction-log).
+
+> **Caution:**  
+> Shrink operations shouldn't be considered a regular maintenance operation. Data and log files that grow because of regular recurring business operations don't require shrink operations. Shrink commands affect database performance while running. They should be run during periods of low usage. We don't recommend that you shrink data files if a regular application workload will cause the files to grow to the same allocated size again.
+
+Be aware of the potential negative performance impact of shrinking database files. See [Index maintenance after shrink](#rebuild-indexes).
+
+Before shrinking the transaction log, keep in mind [factors that can delay log truncation](the-transaction-log-sql-server.md#FactorsThatDelayTruncation). If storage space is required again after a log shrink, the transaction log will grow again, introducing performance overhead during log growth operations. For more information, see [Recommendations](#Recommendations).
+
+You can shrink a log file only while the database is online and at least one [virtual log file (VLF)](../sql-server-transaction-log-architecture-and-management-guide.md#physical_arch) is free. In some cases, shrinking the log might only be possible after the next log truncation.
+
+Some factors, such as a long-running transaction, can keep [VLFs](../sql-server-transaction-log-architecture-and-management-guide.md#physical_arch) active for an extended period, can restrict log shrinkage, or can even prevent the log from shrinking at all. For more information, see [Factors that can delay log truncation](the-transaction-log-sql-server.md#FactorsThatDelayTruncation).
+
+Shrinking a log file removes one or more [VLFs](../sql-server-transaction-log-architecture-and-management-guide.md#physical_arch) that hold no part of the logical log (that is, *inactive VLFs*). When you shrink a transaction log file, inactive VLFs are removed from the end of the log file to reduce the log to approximately the target size.
+
+For more information on shrink operations, review the following resources:
+
+**Shrink a log file (without shrinking database files)**
+
+- [DBCC SHRINKFILE (Transact-SQL)](../../t-sql/database-console-commands/dbcc-shrinkfile-transact-sql.md)
+
+- [Shrink a file](../databases/shrink-a-file.md)
+
+**Monitor log-file shrink events**
+
+- [Log File Auto Shrink event class](../event-classes/log-file-auto-shrink-event-class.md)
+
+**Monitor log space**
+
+- [Sys.dm_db_log_space_usage (Transact-SQL)](../system-dynamic-management-objects/sys-dm-db-log-space-usage-transact-sql.md)
+
+- [Sys.database_files (Transact-SQL)](../system-catalog-views/sys-database-files-transact-sql.md) (See the `size`, `max_size`, and `growth` columns for the log file or files.)
+
+<a id="rebuild-indexes"></a>
+
+### Index maintenance after a shrink operation
+
+Indexes might become fragmented after a shrink operation is completed against data files. This fragmentation reduces their effectiveness for performance optimization for certain workloads, such as queries that use large scans. If performance degradation occurs after the shrink operation is complete, consider index maintenance to rebuild indexes. Keep in mind that index rebuilds require free space in the database and hence might increase the allocated space, counteracting the effect of the shrink operation.
+
+For more information, see [Optimize index maintenance to improve query performance and reduce resource consumption](../indexes/reorganize-and-rebuild-indexes.md).
+
+<a id="AddOrEnlarge"></a>
+
+## Add or enlarge a log file
+
+You can gain space by enlarging the existing log file (if disk space permits) or adding a log file to the database, typically on a different disk. One transaction log file is sufficient unless log space is running out and disk space is also running out on the volume that holds the log file.
+
+- To add a log file to the database, use the `ADD LOG FILE` clause of the `ALTER DATABASE` statement. This action allows the log to grow.
+- To enlarge the log file, use the `MODIFY FILE` clause of the `ALTER DATABASE` statement, specifying the `SIZE` and `MAXSIZE` syntax. For more information, see [ALTER DATABASE (Transact-SQL) file and filegroup options](../../t-sql/statements/alter-database-transact-sql-file-and-filegroup-options.md).
+
+For more information, see [Recommendations](#Recommendations).
+
+<a id="tempdbOptimize"></a>
+
+## Optimize tempdb transaction log size
+
+Restarting a server instance resizes the transaction log of the `tempdb` database to its original pre-autogrowth size. This resizing can reduce the performance of the `tempdb` transaction log.
+
+You can avoid this overhead by increasing the `tempdb` transaction log size after starting or restarting the server instance. For more information, see [Tempdb database](../databases/tempdb-database.md).
+
+<a id="ControlGrowth"></a>
+
+## Control transaction log file growth
+
+Use the [ALTER DATABASE (Transact-SQL) file and filegroup options](../../t-sql/statements/alter-database-transact-sql-file-and-filegroup-options.md) statement to manage the growth of a transaction log file. Note the following:
+
+- Use the `SIZE` option to change the current file size in KB, MB, GB, and TB units.
+- To change the growth increment, use the `FILEGROWTH` option. A value of 0 indicates that automatic growth is set to off and no extra space is permitted.
+Use the `MAXSIZE` option to control the maximum size of a log file in KB, MB, GB, and TB units or to set growth to `UNLIMITED`.
+
+For more information, see [Recommendations](#Recommendations).
+
+<a id="Recommendations"></a>
+
+## Recommendations
+
+Following are some general recommendations to consider when you're working with transaction log files:
+
+- The automatic growth (autogrowth) increment of the transaction log, as set by the `FILEGROWTH` option, must be large enough to stay ahead of the needs of the workload transactions. The file growth increment on a log file should be sufficiently large to avoid frequent expansion. A good tip for properly sizing a transaction log is to monitor the amount of log occupied during:
+    - The time required to run a full backup, because log backups can't occur until it finishes.
+    - The time required for the largest index maintenance operations.
+    - The time required to run the largest batch in a database.
+
+- When you set autogrowth for data and log files by using the `FILEGROWTH` option, it might be better to set it in *size* instead of *percentage* to allow better control of the growth ratio, because a percentage is an ever-growing amount.
+    - In versions prior to  SQL Server 2022 (16.x) 
+, transaction logs can't use [instant file initialization](../databases/database-instant-file-initialization.md), so extended log growth times are especially critical.
+    - Starting with  SQL Server 2022 (16.x) 
+ (all editions) and in  Azure SQL Database 
+, instant file initialization can benefit transaction log growth events up to 64 MB. The default autogrowth size increment for new databases is 64 MB. Transaction log file autogrowth events larger than 64 MB can't benefit from instant file initialization.
+    - As a best practice, don't set the `FILEGROWTH` option value above 1,024 MB for transaction logs. The default values for the `FILEGROWTH` option are:
+
+      | Version | Default values |
+      | --- | --- |
+      | Starting with  SQL Server 2016 (13.x) |
+ | Data: 64 MB. Log files: 64 MB. |
+      | Starting with  SQL Server 2005 (9.x) 
+ | Data: 1 MB. Log files: 10%. |
+      | Prior to  SQL Server 2005 (9.x) 
+ | Data: 10%. Log files: 10%. |
+
+- A small autogrowth increment can generate too many small [VLFs](../sql-server-transaction-log-architecture-and-management-guide.md#physical_arch) and can reduce performance. To determine the optimal VLF distribution for the current transaction log size of all databases in a given instance and the required growth increments to achieve the required size, see this [script for analyzing and fixing VLFs, provided by the SQL Tiger Team](https://github.com/Microsoft/tigertoolbox/tree/master/Fixing-VLFs).
+
+- A large autogrowth increment can cause two problems:
+  - It can cause the database to pause while the new space is allocated, potentially causing query timeouts.
+  - It can generate too few and large [VLFs](../sql-server-transaction-log-architecture-and-management-guide.md#physical_arch) and can also affect performance. To determine the optimal VLF distribution for the current transaction log size of all databases in a given instance and the required growth increments to achieve the required size, see this [script for analyzing and fixing VLFs, provided by the SQL Tiger Team](https://github.com/Microsoft/tigertoolbox/tree/master/Fixing-VLFs).
+
+- Even with autogrowth enabled, you can receive a message that the transaction log is full if it can't grow fast enough to satisfy the needs of your query. For more information on changing the growth increment, see [ALTER DATABASE (Transact-SQL) file and filegroup options](../../t-sql/statements/alter-database-transact-sql-file-and-filegroup-options.md).
+
+- Having multiple log files in a database doesn't enhance performance in any way, because the transaction log files don't use [proportional fill](../pages-and-extents-architecture-guide.md#ProportionalFill) like data files in a same filegroup.
+
+Log files can be set to shrink automatically. However, we don't recommend this configuration, and the `AUTO_SHRINK` database property is set to FALSE by default. If `AUTO_SHRINK` is set to TRUE, automatic shrinking reduces the size of a file only when more than 25 percent of its space is unused.
+- The file is shrunk either to the size at which only 25 percent of the file is unused space or to the original size of the file, whichever is larger.
+- For information about changing the setting of the `AUTO_SHRINK` property, see [View or change the properties of a database](../databases/view-or-change-the-properties-of-a-database.md) and [ALTER DATABASE SET options (Transact-SQL)](../../t-sql/statements/alter-database-transact-sql-set-options.md).
+
+## Related content
+
+- [BACKUP (Transact-SQL)](../../t-sql/statements/backup-transact-sql.md)
+- [Troubleshoot a full transaction log (SQL Server Error 9002)](troubleshoot-a-full-transaction-log-sql-server-error-9002.md)
+- [Transaction log backups in the SQL Server transaction log architecture and management guide](../sql-server-transaction-log-architecture-and-management-guide.md#Backups)
+- [Transaction log backups (SQL Server)](../backup-restore/transaction-log-backups-sql-server.md)
+- [ALTER DATABASE (Transact-SQL) File and Filegroup Options](../../t-sql/statements/alter-database-transact-sql-file-and-filegroup-options.md)

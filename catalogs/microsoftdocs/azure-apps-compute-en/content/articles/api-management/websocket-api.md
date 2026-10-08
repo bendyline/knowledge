@@ -1,0 +1,181 @@
+---
+title: Import a WebSocket API to Azure API Management
+description: Learn how API Management supports WebSocket, add a WebSocket API, and WebSocket limitations.
+ms.service: azure-api-management
+ms.topic: how-to
+ms.date: 03/16/2026
+ms.custom:
+  - template-how-to
+  - sfi-image-nochange
+---
+
+# Import a WebSocket API
+
+
+**APPLIES TO: Developer | Basic | Basic v2 | Standard | Standard v2 | Premium | Premium v2**
+
+With Azure API Management's WebSocket API solution, API publishers can quickly add a WebSocket API in API Management by using the Azure portal, Azure CLI, Azure PowerShell, and other Azure tools. 
+
+WebSocket APIs can be secured by applying API Management's [access control policies](api-management-policies.md#authentication-and-authorization) to the initial handshake operation. You can also test WebSocket APIs by using the API test consoles in both Azure portal and developer portal. Building on existing observability capabilities, API Management provides metrics and logs for monitoring and troubleshooting WebSocket APIs. 
+
+In this article, you learn how to:
+> 
+> * Understand WebSocket passthrough flow.
+> * Add a WebSocket API to your API Management instance.
+> * Test your WebSocket API.
+> * View the metrics and logs for your WebSocket API.
+> * Learn the limitations of WebSocket API.
+
+## Prerequisites
+
+- Create an [API Management instance](get-started-create-service-instance.md)
+- A WebSocket API
+- Azure CLI
+
+## WebSocket passthrough
+
+API Management supports WebSocket passthrough. 
+
+During WebSocket passthrough, the client application establishes a WebSocket connection with the API Management gateway, which then establishes a connection with the corresponding backend services. API Management then proxies WebSocket client-server messages.
+
+Diagram showing the WebSocket passthrough flow.
+
+1. The client application sends a WebSocket handshake request to the gateway, invoking the onHandshake operation.
+1. The API Management gateway applies configured policies and sends WebSocket handshake requests to the corresponding backend service.
+1. The backend service upgrades a connection to WebSocket.
+1. The gateway upgrades the corresponding connection to WebSocket.
+1. After the connection pair is established, API Management brokers messages back and forth between the client application and backend service.
+1. The client application sends a message to the gateway.
+1. The gateway forwards the message to the backend service.
+1. The backend service sends a message to the gateway.
+1. The gateway forwards the message to the client application.
+1. When either side disconnects, API Management terminates the corresponding connection.
+
+> **Note:**
+> Client-to-backend connections consist of one-to-one mappings. The same WebSocket session can't be distributed across multiple backends.
+
+## onHandshake operation
+
+Per the [WebSocket protocol](https://tools.ietf.org/html/rfc6455), when a client application tries to establish a WebSocket connection with a backend service, it first sends an [opening handshake request](https://tools.ietf.org/html/rfc6455#page-6).
+
+Each WebSocket API in API Management has an *onHandshake* operation. onHandshake is an immutable, unremovable, automatically created system operation. The onHandshake operation enables API publishers to intercept these handshake requests and apply API Management policies to them.
+
+Screenshot showing onHandshake screen example.
+
+## Add a WebSocket API
+
+1. In the [Azure portal](https://portal.azure.com), navigate to your API Management instance.
+
+1. In the sidebar menu, select **APIs** > **+ Add API**.
+
+1. Under **Define a new API**, select the **WebSocket** tile.
+
+1. In the dialog box, select **Full** and complete the required form fields.
+
+    | Field | Description |
+    | --- | --- |
+    | Display name | Your WebSocket API's display name. |
+    | Name | Raw name of the WebSocket API. Automatically populates as you type the display name. |
+    | WebSocket URL | The base URL with your websocket name. For example: *ws://example.com/your-socket-name* |
+    | URL scheme | Accept the default. |
+    | API URL suffix | Add a URL suffix to identify this specific API in this API Management instance. It has to be unique in this API Management instance. |
+    | Products | Associate your WebSocket API with a product to publish it. |
+    | Gateways | Associate your WebSocket API with existing gateways. Self-hosted gateways are only available in Developer and Premium tiers. |
+ 
+1. Select **Create**.
+
+## Test your WebSocket API
+
+1. Navigate to your WebSocket API.
+
+1. Within your WebSocket API, select the onHandshake operation.
+
+1. Select the **Test** tab to access the Test console. 
+
+1. Optionally, provide query string parameters required for the WebSocket handshake.
+
+    Screenshot showing the test options for the API.
+
+1. Select **Connect**.
+
+1. View connection status in **Output**.
+
+1. Enter value in **Payload**. 
+
+1. Select **Send**.
+
+1. View received messages in **Output**.
+
+1. Repeat preceding steps to test different payloads.
+
+1. When testing is complete, select **Disconnect**.
+
+## View metrics and logs
+
+Use standard API Management and Azure Monitor features to [monitor](api-management-howto-use-azure-monitor.md) WebSocket APIs:
+
+* View API metrics in Azure Monitor
+* Optionally, enable diagnostic settings to collect and view API Management gateway logs, which include WebSocket API operations, or WebSocket connection logs
+
+For example, the following screenshot shows recent WebSocket API responses with code `101` from the **ApiManagementGatewayLogs** table. These results indicate the successful switch of the requests from TCP to the WebSocket protocol.
+
+Screenshot showing query logs for WebSocket API requests.
+
+## Limitations
+
+The following are the current restrictions of WebSocket support in API Management:
+
+* WebSocket APIs aren't supported yet in the Consumption tier.
+* WebSocket APIs support the following valid buffer types for messages: Close, BinaryFragment, BinaryMessage, UTF8Fragment, and UTF8Message.
+* Currently, the [set-header](set-header-policy.md) policy doesn't support changing certain well-known headers, including `Host` headers, in onHandshake requests.
+* During the TLS handshake with a WebSocket backend, API Management validates that the server certificate is trusted and that its subject name matches the hostname. With HTTP APIs, API Management validates that the certificate is trusted but doesn’t validate that hostname and subject match.
+* WebSocket connections can't be distributed or load-balanced across multiple backends because, once established, each connection is maintained one-to-one between the client and backend.
+
+For WebSocket connection limits, see [API Management limits](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/azure-subscription-service-limits.md#azure-api-management-limits).
+
+### Unsupported policies
+
+The following policies aren't supported by and can't be applied to the onHandshake operation:
+* Mock response
+* Get from cache
+* Store to cache
+* Allow cross-domain calls
+* CORS
+* JSONP
+* Set request method
+* Set body
+* Convert XML to JSON
+* Convert JSON to XML
+* Transform XML using XSLT
+* Validate content
+* Validate parameters
+* Validate headers
+* Validate status code
+
+> **Note:**
+> If you applied the policies at higher scopes (for example, global or product) and they're inherited by a WebSocket API through the policy, they're skipped at runtime.
+
+## Related content
+
+* [API import limitations](api-management-api-import-restrictions.md)
+* [Import an OpenAPI specification](import-api-from-oas.md)
+* [Import a SOAP API](import-soap-api.md)
+* [Import a SOAP API and convert it to REST](restify-soap-api.md)
+* [Import an App Service API](import-app-service-as-api.md)
+* [Import a container app API](import-container-app-with-oas.md)
+* [Import a WebSocket API](websocket-api.md)
+* [Import a GraphQL API](graphql-api.md)
+* [Import a GraphQL schema and set up field resolvers](graphql-schema-resolve-api.md)
+* [Import a function app API](import-function-app-as-api.md)
+* [Import a logic app API](import-logic-app-as-api.md)
+* [Import a Service Fabric service](https://learn.microsoft.com/azure/service-fabric/service-fabric-tutorial-deploy-api-management)
+* [Import a Microsoft Foundry API](azure-ai-foundry-api.md)
+* [Import an Azure OpenAI API](azure-openai-api-from-specification.md)
+* [Import an LLM API](openai-compatible-llm-api.md)
+* [Import an OData API](import-api-from-odata.md)
+* [Export a REST API as an MCP server](export-rest-mcp-server.md)
+* [Expose an existing MCP server](expose-existing-mcp-server.md)
+* [Import an A2A agent API](agent-to-agent-api.md)
+* [Import SAP OData metadata](sap-api.md)
+* [Import a gRPC API](grpc-api.md)
+* [Edit an API](edit-api.md)

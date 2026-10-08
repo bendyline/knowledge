@@ -1,0 +1,36 @@
+# Source code: docs/core/extensions/snippets/logging/worker-service-options/PriorityQueue.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+namespace WorkerServiceOptions.Example;
+
+public class PriorityQueue
+{
+    private readonly List<WorkItem> _workItems =
+    [
+        new WorkItem("Validate collection", Priority.High),
+        new WorkItem("Health check network", Priority.Low),
+        new WorkItem("Ping weather service", Priority.Deferred),
+        new WorkItem("Propagate selections", Priority.Medium),
+        new WorkItem("Verify communications", Priority.Extreme),
+        new WorkItem("Set process state", Priority.Deferred),
+        new WorkItem("Enter pooling [contention]", Priority.Medium)
+    ];
+
+    public WorkItem? ProcessNextHighestPriority()
+    {
+        WorkItem? workItem =
+            _workItems.Where(work => !work.IsCompleted)
+                      .OrderByDescending(work => work.Priority)
+                      .FirstOrDefault();
+
+        return workItem switch
+        {
+            not null when _workItems.Remove(workItem) => workItem.MarkAsComplete(),
+            _ => default
+        };
+    }
+}
+
+```

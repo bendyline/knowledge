@@ -1,0 +1,37 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_CFX/callbackbehaviorattribute/vb/hostapplication.exe.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <!-- <snippet2> -->
+  <system.serviceModel>
+    <services>
+      <service 
+        name="Microsoft.WCF.Documentation.DuplexHello"
+        behaviorConfiguration="metadata">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://localhost:8080/DuplexHello"/>
+          </baseAddresses>
+        </host>
+        <endpoint
+          address=""
+          binding="wsDualHttpBinding"
+          contract="Microsoft.WCF.Documentation.IDuplexHello"
+         />
+      </service>
+    </services>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="metadata">
+          <serviceMetadata httpGetEnabled="true" httpGetUrl=""/>
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+  </system.serviceModel>
+  <!-- </snippet2> -->
+</configuration>
+
+```

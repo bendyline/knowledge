@@ -1,0 +1,49 @@
+---
+title: "Specify a chart area for a series in a paginated report"
+description: Find out about the chart area as a top-level container in a paginated report that includes the outer border, the chart title, and the legend in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "10157"
+  - "sql13.rtp.rptdesigner.chartareaproperties.alignment.f1"
+---
+# Specify a chart area for a series in a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+  In paginated reports, the *chart* is the top-level container that includes the outer border, the chart title, and the legend. By default, the chart contains one *chart area*. The chart area is not visible on the chart surface, but you can think of the chart area as a container that encompasses only the axis labels, the axis title and the plotting area of one or more series. The following illustration shows the concept of multiple chart areas within a single chart.  
+  
+ Shows a diagram of a chart area  
+  
+ By default, all series are added to the default chart area. When using area, column, line, and scatter charts, any combination of these series can be displayed on the same chart area. If you have several series in the same chart area, the readability of the chart is reduced. You may want to separate the chart types into multiple chart areas. Using multiple chart areas will increase readability for easier comparisons. For example, price-volume stock charts often have different ranges of values, but comparisons can be made between the price and volume data over the same period of time.  
+  
+ The bar, polar, or shape series can only be combined with series of the same chart types in the same chart area. If you are using a Polar or Shape chart, consider using a separate chart data region for each field that you wish to show.  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## To associate a series with a new chart area  
+  
+1.  Right-click anywhere on the chart and select **Add New Chart Area**. A new, blank chart area appears on the chart.  
+  
+2.  Right-click the series on the chart or right-click a series or data field in the appropriate area in the Chart Data pane, and then click **Series Properties**.  
+  
+3.  In **Axes and Chart Areas**, select the chart area that you want the series to be shown in.  
+  
+4.  (Optional) Align the chart areas vertically. To do this, right-click the chart and select **Chart Area Properties**. In **Alignment**, select another chart area that you want to align the selected chart area with.  
+  
+## Related content
+
+- [Multiple series on a paginated report chart (Report Builder)](multiple-series-on-a-chart-report-builder-and-ssrs.md)
+- [Formatting data points on a paginated report chart (Report Builder)](formatting-data-points-on-a-chart-report-builder-and-ssrs.md)
+- [Define colors on a paginated report chart using a palette (Report Builder)](define-colors-on-a-chart-using-a-palette-report-builder-and-ssrs.md)
+- [Polar charts in a paginated report (Report Builder)](polar-charts-report-builder-and-ssrs.md)
+- [Shape charts in a paginated report (Report Builder)](shape-charts-report-builder-and-ssrs.md)
+- [Pie charts in a paginated report (Report Builder)](pie-charts-report-builder-and-ssrs.md)

@@ -1,0 +1,34 @@
+---
+title: "updateAsciiStream Method"
+description: "updateAsciiStream Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.updateAsciiStream"
+apitype: "Assembly"
+---
+# updateAsciiStream Method (SQLServerResultSet)
+
+
+  Updates the designated column with an ASCII stream value.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [updateAsciiStream Method (int, java.io.InputStream)](updateasciistream-method-int-java-io-inputstream.md) | Updates the designated column with an ASCII stream value. |
+| [updateAsciiStream (int, java.io.InputStream, int)](updateasciistream-method-int-java-io-inputstream-int.md) | Updates the designated column index with an ASCII stream value specific to the column index. |
+| [updateAsciiStream Method (int, java.io.InputStream, long)](updateasciistream-method-int-java-io-inputstream-long.md) | Updates the designated column with an ASCII stream value, which will have the specified number of bytes. |
+| [updateAsciiStream Method (java.lang.String, java.io.InputStream)](updateasciistream-method-java-lang-string-java-io-inputstream.md) | Updates the designated column with an ASCII stream value. |
+| [updateAsciiStream (java.lang.String, java.io.InputStream, int)](updateasciistream-method-java-lang-string-java-io-inputstream-int.md) | Updates the designated column name with an ASCII stream value, which will have the specified number of bytes. |
+| [updateAsciiStream Method (java.lang.String, java.io.InputStream, long)](updateasciistream-method-java-lang-string-java-io-inputstream-long.md) | Updates the designated column with an ASCII stream value, which will have the specified number of bytes. |
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

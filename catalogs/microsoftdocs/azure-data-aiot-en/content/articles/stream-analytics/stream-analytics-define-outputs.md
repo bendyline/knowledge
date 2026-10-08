@@ -1,0 +1,116 @@
+---
+title: Azure Stream Analytics Output Types Overview
+description: Learn about the various output options available in Azure Stream Analytics to efficiently process and store your streaming data. Explore supported output types and configurations.
+#customer intent: As a data engineer, I want to understand the output options for Azure Stream Analytics so that I can choose the best destination for my transformed data.
+author: AliciaLiMicrosoft
+ms.author: ali
+ms.reviewer: spelluru
+ms.service: azure-stream-analytics
+ms.topic: concept-article
+ms.date: 02/19/2026
+---
+
+# Outputs from Azure Stream Analytics
+
+An Azure Stream Analytics job consists of an input, query, and an output. You can send transformed data to several output types. This article lists the supported Stream Analytics outputs. When you design your Stream Analytics query, refer to the name of the output by using the [INTO clause](https://learn.microsoft.com/stream-analytics-query/into-azure-stream-analytics). You can use a single output per job, or multiple outputs per streaming job by adding multiple INTO clauses to the query.
+
+To create, edit, and test Stream Analytics job outputs, you can use the [Azure portal](stream-analytics-quick-create-portal.md#configure-job-output), [Azure PowerShell](stream-analytics-quick-create-powershell.md#configure-output-to-the-job), [.NET API](https://learn.microsoft.com/dotnet/api/microsoft.azure.management.streamanalytics.ioutputsoperations), [REST API](https://learn.microsoft.com/rest/api/streamanalytics/), [Visual Studio](stream-analytics-quick-create-vs.md), and [Visual Studio Code](quick-create-visual-studio-code.md).
+
+> **Note:** 
+> For the best local development experience, use [**Stream Analytics tools for Visual Studio Code**](quick-create-visual-studio-code.md). Stream Analytics tools for Visual Studio 2019 (version 2.6.3000.0) has known feature gaps and won't be improved going forward.
+
+Some output types support [partitioning](#partitioning) as shown in the following table. 
+
+All outputs support batching, but only some support setting the output batch size explicitly. For more information, see the [output batch sizes](#output-batch-size) section. 
+
+| Output type | Partitioning | Security |
+| --- | --- | --- |
+| [Azure Data Explorer](azure-database-explorer-output.md) | Yes | Managed Identity |
+| [Azure Functions](azure-functions-output.md) | Yes | Access key |
+| [Azure Synapse Analytics](azure-synapse-analytics-output.md) | Yes | SQL user auth, </br> Managed Identity |
+| [Blob storage and Azure Data Lake Gen 2](blob-storage-azure-data-lake-gen2-output.md) | Yes | Access key, </br> Managed Identity |
+| [Azure Cosmos DB](azure-cosmos-db-output.md) | Yes | Access key, </br> Managed Identity |
+| [Azure Data Lake Storage Gen 2](blob-output-managed-identity.md) | Yes | Microsoft Entra user </br> Managed Identity |
+| [Azure Event Hubs](event-hubs-output.md) | Yes, need to set the partition key column in output configuration. | Access key, </br> Managed Identity |
+| [Kafka (preview)](kafka-output.md) | Yes, need to set the partition key column in output configuration. | Access key, </br> Managed Identity |
+| [Azure Database for PostgreSQL](postgresql-database-output.md) | Yes | Username and password auth |
+| [Power BI](power-bi-output.md) | No | Microsoft Entra user, </br> Managed Identity |
+| [Azure Service Bus queues](service-bus-queues-output.md) | Yes | Access key, </br> Managed Identity |
+| [Azure Service Bus topics](service-bus-topics-output.md) | Yes | Access key, </br> Managed Identity |
+| [Azure SQL Database](sql-database-output.md) | Yes, optional. | SQL user auth, </br> Managed Identity |
+| [Azure Table storage](table-storage-output.md) | Yes | Account key |
+
+
+> **Important:** 
+> Azure Stream Analytics uses Insert or Replace API by design. This operation replaces an existing entity or inserts a new entity if it doesn't exist in the table.
+
+## Partitioning
+
+Stream Analytics supports partitions for all outputs except for Power BI. For more information on partition keys and the number of output writers, see the article for the specific output type you're interested in. Articles for output types are linked in the previous section.  
+
+For more advanced tuning of the partitions, you can control the number of output writers by using an `INTO <partition count>` (see [INTO](https://learn.microsoft.com/stream-analytics-query/into-azure-stream-analytics#into-shard-count)) clause in your query. This control can help you achieve a desired job topology. If your output adapter isn't partitioned, lack of data in one input partition causes a delay up to the late arrival amount of time. In such cases, the output is merged to a single writer, which might cause bottlenecks in your pipeline. To learn more about late arrival policy, see [Azure Stream Analytics event order considerations](stream-analytics-time-handling.md).
+
+## Output batch size
+
+All outputs support batching, but only some support setting the batch size explicitly. Azure Stream Analytics uses variable-size batches to process events and write to outputs. Typically, the Stream Analytics engine doesn't write one message at a time and uses batches for efficiency. When the rate of both the incoming and outgoing events is high, Stream Analytics uses larger batches. When the egress rate is low, it uses smaller batches to keep latency low.
+
+## Avro and Parquet file splitting behavior
+
+A Stream Analytics query can generate multiple schemas for a given output. The list of columns projected, and their type, can change on a row-by-row basis.
+By design, the Avro and Parquet formats don't support variable schemas in a single file.
+
+The following behaviors might occur when directing a stream with variable schemas to an output using these formats:
+
+- If the schema change can be detected, the current output file is closed, and a new one initialized on the new schema. Splitting files as such severely slows down the output when schema changes happen frequently. This behavior can severely impact the overall performance of the job.
+- If the schema change can't be detected, the row is most likely rejected, and the job gets stuck as the row can't be output. Nested columns, or multitype arrays, are situations that aren't discovered and rejected.
+
+Consider outputs using the Avro or Parquet format to be strongly typed, or schema-on-write, and write queries targeting them as such by using explicit conversions and projections for a uniform schema.
+
+If you need to generate multiple schemas, consider creating multiple outputs and splitting records into each destination by using a `WHERE` clause.
+
+## Parquet output batching window properties
+
+When you use Azure Resource Manager template deployment or the REST API, you set two batching window properties:
+
+1. *timeWindow*
+
+   The maximum wait time per batch. Set the value as a string of `Timespan`. For example, use `00:02:00` for two minutes. After this time, the batch is written to the output even if the minimum rows requirement isn't met. The default value is one minute and the allowed maximum is two hours. If your blob output has path pattern frequency, the wait time can't be higher than the partition time range.
+
+1. *sizeWindow*
+
+   The number of minimum rows per batch. For Parquet, every batch creates a new file. The current default value is 2,000 rows and the allowed maximum is 10,000 rows.
+
+API version **2017-04-01-preview** or higher supports these batching window properties. Here's an example of the JSON payload for a REST API call:
+
+```json
+"type": "stream",
+      "serialization": {
+        "type": "Parquet",
+        "properties": {}
+      },
+      "timeWindow": "00:02:00",
+      "sizeWindow": "2000",
+      "datasource": {
+        "type": "Microsoft.Storage/Blob",
+        "properties": {
+          "storageAccounts" : [
+          {
+            "accountName": "{accountName}",
+            "accountKey": "{accountKey}",
+          }
+          ],
+```
+
+## Next steps
+
+> 
+>
+> [Quickstart: Create a Stream Analytics job by using the Azure portal](stream-analytics-quick-create-portal.md)
+
+<!--Link references-->
+[stream.analytics.developer.guide]: https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/stream-analytics-developer-guide.md
+[stream.analytics.scale.jobs]: stream-analytics-scale-jobs.md
+[stream.analytics.introduction]: stream-analytics-introduction.md
+[stream.analytics.get.started]: stream-analytics-real-time-fraud-detection.md
+[stream.analytics.query.language.reference]: https://learn.microsoft.com/stream-analytics-query/stream-analytics-query-language-reference
+[stream.analytics.rest.api.reference]: https://learn.microsoft.com/rest/api/streamanalytics/

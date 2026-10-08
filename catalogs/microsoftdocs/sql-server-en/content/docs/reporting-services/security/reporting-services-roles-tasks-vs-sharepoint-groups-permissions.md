@@ -1,0 +1,117 @@
+---
+title: "Reporting Services roles-tasks vs. SharePoint groups-permissions"
+description: "Reporting Services roles-tasks vs. SharePoint groups-permissions"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: security
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "permissions [Reporting Services], SharePoint integrated mode"
+  - "security [Reporting Services], tasks"
+  - "roles [Reporting Services], predefined"
+  - "SharePoint integration [Reporting Services], permissions"
+  - "permissions [Reporting Services], native mode"
+  - "security [Reporting Services], predefined roles"
+  - "security [Reporting Services], SharePoint integrated mode"
+---
+# Reporting Services roles-tasks vs. SharePoint groups-permissions
+  This article compares role and task based authorization features in  Reporting Services 
+ native mode to the security features in SharePoint products. This article compares terminology and characteristics of roles, tasks, SharePoint groups, permission levels, and permissions.  
+  
+**Applies to:**
+
+
+
+
+         Reporting Services 
+ SharePoint mode  
+        SharePoint 2010 and SharePoint 2013  
+
+
+         Reporting Services 
+ Native mode  
+
+
+  
+##  <a name="bkmk_compare_tools_terms"></a> Compare permission tools and terminology  
+ **Native mode:** The  Reporting Services 
+ native mode permission objects (roles and tasks) are created in  SQL Server Management Studio 
+ and configured for individual users in Report Manager.  
+  
+ **SharePoint mode:**  Reporting Services 
+ SharePoint mode utilizes the SharePoint permission features. SharePoint groups and permissions are managed from the **Site Settings** page.  
+  
+ The following table compares permission related objects and concepts between  Reporting Services 
+ native mode and SharePoint.  
+  
+| Reporting Services 
+ | Native mode | SharePoint |
+| --- | --- |
+| **Role:** For example, "Content Manager". | **Group:** For example, the default "Viewers" group. |
+| --- | **Permission level group:** For example, "View Only" for the "Viewers" group. |
+| **Tasks:** For example, "Manage Reports". | **Permissions:** For example, within the "View Only" group there are list-related permissions of view items, view versions, and view application pages. |
+  
+ For more information on SharePoint permissions, see [Permission levels and permissions](https://support.office.com/article/Understand-groups-and-permissions-on-a-SharePoint-site-258E5F33-1B5A-4766-A503-D86655CF950D) and [Determine permission levels and groups in SharePoint 2013](https://learn.microsoft.com/SharePoint/sites/determine-permission-levels-and-groups-in-sharepoint-server).  
+  
+##  <a name="bkmk_compare_roles_groups"></a> Compare native mode roles and SharePoint groups  
+ The following table compares the predefined role definitions in  Reporting Services 
+ in native mode to standard SharePoint groups. If the SharePoint groups don't match the specific role that you want, you can create a custom group and assign permission levels in SharePoint.  
+  
+ **Note**: The default SharePoint groups available depend on the site template used to create the SharePoint site.  
+  
+| Reporting Services 
+ | Role | SharePoint Groups |
+| --- | --- |
+| **Browser**<br /><br /> View | Use the **Visitors** group to grant permissions to view reports. The **Visitors** group has Read level permissions, which enable group members to view pages, list items, and documents. |
+| **Content Manager**<br /><br /> Full permissions to all items and item-level operations, including permissions to set security. | Use the **Owners** group to grant full control over managing report server items on a SharePoint site. The **Owners** group has Full Control permissions, which enable group members to make changes to the site content, pages, or functionality. Full Control access should be limited to site administrators only. |
+| **My Reports** | There's no equivalent group. **My Reports** isn't supported for a report server that runs in SharePoint mode. You can use the My Site features in  Windows SharePoint Services |
+ | if you want to use equivalent functionality. |
+| **Publisher**<br /><br /> Add, update, view, and delete reports, report models, shared data sources, and resources. | Use the **Members** group to grant permissions to add items, edit items, and update references to dependent items on a SharePoint site. The **Members** group has Contribute level permissions, which allow group members to view pages, add and update items, and submit changes for approval. |
+| **Report Builder**<br /><br /> View reports, self-manage individual subscription, and open reports in Report Builder. | There's not a predefined out of the box permission level or SharePoint group that is equivalent to the Report Builder report definition. By default, users who belong to the **Members** group or **Owners** group have permission to use Report Builder. If you want to make Report Builder available to more users, you should create custom security settings to provide a level of permission that is similar to what the Report Builder role provides. For more information, see [Set permissions for report server items on a SharePoint site (Reporting Services in SharePoint integrated mode)](set-permissions-for-report-server-items-on-a-sharepoint-site.md). |
+| - | Use the **Viewers** group to grant permissions to view rendered reports. The **Viewers** group can't download or view the contents of report items.<br /><br /> **Note:** Beginning with SQL Server 2012  Reporting Services |
+| , the **Viewers** group doesn't have permissions to create subscriptions. |
+| **System User** and **System Administrator** | These roles aren't necessary for a report server that runs in SharePoint mode. **System User** and **System Administrator** correspond to SharePoint farm or Web application level permissions. The report server doesn't provide any functionality that requires authorization at that level. |
+  
+##  <a name="bkmk_compare_tasks_permissions"></a> Compare native mode tasks and SharePoint permissions  
+ The following table compares  Reporting Services 
+ Native mode tasks to SharePoint permissions. The **Type** column indicates if the Native mode task is related to a system role or standard role and items. System roles manage permissions on a system level, for example shared schedules.  
+  
+| Native mode task | Role Type | Equivalent SharePoint Permission |
+| --- | --- | --- |
+| Consume reports | Item | Edit Items, View Items. |
+| Create linked reports | Item | Not supported. |
+| Manage all subscriptions | Item | Manage Alerts. |
+| Manage data sources | Item | Add items, Edit Items, Delete Items, View Items. |
+| Manage folders | Item | Add items, Edit Items, Delete Items, View Items. |
+| Manage individual subscriptions | Item | Edit Items<br /><br /> Prior to  SQL Server 2012 (11.x) |
+| , the required permission level was Create alerts. |
+| Manage models | Item | Add items, Edit Items, Delete Items, View Items. |
+| Manage report history | Item | Edit Items, View Versions, Delete Versions. |
+| Manage reports | Item | Add items, Edit Items, Delete Items, View Items. |
+| Manage resources | Item | Add items, Edit Items, Delete Items, View Items. |
+| Set security for individual items | Item | Manage permissions |
+| View data sources | Item | View Items. |
+| View folders | Item | View Items. |
+| View models | Item | View Items. |
+| View reports | Item | View Items. |
+| View resources | Item | View Items. |
+|  |  |  |
+| Execute report definitions | System | View items. |
+| Generate events | System | Manage Web Site. |
+| Manage jobs | System | None (not supported). |
+| Manage report server properties | System | None (not applicable). The report server doesn't control whether a user has permission to view integration settings in Central Administration. |
+| Manage roles | System | Manage Permissions. |
+| Manage shared schedules | System | Manage Web Site, Open. |
+| Manage report server security | System | None (not applicable). The report server doesn't use system-level role assignments on a server that runs in SharePoint integrated mode. |
+| View report server properties | System | None (not applicable). The report server doesn't control whether a user has permission to view integration settings in Central Administration. |
+| View shared schedules | System | Open Items. |
+  
+## Related content
+
+- [Set permissions for report server items on a SharePoint site](set-permissions-for-report-server-items-on-a-sharepoint-site.md)
+- [Set permissions for report server operations in a SharePoint web application](set-permissions-for-report-server-operations-in-a-sharepoint-web-application.md)
+- [Grant permissions on report server items on a SharePoint site](granting-permissions-on-report-server-items-on-a-sharepoint-site.md)
+- [Role definitions](role-definitions.md)
+- [Predefined roles in Reporting Services](role-definitions-predefined-roles.md)

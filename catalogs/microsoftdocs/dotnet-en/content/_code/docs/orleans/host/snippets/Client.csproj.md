@@ -1,0 +1,25 @@
+# Source code: docs/orleans/host/snippets/Client.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="10.0.1" />
+  </ItemGroup>
+
+</Project>
+
+```

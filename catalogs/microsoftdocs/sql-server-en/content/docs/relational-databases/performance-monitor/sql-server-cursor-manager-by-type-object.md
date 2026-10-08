@@ -1,0 +1,58 @@
+---
+title: "SQL Server, Cursor Manager by Type object"
+description: "Learn about the SQLServer:Cursor Manager by Type object, which provides counters to monitor cursors, grouped by type."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "Cursor Manager by Type object"
+  - "SQLServer:Cursor Manager by Type"
+---
+# SQL Server, Cursor Manager by Type object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The **SQLServer:Cursor Manager by Type** object provides counters to monitor cursors, grouped by type.  
+  
+ This table describes the SQL Server **Cursor Manager by Type** counters.  
+  
+| **Cursor Manager by Type** counters | Description |
+| --- | --- |
+| **Active cursors** | Number of active cursors. |
+| **Cache Hit Ratio** | Ratio between cache hits and lookups. |
+| **Cache Hit Ratio Base** | For internal use only. |
+| **Cached Cursor Counts** | Number of cursors of a given type in the cache. |
+| **Cursor Cache Use Count/sec** | Times each type of cached cursor has been used. |
+| **Cursor memory usage** | Amount of memory consumed by cursors in kilobytes (KB). |
+| **Cursor Requests/sec** | Number of SQL cursor requests received by server. |
+| **Cursor worktable usage** | Number of worktables used by cursors. |
+| **Number of active cursor plans** | Number of cursor plans. |
+  
+ Each counter in the object contains the following instances:  
+  
+| **Cursor Manager** instance | Description |
+| --- | --- |
+| **_Total** | Information for all cursors. |
+| **API Cursor** | Only the API cursor information. |
+| **TSQL Global Cursor** | Only the  Transact-SQL  global cursor information. |
+| **TSQL Local Cursor** | Only the  Transact-SQL  local cursor information. |
+
+## Examples
+
+You begin to explore the query performance counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT * FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%Cursor Manager by Type%';
+```  
+  
+## Related content
+
+- [Monitor Resource Usage (Performance Monitor)](monitor-resource-usage-system-monitor.md)

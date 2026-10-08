@@ -1,0 +1,56 @@
+---
+title: Subscription View Formats
+description: Subscription View Formats (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+---
+# Subscription View Formats (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Based on the entity or derived hierarchy you select, the following formats are available for your subscription view.  
+  
+## Subscription View Formats  
+  
+| Name | Description |
+| --- | --- |
+| **Leaf Members** | Contains leaf members and their associated attribute values. |
+| **Leaf Members History** | Contains leaf members' historical data and the associated attribute values. The view format is Slowly Changing Dimension Type 4 style. |
+| **Leaf Members SCD Type 2** | Contains leaf members' historical and current data, and the associated attribute values. The view format is Slowly Changing Dimension Type 2 style. |
+| **Consolidated Members** | Contains consolidated members and their associated attribute values. |
+| **Consolidated Members History** | Contains consolidated members' historical data and the associated attribute values. The view format is Slowly Changing Dimension Type 4 style. |
+| **Consolidated Members SCD Type 2** | Contains consolidated members' historical and current data, and the associated attribute values. The view format is Slowly Changing Dimension Type 2 style. |
+| **Collection Memberships** | Contains a list of collections and their associated attribute values. |
+| **Collections** | Contains a list of collections and the members in each, along with weight values and sort order. |
+| **Collection Members History** | Contains collection members' historical data and the associated attribute values. The view format is Slowly Changing Dimension Type 4 style. |
+| **Collection Members SCD Type 2** | Contains collection members' historical and current data, and the associated attribute values. The view format is Slowly Changing Dimension Type 2 style. |
+| **Explicit Parent Child** | Contains explicit hierarchy structures for an entity in a parent child format. |
+| **Explicit Levels** | Contains explicit hierarchy structures for an entity in level format. |
+| **Derived Parent Child (Derived Hierarchy View)** | Contains a derived hierarchy structure in parent child format. |
+| **Derived Levels (Derived Hierarchy View)** | Contains a derived hierarchy structure in level format. |
+  
+## Related content
+
+- [Overview: Exporting Data (Master Data Services)](overview-exporting-data-master-data-services.md)
+- [Create a Subscription View to Export Data (Master Data Services)](create-a-subscription-view-to-export-data-master-data-services.md)

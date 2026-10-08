@@ -1,0 +1,38 @@
+---
+title: "getHostNameInCertificate Method (SQLServerDataSource)"
+description: "getHostNameInCertificate Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "getHostNameInCertificate Method (SQLServerDataSource)"
+apiname: "getHostNameInCertificate Method (SQLServerDataSource)"
+apitype: "Assembly"
+---
+# getHostNameInCertificate Method (SQLServerDataSource)
+
+
+  Returns the host name used in validating the SQL Server Transport Layer Security (TLS), previously known as Secure Sockets Layer (SSL), certificate.  
+  
+## Syntax  
+  
+```  
+  
+public java.lang.String getHostNameInCertificate()  
+```  
+  
+## Return Value  
+ A **String** that contains the host name, or null if no value is set.  
+  
+## Remarks  
+ The host name is used to validate the SQL Server TLS/SSL certificate value when the communication layer is encrypted using TLS/SSL.  
+  
+ If the host name is not set, the [getHostNameInCertificate](#gethostnameincertificate-method-sqlserverdatasource) method returns null.  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

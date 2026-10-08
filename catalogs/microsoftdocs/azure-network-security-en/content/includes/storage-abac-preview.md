@@ -1,0 +1,16 @@
+---
+title: "include file"
+description: "include file"
+services: storage
+author: pauljewellmsft
+ms.service: azure-storage
+ms.topic: "include"
+ms.date: 07/08/2025
+ms.author: pauljewell
+ms.custom: "include file"
+---
+
+> **Important:**
+> Azure attribute-based access control (Azure ABAC) is generally available (GA) for controlling access to Azure Blob Storage, Azure Data Lake Storage Gen2, and Azure Queues using `request`, `resource`, `environment`, and `principal` attributes in both the standard and premium storage account performance tiers. Currently, the list blob include request attribute and snapshot request attribute for hierarchical namespace are in PREVIEW. For complete feature status information of ABAC for Azure Storage, see [Status of condition features in Azure Storage](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/blobs/storage-auth-abac.md#status-of-condition-features-in-azure-storage).
+>
+> See the [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/) for legal terms that apply to Azure features that are in beta, preview, or otherwise not yet released into general availability.

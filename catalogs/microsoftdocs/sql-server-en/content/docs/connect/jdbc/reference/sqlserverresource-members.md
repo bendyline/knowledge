@@ -1,0 +1,48 @@
+---
+title: "SQLServerResource Members"
+description: "SQLServerResource Members"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# SQLServerResource Members
+
+
+  The following tables list the members that are exposed by the [SQLServerResource](sqlserverresource-class.md) class.  
+  
+## Constructors  
+  
+| Name | Description |
+| --- | --- |
+| [SQLServerResource ()](sqlserverresource-constructor.md) | Initializes a new instance of the [SQLServerResource](sqlserverresource-class.md) class. This constructor is for internal use only. |
+  
+## Fields  
+ None.  
+  
+## Inherited Fields  
+  
+| Name | Description |
+| --- | --- |
+| java.util.ResourceBundle | parent |
+  
+## Methods  
+  
+| Name | Description |
+| --- | --- |
+| [getContents](getcontents-method-sqlserverresource.md) | Retrieves error string information. This method is intended for internal use only. |
+  
+## Inherited Methods  
+  
+| Class inherited from: | Methods |
+| --- | --- |
+| java.util.ListResourceBundle | getKeys, handleGetObject |
+| java.util.ResourceBundle | getBundle, getLocale, getObject, getString, getStringArray, setParent |
+| java.lang.Object | clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait |
+  
+## Related content
+
+- [SQLServerResource Class](sqlserverresource-class.md)

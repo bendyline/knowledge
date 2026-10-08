@@ -1,0 +1,583 @@
+---
+title: T-SQL Differences Between SQL Server & Azure SQL Managed Instance
+description: This article discusses the Transact-SQL (T-SQL) differences between an Azure SQL Managed Instance and SQL Server.
+author: danimir
+ms.author: danil
+ms.reviewer: mathoma, bonova, danil, randolphwest
+ms.date: 07/16/2026
+ms.service: azure-sql-managed-instance
+ms.subservice: service-overview
+ms.topic: reference
+ms.custom:
+  - sqldbrb=1
+---
+
+# T-SQL differences between SQL Server and Azure SQL Managed Instance
+
+
+
+  **Applies to:**    [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This article summarizes and explains the differences in syntax and behavior between Azure SQL Managed Instance and SQL Server.
+
+SQL Managed Instance provides high compatibility with the SQL Server database engine, and most features are supported in a SQL Managed Instance.
+
+Diagram showing the easy migration from SQL Server.
+
+<a id="Differences"></a>
+
+There are some PaaS limitations that are introduced in SQL Managed Instance and some behavior changes compared to SQL Server. The differences are divided into the following categories:
+
+- [Availability](#availability) includes the differences in [Always On Availability Groups](#always-on-availability-groups) and [backups](#backup).
+- [Security](#security) includes the differences in [auditing](#auditing), [certificates](#certificates), [credentials](#credential), [cryptographic providers](#cryptographic-providers), [logins and users](#logins-and-users), and the [service key and service master key](#service-key-and-service-master-key).
+- [Configuration](#configuration) includes the differences in [buffer pool extension](#buffer-pool-extension), [collation](#collation), [compatibility levels](#compatibility-levels), [database mirroring](#database-mirroring), [database options](#database-options), [SQL Server Agent](#sql-server-agent), and [table options](#tables).
+- [Functionalities](#functionalities) include [BULK INSERT/OPENROWSET](#bulk-insert--openrowset), [CLR](#clr), [DBCC](#dbcc), [distributed transactions](#distributed-transactions), [extended events](#extended-events), [external libraries](#external-libraries), [FILESTREAM and FileTable](#filestream-and-filetable), [full-text Semantic Search](#full-text-semantic-search), [linked servers](#linked-servers), [PolyBase](#polybase), [Replication](#replication), [Resource governor](#resource-governor), [RESTORE](#restore-statement), [Service Broker](#service-broker), [stored procedures, functions, and triggers](#stored-procedures-functions-and-triggers).
+- [Environment settings](#Environment) such as VNets and subnet configurations.
+
+Most of these features are architectural constraints and represent service features.
+
+Temporary known issues that are discovered in SQL Managed Instance and will be resolved in the future are described in [What's new in Azure SQL Managed Instance?](doc-changes-updates-release-notes-whats-new.md)
+
+
+> **Note:**  
+> [Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/new-name) was previously known as Azure Active Directory (Azure AD).
+
+## Availability
+
+### Always On availability groups
+
+[High availability](../database/high-availability-sla-local-zone-redundancy.md) is built into SQL Managed Instance and can't be controlled by users. The following statements aren't supported:
+
+- [CREATE ENDPOINT ... FOR DATABASE_MIRRORING](https://learn.microsoft.com/sql/t-sql/statements/create-endpoint-transact-sql)
+- [CREATE AVAILABILITY GROUP](https://learn.microsoft.com/sql/t-sql/statements/create-availability-group-transact-sql)
+- [ALTER AVAILABILITY GROUP](https://learn.microsoft.com/sql/t-sql/statements/alter-availability-group-transact-sql)
+- [DROP AVAILABILITY GROUP](https://learn.microsoft.com/sql/t-sql/statements/drop-availability-group-transact-sql)
+- The [SET HADR](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql-set-hadr) clause of the [ALTER DATABASE](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql) statement
+
+### Backup
+
+Azure SQL Managed Instance has automatic backups, so users can create full database `COPY_ONLY` backups. Differential, log, and file snapshot backups aren't supported.
+
+- With a SQL Managed Instance, you can back up an instance database only to an Azure Blob storage account:
+  - Only `BACKUP TO URL` is supported.
+  - `FILE`, `TAPE`, and backup devices aren't supported.
+- Most of the general `WITH` options are supported.
+  - `COPY_ONLY` is mandatory.
+  - `FILE_SNAPSHOT` and `CREDENTIAL` aren't supported.
+  - Tape options: `REWIND`, `NOREWIND`, `UNLOAD`, and `NOUNLOAD` aren't supported.
+  - Log-specific options: `NORECOVERY`, `STANDBY`, and `NO_TRUNCATE` aren't supported.
+
+Limitations:
+
+- With a SQL Managed Instance, you can back up an instance database to a backup with up to 32 stripes, which is enough for databases up to 4 TB if backup compression is used.
+- You can't execute `BACKUP DATABASE ... WITH COPY_ONLY` on a database that's encrypted with service-managed transparent data encryption (TDE). Service-managed TDE forces backups to be encrypted with an internal TDE key. The key can't be exported, so you can't restore the backup. Use automatic backups and point-in-time restore, or use [customer-managed (BYOK) TDE](../database/transparent-data-encryption-tde-overview.md#customer-managed-transparent-data-encryption---bring-your-own-key) instead. You also can disable encryption on the database.
+- Native backups taken on a SQL Managed Instance can be restored to a SQL Server 2022 instance only. This is because SQL Managed Instance has higher internal database version compared to other versions of SQL Server. For more information, review [Restore a database to SQL Server 2022 from Azure SQL Managed Instance](restore-database-to-sql-server.md).
+- To back up or restore a database to/from an Azure storage, you can authenticate using either managed identity or shared access signature (SAS) which is an URI that grants you restricted access rights to Azure Storage resources [Learn more on this](restore-sample-database-quickstart.md#use-t-sql-to-restore-from-a-backup-file). Using Access keys for these scenarios isn't supported.
+- The maximum backup stripe size by using the `BACKUP` command in SQL Managed Instance is 195 GB, which is the maximum blob size. Increase the number of stripes in the backup command to reduce individual stripe size and stay within this limit.
+
+    > **Tip:**  
+    > To work around this limitation, when you back up a database from either SQL Server in an on-premises environment or in a virtual machine, you can:
+    >
+    > - Back up to `DISK` instead of backing up to `URL`.
+    > - Upload the backup files to Blob storage.
+    > - Restore into SQL Managed Instance.
+    >  
+    > The `Restore` command in SQL Managed Instance supports bigger blob sizes in the backup files because a different blob type is used for storage of the uploaded backup files.
+
+For information about backups using T-SQL, see [BACKUP](https://learn.microsoft.com/sql/t-sql/statements/backup-transact-sql?view=azuresqldb-mi-current\&preserve-view=true).
+
+## Security
+
+### Auditing
+
+The key differences between auditing in Microsoft Azure SQL and in SQL Server are:
+
+- With SQL Managed Instance, auditing works at the server level. The `.xel` log files are stored in Azure Blob storage.
+- With Azure SQL Database, auditing works at the database level. The `.xel` log files are stored in Azure Blob storage.
+- With SQL Server, on-premises or in virtual machines, auditing works at the server level. Events are stored on file system or Windows event logs.
+
+XEvent auditing in SQL Managed Instance supports Azure Blob storage targets. File and Windows logs aren't supported.
+
+The key differences in the `CREATE AUDIT` syntax for auditing to Azure Blob storage are:
+
+- A new syntax `TO URL` is provided to specify the URL of the Azure Blob storage container where the `.xel` files are placed.
+- The syntax `TO FILE` isn't supported because SQL Managed Instance can't access Windows file shares.
+
+For more information, see:
+
+- [CREATE SERVER AUDIT](https://learn.microsoft.com/sql/t-sql/statements/create-server-audit-transact-sql)
+- [ALTER SERVER AUDIT](https://learn.microsoft.com/sql/t-sql/statements/alter-server-audit-transact-sql)
+- [Auditing](https://learn.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-database-engine)
+
+### Certificates
+
+SQL Managed Instance can't access file shares and Windows folders, so the following constraints apply:
+
+- The `CREATE FROM`/`BACKUP TO` file isn't supported for certificates.
+- The `CREATE`/`BACKUP` certificate from `FILE`/`ASSEMBLY` isn't supported. Private key files can't be used.
+
+See [CREATE CERTIFICATE](https://learn.microsoft.com/sql/t-sql/statements/create-certificate-transact-sql) and [BACKUP CERTIFICATE](https://learn.microsoft.com/sql/t-sql/statements/backup-certificate-transact-sql).
+
+**Workaround**: Instead of creating backup of certificate and restoring the backup, [get the certificate binary content and private key, store it as .sql file, and create from binary](https://learn.microsoft.com/sql/t-sql/functions/certencoded-transact-sql#b-copying-a-certificate-to-another-database):
+
+```sql
+CREATE CERTIFICATE
+   FROM BINARY = asn_encoded_certificate
+WITH PRIVATE KEY (<private_key_options>);
+```
+
+### Credential
+
+Managed identity, Azure Key Vault and `SHARED ACCESS SIGNATURE` identities are supported. Windows users aren't supported.
+
+See [CREATE CREDENTIAL](https://learn.microsoft.com/sql/t-sql/statements/create-credential-transact-sql) and [ALTER CREDENTIAL](https://learn.microsoft.com/sql/t-sql/statements/alter-credential-transact-sql).
+
+### Cryptographic providers
+
+SQL Managed Instance can't access files, so cryptographic providers can't be created:
+
+- `CREATE CRYPTOGRAPHIC PROVIDER` isn't supported. See [CREATE CRYPTOGRAPHIC PROVIDER](https://learn.microsoft.com/sql/t-sql/statements/create-cryptographic-provider-transact-sql).
+- `ALTER CRYPTOGRAPHIC PROVIDER` isn't supported. See [ALTER CRYPTOGRAPHIC PROVIDER](https://learn.microsoft.com/sql/t-sql/statements/alter-cryptographic-provider-transact-sql).
+
+### Logins and users
+
+- SQL logins created by using `FROM CERTIFICATE`, `FROM ASYMMETRIC KEY`, and `FROM SID` are supported. See [CREATE LOGIN](https://learn.microsoft.com/sql/t-sql/statements/create-login-transact-sql).
+Server principals (logins) are created at the server level, and users (database principals) are created at the database level. Microsoft Entra logins created with the [CREATE LOGIN](https://learn.microsoft.com/sql/t-sql/statements/create-login-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) syntax and Microsoft Entra users created with the [CREATE USER FROM LOGIN](https://learn.microsoft.com/sql/t-sql/statements/create-user-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) syntax are supported. When creating a user and specifying `FROM LOGIN`, that user is associated to the login, and inherits the server roles and permissions assigned to it.
+
+  SQL Managed Instance supports creating contained database users based on Microsoft Entra identities with the syntax `CREATE USER [AADUser/AAD group] FROM EXTERNAL PROVIDER`. Users created this way aren't associated to server principals, even if a server principal with the same name exists in the `master` database.
+
+- Windows logins created with the `CREATE LOGIN ... FROM WINDOWS` syntax aren't supported. Use Microsoft Entra logins and users.
+- The Microsoft Entra admin for the instance has [unrestricted admin privileges](../database/logins-create-manage.md).
+- Some features don't support using Microsoft Entra logins in cross-instance interactions, but only within a single SQL Managed Instance, such as SQL Server replication for example. Linked server feature though supports cross-instance authentication using Microsoft Entra server principals (logins).
+
+- Setting a Microsoft Entra login mapped to a Microsoft Entra group as the database owner isn't supported. A member of the Microsoft Entra group can be a database owner, even if the login hasn't been created in the database.
+- Impersonation of Microsoft Entra server-level principals by using other Microsoft Entra principals is supported, such as the [EXECUTE AS](https://learn.microsoft.com/sql/t-sql/statements/execute-as-transact-sql) clause. EXECUTE AS limitations are:
+
+  - EXECUTE AS USER isn't supported for Microsoft Entra users when the name differs from the login name. An example is when the user is created through the syntax `CREATE USER [myAadUser] FROM LOGIN [john@contoso.com]` and impersonation is attempted through `EXEC AS USER = myAadUser`. When you create a **USER** from a Microsoft Entra login, specify the user_name as the same login_name from **LOGIN**.
+  - Only SQL Server-level logins that are part of the `sysadmin` role can execute the following operations that target Microsoft Entra principals:
+
+    - EXECUTE AS USER
+    - EXECUTE AS LOGIN
+
+  - To impersonate a user with EXECUTE AS statement, the user needs to be mapped directly to Microsoft Entra login. Users that are members of Microsoft Entra groups mapped into Microsoft Entra server principals can't effectively be impersonated with EXECUTE AS statement, even though the caller has the impersonate permissions on the specified user name.
+
+- Database export/import using bacpac files are supported for Microsoft Entra users in SQL Managed Instance using either [SSMS V18.4 or later](https://learn.microsoft.com/ssms/sql-server-management-studio-ssms), or [SqlPackage](https://learn.microsoft.com/sql/tools/sqlpackage-download).
+  - The following configurations are supported using database bacpac file:
+    - Export/import a database between different manage instances within the same Microsoft Entra domain.
+    - Export a database from SQL Managed Instance and import to SQL Database within the same Microsoft Entra domain.
+    - Export a database from SQL Database and import to SQL Managed Instance within the same Microsoft Entra domain.
+    - Export a database from SQL Managed Instance and import to SQL Server (version 2012 or later).
+      - In this configuration, all Microsoft Entra users are created as SQL Server database principals (users) without logins. The type of users is `SQL` and is visible as `SQL_USER` in `sys.database_principals`. Their permissions and roles remain in the SQL Server database metadata and can be used for impersonation. However, they can't be used to access and sign in to the SQL Server using their credentials.
+
+- Only the server-level principal login, which is created by the SQL Managed Instance provisioning process, members of the server roles, such as `securityadmin` or `sysadmin`, or other logins with ALTER ANY LOGIN permission at the server level can create Microsoft Entra server principals (logins) in the `master` database for SQL Managed Instance.
+- SQL auth-based logins must be assigned the `sysadmin` role to create logins for Microsoft Entra identities.
+- The login must be a member of the same Microsoft Entra tenant that the Azure SQL Managed Instance is hosted in.
+- Microsoft Entra server principals (logins) are visible in Object Explorer starting with SQL Server Management Studio 18.0 preview 5.
+- A server principal with *sysadmin* access level is automatically created for the Microsoft Entra admin once it's enabled on an instance.
+- During authentication, the following sequence is applied to resolve the authenticating principal:
+
+  1. If the Microsoft Entra account is directly mapped to a Microsoft Entra login, which is present in `sys.server_principals` as type "E," grant access and apply permissions of that login.
+  1. If the Microsoft Entra account is a member of a group that's mapped to a Microsoft Entra login, which is present in `sys.server_principals` as type "X," grant access and apply permissions of that login.
+  1. If the Microsoft Entra account exists as directly mapped to a Microsoft Entra user in a database, which is present in `sys.database_principals` as type "E," grant access and apply permissions of the Microsoft Entra database user.
+  1. If the Microsoft Entra account is a member of a Microsoft Entra group that's mapped to a Microsoft Entra user in a database, which is present in `sys.database_principals` as type "X," grant access and apply permissions of the Microsoft Entra group user.
+
+### Service key and service master key
+
+- [Master key backup](https://learn.microsoft.com/sql/t-sql/statements/backup-master-key-transact-sql) isn't supported (managed by SQL Database service).
+- [Master key restore](https://learn.microsoft.com/sql/t-sql/statements/restore-master-key-transact-sql) isn't supported (managed by SQL Database service).
+- [Service master key backup](https://learn.microsoft.com/sql/t-sql/statements/backup-service-master-key-transact-sql) isn't supported (managed by SQL Database service).
+- [Service master key restore](https://learn.microsoft.com/sql/t-sql/statements/restore-service-master-key-transact-sql) isn't supported (managed by SQL Database service).
+
+## Configuration
+
+### Buffer pool extension
+
+- [Buffer pool extension](https://learn.microsoft.com/sql/database-engine/configure-windows/buffer-pool-extension) isn't supported.
+- `ALTER SERVER CONFIGURATION SET BUFFER POOL EXTENSION` isn't supported. See [ALTER SERVER CONFIGURATION](https://learn.microsoft.com/sql/t-sql/statements/alter-server-configuration-transact-sql).
+
+### Collation
+
+The default instance collation is `SQL_Latin1_General_CP1_CI_AS` and can be specified as a creation parameter. See [Collations](https://learn.microsoft.com/sql/t-sql/statements/collations).
+
+### Compatibility levels
+
+- Supported compatibility levels are 100 and above. 
+- Compatibility levels below 100 aren't supported.
+- The default compatibility level for new databases depends on the [update policy](update-policy.md) configured for the instance. For restored databases, the compatibility level remains unchanged if it was 100 and above.
+
+See [ALTER DATABASE compatibility level](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql-compatibility-level) for more information.
+
+### Database mirroring
+
+Database mirroring isn't supported.
+
+- `ALTER DATABASE SET PARTNER` and `SET WITNESS` options aren't supported.
+- `CREATE ENDPOINT ... FOR DATABASE_MIRRORING` isn't supported.
+
+For more information, see [ALTER DATABASE SET PARTNER and SET WITNESS](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql-database-mirroring) and [CREATE ENDPOINT ... FOR DATABASE_MIRRORING](https://learn.microsoft.com/sql/t-sql/statements/create-endpoint-transact-sql).
+
+### Database options
+
+- Multiple log files aren't supported.
+- In-memory objects aren't supported in the General Purpose service tier.
+- There's a limit of 280 files per General Purpose instance, which implies a maximum of 280 files per database. Both data and log files in the General Purpose tier are counted toward this limit. [The Business Critical tier supports 32,767 files per database](resource-limits.md#service-tier-characteristics).
+- The database can't contain filegroups that contain FILESTREAM data. Restore fails if `.bak` contains `FILESTREAM` data.
+- Every file is placed in Azure Blob storage. IO and throughput per file depend on the size of each individual file.
+
+#### CREATE DATABASE statement
+
+The following limitations apply to `CREATE DATABASE`:
+
+- Files and filegroups can't be defined.
+- A memory-optimized filegroup and file are automatically added and are called XTP.
+- The `CONTAINMENT` option isn't supported.
+- `WITH` options aren't supported.
+   > **Tip:**  
+   > As a workaround, use `ALTER DATABASE` after `CREATE DATABASE` to set database options to add files or to set containment.
+
+- The `FOR ATTACH` option isn't supported.
+- The `AS SNAPSHOT OF` option isn't supported.
+
+For more information, see [CREATE DATABASE](https://learn.microsoft.com/sql/t-sql/statements/create-database-sql-server-transact-sql).
+
+#### ALTER DATABASE statement
+
+Some file properties can't be set or changed:
+
+- A file path can't be specified in the `ALTER DATABASE ADD FILE (FILENAME='path')` T-SQL statement. Remove `FILENAME` from the script because SQL Managed Instance automatically places the files.
+- A file name can't be changed by using the `ALTER DATABASE` statement.
+- Altering XTP file or filegroup isn't allowed.
+
+The following options are set by default and can't be changed:
+
+- `MULTI_USER`
+- `ENABLE_BROKER`
+- `AUTO_CLOSE OFF`
+
+The following options can't be modified:
+
+- `AUTO_CLOSE`
+- `AUTOMATIC_TUNING(CREATE_INDEX=ON|OFF)`
+- `AUTOMATIC_TUNING(DROP_INDEX=ON|OFF)`
+- `DISABLE_BROKER`
+- `EMERGENCY`
+- `ENABLE_BROKER`
+- `FILESTREAM`
+- `HADR`
+- `NEW_BROKER`
+- `OFFLINE`
+- `PAGE_VERIFY`
+- `PARTNER`
+- `READ_ONLY`
+- `RECOVERY BULK_LOGGED`
+- `RECOVERY_SIMPLE`
+- `REMOTE_DATA_ARCHIVE`
+- `RESTRICTED_USER`
+- `SINGLE_USER`
+- `WITNESS`
+
+Some `ALTER DATABASE` statements (for example, [SET CONTAINMENT](https://learn.microsoft.com/sql/relational-databases/databases/migrate-to-a-partially-contained-database#converting-a-database-to-partially-contained-using-transact-sql)) might transiently fail, for example during the automated database backup or right after a database is created. In this case `ALTER DATABASE` statement should be retried. For more information on related error messages, see the [Remarks section](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql?preserve-view=true\&tabs=sqlpool\&view=azuresqldb-mi-current#remarks-2).
+
+For more information, see [ALTER DATABASE](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql-file-and-filegroup-options).
+
+### SQL Server Agent
+
+- Enabling and disabling SQL Server Agent is currently not supported in SQL Managed Instance. SQL Agent is always running.
+- Job schedule trigger based on an idle CPU isn't supported.
+- SQL Server Agent settings are read only. The procedure `sp_set_agent_properties` isn't supported in SQL Managed Instance.
+- Jobs
+  - T-SQL job steps are supported.
+  - The following replication jobs are supported:
+    - Transaction-log reader
+    - Snapshot
+    - Distributor
+  - SSIS job steps are supported.
+  - Other types of job steps aren't currently supported:
+    - The merge replication job step isn't supported.
+    - Queue Reader isn't supported.
+    - Command shell isn't yet supported.
+  - SQL Managed Instance can't access external resources, for example, network shares via robocopy.
+  - SQL Server Analysis Services isn't supported.
+- Notifications are partially supported.
+- Email notification is supported, although it requires that you configure a Database Mail profile. SQL Server Agent can use only one Database Mail profile, and it must be called `AzureManagedInstance_dbmail_profile`.
+  - Pager isn't supported.
+  - NetSend isn't supported.
+  - Alerts aren't yet supported.
+  - Proxies aren't supported.
+- EventLog isn't supported.
+- User must be directly mapped to the Microsoft Entra server login to create, modify, or execute SQL Agent jobs. Users that aren't directly mapped, for example, users that belong to a Microsoft Entra group that has the rights to create, modify or execute SQL Agent jobs, will not effectively be able to perform those actions. This is due to SQL Managed Instance impersonation and [EXECUTE AS limitations](#logins-and-users).
+- The Multi Server Administration feature for master/target (MSX/TSX) jobs aren't supported.
+
+For information about SQL Server Agent, see [SQL Server Agent](https://learn.microsoft.com/sql/ssms/agent/sql-server-agent).
+
+### Tables
+
+The following table types aren't supported:
+
+- [FILESTREAM](https://learn.microsoft.com/sql/relational-databases/blob/filestream-sql-server)
+- [FileTables](https://learn.microsoft.com/sql/relational-databases/blob/filetables-sql-server)
+- [EXTERNAL TABLE](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-transact-sql) (except PolyBase)
+- [MEMORY_OPTIMIZED](https://learn.microsoft.com/sql/relational-databases/in-memory-oltp/introduction-to-memory-optimized-tables) (not supported only in General Purpose tier)
+
+For information about how to create and alter tables, see [CREATE TABLE](https://learn.microsoft.com/sql/t-sql/statements/create-table-transact-sql) and [ALTER TABLE](https://learn.microsoft.com/sql/t-sql/statements/alter-table-transact-sql).
+
+## Functionalities
+
+### BULK INSERT / OPENROWSET
+
+SQL Managed Instance can't access file shares and Windows folders, so the files must be imported from Azure Blob storage:
+
+- `DATASOURCE` is required in the `BULK INSERT` command while you import files from Azure Blob storage. See [BULK INSERT](https://learn.microsoft.com/sql/t-sql/statements/bulk-insert-transact-sql).
+- `DATASOURCE` is required in the `OPENROWSET` function when you read the content of a file from Azure Blob storage. See [OPENROWSET](https://learn.microsoft.com/sql/t-sql/functions/openrowset-transact-sql).
+- `OPENROWSET` can be used to read data from Azure SQL Database, Azure SQL Managed Instance, or SQL Server instances. Other sources such as Oracle databases or Excel files aren't supported.
+
+### CLR
+
+A SQL Managed Instance can't access file shares and Windows folders, so the following constraints apply:
+
+- Only `CREATE ASSEMBLY FROM BINARY` is supported. See [CREATE ASSEMBLY FROM BINARY](https://learn.microsoft.com/sql/t-sql/statements/create-assembly-transact-sql).
+- `CREATE ASSEMBLY FROM FILE` isn't supported. See [CREATE ASSEMBLY FROM FILE](https://learn.microsoft.com/sql/t-sql/statements/create-assembly-transact-sql).
+- `ALTER ASSEMBLY` can't reference files. See [ALTER ASSEMBLY](https://learn.microsoft.com/sql/t-sql/statements/alter-assembly-transact-sql).
+
+### Database Mail (db_mail)
+
+- `sp_send_dbmail` can't send attachments using @file_attachments parameter. Local file system and external shares or Azure Blob Storage aren't accessible from this procedure.
+- See the known issues related to `@query` parameter and authentication.
+
+### DBCC
+
+Undocumented DBCC statements that are enabled in SQL Server aren't supported in SQL Managed Instance.
+
+- Only a limited number of Global Trace flags are supported. Session-level `Trace flags` aren't supported. See [Set trace flags with DBCC TRACEON](https://learn.microsoft.com/sql/t-sql/database-console-commands/dbcc-traceon-trace-flags-transact-sql).
+- [DBCC TRACEOFF](https://learn.microsoft.com/sql/t-sql/database-console-commands/dbcc-traceoff-transact-sql) and [DBCC TRACEON](https://learn.microsoft.com/sql/t-sql/database-console-commands/dbcc-traceon-transact-sql) work with the limited number of global trace-flags.
+- [DBCC CHECKDB](https://learn.microsoft.com/sql/t-sql/database-console-commands/dbcc-checkdb-transact-sql) with options REPAIR_ALLOW_DATA_LOSS, REPAIR_FAST, and REPAIR_REBUILD can't be used because database can't be set in `SINGLE_USER` mode - see [ALTER DATABASE differences](#alter-database-statement). Potential database corruption is handled by the Azure support team. Contact Azure support if there's any indication of database corruption.
+
+### Distributed transactions
+
+[T-SQL and .NET based distributed transactions across managed instances](../database/elastic-transactions-overview.md#transactions-for-sql-managed-instance) are generally available.
+Other scenarios, such as XA transactions, distributed transactions between managed instances and other participants and more, are supported with [Distributed Transaction Coordinator (DTC) for Azure SQL Managed Instance](distributed-transaction-coordinator-dtc.md), which is available in public preview.
+
+### Extended Events
+
+Some Windows-specific targets for Extended Events (XEvents) aren't supported:
+
+- The `etw_classic_sync` target isn't supported. Store `.xel` files in Azure Blob storage. See [etw_classic_sync target](https://learn.microsoft.com/sql/relational-databases/extended-events/targets-for-extended-events-in-sql-server#etw_classic_sync_target-target).
+- The `event_file` target isn't supported. Store `.xel` files in Azure Blob storage. See [event_file target](https://learn.microsoft.com/sql/relational-databases/extended-events/targets-for-extended-events-in-sql-server#event_file-target).
+
+### External libraries
+
+In-database R and Python external libraries are the only external libraries supported. See [Machine Learning Services in Azure SQL Managed Instance](machine-learning-services-overview.md).
+
+### FILESTREAM and FileTable
+
+- FILESTREAM data isn't supported.
+- The database can't contain filegroups with `FILESTREAM` data.
+- `FILETABLE` isn't supported.
+- Tables can't have `FILESTREAM` types.
+- The following functions aren't supported:
+  - `GetPathLocator()`
+  - `GET_FILESTREAM_TRANSACTION_CONTEXT()`
+  - `PathName()`
+  - `GetFileNamespacePat)`
+  - `FileTableRootPath()`
+
+For more information, see [FILESTREAM](https://learn.microsoft.com/sql/relational-databases/blob/filestream-sql-server) and [FileTables](https://learn.microsoft.com/sql/relational-databases/blob/filetables-sql-server).
+
+### Full-text Semantic Search
+
+[Semantic Search](https://learn.microsoft.com/sql/relational-databases/search/semantic-search-sql-server) isn't supported.
+
+### Linked servers
+
+[Linked servers](https://learn.microsoft.com/sql/relational-databases/linked-servers/linked-servers-database-engine) in SQL Managed Instance support a limited number of targets:
+
+- Supported targets are SQL Managed Instance, SQL Database, Azure Synapse SQL [serverless](https://devblogs.microsoft.com/azure-sql/linked-server-to-synapse-sql-to-implement-polybase-like-scenarios-in-managed-instance/) and dedicated pools, and SQL Server instances.
+- Targets that aren't supported are files, Analysis Services, and other RDBMS. Try to use native CSV import from Azure Blob Storage using `BULK INSERT` or `OPENROWSET` as an alternative for file import, or load files using a [serverless SQL pool in Azure Synapse Analytics](https://devblogs.microsoft.com/azure-sql/linked-server-to-synapse-sql-to-implement-polybase-like-scenarios-in-managed-instance/).
+
+Operations:
+
+- `sp_dropserver` is supported for dropping a linked server. See [sp_dropserver](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-dropserver-transact-sql).
+- The `OPENROWSET` function can be used to execute queries only on SQL Server instances. They can be either managed, on-premises, or in virtual machines. See [OPENROWSET](https://learn.microsoft.com/sql/t-sql/functions/openrowset-transact-sql).
+- The [OPENDATASOURCE](https://learn.microsoft.com/sql/t-sql/functions/opendatasource-transact-sql) function can be used to execute queries only on SQL Server instances. They can be either managed, on-premises, or in virtual machines. An example is `SELECT * FROM OPENDATASOURCE('SQLNCLI', '...').AdventureWorks2022.HumanResources.Employee`. Only the `SQLNCLI`, `SQLNCLI11`, `SQLOLEDB`, and `MSOLEDBSQL` values are supported as a provider. The [SQL Server Native Client](https://learn.microsoft.com/sql/relational-databases/native-client/sql-server-native-client) (often abbreviated SNAC) has been removed from SQL Server 2022 and SQL Server Management Studio 19 (SSMS). The SQL Server Native Client (SQLNCLI or SQLNCLI11) and the legacy Microsoft OLE DB Provider for SQL Server (SQLOLEDB) aren't recommended for new development. Switch to the new [Microsoft OLE DB Driver for SQL Server](https://learn.microsoft.com/sql/connect/oledb/oledb-driver-for-sql-server) or the latest [Microsoft ODBC Driver for SQL Server](https://learn.microsoft.com/sql/connect/odbc/microsoft-odbc-driver-for-sql-server) going forward.
+- Linked servers can't be used to read files (Excel, CSV) from the network shares. Try to use [BULK INSERT](https://learn.microsoft.com/sql/t-sql/statements/bulk-insert-transact-sql#e-importing-data-from-a-csv-file), [OPENROWSET](https://learn.microsoft.com/sql/t-sql/functions/openrowset-transact-sql#g-accessing-data-from-a-csv-file-with-a-format-file) that reads CSV files from Azure Blob Storage, or a [linked server that references a serverless SQL pool in Synapse Analytics](https://devblogs.microsoft.com/azure-sql/linked-server-to-synapse-sql-to-implement-polybase-like-scenarios-in-managed-instance/). Track this requests on [SQL Managed Instance Feedback item](https://feedback.azure.com/d365community/idea/db80cf6e-3425-ec11-b6e6-000d3a4f0f84)
+
+Linked servers on Azure SQL Managed Instance support SQL authentication and [Microsoft Entra authentication](https://learn.microsoft.com/sql/relational-databases/linked-servers/create-linked-servers-sql-server-database-engine#linked-servers-with-azure-sql-managed-instance).
+
+### PolyBase
+
+[Data virtualization with Azure SQL Managed Instance](data-virtualization-overview.md) enables you to execute Transact-SQL (T-SQL) queries against data from files stored in Azure Data Lake Storage Gen2 or Azure Blob Storage, and combine it with locally stored relational data using joins. Parquet and delimited text (CSV) file formats are directly supported. The JSON file format is indirectly supported by specifying the CSV file format where queries return every document as a separate row. It's possible to parse rows further using `JSON_VALUE` and `OPENJSON`. For general information about PolyBase, see [Data virtualization with PolyBase in SQL Server](https://learn.microsoft.com/sql/relational-databases/polybase/polybase-guide).
+
+Further, [CREATE EXTERNAL TABLE AS SELECT (CETAS)](https://learn.microsoft.com/sql/t-sql/statements/create-external-table-as-select-transact-sql?view=azuresqldb-mi-current\&preserve-view=true) allows you to export data from your SQL managed instance into an external storage account. You can use CETAS to create an external table on top of Parquet or CSV files Azure Blob storage or Azure Data Lake Storage (ADLS) Gen2. CETAS can also export, in parallel, the results of a T-SQL SELECT statement into the created external table.
+
+### Replication
+
+- Snapshot and Bi-directional replication types are supported. Merge replication, Peer-to-peer replication, and updatable subscriptions aren't supported.
+- [Transactional replication](replication-transactional-overview.md) is available for SQL Managed Instance with some constraints:
+  - All types of replication participants (Publisher, Distributor, Pull Subscriber, and Push Subscriber) can be placed on SQL Managed Instance, but the publisher and the distributor must be either both in the cloud or both on-premises.
+  - SQL Managed Instance can communicate with the recent versions of SQL Server. For more information, see the [supported versions matrix](replication-transactional-overview.md#supportability-matrix).
+  - Transactional Replication has some [additional networking requirements](replication-transactional-overview.md#requirements).
+
+For more information about configuring transactional replication, see the following tutorials:
+
+- [Tutorial: Configure replication between two managed instances](replication-between-two-instances-configure-tutorial.md)
+- [Tutorial: Configure transactional replication between Azure SQL Managed Instance and SQL Server](replication-two-instances-and-sql-server-configure-tutorial.md)
+
+### Resource governor
+
+Resource governor is supported. However, there are several behavior differences:
+
+- To modify resource governor configuration in SQL Managed Instance, you must be in the context of the `master` database on the primary replica.
+- Resource governor configuration changes made on the primary replica propagate to all secondary replicas. However, changes to the currently effective configuration on a secondary replica might not be immediate. To make the changes effective on a secondary replica, [connect](../database/read-scale-out.md#connect-to-a-read-only-replica) to the `master` database on a secondary replica and execute `ALTER RESOURCE GOVERNOR RECONFIGURE`.
+- In SQL Server, if the `REQUEST_MAX_CPU_TIME_SEC` setting is configured for a workload group and a batch request exceeds the configured CPU time, the `cpu_threshold_exceeded` event fires but the request is not terminated unless a trace flag is enabled. In SQL Managed Instance, the same event fires and the request is always terminated. For more information, see [REQUEST_MAX_CPU_TIME_SEC](https://learn.microsoft.com/sql/t-sql/statements/create-workload-group-transact-sql#request_max_cpu_time_sec--value).
+- The maximum number of resource pools you can create is 40.
+
+### RESTORE statement
+
+- Supported syntax:
+  - `RESTORE DATABASE`
+  - `RESTORE FILELISTONLY`
+  - `RESTORE HEADERONLY`
+  - `RESTORE LABELONLY`
+  - `RESTORE VERIFYONLY`
+- Unsupported syntax:
+  - `RESTORE LOGONLY`
+  - `RESTORE REWINDONLY`
+- Source:
+  - `FROM URL` (Azure Blob storage) is the only supported option.
+  - `FROM DISK`/`TAPE`/backup device isn't supported.
+  - Backup sets aren't supported.
+- `WITH` options aren't supported. Restore attempts including `WITH` like `DIFFERENTIAL`, `STATS`, `REPLACE`, and so on, will fail.
+
+A database restore operation is asynchronous and retryable in Azure SQL Managed Instance. You might get an error in SSMS if the connection fails or a time-out expires. Azure SQL Managed Instance keeps trying to restore the database in the background, and you can track the progress of the restore process by using the [sys.dm_exec_requests](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-requests-transact-sql) and [sys.dm_operation_status](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-operation-status-azure-sql-database) dynamic management views.
+
+The following database options are set or overridden and can't be changed later:
+
+- `NEW_BROKER` if the broker isn't enabled in the .bak file.
+- `ENABLE_BROKER` if the broker isn't enabled in the .bak file.
+- `AUTO_CLOSE=OFF` if a database in the .bak file has `AUTO_CLOSE=ON`.
+- `RECOVERY FULL` if a database in the .bak file has `SIMPLE` or `BULK_LOGGED` recovery model.
+- A memory-optimized filegroup is added and called XTP if it wasn't in the source .bak file.
+- Any existing memory-optimized filegroup is renamed to XTP.
+- `SINGLE_USER` and `RESTRICTED_USER` options are converted to `MULTI_USER`.
+
+Limitations:
+
+- Backups of the corrupted databases might be restored depending on the type of the corruption, but automated backups aren't taken until the corruption is fixed. Make sure that you run `DBCC CHECKDB` on the source SQL Managed Instance and use backup `WITH CHECKSUM` in order to prevent this issue.
+- Restore of `.BAK` file of a database that contains any limitation described in this document (for example, `FILESTREAM` or `FILETABLE` objects) can't be restored on SQL Managed Instance.
+- `.BAK` files that contain multiple backup sets can't be restored.
+- `.BAK` files that contain multiple log files can't be restored.
+- Backups that contain databases bigger than 8 TB, active in-memory OLTP objects, or number of files that would exceed 280 files per instance can't be restored on a General Purpose instance.
+- Backups that contain databases bigger than 4 TB or in-memory OLTP objects with the total size larger than the size described in [resource limits](resource-limits.md) can't be restored on Business Critical instance.
+For information about restore statements, see [RESTORE statements](https://learn.microsoft.com/sql/t-sql/statements/restore-statements-transact-sql).
+
+> **Important:**  
+> The same limitations apply to built-in point-in-time restore operation. As an example, General Purpose database greater than 4 TB can't be restored on Business Critical instance. Business Critical database with In-memory OLTP files or more than 280 files can't be restored on General Purpose instance.
+
+### Service broker
+
+Cross-instance service broker message exchange is supported only between Azure SQL Managed Instances:
+
+- `CREATE ROUTE`: You can't use `CREATE ROUTE` with `ADDRESS` other than `LOCAL` or DNS name of another SQL Managed Instance. Port is always 4022.
+- `ALTER ROUTE`: You can't use `ALTER ROUTE` with `ADDRESS` other than `LOCAL` or DNS name of another SQL Managed Instance. Port is always 4022.
+
+Transport security is supported, dialog security isn't:
+
+- `CREATE REMOTE SERVICE BINDING`isn't supported.
+
+Service broker is enabled by default for newly created databases and can't be disabled. Service broker state for restored/migrated databases is inherited from the source database and can't be changed. The following ALTER DATABASE options aren't supported:
+
+- `ENABLE_BROKER`
+- `DISABLE_BROKER`
+
+### Stored procedures, functions, and triggers
+
+- `NATIVE_COMPILATION` isn't supported in the General Purpose tier.
+- The following [sp_configure](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-configure-transact-sql) options aren't supported:
+  - `allow polybase export`
+  - `allow updates`
+  - `filestream_access_level`
+  - `remote access`
+  - `remote data archive`
+  - `remote proc trans`
+  - `scan for startup procs`
+- The following [sp_configure](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-configure-transact-sql) options are ignored and have no effect:
+  - `Ole Automation Procedures`
+- `sp_execute_external_scripts` is supported only for [Machine Learning Services in Azure SQL Managed Instance](machine-learning-services-overview.md) on instances configured with the **SQL Server 2022** update policy. Otherwise, `sp_execute_external_scripts` isn't supported for SQL Managed Instance. See [sp_execute_external_scripts](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-execute-external-script-transact-sql#examples).
+- `xp_cmdshell` isn't supported. See [xp_cmdshell](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/xp-cmdshell-transact-sql).
+- `Extended stored procedures` aren't supported, and this includes `sp_addextendedproc` and `sp_dropextendedproc`. This functionality won't be supported because it's on a deprecation path for SQL Server. For more information, see [Programming Database Engine extended stored procedures](https://learn.microsoft.com/sql/relational-databases/extended-stored-procedures-programming/database-engine-extended-stored-procedures-programming).
+- `sp_attach_db`, `sp_attach_single_file_db`, and `sp_detach_db` aren't supported. See [sp_attach_db](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-attach-db-transact-sql), [sp_attach_single_file_db](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-attach-single-file-db-transact-sql), and [sp_detach_db](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-detach-db-transact-sql).
+- `sp_addmessage` isn't supported on Azure SQL Managed Instance.
+
+### System functions and variables
+
+The following variables, functions, and views return different results:
+
+- `SERVERPROPERTY('EngineEdition')` returns the value 8. This property uniquely identifies a SQL Managed Instance. See [SERVERPROPERTY](https://learn.microsoft.com/sql/t-sql/functions/serverproperty-transact-sql).
+- `SERVERPROPERTY('InstanceName')` returns `NULL` because the concept of instance as it exists for SQL Server doesn't apply to SQL Managed Instance. See [SERVERPROPERTY('InstanceName')](https://learn.microsoft.com/sql/t-sql/functions/serverproperty-transact-sql).
+- `@@SERVERNAME` returns a full DNS "connectable" name, for example, `my-managed-instance.wcus17662feb9ce98.database.windows.net`. See [@@SERVERNAME](https://learn.microsoft.com/sql/t-sql/functions/servername-transact-sql).
+- `SYS.SERVERS` returns a full DNS "connectable" name, such as `myinstance.domain.database.windows.net` for the properties "name" and "data_source." See [sys.servers](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-servers-transact-sql).
+- `@@SERVICENAME` returns `NULL` because the concept of service as it exists for SQL Server doesn't apply to SQL Managed Instance. See [@@SERVICENAME](https://learn.microsoft.com/sql/t-sql/functions/servicename-transact-sql).
+- `SUSER_ID` is supported. It returns `NULL` if the Microsoft Entra login isn't in `sys.syslogins`. See [SUSER_ID](https://learn.microsoft.com/sql/t-sql/functions/suser-id-transact-sql).
+- `SUSER_SID` isn't supported. The wrong data is returned, which is a temporary known issue. See [SUSER_SID](https://learn.microsoft.com/sql/t-sql/functions/suser-sid-transact-sql).
+
+<a id="Environment"></a>
+
+## Environment constraints
+
+### Subnet
+
+- You can't place any other resources (for example virtual machines) in the subnet where you have deployed your SQL Managed Instance. Deploy these resources using a different subnet.
+- Subnet must have sufficient number of available [IP addresses](connectivity-architecture-overview.md#network-requirements). Minimum is to have at least 32 IP addresses in the subnet.
+- The number of vCores and types of instances that you can deploy in a region have some [constraints and limits](resource-limits.md#regional-resource-limitations).
+- There's a [networking configuration](connectivity-architecture-overview.md#network-requirements) that must be applied on the subnet.
+
+### Virtual network
+
+- Virtual network can be deployed using Resource Model. Classic Model doesn't support virtual network (VNet) deployment.
+- After a SQL managed instance is created, moving the SQL managed instance or VNet to another resource group or subscription isn't supported.
+- For SQL managed instances hosted in virtual clusters that are created before September 22, 2020, [VNet global peering](https://learn.microsoft.com/azure/virtual-network/virtual-networks-faq#what-are-the-constraints-related-to-global-vnet-peering-and-load-balancers) isn't supported. You can connect to these resources via ExpressRoute or VNet-to-VNet through Virtual Network Gateways.
+
+### Failover groups
+
+System databases aren't replicated to the secondary instance in a failover group. Therefore, scenarios that depend on objects from the system databases are impossible on the secondary instance unless the objects are manually created on the secondary.
+
+### `tempdb`
+
+- The maximum file size of the `tempdb` system database can't be greater than 24 GB per core on a General Purpose tier. The maximum `tempdb` size on a Business Critical tier is limited by the SQL Managed Instance storage size. `tempdb` log file size is limited to 120 GB on General Purpose tier. Some queries might return an error if they need more than 24 GB per core in `tempdb` or if they produce more than 120 GB of log data.
+- `tempdb` is always split into 12 data files: 1 primary, also called `master`, data file, and 11 non-primary data files. The file structure can't be changed and new files can't be added to `tempdb`.
+- [Memory-optimized TempDB metadata](https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database?view=sql-server-ver15\&preserve-view=true#memory-optimized-tempdb-metadata), a new SQL Server 2019 in-memory database feature, isn't supported.
+- Objects created in the `model` database can't be auto-created in `tempdb` after a restart or a failover because `tempdb` doesn't get its initial object list from the `model` database. You must create objects in `tempdb` manually after each restart or a failover.
+
+### `msdb`
+
+The following schemas in the `msdb` system database in SQL Managed Instance must be owned by their respective predefined roles:
+
+- General roles
+  - TargetServersRole
+- [Fixed database roles](https://learn.microsoft.com/sql/ssms/agent/sql-server-agent-fixed-database-roles?view=sql-server-ver15\&preserve-view=true)
+  - SQLAgentUserRole
+  - SQLAgentReaderRole
+  - SQLAgentOperatorRole
+- [DatabaseMail roles](https://learn.microsoft.com/sql/relational-databases/database-mail/database-mail-configuration-objects?view=sql-server-ver15\&preserve-view=true#DBProfile):
+  - DatabaseMailUserRole
+- [Integration services roles](https://learn.microsoft.com/sql/integration-services/security/integration-services-roles-ssis-service?view=sql-server-ver15\&preserve-view=true):
+  - db_ssisadmin
+  - db_ssisltduser
+  - db_ssisoperator
+
+> **Important:**  
+> Changing the predefined role names, schema names and schema owners by customers will affect the normal operation of the service. Any changes made to these will be reverted back to the predefined values as soon as detected, or at the next service update at the latest to ensure normal service operation.
+
+### Error logs
+
+SQL Managed Instance places verbose information in error logs. There are many internal system events that are logged in the error log. Use a custom procedure to read error logs that filters out some irrelevant entries. For more information, see [SQL Managed Instance – sp_readmierrorlog](https://learn.microsoft.com/archive/blogs/sqlcat/azure-sql-db-managed-instance-sp_readmierrorlog).
+
+Changing the number of retained error logs is unsupported.
+
+## Related content
+
+- [What is Azure SQL Managed Instance?](sql-managed-instance-paas-overview.md)
+- [Features comparison: Azure SQL Database and Azure SQL Managed Instance](../database/features-comparison.md)
+- [What's new in Azure SQL Managed Instance?](doc-changes-updates-release-notes-whats-new.md)
+- [Known issues with Azure SQL Managed Instance](doc-changes-updates-known-issues.md)
+- [Quickstart: Create Azure SQL Managed Instance](instance-create-quickstart.md)

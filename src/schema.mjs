@@ -32,6 +32,11 @@ const gutenberg = z.object({
 }).strict();
 const github = z.object({
   type: z.literal('github'), repository, ref: z.string().min(1).default('main'),
+  transport: z.enum(['files', 'archive']).optional(),
+  downloadConcurrency: z.number().int().min(1).max(16).optional(),
+  codeFiles: z.array(z.string().min(1)).optional(),
+  docfxRoot: z.union([z.literal('.'), path]).optional(),
+  maxArchiveBytes: z.number().int().positive().max(10000000000).optional(),
   paths: z.array(z.union([z.literal('.'), path])).min(1), include: z.array(z.string()).min(1).default(['**/*.md', '**/*.yml', '**/*.yaml']),
   exclude: z.array(z.string()).default([]),
   licenseFiles: z.array(z.object({ path, sha256: sha.optional(), license: id }).strict()).min(1),
@@ -57,7 +62,7 @@ export const CatalogSchema = z.object({
     licenses: z.array(z.object({ id, name: z.string().min(1), spdx: z.string().min(1), url: z.string().url(), text: path, attribution: z.string().min(1) }).strict()).min(1),
     rules: z.array(rule).min(1),
   }).strict(),
-  normalization: z.object({ images: z.enum(['omit', 'preserve']).default('omit'), docfx: z.boolean().default(false) }).strict().default({ images: 'omit', docfx: false }),
+  normalization: z.object({ images: z.enum(['omit', 'preserve']).default('omit'), docfx: z.boolean().default(false), docfxReferences: z.literal('preserve').optional(), docfxProfile: z.enum(['rendered-v1', 'rendered-v2']).optional(), docfxMetadataMaxBytes: z.number().int().min(1024).max(16384).optional() }).strict().default({ images: 'omit', docfx: false }),
   sync: z.object({ maxFileBytes: z.number().int().positive().max(100000000).default(20000000), maxTotalBytes: z.number().int().positive().default(200000000), maxDeleteFraction: z.number().min(0).max(1).default(0.2) }).strict().default({ maxFileBytes: 20000000, maxTotalBytes: 200000000, maxDeleteFraction: 0.2 }),
   build: z.object({
     embeddingProfile: z.enum(['multilingual-e5-small@2', 'bge-small-en-v1.5@1']).default('multilingual-e5-small@2'),
@@ -70,6 +75,9 @@ export const CatalogSchema = z.object({
     gilde: z.object({ repository, category: z.enum(['encyclopedia', 'reference', 'science', 'history', 'technology', 'culture', 'manuals', 'other']), tags: z.array(z.string()).default([]), minGezelVersion: z.string().optional() }).strict(),
   }).strict(),
 }).strict().superRefine((m, ctx) => {
+  if (m.normalization.docfxReferences && (m.source.type !== 'github' || !m.normalization.docfx)) ctx.addIssue({ code: 'custom', message: 'DocFX preservation requires a GitHub source and docfx normalization' });
+  if (m.normalization.docfxMetadataMaxBytes && !m.normalization.docfxReferences) ctx.addIssue({ code: 'custom', message: 'DocFX metadata preservation requires the preservation profile' });
+  if (m.normalization.docfxProfile && !m.normalization.docfxReferences) ctx.addIssue({ code: 'custom', message: 'Rendered DocFX includes require the preservation profile' });
   if (m.contentStorage === 'workspace' && !['github', 'wikipedia', 'caselaw', 'gutenberg'].includes(m.source.type)) ctx.addIssue({ code: 'custom', message: 'Workspace content requires a supported source adapter' });
   if (m.build.packaging && (m.build.toc.format !== 'wikipedia-days' || m.source.type !== 'wikipedia' || m.source.depth !== 1 || m.source.seeds.length)) ctx.addIssue({ code: 'custom', message: 'Wikipedia news packages require a depth-one current-events corpus with a daily TOC and no extra seeds' });
   if (m.build.toc.format === 'wikipedia-days' && (m.source.type !== 'wikipedia' || !m.source.currentEvents || m.build.toc.path)) ctx.addIssue({ code: 'custom', message: 'wikipedia-days TOC requires a Wikipedia currentEvents source and derives its paths from the accepted selection' });

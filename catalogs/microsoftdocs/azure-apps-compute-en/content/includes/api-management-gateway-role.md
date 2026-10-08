@@ -1,0 +1,16 @@
+---
+ms.service: azure-api-management
+ms.topic: include
+author: PatAltimore
+ms.author: patricka
+ms.date: 08/04/2022
+---
+
+Specifically, the gateway:
+
+* Acts as a facade to backend services by accepting API calls and routing them to appropriate backends
+* Verifies [API keys](../articles/api-management/api-management-subscriptions.md) and other credentials such as [JWTs and certificates](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/api-management/api-management-access-restriction-policies.md) presented with requests
+* Enforces [usage quotas and rate limits](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/api-management/api-management-access-restriction-policies.md)
+* Optionally transforms requests and responses as specified in [policy statements](../articles/api-management/api-management-howto-policies.md)
+* If configured, [caches responses](../articles/api-management/api-management-howto-cache.md) to improve response latency and minimize the load on backend services
+* Emits logs, metrics, and traces for [monitoring, reporting, and troubleshooting](../articles/api-management/observability.md)

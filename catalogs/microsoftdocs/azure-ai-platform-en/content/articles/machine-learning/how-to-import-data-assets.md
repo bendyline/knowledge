@@ -1,0 +1,438 @@
+---
+title: Import data (preview)
+titleSuffix: Azure Machine Learning
+description: Learn how to import data from external sources to the Azure Machine Learning platform.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: mldata
+ms.topic: how-to
+ms.author: scottpolly
+author: s-polly
+ms.reviewer: soumyapatro
+ms.date: 03/20/2026
+ms.custom: data4ml, dev-focus
+ai-usage: ai-assisted
+---
+
+# Import data assets (preview)
+
+**APPLIES TO:**
+
+
+
+
+> **Warning:**
+> __Import data from external sources (preview)__ and __Data Connections (preview)__ in Azure Machine Learning are deprecated and won't be available after September 30, 2026. Until then, you can continue to use these features without disruption. After that date, any workloads that depend on them will be disrupted.
+>
+> **Recommended action:** Migrate external data imports to [Microsoft Fabric](https://www.microsoft.com/microsoft-fabric) and use Azure Machine Learning datastores to make data available in Azure Machine Learning.
+
+
+
+In this article, you learn how to import data into the Azure Machine Learning platform from external sources. A successful data import automatically creates and registers an Azure Machine Learning data asset with the name you provide during that import. An Azure Machine Learning data asset resembles a web browser bookmark (favorites). You don't need to remember long storage paths (URIs) that point to your most-frequently used data. Instead, you can create a data asset, and then access that asset by using a friendly name.
+
+A data import creates a cache of the source data, along with metadata, for faster and more reliable data access in Azure Machine Learning training jobs. The data cache avoids network and connection constraints. The cached data is versioned to support reproducibility. This feature provides versioning capabilities for data imported from SQL Server sources. Additionally, the cached data provides data lineage for auditing tasks. A data import uses Azure Data Factory (ADF) pipelines behind the scenes, which means that you can avoid complex interactions with ADF. Azure Machine Learning also handles management of ADF compute resource pool size, compute resource provisioning, and tear-down. This management optimizes data transfer by determining proper parallelization.
+
+The transferred data is partitioned and securely stored as parquet files in Azure storage. This storage enables faster processing during training. ADF compute costs only involve the time used for data transfers. Storage costs only involve the time needed to cache the data, because cached data is a copy of the data imported from an external source. Azure storage hosts that external source.
+
+The caching feature involves upfront compute and storage costs. However, it pays for itself, and can save money, because it reduces recurring training compute costs, compared to direct connections to external source data during training. It caches data as parquet files, which makes job training faster and more reliable against connection timeouts for larger data sets. This caching leads to fewer reruns and fewer training failures.
+
+You can import data from Amazon S3, Azure SQL, and Snowflake.
+
+
+> **Important:**
+> This feature is currently in public preview. This preview version is provided without a service-level agreement, and we don't recommend it for production workloads. Certain features might not be supported or might have constrained capabilities.
+>
+> For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+
+## Prerequisites
+
+To create and work with data assets, you need:
+
+* An Azure subscription. If you don't have an Azure subscription, create a free account before you begin. Try the [free or paid version of Azure Machine Learning](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+* An Azure Machine Learning workspace. [Create workspace resources](quickstart-create-resources.md).
+
+* Python 3.10 or later.
+
+* The [Azure Machine Learning CLI/SDK installed](how-to-configure-cli.md).
+
+* [Workspace connections created](how-to-connection.md).
+
+> **Note:**
+> For a successful data import, verify that you installed the latest azure-ai-ml package (version 1.31.0 or later) for SDK, and the ml extension (version 2.37.0 or later). Python 3.9 or later is required.
+>
+> If you have an older SDK package or CLI extension, remove the old one and install the new one by using the code shown in the tab section. Follow the instructions for SDK and CLI as shown here:
+
+### Code versions
+
+# [Azure CLI](#tab/cli)
+
+```cli
+az extension remove -n ml
+az extension add -n ml --yes
+az extension show -n ml #(the version value needs to be 2.37.0 or later)
+```
+
+# [Python SDK](#tab/python)
+
+```bash
+pip install azure-ai-ml
+pip show azure-ai-ml #(the version value needs to be 1.31.0 or later)
+```
+
+# [Studio](#tab/azure-studio)
+
+Not available.
+
+---
+
+## Import from an external database as an mltable data asset
+
+> **Note:**
+> External databases include Snowflake and Azure SQL.
+
+The following code samples can import data from external databases. The `connection` that handles the import action determines the external database data source metadata. In this sample, the code imports data from a Snowflake resource. The connection points to a Snowflake source. With a little modification, the connection can point to an Azure SQL database source or another supported database source. The imported asset `type` from an external database source is `mltable`.
+
+# [Azure CLI](#tab/cli)
+
+Create a `YAML` file `<file-name>.yml`:
+
+```yaml
+$schema: http://azureml/sdk-2-0/DataImport.json
+# Supported connections include:
+# Connection: azureml:<workspace_connection_name>
+# Supported paths include:
+# Datastore: azureml://datastores/<data_store_name>/paths/<my_path>/${{name}}
+
+
+type: mltable
+name: <name>
+source:
+  type: database
+  query: <query>
+  connection: <connection>
+path: <path>
+```
+
+Next, run the following command in the CLI:
+
+```cli
+> az ml data import -f <file-name>.yml
+```
+
+# [Python SDK](#tab/python)
+```python
+
+from azure.ai.ml.entities import DataImport
+from azure.ai.ml.data_transfer import Database
+from azure.ai.ml import MLClient
+from azure.identity import DefaultAzureCredential
+
+# Supported connections include:
+# Connection: azureml:<workspace_connection_name>
+# Supported paths include:
+# path: azureml://datastores/<data_store_name>/paths/<my_path>/${{name}}
+
+ml_client = MLClient.from_config(credential=DefaultAzureCredential())
+
+data_import = DataImport(
+    name="<name>",
+    source=Database(connection="<connection>", query="<query>"),
+    path="<path>"
+    )
+ml_client.data.import_data(data_import=data_import)
+
+```
+
+# [Studio](#tab/azure-studio)
+
+> **Note:**
+> The example seen here describes the process for a Snowflake database. However, this process covers other external database formats, like Azure SQL, etc.
+
+1. Go to the [Azure Machine Learning studio](https://ml.azure.com).
+
+1. Under **Assets** in the left navigation, select **Data**. Next, select the **Data Import** tab. Then select Create, as shown in this screenshot:
+
+   Screenshot showing creation of a new data import in Azure Machine Learning studio UI.
+
+1. At the Data Source screen, select Snowflake, and then select Next, as shown in this screenshot:
+
+   Screenshot showing selection of a Snowflake data asset.
+
+1. At the Data Type screen, fill in the values. The **Type** value defaults to **Table (mltable)**. Then select Next, as shown in this screenshot:
+
+   Screenshot that shows selection of a Snowflake data asset type.
+
+1. At the **Create data import** screen, fill in the values, and select **Next**, as shown in the following screenshot:
+
+   Screenshot that shows details of the data source selection.
+
+1. Fill in the values at the **Choose a datastore to output** screen, and select **Next**, as shown in the following screenshot. **Workspace managed datastore** is selected by default; the path is automatically assigned by the system when you choose managed datastore. If you select **Workspace managed datastore**, the **Auto delete setting** dropdown appears. It offers a data deletion time window of 30 days by default, and [how to manage imported data assets](how-to-manage-imported-data-assets.md) explains how to change this value.
+
+   Screenshot that shows details of the data source to output.
+
+   > **Note:**
+   > To choose your own datastore, select **Other datastores**. In that case, you must select the path for the location of the data cache.
+
+1. You can add a schedule. Select **Add schedule** as shown in the following screenshot:
+   
+   Screenshot that shows the selection of the Add schedule button.
+   
+   A new panel opens, where you can define either a **Recurrence** schedule, or a **Cron** schedule. This screenshot shows the panel for a **Recurrence** schedule:
+   
+   A screenshot that shows selection of the Add recurrence schedule button.
+
+   - **Name**: the unique identifier of the schedule within the workspace.
+   - **Description**: the schedule description.
+   - **Trigger**: the recurrence pattern of the schedule, which includes the following properties.
+     - **Time zone**: the trigger time calculation is based on this time zone; (UTC) Coordinated Universal Time by default.
+     - **Recurrence** or **Cron expression**: select recurrence to specify the recurring pattern. Under **Recurrence**, you can specify the recurrence frequency - by minutes, hours, days, weeks, or months.
+     - **Start**: the schedule first becomes active on this date. By default, the creation date of this schedule.
+     - **End**: the schedule becomes inactive after this date. By default, it's **NONE**, which means that the schedule is always active until you manually disable it.
+     - **Tags**: the selected schedule tags.
+
+   > **Note:**
+   > **Start** specifies the start date and time with the timezone of the schedule. If you omit **Start**, the start time equals the schedule creation time. For a start time in the past, the first job runs at the next calculated run time.
+
+   The following screenshot shows the last screen of this process. Review your choices, and select **Create**. At this screen, and the other screens in this process, select **Back** to move to earlier screens to change your choices of values.
+
+   Screenshot that shows all parameters of the data import.
+   
+   The following screenshot shows the panel for a **Cron** schedule:
+   
+   Screenshot that shows selection of the Add schedule button.
+
+   - **Name**: the unique identifier of the schedule within the workspace.
+   - **Description**: the schedule description.
+   - **Trigger**: the recurrence pattern of the schedule, which includes the following properties.
+      - **Time zone**: the trigger time calculation is based on this time zone; (UTC) Coordinated Universal Time by default.
+      - **Recurrence** or **Cron expression**: select cron expression to specify the cron details.
+
+      - **(Required)** `expression` uses a standard crontab expression to express a recurring schedule. A single expression is composed of five space-delimited fields:
+
+         `MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK`
+
+         - A single wildcard (`*`), which covers all values for the field. A `*`, in days, means all days of a month (which varies with month and year).
+         - The `expression: "15 16 * * 1"` in the sample above means the 4:15 PM on every Monday.
+         - The next table lists the valid values for each field:
+ 
+            | Field | Range | Comment |
+            | --- | --- | --- |
+            | `MINUTES` | 0-59 | - |
+            | `HOURS` | 0-23 | - |
+            | `DAYS` | - | Not supported. The value is ignored and treated as `*`. |
+            | `MONTHS` | - | Not supported. The value is ignored and treated as `*`. |
+            | `DAYS-OF-WEEK` | 0-6 | Zero (0) means Sunday. Names of days also accepted. |
+
+      - For more information about crontab expressions, visit the [Crontab Expression wiki on GitHub](https://github.com/atifaziz/NCrontab/wiki/Crontab-Expression).
+
+      > **Important:**
+      > `DAYS` and `MONTH` aren't supported. If you pass one of these values, it is ignored as `*`.
+
+      - **Start**: the schedule first becomes active on this date. By default, the creation date of this schedule.
+      - **End**: the schedule becomes inactive after this date. By default, it's **NONE**, which means that the schedule is always active until you manually disable it.
+      - **Tags**: the selected schedule tags.
+
+   > **Note:**
+   > **Start** specifies the start date and time with the timezone of the schedule. If you omit **Start**, the start time equals the schedule creation time. For a start time in the past, the first job runs at the next calculated run time.
+
+   The following screenshot shows the last screen of this process. Review your choices, and select **Create**. At this screen, and the other screens in this process, select **Back** to move to earlier screens to change your choices of values.
+
+   Screenshot that shows all parameters of the cron data import.
+
+---
+
+## Import data from an external file system as a folder data asset
+
+> **Note:**
+> An Amazon S3 data resource can serve as an external file system resource.
+
+The `connection` that handles the data import action determines the aspects of the external data source. The connection defines an Amazon S3 bucket as the target. The connection expects a valid `path` value. An asset value imported from an external file system source has a `type` of `uri_folder`.
+
+The next code sample imports data from an Amazon S3 resource.
+
+# [Azure CLI](#tab/cli)
+
+Create a `YAML` file `<file-name>.yml`:
+
+```yaml
+$schema: http://azureml/sdk-2-0/DataImport.json
+# Supported connections include:
+# Connection: azureml:<workspace_connection_name>
+# Supported paths include:
+# path: azureml://datastores/<data_store_name>/paths/<my_path>/${{name}}
+
+
+type: uri_folder
+name: <name>
+source:
+  type: file_system
+  path: <path_on_source>
+  connection: <connection>
+path: <path>
+```
+
+Next, execute this command in the CLI:
+
+```cli
+> az ml data import -f <file-name>.yml
+```
+
+# [Python SDK](#tab/python)
+```python
+
+from azure.ai.ml.entities import DataImport
+from azure.ai.ml.data_transfer import FileSystem
+from azure.ai.ml import MLClient
+from azure.identity import DefaultAzureCredential
+
+# Supported connections include:
+# Connection: azureml:<workspace_connection_name>
+# Supported paths include:
+# path: azureml://datastores/<data_store_name>/paths/<my_path>/${{name}}
+
+ml_client = MLClient.from_config(credential=DefaultAzureCredential())
+
+data_import = DataImport(
+    name="<name>",
+    source=FileSystem(connection="<connection>", path="<path_on_source>"),
+    path="<path>"
+    )
+ml_client.data.import_data(data_import=data_import)
+
+```
+
+# [Studio](#tab/azure-studio)
+
+1. Go to the [Azure Machine Learning studio](https://ml.azure.com).
+
+1. Under **Assets** in the left navigation, select **Data**. Next, select the Data Import tab. Then select **Create** as shown in the following screenshot:
+
+   Screenshot showing creation of a data import in Azure Machine Learning studio UI.
+
+1. At the **Data Source** screen, select **S3**, and then select **Next**, as shown in the following screenshot:
+
+   Screenshot showing selection of an S3 data asset.
+
+1. At the **Data Type** screen, fill in the values. The **Type** value defaults to **Folder (uri_folder)**. Then select **Next**, as shown in the following screenshot:
+
+   Screenshot showing selection of a Snowflake data asset type.
+
+1. At the **Create data import** screen, fill in the values, and select **Next**, as shown in the following screenshot:
+
+   Screenshot showing details of the data source selection.
+
+1. Fill in the values at the **Choose a datastore to output** screen, and select **Next**, as shown in the following screenshot. **Workspace managed datastore** is selected by default; the path is automatically assigned by the system when you choose managed datastore. If you select **Workspace managed datastore**, the **Auto delete setting** dropdown appears. It offers a data deletion time window of 30 days by default, and [how to manage imported data assets](how-to-manage-imported-data-assets.md) explains how to change this value.
+
+   Screenshot showing details of the data source to output.
+
+1. You can add a schedule. Select **Add schedule** as shown in the following screenshot:
+   
+   Screenshot showing selection of the Add schedule button.
+   
+1. A new panel opens, where you can define a **Recurrence** schedule, or a **Cron** schedule. The following screenshot shows the panel for a **Recurrence** schedule:
+   
+   A screenshot showing selection of the Add schedule button.
+
+   - **Name**: the unique identifier of the schedule within the workspace.
+   - **Description**: the schedule description.
+   - **Trigger**: the recurrence pattern of the schedule, which includes the following properties.
+     - **Time zone**: the trigger time calculation is based on this time zone; (UTC) Coordinated Universal Time by default.
+     - **Recurrence** or **Cron expression**: select recurrence to specify the recurring pattern. Under **Recurrence**, you can specify the recurrence frequency - by minutes, hours, days, weeks, or months.
+     - **Start**: the schedule first becomes active on this date. By default, the creation date of this schedule.
+     - **End**: the schedule becomes inactive after this date. By default, it's **NONE**, which means that the schedule is always active until you manually disable it.
+     - **Tags**: the selected schedule tags.
+
+   > **Note:**
+   > **Start** specifies the start date and time with the timezone of the schedule. If you omit **Start**, the start time equals the schedule creation time. For a start time in the past, the first job runs at the next calculated run time.
+
+1. Review your choices at the last screen of this process, and select **Create**. At this screen, and the other screens in this process, select **Back** to move to earlier screens if you'd like to change your choices of values.
+
+   Screenshot showing details of the data source to output.
+
+1. Review your choices, and select **Create**. At this screen, and the other screens in this process, select **Back** to move to earlier screens to change your choices of values.
+
+   Screenshot showing all parameters of the data import.
+
+   The following screenshot shows the panel for a **Cron** schedule:
+
+   Screenshot showing the selection of the Add schedule button.
+
+   - **Name**: the unique identifier of the schedule within the workspace.
+   - **Description**: the schedule description.
+   - **Trigger**: the recurrence pattern of the schedule, which includes the following properties.
+      - **Time zone**: the trigger time calculation is based on this time zone; (UTC) Coordinated Universal Time by default.
+      - **Recurrence** or **Cron expression**: select cron expression to specify the cron details.
+
+      - **(Required)** `expression` uses a standard crontab expression to express a recurring schedule. A single expression is composed of five space-delimited fields:
+
+         `MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK`
+
+         - A single wildcard (`*`), which covers all values for the field. A `*`, in days, means all days of a month (which varies with month and year).
+         - The `expression: "15 16 * * 1"` in the sample above means the 4:15 PM on every Monday.
+         - The next table lists the valid values for each field:
+ 
+            | Field | Range | Comment |
+            | --- | --- | --- |
+            | `MINUTES` | 0-59 | - |
+            | `HOURS` | 0-23 | - |
+            | `DAYS` | - | Not supported. The value is ignored and treated as `*`. |
+            | `MONTHS` | - | Not supported. The value is ignored and treated as `*`. |
+            | `DAYS-OF-WEEK` | 0-6 | Zero (0) means Sunday. Names of days also accepted. |
+
+      - For more information about crontab expressions, visit the [Crontab Expression wiki on GitHub](https://github.com/atifaziz/NCrontab/wiki/Crontab-Expression).
+
+      > **Important:**
+      > `DAYS` and `MONTH` aren't supported. If you pass one of these values, it is ignored as `*`.
+
+      - **Start**: the schedule first becomes active on this date. By default, the creation date of this schedule.
+      - **End**: the schedule becomes inactive after this date. By default, it's **NONE**, which means that the schedule is always active until you manually disable it.
+      - **Tags**: the selected schedule tags.
+
+   > **Note:**
+   > **Start** specifies the start date and time with the timezone of the schedule. If you omit **Start**, the start time equals the schedule creation time. For a start time in the past, the first job runs at the next calculated run time.
+
+   The following screenshot shows the last screen of this process. Review your choices, and select **Create**. At this screen, and the other screens in this process, select **Back** to move to earlier screens to change your choices of values.
+
+   Screenshot showing all parameters of the S3 cron data import.
+
+---
+
+## Check the import status of external data sources
+
+The data import action is an asynchronous action. It can take a long time. After you submit an import data action via the CLI or SDK, the Azure Machine Learning service might need several minutes to connect to the external data source. Then, the service starts the data import, and handles data caching and registration. The time needed for a data import also depends on the size of the source data set.
+
+The following example returns the status of the submitted data import activity. The command or method uses the data asset name as the input to determine the status of the data materialization.
+
+# [Azure CLI](#tab/cli)
+
+```cli
+> az ml data list-materialization-status --name <name>
+```
+
+# [Python SDK](#tab/python)
+
+```python
+from azure.ai.ml.entities import DataImport
+from azure.ai.ml import MLClient
+from azure.identity import DefaultAzureCredential
+
+ml_client = MLClient.from_config(credential=DefaultAzureCredential())
+
+ml_client.data.list_materialization_status(name="<name>")
+
+```
+
+# [Studio](#tab/azure-studio)
+
+Not available.
+
+---
+
+## Next steps
+
+- [Import data assets on a schedule](reference-yaml-schedule-data-import.md)
+- [Access data in a job](how-to-read-write-data-v2.md#access-data-in-a-job)
+- [Working with tables in Azure Machine Learning](how-to-mltable.md)
+- [Access data from Azure cloud storage during interactive development](how-to-access-data-interactive.md)

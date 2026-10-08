@@ -1,0 +1,129 @@
+---
+title: Require secure transfer to ensure secure connections
+titleSuffix: Azure Storage
+description: Learn how to require secure transfer for requests to Azure Storage. When you require secure transfer for a storage account, any requests originating from an insecure connection are rejected.
+services: storage
+author: normesta
+
+ms.service: azure-storage
+ms.topic: how-to
+ms.date: 04/02/2026
+ms.author: normesta
+ms.subservice: storage-common-concepts
+ms.custom: devx-track-azurecli
+ms.devlang: azurecli
+# Customer intent: "As a cloud administrator, I want to enable secure transfer for my storage accounts, so that I can ensure all data requests are securely transmitted over HTTPS and protect against insecure connections."
+---
+
+# Require secure transfer to ensure secure connections
+
+You can configure your storage account to accept requests from secure connections only by setting the **Secure transfer required** property for the storage account. When you require secure transfer, any requests originating from an insecure connection are rejected. We recommend that you require secure transfer for all of your storage accounts.
+
+When secure transfer is required, a call to an Azure Storage REST API operation must be made over HTTPS. Any request made over HTTP is rejected. By default, the **Secure transfer required** property is enabled when you create a storage account.
+
+Azure Policy provides a built-in policy to ensure that secure transfer is required for your storage accounts. For more information, see the **Storage** section in [Azure Policy built-in policy definitions](https://learn.microsoft.com/azure/governance/policy/samples/built-in-policies#storage).
+
+For Azure Files, you can now control SMB and NFS encryption requirements independently using their respective per-protocol security settings. When **Require encryption in transit** is enabled, the **Secure transfer required** property only applies to REST/HTTPS traffic for Azure file shares. For new storage accounts created by using the Azure portal, **Require encryption in transit** is enabled by default for both SMB and NFS. Storage accounts created by using Azure PowerShell, Azure CLI, or the FileREST API initially set these values as **Not selected** to ensure backward compatibility.
+
+Connecting to an Azure file share over SMB without encryption fails when secure transfer is required for the storage account. Examples of insecure connections include those made over SMB 2.1 or SMB 3.x without encryption.
+
+## Require secure transfer in the Azure portal
+
+You can turn on the **Secure transfer required** property when you create a storage account in the [Azure portal](https://portal.azure.com). You can also enable it for existing storage accounts.
+
+### Require secure transfer for a new storage account
+
+1. Sign into the Azure portal and go to **Storage accounts**. Select **+ Create**.
+1. On the **Advanced** tab, under **Security**, select the **Require secure transfer for REST API operations** checkbox.
+
+   Create storage account advanced tab
+
+### Require secure transfer for an existing storage account
+
+1. Select an existing storage account in the Azure portal.
+1. From the service menu, under **Settings**, select **Configuration**.
+1. Under **Secure transfer required**, select **Enabled**.
+1. Select **Save**.
+
+## Require secure transfer from code
+
+To require secure transfer programmatically, set the *enableHttpsTrafficOnly* property to *True* on the storage account. You can set this property by using the Storage Resource Provider REST API, client libraries, or tools:
+
+- [REST API](https://learn.microsoft.com/rest/api/storagerp/storageaccounts)
+- [PowerShell](https://learn.microsoft.com/powershell/module/az.storage/set-azstorageaccount)
+- [CLI](https://learn.microsoft.com/cli/azure/storage/account)
+- [NodeJS](https://www.npmjs.com/package/@azure/arm-storage/)
+- [.NET SDK](https://www.nuget.org/packages/Microsoft.Azure.Management.Storage)
+- [Python SDK](https://pypi.org/project/azure-mgmt-storage)
+- [Ruby SDK](https://rubygems.org/gems/azure_mgmt_storage)
+
+## Require secure transfer with PowerShell
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/updated-for-az.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-require-secure-transfer.md)
+
+This sample requires the Azure PowerShell module Az version 0.7 or later. Run `Get-Module -ListAvailable Az` to find the version. If you need to install or upgrade, see [Install Azure PowerShell module](https://learn.microsoft.com/powershell/azure/install-azure-powershell).
+
+Run `Connect-AzAccount` to create a connection with Azure.
+
+ Use the following command line to check the setting:
+
+```powershell
+Get-AzStorageAccount -Name "{StorageAccountName}" -ResourceGroupName "{ResourceGroupName}"
+StorageAccountName     : {StorageAccountName}
+Kind                   : Storage
+EnableHttpsTrafficOnly : False
+...
+
+```
+
+Use the following command line to enable the setting:
+
+```powershell
+Set-AzStorageAccount -Name "{StorageAccountName}" -ResourceGroupName "{ResourceGroupName}" -EnableHttpsTrafficOnly $True
+StorageAccountName     : {StorageAccountName}
+Kind                   : Storage
+EnableHttpsTrafficOnly : True
+...
+
+```
+
+## Require secure transfer with Azure CLI
+
+To run this sample, install the latest version of the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). To start, run `az login` to create a connection with Azure.
+
+Samples for the Azure CLI are written for the `bash` shell. To run this sample in Windows PowerShell or Command Prompt, you may need to change
+elements of the script.
+
+
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/quickstarts-free-trial-note.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-require-secure-transfer.md)
+
+ Use the following command to check the setting:
+
+```azurecli-interactive
+az storage account show -g {ResourceGroupName} -n {StorageAccountName}
+{
+  "name": "{StorageAccountName}",
+  "enableHttpsTrafficOnly": false,
+  "type": "Microsoft.Storage/storageAccounts"
+  ...
+}
+
+```
+
+Use the following command to enable the setting:
+
+```azurecli-interactive
+az storage account update -g {ResourceGroupName} -n {StorageAccountName} --https-only true
+{
+  "name": "{StorageAccountName}",
+  "enableHttpsTrafficOnly": true,
+  "type": "Microsoft.Storage/storageAccounts"
+  ...
+}
+
+```
+
+## Next steps
+
+[Security recommendations for Blob storage](../blobs/security-recommendations.md)

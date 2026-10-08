@@ -1,0 +1,135 @@
+---
+title: Language and region support for custom named entity recognition
+titleSuffix: Foundry Tools
+description: Learn about the languages and regions supported by custom named entity recognition.
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: concept-article
+ms.date: 08/03/2026
+ms.custom: language-service-custom-ner
+ms.author: lajanuar
+ai-usage: ai-assisted
+---
+# Language support for custom named entity recognition
+
+Use this article to learn about the languages currently supported by custom named entity recognition feature.
+
+## Multi-lingual option
+
+With custom named entity recognition (NER), you can train a model in one language and use to extract entities from documents in another language. This feature is powerful because it helps save time and effort. Instead of building separate projects for every language, you can handle multi-lingual dataset in one project. Your dataset doesn't have to be entirely in the same language but you should enable the multi-lingual option for your project while creating or later in project settings. If you notice your model performing poorly in certain languages during the evaluation process, consider adding more data in these languages to your training set.
+
+
+You can train your project entirely with English documents, and query it in: French, German, Mandarin, Japanese, Korean, and others. Custom named entity recognition 
+makes it easy for you to scale your projects to multiple languages by using multilingual technology to train your models.
+
+Whenever you identify that a particular language isn't performing as well as other languages, you can add more documents for that language in your project. For data labeling in [Microsoft Foundry](https://ai.azure.com/), you can select the language of the document you're adding. When you introduce more documents for that language to the model, the model is introduced to more of the syntax of that language, and learns to predict it better.
+
+You aren't expected to add the same number of documents for every language. You should build most your project in one language, and only add a few documents in languages you observe aren't performing well. If you develop a project mainly in English, and then begin testing it in French, German, and Spanish, you may notice some differences. Specifically, German may underperform compared to the other two languages. While French and Spanish might yield better results, German could present more challenges or produce less favorable outcomes during testing. In that case, consider adding 5% of your original English documents in German, train a new model and test in German again. You should see better results for German queries. The more labeled documents you add, the more likely the results are going to get better. 
+
+When you add data in another language, you shouldn't expect it to negatively affect other languages. 
+
+## Language support
+
+Custom NER supports `.txt` files in the following languages:
+
+| Language | Language code |
+| --- | --- |
+| Afrikaans | `af` |
+| Amharic | `am` |
+| Arabic | `ar` |
+| Assamese | `as` |
+| Azerbaijani | `az` |
+| Belarusian | `be` |
+| Bulgarian | `bg` |
+| Bengali | `bn` |
+| Breton | `br` |
+| Bosnian | `bs` |
+| Catalan | `ca` |
+| Czech | `cs` |
+| Welsh | `cy` |
+| Danish | `da` |
+| German | `de` |
+| Greek | `el` |
+| English (US) | `en-us` |
+| Esperanto | `eo` |
+| Spanish | `es` |
+| Estonian | `et` |
+| Basque | `eu` |
+| Persian | `fa` |
+| Finnish | `fi` |
+| French | `fr` |
+| Western Frisian | `fy` |
+| Irish | `ga` |
+| Scottish Gaelic | `gd` |
+| Galician | `gl` |
+| Gujarati | `gu` |
+| Hausa | `ha` |
+| Hebrew | `he` |
+| Hindi | `hi` |
+| Croatian | `hr` |
+| Hungarian | `hu` |
+| Armenian | `hy` |
+| Indonesian | `id` |
+| Italian | `it` |
+| Japanese | `ja` |
+| Javanese | `jv` |
+| Georgian | `ka` |
+| Kazakh | `kk` |
+| Khmer | `km` |
+| Kannada | `kn` |
+| Korean | `ko` |
+| Kurdish (Kurmanji) | `ku` |
+| Kyrgyz | `ky` |
+| Latin | `la` |
+| Lao | `lo` |
+| Lithuanian | `lt` |
+| Latvian | `lv` |
+| Malagasy | `mg` |
+| Macedonian | `mk` |
+| Malayalam | `ml` |
+| Mongolian | `mn` |
+| Marathi | `mr` |
+| Malay | `ms` |
+| Burmese | `my` |
+| Nepali | `ne` |
+| Dutch | `nl` |
+| Norwegian (Bokmal) | `nb` |
+| Odia | `or` |
+| Punjabi | `pa` |
+| Polish | `pl` |
+| Pashto | `ps` |
+| Portuguese (Brazil) | `pt-br` |
+| Portuguese (Portugal) | `pt-pt` |
+| Romanian | `ro` |
+| Russian | `ru` |
+| Sanskrit | `sa` |
+| Sindhi | `sd` |
+| Sinhala | `si` |
+| Slovak | `sk` |
+| Slovenian | `sl` |
+| Somali | `so` |
+| Albanian | `sq` |
+| Serbian | `sr` |
+| Sundanese | `su` |
+| Swedish | `sv` |
+| Swahili | `sw` |
+| Tamil | `ta` |
+| Telugu | `te` |
+| Thai | `th` |
+| Filipino | `tl` |
+| Turkish | `tr` |
+| Uyghur | `ug` |
+| Ukrainian | `uk` |
+| Urdu | `ur` |
+| Uzbek | `uz` |
+| Vietnamese | `vi` |
+| Xhosa | `xh` |
+| Yiddish | `yi` |
+| Chinese (Simplified) | `zh-hans` |
+| Zulu | `zu` |
+
+## Next steps
+
+* [Custom NER overview](overview.md)
+* [Service limits](service-limits.md)

@@ -1,0 +1,64 @@
+---
+title: "Copy a Package in SQL Server Data Tools"
+description: "Copy a Package in SQL Server Data Tools"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+helpviewer_keywords:
+  - "packages [Integration Services], copying"
+  - "copying packages"
+  - "regenerating package GUID"
+  - "updating package properties"
+---
+# Copy a Package in SQL Server Data Tools
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  This topic describes how to create a new  Integration Services 
+ package by copying an existing package, and how to update the **Name** and **GUID** properties of the new package.  
+  
+### To copy a package  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ project that contains the package that you want to copy.  
+  
+2.  In Solution Explorer, double-click the package.  
+  
+3.  Verify either the package to copy is selected in Solution Explorer or the tab in SSIS Designer that contains the package is the active tab  
+  
+4.  On the **File** menu, click **Save \<package name> As**.  
+  
+    > **Note:**  
+    >  The package must be opened in SSIS Designer before the **Save As** option appears on the **File** menu.  
+  
+5.  Optionally, browse to a different folder.  
+  
+6.  Update the name of the package file. Make sure that you retain the .dtsx file extension.  
+  
+7.  Click **Save**.  
+  
+8.  At the prompt, choose whether to update the name of the package object to match the file name. If you click **Yes**, the **Name** property of the package is updated. The new package is added to the  Integration Services 
+ project and opened in  SSIS 
+ Designer.  
+  
+9. Optionally, click in the background of the **Control Flow** tab, and the click **Properties**.  
+  
+10. In the Properties window, click the value of the ID property, and then in the dropdown list click **\<Generate New ID>**.  
+  
+11. On the **File** menu, click **Save Selected Items** to save the new package.  
+  
+## Related content
+
+- [Save Packages](save-packages.md)
+- [Create Packages in SQL Server Data Tools](create-packages-in-sql-server-data-tools.md)
+- [Integration Services (SSIS) Packages](integration-services-ssis-packages.md)

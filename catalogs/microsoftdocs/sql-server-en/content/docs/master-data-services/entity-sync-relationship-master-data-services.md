@@ -1,0 +1,43 @@
+---
+title: Entity Sync Relationship
+description: Entity sync is a one-way, repeatable synchronization between entity versions, which enables you to share entity data between Master Data Services models.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+---
+# Entity Sync Relationship (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Entity sync is a one-way and repeatable synchronization between entity versions. It enables you to share entity data between different models. You can keep a single source of truth in one model and reuse this master data in other models. For example, you can store US state data in one model entity and reuse that data in other models.  
+  
+ With entity sync, you can also make a one-time copy of data.  
+  
+ All leaf members with free-form and file attributes in the source entity are synced to the target entity during sync execution. This creates, deletes and modifies entity schema and members.  
+  
+ Once a sync relationship has been established, the target entity can be modified only by the sync process. A sync relationship can be removed at any time to make the target entity editable.  
+  
+## Related content
+
+- [Create and Execute an Entity Sync Relationship (Master Data Services)](create-and-execute-an-entity-sync-relationship-master-data-services.md)
+- [Edit and Delete an Entity Sync Relationship (Master Data Services)](edit-and-delete-an-entity-sync-relationship-master-data-services.md)

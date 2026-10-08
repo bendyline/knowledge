@@ -1,0 +1,167 @@
+---
+title: Service quotas and limits - Content Understanding
+titleSuffix: Foundry Tools
+description: Quick reference, detailed description, and best practices for working within Azure Content Understanding in Foundry Tools service Quotas and Limits
+author: PatrickFarley 
+ms.author: pafarley
+manager: mcleans
+ms.date: 09/11/2026
+ms.service: azure-content-understanding-foundry-tools
+ms.topic: limits-and-quotas
+ms.custom:
+  - build-2025
+  - dev-focus
+ai-usage: ai-assisted
+---
+
+
+# Azure Content Understanding in Foundry Tools service quotas and limits
+
+
+> **Important:**
+> API version `2026-06-01-preview` is in public preview. Previews are provided without a service-level agreement and aren't recommended for production workloads. For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/) and the [Microsoft Products and Services Data Protection Addendum](https://www.microsoft.com/licensing/docs/view/Microsoft-Products-and-Services-Data-Protection-Addendum-DPA) ("DPA").
+
+This article lists the quotas and limits for the Azure Content Understanding in Foundry Tools service.
+
+## General limits
+
+| Property | Limit |
+| --- | --- |
+| Analyzer ID | 1-64 characters. Alphanumeric, period, and underscore. Pattern: `[a-zA-Z0-9._]{1,64}` |
+| URL properties | ≤ 8,192 characters |
+| Description properties | ≤ 1,024 characters |
+| Field names | ≤ 64 characters. Unicode letters, numbers, combining marks, connecting punctuation, period, hyphen, and underscore. Pattern: `[\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}._-]{1,64}` |
+| Tags | ≤ 10 tags |
+| Tag key | ≤ 64 characters. Alphanumeric and `+ - . : = _ /` characters. Pattern: `[a-zA-Z0-9+-.:=_/]{1,64}` |
+| Tag value | ≤ 256 characters. Alphanumeric and `+ - . : = _ /` characters. Can be empty. Pattern: `[a-zA-Z0-9+-.:=_/]{0,256}` |
+| Image reference ID | ≤ 256 characters |
+
+## Resource limits
+
+| Quota | Standard (S0) |
+| --- | --- |
+| Max analyzers | 100,000 |
+| Max analysis/min | 1,000 pages/images <br> Four hours of audio <br> Four hours of video |
+| Max operations/min | 3,000 |
+
+## Supported generative models
+
+
+Content Understanding connects to Foundry Models for generative capabilities. The service periodically adds support for more models. To learn more, see [Connect your Content Understanding analyzer to Foundry model deployments](concepts/models-deployments.md).
+
+The currently supported models are:
+
+| Model Type | Model | Version |
+| --- | --- | --- |
+| Chat Completion | gpt-5.5 | `2025-12-11` |
+| Chat Completion | gpt-5.4 | `2025-12-11` |
+| Chat Completion | gpt-5.4-mini | `2025-12-11` |
+| Chat Completion | gpt-5.2 | `2025-12-11` |
+| Chat Completion | gpt-5.1 | `2025-12-11` |
+| Chat Completion | gpt-5 | `2025-12-11` |
+| Chat Completion | gpt-5-mini | `2025-12-11` |
+| Chat Completion | gpt-5-nano | `2025-12-11` |
+| Chat Completion | gpt-4.1 | `2025-04-14` |
+| Chat Completion | gpt-4.1-mini | `2025-04-14` |
+| Chat Completion | gpt-4.1-nano | `2025-04-14` |
+| Chat Completion | gpt-4o | `2024-11-20` |
+| Chat Completion | gpt-4o | `2024-08-06` |
+| Chat Completion | gpt-4o-mini | `2024-07-18` |
+| Embeddings | text-embedding-3-small |  |
+| Embeddings | text-embedding-3-large |  |
+| Embeddings | text-embedding-ada-002 |  |
+
+> **Note:**
+> Model availability changes over time. For the model retirement schedule, see [OpenAI model retirement schedule](https://learn.microsoft.com/azure/foundry/openai/concepts/model-retirement-schedule).
+
+## Input file limits
+
+### Document and text
+
+#### Operation limits
+
+| Supported file types | Async file size | Async length | Sync file size | Sync length |
+| --- | --- | --- | --- | --- |
+| ✓ `.pdf`<br> ✓ `.tiff`<br> ✓ `.jpg`, `.jpeg`, `.jpe`, `.png`, `.bmp`, `.heif`, `.heic` | ≤ 200 MB | ≤ 300 pages | ≤ 10 MB | ≤ 5 pages<sup>2</sup> |
+| ✓ `.docx`, `.xlsx`, `.pptx` <br/> ✓ `.docm`, `.xlsm`, `.pptm` <br/> ✓ `.doc`, `.xls`, `.ppt` | ≤ 200 MB | ≤ 10M characters | ≤ 10 MB | ≤ 30K characters |
+| ✓ `.odt`, `.ods`, `.odp` <br/> ✓ `.epub` | ≤ 200 MB | ≤ 10M characters | ≤ 10 MB | ≤ 30K characters |
+| ✓ `.txt` <br/> ✓ `.html`, `.md`, `.rtf` <br/> ✓ `.xml`, `.json`, `.csv`, `.tsv`, `.kml` <br/> ✓ `.eml`, `.msg` | ≤ 200 MB | ≤ 10M characters | ≤ 10 MB | ≤ 30K characters |
+
+<sup>1</sup> **Page counting for non-paginated files**: For billing purposes, Content Understanding uses page-equivalent rules: text files and email files (TXT, HTML, MD, XML, MSG, EML) count 3,000 characters as one page (rounded up). Spreadsheets (XLSX) count one sheet as one page (including hidden sheets). Presentations (PPTX) count one slide as one page. Word documents (DOCX) use native pagination.
+
+<sup>2</sup> If there are more than five pages in the document, the service processes only the first five pages. The request can optionally specify the page range to process. 
+
+### Image
+
+| Supported file types | File size | Resolution |
+| --- | --- | --- |
+| ✓ `.jpg`, `.jpeg`, `.jpe`, `.png`, `.bmp`, `.heif`, `.heic` | ≤ 200 MB | Min: 50 x 50 pixels <br> Max: 10k x 10k pixels |
+
+### Audio
+
+| Supported file types | File size | Length |
+| --- | --- | --- |
+| ✓ `.wav` (PCM: `pcm_s8`, `pcm_u8`, `pcm_s16*`, `pcm_u16*`, `pcm_s24*`, `pcm_u24*`, `pcm_s32*`, `pcm_u32*`, `pcm_f32*`, `pcm_f64*`) <br> ✓ `.mp3` <br> ✓ `.mp4` <br> ✓ `.opus`, `.ogg` (Opus)<br> ✓ `.flac` <br> ✓ `.wma` <br> ✓ `.aac` <br> ✓ `.webm` (Opus, Vorbis) <br> ✓ `.m4a` (AAC, AC-3) | Max: 300 MB<sup>3</sup> | Max: Two hours<sup>3</sup> |
+
+<sup>3</sup> Content Understanding supports audio files up to 1 GB and 4 hours in duration, but transcription time is substantially reduced for files 300 MB or less or two hours or less.
+
+### Video
+
+#### Supported file types and resolution
+
+| Supported file types | Resolution |
+| --- | --- |
+| ✓  `.mp4`, `.m4v` <br> ✓ `.flv` (H.264 and `AAC`) <br> ✓ `.wmv`, `.asf` <br> ✓ `.avi` <br> ✓ `.mkv` <br> ✓ `.mov` | Min: 320 x 240 pixels <br>Max: 1920 x 1,080 pixels |
+
+#### File size limits
+
+| Upload Method | File Size | Length | Description |
+| --- | --- | --- | --- |
+| analyzeBinary API (direct upload) | ≤ 200 MB | ≤ 30 minutes | Upload video files directly in the API request body by using the analyzeBinary API. The Microsoft Foundry UX and Content Understanding Studio UX use this method. |
+| analyze API (file reference) | Max: 4 GB | Max: Two hours | Reference video files by URL from Azure Blob Storage or similar storage when you use the Analyze API. |
+
+> **Note:**
+> Video analysis has the following limitations:
+> * analyzeBinary API: Maximum file size of 200 MB and maximum duration of 30 minutes when uploading video directly in the request body
+> * Frame sampling: Analyzes approximately one frame per second, which might miss quick movements or brief events
+> * Resolution: All frames are scaled to 512 x 512 pixels, which might affect visibility of small details or distant objects
+
+## Field schema limits
+
+Content Understanding supports both basic field value types and nested structures, including lists, groups, tables, and fixed tables.
+
+* **Basic field value types**: *string*, *date*, *time*, *number*, *integer*, and *boolean*.
+* **List field**: A sequence of values of the same type, represented as an array of basic fields in the API.
+* **Group field**: A set of semantically related fields, represented as an object of basic fields in the API.
+* **Table field**: A variable number of items with fixed subfields, represented as an array of objects of basic fields in the API.
+* **Fixed table field**: A group of fields with shared subfields, represented as an object of objects of basic fields in the API.
+
+### Basic limits
+
+| Property | Document | Text | Image | Audio | Video |
+| --- | --- | --- | --- | --- | --- |
+| Max fields | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 |
+| Max classify field categories | 300 | 300 | 300 | 300 | 300 |
+| Supported generation methods | extract<br>generate<br>classify | generate<br>classify | generate<br>classify | generate<br>classify | generate<br>classify |
+
+* The *Max fields* limit includes all named fields. For example, a list of strings counts as one field, while a group with string and number subfields counts as three fields. 
+* The *Max classify field categories* limit is the total number of categories across all fields using the `classify` generation method.
+
+## Knowledge source limits
+
+| Type | Limits |
+| --- | --- |
+| Training data | Documents only <br/> 1 GB total <br/> 50,000 pages/images total |
+
+
+## Segmentation and classification limits
+
+> **Note:**
+> These limits apply to [Content Understanding segmentation and classification](concepts/classifier.md) itself. They don't apply to classifying fields within the extraction capability.
+
+| Property | Limit |
+| --- | --- |
+| Category name | Can't start with a dollar sign (`$`). |
+| Category name and description | Maximum 120 characters for combined name and description in each category. |
+| Number of categories | 200 per analyzer for documents, 1 for videos. |
+| Hierarchical classification | Five layers for documents, two layers for videos |

@@ -1,0 +1,50 @@
+---
+title: "sys.service_queues (Transact-SQL)"
+description: sys.service_queues (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.service_queues"
+  - "service_queues"
+  - "service_queues_TSQL"
+  - "sys.service_queues_TSQL"
+helpviewer_keywords:
+  - "sys.service_queues catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.service_queues (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains a row for each object in the database that is a service queue, with **sys.objects.type** = SQ.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **\<inherited columns>** |  | For a list of columns that this view inherits, see [sys.objects (Transact-SQL)](sys-objects-transact-sql.md). |
+| **max_readers** | **smallint** | Maximum number of the concurrent readers allowed in the queue. |
+| **activation_procedure** | **nvarchar(776)** | Three-part name of the activation procedure. |
+| **execute_as_principal_id** | **int** | ID of the EXECUTE AS database principal.<br /><br /> NULL by default or if EXECUTE AS CALLER.<br /><br /> ID of the specified principal if EXECUTE AS SELF EXECUTE AS \<principal>.<br /><br /> -2 = EXECUTE AS OWNER. |
+| **is_activation_enabled** | **bit** | 1 = Activation is enabled. |
+| **is_receive_enabled** | **bit** | 1 = Receive is enabled. |
+| **is_enqueue_enabled** | **bit** | 1 = Enqueue is enabled. |
+| **is_retention_enabled** | **bit** | 1 = Messages are retained until dialog end. |
+| **is_poison_message_handling_enabled** | **bit** | **Applies to**:  SQL Server 2012 (11.x) |
+ | and later.<br /><br /> 1 = Poison message handling is enabled. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

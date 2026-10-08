@@ -1,0 +1,99 @@
+---
+description: "Learn more about: How to: Cancel a Dataflow Block"
+title: "How to: Cancel a Dataflow Block"
+ms.date: "03/30/2017"
+dev_langs:
+  - "csharp"
+  - "vb"
+helpviewer_keywords:
+  - "Task Parallel Library, dataflows"
+  - "dataflow blocks, canceling in TPL"
+  - "TPL dataflow library,canceling dataflow blocks"
+ms.assetid: fbddda0d-da3b-4ec8-a1d6-67ab8573fcd7
+---
+# How to: Cancel a Dataflow Block
+
+This document demonstrates how to enable cancellation in your application. This example uses Windows Forms to show where work items are active in a dataflow pipeline and also the effects of cancellation.
+
+> **Note:**
+> The TPL dataflow library (the [System.Threading.Tasks.Dataflow](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.Dataflow) namespace) is included in .NET 6 and later versions. For .NET Framework and .NET Standard projects, you need to install the [📦 System.Threading.Tasks.Dataflow NuGet package](https://www.nuget.org/packages/System.Threading.Tasks.Dataflow).
+
+
+## To Create the Windows Forms Application
+
+1. Create a C# or Visual Basic **Windows Forms Application** project. In the following steps, the project is named `CancellationWinForms`.
+
+2. On the form designer for the main form, Form1.cs (Form1.vb for Visual Basic), add a [System.Windows.Forms.ToolStrip](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStrip) control.
+
+3. Add a [System.Windows.Forms.ToolStripButton](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripButton) control to the [System.Windows.Forms.ToolStrip](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStrip) control. Set the [System.Windows.Forms.ToolStripItem.DisplayStyle](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.DisplayStyle) property to [System.Windows.Forms.ToolStripItemDisplayStyle.Text](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItemDisplayStyle.Text) and the [System.Windows.Forms.ToolStripItem.Text](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Text) property to **Add Work Items**.
+
+4. Add a second [System.Windows.Forms.ToolStripButton](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripButton) control to the [System.Windows.Forms.ToolStrip](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStrip) control. Set the [System.Windows.Forms.ToolStripItem.DisplayStyle](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.DisplayStyle) property to [System.Windows.Forms.ToolStripItemDisplayStyle.Text](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItemDisplayStyle.Text), the [System.Windows.Forms.ToolStripItem.Text](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Text) property to **Cancel**, and the [System.Windows.Forms.ToolStripItem.Enabled](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Enabled) property to `False`.
+
+5. Add four [System.Windows.Forms.ToolStripProgressBar](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripProgressBar) objects to the [System.Windows.Forms.ToolStrip](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStrip) control.
+
+## Creating the Dataflow Pipeline
+
+ This section describes how to create the dataflow pipeline that processes work items and updates the progress bars.
+
+### To Create the Dataflow Pipeline
+
+1. In your project, add a reference to System.Threading.Tasks.Dataflow.dll.
+
+2. Ensure that Form1.cs (Form1.vb for Visual Basic) contains the following `using` directives (`Imports` in Visual Basic).
+
+     [TPLDataflow_CancellationWinForms#1 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#1)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+     [TPLDataflow_CancellationWinForms#1 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#1)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+3. Add the `WorkItem` class as an inner type of the `Form1` class.
+
+     [TPLDataflow_CancellationWinForms#2 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#2)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+     [TPLDataflow_CancellationWinForms#2 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#2)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+4. Add the following data members to the `Form1` class.
+
+     [TPLDataflow_CancellationWinForms#3 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#3)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+     [TPLDataflow_CancellationWinForms#3 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#3)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+5. Add the following method, `CreatePipeline`, to the `Form1` class.
+
+     [TPLDataflow_CancellationWinForms#4 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#4)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+     [TPLDataflow_CancellationWinForms#4 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#4)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+ Because the `incrementProgress` and `decrementProgress` dataflow blocks act on the user interface, it is important that these actions occur on the user-interface thread. To accomplish this, during construction these objects each provide an [System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions) object that has the [System.Threading.Tasks.Dataflow.DataflowBlockOptions.TaskScheduler](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.Dataflow.DataflowBlockOptions.TaskScheduler) property set to [System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext*](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext*). The [System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext*](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext*) method creates a [System.Threading.Tasks.TaskScheduler](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.TaskScheduler) object that performs work on the current synchronization context. Because the `Form1` constructor is called from the user-interface thread, the actions for the `incrementProgress` and `decrementProgress` dataflow blocks also run on the user-interface thread.
+
+ This example sets the [System.Threading.Tasks.Dataflow.DataflowBlockOptions.CancellationToken](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.Dataflow.DataflowBlockOptions.CancellationToken) property when it constructs the members of the pipeline. Because the [System.Threading.Tasks.Dataflow.DataflowBlockOptions.CancellationToken](https://learn.microsoft.com/search/?terms=System.Threading.Tasks.Dataflow.DataflowBlockOptions.CancellationToken) property permanently cancels dataflow block execution, the whole pipeline must be recreated after the user cancels the operation and then wants to add more work items to the pipeline. For an example that demonstrates an alternative way to cancel a dataflow block so that other work can be performed after an operation is canceled, see [Walkthrough: Using Dataflow in a Windows Forms Application](walkthrough-using-dataflow-in-a-windows-forms-application.md).
+
+## Connecting the Dataflow Pipeline to the User Interface
+
+ This section describes how to connect the dataflow pipeline to the user interface. Both creating the pipeline and adding work items to the pipeline are controlled by the event handler for the **Add Work Items** button. Cancellation is initiated by the **Cancel** button. When the user clicks either of these buttons, the appropriate action is initiated in an asynchronous manner.
+
+### To Connect the Dataflow Pipeline to the User Interface
+
+1. On the form designer for the main form, create an event handler for the [System.Windows.Forms.ToolStripItem.Click](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Click) event for the **Add Work Items** button.
+
+2. Implement the [System.Windows.Forms.ToolStripItem.Click](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Click) event for the **Add Work Items** button.
+
+     [TPLDataflow_CancellationWinForms#5 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#5)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+     [TPLDataflow_CancellationWinForms#5 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#5)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+3. On the form designer for the main form, create an event handler for the [System.Windows.Forms.ToolStripItem.Click](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Click) event handler for the **Cancel** button.
+
+4. Implement the [System.Windows.Forms.ToolStripItem.Click](https://learn.microsoft.com/search/?terms=System.Windows.Forms.ToolStripItem.Click) event handler for the **Cancel** button.
+
+     [TPLDataflow_CancellationWinForms#6 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#6)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+     [TPLDataflow_CancellationWinForms#6 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#6)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+## Example
+
+ The following example shows the complete code for Form1.cs (Form1.vb for Visual Basic).
+
+ [TPLDataflow_CancellationWinForms#100 (complete source file; reference: ../../../samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs#100)](../../../_code/samples/snippets/csharp/VS_Snippets_Misc/tpldataflow_cancellationwinforms/cs/cancellationwinforms/form1.cs.md)
+ [TPLDataflow_CancellationWinForms#100 (complete source file; reference: ../../../samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb#100)](../../../_code/samples/snippets/visualbasic/VS_Snippets_Misc/tpldataflow_cancellationwinforms/vb/cancellationwinforms/form1.vb.md)
+
+ The following illustration shows the running application.
+
+ The Windows Forms Application
+
+## See also
+
+- [Dataflow](dataflow-task-parallel-library.md)

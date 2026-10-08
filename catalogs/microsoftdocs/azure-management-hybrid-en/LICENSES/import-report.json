@@ -1,0 +1,2270 @@
+{
+  "schemaVersion": 1,
+  "repository": "MicrosoftDocs/azure-docs",
+  "revision": "4260367da6fe93d74e80662f882dd4e9f52b8924",
+  "documents": 4726,
+  "codeDocuments": 1,
+  "unresolved": [
+    {
+      "path": "articles/azure-vmware/includes/azure-vmware-solution-networking-description.md",
+      "kind": "Original metadata retained as code",
+      "target": "articles/azure-vmware/includes/azure-vmware-solution-networking-description.md: Map keys must be unique at line 9, column 1:\n\nms.author: v-szuber\nms.custom: engagement-fy23\n^\n"
+    },
+    {
+      "path": "includes/azure-blob-storage-sample-prices.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/azure-blob-storage-sample-prices.md: Unexpected scalar at node end at line 6, column 1:\n\n ms.author: normesta\nms.custom:\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/azure-storage-account-limits-standard.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/azure-storage-account-limits-standard.md: Nested mappings are not allowed in compact mappings at line 1, column 8:\n\ntitle: include file\n       ^\n"
+    },
+    {
+      "path": "includes/azure-storage-set-last-access-time-powershell.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/azure-storage-set-last-access-time-powershell.md: Unexpected scalar at node end at line 3, column 1:\n\n ms.service: storage\nms.custom: devx-track-azurepowershell\n ms.topic: include\n ms.date: 05/02/2024\n …\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/create-test-virtual-machine-linux-tabs.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/create-test-virtual-machine-linux-tabs.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: allensu\nms.custom: include file, linux-related-content\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/create-two-virtual-machines-linux-load-balancer.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/create-two-virtual-machines-linux-load-balancer.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: allensu\nms.custom: include file, linux-related-content\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/event-hubs-limits.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/event-hubs-limits.md: Unexpected scalar at node end at line 8, column 26:\n\nms.custom: \"include file\",\"fasttrack-edit\",\"iot\",\"event-hubs\"\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/expressroute-cloud-shell-connect.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/expressroute-cloud-shell-connect.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: cherylmc\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/expressroute-cloudshell-powershell-about.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/expressroute-cloudshell-powershell-about.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: cherylmc\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/expressroute-gwsku-include.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/expressroute-gwsku-include.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: duau\nms.custom:\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-admin-state-example-values.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-admin-state-example-values.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-add-nic.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-cross-subscription-add-nic.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom:\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-azure-sign-in.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-cross-subscription-azure-sign-in.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom:\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-clean-up.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-cross-subscription-clean-up.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-create-resource-group.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-cross-subscription-create-resource-group.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-health-probe-rules.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-cross-subscription-health-probe-rules.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-prerequisites.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-cross-subscription-prerequisites.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/load-balancer-health-event-logs-preview.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/load-balancer-health-event-logs-preview.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/network-security-perimeter-add-preview.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/network-security-perimeter-add-preview.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include file, ignite-2024\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/network-security-perimeter-delete-resources.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/network-security-perimeter-delete-resources.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include file, ignite-2024\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/network-security-perimeter-limits.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/network-security-perimeter-limits.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include file, ignite-2024\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/network-security-perimeter-note-managed-id.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/network-security-perimeter-note-managed-id.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include file, ignite-2024\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/network-security-perimeter-preview-message.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/network-security-perimeter-preview-message.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender\nms.custom: include file, ignite-2024\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/service-connector-service-linker.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/service-connector-service-linker.md: Map keys must be unique at line 6, column 1:\n\nms.author: malev\nauthor: maud-lv\n^\n"
+    },
+    {
+      "path": "includes/storage-account-key-note-include.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/storage-account-key-note-include.md: Unexpected scalar at node end at line 9, column 26:\n\nms.custom: \"include file\", engagement-fy23\n                         ^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/storage-customer-managed-keys-change-include.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/storage-customer-managed-keys-change-include.md: Unexpected scalar at node end at line 9, column 26:\n\nms.custom: \"include file\", engagement-fy23\n                         ^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/storage-failover-unplanned-hns-preview-include.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/storage-failover-unplanned-hns-preview-include.md: Unexpected scalar at node end at line 10, column 26:\n\nms.custom: \"include file\", references_regions\n                         ^^^^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/storage-failover-user-unplanned-preview-lst.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/storage-failover-user-unplanned-preview-lst.md: Unexpected scalar at node end at line 10, column 26:\n\nms.custom: \"include file\", references_regions\n                         ^^^^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/storage-failover.planned-preview.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/storage-failover.planned-preview.md: Unexpected scalar at node end at line 10, column 26:\n\nms.custom: \"include file\", references_regions\n                         ^^^^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-create-instance.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-create-instance.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-create-udr-instance.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-create-udr-instance.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-define-azure-policy.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-define-azure-policy.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-deploy-hub-spoke-topology.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-deploy-hub-spoke-topology.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-ipam.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-ipam.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file, references_regions\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-preview.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-preview.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender-ms\nms.custom: include-file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/virtual-network-manager-virtual-wan-hub-preview-includes.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/virtual-network-manager-virtual-wan-hub-preview-includes.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: mbender\nms.custom: include-file, references_regions\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-cloud-shell-powershell-about.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-cloud-shell-powershell-about.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: duau\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-cloud-shell-powershell.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-cloud-shell-powershell.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: duau\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-config-openvpn-linux.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-config-openvpn-linux.md: Unexpected scalar at node end at line 6, column 1:\n\n ms.author: duau\nms.custom: include file, linux-related-content\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-p2s-vpn-client-profile-generate-entra.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-p2s-vpn-client-profile-generate-entra.md: Unexpected scalar at node end at line 3, column 1:\n\n ms.service: vpn-gateway\nms.custom: devx-track-azurepowershell\n ms.topic: include\n ms.date: 05/15/2024\n …\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-powershell-classic-locally.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-powershell-classic-locally.md: Unexpected scalar at node end at line 9, column 1:\n\n ms.author: duau\nms.custom: include file\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-vwan-config-openvpn-clients.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-vwan-config-openvpn-clients.md: Unexpected scalar at node end at line 3, column 1:\n\n ms.service: vpn-gateway\nms.custom: linux-related-content\n ms.topic: include\n ms.date: 05/04/2023\n ms.au…\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-vwan-config-openvpn-linux.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-vwan-config-openvpn-linux.md: Unexpected scalar at node end at line 6, column 1:\n\n ms.author: duau\nms.custom: include file, linux-related-content\n^^^^^^^^^\n"
+    },
+    {
+      "path": "includes/vpn-gateway-vwan-generate-certificates-linux-openssl.md",
+      "kind": "Original metadata retained as code",
+      "target": "includes/vpn-gateway-vwan-generate-certificates-linux-openssl.md: Implicit map keys need to be followed by map values at line 6, column 1:\n\nms.topic: include\nThis is for both VPN Gateway and Virtual WAN\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+    },
+    {
+      "path": "articles/automation/automation-dsc-diagnostics.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor-log-analytics-rebrand.md"
+    },
+    {
+      "path": "articles/automation/automation-runbook-execution.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-dsr-and-stp-note.md"
+    },
+    {
+      "path": "articles/automation/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-lighthouse-supported-service.md"
+    },
+    {
+      "path": "articles/automation/policy-reference.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/byrp/microsoft.automation.md"
+    },
+    {
+      "path": "articles/automation/quickstart-create-automation-account-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/automation/quickstart-create-automation-account-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.automation/101-automation/azuredeploy.json"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/abstract.md"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan-destroy.md"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-automation/main.tf"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-automation/outputs.tf"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-automation/providers.tf"
+    },
+    {
+      "path": "articles/automation/quickstarts/create-azure-automation-account-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-automation/variables.tf"
+    },
+    {
+      "path": "articles/automation/security-controls-policy.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/policy/standards/intro-warning.md"
+    },
+    {
+      "path": "articles/automation/security-controls-policy.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/standards/byrp/microsoft.automation.md"
+    },
+    {
+      "path": "articles/automation/shared-resources/credentials.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-dsr-and-stp-note.md"
+    },
+    {
+      "path": "articles/azure-government/connect-with-azure-pipelines.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/azure-government/documentation-government-cognitiveservices.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/azure-government/documentation-government-extension.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/azure-government/documentation-government-get-started-connect-with-ps.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/azure-government/documentation-government-image-gallery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/azure-government/documentation-government-manage-oms.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor-log-analytics-rebrand.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/bicep-functions-date.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.storage/storage-blob-encryption-with-cmk/main.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/deploy-github-actions.md",
+      "kind": "Include",
+      "target": "~/reusable-content/github-actions/generate-deployment-credentials.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/deploy-github-actions.md",
+      "kind": "Include",
+      "target": "~/reusable-content/github-actions/create-secrets-with-openid.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-configuration-set.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-configuration-set/main.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-configuration-set.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-configuration-set/main.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-configuration-set.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-configuration-set/main.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/virtual-network.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/virtual-network.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/virtual-network.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/service-bus.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/service-bus.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/resources.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-logical-parameter.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-logical-parameter/all-tenant-resources.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-name-generation.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-name-generation/app-service.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-name-generation.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-name-generation/storage.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/shared-prefixes.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/example-1.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/example-1.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/shared-rules.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/example-2.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/example-2.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/bicep/patterns-shared-variable-file.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-bicep-samples/samples/patterns-shared-variable-file/example-2.bicep"
+    },
+    {
+      "path": "articles/azure-resource-manager/custom-providers/create-custom-provider.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/custom-providers/policy-reference.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/bycat/policies-custom-provider.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/mainTemplate.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/mainTemplate.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/mainTemplate.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/mainTemplate.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/createUiDefinition.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/createUiDefinition.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/existing-vnet-integration.md",
+      "kind": "Code reference",
+      "target": "~/resourcemanager-templates/managed-app-existing-vnet/createUiDefinition.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/managed-applications/policy-reference.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/bycat/policies-managed-application.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../../api-center/includes/api-center-service-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-cache-for-redis/includes/redis-cache-service-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-search-limits-per-subscription.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-search-limits-per-service.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/container-service-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/container-quota-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/container-registry/container-registry-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../../iot-operations/includes/device-registry-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../../digital-twins/includes/digital-twins-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../../../articles/event-grid/includes/limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../articles/event-hubs/includes/event-hubs-common-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../articles/event-hubs/includes/event-hubs-tier-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/key-vault/key-vault-service-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/key-vault/managed-hsm-service-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../articles/service-bus-messaging/includes/common-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "../articles/service-bus-messaging/includes/tier-limits.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-storage-limits-vm-disks.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-storage-limits-vm-disks-managed.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-storage-limits-vm-disks-standard.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/azure-subscription-service-limits.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-storage-limits-vm-disks-premium.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/manage-resource-groups-portal.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/manage-resources-portal.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-intro.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-intro.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-tableheader.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/reference/metrics/microsoft-resources-subscriptions-metrics-include.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions-intro.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-activity-log.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-no-resource-logs.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights-alerts.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/monitor-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/policy-reference.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/byrp/microsoft.resources.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/relocation/relocation-container-registry.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/container-registry/container-registry-geo-replication-include.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/relocation/relocation-log-analytics.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/reliability/reliability-availability-zone-description-include.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/resource-manager-personal-data.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/resource-name-rules.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/security-controls-policy.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/policy/standards/intro-warning.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/security-controls-policy.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/standards/byrp/microsoft.resources.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/tag-policies.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/bycat/policies-tags.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/management/tag-resources.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/deploy-github-actions.md",
+      "kind": "Include",
+      "target": "~/reusable-content/github-actions/generate-deployment-credentials.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/deploy-github-actions.md",
+      "kind": "Include",
+      "target": "~/reusable-content/github-actions/create-secrets-with-openid.md"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/deploy-to-subscription.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/subscription-deployments/blueprints-new-blueprint/azuredeploy.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/deploy-to-subscription.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/subscription-deployments/create-rg-lock-role-assignment/azuredeploy.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/deploy-to-tenant.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/tenant-deployments/new-mg/azuredeploy.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/deploy-to-tenant.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/tenant-deployments/tenant-role-assignment/azuredeploy.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-functions-date.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.storage/storage-blob-encryption-with-cmk/azuredeploy.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-functions-resource.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/managementgroup-deployments/mg-policy/azuredeploy.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/steps.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform2.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform2.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform2.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform2.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/templates/template-specs-create-portal-forms.md",
+      "kind": "Code reference",
+      "target": "~/azure-docs-json-samples/azure-resource-manager/ui-forms/keyvaultform2.json"
+    },
+    {
+      "path": "articles/azure-resource-manager/troubleshooting/quickstart-troubleshoot-arm-deployment.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/azure-vmware/deploy-azure-vmware-solution.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/azure-vmware/deploy-azure-vmware-solution.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/azure-vmware/includes/create-private-cloud-azure-portal-steps.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/azure-vmware/includes/register-resource-provider-steps.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/azure-vmware/rotate-cloudadmin-credentials.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/azure-vmware/tutorial-create-private-cloud.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/backup/backup-afs-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-afs-automation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-manage-windows-server.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/learn-about-deployment-models-rm-include.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-restore-key-secret.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-restore-windows-server.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/learn-about-deployment-models-rm-include.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-sql-backup-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-troubleshoot-slow-backup-performance-issue.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/support-disclaimer.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-troubleshoot-vm-backup-fails-snapshot-timeout.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/support-disclaimer.md"
+    },
+    {
+      "path": "articles/backup/backup-azure-vms-automation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/backup-center-actions.md",
+      "kind": "Include",
+      "target": "../../includes/backup-center-deprecation.md "
+    },
+    {
+      "path": "articles/backup/backup-center-govern-environment.md",
+      "kind": "Include",
+      "target": "../../includes/backup-center-deprecation.md "
+    },
+    {
+      "path": "articles/backup/backup-center-monitor-operate.md",
+      "kind": "Include",
+      "target": "../../includes/backup-center-deprecation.md "
+    },
+    {
+      "path": "articles/backup/backup-center-obtain-insights.md",
+      "kind": "Include",
+      "target": "../../includes/backup-center-deprecation.md "
+    },
+    {
+      "path": "articles/backup/backup-center-support-matrix.md",
+      "kind": "Include",
+      "target": "../../includes/backup-center-deprecation.md "
+    },
+    {
+      "path": "articles/backup/backup-client-automation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/backup-dpm-automation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/backup-support-matrix.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-lighthouse-supported-service.md"
+    },
+    {
+      "path": "articles/backup/manage-afs-backup-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-intro.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-intro.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-tableheader.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/reference/metrics/microsoft-dataprotection-backupvaults-metrics-include.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions-intro.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-resource-logs.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/reference/logs/microsoft-dataprotection-backupvaults-logs-include.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-logs-tables.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-activity-log.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/azmon-horz-intro.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/azmon-horz-supported-data.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/azmon-horz-tools.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/azmon-horz-export-data.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/azmon-horz-kusto.md"
+    },
+    {
+      "path": "articles/backup/monitor-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/azmon-horz-alerts-part-one.md"
+    },
+    {
+      "path": "articles/backup/policy-reference.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/byrp/microsoft.recoveryservices.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-postgresql-flexible-server-arm.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-postgresql-flexible-server-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-postgresql-flexible-server-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-postgresql-flexible-server-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.recoveryservices/recovery-services-create-vm-and-configure-backup/azuredeploy.json"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/abstract.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan-destroy.md"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-backup-vm/main.tf"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-backup-vm/outputs.tf"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-backup-vm/providers.tf"
+    },
+    {
+      "path": "articles/backup/quick-backup-vm-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-backup-vm/variables.tf"
+    },
+    {
+      "path": "articles/backup/quick-kubernetes-backup-arm.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/backup/quick-kubernetes-backup-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "articles/backup/quick-kubernetes-backup-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "articles/backup/quick-kubernetes-backup-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "articles/backup/restore-afs-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-h3.md"
+    },
+    {
+      "path": "articles/backup/scripts/backup-powershell-sample-backup-encrypted-vm.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/sample-powershell-install-no-ssh.md"
+    },
+    {
+      "path": "articles/backup/scripts/backup-powershell-sample-backup-encrypted-vm.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/quickstarts-free-trial-note.md"
+    },
+    {
+      "path": "articles/backup/scripts/backup-powershell-sample-backup-encrypted-vm.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/scripts/backup-powershell-sample-backup-encrypted-vm.md",
+      "kind": "Code reference",
+      "target": "~/powershell_scripts/backup/backup-encrypted-vm/backup-encrypted-vm.ps1"
+    },
+    {
+      "path": "articles/backup/secure-backup.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/security/zero-trust-security-horizontal.md"
+    },
+    {
+      "path": "articles/backup/security-controls-policy.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/policy/standards/intro-warning.md"
+    },
+    {
+      "path": "articles/backup/security-controls-policy.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/standards/byrp/microsoft.recoveryservices.md"
+    },
+    {
+      "path": "articles/backup/tutorial-backup-azure-vm.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/backup/tutorial-restore-disk.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "articles/backup/tutorial-restore-files.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/backup/tutorial-sap-hana-backup-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "articles/cost-management-billing/automate/get-usage-data-azure-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-bicep.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-bicep-introduction.md"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-bicep.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.consumption/create-budget-simple/main.bicep"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-bicep.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.consumption/create-budget-onefilter/main.bicep"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-bicep.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.consumption/create-budget/main.bicep"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.consumption/create-budget-simple/azuredeploy.json"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.consumption/create-budget-onefilter/azuredeploy.json"
+    },
+    {
+      "path": "articles/cost-management-billing/costs/quick-create-budget-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.consumption/create-budget/azuredeploy.json"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/classic-administrator-retire.md",
+      "kind": "Include",
+      "target": "../../role-based-access-control/includes/classic-administrators-retirement-note.md"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/download-azure-invoice-daily-usage-date.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/grant-access-to-create-subscription.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/programmatically-create-subscription-enterprise-agreement.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/programmatically-create-subscription-microsoft-customer-agreement.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/programmatically-create-subscription-microsoft-partner-agreement.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/manage/programmatically-create-subscription-preview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/reservations/manage-reservations-rbac-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/reservations/manage-reserved-vm-instance.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/reservations/view-reservations.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/cost-management-billing/understand/download-azure-daily-usage.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/extended-zones/deploy-vm-arm-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/extended-zones/deploy-vm-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/governance/blueprints/create-blueprint-azurecli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/blueprints/create-blueprint-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/blueprints/create-blueprint-rest-api.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-azure-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-dotnet.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-go.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-javascript.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-python.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/create-management-group-rest-api.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/governance/management-groups/manage.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-bicep.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-bicep-introduction.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/abstract.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan-destroy.md"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-policy/providers.tf"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-policy/main.tf"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-policy/variables.tf"
+    },
+    {
+      "path": "articles/governance/policy/assign-policy-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-policy/outputs.tf"
+    },
+    {
+      "path": "articles/governance/resource-graph/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-lighthouse-supported-service.md"
+    },
+    {
+      "path": "articles/governance/resource-graph/shared-query-bicep.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-bicep-introduction.md"
+    },
+    {
+      "path": "articles/governance/resource-graph/shared-query-bicep.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/demos/resourcegraph-sharedquery-countos/main.bicep"
+    },
+    {
+      "path": "articles/governance/resource-graph/shared-query-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/governance/resource-graph/shared-query-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/demos/resourcegraph-sharedquery-countos/azuredeploy.json"
+    },
+    {
+      "path": "articles/managed-grafana/how-to-migrate.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/managed-grafana/quickstart-managed-grafana-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/managed-grafana/secure-azure-managed-grafana.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/security/zero-trust-security-horizontal.md"
+    },
+    {
+      "path": "articles/microsoft-discovery/quickstart-infrastructure.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-bicep-introduction.md"
+    },
+    {
+      "path": "articles/microsoft-discovery/quickstart-infrastructure.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.discovery/discovery-infra-deployment/main.bicep"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/configuration.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-configuration-reference.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/configuration.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-environment-variables.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/getting-started.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-getting-started-intro.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/getting-started.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-packages.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/getting-started.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-initialize.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/getting-started.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-configure-destinations.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/instrumentation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-instrumentation-overview.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/instrumentation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-auto-instrumentation.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/instrumentation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-baggage.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/instrumentation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-baggage-middleware.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/instrumentation.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-manual-instrumentation.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-overview-header.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-supported-scenarios.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-key-benefits.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-packages.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-how-it-works.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-destination-categories.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/overview.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-instrumentation-overview.md"
+    },
+    {
+      "path": "articles/microsoft-opentelemetry/validate-locally.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/microsoft-opentelemetry-distro/microsoft-opentelemetry-local-validation.md"
+    },
+    {
+      "path": "articles/migrate/policy-reference.md",
+      "kind": "Include",
+      "target": "~/azure-policy-autogen-docs/includes/policy/reference/bycat/policies-migrate.md"
+    },
+    {
+      "path": "articles/migrate/quickstart-create-migrate-project.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/migrate/quickstart-create-migrate-project.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.migrate/migrate-project-create/azuredeploy.json"
+    },
+    {
+      "path": "articles/partner-solutions/apache-kafka-confluent-cloud/create-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/partner-solutions/apache-kafka-confluent-cloud/create-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-powershell-requirements-no-header.md"
+    },
+    {
+      "path": "articles/partner-solutions/datadog/create.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "articles/sap/center-sap-solutions/quickstart-create-high-availability-namecustom.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/sap/center-sap-solutions/quickstart-install-high-availability-namecustom-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/sap/center-sap-solutions/tutorial-create-high-availability-name-custom.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/cloud-shell-try-it.md"
+    },
+    {
+      "path": "articles/sap/workloads/sap-ascs-ha-multi-sid-wsfc-shared-disk.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/azure-to-azure-autoupdate.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/azure-to-azure-exclude-disks.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/azure-to-azure-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/azure-to-azure-tutorial-enable-replication-shared-disk.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/delete-vault.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/hyper-v-azure-powershell-resource-manager.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-intro.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-resource-logs.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/reference/logs/microsoft-recoveryservices-vaults-logs-include.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-logs-tables.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery-reference.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-activity-log.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-logs.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md"
+    },
+    {
+      "path": "articles/site-recovery/monitor-site-recovery.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-bicep.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-bicep-introduction.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-bicep.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.recoveryservices/recovery-services-vault-create/main.bicep"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-template.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-template.md",
+      "kind": "Code reference",
+      "target": "~/quickstart-templates/quickstarts/microsoft.recoveryservices/recovery-services-vault-create/azuredeploy.json"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/abstract.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs-pr/articles/terraform/includes/terraform-plan-destroy.md"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-recovery-services/main.tf"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-recovery-services/outputs.tf"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-recovery-services/providers.tf"
+    },
+    {
+      "path": "articles/site-recovery/quickstart-create-vault-terraform.md",
+      "kind": "Code reference",
+      "target": "~/terraform_samples/quickstart/101-azure-recovery-services/variables.tf"
+    },
+    {
+      "path": "articles/site-recovery/vmware-azure-disaster-recovery-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "includes/app-service-web-create-resource-group-linux-no-h.md",
+      "kind": "Include",
+      "target": "resource-group.md"
+    },
+    {
+      "path": "includes/app-service-web-create-resource-group-linux.md",
+      "kind": "Include",
+      "target": "resource-group.md"
+    },
+    {
+      "path": "includes/azure-powershell-requirements-h3.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-powershell-requirements-no-header.md"
+    },
+    {
+      "path": "includes/azure-powershell-requirements.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/azure-powershell-requirements-no-header.md"
+    },
+    {
+      "path": "includes/create-test-virtual-machine-linux-tabs.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/ephemeral-ip-note.md"
+    },
+    {
+      "path": "includes/create-two-virtual-machines.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/ephemeral-ip-note.md"
+    },
+    {
+      "path": "includes/event-hubs-limits.md",
+      "kind": "Include",
+      "target": "../articles/event-hubs/includes/event-hubs-common-limits.md"
+    },
+    {
+      "path": "includes/event-hubs-limits.md",
+      "kind": "Include",
+      "target": "../articles/event-hubs/includes/event-hubs-tier-limits.md"
+    },
+    {
+      "path": "includes/functions-add-output-binding-cli.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/src/functions/httpTrigger.js"
+    },
+    {
+      "path": "includes/functions-add-output-binding-cli.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-typescript/src/functions/httpTrigger1.ts"
+    },
+    {
+      "path": "includes/functions-add-output-binding-cli.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model-ts/src/functions/httpTrigger1.ts"
+    },
+    {
+      "path": "includes/functions-add-output-binding-cli.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-powershell/functions-add-output-binding-storage-queue-cli/HttpExample/function.json"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-cli/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model/src/functions/httpTrigger1.js"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli/HttpExample/function.json"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-powershell/functions-add-output-binding-storage-queue-cli/HttpExample/run.ps1"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-python-v2/function_app.py"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli/HttpExample/function.json"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model-ts/src/functions/httpTrigger1.ts"
+    },
+    {
+      "path": "includes/functions-add-output-binding-example-all-languages.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli/HttpExample/function.json"
+    },
+    {
+      "path": "includes/functions-add-output-binding-java-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-java-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-java-test-cli.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/test/java/com/function/FunctionTest.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-java-test.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/test/java/com/function/FunctionTest.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-java.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-java.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-output-binding-js-v4.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model/src/functions/httpTrigger1.js"
+    },
+    {
+      "path": "includes/functions-add-output-binding-js-v4.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model/src/functions/httpTrigger1.js"
+    },
+    {
+      "path": "includes/functions-add-output-binding-js.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli/HttpExample/index.js"
+    },
+    {
+      "path": "includes/functions-add-output-binding-js.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli/HttpExample/index.js"
+    },
+    {
+      "path": "includes/functions-add-output-binding-json.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli/HttpExample/function.json"
+    },
+    {
+      "path": "includes/functions-add-output-binding-powershell.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-powershell/functions-add-output-binding-storage-queue-cli/HttpExample/run.ps1"
+    },
+    {
+      "path": "includes/functions-add-output-binding-powershell.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-powershell/functions-add-output-binding-storage-queue-cli/HttpExample/run.ps1"
+    },
+    {
+      "path": "includes/functions-add-output-binding-python-v2.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-python-v2/function_app.py"
+    },
+    {
+      "path": "includes/functions-add-output-binding-ts-v4.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model-ts/src/functions/httpTrigger1.ts"
+    },
+    {
+      "path": "includes/functions-add-output-binding-ts-v4.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model-ts/src/functions/httpTrigger1.ts"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-csharp-library-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-isolated/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-csharp-library-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-cli/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-csharp-library-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-cli/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-csharp-library.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-isolated/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-csharp-library.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-cli/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-csharp-library.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-csharp/functions-add-output-binding-storage-queue-cli/HttpExample.cs"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-java-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-java-code.md",
+      "kind": "Code reference",
+      "target": "~/functions-quickstart-java/functions-add-output-binding-storage-queue/src/main/java/com/function/Function.java"
+    },
+    {
+      "path": "includes/functions-add-storage-binding-python-v2.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-python-v2/function_app.py"
+    },
+    {
+      "path": "includes/functions-bindings-event-hubs-trigger.md",
+      "kind": "Code reference",
+      "target": "~/azure-functions-dotnet-worker/samples/Extensions/EventHubs/EventHubsFunction.cs"
+    },
+    {
+      "path": "includes/functions-bindings-event-hubs-trigger.md",
+      "kind": "Code reference",
+      "target": "~/azure-functions-nodejs-v4/ts/src/functions/eventHubTrigger1.ts"
+    },
+    {
+      "path": "includes/functions-bindings-event-hubs-trigger.md",
+      "kind": "Code reference",
+      "target": "~/azure-functions-nodejs-v4/ts/src/functions/eventHubTrigger2.ts"
+    },
+    {
+      "path": "includes/functions-bindings-event-hubs-trigger.md",
+      "kind": "Code reference",
+      "target": "~/azure-functions-nodejs-v4/js/src/functions/eventHubTrigger1.js"
+    },
+    {
+      "path": "includes/functions-bindings-event-hubs-trigger.md",
+      "kind": "Code reference",
+      "target": "~/azure-functions-nodejs-v4/js/src/functions/eventHubTrigger2.js"
+    },
+    {
+      "path": "includes/functions-blob-storage-sdk-types-node.md",
+      "kind": "Code reference",
+      "target": "~/functions-node-sdk-bindings-blob/blobClientSdkBinding/src/functions/storageBlobTrigger.ts"
+    },
+    {
+      "path": "includes/functions-blob-storage-sdk-types-node.md",
+      "kind": "Code reference",
+      "target": "~/functions-node-sdk-bindings-blob/containerClientInputBinding/src/functions/listBlobs.ts"
+    },
+    {
+      "path": "includes/functions-extension-bundles-json-v4-element.md",
+      "kind": "Code reference",
+      "target": "~/functions-docs-javascript/functions-add-output-binding-storage-queue-cli-v4-programming-model/host.json"
+    },
+    {
+      "path": "includes/functions-service-bus-sdk-types-node-ts.md",
+      "kind": "Code reference",
+      "target": "~/functions-nodejs-extensions/azure-functions-nodejs-extensions-servicebus/samples/serviceBusSampleWithComplete/src/functions/serviceBusTopicTrigger.ts"
+    },
+    {
+      "path": "includes/functions-storage-blob-connections.md",
+      "kind": "Include",
+      "target": "./functions-blob-permissions.md"
+    },
+    {
+      "path": "includes/functions-storage-queue-connections.md",
+      "kind": "Include",
+      "target": "./functions-queue-permissions.md"
+    },
+    {
+      "path": "includes/functions-update-app-settings-flex-cli.md",
+      "kind": "Code reference",
+      "target": "~/azure_cli_scripts/azure-functions/create-function-app-flex-plan-identities/create-function-app-flex-plan-identities.md"
+    },
+    {
+      "path": "includes/functions-update-app-settings-flex-cli.md",
+      "kind": "Code reference",
+      "target": "~/azure_cli_scripts/azure-functions/create-function-app-flex-plan-identities/create-function-app-flex-plan-identities.md"
+    },
+    {
+      "path": "includes/iot-hub-configure-file-upload-cli.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/ip-services-prerequisites.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/load-balancer-create-bastion-no-natgateway.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/load-balancer-create-bastion.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/load-balancer-create-no-gateway.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/load-balancer-cross-subscription-prerequisites.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/load-balancer-multi-ip-portal.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/load-balancer-multi-ip-portal.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/load-balancer-multi-ip-portal.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/ephemeral-ip-note.md"
+    },
+    {
+      "path": "includes/load-balancer-multi-ip-powershell.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/updated-for-az.md"
+    },
+    {
+      "path": "includes/quickstart-control-device-dotnet.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/quickstart-control-device-java.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/quickstart-control-device-node.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/quickstart-control-device-python.md",
+      "kind": "Include",
+      "target": "~/reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "includes/service-bus-quotas-table.md",
+      "kind": "Include",
+      "target": "../articles/service-bus-messaging/includes/common-limits.md"
+    },
+    {
+      "path": "includes/service-bus-quotas-table.md",
+      "kind": "Include",
+      "target": "../articles/service-bus-messaging/includes/tier-limits.md"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-create-client-java.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/Java/blob-devguide/blob-devguide-blobs/src/main/java/com/blobs/devguide/blobs/App.java"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-project-setup-go.md",
+      "kind": "Code reference",
+      "target": "~/blob-devguide-go/cmd/client-auth/client_auth.go"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-stored-access-policy.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/dotnet/BlobDevGuideBlobs/CreateSas.cs"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-stored-access-policy.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/dotnet/BlobDevGuideBlobs/CreateSas.cs"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-stored-access-policy.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/dotnet/BlobDevGuideBlobs/CreateSas.cs"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-stored-access-policy.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/dotnet/BlobDevGuideBlobs/CreateSas.cs"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-user-delegation-sas-java.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/Java/blob-devguide/blob-devguide-blobs/src/main/java/com/blobs/devguide/blobs/BlobSAS.java"
+    },
+    {
+      "path": "includes/storage-dev-guides/storage-dev-guide-user-delegation-sas-python.md",
+      "kind": "Code reference",
+      "target": "~/azure-storage-snippets/blobs/howto/python/blob-devguide-py/blob-devguide-create-sas.py"
+    },
+    {
+      "path": "includes/storage-import-export-delete-personal-info.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/gdpr-intro-sentence.md"
+    },
+    {
+      "path": "includes/storage-quickstart-credential-free-include.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/passwordless/default-azure-credential-sign-in.md"
+    },
+    {
+      "path": "includes/virtual-network-create-with-bastion-tabs.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/virtual-network-create-with-nat-bastion.md",
+      "kind": "Include",
+      "target": "~/reusable-content/ce-skilling/azure/includes/bastion-pricing.md"
+    },
+    {
+      "path": "includes/vpn-gateway-common-tasks-cli-include.md",
+      "kind": "Include",
+      "target": "../articles/networking/includes/vpn-gateway/modify-ip-prefix-cli.md"
+    },
+    {
+      "path": "includes/vpn-gateway-common-tasks-cli-include.md",
+      "kind": "Include",
+      "target": "../articles/networking/includes/vpn-gateway/modify-lng-gateway-ip-cli.md"
+    },
+    {
+      "path": "includes/vpn-gateway-p2s-vpn-client-profile-generate-entra.md",
+      "kind": "Include",
+      "target": "../articles/networking/includes/vpn-gateway/generate-profile-portal.md"
+    },
+    {
+      "path": "includes/vpn-gateway-p2s-vpn-client-profile-generate-entra.md",
+      "kind": "Include",
+      "target": "../articles/networking/includes/vpn-gateway/generate-profile-powershell.md"
+    }
+  ],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

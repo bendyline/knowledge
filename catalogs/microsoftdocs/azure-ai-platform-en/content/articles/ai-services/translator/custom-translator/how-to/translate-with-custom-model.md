@@ -1,0 +1,33 @@
+---
+title: Translate text with a Custom Translator model
+titleSuffix: Foundry Tools
+description: How to make translation requests using custom models published with the Custom Translator.
+author: laujan
+manager: mcleans
+ms.service: azure-translator-foundry-tools
+ms.date: 06/02/2026
+ms.author: lajanuar
+ms.topic: how-to
+---
+
+# Translate text with a Custom Translator model
+
+After you publish your custom model, you can access it with the Azure Translator API by using the `Category ID` parameter.
+
+## How to translate
+
+1. Use the `Category ID` when making a custom translation request via Microsoft Translator [Text API v3](../../text-translation/reference/v3/translate.md?tabs=curl). The `Category ID` is created by concatenating the WorkspaceID, project label, and category code. Use the `CategoryID` with the Text translation API to get custom translations.
+
+   ```bash
+   https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=de&category=aaaabbbb-0000-cccc-1111-dddd2222eeee-TECH
+
+   ```
+
+   More information about the Translator Text API can be found on the [Translator API Reference](../../text-translation/reference/v3/translate.md) page.
+
+1. You can also download and install our free [DocumentTranslator app for Windows](https://github.com/MicrosoftTranslator/DocumentTranslation/releases).
+
+## Next steps
+
+> 
+> [Learn more about building and publishing  Custom Translator models](../beginners-guide.md)

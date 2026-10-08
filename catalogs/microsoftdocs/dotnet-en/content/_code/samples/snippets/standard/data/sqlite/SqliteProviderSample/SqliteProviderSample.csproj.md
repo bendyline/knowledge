@@ -1,0 +1,22 @@
+# Source code: samples/snippets/standard/data/sqlite/SqliteProviderSample/SqliteProviderSample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.12" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="3.0.5" />
+    <PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="3.0.5" />
+  </ItemGroup>
+
+</Project>
+
+```

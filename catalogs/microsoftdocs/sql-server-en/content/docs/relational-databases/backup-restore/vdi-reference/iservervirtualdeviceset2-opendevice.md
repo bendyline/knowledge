@@ -1,0 +1,54 @@
+---
+title: "IServerVirtualDeviceSet2::OpenDevice"
+titleSuffix: SQL Server VDI reference
+description: "This article provides reference for the IServerVirtualDeviceSet2::OpenDevice command."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 08/30/2019
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: reference
+---
+
+# IServerVirtualDeviceSet2::OpenDevice (VDI)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **OpenDevice** function obtains virtual device interfaces from the virtual device set.
+
+## Syntax
+
+```c
+HRESULT IServerVirtualDeviceSet2::OpenDevice (
+   LPCWSTR                     lpName,
+   IServerVirtualDevice**      ppVirtualDevice
+);
+```
+
+## Parameters
+
+*lpName*
+This is provided from the first VIRTUAL_DEVICE= clause of the BACKUP or RESTORE command. This name is used as the key to obtain access to the virtual device set created by the client.
+
+*ppVirtualDevice*
+This is used to return a virtual device interface.
+
+## Return Value
+
+| Return Value | Explanation |
+| --- | --- |
+| NOERROR | The function succeeded. |
+| VD_E_OPEN | All devices have been opened. |
+
+## Remarks
+
+Each call returns the next unopened device. The function can be called only the number of times equal to the number of devices specified in the virtual device set configuration.
+
+## Related content
+
+- [Virtual device interface (VDI) reference](reference-virtual-device-interface.md)

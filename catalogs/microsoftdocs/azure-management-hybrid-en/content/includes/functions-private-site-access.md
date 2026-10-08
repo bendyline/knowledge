@@ -1,0 +1,18 @@
+---
+author: ggailey777
+ms.service: azure-functions
+ms.topic: include
+ms.date: 05/06/2020
+ms.author: glenga
+---
+[Azure Private Endpoint](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/private-link/private-endpoint-overview.md) is a network interface that connects you privately and securely to a service powered by Azure Private Link. Private Endpoint uses a private IP address from your virtual network, effectively bringing the service into your virtual network.
+
+You can use Private Endpoint for your functions hosted in the [Flex Consumption](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/flex-consumption-plan.md), [Elastic Premium](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-premium-plan.md), and [Dedicated (App Service)](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/dedicated-plan.md) plans.
+
+If you want to make calls to Private Endpoints, then you must make sure that your DNS lookups resolve to the private endpoint. You can enforce this behavior in one of the following ways: 
+
+* Integrate with Azure DNS private zones. When your virtual network doesn't have a custom DNS server, this is done automatically.
+* Manage the private endpoint in the DNS server used by your app. To manage a private endpoint, you must know the endpoint address and use an A record to reference the endpoint you're trying to reach.
+* Configure your own DNS server to forward to [Azure DNS private zones](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/dns/private-dns-privatednszone.md).
+
+To learn more, see [using Private Endpoints for Web Apps](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/overview-private-endpoint.md).

@@ -1,0 +1,60 @@
+---
+title: "SQL Server Agent, JobSteps object"
+description: Learn about the SQL Server Agent JobSteps performance object, which contains performance counters that report information about SQL Server Agent job steps.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "JobSteps object"
+  - "SQLAgent:JobSteps"
+---
+# SQL Server Agent, JobSteps object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The  SQL Server 
+ Agent **JobSteps** performance object contains performance counters that report information about  SQL Server 
+ Agent job steps. The table below lists the counters that this object contains.  
+  
+ The table below contains the **SQLAgent:JobSteps** counters.  
+  
+| Name | Description |
+| --- | --- |
+| **Active steps** | This counter reports the number of job steps currently running. |
+| **Queued steps** | This counter reports the number of job steps that are ready for  SQL Server |
+ | Agent to run, but which have not yet started running. |
+| **Total step retries** | This counter reports the total number of times that  Microsoft |
+  | SQL Server |
+ | has retried a job step since the last server restart. |
+  
+ Each counter in the object contains the following instances:  
+  
+| Instance | Description |
+| --- | --- |
+| **_Total** | Information for all job steps. |
+| **ActiveScripting** | Information for job steps that use the **ActiveScripting** subsystem. |
+| **ANALYSISCOMMAND** | Information for job steps that use the ANALYSISCOMMAND subsystem. |
+| **ANALYSISQUERY** | Information for job steps that use the ANALYSISQUERY subsystem. |
+| **CmdExec** | Information for job steps that use the **CmdExec** subsystem. |
+| **Distribution** | Information for job steps that use the **Distribution** subsystem. |
+| **Dts** | Information for job steps that use the  Integration Services |
+ | subsystem. |
+| **LogReader** | Information for job steps that use the **LogReader** subsystem. |
+| **Merge** | Information for job steps that use the **Merge** subsystem. |
+| **PowerShell** | Information for job steps that use the **PowerShell** subsystem. |
+| **QueueReader** | Information for job steps that use the **QueueReader** subsystem. |
+| **Snapshot** | Information for job steps that use the **Snapshot** subsystem. |
+| **TSQL** | Information for job steps that execute  Transact-SQL . |
+  
+## Related content
+
+- [Manage Job Steps](https://learn.microsoft.com/ssms/agent/manage-job-steps)
+- [Use Performance Objects](https://learn.microsoft.com/ssms/agent/use-performance-objects)
+- [Monitor Resource Usage (Performance Monitor)](monitor-resource-usage-system-monitor.md)

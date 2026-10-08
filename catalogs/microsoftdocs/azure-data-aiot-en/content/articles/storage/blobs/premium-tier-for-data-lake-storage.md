@@ -1,0 +1,50 @@
+---
+title: Premium Tier for Azure Data Lake Storage
+titleSuffix: Azure Storage
+description: Learn how to use the premium tier for Azure Data Lake Storage to achieve low latency and high transaction throughput for analytics workloads.
+author: normesta
+
+ms.service: azure-data-lake-storage
+ms.topic: concept-article
+ms.date: 05/08/2026
+ms.author: normesta
+# Customer intent: As a data engineer, I want to utilize the premium tier of Azure Data Lake Storage, so that I can achieve low latency and support high transaction workloads for analytics applications.
+---
+
+# Premium tier for Azure Data Lake Storage
+
+Azure Data Lake Storage now supports [premium block blob storage accounts](storage-blob-block-blob-premium.md). Premium block blob storage accounts are ideal for big data analytics applications and workloads that require low consistent latency and have a high number of transactions. Example workloads include interactive workloads, IoT, streaming analytics, artificial intelligence, and machine learning. 
+
+>**Tip:**
+> To learn more about the performance and cost advantages of using a premium block blob storage account, and to see how other Data Lake Storage customers have used this type of account, see [Premium block blob storage accounts](storage-blob-block-blob-premium.md).
+
+## Get started with premium
+
+First, check to make sure your favorite Blob Storage features are compatible with premium block blob storage accounts, then create the account. 
+
+>**Note:**
+> You can't convert an existing standard general-purpose v2 storage account to a premium block blob storage account. To migrate to a premium block blob storage account, you must create a premium block blob storage account, and migrate the data to the new account. 
+
+### Check for Blob Storage feature compatibility
+
+Some Blob Storage features aren't yet supported or have partial support in premium block blob storage accounts. Before choosing premium, review the [Blob Storage feature support in Azure Storage accounts](storage-feature-support-in-storage-accounts.md) article to determine whether the features that you intend to use are fully supported in your account. Feature support is always expanding so make sure to periodically review this article for updates.
+
+### Create a new storage account
+
+Create a new Azure Storage account. For complete guidance, see [Create a storage account](../common/storage-account-create.md). 
+
+As you create the account, choose the **Premium** performance option and the **Block blobs** account type. 
+
+> 
+> Screenshot of the Create storage account page with Premium performance and Block blobs account type selected.
+
+To unlock Azure Data Lake Storage capabilities, enable the **Hierarchical namespace** setting in the **Advanced** tab of the **Create storage account** page. 
+
+The following image shows this setting in the **Create storage account** page.
+
+> 
+> Screenshot of the Advanced tab showing the Hierarchical namespace setting enabled during storage account creation.
+
+## Next steps
+
+Use the premium tier for Azure Data Lake Storage with your favorite analytics service such as Azure Databricks, Azure HDInsight, and Azure Synapse Analytics. See [Tutorials that use Azure services with Azure Data Lake Storage](data-lake-storage-integrate-with-services-tutorials.md).

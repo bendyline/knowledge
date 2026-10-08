@@ -1,0 +1,37 @@
+---
+title: "getPacketSize Method (SQLServerDataSource)"
+description: "getPacketSize Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDataSource.getPacketSize"
+apitype: "Assembly"
+---
+# getPacketSize Method (SQLServerDataSource)
+
+
+  Returns the current network packet size used to communicate with  SQL Server 
+, specified in bytes.  
+  
+## Syntax  
+  
+```  
+  
+public int getPacketSize()  
+```  
+  
+## Return Value  
+ An **int** value containing the current network packet size.  
+  
+## Remarks  
+ If the packetSize property is not set, the getPacketSize method returns the default value of 8000.  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

@@ -1,0 +1,23 @@
+# Source code: aspnetcore/web-api/jsonpatch/samples/10.x/JsonPatchSample/JsonPatchSample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch.SystemTextJson" Version="10.0.0-preview.5.25277.114" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.5.25277.114" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0-preview.5.25277.114" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-preview.5.25277.114" />
+  </ItemGroup>
+
+</Project>
+
+```

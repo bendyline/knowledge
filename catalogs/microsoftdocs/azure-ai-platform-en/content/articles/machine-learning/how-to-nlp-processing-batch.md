@@ -1,0 +1,450 @@
+---
+title: "Deploy and run language models in batch endpoints"
+titleSuffix: Azure Machine Learning
+description: Learn how to use batch deployments to process text with large language models.
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: inferencing
+ms.topic: how-to
+author: s-polly
+ms.author: scottpolly
+ms.date: 03/30/2026
+ms.reviewer: jturuk
+ms.custom: devplatv2, update-code
+ai-usage: ai-assisted
+---
+
+# Deploy language models in batch endpoints
+
+
+**APPLIES TO:**
+
+
+
+Use batch endpoints to deploy resource-intensive models, such as language models, over text data. In this tutorial, you learn how to deploy a model that can perform text summarization of long sequences of text by using a model from HuggingFace. It also shows how to optimize inference by using HuggingFace `optimum` and `accelerate` libraries.
+
+## About this sample
+
+The model you work with in this tutorial uses the popular `transformers` library from HuggingFace along with [a pretrained model from Facebook with the BART architecture](https://huggingface.co/facebook/bart-large-cnn). The model was introduced in the paper [BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation](https://arxiv.org/abs/1910.13461). This model has the following constraints, which are important to keep in mind for deployment:
+
+* It works with sequences up to 1,024 tokens.
+* It's trained for summarization of text in English.
+* It uses Torch as a backend.
+
+
+The example in this article is based on code samples contained in the [azureml-examples](https://github.com/azure/azureml-examples) repository. To run the commands locally without having to copy or paste YAML and other files, use the following commands to clone the repository and go to the folder for your coding language:
+
+# [Azure CLI](#tab/cli)
+
+```azurecli
+git clone https://github.com/Azure/azureml-examples --depth 1
+cd azureml-examples/cli
+```
+
+# [Python](#tab/python)
+
+```azurecli
+git clone https://github.com/Azure/azureml-examples --depth 1
+cd azureml-examples/sdk/python
+```
+---
+
+The files for this example are in:
+
+```azurecli
+cd endpoints/batch/deploy-models/huggingface-text-summarization
+```
+
+### Follow along in Jupyter Notebooks
+
+You can follow this sample in a Jupyter Notebook. In the cloned repository, open the notebook: [text-summarization-batch.ipynb](https://github.com/Azure/azureml-examples/blob/main/sdk/python/endpoints/batch/deploy-models/huggingface-text-summarization/text-summarization-batch.ipynb).
+
+## Prerequisites
+
+
+- An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- An Azure Machine Learning workspace. To create a workspace, see [Manage Azure Machine Learning workspaces](how-to-manage-workspace.md).
+- The following permissions in the Azure Machine Learning workspace:
+  - For creating or managing batch endpoints and deployments: Use an Owner, Contributor, or custom role that has the `Microsoft.MachineLearningServices/workspaces/batchEndpoints/*` permissions.
+  - For creating Azure Resource Manager deployments in the workspace resource group: Use an Owner, Contributor, or custom role that has the `Microsoft.Resources/deployments/write` permission in the resource group where the workspace is deployed.
+- The Azure Machine Learning CLI or the Azure Machine Learning SDK for Python:
+
+  # [Azure CLI](#tab/cli)
+
+  Run the following command to install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) and the `ml` [extension for Azure Machine Learning](how-to-configure-cli.md):
+
+  ```azurecli
+  az extension add -n ml
+  ```
+
+  Pipeline component deployments for batch endpoints require version 2.7 or later of the `ml` extension for the Azure CLI (current version: 2.37.0). Use the `az extension update --name ml` command to get the latest version.
+
+  # [Python](#tab/python)
+
+  Run the following command to install the [Azure Machine Learning SDK for Python](https://aka.ms/sdk-v2-install):
+
+  ```python
+  pip install azure-ai-ml
+  ```
+
+  The `ModelBatchDeployment` and `PipelineComponentBatchDeployment` classes require version 1.7.0 or later of the SDK (current version: 1.32.0). Use the `pip install -U azure-ai-ml` command to get the latest version.
+
+  ---
+
+### Connect to your workspace
+
+The workspace is the top-level resource for Azure Machine Learning. It provides a centralized place to work with all artifacts you create when you use Azure Machine Learning. In this section, you connect to the workspace where you perform your deployment tasks.
+
+# [Azure CLI](#tab/cli)
+
+In the following command, enter your subscription ID, workspace name, resource group name, and location:
+
+```azurecli
+az account set --subscription <subscription>
+az configure --defaults workspace=<workspace> group=<resource-group> location=<location>
+```
+
+# [Python](#tab/python)
+
+1. Import the required libraries:
+
+   ```python
+   from azure.ai.ml import MLClient, Input, load_component
+   from azure.ai.ml.entities import BatchEndpoint, ModelBatchDeployment, ModelBatchDeploymentSettings, PipelineComponentBatchDeployment, Model, AmlCompute, Data, BatchRetrySettings, CodeConfiguration, Environment, Data
+   from azure.ai.ml.constants import AssetTypes, BatchDeploymentOutputAction
+   from azure.ai.ml.dsl import pipeline
+   from azure.identity import DefaultAzureCredential
+   ```
+
+1. Configure the workspace details and get a handle to the workspace:
+
+   In the following command, enter your subscription ID, resource group name, and workspace name:
+
+   ```python
+   subscription_id = "<subscription>"
+   resource_group = "<resource-group>"
+   workspace = "<workspace>"
+   
+   ml_client = MLClient(DefaultAzureCredential(), subscription_id, resource_group, workspace)
+   ```
+
+---
+
+
+### Registering the model
+
+Due to the size of the model, it isn't included in this repository. Instead, you can download a copy from the HuggingFace model's hub. You need the packages `transformers` and `torch` installed in the environment you're using.
+
+```python
+%pip install transformers torch
+```
+
+Use the following code to download the model to a folder `model`:
+
+```python
+from transformers import pipeline
+
+model = pipeline("summarization", model="facebook/bart-large-cnn")
+model_local_path = 'model'
+model.save_pretrained(model_local_path)
+```
+
+We can now register this model in the Azure Machine Learning registry:
+   
+# [Azure CLI](#tab/cli)
+
+```azurecli
+MODEL_NAME='bart-text-summarization'
+az ml model create --name $MODEL_NAME --path "model"
+```
+
+# [Python](#tab/python)
+
+```python
+model_name = 'bart-text-summarization'
+model = ml_client.models.create_or_update(
+    Model(name=model_name, path='model', type=AssetTypes.CUSTOM_MODEL)
+)
+```
+---
+
+## Creating the endpoint
+
+We're going to create a batch endpoint named `text-summarization-batch` where to deploy the HuggingFace model to run text summarization on text files in English.
+
+1. Decide on the name of the endpoint. The name of the endpoint ends-up in the URI associated with your endpoint. Because of that, __batch endpoint names need to be unique within an Azure region__. For example, there can be only one batch endpoint with the name `mybatchendpoint` in `westus2`.
+
+    # [Azure CLI](#tab/cli)
+    
+    In this case, let's place the name of the endpoint in a variable so we can easily reference it later.
+    
+    ```azurecli
+    ENDPOINT_NAME="text-summarization-batch"
+    ```
+    
+    # [Python](#tab/python)
+    
+    In this case, let's place the name of the endpoint in a variable so we can easily reference it later.
+
+    ```python
+    endpoint_name="text-summarization-batch"
+    ```
+
+1. Configure your batch endpoint
+
+    # [Azure CLI](#tab/cli)
+
+    The following YAML file defines a batch endpoint:
+    
+    __endpoint.yml__
+
+    [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/endpoint.yml](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+    
+    # [Python](#tab/python)
+    
+    ```python
+    endpoint = BatchEndpoint(
+        name=endpoint_name,
+        description="A batch endpoint for summarizing text using a HuggingFace transformer model.",
+    )
+    ```
+    
+1. Create the endpoint:
+
+   # [Azure CLI](#tab/cli)
+
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deploy-and-run.sh](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+
+   # [Python](#tab/python)
+
+   ```python
+   ml_client.batch_endpoints.begin_create_or_update(endpoint)
+   ```
+
+## Creating the deployment
+
+Let's create the deployment that hosts the model:
+
+1. We need to create a scoring script that can read the CSV files provided by the batch deployment and return the scores of the model with the summary. The following script performs these actions:
+
+   > 
+   > * Indicates an `init` function that detects the hardware configuration (CPU vs GPU) and loads the model accordingly. Both the model and the tokenizer are loaded in global variables. We are not using a `pipeline` object from HuggingFace to account for the limitation in the sequence lenghs of the model we are currently using.
+   > * Notice that we are doing performing **model optimizations** to improve the performance using `optimum` and `accelerate` libraries. If the model or hardware doesn't support it, we will run the deployment without such optimizations.
+   > * Indicates a `run` function that is executed for each mini-batch the batch deployment provides.
+   > * The `run` function read the entire batch using the `datasets` library. The text we need to summarize is on the column `text`.
+   > * The `run` method iterates over each of the rows of the text and run the prediction. Since this is a very expensive model, running the prediction over entire files will result in an out-of-memory exception. Notice that the model is not execute with the `pipeline` object from `transformers`. This is done to account for long sequences of text and the limitation of 1024 tokens in the underlying model we are using.
+   > * It returns the summary of the provided text.
+
+   __code/batch_driver.py__
+
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/code/batch_driver.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+
+   > **Tip:**
+   > Although files are provided in mini-batches by the deployment, this scoring script processes one row at a time. This is a common pattern when dealing with expensive models (like transformers), because trying to load the entire batch and send it to the model at once can result in high-memory pressure on the batch executor (OOM exceptions).
+
+1. We need to indicate over which environment we're going to run the deployment. In our case, our model runs on `Torch` and it requires the libraries `transformers`, `accelerate`, and `optimum` from HuggingFace. Azure Machine Learning already has an environment with Torch and GPU support available. We're just going to add a couple of dependencies in a `conda.yaml` file.
+
+   __environment/torch200-conda.yaml__
+
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/environment/torch200-conda.yaml](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+   
+1. We can use the conda file mentioned before as follows:
+
+   # [Azure CLI](#tab/cli)
+   
+   The environment definition is included in the deployment file.
+   
+   __deployment.yml__
+   
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deployment.yml](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+   
+   # [Python](#tab/python)
+   
+   Let's get a reference to the environment:
+   
+   ```python
+   environment = Environment(
+       name="torch200-transformers-gpu",
+       conda_file="environment/torch200-conda.yaml",
+       image="mcr.microsoft.com/azureml/openmpi4.1.0-cuda12.1-cudnn9-ubuntu22.04:latest",
+   )
+   ```
+   ---
+   
+   > **Important:**
+   > The environment `torch200-transformers-gpu` we've created requires a CUDA 12.1 compatible hardware device to run Torch 2.0 on Ubuntu 22.04. Ensure that your GPU compute cluster uses a VM size that supports CUDA 12.1 or later, such as `Standard_NCasT4_v3`.
+   
+1. Each deployment runs on compute clusters. They support both [Azure Machine Learning Compute clusters (AmlCompute)](how-to-create-attach-compute-cluster.md) or [Kubernetes clusters](how-to-attach-kubernetes-anywhere.md). In this example, our model can benefit from GPU acceleration, which is why we use a GPU cluster.
+
+   # [Azure CLI](#tab/cli)
+
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deploy-and-run.sh](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+
+   # [Python](#tab/python)
+
+   ```python
+   compute_name = "gpu-cluster"
+   compute_cluster = AmlCompute(
+       name=compute_name,
+       description="GPU cluster compute",
+       size="Standard_NCasT4_v3",
+       min_instances=0,
+       max_instances=2,
+   )
+   ml_client.begin_create_or_update(compute_cluster)
+   ```
+   ---
+
+   > **Note:**
+   > You aren't charged for compute at this point, because the cluster remains at zero nodes until a batch endpoint is invoked and a batch scoring job is submitted. Learn more about [manage and optimize cost for AmlCompute](how-to-manage-optimize-cost.md#use-azure-machine-learning-compute-cluster-amlcompute).
+
+1. Now, let's create the deployment.
+
+   # [Azure CLI](#tab/cli)
+   
+   To create a new deployment under the created endpoint, create a `YAML` configuration like the following. You can check the [full batch endpoint YAML schema](reference-yaml-endpoint-batch.md) for extra properties.
+   
+   __deployment.yml__
+   
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deployment.yml](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+  
+   Then, create the deployment with the following command:
+   
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deploy-and-run.sh](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+   
+   # [Python](#tab/python)
+   
+   To create a new deployment with the indicated environment and scoring script, use the following code:
+   
+   ```python
+   deployment = BatchDeployment(
+       name="text-summarization-hfbart",
+       description="A text summarization deployment implemented with HuggingFace and BART architecture",
+       endpoint_name=endpoint.name,
+       model=model,
+       environment=environment,
+       code_configuration=CodeConfiguration(
+           code="code",
+           scoring_script="batch_driver.py",
+       ),
+       compute=compute_name,
+       instance_count=2,
+       max_concurrency_per_instance=1,
+       mini_batch_size=1,
+       output_action=BatchDeploymentOutputAction.APPEND_ROW,
+       output_file_name="predictions.csv",
+       retry_settings=BatchRetrySettings(max_retries=3, timeout=3000),
+       logging_level="info",
+   )
+   ```
+   
+   Then, create the deployment with the following command:
+   
+   ```python
+   ml_client.batch_deployments.begin_create_or_update(deployment)
+   ```
+   ---
+   
+   > **Important:**
+   > You notice in this deployment a high value in `timeout` in the parameter `retry_settings`. The reason involves the nature of the model we're running. This is an expensive model and inference on a single row can take up to 60 seconds. The `timeout` parameter controls how much time the Batch Deployment should wait for the scoring script to finish processing each mini-batch. Since our model runs predictions row by row, processing a long file can take time. Also notice that the number of files per batch is set to 1 (`mini_batch_size=1`). This is again related to the nature of the work we're doing. Processing one file at a time per batch is expensive enough to justify it. You notice this being a pattern in NLP processing.
+
+1. Although you can invoke a specific deployment inside of an endpoint, you usually want to invoke the endpoint itself and let the endpoint decide which deployment to use. Such deployment is named the "default" deployment. This gives you the possibility of changing the default deployment and hence changing the model serving the deployment without changing the contract with the user invoking the endpoint. Use the following instruction to update the default deployment:
+
+   # [Azure CLI](#tab/cli)
+   
+   ```azurecli
+   DEPLOYMENT_NAME="text-summarization-hfbart"
+   az ml batch-endpoint update --name $ENDPOINT_NAME --set defaults.deployment_name=$DEPLOYMENT_NAME
+   ```
+   
+   # [Python](#tab/python)
+   
+   ```python
+   endpoint.defaults.deployment_name = deployment.name
+   ml_client.batch_endpoints.begin_create_or_update(endpoint)
+   ```
+
+4. At this point, our batch endpoint is ready to be used. 
+
+
+## Testing out the deployment
+
+For testing our endpoint, we're going to use a sample of the dataset [BillSum: A Corpus for Automatic Summarization of US Legislation](https://arxiv.org/abs/1910.00523). This sample is included in the repository in the folder `data`. Notice that the format of the data is CSV and the content to be summarized is under the column `text`, as expected by the model.
+   
+1. Let's invoke the endpoint:
+
+   # [Azure CLI](#tab/cli)
+   
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deploy-and-run.sh](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+   
+   > **Note:**
+   > The utility `jq` might not be installed on every installation. You can get instructions in [this link](https://stedolan.github.io/jq/download/).
+   
+   # [Python](#tab/python)
+   
+   > **Tip:**
+   > 
+__What's the difference between the `inputs` and `input` parameter when you invoke an endpoint?__
+
+In general, you can use a dictionary `inputs = {}` parameter with the `invoke` method to provide an arbitrary number of required inputs to a batch endpoint that contains a _model deployment_ or a _pipeline deployment_.
+
+For a _model deployment_, you can use the `input` parameter as a shorter way to specify the input data location for the deployment. This approach works because a model deployment always takes only one [data input](how-to-access-data-batch-endpoints-jobs.md#explore-data-inputs).
+
+
+   ```python
+   input = Input(type=AssetTypes.URI_FOLDER, path="data")
+   job = ml_client.batch_endpoints.invoke(
+      endpoint_name=endpoint.name,
+      input=input,
+   )
+   ```
+   ---
+   
+   > **Tip:**
+   > Notice that by indicating a local path as an input, the data is uploaded to Azure Machine Learning default's storage account.
+
+4. A batch job is started as soon as the command returns. You can monitor the status of the job until it finishes:
+
+   # [Azure CLI](#tab/cli)
+   
+   [Code reference unavailable in this source snapshot: ~/azureml-examples-main/cli/endpoints/batch/deploy-models/huggingface-text-summarization/deploy-and-run.sh](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-nlp-processing-batch.md)
+   
+   # [Python](#tab/python)
+   
+   ```python
+   ml_client.jobs.get(job.name)
+   ```
+
+5. Once the deployment is finished, we can download the predictions:
+
+   # [Azure CLI](#tab/cli)
+
+   To download the predictions, use the following command:
+
+   ```azurecli
+   az ml job download --name $JOB_NAME --output-name score --download-path .
+   ```
+
+   # [Python](#tab/python)
+
+   ```python
+   ml_client.jobs.download(name=job.name, output_name='score', download_path='./')
+   ```
+
+## Considerations when deploying models that process text
+
+As mentioned in some of the notes along this tutorial, processing text can have some peculiarities that require specific configuration for batch deployments. Take the following consideration when designing the batch deployment:
+
+> 
+> * Some NLP models may be very expensive in terms of memory and compute time. If this is the case, consider decreasing the number of files included on each mini-batch. In the previous example, the number was taken to the minimum, 1 file per batch. While this may not be your case, take into consideration how many files your model can score at each time. Have in mind that the relationship between the size of the input and the memory footprint of your model may not be linear for deep learning models.
+> * If your model can't even handle one file at a time (like in this example), consider reading the input data in rows/chunks. Implement batching at the row level if you need to achieve higher throughput or hardware utilization.
+> * Set the `timeout` value of your deployment accordly to how expensive your model is and how much data you expect to process. Remember that the `timeout` indicates the time the batch deployment would wait for your scoring script to run for a given batch. If your batch have many files or files with many rows, this impacts the right value of this parameter.
+
+## Considerations for MLflow models that process text
+
+The same considerations mentioned earlier apply to MLflow models. However, since you aren't required to provide a scoring script for your MLflow model deployment, some of the recommendations mentioned might require a different approach. 
+
+* MLflow models in Batch Endpoints support reading tabular data as input data, which might contain long sequences of text. See [File's types support](how-to-mlflow-batch.md#review-support-for-file-types) for details about which file types are supported.
+* Batch deployments calls your MLflow model's predict function with the content of an entire file in as Pandas dataframe. If your input data contains many rows, chances are that running a complex model (like the one presented in this tutorial) results in an out-of-memory exception. If this is your case, you can consider:
+   * Customize how your model runs predictions and implement batching. To learn how to customize MLflow model's inference, see [Log custom models](how-to-log-mlflow-models.md?#log-custom-models).
+   * Author a scoring script and load your model using `mlflow.<flavor>.load_model()`. See [Using MLflow models with a scoring script](how-to-mlflow-batch.md#customize-model-deployment-with-scoring-script) for details.

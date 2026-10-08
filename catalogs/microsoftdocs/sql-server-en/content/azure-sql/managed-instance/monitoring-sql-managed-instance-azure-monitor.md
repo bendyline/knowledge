@@ -1,0 +1,118 @@
+---
+title: Monitor Azure SQL Managed Instance
+description: Start here to learn how to monitor Azure SQL Managed Instance.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: wiassaf
+ms.date: 08/27/2025
+ms.service: azure-sql-managed-instance
+ms.subservice: monitoring
+ms.topic: concept-article
+ms.custom:
+  - horz-monitor
+---
+
+# Monitor Azure SQL Managed Instance
+
+
+
+  **Applies to:**    [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+Learn how to monitor Azure SQL Managed Instance. 
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+In addition to the features in this article, the SQL Database Engine has its own monitoring and diagnostic capabilities that Azure SQL Managed Instance uses, such as Query Store and dynamic management views (DMVs). For more information, see the following articles:
+
+- [Monitor performance by using the Query Store](https://learn.microsoft.com/sql/relational-databases/performance/monitoring-performance-by-using-the-query-store)
+- [Monitor Azure SQL Managed Instance performance using dynamic management views](monitoring-with-dmvs.md)
+
+For a detailed discussion of all monitoring and performance aspects of Azure SQL Managed Instance, see [Monitor and performance tuning in Azure SQL Database and Azure SQL Managed Instance](../database/monitor-tune-overview.md).
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+## Database watcher (preview)
+
+Database watcher collects in-depth workload monitoring data to give you a detailed view of database performance, configuration, and health. Dashboards in the Azure portal provide a single-pane-of-glass view of your Azure SQL estate and a detailed view of each monitored resource. Data is collected into a central data store in your Azure subscription. You can query, analyze, export, visualize collected data, and integrate it with downstream systems.
+
+For more information about database watcher, see the following articles:
+
+- [Monitor Azure SQL workloads with database watcher (preview)](../database-watcher-overview.md)
+- [Quickstart: Create a database watcher to monitor Azure SQL (preview)](../database-watcher-quickstart.md)
+- [Create and configure a database watcher (preview)](../database-watcher-manage.md)
+- [Database watcher data collection and datasets (preview)](../database-watcher-data.md)
+- [Analyze database watcher monitoring data (preview)](../database-watcher-analyze.md)
+- [Database watcher FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/database-watcher-faq.yml)
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+For more information about the resource types for SQL Managed Instance, see [SQL Managed Instance monitoring data reference](monitoring-sql-managed-instance-azure-monitor-reference.md).
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+For a list of available metrics for SQL Managed Instance, see [SQL Managed Instance monitoring data reference](monitoring-sql-managed-instance-azure-monitor-reference.md#metrics).
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-logs.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+## Azure SQL Managed Instance logs
+
+[Auditing for Azure SQL Managed Instance](auditing.md) tracks database events and writes them to an audit log in your Azure storage account. For more information, see [Get started with SQL Managed Instance auditing](auditing-configure.md).
+
+For more information on the resource logs and diagnostics available for Azure SQL Managed Instance, see [Configure streaming export of diagnostic telemetry](../database/metrics-diagnostic-telemetry-logging-streaming-export-configure.md).
+
+For the available resource log categories, their associated Log Analytics tables, and the log schemas for SQL Managed Instance, see [SQL Managed Instance monitoring data reference](monitoring-sql-managed-instance-azure-monitor-reference.md#resource-logs).
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+<a id="analyzing-metrics"></a>
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+Use the following sample queries to help you monitor your Azure SQL Managed Instance.
+
+**Example A:** Display all managed instances with `avg_cpu` utilization over 95%.
+
+```Kusto
+let cpu_percentage_threshold = 95;
+let time_threshold = ago(1h);
+AzureDiagnostics
+| where Category == "ResourceUsageStats" and TimeGenerated > time_threshold
+| summarize avg_cpu = max(todouble(avg_cpu_percent_s)) by _ResourceId
+| where avg_cpu > cpu_percentage_threshold
+```
+
+**Example B:** Display all managed instances with storage utilization over 90%, dividing `storage_space_used_mb_s` by `reserved_storage_mb_s`.
+
+```Kusto
+let storage_percentage_threshold = 90;
+AzureDiagnostics
+| where Category =="ResourceUsageStats"
+| summarize (TimeGenerated, calculated_storage_percentage) = arg_max(TimeGenerated, todouble(storage_space_used_mb_s) *100 / todouble (reserved_storage_mb_s))
+   by _ResourceId
+| where calculated_storage_percentage > storage_percentage_threshold
+```
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights-alerts.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+### SQL Managed Instance alert rules
+
+The following table lists common and recommended alert rules for Azure SQL Managed Instance. You might see different options available depending on your purchasing model.
+
+| Signal name | Operator | Aggregation type | Threshold value | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `Average CPU percentage` | Greater than | Average | 80 | Whenever the average CPU utilization percentage is greater than 80% |
+| `Resource Health` | Current Resource Status | NA | Degraded or Unavailable | Detect resources outages, whether they be Azure initiated or user initiated |
+
+[Include unavailable in this source snapshot: ~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md)
+
+## Related content
+
+- [Azure SQL Managed Instance monitoring data reference](monitoring-sql-managed-instance-azure-monitor-reference.md)
+- [Monitoring Azure resources with Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/monitor-azure-resource)
+- [Modifiable configuration reference for Azure SQL Managed Instance](modifiable-configuration-reference.md)

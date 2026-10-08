@@ -1,0 +1,184 @@
+---
+title: "Step 1: Your First Agent"
+description: "Create and run your first AI agent with Agent Framework in under 5 minutes."
+zone_pivot_groups: programming-languages
+author: eavanvalkenburg
+ms.topic: tutorial
+ms.author: edvan
+ms.date: 10/07/2026
+ms.service: agent-framework
+ai-usage: ai-assisted
+---
+
+# Step 1: Your First Agent
+
+Create an agent and get a response — in just a few lines of code.
+
+**Applies to: programming-language-csharp**
+
+
+```dotnetcli
+dotnet add package Microsoft.Agents.AI.Foundry --prerelease
+```
+
+Create the agent:
+
+```csharp
+using System;
+using Azure.AI.Projects;
+using Azure.Identity;
+using Microsoft.Agents.AI;
+
+var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
+    ?? throw new InvalidOperationException("Set AZURE_OPENAI_ENDPOINT");
+var deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME") ?? "gpt-4o-mini";
+
+AIAgent agent = new AIProjectClient(new Uri(endpoint), new DefaultAzureCredential())
+    .AsAIAgent(
+        model: deploymentName,
+        instructions: "You are a friendly assistant. Keep your answers brief.",
+        name: "HelloAgent");
+```
+
+> **Warning:**
+> `DefaultAzureCredential` is convenient for development but requires careful consideration in production. In production, consider using a specific credential (e.g., `ManagedIdentityCredential`) to avoid latency issues, unintended credential probing, and potential security risks from fallback mechanisms.
+
+Run it:
+
+```csharp
+Console.WriteLine(await agent.RunAsync("What is the largest city in France?"));
+```
+
+Or stream the response:
+
+```csharp
+await foreach (var update in agent.RunStreamingAsync("Tell me a one-sentence fun fact."))
+{
+    Console.Write(update);
+}
+```
+
+> **Tip:**
+> See [here](https://github.com/microsoft/agent-framework/tree/main/dotnet/samples/01-get-started/01_hello_agent) for a full runnable sample application.
+
+
+
+**Applies to: programming-language-python**
+
+
+```bash
+pip install agent-framework-foundry azure-identity
+```
+
+The `agent-framework-foundry` package installs `agent-framework-core` with the Microsoft Foundry integration. The `agent-framework` metapackage also installs `agent-framework-core`, together with many other optional integrations.
+
+Sign in with the [Azure CLI](https://learn.microsoft.com/cli/azure/authenticate-azure-cli) by running `az login`. In the following example, replace `project_endpoint` with your Microsoft Foundry project endpoint and `model` with your model deployment name.
+
+Save the complete example as `hello_agent.py`:
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/01-get-started/01_hello_agent.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/get-started/your-first-agent.md)
+
+Run the example:
+
+```bash
+python hello_agent.py
+```
+
+> **Note:**
+> Agent Framework does **not** automatically load `.env` files. To use a `.env` file for configuration, call `load_dotenv()` at the start of your script:
+>
+> ```python
+> from dotenv import load_dotenv
+> load_dotenv()
+> ```
+>
+> Alternatively, set environment variables directly in your shell or IDE. See the [settings migration note](../support/upgrade/python-2026-significant-changes.md#-pydantic-settings-replaced-with-typeddict--load_settings) for details.
+
+> **Tip:**
+> See the [full sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/01-get-started/01_hello_agent.py) for the complete runnable file.
+
+
+
+**Applies to: programming-language-go**
+
+
+```bash
+go get github.com/microsoft/agent-framework-go
+```
+
+Create the agent:
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+
+    "github.com/microsoft/agent-framework-go/agent"
+    "github.com/microsoft/agent-framework-go/provider/foundryprovider"
+
+    "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+)
+
+func main() {
+    endpoint := os.Getenv("FOUNDRY_PROJECT_ENDPOINT")
+    model := os.Getenv("FOUNDRY_MODEL")
+
+    token, err := azidentity.NewDefaultAzureCredential(nil)
+    if err != nil {
+        panic(err)
+    }
+
+    a := foundryprovider.NewAgent(
+        endpoint,
+        token,
+        foundryprovider.ModelDeployment(model),
+        foundryprovider.AgentConfig{
+            Instructions: "You are a friendly assistant. Keep your answers brief.",
+            Config: agent.Config{
+                Name: "HelloAgent",
+            },
+        },
+    )
+```
+
+> **Warning:**
+> `azidentity.NewDefaultAzureCredential` is convenient for development but requires careful consideration in production. In production, consider using a specific credential, such as `azidentity.NewManagedIdentityCredential`, to avoid latency issues, unintended credential probing, and potential security risks from fallback mechanisms.
+
+Run it:
+
+```go
+    ctx := context.Background()
+
+    resp, err := a.RunText(ctx, "What is the largest city in France?").Collect()
+    fmt.Println(resp, err)
+```
+
+Or stream the response:
+
+```go
+    for update, err := range a.RunText(ctx, "Tell me a one-sentence fun fact.", agent.Stream(true)) {
+        if err != nil {
+            panic(err)
+        }
+        fmt.Print(update)
+    }
+}
+```
+
+> **Tip:**
+> See the [full sample](https://github.com/microsoft/agent-framework-go/blob/main/examples/01-get-started/01_hello_agent/main.go) for the complete runnable file.
+
+
+
+## Next steps
+
+> 
+> [Step 2: Add Tools](add-tools.md)
+
+**Go deeper:**
+
+- [Agents](../concepts/agents/index.md) — understand agent architecture
+- [Providers](../integrations/by-component/model-providers/index.md) — see all supported providers

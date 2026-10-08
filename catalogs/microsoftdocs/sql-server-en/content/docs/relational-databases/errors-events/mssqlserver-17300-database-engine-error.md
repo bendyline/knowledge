@@ -1,0 +1,52 @@
+---
+title: "MSSQLSERVER_17300"
+description: "MSSQLSERVER_17300"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "17300 (Database Engine error)"
+---
+# MSSQLSERVER_17300
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 17300 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | PROC_OUT_OF_SYSTASK_SESSIONS |
+| Message Text | SQL Server was unable to run a new system task, either because there is insufficient memory or the number of configured sessions exceeds the maximum allowed in the server. Verify that the server has adequate memory. Use sp_configure with option 'user connections' to check the maximum number of user connections allowed. Use sys.dm_exec_sessions to check the current number of sessions, including user processes. |
+  
+## Explanation  
+An attempt to run a new system task failed because of insufficient memory or because the number of configured sessions in the server was exceeded.  
+  
+## User Action  
+Verify that the server has enough memory. Verify the current number of system tasks by using sys.dm_exec_sessions, and verify the configured value of maximum user connections by using sp_configure.  
+  
+Perform the following tasks as appropriate:  
+  
+-   Add more memory to the server.  
+  
+-   Terminate one or more sessions.  
+  
+-   Increase the maximum number of user connections allowed on the server.  
+  
+## Related content
+
+- [sys.sp_configure (Transact-SQL)](../system-stored-procedures/sp-configure-transact-sql.md)
+- [Server configuration options](../../database-engine/configure-windows/server-configuration-options-sql-server.md)
+- [sys.dm_exec_sessions &#40;Transact-SQL&#41;](../system-dynamic-management-objects/sys-dm-exec-query-stats-transact-sql.md)
+- [Server configuration: user connections](../../database-engine/configure-windows/configure-the-user-connections-server-configuration-option.md)
+- [KILL (Transact-SQL)](../../t-sql/language-elements/kill-transact-sql.md)

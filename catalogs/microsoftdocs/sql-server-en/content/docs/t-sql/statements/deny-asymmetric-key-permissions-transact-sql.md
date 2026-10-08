@@ -1,0 +1,127 @@
+---
+title: "DENY Asymmetric Key Permissions (Transact-SQL)"
+description: DENY Asymmetric Key Permissions (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "denying permissions [SQL Server], asymmetric keys"
+  - "encryption [SQL Server], asymmetric keys"
+  - "permissions [SQL Server], asymmetric keys"
+  - "asymmetric keys [SQL Server], permissions"
+  - "DENY statement, asymmetric keys"
+  - "cryptography [SQL Server], asymmetric keys"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# DENY Asymmetric Key Permissions (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Denies permissions on an asymmetric key.  
+   
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+  
+DENY { permission  [ ,...n ] }   
+    ON ASYMMETRIC KEY :: asymmetric_key_name   
+        TO database_principal [ ,...n ]  
+    [ CASCADE ]  
+        [ AS denying_principal ]  
+```  
+  
+## Arguments
+ *permission*  
+ Specifies a permission that can be denied on an asymmetric key. Listed below.  
+  
+ ON ASYMMETRIC KEY **::**_asymmetric_key_name_  
+ Specifies the asymmetric key on which the permission is being denied. The scope qualifier "::" is required.  
+  
+ *database_principal*  
+ Specifies the principal to which the permission is being denied. One of the following:  
+  
+-   database user  
+  
+-   database role  
+  
+-   application role  
+  
+-   database user mapped to a Windows login  
+  
+-   database user mapped to a Windows group  
+  
+-   database user mapped to a certificate  
+  
+-   database user mapped to an asymmetric key  
+  
+-   database user not mapped to a server principal.  
+  
+ CASCADE  
+ Indicates that the permission being denied is also denied to other principals to which it has been granted by this principal.  
+  
+ *denying_principal*  
+ Specifies a principal from which the principal executing this query derives its right to deny the permission. One of the following:  
+  
+-   database user  
+  
+-   database role  
+  
+-   application role  
+  
+-   database user mapped to a Windows login  
+  
+-   database user mapped to a Windows group  
+  
+-   database user mapped to a certificate  
+  
+-   database user mapped to an asymmetric key  
+  
+-   database user not mapped to a server principal.  
+  
+## Remarks  
+ An asymmetric key is a database-level securable contained by the database that is its parent in the permissions hierarchy. The most specific and limited permissions that can be granted on an asymmetric key are listed below, together with the more general permissions that include them by implication.  
+  
+| Asymmetric Key permission | Implied by asymmetric key permission | Implied by database permission |
+| --- | --- | --- |
+| CONTROL | CONTROL | CONTROL |
+| TAKE OWNERSHIP | CONTROL | CONTROL |
+| ALTER | CONTROL | ALTER ANY ASYMMETRIC KEY |
+| REFERENCES | CONTROL | REFERENCES |
+| VIEW DEFINITION | CONTROL | VIEW DEFINITION |
+  
+## Permissions  
+ Requires CONTROL permission on the asymmetric key. If the AS clause is used, the specified principal must own the asymmetric key.  
+  
+## Related content
+
+- [DENY (Transact-SQL)](deny-transact-sql.md)
+- [Permissions (Database Engine)](../../relational-databases/security/permissions-database-engine.md)
+- [Principals (Database Engine)](../../relational-databases/security/authentication-access/principals-database-engine.md)
+- [CREATE CERTIFICATE (Transact-SQL)](create-certificate-transact-sql.md)
+- [CREATE ASYMMETRIC KEY (Transact-SQL)](create-asymmetric-key-transact-sql.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)

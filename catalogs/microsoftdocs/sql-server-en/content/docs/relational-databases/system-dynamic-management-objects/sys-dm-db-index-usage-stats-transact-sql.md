@@ -1,0 +1,114 @@
+---
+title: "sys.dm_db_index_usage_stats (Transact-SQL)"
+description: sys.dm_db_index_usage_stats (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/19/2023"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "dm_db_index_usage_stats_TSQL"
+  - "sys.dm_db_index_usage_stats"
+  - "sys.dm_db_index_usage_stats_TSQL"
+  - "dm_db_index_usage_stats"
+helpviewer_keywords:
+  - "sys.dm_db_index_usage_stats dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.dm_db_index_usage_stats (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns counts of different types of index operations and the time each type of operation was last performed.  
+  
+ In  Azure SQL Database 
+, dynamic management views cannot expose information that would affect database containment or expose information about other databases the user has access to. To avoid exposing this information, every row that contains data that doesn't belong to the connected tenant is filtered out.  
+  
+> **Note:**  
+> The DMV `sys.dm_db_index_usage_stats` does not return information about memory-optimized indexes or spatial indexes. For information about memory-optimized index use, see [sys.dm_db_xtp_index_stats &#40;Transact-SQL&#41;](sys-dm-db-xtp-index-stats-transact-sql.md).  
+  
+> **Note:**  
+>  To call this view from  Azure Synapse Analytics , use `sys.dm_pdw_nodes_db_index_usage_stats`.  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+ 
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **database_id** | **smallint** | ID of the database on which the table or view is defined. <br /><br />In  Azure SQL Database |
+| , the values are unique within a single database or an elastic pool, but not within a logical server. |
+| **object_id** | **int** | ID of the table or view on which the index is defined |
+| **index_id** | **int** | ID of the index. |
+| **user_seeks** | **bigint** | Number of seeks by user queries. |
+| **user_scans** | **bigint** | Number of scans by user queries that did not use 'seek' predicate. |
+| **user_lookups** | **bigint** | Number of bookmark lookups by user queries. |
+| **user_updates** | **bigint** | Number of updates by user queries. This includes Insert, Delete, and Updates representing number of operations done not the actual rows affected. For example, if you delete 1000 rows in one statement, this count increments by 1 |
+| **last_user_seek** | **datetime** | Time of last user seek |
+| **last_user_scan** | **datetime** | Time of last user scan. |
+| **last_user_lookup** | **datetime** | Time of last user lookup. |
+| **last_user_update** | **datetime** | Time of last user update. |
+| **system_seeks** | **bigint** | Number of seeks by system queries. |
+| **system_scans** | **bigint** | Number of scans by system queries. |
+| **system_lookups** | **bigint** | Number of lookups by system queries. |
+| **system_updates** | **bigint** | Number of updates by system queries. |
+| **last_system_seek** | **datetime** | Time of last system seek. |
+| **last_system_scan** | **datetime** | Time of last system scan. |
+| **last_system_lookup** | **datetime** | Time of last system lookup. |
+| **last_system_update** | **datetime** | Time of last system update. |
+| pdw_node_id | **int** | **Applies to**:  Azure Synapse Analytics <br /><br /> The identifier for the node that this distribution is on. |
+  
+## Remarks  
+ Every individual seek, scan, lookup, or update on the specified index by one query execution is counted as a use of that index and increments the corresponding counter in this view. Information is reported both for operations caused by user-submitted queries, and for operations caused by internally generated queries, such as scans for gathering statistics.  
+  
+ The `user_updates` column is a counter of maintenance on the index caused by insert, update, or delete operations on the underlying table or view. You can use this view to determine which indexes are used only lightly by your applications. You can also use the view to determine which indexes are incurring maintenance overhead. You may want to consider dropping indexes that incur maintenance overhead, but are not used for queries, or are only infrequently used for queries.  
+  
+ The counters are initialized to empty whenever the database engine is started. Use the `sqlserver_start_time` column in [sys.dm_os_sys_info](sys-dm-os-sys-info-transact-sql.md) to find the last database engine startup time. In addition, whenever a database is detached or is shut down (for example, because AUTO_CLOSE is set to ON), all rows associated with the database are removed.  
+  
+ When an index is used, a row is added to `sys.dm_db_index_usage_stats` if a row does not already exist for the index. When the row is added, its counters are initially set to zero.  
+  
+ During upgrade to  SQL Server 2008 R2 (10.50.x) 
+,  SQL Server 2012 (11.x) 
+, or  SQL Server 2014 (12.x)
+, entries in `sys.dm_db_index_usage_stats` are removed. Beginning with  SQL Server 2016 (13.x) 
+, entries are retained as they were prior to  SQL Server 2008 R2 (10.50.x) 
+.  
+  
+## Permissions  
+On  SQL Server 
+ and SQL Managed Instance, requires `VIEW SERVER STATE` permission.
+
+On SQL Database **Basic**, **S0**, and **S1** service objectives, and for databases in **elastic pools**, the [server admin](https://learn.microsoft.com/azure/azure-sql/database/logins-create-manage#existing-logins-and-user-accounts-after-creating-a-new-database) account, the [Microsoft Entra admin](https://learn.microsoft.com/azure/azure-sql/database/authentication-aad-overview#administrator-structure) account, or membership in the `##MS_ServerStateReader##` [server role](https://learn.microsoft.com/azure/azure-sql/database/security-server-roles) is required. On all other SQL Database service objectives, either the `VIEW DATABASE STATE` permission on the database, or membership in the `##MS_ServerStateReader##` server role is required.  
+  
+### Permissions for SQL Server 2022 and later
+
+Requires VIEW SERVER PERFORMANCE STATE permission on the server.
+
+## Related content
+
+- [Index Related Dynamic Management Views and Functions (Transact-SQL)](index-related-dynamic-management-views-and-functions-transact-sql.md)
+- [sys.dm_db_index_physical_stats (Transact-SQL)](sys-dm-db-index-physical-stats-transact-sql.md)
+- [sys.dm_db_index_operational_stats (Transact-SQL)](sys-dm-db-index-operational-stats-transact-sql.md)
+- [sys.indexes (Transact-SQL)](../system-catalog-views/sys-indexes-transact-sql.md)
+- [sys.objects (Transact-SQL)](../system-catalog-views/sys-objects-transact-sql.md)
+- [sys.dm_os_sys_info (Transact-SQL)](sys-dm-os-sys-info-transact-sql.md)
+- [Monitor and Tune for Performance](../performance/monitor-and-tune-for-performance.md)

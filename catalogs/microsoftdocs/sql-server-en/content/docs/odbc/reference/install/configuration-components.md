@@ -1,0 +1,32 @@
+---
+title: "Configuration Components"
+description: "Configuration Components"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "data sources [ODBC], configuring"
+---
+# Configuration Components
+> **Note:**  
+>  Starting with Windows XP and Windows Server 2003, ODBC is included in the Windows operation system. You should only explicitly install ODBC on earlier versions of Windows.  
+  
+ Data sources are configured by the installer DLL, which in turn calls driver setup DLLs and translator setup DLLs as they are needed. The installer DLL is either invoked directly from Control Panel or loaded and called by another program, known as the *administration program*. The following illustration shows the relationship between the configuration components.  
+  
+ Relationship between configuration components  
+  
+ For more information about these components, see the following topics at the end of this section.  
+  
+-   [Setup Program](setup-program.md)  
+  
+-   [Installer DLL](installer-dll.md)  
+  
+-   [Driver Setup DLL](driver-setup-dll.md)  
+  
+## Related content
+
+- [Installation Components](installation-components.md)

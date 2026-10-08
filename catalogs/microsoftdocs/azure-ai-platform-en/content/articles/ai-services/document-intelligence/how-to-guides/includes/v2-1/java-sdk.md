@@ -1,0 +1,465 @@
+---
+title: "Use Document Intelligence SDK for Java (REST API v2.1)"
+description: Use the Document Intelligence Java SDK (REST API v2.1) to create a forms processing app that extracts key data from your documents.
+author: laujan
+manager: mcleans
+ms.service: azure-document-intelligence-foundry-tools
+ms.topic: include
+ms.date: 04/26/2026
+ms.custom: devx-track-java
+ms.author: lajanuar
+---
+<!-- markdownlint-disable MD001 -->
+<!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD034 -->
+
+> **Important:**
+>
+> This project targets Document Intelligence REST API version 2.1.
+
+[Reference documentation](https://learn.microsoft.com/java/api/overview/azure/ai-formrecognizer-readme) | [Library source code](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src) | [Package (Maven)](https://mvnrepository.com/artifact/com.azure/azure-ai-formrecognizer) | [Samples](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples/README.md)
+
+## Prerequisites
+
+- An Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- The current version of the [Java Development Kit (JDK)](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
+- The [Gradle build tool](https://gradle.org/install/), or another dependency manager.
+- <a href="https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer" title="Create a Document Intelligence resource." target="_blank">A Document Intelligence resource</a>. You can use the free pricing tier (`F0`) to try the service, and upgrade later to a paid tier for production.
+- The key and endpoint from the resource you create to connect your application to the Azure Document Intelligence.
+
+  1. After your resource deploys, select **Go to resource**.
+  1. In the left pane, select **Keys and Endpoint**.
+  1. Copy one of the keys and the **Endpoint** for use later in this article.
+
+  Screenshot of keys and endpoint location in the Azure portal.
+
+- An Azure Storage blob that contains a set of training data. See [Build and train a custom model](../../build-a-custom-model.md?view=doc-intel-2.1.0&preserve-view=true) for tips and options for putting together your training data set. For this project, you can use the files in the *Train* folder of the [sample data set](https://go.microsoft.com/fwlink/?linkid=2090451). Download and extract *sample_data.zip*.
+
+## Set up your programming environment
+
+To set up your programming environment, create a Gradle project and install the client library.
+
+### Create a new Gradle project
+
+In a console window, create a directory for your app and navigate to it.
+
+```console
+mkdir myapp
+cd myapp
+```
+
+Run the `gradle init` command from your working directory. This command creates essential build files for Gradle, including *build.gradle.kts*, which is used at runtime to create and configure your application.
+
+```console
+gradle init --type basic
+```
+
+When prompted to choose a **DSL**, select Kotlin.
+
+### Install the client library
+
+This project uses the Gradle dependency manager. You can find the client library and information for other dependency managers on the [Maven Central Repository](https://mvnrepository.com/artifact/com.azure/azure-ai-formrecognizer).
+
+In your project's *build.gradle.kts* file, include the client library as an `implementation` statement, along with the required plugins and settings.
+
+```kotlin
+plugins {
+    java
+    application
+}
+application {
+    mainClass.set("FormRecognizer")
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation(group = "com.azure", name = "azure-ai-formrecognizer", version = "3.1.1")
+}
+```
+
+### Create a Java file
+
+From your working directory, run the following command:
+
+```console
+mkdir -p src/main/java
+```
+
+Navigate to the new folder and create a file called *FormRecognizer.java*. Open it in an editor or IDE and add the following `import` statements:
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_imports](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+In the application's **FormRecognizer** class, create variables for your resource's key and endpoint.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_creds](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Important:**
+> Go to the Azure portal. If the Document Intelligence resource you created in the Prerequisites section deployed successfully, under **Next Steps** select **Go to Resource**. You can find your key and endpoint in **Resource management** under **Keys and Endpoint**.
+>
+> Remember to remove the key from your code when you're done. Never post it publicly. For production, use secure methods to store and access your credentials. For more information, see Foundry Tools [security](../../../../security-features.md).
+
+In the application's `main` method, add calls for the methods used in this project. You define these calls later. You also need to add references to the URLs for your training and testing data.
+
+1. To retrieve the SAS URL for your custom model training data, go to your storage resource in the Azure portal and select **Data storage** > **Containers**.
+1. Navigate to your container, right-click, and select **Generate SAS**.
+
+   Get the SAS for your container, not for the storage account itself.
+
+1. Make sure the **Read**, **Write**, **Delete**, and **List** permissions are selected, and select **Generate SAS token and URL**.
+1. Copy the value in the **URL** section to a temporary location. It should have the form: `https://<storage account>.blob.core.windows.net/<container name>?<SAS value>`.
+
+To get a URL of a form to test, you can use the preceding steps to get the SAS URL of an individual document in blob storage. Or, take the URL of a document located elsewhere.
+
+Use the preceding method to get the URL of a receipt image as well.
+<!-- markdownlint-disable MD024 -->
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_mainvars](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_maincalls](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+## Use the Object model
+
+With Document Intelligence, you can create two different client types. The first, `FormRecognizerClient`, queries the service to recognized form fields and content. The second, `FormTrainingClient`, creates and manages custom models to improve recognition.
+
+`FormRecognizerClient` provides operations for the following tasks:
+
+- Recognize form fields and content by using custom models trained to analyze your custom forms. These values are returned in a collection of `RecognizedForm` objects. See [Analyze custom forms](#analyze-forms-with-a-custom-model).
+- Recognize form content, including tables, lines, and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects. See [Analyze layout](#analyze-layout).
+- Recognize common fields from US receipts, business cards, invoices, and ID documents using a pretrained model on the Document Intelligence service.
+
+`FormTrainingClient` provides operations to:
+
+- Train custom models to analyze all fields and values found in your custom forms. A `CustomFormModel` is returned that indicate the form types the model analyzes and the fields it extracts for each form type.
+- Train custom models to analyze specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned that indicates the fields the model extracts and the estimated accuracy for each field.
+- Manage models created in your account.
+- Copy a custom model from one Document Intelligence resource to another.
+
+> **Note:**
+> Models can also be trained using a graphical user interface such as the [Sample Labeling Tool](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/label-tool.md).
+
+## Authenticate the client
+
+At the top of your `main` method, add the following code. You authenticate two client objects using the subscription variables you defined previously. You use an `AzureKeyCredential` object, so that if needed, you can update the key without creating new client objects.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_auth](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+## Analyze layout
+
+You can use Document Intelligence to analyze tables, lines, and words in documents, without needing to train a model. For more information about layout extraction, see the [Document Intelligence layout model](../../../prebuilt/layout.md).
+
+To analyze the content of a file at a given URL, use the `beginRecognizeContentFromUrl` method.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_getcontent_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Tip:**
+> You can also get content from a local file. See the [FormRecognizerClient](https://learn.microsoft.com/java/api/com.azure.ai.formrecognizer.formrecognizerclient) methods, such as `beginRecognizeContent`. Or, see the sample code on [GitHub](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples/README.md) for scenarios that involve local images.
+
+The returned value is a collection of `FormPage` objects. There's one object for each page in the submitted document. The following code iterates through these objects and prints the extracted key/value pairs and table data.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_getcontent_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+```output
+Get form content...
+----Recognizing content ----
+Has width: 8.500000 and height: 11.000000, measured with unit: inch.
+Table has 2 rows and 6 columns.
+Cell has text Invoice Number.
+Cell has text Invoice Date.
+Cell has text Invoice Due Date.
+Cell has text Charges.
+Cell has text VAT ID.
+Cell has text 458176.
+Cell has text 3/28/2018.
+Cell has text 4/16/2018.
+Cell has text $89,024.34.
+Cell has text ET.
+```
+
+## Analyze receipts
+
+This section demonstrates how to analyze and extract common fields from US receipts by using a pretrained receipt model. For more information about receipt analysis, see the [Document Intelligence receipt model](../../../prebuilt/receipt.md).
+
+To analyze receipts from a URI, use the `beginRecognizeReceiptsFromUrl` method.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_receipts_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Tip:**
+> You can also analyze local receipt images. See the [FormRecognizerClient](https://learn.microsoft.com/java/api/com.azure.ai.formrecognizer.formrecognizerclient) methods, such as `beginRecognizeReceipts`. Or, see the sample code on [GitHub](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples/README.md) for scenarios that involve local images.
+
+The returned value is a collection of `RecognizedReceipt` objects. There's one object for each page in the submitted document. The next block of code iterates through the receipts and prints their details to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_receipts_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The next block of code iterates through the individual items detected on the receipt and prints their details to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_receipts_print_items](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+```console
+Analyze receipt...
+----------- Recognized Receipt page 0 -----------
+Merchant Name: Contoso Contoso, confidence: 0.62
+Merchant Address: 123 Main Street Redmond, WA 98052, confidence: 0.99
+Transaction Date: 2020-06-10, confidence: 0.90
+Receipt Items:
+Name: Cappuccino, confidence: 0.96s
+Quantity: null, confidence: 0.957s]
+Total Price: 2.200000, confidence: 0.95
+Name: BACON & EGGS, confidence: 0.94s
+Quantity: null, confidence: 0.927s]
+Total Price: null, confidence: 0.93
+```
+
+## Analyze business cards
+
+This section demonstrates how to analyze and extract common fields from English business cards by using a pretrained model. For more information about business card analysis, see the [Document Intelligence business card model](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/concept-business-card.md).
+
+To analyze business cards from a URL, use the `beginRecognizeBusinessCardsFromUrl` method.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_bc_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Tip:**
+> You can also analyze local business card images. See the [FormRecognizerClient](https://learn.microsoft.com/java/api/com.azure.ai.formrecognizer.formrecognizerclient) methods, such as `beginRecognizeBusinessCards`. Or, see the sample code on [GitHub](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples/README.md) for scenarios that involve local images.
+
+The returned value is a collection of `RecognizedForm` objects. There's one object for each card in the document. The following code processes the business card at the given URI and prints the major fields and values to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_bc_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+## Analyze invoices
+
+This section demonstrates how to analyze and extract common fields from sales invoices by using a pretrained model. For more information about invoice analysis, see the [Document Intelligence invoice model](../../../prebuilt/invoice.md).
+
+To analyze invoices from a URL, use the `beginRecognizeInvoicesFromUrl` method.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_invoice_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Tip:**
+> You can also analyze local invoices. See the [FormRecognizerClient](https://learn.microsoft.com/java/api/com.azure.ai.formrecognizer.formrecognizerclient) methods, such as `beginRecognizeInvoices`. Or, see the sample code on [GitHub](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples/README.md) for scenarios that involve local images.
+
+The returned value is a collection of `RecognizedForm` objects. There's one object for each invoice in the document. The following code processes the invoice at the given URI and prints the major fields and values to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_invoice_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+## Analyze ID documents
+
+This section demonstrates how to analyze and extract key information from government-issued identification documents—worldwide passports and U.S. driver's licenses by using the Document Intelligence prebuilt ID model. For more information about ID document analysis, see the [Document Intelligence ID document model](../../../prebuilt/id-document.md).
+
+To analyze ID documents from a URI, use the `beginRecognizeIdentityDocumentsFromUrl` method.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_id_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Tip:**
+> You can also analyze local ID document images. See the [FormRecognizerClient](https://learn.microsoft.com/dotnet/api/azure.ai.formrecognizer.formrecognizerclient) methods, such as `beginRecognizeIdentityDocuments`. Also, see the sample code on [GitHub](https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/formrecognizer/Azure.AI.FormRecognizer/samples/README.md) for scenarios that involve local images.
+
+The following code processes the ID document at the given URI and prints the major fields and values to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer-preview.java?name=snippet_id_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+## Train a custom model
+
+This section demonstrates how to train a model with your own data. A trained model can output structured data that includes the key/value relationships in the original document. After you train the model, you can test, retrain, and eventually use it to reliably extract data from more forms according to your needs.
+
+> **Note:**
+> You can also train models with a graphical user interface such as the [Document Intelligence Sample Labeling tool](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/label-tool.md).
+
+### Train a model without labels
+
+Train custom models to analyze all fields and values found in your custom forms without manually labeling the training documents.
+
+The following method trains a model on a given set of documents and prints the model's status to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_train_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The returned `CustomFormModel` object contains information on the form types the model can analyze and the fields it can extract from each form type. The following code block prints this information to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_train_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+Finally, this method returns the unique ID of the model.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_train_return](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+```console
+Train Model with training data...
+Model Id: 20c3544d-97b4-49d9-b39b-dc32d85f1358
+Model Status: ready
+Training started on: 2020-08-31T16:52:09Z
+Training completed on: 2020-08-31T16:52:23Z
+
+Recognized Fields:
+The subModel has form type form-0
+The model found field 'field-0' with label: Address:
+The model found field 'field-1' with label: Charges
+The model found field 'field-2' with label: Invoice Date
+The model found field 'field-3' with label: Invoice Due Date
+The model found field 'field-4' with label: Invoice For:
+The model found field 'field-5' with label: Invoice Number
+The model found field 'field-6' with label: VAT ID
+```
+
+### Train a model with labels
+
+You can also train custom models by manually labeling the training documents. Training with labels leads to better performance in some scenarios. To train with labels, you need to have special label information files (*\<filename>.pdf.labels.json*) in your blob storage container alongside the training documents. The [Document Intelligence Sample Labeling tool](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/label-tool.md) provides a user interface to help you create these label files. After you get them, you can call the `beginTraining` method with the `useTrainingLabels` parameter set to `true`.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_trainlabels_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The returned `CustomFormModel` indicates the fields the model can extract, along with its estimated accuracy in each field. The following code block prints this information to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_trainlabels_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+```console
+Train Model with training data...
+Model Id: 20c3544d-97b4-49d9-b39b-dc32d85f1358
+Model Status: ready
+Training started on: 2020-08-31T16:52:09Z
+Training completed on: 2020-08-31T16:52:23Z
+
+Recognized Fields:
+The subModel has form type form-0
+The model found field 'field-0' with label: Address:
+The model found field 'field-1' with label: Charges
+The model found field 'field-2' with label: Invoice Date
+The model found field 'field-3' with label: Invoice Due Date
+The model found field 'field-4' with label: Invoice For:
+The model found field 'field-5' with label: Invoice Number
+The model found field 'field-6' with label: VAT ID
+```
+
+## Analyze forms with a custom model
+
+This section demonstrates how to extract key/value information and other content from your custom template types, using models you trained with your own forms.
+
+> **Important:**
+> In order to implement this scenario, you must have already trained a model so you can pass its ID into the method operation. See [Train a model with labels](#train-a-model-without-labels).
+
+Use the `beginRecognizeCustomFormsFromUrl` method.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_analyze_call](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+> **Tip:**
+> You can also analyze a local file. See the [FormRecognizerClient](https://learn.microsoft.com/java/api/com.azure.ai.formrecognizer.formrecognizerclient) methods, such as `beginRecognizeCustomForms`. Or, see the sample code on [GitHub](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples/README.md) for scenarios that involve local images.
+
+The returned value is a collection of `RecognizedForm` objects. There's one object for each page in the submitted document. The following code prints the analysis results to the console. It prints each recognized field and corresponding value, along with a confidence score.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_analyze_print](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+```console
+Analyze PDF form...
+----------- Recognized custom template info for page 0 -----------
+Form type: form-0
+Field 'field-0' has label 'Address:' with a confidence score of 0.91.
+Field 'field-1' has label 'Invoice For:' with a confidence score of 1.00.
+Field 'field-2' has label 'Invoice Number' with a confidence score of 1.00.
+Field 'field-3' has label 'Invoice Date' with a confidence score of 1.00.
+Field 'field-4' has label 'Invoice Due Date' with a confidence score of 1.00.
+Field 'field-5' has label 'Charges' with a confidence score of 1.00.
+Field 'field-6' has label 'VAT ID' with a confidence score of 1.00.
+```
+
+## Manage custom models
+
+This section demonstrates how to manage the custom models stored in your account. The following code does all of the model management tasks in a single method, as an example. Start by copying the following method signature:
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_manage](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+### Check the number of models in the FormRecognizer resource account
+
+The following code block checks how many models you saved in your Document Intelligence account and compares it to the account limit.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_manage_count](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+```console
+The account has 12 custom models, and we can have at most 250 custom models
+```
+
+### List the models currently stored in the resource account
+
+The following code blocklists the current models in your account and prints their details to the console.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_manage_list](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+The result looks like the following output.
+
+This response was truncated for readability.
+
+```console
+We have following models in the account:
+Model Id: 0b048b60-86cc-47ec-9782-ad0ffaf7a5ce
+Model Id: 0b048b60-86cc-47ec-9782-ad0ffaf7a5ce
+Model Status: ready
+Training started on: 2020-06-04T18:33:08Z
+Training completed on: 2020-06-04T18:33:10Z
+Custom Model Form type: form-0b048b60-86cc-47ec-9782-ad0ffaf7a5ce
+Custom Model Accuracy: 1.00
+Field Text: invoice date
+Field Accuracy: 1.00
+Field Text: invoice number
+Field Accuracy: 1.00
+...
+```
+
+### Delete a model from the resource account
+
+You can also delete a model from your account by referencing its ID.
+
+[Code reference unavailable in this source snapshot: ~/cognitive-services-quickstart-code/java/FormRecognizer/FormRecognizer.java?name=snippet_manage_delete](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/how-to-guides/includes/v2-1/java-sdk.md)
+
+## Run the application
+
+Navigate back to your main project directory. Then, build the app with the following command:
+
+```console
+gradle build
+```
+
+Run the application with the `run` goal:
+
+```console
+gradle run
+```
+
+## Clean up resources
+
+If you want to clean up and remove an AI Services subscription, you can delete the resource or resource group. Deleting the resource group also deletes any other resources associated with it.
+
+- [Azure portal](../../../../multi-service-resource.md?pivots=azportal#clean-up-resources)
+- [Azure CLI](../../../../multi-service-resource.md?pivots=azcli#clean-up-resources)
+
+## Troubleshooting
+
+Document Intelligence clients raise `ErrorResponseException` exceptions. For example, if you try to provide an invalid file source URL, an `ErrorResponseException` would be raised with an error that indicates the failure cause. In the following code snippet, the error is handled gracefully by catching the exception and displaying the additional information about the error.
+
+```java Snippet:FormRecognizerBadRequest
+try {
+    formRecognizerClient.beginRecognizeContentFromUrl("invalidSourceUrl");
+} catch (ErrorResponseException e) {
+    System.out.println(e.getMessage());
+}
+```
+
+### Enable client logging
+
+Azure SDKs for Java offer a consistent logging story to help aid in troubleshooting application errors and speeding up their resolution. The logs produced capture the flow of an application before reaching the terminal state to help locate the root issue. For more information about enabling logging, see the [logging wiki](https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK).
+
+## Next steps
+
+For this project, you used the Document Intelligence Java client library to train models and analyze forms in different ways. Next, learn tips to create a better training data set and produce more accurate models.
+
+> 
+> [Build and train a custom model](../../build-a-custom-model.md?view=doc-intel-2.1.0&preserve-view=true)
+
+- [What is Document Intelligence?](../../../overview.md)
+
+- The sample code for this project can be found on [GitHub](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/src/samples).

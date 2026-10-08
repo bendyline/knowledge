@@ -1,0 +1,74 @@
+---
+title: Govern your backup estate using Backup Center
+description: Learn how to govern your Azure environment to ensure that all your resources are compliant from a backup perspective with Backup Center.
+ms.topic: how-to
+ms.date: 08/22/2025
+ms.update-cycle: 1825-days
+author: AbhishekMallick-MS
+ms.author: v-mallicka
+# Customer intent: "As an IT administrator, I want to manage backup compliance and resource governance using a central Backup Center, so that I can ensure all data sources in my Azure environment are properly backed up and adhere to organizational policies."
+---
+
+# Govern your backup estate using Backup Center
+
+[Include unavailable in this source snapshot: ../../includes/backup-center-deprecation.md ](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-center-govern-environment.md)
+
+Backup center helps you govern your Azure environment to ensure that all your resources are compliant from a backup perspective. Below are some of the governance capabilities of Backup center:
+
+* View and assign Azure Policies for backup
+
+* View compliance of your resources on all the built-in Azure Policies for backup.
+
+* View all datasources that haven't been configured for backup.
+
+## Supported scenarios
+
+* Refer to the [support matrix](backup-center-support-matrix.md) for a detailed list of supported and unsupported scenarios.
+
+
+## Get started with Backup center
+
+To get started with using Backup center, follow these steps:
+
+1. In the [Azure portal](https://portal.azure.com/), search for **Resiliency**, and then go to the **Resiliency** dashboard.
+
+    Screenshot shows how to search for Resiliency.
+
+1. To launch Backup center, Select **Help** in the top menu > **Go to Backup Center**.
+
+    Screenshot shows how to launch Backup center from the Help menu.
+
+1. On the **Navigate to Backup Center** pane, select a reason for transitioning to Backup center, type a reason in the text box, and then select **Submit**.
+
+
+
+## Azure Policies for backup
+
+To view all the [Azure Policies](../governance/policy/overview.md) that are available for backup, select the **Azure Policies for Backup** menu item. This will display all the built-in and custom [Azure Policy definitions for backup](policy-reference.md) that are available for assignment to your subscriptions and resource groups.
+
+Selecting any of the definitions allows you to [assign the policy](../governance/policy/tutorials/create-and-manage.md#assign-a-policy) to a scope.
+
+Select Azure Policy definitions
+
+## Backup compliance
+
+Clicking on the Backup Compliance menu item helps you view the [compliance](../governance/policy/how-to/get-compliance-data.md) of your resources according to the various built-in policies that you've assigned to your Azure environment. You can view the percentage of resources that are compliant on all policies, as well as the policies that have one or more non-compliant resources.
+
+View Backup Compliance
+
+## Protectable datasources
+
+Selecting the **Protectable Datasources** menu item allows you to view all your datasources that haven't been configured for backup. You can filter the list by datasource subscription, resource group, location, type and tags. Once you've identified a datasource that needs to be backed up, you can right-click on the corresponding grid item and select **Backup** to configure backup for the resource.
+
+Protectable datasources menu
+
+> **Note:**
+> If you select **SQL in Azure VM** as the datasource type, the **Protectable Datasources** view displays the list of all Gallery VMs, which don't have any SQL databases that are configured for backup.
+> If you select **Azure Storage (Azure Files)** as the datasource type, the **Protectable Datasources** view displays the list of all storage accounts (that support file shares) which don't have any file shares that are configured for backup.
+
+
+## Next steps
+
+* [Monitor and Operate backups](backup-center-monitor-operate.md)
+* [Perform actions using Backup Center](backup-center-actions.md)
+* [Obtain insights on your backups](backup-center-obtain-insights.md)

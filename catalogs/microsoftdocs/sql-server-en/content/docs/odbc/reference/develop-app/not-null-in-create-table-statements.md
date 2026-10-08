@@ -1,0 +1,16 @@
+---
+title: "NOT NULL in CREATE TABLE Statements"
+description: "NOT NULL in CREATE TABLE Statements"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "not null [ODBC]"
+  - "interoperability [ODBC], not null"
+---
+# NOT NULL in CREATE TABLE Statements
+Some databases, and especially desktop databases, do not support the **NOT NULL** column constraint in **CREATE TABLE** statements. For more information, see the SQL_NON_NULLABLE_COLUMNS option in the [SQLGetInfo](../syntax/sqlgetinfo-function.md) function description.

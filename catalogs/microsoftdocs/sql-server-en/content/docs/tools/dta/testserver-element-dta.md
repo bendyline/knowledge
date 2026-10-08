@@ -1,0 +1,59 @@
+---
+title: "TestServer Element (DTA)"
+description: In the dta utility, the TestServer element specifies the test server to use when tuning a production server.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/01/2017
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: reference
+ms.collection:
+  - data-tools
+helpviewer_keywords:
+  - "TestServer element"
+dev_langs:
+  - "XML"
+---
+
+# TestServer Element (DTA)
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Specifies the test server to use when tuning a production server.  
+  
+## Syntax  
+  
+```  
+  
+<TuningOptions>  
+  <TestServer>...</TestServer>  
+   ...code removed here...  
+</TuningOptions>  
+```  
+  
+## Element Characteristics  
+  
+| Characteristic | Description |
+| --- | --- |
+| **Data type and length** | **string**, unlimited length. |
+| **Default value** | None. |
+| **Occurrence** | Optional. Can use once for each **TuningOptions** element. |
+  
+## Element Relationships  
+  
+| Relationship | Elements |
+| --- | --- |
+| **Parent element** | [TuningOptions Element (DTA)](tuningoptions-element-dta.md) |
+| **Child elements** | None. |
+  
+## Example  
+ For a usage example of this element, see [Reduce the Production Server Tuning Load](../../relational-databases/performance/reduce-the-production-server-tuning-load.md).  
+  
+## Related content
+
+- [XML Input File Reference (Database Engine Tuning Advisor)](xml-input-file-reference-database-engine-tuning-advisor.md)

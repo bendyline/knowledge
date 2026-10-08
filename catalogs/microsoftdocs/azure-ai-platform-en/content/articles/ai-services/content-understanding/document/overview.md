@@ -1,0 +1,124 @@
+---
+title: Azure Content Understanding in Foundry Tools Document Overview
+titleSuffix: Foundry Tools
+description: Learn about Azure Content Understanding in Foundry Tools document solutions.
+author: PatrickFarley 
+ms.author: pafarley
+manager: mcleans
+ms.date: 08/04/2026
+ms.service: azure-content-understanding-foundry-tools
+ms.topic: overview
+ms.custom:
+  - build-2025
+  - dev-focus
+ai-usage: ai-assisted
+---
+
+# Azure Content Understanding in Foundry Tools document solutions
+
+Content Understanding offers sophisticated document analysis capabilities. Organizations can use these capabilities to convert unstructured content into actionable and organized data. Content Understanding can use [customizable analyzers](../concepts/prebuilt-analyzers.md) to expertly extract essential information, fields, and relationships from a diverse range of documents and forms.
+
+> **Note:**
+>
+> * As part of Azure Content Understanding capabilities, Azure Document Intelligence provides high-accuracy and reliable deterministic extraction from structured documents.
+> * Content Understanding also offers LLM-powered analyzers for complex, unstructured, and multimodal content.
+> * Together, they make it easier to prepare data for intelligent agents and applications that can read, analyze, and respond to real-world content with precision and speed.
+> * To compare both services and determine which best fits your scenario, see [Choose the right Azure AI tool for document processing](../choosing-right-ai-tool.md).
+
+## Business use cases
+
+Document analyzers can process complex documents in various formats and templates:
+
+* **Contract lifecycle management:** Extract key fields, clauses, and obligations from various contract types.
+* **Loan and mortgage applications:** Automate processing to enable quicker handling by banks, lenders, and government entities.
+* **Financial services:** Analyze complex documents like financial reports and asset management reports.
+* **Expense management:** Parse receipts and invoices from various retailers to validate expenses across different formats and templates.
+* **Insurance policy analysis:** Parse the details of the insurance policy and build a complete understanding of the policy coverage and gaps using multistep reasoning, calculations, and validations.
+
+
+## Key benefits
+
+Content Understanding delivers powerful document analysis capabilities that are designed to address critical enterprise and business scenarios, such as retrieval-augmented generation (RAG) and robotic process automation. Key benefits include:
+
+- **Intelligent search enablement:** Transform unstructured documents into structured, searchable data assets to improve information discoverability and accessibility across your organization.
+- **Grounded data extraction:** Maintain clear traceability and localization of extracted data to facilitate efficient human-in-the-loop review processes and ensure transparency and compliance.
+- **Confidence-driven automation:** Use built-in confidence scoring to intelligently automate document processing tasks to help you optimize resource allocation, reduce operational costs, and enhance decision-making accuracy.
+- **Flexible customization:** Easily adapt and tailor document analyzers to align with specific business processes and workflows. Customization enables precise extraction and classification tailored to your organization's specific requirements.
+- **Enhanced accuracy and reliability:** Achieve precise extraction and classification of critical business data to reduce errors and improve operational efficiency across automated workflows.
+- **Agents ready:** Process your diverse input and deliver output in a standard format that's ready for an agent's workflow. Outputs can give your application an understanding of user intent, with data supported by a `strongly-typed` schema that makes it easier to quickly get data in a format ready for your code.
+
+## Document analyzer capabilities
+
+Screenshot that shows document extraction flow.
+
+### Content extraction
+
+Content extraction forms the foundation of Content Understanding document analysis capabilities. This process transforms unstructured documents into structured, machine-readable data. Content extraction precisely captures printed and handwritten text while it preserves the document's structure through advanced layout analysis:
+
+- Content analysis
+  - **Text**: Processes multilingual content, including both machine-printed and handwritten text from hundreds of languages.
+  - **Selection marks**: Identifies and extracts selection indicators such as checkboxes, buttons, and similar markers.
+  - **Barcode detection**: Scans and decodes information from over a dozen types of linear and two-dimensional barcodes.
+  - **Mathematical formulas**: Captures and preserves complex mathematical expressions in LaTeX format.
+  - **Image elements**: Locates and extracts images, figures, diagrams, and charts along with their related captions and annotations.
+  - **Hyperlink elements**: Detects hyperlinks embedded within the document.
+  - **Annotation elements**: Associates contents with its annotations such as strikethrough, underline, and highlight.
+  - **Figure elements**: Detects and extracts figure elements into structured output.
+  - **Signature detection**: Detects signatures and returns their location, along with any text recognized inside the signature region.
+  - **Document metadata**: Extracts embedded metadata, such as author, creation date, and title, from supported file types.
+- Structure analysis
+  - **Paragraphs**: Detects and categorizes text segments based on their document context and role.
+  - **Tabular data**: Recognizes and extracts table structures, including complex formats with spanning cells and multipage layouts.
+  - **Hierarchical sections**: Maps content organization through section headers and nested content relationships.
+- Retrieval-augmented generation (RAG)
+  - **RAG solutions**: Content extraction forms the foundation of effective RAG systems by transforming raw multimodal data into structured, searchable formats that are optimized for retrieval. To learn more about building RAG solutions, see [Retrieval-augmented generation](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/content-understanding/concepts/retrieval-augmented-generation.md).
+
+#### Extraction mode
+
+Use `extractionMode` to choose how to analyze document content. Use layout-aware extraction for structured documents, where tables, sections, and reading order matter. Use faster text-only extraction to produce clean Markdown for RAG and document ingestion scenarios.
+
+### Field extraction
+
+With field extraction, you can extract, classify, and generate structured data from various documents and forms that are customized to meet your requirements. The process of transforming unstructured content into organized, actionable information simplifies data management, improves searchability, and supports automated workflows.
+
+For example, you can extract customer details, billing addresses, and itemized charges from invoices. You can also identify contractual parties, renewal dates, and payment terms in legal agreements.
+
+To maximize efficiency, use prebuilt analyzer templates, such as templates tailored for invoices. You can also design custom analyzers from scratch to enhance precision through labeling of more sample documents.
+
+The confidence and grounding API is an opt-in feature available for all document field types, whether they use the `extract`, `classify`, or `generate` method. To opt in for confidence and grounding for field extraction, set `estimateFieldSourceAndConfidence = true` in the analyzer config or `estimateSourceAndConfidence = true` for a specific field.
+
+Supported typed field values, such as dates and numbers, are automatically normalized to a canonical format. Normalization isn't configurable. The field's returned value is the normalized value.
+
+Use confidence scores and source grounding to route low-confidence or insufficiently grounded extractions for human review. Continue high-confidence, grounded results through downstream automated workflows.
+
+#### Field extraction methods
+
+Content Understanding provides versatile methods for field extraction, which enables precise and tailored processing of document content:
+
+- **Extract**: Extract specific data, like transaction dates from receipts or line items from invoices, for precise and focused information capture.
+- **Classify**: Categorize document content into predefined categories, such as classifying sentiment in customer call transcripts or classifying hotel receipt items.
+- **Generate**: Produce new insights or summaries from your documents, including document summaries, and chapter overviews to enhance content accessibility and comprehension.
+
+### Agentic mode (preview)
+
+For scenarios where the answer isn't directly present in a field and must be built from evidence across a document, use [agentic mode](../concepts/agentic-mode.md). Agentic mode reasons over a document to support multistep calculations, validation against a set of conditions, and analysis of complex tables or figures. It's available with API version `2026-06-01-preview`, and the initial preview supports one input file per analysis request.
+
+
+## Input requirements
+
+For more information on supported input document formats, see [Service quotas and limits](../service-limits.md).
+
+## Supported languages and regions
+
+For a list of supported languages and regions, see [Language and region support](../language-region-support.md).
+
+## Data, privacy, and security
+
+If you use Content Understanding, review the Microsoft policies on customer data. For more information, see [Data, privacy, and security](https://learn.microsoft.com/azure/ai-foundry/responsible-ai/content-understanding/data-privacy).
+
+## Related content
+
+* Try processing your document content by using [Content Understanding Studio](https://aka.ms/cu-studio).
+* Check out the [Content Understanding Studio quickstart](../quickstart/content-understanding-studio.md).
+* Learn to analyze document content using [analyzer templates](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/content-understanding/concepts/analyzer-templates.md).
+* Review code samples with [visual document search](https://github.com/Azure-Samples/azure-ai-search-with-content-understanding-python/blob/main/notebooks/search_with_visual_document.ipynb).

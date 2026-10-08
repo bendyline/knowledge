@@ -1,0 +1,80 @@
+---
+title: 'About active-active VPN gateways'
+titleSuffix: Azure VPN Gateway
+description: Learn about active-active VPN gateways, including configuration and design.
+author: duongau
+ms.service: azure-vpn-gateway
+ms.topic: concept-article
+ms.date: 08/27/2026
+ms.author: duau
+ms.custom: sfi-image-nochange
+
+# Customer intent: "As a network administrator, I want to configure an active-active VPN gateway so that I can ensure continuous connectivity and minimize interruption during maintenance or outages."
+---
+# About active-active mode VPN gateways
+
+Azure VPN gateways can be configured as active-standby or active-active. This article explains active-active mode gateway configurations and highlights the benefits of using active-active mode.
+
+## Why create an active-active gateway?
+
+VPN gateways consist of two instances in an active-standby configuration unless you specify active-active mode.
+
+### Active-standby mode behavior
+
+In active-standby mode, during any planned maintenance or unplanned disruption affecting the active instance, the following behavior occurs:
+
+* **S2S and VNet-to-VNet**: The standby instance takes over automatically (failover), and resumes the site-to-site (S2S) VPN or VNet-to-VNet connections. This switch over causes a brief interruption. For planned maintenance, connectivity is restored quickly. For unplanned issues, the connection recovery is longer.
+* **P2S**: For point-to-site (P2S) VPN client connections to the gateway, P2S connections are disconnected. Users need to reconnect from the client machines.
+
+For future maintenance or disruptions, active-active mode reduces the interruption associated with active-standby failover. However, converting an existing gateway that uses non-APIPA BGP peer IP addresses causes downtime and requires you to update the on-premises BGP peers. For more information, see [Change a gateway to active-active mode](gateway-change-active-active.md).
+
+### Active-active mode design
+
+In an active-active configuration for a S2S connection, both instances of the gateway VMs establish S2S VPN tunnels to your on-premises VPN device, as shown the following diagram:
+
+Diagram shows an on-premises site with private IP subnets and an on-premises gateway connected to two VPN gateway instances.
+
+In this configuration, each Azure gateway instance has a unique public IP address, and each establishes an IPsec/IKE S2S VPN tunnel to the on-premises VPN device. Both tunnels are part of the same connection. Configure your on-premises VPN device to accept two S2S VPN tunnels, one for each gateway instance. Point-to-site (P2S) connections don't require additional on-premises VPN device configuration. However, an active-active gateway with P2S enabled requires a third public IP address for the P2S endpoint.
+
+In an active-active configuration, Azure routes traffic from your virtual network to your on-premises network through both tunnels simultaneously, even if your on-premises VPN device might favor one tunnel over the other. For a single TCP or UDP flow, Azure attempts to use the same tunnel when sending packets to your on-premises network. However, your on-premises network might use a different tunnel to send packets back to Azure.
+
+When a planned maintenance or unplanned event happens to one gateway instance, the IPsec tunnel from that instance to your on-premises VPN device will be disconnected. The corresponding routes on your VPN devices should be removed or withdrawn automatically so that the traffic will be switched over to the other active IPsec tunnel. On the Azure side, the switch over will happen automatically from the affected instance to the other active instance.
+
+> **Note:**
+> 
+For S2S connections with an active-active mode VPN gateway, ensure tunnels are established to each gateway VM instance. If you establish a tunnel to only one gateway VM instance, the connection will go down during maintenance. If your VPN device doesn't support this setup, configure your gateway for active-standby mode instead.
+
+
+### Dual-redundancy active-active mode design
+
+The most reliable design option is to combine the active-active gateways on both your network and Azure, as shown in the following diagram.
+
+Diagram shows a Dual Redundancy scenario.
+
+In this configuration, you create and set up the Azure VPN gateway in active-active mode. You create two local network gateways and two connections for your two on-premises VPN devices. The result is a full mesh connectivity of four IPsec tunnels between your Azure virtual network and your on-premises network.
+
+All gateways and tunnels are active from the Azure side, so the traffic is spread among all four tunnels simultaneously, although each TCP or UDP flow will follow the same tunnel or path from the Azure side. Even though by spreading the traffic, you might see slightly better throughput over the IPsec tunnels, the primary goal of this configuration is for high availability. And due to the statistical nature of the spreading, it's difficult to provide the measurement on how different application traffic conditions affect the aggregate throughput.
+
+This topology requires two local network gateways and two connections to support the pair of on-premises VPN devices. For more information, see [About highly available connectivity](vpn-gateway-highlyavailable.md).
+
+## Configure an active-active mode gateway
+
+You can configure an active-active gateway using the [Azure portal](tutorial-create-gateway-portal.md), PowerShell, or CLI. You can also change an active-standby gateway to active-active mode. For steps, see [Change a gateway to active-active](gateway-change-active-active.md).
+
+An active-active gateway has slightly different configuration requirements than an active-standby gateway.
+
+* You can't configure an active-active gateway using the Basic gateway SKU.
+* The VPN must be route based. It can't be policy based.
+* You need two public IP addresses for the gateway instances. Both must be **Standard SKU** public IP addresses that are assigned as **Static**.
+* If the gateway has P2S enabled, you need a third public IP address for the P2S endpoint. For Basic-to-Standard public IP migration requirements, see [About migrating a Basic SKU public IP address to Standard SKU](basic-public-ip-migrate-about.md#active-active-vpngw1-5-gateway-skus).
+* An active-active gateway configuration costs the same as an active-standby configuration. However, active-active configurations require at least two public IP addresses instead of one. See [IP Address pricing](https://azure.microsoft.com/pricing/details/ip-addresses/).
+
+## Reset an active-active mode gateway
+
+If you need to reset an active-active gateway, you can reset both instances using the portal. You can also use PowerShell or CLI to reset each gateway instance separately using instance VIPs. See [Reset a connection or a gateway](reset-gateway.md#ps).
+
+## Next steps
+
+* [Configure an active-active gateway - Azure portal](tutorial-create-gateway-portal.md)
+* [Change a gateway to active-active mode](gateway-change-active-active.md)
+* [Reset an active-active gateway](reset-gateway.md#ps)

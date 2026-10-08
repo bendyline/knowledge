@@ -1,0 +1,62 @@
+---
+title: "About the Exchange Administrator role"
+f1.keywords:
+- NOCSH
+ms.author: deniseb
+author: denisebmsft
+manager: dansimp
+ms.date: 04/22/2026
+audience: Admin
+ms.topic: overview
+ms.service: microsoft-365-admin
+ms.localizationpriority: medium
+ms.collection:
+- M365-subscription-management
+- Adm_O365
+- must-keep
+ms.custom:
+- AdminSurgePortfolio
+- admindeeplinkEXCHANGE
+search.appverid:
+- BCS160
+- MET150
+- MOE150
+- GEA150
+description: "Exchange administrators manage your organization's email and mailboxes and, for example, recover deleted items in a user's mailbox."
+---
+
+# About the Exchange Administrator role
+
+To help you administer Microsoft 365, you can [assign administrator roles](assign-admin-roles.md) to users to grant permissions for them to manage your organization's email and mailboxes. You do this by assigning the [Exchange Administrator role](https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference#exchange-administrator) in the [Exchange admin center](https://go.microsoft.com/fwlink/p/?linkid=2059104).
+  
+When users are assigned the Exchange Administrator role, they can perform these key tasks:
+  
+- [Recover deleted items in a user mailbox - Admin Help](https://learn.microsoft.com/Exchange/recipients-in-exchange-online/manage-user-mailboxes/recover-deleted-messages)
+
+- [Set up an archive and deletion policy for mailboxes in your organization](https://github.com/MicrosoftDocs/microsoft-365-docs/blob/eab9d7696cdff87474698b08a1fb328091102a2f/microsoft-365/compliance/set-up-an-archive-and-deletion-policy-for-mailboxes.md).
+
+- Set up mailbox features such as the mailbox sharing policy: how users can share calendar and contacts information with others outside of your organization.
+
+- Set up "[Send as](give-mailbox-permissions-to-another-user.md#send-email-from-another-users-mailbox)" and "[Send on behalf](give-mailbox-permissions-to-another-user.md#send-email-on-behalf-of-another-user)" delegates for someone's mailbox. For example, an executive might want their assistant to have the ability to send mail on their behalf.
+
+- [Create a shared mailbox](../email/create-a-shared-mailbox.md) so a group of people can monitor and send email from a common email address.
+
+- [Email anti-spam protection](https://github.com/MicrosoftDocs/microsoft-365-docs/blob/eab9d7696cdff87474698b08a1fb328091102a2f/microsoft-365/security/office-365-security/anti-spam-protection-about.md) and malware filters for the organization.
+
+- Manage Microsoft 365 groups
+
+## Exchange Online role groups
+
+If you have a large organization, the Exchange admin might want to assign users to Exchange role groups. When an admin adds a user to a role group, the user gets permissions to perform certain business functions only members of that group can do.
+  
+For example, the Exchange admin might assign someone to the Discovery Management role group so they can perform searches of mailboxes for data that meets certain criteria. To learn more, see [Permissions in Exchange Online](https://learn.microsoft.com/exchange/permissions-exo/permissions-exo) and [Manage Role Groups](https://learn.microsoft.com/exchange/manage-role-groups-exchange-2013-help).
+  
+## Learn about other admin roles
+
+- [About Microsoft 365 admin roles](about-admin-roles.md)
+
+- [About the SharePoint admin role](https://learn.microsoft.com/sharepoint/sharepoint-admin-role)
+
+- [About the Skype for Business admin role](https://learn.microsoft.com/skypeforbusiness/skype-for-business-online)
+
+- [Use Microsoft Teams admin role](https://learn.microsoft.com/MicrosoftTeams/using-admin-roles)

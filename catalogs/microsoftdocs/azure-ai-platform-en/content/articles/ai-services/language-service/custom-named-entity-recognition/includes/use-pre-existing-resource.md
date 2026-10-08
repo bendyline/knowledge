@@ -1,0 +1,91 @@
+---
+titleSuffix: Foundry Tools
+description: Learn about the steps for using Azure resources with custom named entity recognition (NER).
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 04/03/2026
+ms.author: lajanuar
+---
+You can use an existing Language resource to get started with custom NER as long as this resource meets the below requirements:
+
+| Requirement | Description |
+| --- | --- |
+| Regions | Make sure your existing resource is provisioned in one of the [supported regions](../service-limits.md#regional-availability). If not, you need to create a new resource in one of these regions. |
+| Pricing tier | Learn more about [supported pricing tiers](../service-limits.md#language-resource-limits). |
+| Managed identity | Make sure that the resource's managed identity setting is enabled. Otherwise, read the next section. |
+
+To use custom named entity recognition, you need to [create an Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-create) if you don't have one already. 
+
+## Enable identity management for your resource
+
+Your Language resource must have identity management, to enable it using the [Azure portal](https://portal.azure.com):
+
+1. Go to your Language resource
+2. From left hand menu, under **Resource Management** section, select **Identity**
+3. From **System assigned** tab, make sure to set **Status** to **On**
+
+
+### Enable custom named entity recognition feature
+
+Make sure to enable **Custom text classification / Custom Named Entity Recognition** feature from Azure portal.
+
+1. Go to your Language resource in the [Azure portal](https://portal.azure.com).
+2. From the left side menu, under **Resource Management** section, select **Features**.
+3. Enable **Custom text classification / Custom Named Entity Recognition** feature.
+4. Connect your storage account.
+5. Select **Apply**.
+
+>**Important:**
+ > Make sure that the user making changes the **storage blob data contributor** role assigned for them.
+
+### Add required roles
+
+Use the following steps to set the required roles for your Language resource and storage account.
+
+An animated image showing how to set roles in the Azure portal.
+
+### Roles for your Azure Language in Foundry Tools resource
+
+1. Go to your storage account or Language resource in the [Azure portal](https://portal.azure.com/).
+2. Select **Access Control (IAM)** in the left pane.
+3. Select **Add** to **Add Role Assignments**, and choose the appropriate role for your account.
+
+    You should have the **owner** or **contributor** role assigned on your Language resource.
+
+4. Within **Assign access to**, select **User, group, or service principal**
+5. Select **Select members**
+6. Select your user name. You can search for user names in the **Select** field. Repeat this for all roles. 
+7. Repeat these steps for all the user accounts that need access to this resource. 
+
+### Roles for your storage account
+
+1. Go to your storage account page in the [Azure portal](https://portal.azure.com/).
+2. Select **Access Control (IAM)** in the left pane.
+3. Select **Add** to **Add Role Assignments**, and choose the **Storage blob data contributor** role on the storage account.
+4. Within **Assign access to**, select **Managed identity**. 
+5. Select **Select members**
+6. Select your subscription, and **Language** as the managed identity. You can search for user names in the **Select** field. 
+
+### Roles for your user
+> **Important:**
+> If you skip this step, you'll have a 403 error when trying to connect to your custom project. It's important that your current user has this role to access storage account blob data, even if you're the owner of the storage account.
+> 
+1. Go to your storage account page in the [Azure portal](https://portal.azure.com/).
+2. Select **Access Control (IAM)** in the left pane.
+3. Select **Add** to **Add Role Assignments**, and choose the **Storage blob data contributor** role on the storage account.
+4. Within **Assign access to**, select **User, group, or service principal**. 
+5. Select **Select members**
+6. Select your User. You can search for user names in the **Select** field. 
+
+> **Important:**
+> If you have a virtual network or private endpoint, be sure to select **Allow Azure services on the trusted services list to access this storage account** in the Azure portal.
+
+
+### Enable CORS for your storage account
+
+Make sure to allow (**GET, PUT, DELETE**) methods when enabling Cross-Origin Resource Sharing (CORS). 
+Set allowed origins field to `https://ai.azure.com`. Allow all header by adding `*` to the allowed header values, and set the maximum age to `500`.
+
+A screenshot showing how to use CORS for storage accounts.

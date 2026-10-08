@@ -1,0 +1,58 @@
+---
+title: Enable accelerated networking for Azure VM disaster recovery with Azure Site Recovery
+description: Describes how to enable Accelerated Networking with Azure Site Recovery for Azure virtual machine disaster recovery
+author: Jeronika-MS
+ms.service: azure-site-recovery
+ms.topic: concept-article
+ms.date: 09/11/2026
+ms.author: v-gajeronika
+ms.reviewer: v-gajeronika
+ms.custom: engagement-fy23, linux-related-content
+# Customer intent: As a cloud administrator, I want to enable Accelerated Networking for Azure VMs during disaster recovery, so that I can improve network performance and minimize latency for critical workloads in Azure Site Recovery.
+---
+# Accelerated Networking with Azure virtual machine disaster recovery
+
+Accelerated Networking enables single root I/O virtualization (SR-IOV) to a VM, greatly improving its networking performance. This high-performance path bypasses the host from the datapath, reducing latency, jitter, and CPU utilization, for use with the most demanding network workloads on supported VM types. The following picture shows communication between two VMs with and without accelerated networking:
+
+Screenshot of difference between accelerated and nonaccelerated networking.
+
+Azure Site Recovery enables you to use the benefits of Accelerated Networking for Azure virtual machines that you fail over to a different Azure region. This article describes how you can enable Accelerated Networking for Azure virtual machines replicated with Azure Site Recovery.
+
+## Prerequisites
+
+Before you begin, make sure you understand:
+-	Azure virtual machine [replication architecture](azure-to-azure-architecture.md)
+-	[Setting up replication](azure-to-azure-tutorial-enable-replication.md) for Azure virtual machines
+-	[Failing over](azure-to-azure-tutorial-failover-failback.md) Azure virtual machines
+
+## Support requirements
+
+Site Recovery preserves Accelerated Networking only when it is enabled on the source NIC and the exact recovery VM size, image, operating system, region, and NIC configuration support it. Validate the recovery configuration by capability rather than relying on a static VM-family or operating-system list.
+
+Some NC and NV sizes can appear in capability-query results even though they don't support Accelerated Networking. Confirm support for the exact target size before failover. For maintained requirements and capability checks, see [Accelerated Networking limitations and constraints](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/accelerated-networking-overview.md#limitations-and-constraints).
+
+If the source VM doesn't have Accelerated Networking enabled, enable it before expecting Site Recovery to preserve it.
+
+## Enabling Accelerated Networking for replicated VMs
+
+When you [enable replication](azure-to-azure-tutorial-enable-replication.md) for Azure virtual machines, Site Recovery automatically detects whether the virtual machine network interfaces have Accelerated Networking enabled. If Accelerated Networking is already enabled, Site Recovery automatically configures Accelerated Networking on the network interfaces of the replicated virtual machine.
+
+You can verify the status of Accelerated Networking under the respective NIC's tab in the **Network** settings for the replicated virtual machine.
+
+Screenshot of Accelerated Networking setting.
+
+If you enable Accelerated Networking on the source virtual machine after enabling replication, you can enable Accelerated Networking for the replicated virtual machine's network interfaces by the following process:
+1. Open **Network** settings for the replicated virtual machine.
+1. Select the name of the network interface under the **Network interfaces** section.
+1. Select **Enabled** from the dropdown for Accelerated Networking under the **Target** column.
+
+Screenshot of Enable Accelerated Networking.
+
+
+Follow the preceding process for existing replicated virtual machines that didn't previously have Accelerated Networking enabled automatically by Site Recovery.
+
+## Next steps
+
+- Learn more about the [benefits of Accelerated Networking](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/accelerated-networking-overview.md#benefits).
+- Learn more about limitations and constraints of Accelerated Networking for [Windows virtual machines](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/accelerated-networking-overview.md#limitations-and-constraints) and [Linux virtual machines](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/accelerated-networking-overview.md#limitations-and-constraints).
+- Learn more about [recovery plans](site-recovery-create-recovery-plans.md) to automate application failover.

@@ -1,0 +1,62 @@
+# Source code: aspnetcore/security/authorization/secure-data/samples/starter2.1/Pages/Contacts/Details.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model ContactManager.Pages.Contacts.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Contact</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Contact.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Contact.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Contact.Address)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Contact.Address)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Contact.City)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Contact.City)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Contact.State)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Contact.State)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Contact.Zip)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Contact.Zip)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Contact.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Contact.Email)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Contact.ContactId">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+```

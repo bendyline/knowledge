@@ -1,0 +1,46 @@
+# Source code: aspnetcore/security/enforcing-ssl/sample-snapshot/6.x/Program2.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using static Microsoft.AspNetCore.Http.StatusCodes;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRazorPages();
+
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(60);
+    options.ExcludedHosts.Add("example.com");
+    options.ExcludedHosts.Add("www.example.com");
+});
+
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = Status307TemporaryRedirect;
+    options.HttpsPort = 5001;
+});
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapRazorPages();
+
+app.Run();
+
+```

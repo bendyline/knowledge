@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Active Directory Domain Services overview",
+    "expectedDocumentIds": [
+      "WindowsServerDocs/identity/ad-ds/get-started/virtual-dc/Active-Directory-Domain-Services-Overview"
+    ]
+  }
+]

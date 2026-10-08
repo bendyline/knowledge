@@ -1,0 +1,41 @@
+---
+title: "MSSQLSERVER_41302"
+description: "MSSQLSERVER_41302"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "41302 (Database Engine error)"
+---
+# MSSQLSERVER_41302
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+|  |
+| Event ID | 41302 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | WRITE_WRITE_CONFLICT |
+| Message Text | The current transaction attempted to update a record that has been updated since this transaction started. The transaction was aborted. |
+  
+## Explanation  
+The transaction encountered a write/write conflict and the statement terminated.  
+  
+## User Action  
+Retry the operation later in a different transaction. For more information, see [In-Memory OLTP (In-Memory Optimization)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/in-memory-oltp/in-memory-oltp-in-memory-optimization.md).  
+  
+## Related content
+
+- [In-Memory OLTP (In-Memory Optimization)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/in-memory-oltp/in-memory-oltp-in-memory-optimization.md)

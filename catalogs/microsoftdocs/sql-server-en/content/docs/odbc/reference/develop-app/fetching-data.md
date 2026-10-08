@@ -1,0 +1,24 @@
+---
+title: "Fetching Data"
+description: "Fetching Data"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "result sets [ODBC], fetching"
+  - "fetches [ODBC], defined"
+---
+# Fetching Data
+The process of retrieving rows from the result set and returning them to the application is called *fetching*. This section describes how to fetch data.  
+  
+ This section contains the following topics.  
+  
+-   [Cursors](cursors.md)  
+  
+-   [Fetching a Row of Data](fetching-a-row-of-data.md)  
+  
+-   [Getting Long Data](getting-long-data.md)

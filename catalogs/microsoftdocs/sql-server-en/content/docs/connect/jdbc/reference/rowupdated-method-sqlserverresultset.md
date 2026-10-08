@@ -1,0 +1,45 @@
+---
+title: "rowUpdated Method (SQLServerResultSet)"
+description: "rowUpdated Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.rowUpdated"
+apitype: "Assembly"
+---
+# rowUpdated Method (SQLServerResultSet)
+
+
+  Retrieves whether the current row has been updated.  
+  
+## Syntax  
+  
+```  
+  
+public boolean rowUpdated()  
+```  
+  
+## Return Value  
+ **true** if both the row has been visibly updated by the owner or another user, and updates are detected. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This rowUpdated method is specified by the rowUpdated method in the java.sql.ResultSet interface.  
+  
+ The value that is returned depends on whether or not the result set can detect updates.  
+  
+> **Note:**  
+>   SQL Server 
+ does not detect updated rows for any cursor type.  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

@@ -1,0 +1,17 @@
+---
+author: PatAltimore
+ms.service: azure-api-management
+ms.custom:
+  - build-2024
+ms.topic: include
+ms.date: 05/19/2026
+ms.author: patricka
+---
+
+## Supported model APIs
+
+This policy works with LLM APIs added to API Management that conform to one of the following API schemas:
+
+* OpenAI Chat Completions or Responses API
+* Anthropic Messages API (currently supported in API Management v2 tiers)
+* Google Vertex AI API

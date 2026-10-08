@@ -1,0 +1,115 @@
+---
+title: "Replication Security Best Practices"
+description: Learn about the best approach for securing replication connections in SQL Server in a variety of different circumstances.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "security [SQL Server replication], best practices"
+  - "security [SQL Server replication], between domains"
+  - "authentication [SQL Server replication]"
+  - "Internet [SQL Server replication], security"
+---
+# Replication Security Best Practices
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  Replication moves data in distributed environments ranging from intranets on a single domain to applications that access data between untrusted domains and over the Internet. It is important to understand the best approach for securing replication connections under these different circumstances.  
+  
+ The following information is relevant to replication in all environments:  
+  
+-   Encrypt the connections between computers in a replication topology using an industry standard method, such as Virtual Private Networks (VPN), Transport Layer Security (TLS), previously known as Secure Sockets Layer (SSL), or IP Security (IPSEC). For more information, see [Enable Encrypted Connections to the Database Engine &#40;SQL Server Configuration Manager&#41;](../../../database-engine/configure-windows/configure-sql-server-encryption.md). For information about using VPN and TLS for replicating data over the Internet, see [Securing Replication Over the Internet](securing-replication-over-the-internet.md).  
+  
+     If you use TLS 1.2 to secure the connections between computers in a replication topology, specify a value of `1` or `2` for the `-EncryptionLevel` parameter of each replication agent (a value of `2` is recommended). A value of `1` specifies that encryption is used, but the agent does not verify that the TLS/SSL server certificate is signed by a trusted issuer; a value of `2` specifies that the certificate is verified. Azure SQL Managed Instance [supports TLS 1.3](https://learn.microsoft.com/azure/azure-sql/managed-instance/replication-transactional-overview#tls-1-3-support) for connections coming from Azure SQL Managed Instances, or SQL Server 2025 and later versions, by specifying a value of `3`. Azure SQL Managed Instance, and SQL Server 2025 and later versions, [support TLS 1.3](https://learn.microsoft.com/azure/azure-sql/managed-instance/replication-transactional-overview#tls-1-3-support) for connections to SQL Server by specifying a value of `4`.  
+
+    For information about working with agents, see:  
+
+    -   [View and Modify Replication Agent Command Prompt Parameters (SQL Server Management Studio)](../agents/view-and-modify-replication-agent-command-prompt-parameters.md) 
+  
+    -   [Work with Replication Agent Profiles](../agents/work-with-replication-agent-profiles.md)  
+  
+    -   [Replication Agent Executables Concepts](../concepts/replication-agent-executables-concepts.md)  
+  
+-   Run each replication agent under a different Windows account, and use Windows Authentication for all replication agent connections. For more information about specifying accounts, see [Identity and access control for replication](identity-and-access-control-replication.md).  
+  
+-   Grant only the required permissions to each agent. For more information, see the "Permissions Required by Agents" section of [Replication Agent Security Model](replication-agent-security-model.md).  
+  
+-   Ensure all Merge Agent and Distribution Agent accounts are in the publication access list (PAL). For more information, see [Secure the Publisher](secure-the-publisher.md).  
+  
+-   Follow the principle of least privilege by allowing accounts in the PAL only the permissions they need to perform replication tasks. Do not add the logins to any fixed server roles that are not required for replication.  
+  
+-   Configure the snapshot share to allow read access by all Merge Agents and Distribution Agents. In the case of snapshots for publications with parameterized filters, ensure that each folder is configured to allow access only to the appropriate Merge Agent accounts.  
+  
+-   Configure the snapshot share to allow write access by the Snapshot Agent.  
+  
+-   If you use pull subscriptions, use a network share rather than a local path for the snapshot folder.  
+  
+ If your replication topology includes computers that are not in the same domain or are in domains that do not have trust relationships with each other, you can use Windows Authentication or  SQL Server 
+ Authentication for the connections made by agents (For more information about domains, see the Windows documentation). It is recommended as a security best practice that you use Windows Authentication.  
+  
+-   To use Windows Authentication:  
+  
+    -   Add a local Windows account (not a domain account) for each agent at the appropriate nodes (use the same name and password at each node). For example, the Distribution Agent for a push subscription runs at the Distributor and makes connections to the Distributor and Subscriber. The Windows account for the Distribution Agent should be added to the Distributor and Subscriber.  
+  
+    -   Ensure that a given agent (for example the Distribution Agent for a subscription) runs under the same account at each computer.  
+  
+-   To use  SQL Server 
+ Authentication:  
+  
+    -   Add a  SQL Server 
+ account for each agent at the appropriate nodes (use the same account name and password at each node). For example, the Distribution Agent for a push subscription runs at the Distributor and makes connections to the Distributor and Subscriber. The  SQL Server 
+ account for the Distribution Agent should be added to the Distributor and Subscriber.  
+  
+    -   Ensure that a given agent (for example the Distribution Agent for a subscription) makes connections under the same account at each computer.  
+  
+    -   In situations that require  SQL Server 
+ Authentication, access to UNC snapshot shares is often not available (for example access might be blocked by a firewall). In this case, you can transfer the snapshot to Subscribers through file transfer protocol (FTP). For more information, see [Transfer Snapshots Through FTP](../publish/deliver-a-snapshot-through-ftp.md).
+
+## Improve security posture with database master key
+
+> **Note:**
+> The instructions in this section are currently applicable to SQL Server 2022 CU18 and later, and SQL Server 2019 CU31 and later. These instructions are not applicable to Azure SQL Managed Instance. 
+
+When using SQL Server authentication for replication, secrets that you provide when you configure replication are stored within SQL Server — specifically, in the distribution database and, for pull subscriptions, also in the subscriber database. 
+
+To enhance the security posture for replication, **before you *start* to configure replication**: 
+
+- Create a [database master key (DMK)](../../../t-sql/statements/create-master-key-transact-sql.md) in the distribution database of the server that hosts the Distributor. 
+- For *pull subscriptions*, also create a DMK in the subscriber database.
+
+If replication was created before the DMK, first create the DMK, and then update replication secrets by updating passwords for replication jobs. You can update the job with the same password, or you can use a new password. 
+
+To update replication secrets, use one of the following relevant stored procedures to update passwords for replication jobs:
+
+- [sp_changelogreader_agent](../../system-stored-procedures/sp-changelogreader-agent-transact-sql.md)
+- [sp_changesubscriber](../../system-stored-procedures/sp-changesubscriber-transact-sql.md)
+- [sp_changedistpublisher](../../system-stored-procedures/sp-changedistpublisher-transact-sql.md)
+- [sp_changepublication_snapshot](../../system-stored-procedures/sp-changepublication-snapshot-transact-sql.md)
+
+Configuring transactional replication without a DMK can result in SQL Server warning `14130` on: 
+
+- Azure SQL Managed Instance
+- SQL Server 2022 [CU18](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate18) and later
+- SQL Server 2019 [CU31](https://learn.microsoft.com/troubleshoot/sql/releases/sqlserver-2019/cumulativeupdate31) and later
+
+
+## Related content
+
+- [Encrypt connections to SQL Server by importing a certificate](../../../database-engine/configure-windows/configure-sql-server-encryption.md)
+- [Replication over the Internet](../replication-over-the-internet.md)
+- [Secure the Subscriber](secure-the-subscriber.md)
+- [Secure the Distributor](secure-the-distributor.md)
+- [Secure the Publisher](secure-the-publisher.md)
+- [View and modify replication security settings](view-and-modify-replication-security-settings.md)

@@ -1,0 +1,32 @@
+# Source code: samples/core/Schemas/ThreeProjectMigrations/WebApplication1/Pages/Error.cshtml.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+
+namespace WebApplication1.Pages;
+
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+public class ErrorModel : PageModel
+{
+    public string RequestId { get; set; }
+
+    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    private readonly ILogger<ErrorModel> _logger;
+
+    public ErrorModel(ILogger<ErrorModel> logger)
+    {
+        _logger = logger;
+    }
+
+    public void OnGet()
+    {
+        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+    }
+}
+```

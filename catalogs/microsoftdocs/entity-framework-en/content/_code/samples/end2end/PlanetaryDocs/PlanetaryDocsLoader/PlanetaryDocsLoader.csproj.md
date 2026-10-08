@@ -1,0 +1,35 @@
+# Source code: samples/end2end/PlanetaryDocs/PlanetaryDocsLoader/PlanetaryDocsLoader.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
+    <Description>Seed data for the Azure Cosmos DB database.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="stopwords.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="stopwords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.24.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlanetaryDocs.DataAccess\PlanetaryDocs.DataAccess.csproj" />
+  </ItemGroup>
+  
+</Project>
+
+```

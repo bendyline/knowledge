@@ -1,0 +1,23 @@
+# Source code: samples/snippets/csharp/VS_Snippets_CLR_System/system.io.windowsruntimestorageextensions/cs/blankpage.xaml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!-- <snippet1> -->
+<Page
+    x:Class="ExampleApplication.BlankPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ExampleApplication"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Background="{StaticResource ApplicationPageBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <TextBlock Text="Display lines from a file."></TextBlock>
+        <Button Content="Load File" Click="Button_Click_1"></Button>
+        <TextBlock Name="DisplayContentsBlock"></TextBlock>
+    </StackPanel>
+</Page>
+<!-- </snippet1> -->
+```

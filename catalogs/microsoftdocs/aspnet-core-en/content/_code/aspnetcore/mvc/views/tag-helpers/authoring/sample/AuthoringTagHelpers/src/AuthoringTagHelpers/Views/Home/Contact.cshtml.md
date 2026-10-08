@@ -1,0 +1,25 @@
+# Source code: aspnetcore/mvc/views/tag-helpers/authoring/sample/AuthoringTagHelpers/src/AuthoringTagHelpers/Views/Home/Contact.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    ViewData["Title"] = "Contact";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<address>
+    One Microsoft Way<br />
+    Redmond, WA 98052<br />
+    <abbr title="Phone">P:</abbr>
+    425.555.0100
+</address>
+
+<address>
+    <strong>Support:</strong><email>Support</email><br />
+    <strong>Marketing:</strong><email>Marketing</email>
+</address>
+
+<p>Visit us at http://docs.asp.net or at www.microsoft.com</p>
+```

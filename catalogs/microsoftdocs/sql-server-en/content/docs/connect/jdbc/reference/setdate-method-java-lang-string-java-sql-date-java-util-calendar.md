@@ -1,0 +1,51 @@
+---
+title: "setDate Method to date and calendar - string"
+description: "setDate Method (java.lang.String, java.sql.Date, java.util.Calendar)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.setDate (java.lang.String, java.sql.Date, java.util.Calendar)"
+apitype: "Assembly"
+---
+# setDate Method (java.lang.String, java.sql.Date, java.util.Calendar)
+
+
+  Sets the designated parameter to the given date and calendar values.  
+  
+## Syntax  
+  
+```  
+  
+public void setDate(java.lang.String sCol,  
+                    java.sql.Date x,  
+                    java.util.Calendar c)  
+```  
+  
+#### Parameters  
+ *n*  
+  
+ An **int** that indicates the parameter number.  
+  
+ *x*  
+  
+ A Date object.  
+  
+ *c*  
+  
+ A Calendar object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setDate method is specified by the setDate method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

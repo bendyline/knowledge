@@ -1,0 +1,27 @@
+---
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 04/04/2026
+ms.author: lajanuar
+---
+After you create an Azure storage account and connected it to your Language resource, you need to upload the documents from the sample dataset to the root directory of your container. These documents are used to train your model.
+
+
+1. [Download the sample dataset](https://go.microsoft.com/fwlink/?linkid=2175226) from GitHub.
+
+2. Open the .zip file, and extract the folder containing the documents.
+
+2. In the [Azure portal](https://portal.azure.com), navigate to the storage account you created, and select it.
+
+3. In your storage account, select **Containers** from the left menu, located below **Data storage**. On the screen that appears, select **+ Container**. Give the container the name **example-data** and leave the default **Public access level**.
+
+    A screenshot showing the main page for a storage account.
+
+4. After your container is created, select it. Then select **Upload** button to select the `.txt` and `.json` files you downloaded earlier. 
+
+    A screenshot showing the button for uploading files to the storage account.
+
+
+The provided sample dataset contains 20 loan agreements. Each agreement includes two parties: a lender and a borrower. You can use the provided sample file to extract relevant information for: both parties, an agreement date, a loan amount, and an interest rate.

@@ -1,0 +1,28 @@
+# Source code: docs/ai/vector-stores/snippets/how-to/Hotel.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+// <DataModel>
+using Microsoft.Extensions.VectorData;
+
+public record class Hotel
+{
+    [VectorStoreKey]
+    public int HotelId { get; set; }
+
+    [VectorStoreData(IsIndexed = true)]
+    public string? HotelName { get; set; }
+
+    [VectorStoreData(IsFullTextIndexed = true)]
+    public string? Description { get; set; }
+
+    [VectorStoreVector(dimensions: 1536, DistanceFunction = DistanceFunction.CosineSimilarity)]
+    public ReadOnlyMemory<float>? DescriptionEmbedding { get; set; }
+
+    [VectorStoreData(IsIndexed = true)]
+    public string[]? Tags { get; set; }
+}
+// </DataModel>
+
+```

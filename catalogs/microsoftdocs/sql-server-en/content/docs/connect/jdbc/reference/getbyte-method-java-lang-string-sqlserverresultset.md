@@ -1,0 +1,48 @@
+---
+title: "getByte Method (java.lang.String) (SQLServerResultSet)"
+description: "getByte Method (java.lang.String) (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.getByte (java.lang.String)"
+apitype: "Assembly"
+---
+# getByte Method (java.lang.String) (SQLServerResultSet)
+
+
+  Retrieves the value of the designated column name in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a **byte** in the Java programming language.  
+  
+## Syntax  
+  
+```  
+  
+public byte getByte(java.lang.String columnName)  
+```  
+  
+#### Parameters  
+ *columnName*  
+  
+ A **String** that contains the column name.  
+  
+## Return Value  
+ A **byte** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getByte method is specified by the getByte method in the java.sql.ResultSet interface.  
+  
+ This method is supported only on  SQL Server 
+ data types that can safely return a byte value, such as tinyint and bit. All other data types will cause an exception to be thrown.  
+  
+## Related content
+
+- [getByte Method (SQLServerResultSet)](getbyte-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

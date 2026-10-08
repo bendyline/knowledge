@@ -1,0 +1,1483 @@
+---
+title: Install Using Graphical User Interface
+description: This article provides a step-by-step procedure for installing a new instance of SQL Server by using the SQL Server Setup Installation Wizard.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: jopilov
+ms.date: 11/18/2025
+ms.service: sql
+ms.subservice: install
+ms.topic: install-set-up-deploy
+ms.custom:
+  - intro-installation
+  - ignite-2025
+helpviewer_keywords:
+  - "installing SQL Server, steps"
+  - "Setup [SQL Server], steps"
+  - "SQL Server, installing"
+monikerRange: ">=sql-server-2017"
+---
+# Install SQL Server from the Installation Wizard (Setup)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+
+This article explains how to install  SQL Server 
+ with the Installation Wizard.
+
+The installation experience depends on the version of  SQL Server 
+. Select your version.
+
+**Applies to: \=sql-server-2017**
+
+
+
+        ***\* SQL Server 2017 \**** &nbsp;
+
+
+        [SQL Server 2019](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver15&preserve-view=true) &nbsp;
+
+
+        [SQL Server 2022](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver16&preserve-view=true) &nbsp;
+
+
+        [SQL Server 2025](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver17&preserve-view=true) &nbsp;
+
+
+
+
+
+**Applies to: \=sql-server-ver15**
+
+
+
+        [SQL Server 2017](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-2017&preserve-view=true) &nbsp;
+
+
+        ***\* SQL Server 2019 \**** &nbsp;
+
+
+        [SQL Server 2022](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver16&preserve-view=true) &nbsp;
+
+
+        [SQL Server 2025](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver17&preserve-view=true) &nbsp;
+
+
+
+
+
+**Applies to: \=sql-server-ver16**
+
+
+
+        [SQL Server 2017](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-2017&preserve-view=true) &nbsp;
+
+
+        [SQL Server 2019](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver15&preserve-view=true) &nbsp;
+
+
+        ***\* SQL Server 2022 \**** &nbsp;
+
+
+        [SQL Server 2025](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver17&preserve-view=true) &nbsp;
+
+
+
+
+
+**Applies to: \=sql-server-ver17**
+
+
+
+        [SQL Server Server 2017](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-2017&preserve-view=true) &nbsp;
+
+
+        [SQL Server 2019](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver15&preserve-view=true) &nbsp;
+
+
+        [SQL Server 2022](install-sql-server-from-the-installation-wizard-setup.md?view=sql-server-ver16&preserve-view=true) &nbsp;
+
+
+        ***\* SQL Server 2025 \**** &nbsp;
+
+
+
+
+
+This article provides a step-by-step procedure for installing a new instance of  SQL Server 
+ by using the  SQL Server 
+ Setup Installation Wizard. The Installation Wizard provides a single feature tree for installation of all  SQL Server 
+ components so that you don't have to install them individually. To install the  SQL Server 
+ components individually, see [Install SQL Server](install-sql-server.md#individual-component-installation).
+
+For other ways to install  SQL Server 
+, see:
+
+- [Install, configure, or uninstall SQL Server on Windows from the command prompt](install-sql-server-from-the-command-prompt.md)
+- [Install SQL Server using a configuration file](install-sql-server-using-a-configuration-file.md)
+- [Install SQL Server with SysPrep](install-sql-server-using-sysprep.md)
+- [Create a new Always On failover cluster instance (Setup)](../../sql-server/failover-clusters/install/create-a-new-sql-server-failover-cluster-setup.md)
+- [Upgrade SQL Server Using the Installation Wizard (Setup)](upgrade-sql-server-using-the-installation-wizard-setup.md)
+
+## Get the installation media
+
+The download location for  SQL Server 
+ depends on the edition:
+
+- **SQL Server Enterprise, Standard, and Express editions**. These editions are licensed for production use. For the Enterprise and Standard editions, contact your software vendor for the installation media. You can find purchasing information and a directory of Microsoft partners on the [Microsoft purchasing website](https://www.microsoft.com/sql-server).
+
+- [The latest free edition](https://www.microsoft.com/sql-server/sql-server-downloads).
+
+
+## Prerequisites
+
+Before you install  SQL Server 
+, review [Plan a SQL Server installation](../../sql-server/install/planning-a-sql-server-installation.md).
+
+For local installations, you must run Setup as an administrator. If you install  SQL Server 
+ from a remote share, you must use a domain account that has read and execute permissions on the remote share.
+
+**Applies to: \=sql-server-2017**
+
+<a id="bkmk_ga_instalpatch"></a>
+
+### Install patch requirement
+
+Microsoft identified a problem with the Microsoft Visual C++ 2013 runtime binaries that are installed as a prerequisite by  SQL Server 2017 (14.x) 
+. An update is available to fix this problem. If this update to the Visual C++ runtime binaries isn't installed,  SQL Server 
+ could experience stability issues in certain scenarios. Before you install  SQL Server 
+, follow the instructions in the [SQL Server 2016 release notes](../../sql-server/sql-server-2016-release-notes.md#bkmk_ga_instalpatch) to see if your computer requires a patch for the Visual C++ runtime binaries.
+
+This problem isn't applicable to  SQL Server 2019 (15.x) 
+ and later versions.
+
+## Install SQL Server 2017
+
+<a id="installation-media-2016-2017"></a>
+
+#### 1. Installation media
+
+Insert the  SQL Server 
+ installation media. From the root folder, double-click `setup.exe`. To install from a network share, locate the root folder on the share, and then double-click `setup.exe`.
+
+<a id="installation-center-2016-2017"></a>
+
+#### 2. SQL Server Installation Center
+
+The Installation Wizard runs the  SQL Server 
+ Installation Center. To create a new installation of  SQL Server 
+, select **Installation** in the left navigation area, and then select **New  SQL Server 
+ standalone installation or add features to an existing installation**.
+
+<a id="product-key-2016-2017"></a>
+
+#### 3. Product Key
+
+On the **Product Key** page, select an option to indicate whether you're installing a free edition of  SQL Server 
+ or a production version that has a PID key. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+
+To continue, select **Next**.
+
+<a id="license-terms-2016-2017"></a>
+
+#### 4. License Terms
+
+On the **License Terms** page, review the license agreement. If you agree, select the **I accept the license terms** check box, and then select **Next**.
+
+> **Note:**  
+>  SQL Server 
+ transmits information about your installation experience, as well as other usage and performance data to help Microsoft improve the product. To learn more about  SQL Server 
+ data processing and privacy controls, see the [privacy statement](https://www.microsoft.com/privacy/privacystatement) and [Configure usage and diagnostic data collection for SQL Server (CEIP)](../../sql-server/usage-and-diagnostic-data-configuration-for-sql-server.md).
+
+<a id="global-rules-2016-2017"></a>
+
+#### 5. Global Rules
+
+In the **Global Rules** page, Setup automatically advances to the **Product Updates** page if there are no rule errors.
+
+<a id="microsoft-update-2016-2017"></a>
+
+#### 6. Microsoft Update
+
+The **Microsoft Update** page appears next if the **Microsoft Update** check box in **Control Panel** > **All Control Panel Items** > **Windows Update** > **Change settings** isn't selected. Selecting the **Microsoft Update** check box changes the computer settings to include the latest updates for all Microsoft products when you scan for Windows updates.
+
+<a id="product-updates-2016-2017"></a>
+
+#### 7. Product Updates
+
+On the **Product Updates** page, the latest available  SQL Server 
+ product updates are displayed. If no product updates are discovered, Setup doesn't display this page and automatically advances to the **Install Setup Files** page.
+
+<a id="install-setup-files-2016-2017"></a>
+
+#### 8. Install Setup Files
+
+On the **Install Setup Files** page, Setup provides the progress of downloading, extracting, and installing the Setup files. If an update for Setup is found and you specify to include it, that update is also installed. If no update is found, Setup automatically advances to the next section.
+
+<a id="install-rules-2016-2017"></a>
+
+#### 9. Install Rules
+
+On the **Install Rules** page, Setup checks for potential problems that might occur while running Setup. If failures occur, select an item in the **Status** column for more information. Otherwise, select **Next**.
+
+<a id="azure-extension-for-sql-server-2016-2017"></a>
+
+#### 10. Azure Extension for SQL Server
+
+If this is the first installation of  SQL Server 
+ on the machine, Setup skips the **Installation Type** page and goes directly to the **Feature Selection** page. If  SQL Server 
+ is already installed on the system, you can use the **Installation Type** page to select either to perform a new installation, or to add features to an existing installation. To continue, select **Next**.
+
+<a id="feature-selection-2016-2017"></a>
+
+#### 11. Feature Selection
+
+On the **Feature Selection** page, select the components for your installation. For example, to install a new instance of  SQL Server 
+  Database Engine 
+, select **Database Engine Services**.
+
+A description for each component group appears in the **Feature description** pane after you select the feature name. You can select any combination of check boxes. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+
+The prerequisites for the selected features are displayed in the **Prerequisites for selected features** pane. Setup installs the prerequisites that aren't already installed during the installation step described later in this procedure.
+
+You can also specify a custom directory for shared components by using the field at the bottom of the **Feature Selection** page. To change the installation path for shared components, either update the path in the field at the bottom of the dialog box or select **Browse** to go to an installation directory. The default installation path is \<*drive*>:\Program Files\Microsoft SQL Server\\*nnn*\\
+.
+
+> **Note:**  
+> The path specified for the shared components must be an absolute path. The folder must not be compressed or encrypted. Mapped drives aren't supported.
+
+ SQL Server 
+ uses two directories for shared features:
+
+- Shared feature directory
+- Shared feature directory (x86)
+
+> **Note:**  
+> The path specified for each of the above options must be different.
+
+<a id="feature-roles-2016-2017"></a>
+
+#### 12. Feature Rules
+
+The **Feature Rules** page automatically advances if all rules pass.
+
+<a id="instance-configuration-2016-2017"></a>
+
+#### 13. Instance Configuration
+
+On the **Instance Configuration** page, specify whether to install a default instance or a named instance. For more information, see [Instance configuration](../../sql-server/install/instance-configuration.md#instance-configuration-page).
+
+- **Instance ID**: By default, the instance name is used as the instance ID. This ID is used to identify the installation directories and registry keys for your instance of  SQL Server 
+. The same behavior occurs for default instances and named instances. For a default instance, the instance name and instance ID are `MSSQLSERVER`. To use a nondefault instance ID, specify a different value in the **Instance ID** text box.
+
+  > **Note:**  
+  > Typical standalone instances of  SQL Server 
+, whether default or named instances, don't use a nondefault value for the instance ID.
+
+  All  SQL Server 
+ service packs and upgrades apply to every component of an instance of  SQL Server 
+.
+
+- **Installed instances**: The grid shows the instances of  SQL Server 
+ that are on the computer where Setup is running. If a default instance is already installed on the computer, you must install a named instance of  SQL Server 
+.
+
+The workflow for the rest of the installation depends on the features that you specified for your installation. Depending on your selections, you might not see all the pages.
+
+<a id="polybase-configuration-2016-2017"></a>
+
+#### 14. PolyBase Configuration
+
+Selecting to install the PolyBase feature will add the **PolyBase Configuration** page to the  SQL Server 
+ setup, displayed after the **Instance Configuration** page. PolyBase requires the Oracle JRE 7 Update 51 (at least), and if this isn't already installed, your installation is blocked. On the **PolyBase Configuration** page, you can choose to use the  SQL Server 
+ as a standalone PolyBase-enabled instance, or you can use this  SQL Server 
+ as part of a PolyBase scale-out group. If you choose to use the scale-out group, you need to specify a port range of up to six or more ports.
+
+<a id="server-configuration-2016-2017"></a>
+
+#### 15. Server Configuration
+
+Use the **Service Accounts** tab on the **Server Configuration** page to specify the accounts for  SQL Server 
+ services. The actual services that you configure on this page depend on the features that you selected to install. For more information about configuration settings, see [Installation Wizard help](../../sql-server/install/instance-configuration.md#serverconfig).
+
+You can assign the same account to all  SQL Server 
+ services, or you can configure each service account individually. You can also specify whether services start automatically, start manually, or are disabled. We recommend you configure service accounts individually to provide the least privileges for each service. Make sure  SQL Server 
+ services are granted the minimum permissions they must have to complete their tasks. For more information, see [Configure Windows service accounts and permissions](../configure-windows/configure-windows-service-accounts-and-permissions.md).
+
+To specify the same account for all service accounts in this instance of  SQL Server 
+, provide the credentials in the fields at the bottom of the page.
+
+> **Important:**  
+>  Do not use a blank password. Use a strong password. 
+
+
+In  SQL Server 2016 (13.x) 
+ and later versions, select the **Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service** check box to allow the  SQL Server Database Engine 
+ service account to use [database instant file initialization](../../relational-databases/databases/database-instant-file-initialization.md).
+
+Use the **Collation** tab on the **Server Configuration** page to specify non-default collations for the  Database Engine 
+ and  Analysis Services 
+.
+
+The default installation setting is determined by the operating system (OS) locale. The server-level collation can either be changed during setup, or by changing the OS locale before installation. The default collation is set to the oldest available version that is associated with each specific locale. This is due to backward compatibility reasons. Therefore, this isn't always the recommended collation. To take full advantage of  SQL Server 
+ features, change the default installation settings to use Windows collations. For example, for the OS locale **English (United States)** (code page 1252), the default collation during setup is **SQL_Latin1_General_CP1_CI_AS** and can be changed to its closest Windows collation counterpart **Latin1_General_100_CI_AS_SC**.
+
+For more information, see [Collation and Unicode support](../../relational-databases/collations/collation-and-unicode-support.md).
+
+<a id="database-engine-configuration-2016-2017"></a>
+
+#### 16. Database Engine Configuration
+
+- Use the **Server Configuration** tab on the **Database Engine Configuration** page to specify the following options:
+
+  - **Authentication Mode**: Select **Windows Authentication** or **Mixed Mode Authentication** for your instance of  SQL Server 
+. If you select **Mixed Mode Authentication**, you must provide a strong password for the built-in  SQL Server 
+ system administrator account.
+
+    After a device establishes a successful connection to  SQL Server 
+, the security mechanism is the same for both Windows authentication and mixed mode authentication. For more information, see [Database Engine Configuration - Server Configuration page](../../sql-server/install/instance-configuration.md#serverconfig).
+
+  - **SQL Server Administrators**: You must specify at least one system administrator for the instance of  SQL Server 
+. To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**. To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for the instance of  SQL Server 
+.
+
+- Use the **Data Directories** tab on the **Database Engine Configuration** page to specify nondefault installation directories. To install in the default directories, select **Next**.
+
+  > **Important:**  
+  > If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+  For more information, see [Database Engine Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#datadir).
+
+- Use the **TempDB** tab on the **Database Engine Configuration** page to configure the file size, number of files, nondefault installation directories, and file-growth settings for `tempdb`. For more information, see [Database Engine Configuration - TempDB page](../../sql-server/install/instance-configuration.md#tempdb).
+
+- Use the **FILESTREAM** tab on the **Database Engine Configuration** page to enable FILESTREAM for your instance of  SQL Server 
+. For more information, see [Database Engine Configuration - FILESTREAM page](../../sql-server/install/instance-configuration.md#database-engine-configuration---filestream-page).
+
+<a id="analysis-services-configuration-2016-2017"></a>
+
+#### 17. Analysis Services Configuration
+
+- Use the **Server Configuration** tab on the **Analysis Services Configuration** page to specify the server mode and the users or accounts that have administrator permissions for  Analysis Services 
+. The server mode determines which memory and storage subsystems are used on the server. Different solution types run in different server modes. **Tabular mode** is the default.
+
+  You must specify at least one system administrator for  Analysis Services 
+:
+
+  - To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**.
+
+  - To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for  Analysis Services 
+.
+
+  For more information about server mode and administrator permissions, see [Analysis Services Configuration](../../sql-server/install/instance-configuration.md#analysis-services-configuration---account-provisioning-page).
+
+  When you finish editing the list, select **OK**. Verify the list of administrators in the configuration dialog box.
+
+- Use the **Data Directories** tab on the **Analysis Services Configuration** page to specify non-default installation directories. To install to the default directories, select **Next**.
+
+  > **Important:**  
+  > When installing  SQL Server 
+, if you specify the same directory path for `INSTANCEDIR` and `SQLUSERDBDIR`,  SQL Server 
+ Agent and Full Text Search won't start due to missing permissions.  
+  >
+  > If you specify non-default installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+  For more information, see [Analysis Services Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---data-directories-page).
+
+<a id="distributed-replay-controller-2016-2017"></a>
+
+#### 18. Distributed Replay Controller
+
+Use the **Distributed Replay Controller** page to specify the users you want to grant administrative permissions to for the Distributed Replay controller service. Users that have administrative permissions have unlimited access to the Distributed Replay controller service.
+
+- To grant access permissions for the Distributed Replay controller service to the user who's running  SQL Server 
+ Setup, select the **Add Current User** button.
+
+- To grant access permissions for the Distributed Replay controller service to other users, select the **Add** button.
+
+- To remove access permissions from the Distributed Replay controller service, select the **Remove** button.
+
+- To continue, select **Next**.
+
+<a id="distributed-replay-client-2016-2017"></a>
+
+#### 19. Distributed Replay Client
+
+Use the **Distributed Replay Client** page to specify the users you want to grant administrative permissions to for the Distributed Replay client service. Users that have administrative permissions have unlimited access to the Distributed Replay client service.
+
+- **Controller Name** is optional. The default value is `<blank>`. Enter the name of the controller that the client computer will communicate with for the Distributed Replay client service:
+
+  - If you already set up a controller, enter the name of the controller while configuring each client.
+
+  - If you haven't set up a controller, you can leave the controller name blank. However, you must manually enter the controller name in the **client configuration** file.
+
+- Specify the **Working Directory** for the Distributed Replay client service. The default working directory is `<drive letter>:\Program Files\Microsoft SQL Server\DReplayClient\WorkingDir\`.
+
+- Specify the **Result Directory** for the Distributed Replay client service. The default result directory is `<drive letter>:\Program Files\Microsoft SQL Server\DReplayClient\ResultDir\`.
+
+- To continue, select **Next**.
+
+<a id="ready-to-install-2016-2017"></a>
+
+#### 20. Ready to Install
+
+The **Ready to Install** page shows a tree view of the installation options that you specified during Setup. On this page, Setup indicates whether the **Product Update** feature is enabled or disabled and the final update version.
+
+To continue, select **Install**.  SQL Server 
+ Setup first installs the required prerequisites for the selected features, then it installs the selected features.
+
+<a id="installation-progress-2016-2017"></a>
+
+#### 21. Installation Progress
+
+During installation, the **Installation Progress** page provides status updates so that you can monitor the installation progress as Setup continues.
+
+<a id="complete-2016-2017"></a>
+
+#### 22. Complete
+
+After installation, the **Complete** page provides a link to the summary log file for the installation and other important notes.
+
+> **Important:**  
+> Make sure you read the message from the Installation Wizard when you finish with Setup. For more information, see [View and read SQL Server Setup log files](view-and-read-sql-server-setup-log-files.md).
+
+To complete the  SQL Server 
+ installation process, select **Close**.
+
+<a id="restart-2016-2017"></a>
+
+#### 23. Restart
+
+If you're instructed to restart the computer, do so now.
+
+
+
+**Applies to: \=sql-server-ver15**
+
+## Install SQL Server 2019
+
+<a id="installation-media-2019"></a>
+
+#### 1. Installation media
+
+Insert the  SQL Server 
+ installation media. From the root folder, double-click `setup.exe`. To install from a network share, locate the root folder on the share, and then double-click `setup.exe`.
+
+<a id="installation-center-2019"></a>
+
+#### 2. SQL Server Installation Center
+
+The Installation Wizard runs the  SQL Server 
+ Installation Center. To create a new installation of  SQL Server 
+, select **Installation** in the left navigation area, and then select **New  SQL Server 
+ standalone installation or add features to an existing installation**.
+
+<a id="product-key-2019"></a>
+
+#### 3. Product Key
+
+On the **Product Key** page, select an option to indicate whether you're installing a free edition of  SQL Server 
+ or a production version that has a PID key. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+
+To continue, select **Next**.
+
+<a id="license-terms-2019"></a>
+
+#### 4. License Terms
+
+On the **License Terms** page, review the license agreement. If you agree, select the **I accept the license terms and [privacy statement](https://www.microsoft.com/privacy/privacystatement)** check box, and then select **Next**.
+
+> **Note:**  
+> If an Enterprise Server/CAL license product key is entered, and the machine has more than 20 physical cores, or 40 logical cores when simultaneous multithreading (SMT) is enabled, a warning is shown during setup. You can still continue setup by selecting the **Check this box to acknowledge this limitation or select Back/Cancel to enter an Enterprise Core product license that supports the operating system maximum** check box, or select **Back** and enter a License Key that supports the operating system maximum number of processors.
+
+ SQL Server 
+ transmits information about your installation experience, as well as other usage and performance data to help Microsoft improve the product. To learn more about  SQL Server 
+ data processing and privacy controls, see the [privacy statement](https://www.microsoft.com/privacy/privacystatement) and [Configure usage and diagnostic data collection for SQL Server (CEIP)](../../sql-server/usage-and-diagnostic-data-configuration-for-sql-server.md).
+
+<a id="global-rules-2019"></a>
+
+#### 5. Global Rules
+
+In the **Global Rules** page, Setup automatically advances to the **Product Updates** page if there are no rule errors.
+
+<a id="microsoft-update-2019"></a>
+
+#### 6. Microsoft Update
+
+The **Microsoft Update** page appears next if the **Microsoft Update** check box in **Control Panel** > **All Control Panel Items** > **Windows Update** > **Change settings** isn't selected. Selecting the **Microsoft Update** check box changes the computer settings to include the latest updates for all Microsoft products when you scan for Windows updates.
+
+<a id="product-updates-2019"></a>
+
+#### 7. Product Updates
+
+On the **Product Updates** page, the latest available  SQL Server 
+ product updates are displayed. If no product updates are discovered, Setup doesn't display this page and automatically advances to the **Install Setup Files** page.
+
+<a id="install-setup-files-2019"></a>
+
+#### 8. Install Setup Files
+
+On the **Install Setup Files** page, Setup provides the progress of downloading, extracting, and installing the Setup files. If an update for Setup is found and you specify to include it, that update is also installed. If no update is found, Setup automatically advances to the next section.
+
+<a id="install-rules-2019"></a>
+
+#### 9. Install Rules
+
+On the **Install Rules** page, Setup checks for potential problems that might occur while running Setup. If failures occur, select an item in the **Status** column for more information. Otherwise, select **Next**.
+
+<a id="installation-type-2019"></a>
+
+#### 10. Installation Type
+
+If this is the first installation of  SQL Server 
+ on the machine, Setup skips the **Installation Type** page and goes directly to the **Feature Selection** page. If  SQL Server 
+ is already installed on the system, you can use the **Installation Type** page to select either to perform a new installation, or to add features to an existing installation. To continue, select **Next**.
+
+<a id="feature-selection-2019"></a>
+
+#### 11. Feature Selection
+
+On the **Feature Selection** page, select the components for your installation. For example, to install a new instance of  SQL Server 
+  Database Engine 
+, select **Database Engine Services**.
+
+A description for each component group appears in the **Feature description** pane after you select the feature name. You can select any combination of check boxes. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+
+The prerequisites for the selected features are displayed in the **Prerequisites for selected features** pane. Setup installs the prerequisites that aren't already installed during the installation step described later in this procedure.
+
+You can also specify a custom directory for shared components by using the field at the bottom of the **Feature Selection** page. To change the installation path for shared components, either update the path in the field at the bottom of the dialog box or select **Browse** to go to an installation directory. The default installation path is \<*drive*>:\Program Files\Microsoft SQL Server\\*nnn*\\
+.
+
+> **Note:**  
+> The path specified for the shared components must be an absolute path. The folder must not be compressed or encrypted. Mapped drives aren't supported.
+
+ SQL Server 
+ uses two directories for shared features:
+
+- Shared feature directory
+- Shared feature directory (x86)
+
+> **Note:**  
+> The path specified for each of the above options must be different.
+
+<a id="feature-rules-2019"></a>
+
+#### 12. Feature Rules
+
+The **Feature Rules** page automatically advances if all rules pass.
+
+<a id="instance-configuration-2019"></a>
+
+#### 13. Instance Configuration
+
+On the **Instance Configuration** page, specify whether to install a default instance or a named instance. For more information, see [Instance configuration](../../sql-server/install/instance-configuration.md#instance-configuration-page).
+
+- **Instance ID**: By default, the instance name is used as the instance ID. This ID is used to identify the installation directories and registry keys for your instance of  SQL Server 
+. The same behavior occurs for default instances and named instances. For a default instance, the instance name and instance ID are `MSSQLSERVER`. To use a nondefault instance ID, specify a different value in the **Instance ID** text box.
+
+  > **Note:**  
+  > Typical standalone instances of  SQL Server 
+, whether default or named instances, don't use a nondefault value for the instance ID.
+
+  All  SQL Server 
+ service packs and upgrades apply to every component of an instance of  SQL Server 
+.
+
+- **Installed instances**: The grid shows the instances of  SQL Server 
+ that are on the computer where Setup is running. If a default instance is already installed on the computer, you must install a named instance of  SQL Server 
+.
+
+The workflow for the rest of the installation depends on the features that you specified for your installation. Depending on your selections, you might not see all the pages.
+
+<a id="java-install-location-2019"></a>
+
+#### 14. Java Install Location
+
+In  SQL Server 2019 (15.x) 
+ and later versions, PolyBase no longer requires that Oracle JRE 7 Update 51 (at least) is preinstalled on the computer before installing the feature. Selecting to install the PolyBase feature will add the **Java Install Location** page to the  SQL Server 
+ setup displayed after the **Instance Configuration** page. On the Java Install Location page, you can choose to install the Azul Zulu Open JRE included with the  SQL Server 2019 (15.x) 
+ installation, or provide a location of a different JRE or JDK that has already been installed on the computer.
+
+In  SQL Server 2019 (15.x) 
+ and later versions, Java has been added with Language Extensions. Selecting to install the Java feature will add the **Java Install Location** page to the  SQL Server 
+ setup dialog window, displayed after the **Instance Configuration** page. On the **Java Install Location** page, you can choose to install the Zulu Open JRE included with the  SQL Server 2019 (15.x) 
+ installation, or provide a location of a different JRE or JDK that has already been installed on the computer.
+
+<a id="server-configuration-2019"></a>
+
+#### 15. Server Configuration
+
+Use the **Service Accounts** tab under the **Server Configuration** page to specify the accounts for  SQL Server 
+ services. The actual services that you configure on this page depend on the features that you selected to install. For more information about configuration settings, see [Installation Wizard help](../../sql-server/install/instance-configuration.md#serverconfig).
+
+You can assign the same account to all  SQL Server 
+ services, or you can configure each service account individually. You can also specify whether services start automatically, start manually, or are disabled. We recommend you configure service accounts individually to provide the least privileges for each service. Make sure  SQL Server 
+ services are granted the minimum permissions they must have to complete their tasks. For more information, see [Configure Windows service accounts and permissions](../configure-windows/configure-windows-service-accounts-and-permissions.md).
+
+To specify the same account for all service accounts in this instance of  SQL Server 
+, provide the credentials in the fields at the bottom of the page.
+
+> **Important:**  
+>  Do not use a blank password. Use a strong password. 
+
+
+In  SQL Server 2016 (13.x) 
+ and later versions, select the **Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service** check box to allow the  SQL Server Database Engine 
+ service account to use [database instant file initialization](../../relational-databases/databases/database-instant-file-initialization.md).
+
+Use the **Collation** tab under the **Server Configuration** page to specify nondefault collations for the  Database Engine 
+ and  Analysis Services 
+. For more information, see [Collation and Unicode support](../../relational-databases/collations/collation-and-unicode-support.md).
+
+<a id="database-engine-configuration-2019"></a>
+
+#### 16. Database Engine Configuration
+
+- Use the **Server Configuration** tab under the **Database Engine Configuration** page to specify the following options:
+
+  - **Security Mode**: Select **Windows Authentication** or **Mixed Mode Authentication** for your instance of  SQL Server 
+. If you select **Mixed Mode Authentication**, you must provide a strong password for the built-in  SQL Server 
+ system administrator account (sa).
+
+    After a device establishes a successful connection to  SQL Server 
+, the security mechanism is the same for both Windows authentication and mixed mode authentication. For more information, see [Database Engine Configuration - Server Configuration page](../../sql-server/install/instance-configuration.md#serverconfig).
+
+  - **SQL Server Administrators**: You must specify at least one system administrator for the instance of  SQL Server 
+. To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**. To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for the instance of  SQL Server 
+. You can also add a Windows Domain Group, to establish a shared SQL Administrator Group in Active Directory with sysadmin Access to  SQL Server 
+.
+
+- Use the **Data Directories** tab under the **Database Engine Configuration** page to specify nondefault installation directories. To install to the default directories, select **Next**.
+
+  > **Important:**  
+  > If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+  For more information, see [Database Engine Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#datadir).
+
+- Use the **TempDB** tab under the **Database Engine Configuration** page to configure the file size, number of files, nondefault installation directories, and file-growth settings for `tempdb`. For more information, see [Database Engine Configuration - TempDB page](../../sql-server/install/instance-configuration.md#tempdb).
+
+- Use the **MaxDOP** tab under the ** Database Engine 
+ Configuration** page to specify your max degree of parallelism. This setting determines how many processors a single statement can use during execution. The recommended value is automatically calculated during installation.
+
+  > **Note:**  
+  > This page is only available in Setup starting with  SQL Server 2019 (15.x) 
+.
+
+  For more information, see the [Database Engine Configuration - MaxDOP page](../../sql-server/install/instance-configuration.md?view=sql-server-ver15&preserve-view=true#maxdop).
+
+- Use the **Memory** tab under the **Database Engine Configuration** page to specify the **min server memory** and **max server memory** values that this instance of  SQL Server 
+ will use after startup. You can use the default values, use the calculated recommended values, or manually specify your own values after you choose the **Recommended** option.
+
+  > **Note:**  
+  > This page is only available in Setup starting with  SQL Server 2019 (15.x) 
+.
+
+  For more information, see the [Database Engine Configuration - Memory page](../../sql-server/install/instance-configuration.md?view=sql-server-ver15&preserve-view=true#memory).
+
+- Use **FILESTREAM** tab under the **Database Engine Configuration** page to enable FILESTREAM for your instance of  SQL Server 
+. For more information, see [Database Engine Configuration - FILESTREAM page](../../sql-server/install/instance-configuration.md#database-engine-configuration---filestream-page).
+
+<a id="analysis-services-configuration-2019"></a>
+
+#### 17. Analysis Services Configuration
+
+Use the **Analysis Services Configuration - Account Provisioning** page to specify the server mode and the users or accounts that have administrator permissions for  Analysis Services 
+. The server mode determines which memory and storage subsystems are used on the server. Different solution types run in different server modes. If you plan to run multidimensional cube databases on the server, select the default server mode option, **Multidimensional and Data Mining**.
+
+You must specify at least one system administrator for  Analysis Services 
+:
+
+- To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**.
+
+- To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for  Analysis Services 
+.
+
+For more information about server mode and administrator permissions, see [Analysis Services Configuration - Account Provisioning page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---account-provisioning-page).
+
+When you're finished editing the list, select **OK**. Verify the list of administrators in the configuration dialog box. After the list is complete, select **Next**.
+
+Use the **Data Directories** tab under the **Analysis Services Configuration** page to specify nondefault installation directories. To install to the default directories, select **Next**.
+
+> **Important:**  
+> When installing  SQL Server 
+, if you specify the same directory path for `INSTANCEDIR` and `SQLUSERDBDIR`,  SQL Server 
+ Agent and Full Text Search won't start due to missing permissions.  
+>
+> If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+For more information, see [Analysis Services Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---data-directories-page).
+
+<a id="distributed-replay-controller-2019"></a>
+
+#### 18. Distributed Replay Controller
+
+Use the **Distributed Replay Controller** page to specify the users you want to grant administrative permissions to for the Distributed Replay controller service. Users that have administrative permissions have unlimited access to the Distributed Replay controller service.
+
+- To grant access permissions for the Distributed Replay controller service to the user who's running  SQL Server 
+ Setup, select the **Add Current User** button.
+
+- To grant access permissions for the Distributed Replay controller service to other users, select the **Add** button.
+
+- To remove access permissions from the Distributed Replay controller service, select the **Remove** button.
+
+- To continue, select **Next**.
+
+<a id="distributed-replay-client-2019"></a>
+
+#### 19. Distributed Replay Client
+
+Use the **Distributed Replay Client** page to specify the users you want to grant administrative permissions to for the Distributed Replay client service. Users that have administrative permissions have unlimited access to the Distributed Replay client service.
+
+- **Controller Name** is optional. The default value is `<blank>`. Enter the name of the controller that the client computer will communicate with for the Distributed Replay client service:
+
+  - If you already set up a controller, enter the name of the controller while configuring each client.
+
+  - If you haven't set up a controller, you can leave the controller name blank. However, you must manually enter the controller name in the **client configuration** file.
+
+- Specify the **Working Directory** for the Distributed Replay client service. The default working directory is `<drive letter>:\Program Files\Microsoft SQL Server\DReplayClient\WorkingDir\`.
+
+- Specify the **Result Directory** for the Distributed Replay client service. The default result directory is `<drive letter>:\Program Files\Microsoft SQL Server\DReplayClient\ResultDir\`.
+
+- To continue, select **Next**.
+
+<a id="ready-to-install-2019"></a>
+
+#### 20. Ready to Install
+
+The **Ready to Install** page shows a tree view of the installation options that you specified during Setup. On this page, Setup indicates whether the **Product Update** feature is enabled or disabled and the final update version.
+
+To continue, select **Install**.  SQL Server 
+ Setup first installs the required prerequisites for the selected features, then it installs the selected features.
+
+<a id="installation-progress-2019"></a>
+
+#### 21. Installation Progress
+
+During installation, the **Installation Progress** page provides status updates so that you can monitor the installation progress as Setup continues.
+
+<a id="complete-2019"></a>
+
+#### 22. Complete
+
+After installation, the **Complete** page provides a link to the summary log file for the installation and other important notes.
+
+> **Important:**  
+> Make sure you read the message from the Installation Wizard when you finish with Setup. For more information, see [View and read SQL Server Setup log files](view-and-read-sql-server-setup-log-files.md).
+
+To complete the  SQL Server 
+ installation process, select **Close**.
+
+<a id="restart-2019"></a>
+
+#### 23. Restart
+
+If you're instructed to restart the computer, do so now.
+
+
+
+**Applies to: \=sql-server-ver16**
+
+## Install SQL Server 2022
+
+<a id="installation-media-2022"></a>
+
+#### 1. Installation media
+
+Insert the  SQL Server 
+ installation media. From the root folder, double-click `setup.exe`. To install from a network share, locate the root folder on the share, and then double-click `setup.exe`.
+
+<a id="installation-center-2022"></a>
+
+#### 2. SQL Server Installation Center
+
+The Installation Wizard runs the  SQL Server 
+ Installation Center. To create a new installation of  SQL Server 
+, select **Installation** in the left navigation area, and then select **New  SQL Server 
+ standalone installation or add features to an existing installation**.
+
+<a id="edition-2022"></a>
+
+#### 3. Edition
+
+On the **Edition** page, select the edition you want to install.
+
+- **Specify a free edition** allows you to select Evaluation, Developer, or Web edition.
+
+  > **Note:**  
+  > Web edition isn't available in  SQL Server 2025 (17.x) 
+ and later versions.
+
+- **Use pay-as-you-go billing through Microsoft Azure** is an alternative to using the traditional license agreement.  SQL Server 2022 (16.x) 
+ introduces this option in setup and allows you to activate your instance for use in production without supplying a product key. This option requires an active Azure subscription. For more information, see [Configure SQL Server enabled by Azure Arc](../../sql-server/azure-arc/manage-configuration.md). With this option, you can specify Standard or Enterprise edition.
+
+- **Enter the product key** allows you to provide a product key for a specific edition of  SQL Server 
+. You can also specify if you have a license with Software Assurance or SQL Software Subscription, and if you have a  SQL Server 
+ license only.
+
+To continue, select **Next**.
+
+<a id="license-terms-2022"></a>
+
+#### 4. License Terms
+
+On the **License Terms** page, review the license agreement. If you agree, select the **I accept the license terms and [Privacy Statement](https://www.microsoft.com/privacy/privacystatement)** check box, and then select **Next**.
+
+> **Note:**  
+> If an Enterprise Server/CAL license product key is entered, and the machine has more than 20 physical cores, or 40 logical cores when simultaneous multithreading (SMT) is enabled, a warning is shown during setup. You can still continue setup by selecting the **Check this box to acknowledge this limitation or select Back/Cancel to enter an Enterprise Core product license that supports the operating system maximum** check box, or select **Back** and enter a product key that supports the operating system maximum number of processors.
+
+ SQL Server 
+ transmits information about your installation experience, as well as other usage and performance data to help Microsoft improve the product. To learn more about  SQL Server 
+ data processing and privacy controls, see the [privacy statement](https://www.microsoft.com/privacy/privacystatement) and [Configure usage and diagnostic data collection for SQL Server (CEIP)](../../sql-server/usage-and-diagnostic-data-configuration-for-sql-server.md).
+
+<a id="global-rules-2022"></a>
+
+#### 5. Global Rules
+
+In the **Global Rules** page, Setup automatically advances to the **Microsoft Update** page if there are no rule errors.
+
+<a id="microsoft-update-2022"></a>
+
+#### 6. Microsoft Update
+
+The **Microsoft Update** page appears next if the **Microsoft Update** check box in **Control Panel** > **All Control Panel Items** > **Windows Update** > **Change settings** isn't selected. Selecting the **Microsoft Update** check box changes the computer settings to include the latest updates for all Microsoft products when you scan for Windows updates.
+
+<a id="product-updates-2022"></a>
+
+#### 7. Product Updates
+
+On the **Product Updates** page, the latest available  SQL Server 
+ critical product updates are displayed. If no product updates are discovered, Setup doesn't display this page and automatically advances to the **Install Setup Files** page.
+
+<a id="install-setup-files-2022"></a>
+
+#### 8. Install Setup Files
+
+On the **Install Setup Files** page, Setup provides the progress of downloading, extracting, and installing the Setup files. If an update for Setup is found and you specify to include it, that update is also installed. If no update is found, Setup automatically advances to the next section.
+
+<a id="install-rules-2022"></a>
+
+#### 9. Install Rules
+
+On the **Install Rules** page, Setup checks for potential problems that might occur while running Setup. If failures occur, select an item in the **Status** column for more information. Otherwise, select **Next**.
+
+<a id="azure-extension-for-sql-server-2022"></a>
+
+#### 10. Azure Extension for SQL Server
+
+On the **Azure Extension for SQL Server** page, you can configure  SQL Server 
+ to connect to Azure.  SQL Server 2022 (16.x) 
+ introduces this extension to enable using Azure services such as Microsoft Defender for Cloud, Microsoft Purview, Microsoft Entra ID, and others. This feature is selected by default. If you wish to proceed without connecting to Azure, you can unselect **Azure Extension for SQL Server**.
+
+- If you're installing  SQL Server 2022 (16.x) 
+ on a VMware ESX host or an Azure VMware Solution (AVS) host, you don't see the **Azure Extension for SQL Server** page during installation. You can [install the extension during setup using the command line parameters](install-sql-server-from-the-command-prompt.md) or you can install  SQL Server 2022 (16.x) 
+ without the Azure Extension for  SQL Server 
+ first and then later install the [Connect your SQL Server to Azure Arc](../../sql-server/azure-arc/connect.md).
+
+- If you're installing  SQL Server 2022 (16.x) 
+ on an Azure VM, you don't see the **Azure Extension for SQL Server** page during installation. Connectivity to Azure Services for  SQL Server 
+ on Azure VMs is handled through the [SQL Server IaaS Agent extension](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/sql-server-iaas-agent-extension-automate-management), which is automatically pushed to your Azure VM shortly after  SQL Server 
+ installation. You can register your VM with the extension [manually](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/sql-agent-extension-manually-register-single-vm) if you don't want to wait for automatic registration. For more information on supported configurations, see [Supported SQL Server versions and environments](../../sql-server/azure-arc/prerequisites.md#supported-sql-server-versions-and-environments).
+
+To use the Azure extension for  SQL Server 
+, you must have an active Azure subscription and provide a set of additional Azure-related parameters. You also need to make sure the following [Azure resource providers](../../sql-server/azure-arc/prerequisites.md) are registered in your subscription:
+
+- `Microsoft.AzureArcData`
+- `Microsoft.HybridCompute`
+
+To authenticate the  SQL Server 
+ instance with Azure, you can sign in using an Azure account, or you can use an Azure service principal. For specific security requirements to install the extension, see [Prerequisites - SQL Server enabled by Azure Arc](../../sql-server/azure-arc/prerequisites.md).
+
+To sign in with your Azure account, select **Use Azure Login**. Windows might prompt you to add one or more sites to the Trusted sites zone. Follow your organization's security requirements. After you sign in to Azure, proceed to provide the additional registration information.
+
+Alternatively, you can use a service principal:
+
+- **Azure service principal**: If you provide the service principal, provide the service principal secret. This is used to authenticate the  SQL Server 
+ instance to Azure.
+- **Azure subscription ID**: Azure subscription where the  SQL Server 
+ instance resource is created.
+
+Provide the following information:
+
+- **Azure resource group**: Azure resource group where the  SQL Server 
+ instance resource is created.
+- **Azure region**: Azure region where the  SQL Server 
+ instance resource is created.
+- **Azure tenant ID**: Azure tenant ID in which the service principal exists.
+- **Proxy server URL**: (Optional) - Name of the HTTP proxy server used to connect to Azure Arc.
+
+> **Note:**  
+> To create a service principal, retrieve its password and Tenant ID, see [Connect multiple SQL Server instances to Azure Arc](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/sql-server/azure-arc/connect-at-scale-policy.md). If the server is already connected to Azure via Azure Arc, the subscription ID, resource group, and region will be populated and you won't be able to change them.
+
+Select **Next** to proceed.
+
+<a id="feature-selection-2022"></a>
+
+#### 11. Feature Selection
+
+On the **Feature Selection** page, select the components for your installation. For example, to install a new instance of  SQL Server 
+  Database Engine 
+, select **Database Engine Services**.
+
+A description for each component group appears in the **Feature description** pane after you select the feature name. You can select any combination of check boxes.
+
+The prerequisites for the selected features are displayed in the **Prerequisites for selected features** pane. Setup installs the prerequisites that aren't already installed during the installation step described later in this procedure.
+
+You can also specify a custom directory for shared components by using the field at the bottom of the **Feature Selection** page. To change the installation path for shared components, either update the path in the field at the bottom of the dialog box or select **Browse** to go to an installation directory. The default installation path is \<*drive*>:\Program Files\Microsoft SQL Server\\*nnn*\\
+.
+
+> **Note:**  
+> The path specified for the shared components must be an absolute path. The folder must not be compressed or encrypted. Mapped drives aren't supported.
+
+ SQL Server 
+ uses two directories for shared features:
+
+- Shared feature directory
+- Shared feature directory (x86)
+
+> **Note:**  
+> The path specified for each of the above options must be different.
+
+<a id="feature-rules-2022"></a>
+
+#### 12. Feature Rules
+
+The **Feature Rules** page automatically advances if all rules pass.
+
+<a id="instance-configuration-2022"></a>
+
+#### 13. Instance Configuration
+
+On the **Instance Configuration** page, specify whether to install a default instance or a named instance. For more information, see [Instance configuration](../../sql-server/install/instance-configuration.md#instance-configuration-page).
+
+- **Instance ID**: By default, the instance name is used as the instance ID. This ID is used to identify the installation directories and registry keys for your instance of  SQL Server 
+. The same behavior occurs for default instances and named instances. For a default instance, the instance name and instance ID are `MSSQLSERVER`. To use a nondefault instance ID, specify a different value in the **Instance ID** text box.
+
+  > **Note:**  
+  > Typical standalone instances of  SQL Server 
+, whether default or named instances, don't use a nondefault value for the instance ID.
+
+  All  SQL Server 
+ service packs and upgrades apply to every component of an instance of  SQL Server 
+.
+
+- **Installed instances**: The grid shows the instances of  SQL Server 
+ that are on the computer where Setup is running. If a default instance is already installed on the computer, you must install a named instance of  SQL Server 
+.
+
+The workflow for the rest of the installation depends on the features that you specified for your installation. Depending on your selections, you might not see all the pages.
+
+<a id="java-install-location-2022"></a>
+
+#### 14. Java Install Location
+
+In  SQL Server 2019 (15.x) 
+ and later versions, PolyBase no longer requires that Oracle JRE 7 Update 51 (at least) is preinstalled on the computer before installing the feature. Selecting to install the PolyBase feature will add the **Java Install Location** page to the  SQL Server 
+ setup displayed after the **Instance Configuration** page. On the Java Install Location page, you can choose to install the Azul Zulu Open JRE included with the  SQL Server 
+ installation, or provide a location of a different JRE or JDK that has already been installed on the computer.
+
+In  SQL Server 2019 (15.x) 
+ and later versions, Java has been added with Language Extensions. Selecting to install the Java feature will add the **Java Install Location** page to the  SQL Server 
+ setup dialog window, displayed after the **Instance Configuration** page. On the **Java Install Location** page, you can choose to install the Zulu Open JRE included with the  SQL Server 
+ installation, or provide a location of a different JRE or JDK that has already been installed on the computer.
+
+<a id="server-configuration-2022"></a>
+
+#### 15. Server Configuration
+
+- On the **Server Configuration** page, use the **Service Accounts** tab to specify the accounts for  SQL Server 
+ services. The actual services that you configure on this page depend on the features that you selected to install. For more information about configuration settings, see [Installation Wizard help](../../sql-server/install/instance-configuration.md#serverconfig).
+
+  You can assign the same account to all  SQL Server 
+ services, or you can configure each service account individually. You can also specify whether services start automatically, start manually, or are disabled. We recommend you configure service accounts individually to provide the least privileges for each service. Make sure  SQL Server 
+ services are granted the minimum permissions they must have to complete their tasks. For more information, see [Configure Windows service accounts and permissions](../configure-windows/configure-windows-service-accounts-and-permissions.md).
+
+  To specify the same account for all service accounts in this instance of  SQL Server 
+, provide the credentials in the fields at the bottom of the page.
+
+  > **Important:**  
+  >  Do not use a blank password. Use a strong password. 
+
+
+  Select the **Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service** check box to allow the  SQL Server Database Engine 
+ service account to use [database instant file initialization](../../relational-databases/databases/database-instant-file-initialization.md).
+
+- On the **Server Configuration** page, use the **Collation** tab to specify nondefault collations for the  Database Engine 
+ and  Analysis Services 
+. For more information, see [Collation and Unicode support](../../relational-databases/collations/collation-and-unicode-support.md).
+
+<a id="database-engine-configuration-2022"></a>
+
+#### 16. Database Engine Configuration
+
+- Use the **Server Configuration** tab on the **Database Engine Configuration** page to specify the following options:
+
+  - **Security Mode**: Select **Windows Authentication** or **Mixed Mode Authentication** for your instance of  SQL Server 
+. If you select **Mixed Mode Authentication**, you must provide a strong password for the built-in  SQL Server 
+ system administrator account (sa).
+
+    After a device establishes a successful connection to  SQL Server 
+, the security mechanism is the same for both Windows authentication and mixed mode authentication. For more information, see [Database Engine Configuration - Server Configuration page](../../sql-server/install/instance-configuration.md#serverconfig).
+
+  - **SQL Server Administrators**: You must specify at least one system administrator for the instance of  SQL Server 
+. To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**. To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for the instance of  SQL Server 
+. You can also add a Windows Domain Group, to establish a shared SQL Administrator Group in Active Directory with sysadmin Access to  SQL Server 
+.
+
+- Use the **Data Directories** tab to specify nondefault installation directories. To install to the default directories, select **Next**.
+
+  > **Important:**  
+  > If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+  For more information, see [Database Engine Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#datadir).
+
+- Use the **TempDB** tab to configure the file size, number of files, nondefault installation directories, and file-growth settings for `tempdb`. For more information, see [Database Engine Configuration - TempDB page](../../sql-server/install/instance-configuration.md#tempdb).
+
+- Use the **MaxDOP** tab to specify your max degree of parallelism. This setting determines how many processors a single statement can use during execution. The recommended value is automatically calculated during installation.
+
+  For more information, see the [Database Engine Configuration - MaxDOP page](../../sql-server/install/instance-configuration.md?view=sql-server-ver15&preserve-view=true#maxdop).
+
+- Use the **Memory** tab to specify the **min server memory** and **max server memory** values that this instance of  SQL Server 
+ will use after startup. You can use the default values, use the calculated recommended values, or manually specify your own values after you choose the **Recommended** option.
+
+  For more information, see the [Database Engine Configuration - Memory page](../../sql-server/install/instance-configuration.md?view=sql-server-ver15&preserve-view=true#memory).
+
+- Use the **FILESTREAM** tab to enable FILESTREAM for your instance of  SQL Server 
+. For more information, see [Database Engine Configuration - FILESTREAM page](../../sql-server/install/instance-configuration.md#database-engine-configuration---filestream-page).
+
+<a id="analysis-services-configuration-2022"></a>
+
+#### 17. Analysis Services Configuration
+
+On the **Analysis Services Configuration**, use the **Account Provisioning** tab to specify the server mode and the users or accounts that have administrator permissions for  Analysis Services 
+. The server mode determines which memory and storage subsystems are used on the server. Different solution types run in different server modes. If you plan to run multidimensional cube databases on the server, select the default server mode option, **Multidimensional and Data Mining**.
+
+You must specify at least one system administrator for  Analysis Services 
+:
+
+- To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**.
+
+- To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for  Analysis Services 
+.
+
+  For more information about server mode and administrator permissions, see [Analysis Services Configuration - Account Provisioning page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---account-provisioning-page).
+
+  When you finish editing the list, select **OK**. Verify the list of administrators in the configuration dialog box. After the list is complete, select **Next**.
+
+On the **Analysis Services Configuration**, use the **Data Directories** page to specify nondefault installation directories. To install to the default directories, select **Next**.
+
+> **Important:**  
+> When installing  SQL Server 
+, if you specify the same directory path for `INSTANCEDIR` and `SQLUSERDBDIR`,  SQL Server 
+ Agent and Full Text Search won't start due to missing permissions.  
+>
+> If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+For more information, see [Analysis Services Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---data-directories-page).
+
+<a id="ready-to-install-2022"></a>
+
+#### 18. Ready to Install
+
+The **Ready to Install** page shows a tree view of the installation options that you specified during Setup. On this page, Setup indicates whether the **Product Update** feature is enabled or disabled and the final update version.
+
+To continue, select **Install**.  SQL Server 
+ Setup first installs the required prerequisites for the selected features, then it installs the selected features.
+
+<a id="installation-progress-2022"></a>
+
+#### 19. Installation Progress
+
+During installation, the **Installation Progress** page provides status updates so that you can monitor the installation progress as Setup continues.
+
+<a id="complete-2022"></a>
+
+#### 20. Complete
+
+After installation, a *Successful* status on the **Complete** page indicates a successful completion. This page provides a link to the summary log file for the installation and other important notes.
+
+> **Important:**  
+> Make sure you read the message from the Installation Wizard when you finish with Setup. For more information, see [View and read SQL Server Setup log files](view-and-read-sql-server-setup-log-files.md).
+
+To complete the  SQL Server 
+ installation process, select **Close**.
+
+If you're instructed to restart the computer, do so now.
+
+
+
+**Applies to: \=sql-server-ver17**
+
+## Install SQL Server 2025
+
+<a id="installation-media-2025"></a>
+
+#### 1. Installation media
+
+Insert the  SQL Server 
+ installation media. From the root folder, double-click `setup.exe`. To install from a network share, locate the root folder on the share, and then double-click `setup.exe`.
+
+<a id="installation-center-2025"></a>
+
+#### 2. SQL Server Installation Center
+
+The Installation Wizard runs the  SQL Server 
+ Installation Center. To create a new installation of  SQL Server 
+, select **Installation** in the left navigation area, and then select **New  SQL Server 
+ standalone installation or add features to an existing installation**.
+
+<a id="edition-2025"></a>
+
+#### 3. Edition
+
+On the **Edition** page, select the edition you want to install.
+
+- **Specify a free edition** allows you to select Evaluation, Developer, or Web edition.
+
+  > **Note:**  
+  > Web edition isn't available in  SQL Server 2025 (17.x) 
+ and later versions.
+
+- **Use pay-as-you-go billing through Microsoft Azure** is an alternative to using the traditional license agreement.  SQL Server 
+ allows you to activate your instance for use in production without supplying a product key. This option requires an active Azure subscription. For more information, see [Configure SQL Server enabled by Azure Arc](../../sql-server/azure-arc/manage-configuration.md). With this option, you can specify Standard or Enterprise edition.
+
+- **Enter the product key** allows you to provide a product key for a specific edition of  SQL Server 
+. You can also specify if you have a license with Software Assurance or SQL Software Subscription, and if you have a  SQL Server 
+ license only.
+
+To continue, select **Next**.
+
+<a id="license-terms-2025"></a>
+
+#### 4. License Terms
+
+On the **License Terms** page, review the license agreement. If you agree, select the **I accept the license terms and [Privacy Statement](https://www.microsoft.com/privacy/privacystatement)** check box, and then select **Next**.
+
+> **Note:**  
+> If an Enterprise Server/CAL license product key is entered, and the machine has more than 20 physical cores, or 40 logical cores when simultaneous multithreading (SMT) is enabled, a warning is shown during setup. You can still continue setup by selecting the **Check this box to acknowledge this limitation or select Back/Cancel to enter an Enterprise Core product license that supports the operating system maximum** check box, or select **Back** and enter a product key that supports the operating system maximum number of processors.
+
+ SQL Server 
+ transmits information about your installation experience, as well as other usage and performance data to help Microsoft improve the product. To learn more about  SQL Server 
+ data processing and privacy controls, see the [privacy statement](https://www.microsoft.com/privacy/privacystatement) and [Configure usage and diagnostic data collection for SQL Server (CEIP)](../../sql-server/usage-and-diagnostic-data-configuration-for-sql-server.md).
+
+<a id="global-rules-2025"></a>
+
+#### 5. Global Rules
+
+In the **Global Rules** page, Setup automatically advances to the **Microsoft Update** page if there are no rule errors.
+
+<a id="microsoft-update-2025"></a>
+
+#### 6. Microsoft Update
+
+The **Microsoft Update** page appears next if the **Microsoft Update** check box in **Control Panel** > **All Control Panel Items** > **Windows Update** > **Change settings** isn't selected. Selecting the **Microsoft Update** check box changes the computer settings to include the latest updates for all Microsoft products when you scan for Windows updates.
+
+<a id="product-updates-2025"></a>
+
+#### 7. Product Updates
+
+On the **Product Updates** page, the latest available  SQL Server 
+ critical product updates are displayed. If no product updates are discovered, Setup doesn't display this page and automatically advances to the **Install Setup Files** page.
+
+<a id="install-setup-files-2025"></a>
+
+#### 8. Install Setup Files
+
+On the **Install Setup Files** page, Setup provides the progress of downloading, extracting, and installing the Setup files. If an update for Setup is found and you specify to include it, that update is also installed. If no update is found, Setup automatically advances to the next section.
+
+<a id="install-rules-2025"></a>
+
+#### 9. Install Rules
+
+On the **Install Rules** page, Setup checks for potential problems that might occur while running Setup. If failures occur, select an item in the **Status** column for more information. Otherwise, select **Next**.
+
+<a id="azure-extension-for-sql-server-2025"></a>
+
+#### 10. Azure Extension for SQL Server
+
+On the **Azure Extension for SQL Server** page, you can configure  SQL Server 
+ to connect to Azure.  SQL Server 
+ enable using Azure services such as Microsoft Defender for Cloud, Microsoft Purview, Microsoft Entra ID, and others. This feature is selected by default. If you wish to proceed without connecting to Azure, you can unselect **Azure Extension for SQL Server**.
+
+- If you're installing  SQL Server 2025 (17.x) 
+ on a VMware ESX host or an Azure VMware Solution (AVS) host, you don't see the **Azure Extension for SQL Server** page during installation. You can [install the extension during setup using the command line parameters](install-sql-server-from-the-command-prompt.md) or you can install  SQL Server 2025 (17.x) 
+ without the Azure Extension for  SQL Server 
+ first and then later install the [Connect your SQL Server to Azure Arc](../../sql-server/azure-arc/connect.md).
+
+- If you're installing  SQL Server 2025 (17.x) 
+ on an Azure VM, you don't see the **Azure Extension for SQL Server** page during installation. Connectivity to Azure Services for  SQL Server 
+ on Azure VMs is handled through the [SQL Server IaaS Agent extension](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/sql-server-iaas-agent-extension-automate-management), which is automatically pushed to your Azure VM shortly after  SQL Server 
+ installation. You can register your VM with the extension [manually](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/sql-agent-extension-manually-register-single-vm) if you don't want to wait for automatic registration. For more information on supported configurations, see [Supported SQL Server versions and environments](../../sql-server/azure-arc/prerequisites.md#supported-sql-server-versions-and-environments).
+
+To use the Azure extension for  SQL Server 
+, you must have an active Azure subscription and provide a set of additional Azure-related parameters. You also need to make sure the following [Azure resource providers](../../sql-server/azure-arc/prerequisites.md) are registered in your subscription:
+
+- `Microsoft.AzureArcData`
+- `Microsoft.HybridCompute`
+
+To authenticate the  SQL Server 
+ instance with Azure, you can sign in using an Azure account, or you can use an Azure service principal. For specific security requirements to install the extension, see [Prerequisites - SQL Server enabled by Azure Arc](../../sql-server/azure-arc/prerequisites.md).
+
+If you don't already have an Azure account, select the **Start free** button to begin the Azure sign-up experience. This option takes you to the <https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn> page, where you can register for a free account and receive credits, if eligible, to explore and use a wide range of Azure services, including capabilities such as [Azure Arc enabling SQL Server](https://aka.ms/arc-sql-server).
+
+> **Note:**  
+> For more information on Azure account types, and guidance on selecting the best option for your needs, visit the [Azure account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) page. This resource will help you get started with creating, deploying, and managing applications across multiple clouds, on-premises, and at the edge using scalable and cost-effective Azure services.
+
+To sign in with your Azure account, select **Use Azure Login**. Windows might prompt you to add one or more sites to the Trusted sites zone. Follow your organization's security requirements. After you sign in to Azure, proceed to provide the additional registration information.
+
+Alternatively, you can use a service principal:
+
+- **Azure service principal**: If you provide the service principal, provide the service principal secret. This is used to authenticate the  SQL Server 
+ instance to Azure.
+- **Azure subscription ID**: Azure subscription where the  SQL Server 
+ instance resource is created.
+
+Provide the following information:
+
+- **Azure resource group**: Azure resource group where the  SQL Server 
+ instance resource is created.
+- **Azure region**: Azure region where the  SQL Server 
+ instance resource is created.
+- **Azure tenant ID**: Azure tenant ID in which the service principal exists.
+- **Proxy server URL**: (Optional) - Name of the HTTP proxy server used to connect to Azure Arc.
+
+> **Note:**  
+> To create a service principal, retrieve its password and Tenant ID, see [Connect multiple SQL Server instances to Azure Arc](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/sql-server/azure-arc/connect-at-scale-policy.md). If the server is already connected to Azure via Azure Arc, the subscription ID, resource group, and region will be populated and you won't be able to change them.
+
+Select **Next** to proceed.
+
+<a id="feature-selection-2025"></a>
+
+#### 11. Feature Selection
+
+On the **Feature Selection** page, select the components for your installation. For example, to install a new instance of  SQL Server 
+  Database Engine 
+, select **Database Engine Services**.
+
+A description for each component group appears in the **Feature description** pane after you select the feature name. You can select any combination of check boxes.
+
+The prerequisites for the selected features are displayed in the **Prerequisites for selected features** pane. Setup installs the prerequisites that aren't already installed during the installation step described later in this procedure.
+
+You can also specify a custom directory for shared components by using the field at the bottom of the **Feature Selection** page. To change the installation path for shared components, either update the path in the field at the bottom of the dialog box or select **Browse** to go to an installation directory. The default installation path is \<*drive*>:\Program Files\Microsoft SQL Server\\*nnn*\\
+.
+
+> **Note:**  
+> The path specified for the shared components must be an absolute path. The folder must not be compressed or encrypted. Mapped drives aren't supported.
+
+ SQL Server 
+ uses two directories for shared features:
+
+- Shared feature directory
+- Shared feature directory (x86)
+
+> **Note:**  
+> The path specified for each of the above options must be different.
+
+<a id="feature-rules-2025"></a>
+
+#### 12. Feature Rules
+
+The **Feature Rules** page automatically advances if all rules pass.
+
+<a id="instance-configuration-2025"></a>
+
+#### 13. Instance Configuration
+
+On the **Instance Configuration** page, specify whether to install a default instance or a named instance. For more information, see [Instance configuration](../../sql-server/install/instance-configuration.md#instance-configuration-page).
+
+- **Instance ID**: By default, the instance name is used as the instance ID. This ID is used to identify the installation directories and registry keys for your instance of  SQL Server 
+. The same behavior occurs for default instances and named instances. For a default instance, the instance name and instance ID are `MSSQLSERVER`. To use a nondefault instance ID, specify a different value in the **Instance ID** text box.
+
+  > **Note:**  
+  > Typical standalone instances of  SQL Server 
+, whether default or named instances, don't use a nondefault value for the instance ID.
+
+  All  SQL Server 
+ service packs and upgrades apply to every component of an instance of  SQL Server 
+.
+
+- **Installed instances**: The grid shows the instances of  SQL Server 
+ that are on the computer where Setup is running. If a default instance is already installed on the computer, you must install a named instance of  SQL Server 
+.
+
+The workflow for the rest of the installation depends on the features that you specified for your installation. Depending on your selections, you might not see all the pages.
+
+<a id="java-install-location-2025"></a>
+
+#### 14. Java Install Location
+
+In  SQL Server 2019 (15.x) 
+ and later versions, PolyBase no longer requires that Oracle JRE 7 Update 51 (at least) is preinstalled on the computer before installing the feature. Selecting to install the PolyBase feature will add the **Java Install Location** page to the  SQL Server 
+ setup displayed after the **Instance Configuration** page. On the Java Install Location page, you can choose to install the Azul Zulu Open JRE included with the  SQL Server 
+ installation, or provide a location of a different JRE or JDK that has already been installed on the computer.
+
+In  SQL Server 2019 (15.x) 
+ and later versions, Java has been added with Language Extensions. Selecting to install the Java feature will add the **Java Install Location** page to the  SQL Server 
+ setup dialog window, displayed after the **Instance Configuration** page. On the **Java Install Location** page, you can choose to install the Zulu Open JRE included with the  SQL Server 
+ installation, or provide a location of a different JRE or JDK that has already been installed on the computer.
+
+<a id="server-configuration-2025"></a>
+
+#### 15. Server Configuration
+
+- On the **Server Configuration** page, use the **Service Accounts** tab to specify the accounts for  SQL Server 
+ services. The actual services that you configure on this page depend on the features that you selected to install. For more information about configuration settings, see [Installation Wizard help](../../sql-server/install/instance-configuration.md#serverconfig).
+
+  You can assign the same account to all  SQL Server 
+ services, or you can configure each service account individually. You can also specify whether services start automatically, start manually, or are disabled. We recommend you configure service accounts individually to provide the least privileges for each service. Make sure  SQL Server 
+ services are granted the minimum permissions they must have to complete their tasks. For more information, see [Configure Windows service accounts and permissions](../configure-windows/configure-windows-service-accounts-and-permissions.md).
+
+  To specify the same account for all service accounts in this instance of  SQL Server 
+, provide the credentials in the fields at the bottom of the page.
+
+  > **Important:**  
+  >  Do not use a blank password. Use a strong password. 
+
+
+  Select the **Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service** check box to allow the  SQL Server Database Engine 
+ service account to use [database instant file initialization](../../relational-databases/databases/database-instant-file-initialization.md).
+
+- On the **Server Configuration** page, use the **Collation** tab to specify nondefault collations for the  Database Engine 
+ and  Analysis Services 
+. For more information, see [Collation and Unicode support](../../relational-databases/collations/collation-and-unicode-support.md).
+
+<a id="database-engine-configuration-2025"></a>
+
+#### 16. Database Engine Configuration
+
+- Use the **Server Configuration** tab on the **Database Engine Configuration** page to specify the following options:
+
+  - **Security Mode**: Select **Windows Authentication** or **Mixed Mode Authentication** for your instance of  SQL Server 
+. If you select **Mixed Mode Authentication**, you must provide a strong password for the built-in  SQL Server 
+ system administrator account (sa).
+
+    After a device establishes a successful connection to  SQL Server 
+, the security mechanism is the same for both Windows authentication and mixed mode authentication. For more information, see [Database Engine Configuration - Server Configuration page](../../sql-server/install/instance-configuration.md#serverconfig).
+
+  - **SQL Server Administrators**: You must specify at least one system administrator for the instance of  SQL Server 
+. To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**. To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for the instance of  SQL Server 
+. You can also add a Windows Domain Group, to establish a shared SQL Administrator Group in Active Directory with sysadmin Access to  SQL Server 
+.
+
+- Use the **Data Directories** tab to specify nondefault installation directories. To install to the default directories, select **Next**.
+
+  > **Important:**  
+  > If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+  For more information, see [Database Engine Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#datadir).
+
+- Use the **TempDB** tab to configure the file size, number of files, nondefault installation directories, and file-growth settings for `tempdb`. For more information, see [Database Engine Configuration - TempDB page](../../sql-server/install/instance-configuration.md#tempdb).
+
+- Use the **MaxDOP** tab to specify your max degree of parallelism. This setting determines how many processors a single statement can use during execution. The recommended value is automatically calculated during installation.
+
+  For more information, see the [Database Engine Configuration - MaxDOP page](../../sql-server/install/instance-configuration.md?view=sql-server-ver15&preserve-view=true#maxdop).
+
+- Use the **Memory** tab to specify the **min server memory** and **max server memory** values that this instance of  SQL Server 
+ will use after startup. You can use the default values, use the calculated recommended values, or manually specify your own values after you choose the **Recommended** option.
+
+  For more information, see the [Database Engine Configuration - Memory page](../../sql-server/install/instance-configuration.md?view=sql-server-ver15&preserve-view=true#memory).
+
+- Use the **FILESTREAM** tab to enable FILESTREAM for your instance of  SQL Server 
+. For more information, see [Database Engine Configuration - FILESTREAM page](../../sql-server/install/instance-configuration.md#database-engine-configuration---filestream-page).
+
+<a id="analysis-services-configuration-2025"></a>
+
+#### 17. Analysis Services Configuration
+
+On the **Analysis Services Configuration**, use the **Account Provisioning** tab to specify the server mode and the users or accounts that have administrator permissions for  Analysis Services 
+. The server mode determines which memory and storage subsystems are used on the server. Different solution types run in different server modes. If you plan to run multidimensional cube databases on the server, select the default server mode option, **Multidimensional and Data Mining**.
+
+You must specify at least one system administrator for  Analysis Services 
+:
+
+- To add the account under which  SQL Server 
+ Setup is running, select **Add Current User**.
+
+- To add or remove accounts from the list of system administrators, select **Add** or **Remove**, and then edit the list of users, groups, or computers that have administrator privileges for  Analysis Services 
+.
+
+  For more information about server mode and administrator permissions, see [Analysis Services Configuration - Account Provisioning page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---account-provisioning-page).
+
+  When you finish editing the list, select **OK**. Verify the list of administrators in the configuration dialog box. After the list is complete, select **Next**.
+
+On the **Analysis Services Configuration**, use the **Data Directories** page to specify nondefault installation directories. To install to the default directories, select **Next**.
+
+> **Important:**  
+> When installing  SQL Server 
+, if you specify the same directory path for `INSTANCEDIR` and `SQLUSERDBDIR`,  SQL Server 
+ Agent and Full Text Search won't start due to missing permissions.  
+>
+> If you specify nondefault installation directories, ensure that the installation folders are unique to this instance of  SQL Server 
+. None of the directories in this dialog box should be shared with directories from other instances of  SQL Server 
+.
+
+For more information, see [Analysis Services Configuration - Data Directories page](../../sql-server/install/instance-configuration.md#analysis-services-configuration---data-directories-page).
+
+<a id="ready-to-install-2025"></a>
+
+#### 18. Ready to Install
+
+The **Ready to Install** page shows a tree view of the installation options that you specified during Setup. On this page, Setup indicates whether the **Product Update** feature is enabled or disabled and the final update version.
+
+To continue, select **Install**.  SQL Server 
+ Setup first installs the required prerequisites for the selected features, then it installs the selected features.
+
+<a id="installation-progress-2025"></a>
+
+#### 19. Installation Progress
+
+During installation, the **Installation Progress** page provides status updates so that you can monitor the installation progress as Setup continues.
+
+<a id="complete-2025"></a>
+
+#### 20. Complete
+
+After installation, a *Successful* status on the **Complete** page indicates a successful completion. This page provides a link to the summary log file for the installation and other important notes.
+
+> **Important:**  
+> Make sure you read the message from the Installation Wizard when you finish with Setup. For more information, see [View and read SQL Server Setup log files](view-and-read-sql-server-setup-log-files.md).
+
+To complete the  SQL Server 
+ installation process, select **Close**.
+
+If you're instructed to restart the computer, do so now.
+
+
+
+## Related content
+
+- [Database Engine instances (SQL Server)](../configure-windows/database-engine-instances-sql-server.md)
+- [Surface area configuration](../../relational-databases/security/surface-area-configuration.md)
+- [Validate a SQL Server installation](validate-a-sql-server-installation.md)
+- [Repair a failed SQL Server installation](repair-a-failed-sql-server-installation.md)
+- [View and read SQL Server Setup log files](view-and-read-sql-server-setup-log-files.md)
+- [Upgrade SQL Server Using the Installation Wizard (Setup)](upgrade-sql-server-using-the-installation-wizard-setup.md)
+- [Install, configure, or uninstall SQL Server on Windows from the command prompt](install-sql-server-from-the-command-prompt.md)

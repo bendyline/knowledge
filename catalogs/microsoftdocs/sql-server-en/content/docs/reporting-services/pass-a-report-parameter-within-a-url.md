@@ -1,0 +1,53 @@
+---
+title: "Pass a report parameter within a URL"
+description: Learn about how you can pass report parameters directly to the SQL Server Reporting Services (SSRS) report server in a URL.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: reporting-services
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "URL access [Reporting Services], passing parameters"
+  - "passing parameters [Reporting Services]"
+# customer intent: As a SQL Server report user or administrator, I want to pass parameters within a URL so that I can customize report output and streamline report generation in SSRS.
+---
+# Pass a report parameter within a URL
+
+You can pass report parameters to a SQL Server Reporting Services (SSRS) report server by including them in a report URL. All query parameters can have corresponding report parameters. You pass a query parameter to a report by passing the corresponding report parameter. For more information, see [Build a query in the Relational Query Designer (Report Builder and SSRS)](report-data/build-a-query-in-the-relational-query-designer-report-builder-and-ssrs.md).  
+
+
+## Basic parameter syntax
+
+- Report parameters are case-sensitive. 
+- For special characters:   
+  - Replace any space characters in the URL string with the characters `%20`.  
+  - Replace any space characters in the parameter portion of the URL with a plus character `+`.  
+  - Replace a semicolon in any portion of the string with the characters `%3A`.
+- Browsers typically handle URL encoding automatically, so you don't need to encode characters manually. 
+- It's important the URL include the `_vti_bin` proxy syntax to route the request through SharePoint and the  Reporting Services 
+ HTTP proxy. The proxy adds some context to the HTTP request, context that is required to ensure proper execution of the report for SharePoint mode report servers. If you don't include the proxy syntax, then you need to prefix the parameter with `rp:`.  
+
+## Examples
+
+> **Note:**
+> SSRS integration with SharePoint is no longer available after SQL Server 2016.
+
+- Set a report parameter within a URL.
+    - Syntax: `parameter=value`
+- Specify two parameters defined in a report.
+    - Example for an SSRS SharePoint mode server: 
+    `https://myspsite/subsite/_vti_bin/reportserver?https://myspsite/subsite/AdventureWorks2022/Employee_Sales_Summary_2022.rdl&ReportMonth=3&ReportYear=2008`  
+    - Example for an SSRS Native mode server: 
+    `https://myrshost/ReportServer?/AdventureWorks2022/Employee_Sales_Summary_2022&ReportMonth=3&ReportYear=2008`  
+- Pass a null value for a parameter. 
+    - Syntax: `parameter:isnull=true` 
+    - Example: `SalesOrderNumber:isnull=true` 
+- Pass a Boolean value. Possible values are `0` for false and `1` for true.
+    - Example: `https://myrshost/ReportServer?/AdventureWorks2022/Employee_Sales_Summary_2022&ShowDetails=1` 
+- Pass a float value. Include the decimal separator of the server locale. 
+ 
+## Related content
+
+- [URL access (SSRS)](url-access-ssrs.md)
+- [URL access parameter reference](url-access-parameter-reference.md)

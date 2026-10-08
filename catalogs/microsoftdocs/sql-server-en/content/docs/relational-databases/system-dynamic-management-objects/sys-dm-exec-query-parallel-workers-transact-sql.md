@@ -1,0 +1,74 @@
+---
+title: "sys.dm_exec_query_parallel_workers (Transact-SQL)"
+description: sys.dm_exec_query_parallel_workers (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "02/24/2023"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "dm_exec_query_parallel_workers_TSQL"
+  - "dm_exec_query_parallel_workers"
+  - "sys.dm_exec_query_parallel_workers_TSQL"
+  - "sys.dm_exec_query_parallel_workers"
+helpviewer_keywords:
+  - "sys.dm_exec_query_parallel_workers dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.dm_exec_query_parallel_workers (Transact-SQL)
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns worker availability information per node.  
+  
+| Name | Data type | Description |
+| --- | --- | --- |
+| **node_id** | **int** | NUMA node ID. |
+| **scheduler_count** | **int** | Number of schedulers on this node. |
+| **max_worker_count** | **int** | Maximum number of workers for parallel queries. |
+| **reserved_worker_count** | **int** | Number of workers reserved by parallel queries, plus number of main workers used by all requests. |
+| **free_worker_count** | **int** | Number of workers available for tasks.<br /><br />**Note:** every incoming request consumes at least 1 worker, which is subtracted from the free worker count.  It is possible that the free worker count can be a negative number on a heavily loaded server. |
+| **used_worker_count** | **int** | Number of workers used by parallel queries. |
+  
+## Permissions  
+
+On  SQL Server 
+ and SQL Managed Instance, requires `VIEW SERVER STATE` permission.
+
+On SQL Database **Basic**, **S0**, and **S1** service objectives, and for databases in **elastic pools**, the [server admin](https://learn.microsoft.com/azure/azure-sql/database/logins-create-manage#existing-logins-and-user-accounts-after-creating-a-new-database) account, the [Microsoft Entra admin](https://learn.microsoft.com/azure/azure-sql/database/authentication-aad-overview#administrator-structure) account, or membership in the `##MS_ServerStateReader##` [server role](https://learn.microsoft.com/azure/azure-sql/database/security-server-roles) is required. On all other SQL Database service objectives, either the `VIEW DATABASE STATE` permission on the database, or membership in the `##MS_ServerStateReader##` server role is required.   
+ 
+### Permissions for SQL Server 2022 and later
+
+Requires VIEW SERVER PERFORMANCE STATE permission on the server.
+
+## Examples  
+  
+### A. Viewing current parallel worker availability  
+
+```sql 
+SELECT * FROM sys.dm_exec_query_parallel_workers;  
+```  
+  
+## Related content
+
+- [System dynamic management views and functions](system-dynamic-management-objects.md)
+- [Execution Related Dynamic Management Views and Functions (Transact-SQL)](execution-related-dynamic-management-views-and-functions-transact-sql.md)
+- [sys.dm_os_workers (Transact-SQL)](sys-dm-os-workers-transact-sql.md)

@@ -1,0 +1,167 @@
+---
+title: "What happens to my data and access when my Microsoft 365 for business subscription ends?"
+f1.keywords:
+- NOCSH
+author: cmcatee-MSFT
+ms.author: cmcatee
+manager: scotv
+ms.reviewer: mijeffer, jobailey
+audience: Admin
+ms.topic: concept-article
+ms.service: microsoft-365-business
+ms.subservice: m365-commerce-acquisition
+ms.localizationpriority: medium
+ms.collection:
+- Tier1
+- scotvorg
+- M365-subscription-management
+- Adm_O365
+ms.custom:
+- commerce_subscriptions
+- AdminSurgePortfolio
+- AdminTemplateSet
+- campaignIDs-batch1
+service.tree.id: 84a24b9c-ce0c-4b4b-b837-45bc5ee4bef0
+search.appverid: MET150
+description: "Learn what happens to your data when your Microsoft 365 for business subscription expires, is disabled, or if you cancel."
+ms.date: 04/09/2026
+---
+
+# What happens to my data and access when my Microsoft 365 for business subscription ends?
+
+When your subscription ends, your access to Microsoft 365 products and services, apps, and customer data goes through multiple statuses before the subscription is fully turned off or deleted. Being aware of this status progression can help you return your subscription to an active status before it's too late. If you're leaving Microsoft 365, we recommend that you [back up your data](move-users-different-subscription.md#back-up-data-before-changing-microsoft-365-for-business-plans) before it gets deleted.
+
+This article applies to all Microsoft 365 for business subscriptions, including Enterprise and Volume Licensing.
+
+> **Important:**
+> For some subscriptions, you can only cancel during a limited window of time after you buy or renew your subscription. If the cancellation window has passed, [turn off recurring billing](renew-your-subscription.md) to cancel the subscription at the end of its term.
+  
+## Understand subscription lifecycle statuses
+
+When your subscription ends, it goes through multiple lifecycle statuses before it gets deleted. This gives you, as the admin, time to reactivate the subscription if you want to continue the service, or to back up your customer data if you decide you no longer want the subscription.
+
+A subscription goes through the following statuses over the course of its lifecycle:
+
+Active > Expired > Disabled > Deleted
+
+> **Note:**
+> As of February 9, 2026, the **Expired** lifecycle state no longer applies to license-based subscriptions bought directly through a Microsoft Customer Agreement (MCA). To learn more, see [Understand your options if your subscription is about to end](#understand-your-options-if-your-subscription-is-about-to-end).
+
+The **Expired** status starts immediately after the subscription reaches its end date, regardless of whether it expired naturally by reaching the end of the subscription term, you turned off recurring billing or upgraded it.
+
+**For yearly or three-year subscriptions**, if you turn off recurring billing, it goes through all the lifecycle statuses. The **Expired** status starts on the subscription end date, not the date that you turned off recurring billing.
+
+**For monthly subscriptions**, if you cancel a monthly subscription within the cancellation policy window, it skips the **Expired** status and moves to the **Disabled** status. During the **Disabled** period, users can't access Microsoft 365 services, and only admins can access and back up data.
+
+**For volume licensing customers**, the subscription only enters the **Expired** status after all the licenses are removed. If you order fewer than the original number of licenses, the subscription doesn’t enter the **Expired** status. Instead, admins have 90 days to resolve the conflict for any assigned licenses in excess of the purchased quantity. During this 90 day period there’s no service interruption to subscriptions that are assigned on a per user basis. For nonuser based subscriptions, like Office 365 Extra File Storage for SharePoint, a reduction in the license quantity immediately results in reduced storage. For volume licensing customers, we recommend that you place an Online Reservation to restore service, and then contact your licensing partner to understand why there was a reduction in licenses.
+
+> **Important:**
+> If a subscription is deleted, adding a new subscription of the same type doesn't restore the data that was associated with the deleted subscription.
+
+> **Note:**
+> **What is "customer data"?** Customer data, as defined in the [Microsoft Services Agreement](https://www.microsoft.com/servicesagreement), refers to all data, including all text, sound, or image files that are provided to Microsoft by, or on behalf of, the customer through the customer's use of Microsoft 365 services. To learn more about the protection of customer data, see [Get started with the Microsoft Service Trust Portal](https://github.com/MicrosoftDocs/microsoft-365-docs/blob/eab9d7696cdff87474698b08a1fb328091102a2f/microsoft-365/compliance/get-started-with-service-trust-portal.md).
+
+The number of days a subscription stays in each lifecycle status is different, depending on whether you bought the subscription directly from Microsoft, or through an Enterprise agreement, a Cloud Solution Provider (CSP), or Volume Licensing (VL). For more information, see [Lengths of time a subscription spends in each lifecycle status](#lengths-of-time-a-subscription-spends-in-each-lifecycle-status), later in this article. The following table explains what you can expect for each lifecycle status when a paid Microsoft 365 for business subscription ends.
+
+| &nbsp; | Active | Expired* | Disabled* | Deleted |
+| --- | --- | --- | --- | --- |
+| Customer data | Data is accessible to all | Data is accessible to all | Data is accessible to admins only | Data is deleted and Microsoft Entra ID is removed, if not in use by other services |
+| Users | Users have normal access to Microsoft 365, files, and apps | Users have normal access to Microsoft 365, files, and apps | Users can't access apps in Microsoft 365. Apps in Microsoft 365 eventually move into a read-only, reduced functionality mode and display [Unlicensed Product notifications](https://support.microsoft.com/office/0d23d3c0-c19c-4b2f-9845-5344fedc4380) | Users can't access Microsoft 365, files, or apps |
+| Licenses bought via the Volume Licensing program |  | Services available for 90 days from subscription end date<br><br>If seat quantity is reduced, no expired status is available | Service is immediately unavailable | N/A |
+| Admins | Admins have normal access to Microsoft 365, data, and apps | Admins can access the admin center | Admins can access the admin center, but can't assign licenses to users | Admins can access the admin center to manage other subscriptions, or to buy new subscriptions |
+| Reactivation | Subscription is already active | Global or billing admins can reactivate the subscription in the admin center | Global or billing admins can reactivate the subscription in the admin center | Subscription can't be reactivated |
+
+*For most offers, in most countries/regions.
+  
+## Lengths of time a subscription spends in each lifecycle status
+
+For most offers, in most countries and regions, the number of days a subscription stays in each lifecycle status is shown in the following table.
+
+| &nbsp; | Active | Expired | Disabled | Deleted |
+| --- | --- | --- | --- | --- |
+| All subscription terms | Default status | 30 days | 90 days | Terminal state |
+
+### Lifecycle status durations for Enterprise, Volume Licensing and Open Value customers
+
+If you bought your subscription through an Enterprise agreement, Volume Licensing program, or Open Value program, the lifecycle statuses and time periods for each are different, based on the length of your subscription. The following table lists the statuses and number of days for each status and each subscription length.
+
+| &nbsp; | Active | Expired | Inactive | Deleted |
+| --- | --- | --- | --- | --- |
+| Monthly term | Default status | 30 days | 90 days | Terminal state |
+| Annual term | Default status | 30 days | 90 days | Terminal state |
+| Multi-year term | Default status | 90 days | 90 days | Terminal state |
+
+Your lifecycle durations and renewal options might differ from what is described above. The exact timing depends on the terms of your specific agreement.
+
+#### Key differences to be aware of
+
+- Your subscription end date might be tied to your agreement end date rather than an individual subscription term.
+- Grace periods after expiration might vary by program and product. Contact your licensing partner or Microsoft account team to confirm the specific durations that apply to your agreement.
+- To renew or restore service, contact your Microsoft volume licensing partner. If you bought through the Open Volume Licensing program, see [Microsoft Open License program changes](https://www.microsoft.com/en-us/licensing/news/microsoft-open-license-program-changes) for your options.
+
+> **Note:**
+> Not all VL subscriptions have a 90 day expired period. Some products and services, like some Microsoft 365 Copilot subscriptions, bought through VL only have a 30 day expired period.
+
+### Lifecycle status durations for Cloud Service Provider (CSP) customers
+
+If you bought your subscription through a CSP, see [Subscription lifecycle states - Partner Center](https://learn.microsoft.com/partner-center/subscription-lifecycle) for descriptions of the lifecycle statuses that apply to those subscriptions.
+
+## Understand your options if your subscription is about to end
+
+While a subscription is active, you and your users have normal access to your data, services like email, OneDrive, and apps in Microsoft 365. As an admin, you receive a series of notifications via email and in the admin center as your subscription nears its end date.
+
+If you’re a Volume Licensing customer, see [Options if your volume licensing subscription is about to expire](#options-if-your-volume-licensing-subscription-is-about-to-expire).
+
+Before the subscription reaches its end date, you have the following options:
+
+1. **Enable recurring billing for the subscription.**
+
+   - If **Recurring billing** is already turned on, you don't have to take any action. Your subscription is automatically billed, and you're charged for another year or month, depending on your current billing frequency.
+   - If you turned off **Recurring billing**, you can [turn it back on](renew-your-subscription.md) to keep your subscription active. 
+   - If you bought Microsoft 365 Apps for business with a prepaid card, you can [turn on ](renew-your-subscription.md)**[Recurring billing](renew-your-subscription.md)** for your subscription and provide a payment method to continue the subscription.
+   - If you have Microsoft 365 Apps for business, see [Manage recurring billing for your subscription](renew-your-subscription.md).
+      
+1. **Let the subscription end.**
+
+   - If you don't want to continue your subscription, [turn off recurring billing](renew-your-subscription.md). Your subscription ends on its term end date, and you can ignore all related email notifications.
+   - If you're a Microsoft 365 Business Standard customer, and you prepaid for your subscription and activated it with a product key, you can let your subscription end by taking no action.
+      
+1. **Switch to an Extended Service Term subscription.**
+
+   - An Extended Service Term (EST) option is available for subscriptions purchased under an MCA billing account. 
+   - EST gives customers additional time at the end of a subscription term to make the right subscription choices for their business without any service disruption. 
+   - EST allows customers to continue service on a month-to-month basis until they cancel or convert to a standard subscription.
+      
+### Options if your volume licensing subscription is about to expire
+
+1. **Enable recurring billing for the subscription.**
+    - If your online services were bought through the Open Volume Licensing program, see [Microsoft Open License program changes](https://www.microsoft.com/en-us/licensing/news/microsoft-open-license-program-changes) for your options to renew existing subscriptions or buy new products and services.
+    - If you bought your subscription through a Volume Licensing program, contact your Microsoft volume licensing partner about placing a renewal order.
+2. **Let the subscription expire.**
+    - If you're an Open Volume Licensing customer working with a partner, you can let your subscription expire by taking no action.
+    - If you bought your subscription through a volume licensing program, contact your Microsoft volume licensing partner to ensure there's no automatic extension in place for your agreement.
+
+## What happens when you cancel a subscription
+
+If you cancel your subscription within the cancellation policy window, the subscription moves directly to the **Disabled** status.
+
+We recommend that you [back up your data](move-users-different-subscription.md) before you cancel your subscription. As an admin, you can still access and back up data for your organization while it’s in the Disabled status. Any customer data that you leave behind might be deleted after 90 days and will be deleted no later than 180 days after cancellation.
+
+> **Important:**
+> If you explicitly delete a subscription, it skips the Expired and Disabled statuses and SharePoint Online data and content, including OneDrive, is immediately deleted. To learn how to cancel, see [Cancel your subscription in the Microsoft 365 admin center](cancel-your-subscription.md). If you want your subscription data to be deleted before the typical **Disabled** status is over, you can [close your account](../close-your-account.md).
+
+## What happens when your trial ends
+
+At the end of your trial period, we automatically start billing you for your subscription. Before your trial period ends, you can [turn off recurring billing](renew-your-subscription.md) and let the trial end. 
+
+> **Important:**
+> Before your trial ends, back up any data that you want to keep. After the trial ends, your trial account information and data are permanently deleted.
+
+> **Note:**
+> The information on this page is subject to the [Microsoft Policy Disclaimer and Change Notice](https://go.microsoft.com/fwlink/p/?LinkId=613651). Return to this site periodically to review any changes.
+
+## Related content
+
+[Cancel your subscription](cancel-your-subscription.md) (article)\
+[Renew Microsoft 365 for business](renew-your-subscription.md) (article)\
+[Reactivate your subscription](reactivate-your-subscription.md) (article)

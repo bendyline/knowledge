@@ -1,0 +1,48 @@
+---
+title: "Endpoints Catalog Views (Transact-SQL)"
+description: Endpoints Catalog Views (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+helpviewer_keywords:
+  - "endpoints [SQL Server], catalog views"
+  - "catalog views [SQL Server], endpoints"
+dev_langs:
+  - "TSQL"
+---
+# Endpoints Catalog Views (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This section contains the following catalog views.  
+
+
+
+        [sys.database_mirroring_endpoints](../../relational-databases/system-catalog-views/sys-database-mirroring-endpoints-transact-sql.md)
+        
+        [sys.endpoints](../../relational-databases/system-catalog-views/sys-endpoints-transact-sql.md)
+        
+        [sys.endpoint_webmethods](../../relational-databases/system-catalog-views/sys-endpoint-webmethods-transact-sql.md)
+        
+        [sys.http_endpoints](../../relational-databases/system-catalog-views/sys-http-endpoints-transact-sql.md)
+    :::column-end:::
+    :::column:::
+        [sys.service_broker_endpoints](../../relational-databases/system-catalog-views/sys-service-broker-endpoints-transact-sql.md)
+        
+        [sys.soap_endpoints](../../relational-databases/system-catalog-views/sys-soap-endpoints-transact-sql.md)
+        
+        [sys.tcp_endpoints](../../relational-databases/system-catalog-views/sys-tcp-endpoints-transact-sql.md)
+    :::column-end:::
+
+  
+## Related content
+
+- [Transact-SQL reference (Database Engine)](../../t-sql/language-reference.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

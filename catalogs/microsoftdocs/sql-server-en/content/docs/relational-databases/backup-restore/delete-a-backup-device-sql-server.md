@@ -1,0 +1,82 @@
+---
+title: "Delete a Backup Device (SQL Server)"
+description: This article shows you how to delete a backup device in SQL Server by using SQL Server Management Studio or Transact-SQL.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "database backups [SQL Server], deleting devices"
+  - "backup devices [SQL Server], deleting"
+  - "deleting backup devices"
+  - "removing backup devices"
+  - "backing up databases [SQL Server], backup devices"
+---
+# Delete a Backup Device (SQL Server)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to delete a backup device in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .  
+
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the **diskadmin** fixed server role.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To delete a backup device  
+  
+1.  After connecting to the appropriate instance of the  SQL Server Database Engine 
+, in Object Explorer, click the server name to expand the server tree.  
+  
+2.  Expand **Server Objects**, and then expand **Backup Devices**.  
+  
+3.  Right-click the device you want, and then click **Delete**.  
+  
+4.  In the **Delete Object** dialog box, verify that the correct device name appears in the **Object Name** column.  
+  
+5.  Click **OK**.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To delete a backup device  
+  
+1.  Connect to the  Database Engine 
+.  
+  
+2.  From the Standard bar, click **New Query**.  
+  
+3.  Copy and paste the following example into the query. This example shows how to use [sp_dropdevice](../system-stored-procedures/sp-dropdevice-transact-sql.md) to delete a backup device. Execute the first example to create the `mybackupdisk` backup device and the physical name `c:\backup\backup1.bak`. Execute **sp_dropdevice** to delete the `mybackupdisk` backup device. The `delfile` parameter deletes the physical name.  
+  
+```sql  
+--Define a backup device and physical name.   
+USE AdventureWorks2022;  
+GO  
+EXEC sp_addumpdevice 'disk', 'mybackupdisk', 'c:\backup\backup1.bak' ;  
+GO  
+--Delete the backup device and the physical name.  
+USE AdventureWorks2022;  
+GO  
+EXEC sp_dropdevice ' mybackupdisk ', 'delfile' ;  
+GO  
+  
+```  
+  
+## Related content
+
+- [View the Properties and Contents of a Logical Backup Device (SQL Server)](view-the-properties-and-contents-of-a-logical-backup-device-sql-server.md)
+- [sys.backup_devices (Transact-SQL)](../system-catalog-views/sys-backup-devices-transact-sql.md)
+- [BACKUP (Transact-SQL)](../../t-sql/statements/backup-transact-sql.md)
+- [Backup Devices (SQL Server)](backup-devices-sql-server.md)
+- [sys.sp_addumpdevice (Transact-SQL)](../system-stored-procedures/sp-addumpdevice-transact-sql.md)

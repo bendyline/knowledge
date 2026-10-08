@@ -1,0 +1,31 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.string.basicops/vb/padding.vb
+
+Complete source file; linked examples may select a region or line range.
+
+```
+Option Strict On
+
+' <snippet2>
+Class Example
+    Public Shared Sub Main()
+        PadLeft()
+        PadRight()
+    End Sub
+
+    Public Shared Sub PadLeft()
+        ' <snippet3>
+        Dim MyString As String = "Hello World!"
+        Console.WriteLine(MyString.PadLeft(20, "-"c))
+        ' </snippet3>
+    End Sub
+
+    Public Shared Sub PadRight()
+        ' <snippet4>
+        Dim MyString As String = "Hello World!"
+        Console.WriteLine(MyString.PadRight(20, "-"c))
+        ' </snippet4>
+    End Sub
+End Class
+' </snippet2>
+
+```

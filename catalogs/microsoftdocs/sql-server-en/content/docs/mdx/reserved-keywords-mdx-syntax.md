@@ -1,0 +1,26 @@
+---
+title: "Reserved Keywords (MDX Syntax)"
+description: "Reserved Keywords (MDX Syntax)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Reserved Keywords (MDX Syntax)
+
+
+  Analysis Services reserves certain keywords for its exclusive use. For a list of reserved keywords, see [MDX Reserved Words](mdx-reserved-words.md).  
+  
+ Reserved keywords follow these guidelines:  
+  
+-   You cannot include reserved keywords in a Multidimensional Expressions (MDX) statement in any location except that defined by  Analysis Services 
+.  
+  
+-   No objects in the database should be specific a name that matches a reserved keyword. If such a name exists, the object must always be referred to using delimited identifiers. Although this method does allow for object names to be reserved words, using keywords to name objects should be avoided.  
+  
+-   Use a naming convention that avoids using reserved keywords. Consonants or vowels can be removed if an object name must look like a reserved keyword.  
+  
+## Related content
+
+- [MDX Syntax Elements (MDX)](mdx-syntax-elements-mdx.md)

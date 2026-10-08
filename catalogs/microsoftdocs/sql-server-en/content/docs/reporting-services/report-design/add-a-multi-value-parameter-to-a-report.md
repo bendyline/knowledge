@@ -1,0 +1,56 @@
+---
+title: "Add a multi-value parameter to a paginated report"
+description: Learn how to add a parameter to a paginated report that allows the user to select more than one value for the parameter in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Add a multi-value parameter to a paginated report
+
+  **Applies to:**
+ 
+
+
+  You can add a parameter to a paginated report that allows the user to select more than one value for the parameter.  
+  
+ You can pass multiple parameter values to the report within the report URL. For more information, see [Pass a report parameter within a URL](../pass-a-report-parameter-within-a-url.md).  
+  
+ For information on how to pass multiple parameter values to a stored procedure, see [Work with multi-select parameters for SQL Server Reporting Service Reports](https://go.microsoft.com/fwlink/?LinkId=321529) on `mssqltips.com`.  
+  
+## Add a multi-value parameter  
+  
+1.  In Report Builder, open the report that you want to add the multi-value parameter to.  
+  
+1.  Right-click the report dataset, and then select **Dataset Properties**  
+  
+1.  Add a variable to the dataset query by either editing the query text in the **Query** box, or by adding a filter by using the query designer. For more information, see [Build a query in the relational query designer (Report Builder)](../report-data/build-a-query-in-the-relational-query-designer-report-builder-and-ssrs.md).  
+  
+    ```  
+    WHERE  
+      Production.ProductInventory.ProductID IN (@ProductID)  
+    ```  
+  
+    > **Important:**  
+    > *  The query text must not include the DECLARE statement for the query variable.  
+    > *  The text for the query variable must include the **IN** operator, as shown in the previous example.  
+    > *  Be sure to include the parentheses around the variable as shown previously. Otherwise, the report fails to render and the "must declare the scalar variable" error is displayed.  
+  
+    A dataset parameter for an embedded dataset or a shared dataset is created automatically for the query variable. A report parameter is created automatically for the dataset parameter.  
+  
+1.  In the **Report Data** pane, expand the **Parameters** node, right-click the report parameter that was automatically created for the dataset parameter, and then select **Parameter Properties**.  
+  
+1.  In the **General** tab, select **Allow multiple values** to allow a user to select more than one value for the parameter.  
+  
+1.  (Optionally) In the **Available** values tab, specify a list of available values to display to the user.  
+  
+     An available values list limits the choices a user can make to only valid values for the parameter. For multiple values, the top of list begins with a **Select All** feature so the user can select or clear all values by selecting a single box. If you choose to get the available values for the report parameter from a dataset query, be sure to select a dataset that doesn't contain the query variable that is associated with the same report parameter.  
+  
+     For more information, see [Add, change, or delete available values for a report parameter (Report Builder)](add-change-or-delete-available-values-for-a-report-parameter.md).  
+
+## Related content
+
+- [Add cascading parameters to a paginated report (Report Builder)](add-cascading-parameters-to-a-report-report-builder-and-ssrs.md)
+- [Add, change, or delete a paginated report parameter (Report Builder)](add-change-or-delete-a-report-parameter-report-builder-and-ssrs.md)

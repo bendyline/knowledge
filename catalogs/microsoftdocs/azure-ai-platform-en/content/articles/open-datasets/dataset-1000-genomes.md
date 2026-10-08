@@ -1,0 +1,65 @@
+---
+title: 1000 Genomes
+description: Learn how to use the 1000 Genomes dataset in Azure Open Datasets.
+ms.service: azure-open-datasets
+ms.topic: sample
+ms.reviewer: fsolomon
+ms.date: 07/10/2024
+---
+
+# 1000 Genomes
+> **Note:**
+> Important Update May 2025: 
+Dear Community,
+We’d like to inform you of an upcoming change regarding the Genomics open datasets currently available through Azure.
+After careful consideration, we decided to shift our focus to new initiatives that will better serve our community and align with our long-term goals. As such, access to the Genomics open datasets on Azure will be deprecated in the coming months.
+We understand these datasets were valuable for research, development, and learning, and we deeply appreciate the contributions and engagement from our community over time.
+Thank you for your understanding and support.
+
+
+The 1000 Genomes Project ran between 2008 and 2015, to create the largest public catalog of human variation and genotype data. The final data set contains data for 2,504 individuals from 26 populations and 84 million identified variants. For more information, visit the 1000 Genome Project [website](https://www.internationalgenome.org/) and these publications:
+
+[Pilot Analysis: A map of human genome variation from population-scale sequencing Nature 467, 1061-1073 (28 October 2010)](https://www.nature.com/articles/nature09534)
+
+[Phase 1 Analysis: An integrated map of genetic variation from 1,092 human genomes Nature 491, 56-65 (01 November 2012)](https://www.nature.com/articles/nature11632)
+
+[Phase 3 Analysis: A global reference for human genetic variation Nature 526, 68-74 (01 October 2015) and An integrated map of structural variation in 2,504 human genomes Nature 526, 75-81](https://www.nature.com/articles/nature15394)
+
+Visit [this resource](http://www.internationalgenome.org/formats) for more information about the relevant data formats.
+
+**[NEW]**: The dataset is also available in [parquet format](https://github.com/microsoft/genomicsnotebook/tree/main/vcf2parquet-conversion/1000genomes).
+
+> **Note:**
+> Microsoft provides Azure Open Datasets on an “as is” basis. Microsoft makes no warranties, express or implied, guarantees or conditions with respect to your use of the datasets. To the extent permitted under your local law, Microsoft disclaims all liability for any damages or losses, including direct, consequential, special, indirect, incidental or punitive, resulting from your use of the datasets.
+> 
+>This dataset is provided under the original terms that Microsoft received source data. The dataset may include data sourced from Microsoft.
+
+## Data source
+
+This dataset is a mirror of [this](ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/) FTP resource.
+
+## Data volumes and update frequency
+
+This dataset contains approximately 815 TB of data. It receives daily updates.
+
+## Storage location
+
+This dataset is stored in the West US 2 and West Central US Azure regions. We recommend locating compute resources in West US 2 or West Central US for affinity.
+
+## Data access
+
+West US 2:"https://dataset1000genomes.blob.core.windows.net/dataset'"
+
+West Central US: "https://dataset1000genomes-secondary.blob.core.windows.net/dataset"
+
+## Use Terms
+
+Following the final publications, data from the 1000 Genomes Project is publicly available, without embargo, to anyone for use under the terms provided by the [dataset source](http://www.internationalgenome.org/data). Use of the data should be cited per details available in the 1000 Genome Project [FAQ resource](https://www.internationalgenome.org/faq).
+
+## Contact
+
+Scroll down at [this resource](https://www.internationalgenome.org/contact) for the contact information.
+
+## Next steps
+
+View the rest of the datasets in the [Open Datasets catalog](dataset-catalog.md).

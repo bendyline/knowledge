@@ -1,0 +1,50 @@
+---
+title: Geo-Replication Dynamic Management Views and Functions
+description: Geo-Replication Dynamic Management Views and Functions
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/08/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "dynamic management objects [Azure SQL Database]"
+  - "geo-replication"
+  - "dynamic management views"
+  - "system views"
+  - "geo-replication [Azure SQL Database]"
+dev_langs:
+  - TSQL
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Geo-replication dynamic management views and functions
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The following views display information about geo-replication.
+
+- Dynamic management views:
+
+  - [sys.dm_continuous_copy_status](sys-dm-continuous-copy-status-azure-sql-database.md)
+  - [sys.dm_geo_replication_link_status](sys-dm-geo-replication-link-status-azure-sql-database.md)
+  - [sys.dm_operation_status](sys-dm-operation-status-azure-sql-database.md)
+
+- System views:
+
+  - [sys.geo_replication_links](../system-views/sys-geo-replication-links-azure-sql-database.md)

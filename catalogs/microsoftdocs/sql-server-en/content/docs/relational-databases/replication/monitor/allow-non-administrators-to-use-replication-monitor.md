@@ -1,0 +1,81 @@
+---
+title: "Allow Non-Administrators use Replication Monitor"
+description: Learn how to grant access to non-administrators to the Replication Monitor in SQL Server Management Studio (SSMS).
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Replication Monitor, non-administrators access"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Allow Non-Administrators to Use Replication Monitor
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  This topic describes how to allow non-administrators to use Replication Monitor in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL . Replication Monitor can be used by users who are members of the following roles:  
+  
+-   The **sysadmin** fixed server role.  
+  
+     These users can monitor replication and have full control over changing replication properties such as agent schedules, agent profiles, and so on.  
+  
+-   The **replmonitor** database role in the distribution database.  
+  
+     These users can monitor replication, but cannot change any replication properties.  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+To allow non-administrators to use Replication Monitor, a member of the **sysadmin** fixed server role must add the user to the distribution database and assign that user to the **replmonitor** role.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To allow non-administrators to use Replication Monitor  
+  
+1.  In  SQL Server Management Studio 
+, connect to the Distributor, and then expand the server node.  
+  
+2.  Expand **Databases**, expand **System Databases**, and then expand the distribution database (named **distribution** by default).  
+  
+3.  Expand **Security**, right-click **Users**, and then click **New User**.  
+  
+4.  Enter a user name and login for the user.  
+  
+5.  Select a default schema of **replmonitor**.  
+  
+6.  Select the **replmonitor** check box in the **Database role membership** grid.  
+  
+7.  Select **OK**.
+
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To add a user to the replmonitor fixed database role  
+  
+1.  At the Distributor on the distribution database, execute [sp_helpuser (Transact-SQL)](../../system-stored-procedures/sp-helpuser-transact-sql.md). If the user is not listed in **UserName** in the result set, the user must be granted access to the distribution database using the [CREATE USER &#40;Transact-SQL&#41;](../../../t-sql/statements/create-user-transact-sql.md) statement.  
+  
+2.  At the Distributor on the distribution database, execute [sp_helprolemember (Transact-SQL)](../../system-stored-procedures/sp-helprolemember-transact-sql.md), specifying a value of **replmonitor** for the `@rolename` parameter. If the user is listed in **MemberName** in the result set, the user already belongs to this role.  
+  
+3.  If the user does not belong to the **replmonitor** role, execute [sp_addrolemember (Transact-SQL)](../../system-stored-procedures/sp-addrolemember-transact-sql.md) at the Distributor on the distribution database. Specify a value of **replmonitor** for `@rolename` and the name of the database user or the  Microsoft 
+ Windows login being added for `@membername`.  
+  
+#### To remove a user from the replmonitor fixed database role  
+  
+1.  To verify that the user belongs to the **replmonitor** role, execute [sp_helprolemember (Transact-SQL)](../../system-stored-procedures/sp-helprolemember-transact-sql.md) at the Distributor on the distribution database, and specify a value of **replmonitor** for `@rolename`. If the user is not listed in **MemberName** in the result set, the user does not currently belong to this role.  
+  
+2.  If the user does belong to the **replmonitor** role, execute [sp_droprolemember (Transact-SQL)](../../system-stored-procedures/sp-droprolemember-transact-sql.md) at the Distributor on the distribution database. Specify a value of **replmonitor** for `@rolename` and the name of the database user or the Windows login being removed for `@membername`.

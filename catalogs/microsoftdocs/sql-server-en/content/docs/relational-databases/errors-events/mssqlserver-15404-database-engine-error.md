@@ -1,0 +1,52 @@
+---
+title: "MSSQLSERVER_15404"
+description: "MSSQLSERVER_15404"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "15404 (Database Engine error)"
+---
+# MSSQLSERVER_15404
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 15404 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | SEC_NTGRP_ERROR |
+| Message Text | Could not obtain information about Windows NT group/user '*user*', error code *code*. |
+  
+## Explanation  
+SQL Server uses event 15404 during authentication when an invalid principal is specified. Or, impersonation of a Windows account fails because there's no full trust relationship between the  SQL Server 
+ service account and the domain of the Windows account.  
+  
+## User Action  
+Check that the Windows principal exists and isn't misspelled.  
+  
+If this error results from a lack of a full trust relationship between the  SQL Server 
+ service account and the domain of the Windows account, one of the following actions can resolve the error:  
+  
+-   Use an account from the same domain as the Windows user for the  SQL Server 
+ service.  
+  
+-   If  SQL Server 
+ is using a machine account such as Network Service or Local System, the machine must be trusted by the domain containing the Windows User.  
+  
+-   Use a  SQL Server 
+ account.  
+  
+- If you use a domain account for the  SQL Server 
+ service, ensure that domain account isn't locked out from Active Directory.

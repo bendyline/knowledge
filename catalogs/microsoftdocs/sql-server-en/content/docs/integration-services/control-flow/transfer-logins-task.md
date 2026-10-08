@@ -1,0 +1,146 @@
+---
+title: "Transfer Logins Task"
+description: "Transfer Logins Task"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.transferloginstask.f1"
+  - "sql13.dts.designer.transferloginstask.general.f1"
+  - "sql13.dts.designer.transferloginstask.logins.f1"
+helpviewer_keywords:
+  - "Transfer Logins task [Integration Services]"
+---
+# Transfer Logins Task
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  The Transfer Logins task transfers one or more logins between instances of  SQL Server 
+.  
+  
+## Transfer Logins Between Instances of SQL Server  
+ The Transfer Logins task supports a  SQL Server 
+ source and destination.  
+  
+## Events  
+ The task raises an information event that reports the number of logins transferred and a warning event when a login is overwritten.  
+  
+ The Transfer Logins task does not report incremental progress of the login transfer; it reports only 0% and 100 % completion.  
+  
+## Execution Value  
+ The execution value, defined in the **ExecutionValue** property of the task, returns the number of logins transferred. By assigning a user-defined variable to the **ExecValueVariable** property of the Transfer Logins task, information about the login transfer can be made available to other objects in the package. For more information, see [Integration Services (SSIS) Variables](../integration-services-ssis-variables.md) and [Use Variables in Packages](../integration-services-ssis-variables.md).  
+  
+## Log Entries  
+ The Transfer Logins task includes the following custom log entries:  
+  
+-   TransferLoginsTaskStarTransferringObjects    This log entry reports the transfer has started. The log entry includes the start time.  
+  
+-   TransferLoginsTaskFinishedTransferringObjects   This log entry reports the transfer has completed. The log entry includes the end time.  
+  
+ In addition, a log entry for the **OnInformation** event reports the number of logins that were transferred, and a log entry for the **OnWarning** event is written for each login on the destination that is overwritten.  
+  
+## Security and Permissions  
+ To browse logins on the source server and to create logins on the destination server, the user must be a member of the sysadmin server role on both servers.  
+  
+## Configuration of the Transfer Logins Task  
+ The Transfer Logins task can be configured to transfer all logins, only specified logins, or all logins that have access to specified databases only. The sa login cannot be transferred. The sa login may be renamed; however, the renamed sa login cannot be transferred either.  
+  
+ You can also indicate whether the task copies the security identifiers (SIDs) associated with the logins. If the Transfer Logins task is used in conjunction with the Transfer Database task the SIDs must be copied to the destination; otherwise, the transferred logins are not recognized by the destination database.  
+  
+ At the destination, the transferred logins are disabled and assigned random passwords. A member of the sysadmin role on the destination server must change the passwords and enable the logins before the logins can be used.  
+  
+ The logins to be transferred may already exist on the destination. The Transfer Logins task can be configured to handle existing logins in the following ways:  
+  
+-   Overwrite existing logins.  
+  
+-   Fail the task when duplicate logins exist.  
+  
+-   Skip duplicate logins.  
+  
+ At run time, the Transfer Logins task connects to the source and destination servers by using two SMO connection managers. The SMO connection managers are configured separately from the Transfer Logins task, and then referenced in the Transfer Logins task. The SMO connection managers specify the server and the authentication mode to use when accessing the server. For more information, see [SMO Connection Manager](../connection-manager/smo-connection-manager.md).  
+  
+ You can set properties through  SSIS 
+ Designer or programmatically.  
+  
+ For more information about the properties that you can set in  SSIS 
+ Designer, click the following topic:  
+  
+-   [Expressions Page](../expressions/expressions-page.md)  
+  
+ For more information about how to set these properties in  SSIS 
+ Designer, click the following topic:  
+  
+-   [Set the Properties of a Task or Container](add-or-delete-a-task-or-a-container-in-a-control-flow.md)  
+  
+## Programmatic Configuration of the Transfer Logins Task  
+ For more information about programmatically setting these properties, click the following topic:  
+  
+-   [Microsoft.SqlServer.Dts.Tasks.TransferLoginsTask.TransferLoginsTask](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Tasks.TransferLoginsTask.TransferLoginsTask)  
+  
+## Transfer Logins Task Editor (General Page)
+  Use the **General** page of the **Transfer Logins Task Editor** dialog box to name and describe the Transfer Logins task.  
+  
+### Options  
+ **Name**  
+ Type a unique name for the Transfer Logins task. This name is used as the label in the task icon.  
+  
+> **Note:**  
+>  Task names must be unique within a package.  
+  
+ **Description**  
+ Type a description of the Transfer Logins task.  
+  
+## Transfer Logins Task Editor (Logins Page)
+  Use the **Logins** page of the **Transfer Logins Task Editor** dialog box to specify properties for copying one or more  SQL Server 
+ logins from one instance of  SQL Server 
+ to another.  
+  
+> **Important:**  
+>  When the Transfer Logins task is executed, logins are created on the destination server with random passwords and the passwords are disabled. To use these logins, a member of the **sysadmin** fixed server role must change the passwords and then enable them. The **sa** login cannot be transferred.  
+  
+### Options  
+ **SourceConnection**  
+ Select a SMO connection manager in the list, or click **\<New connection...>** to create a new connection to the source server.  
+  
+ **DestinationConnection**  
+ Select a SMO connection manager in the list, or click **\<New connection...>** to create a new connection to the destination server.  
+  
+ **LoginsToTransfer**  
+ Select the  SQL Server 
+ logins to copy from the source to the destination server. This property has the options listed in the following table:  
+  
+| Value | Description |
+| --- | --- |
+| **AllLogins** | All  SQL Server |
+ | logins on the source server will be copied to the destination server. |
+| **SelectedLogins** | Only logins specified with **LoginsList** will be copied to the destination server. |
+| **AllLoginsFromSelectedDatabases** | All logins from the databases specified with **DatabasesList** will be copied to the destination server. |
+  
+ **LoginsList**  
+ Select the logins on the source server to be copied to the destination server. This option is only available when **SelectedLogins** is selected for **LoginsToTransfer**.  
+  
+ **DatabasesList**  
+ Select the databases on the source server that contain logins to be copied to the destination server. This option is only available when **AllLoginsFromSelectedDatabases** is selected for **LoginsToTransfer**.  
+  
+ **IfObjectExists**  
+ Select how the task should handle logins of the same name that already exist on the destination server.  
+  
+ This property has the options listed in the following table:  
+  
+| Value | Description |
+| --- | --- |
+| **FailTask** | Task fails if logins of the same name already exist on the destination server. |
+| **Overwrite** | Task overwrites logins of the same name on the destination server. |
+| **Skip** | Task skips logins of the same name that exist on the destination server. |
+  
+ **CopySids**  
+ Select whether the security identifiers associated with the logins should be copied to the destination server. **CopySids** must be set to **True** if the Transfer Logins task is used along with the Transfer Database task. Otherwise, the copied logins will not be recognized by the transferred database.

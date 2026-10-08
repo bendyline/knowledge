@@ -2,13 +2,14 @@ import { readFile, mkdir, mkdtemp, stat } from 'node:fs/promises';
 import { resolve, matchesGlob } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createPublicKey } from 'node:crypto';
-import { compileKnowledgeCatalog, loadMarkdownCatalog, createProfileEmbedder, knowledgeEmbeddingProfile, MARKDOWN_CHUNKS_2, extractGezkVerified, validateExtractedCatalog, inspectGezkArchive, signManifest, toolchainIdentity, manifestToolchain, requireSharedToc } from './toolchain.mjs';
+import { compileKnowledgeCatalog, createProfileEmbedder, knowledgeEmbeddingProfile, MARKDOWN_CHUNKS_2, extractGezkVerified, validateExtractedCatalog, inspectGezkArchive, signManifest, toolchainIdentity, manifestToolchain, requireSharedToc } from './toolchain.mjs';
 import { applyWikipediaToc } from './wikipedia-toc.mjs';
 import { buildDigest, licenseFor, parseYaml, validateCatalog } from './catalogs.mjs';
 import { digest, exists, hashFile, inside, inventory, readJson, removeWork, write, writeJson } from './files.mjs';
 import { cachedEmbedder } from './embedding-cache.mjs';
 import { attributionRequired } from './licensing.mjs';
 import { bindPackageLinks, packageCatalogId, packageQueries, resolveBuildPackage } from './news-packages.mjs';
+import { loadNormalizedMarkdown } from './markdown-loader.mjs';
 
 export function assertVersion(version) {
   if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version ?? '')) throw new Error('--version must be a stable semantic version, for example 2026.10.1');
@@ -45,10 +46,11 @@ export async function buildCatalog(catalog, { version, createdAt, embedderFactor
   const profile = knowledgeEmbeddingProfile(m.build.embeddingProfile);
   if (!profile) throw new Error(`Unsupported embedding profile ${m.build.embeddingProfile}`);
   const contentFiles = await inventory(resolve(dir, 'content'));
-  const ignore = contentFiles.filter((f) => m.build.ignore.some((pattern) => matchesGlob(f.path, pattern)) || (packaging && !packaging.paths.has(f.path))).map((f) => f.path);
+  const preserve = m.normalization.docfxReferences === 'preserve';
+  const ignore = contentFiles.filter((f) => m.build.ignore.some((pattern) => matchesGlob(preserve ? f.path.toLowerCase() : f.path, preserve ? pattern.toLowerCase() : pattern)) || (packaging && !packaging.paths.has(f.path))).map((f) => f.path);
   console.error(`[Build] Loading ${contentFiles.length - ignore.length} content files for ${m.id}${packaging ? ` (${packaging.window.start} through ${packaging.window.end})` : ''}`);
   const dailyToc = m.build.toc.format === 'wikipedia-days';
-  let source = await loadMarkdownCatalog(resolve(dir, 'content'), { language: m.language, ...(packaging ? {} : { uri: { publisherId: m.publisher.id, catalogId: m.id } }), toc: dailyToc ? { format: 'folders' } : m.build.toc, ignore, missingAssets: 'error' });
+  let source = await loadNormalizedMarkdown(resolve(dir, 'content'), { language: m.language, ...(packaging ? {} : { uri: { publisherId: m.publisher.id, catalogId: m.id } }), toc: dailyToc ? { format: 'folders' } : m.build.toc, ignore }, m.normalization);
   if (packaging && source.documents.length !== packaging.documentIds.size) throw new Error('Package document count disagrees with its selected days and articles');
   if (dailyToc) source = await applyWikipediaToc(catalog, source, packaging?.selection);
   const provenancePath = resolve(dir, 'provenance.jsonl');

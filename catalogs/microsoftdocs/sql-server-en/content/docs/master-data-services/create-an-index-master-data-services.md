@@ -1,0 +1,81 @@
+---
+title: Create an Index
+description: Create an Index (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+---
+# Create an Index (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Create a custom index on a list of attributes that you query frequently, to improve query performance.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the System Administration functional area. For more information, see [Functional Area Permissions (Master Data Services)](functional-area-permissions-master-data-services.md).  
+  
+-   You must be a model administrator. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md).  
+  
+ **To create an index**  
+  
+1.  In Master Data Manager, click **System Administration**.  
+  
+2.  On the **Manage Model** page, select a model from the grid and click then **Entities**.  
+  
+3.  On the **Manage Entity** page, from the **grid** , select the row for the entity that you want to create an index for.  
+  
+4.  Click **Indexes**.  
+  
+5.  In the **Name** box, type a name for the index.  
+  
+6.  Select **Is Unique** if you want to create a unique index. For more information about index types, see [Custom Index (Master Data Services)](custom-index-master-data-services.md).  
+  
+7.  Click attributes in the **Available Attributes** box, and then click the **Add** arrow. To add all attributes, click the **Add All** arrow.  
+  
+8.  Click **Save**.  
+  
+ For each created index, a row with four columns is added to the grid. The following table describes the columns.  
+  
+| Column Name | Description |
+| --- | --- |
+| Status | The index status.<br /><br /> When you click **Save**, the Icon for updating status image displays indicating that the index is updating.<br /><br /> If there are errors when creating or editing an index, the Icon for error status image displays.<br /><br /> Otherwise, the status is OK, and the Icon for OK status image displays. |
+| Name | The index name. |
+| Is Unique | Specifies whether the index is unique. |
+| On Attributes | Shows the display names  of attributes that the index is defined on. |
+  
+ When you click an index, the following information displays.  
+  
+-   **Created By**: The name of the user who created the index.  
+  
+-   **On**: The date and time when the index was created.  
+  
+-   **Updated By**: The name of the user who last updated the index.  
+  
+-   **On**: The date and time when the index was last updated.  
+  
+## Related content
+
+- [Custom Index (Master Data Services)](custom-index-master-data-services.md)
+- [Edit and Delete an Index (Master Data Services)](edit-and-delete-an-index-master-data-services.md)

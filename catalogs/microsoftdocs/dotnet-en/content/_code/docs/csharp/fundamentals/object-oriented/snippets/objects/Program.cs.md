@@ -1,0 +1,41 @@
+# Source code: docs/csharp/fundamentals/object-oriented/snippets/objects/Program.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+
+public class Person(string name, int age)
+{
+    public string Name { get; set; } = name;
+    public int Age { get; set; } = age;
+    // Other properties, methods, events...
+}
+
+class Program
+{
+    static void Main()
+    {
+        Person person1 = new("Leopold", 6);
+        Console.WriteLine($"person1 Name = {person1.Name} Age = {person1.Age}");
+
+        // Declare new person, assign person1 to it.
+        Person person2 = person1;
+
+        // Change the name of person2, and person1 also changes.
+        person2.Name = "Molly";
+        person2.Age = 16;
+
+        Console.WriteLine($"person2 Name = {person2.Name} Age = {person2.Age}");
+        Console.WriteLine($"person1 Name = {person1.Name} Age = {person1.Age}");
+
+        /*
+            Output:
+            person1 Name = Leopold Age = 6
+            person2 Name = Molly Age = 16
+            person1 Name = Molly Age = 16
+        */
+    }
+}
+
+```

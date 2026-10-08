@@ -1,0 +1,8 @@
+[
+  {
+    "query": "What is Azure Virtual Network and how does it allow Azure resources to communicate with each other, the internet, and on-premises networks?",
+    "expectedDocumentIds": [
+      "articles/virtual-network/virtual-networks-overview"
+    ]
+  }
+]

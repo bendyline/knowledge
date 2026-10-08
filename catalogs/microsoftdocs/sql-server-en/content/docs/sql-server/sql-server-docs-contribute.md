@@ -1,0 +1,115 @@
+---
+title: How to Contribute to SQL Server Documentation
+description: "How to contribute to SQL Server Documentation"
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 12/15/2025
+ms.service: sql
+ms.subservice: release-landing
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =fabric-sqldb"
+---
+
+# How to contribute to SQL Server documentation
+
+
+**Applies to:**
+ 
+
+](sql-docs-navigation-guide.md#applies-to)
+ 
+
+](sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+Anyone can contribute to SQL Server documentation. This includes correcting typos, suggesting better explanations, and improving technical accuracy. This article explains how to get started with content contributions and how the process works.
+
+There are two main workflows you can use to contribute:
+
+| Workflow | Description |
+| --- | --- |
+| [Edit in your browser](#githubui) | Good for small, quick edits of any article. |
+| [Edit locally with tools](#tools) | Good for more complex edits, edits involving multiple articles, and frequent contributions. |
+
+The Data Docs content team validates all public contributions for technical accuracy and consistency.
+
+<a id="githubui"></a>
+
+## Edit in your browser
+
+You can make simple edits to SQL Server content in your browser and then submit them to Microsoft. For more information, see the [contributor guide overview](https://learn.microsoft.com/contribute/#quick-edits-to-existing-documents).
+
+The following steps summarize the process:
+
+1. On the page you want to suggest a change for, select the **Kebab (three vertical dots)** near **In this article**. 
+1. Select **Edit**. The browser takes you to the GitHub repository for that article source file.
+1. In the source file, select the **Pencil** icon at the top right. If this icon doesn't appear, you might need to sign in to your GitHub account first. GitHub returns the editing page.
+1. Edit the text to propose changes.
+   If you need help with formatting the new or changed text, see the [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
+1. After you make your edits, scroll back to the top of the page and select **Commit changes**. 
+   1. In the **Commit message** dialog box, provide a name for your pull request, such as *Fixing typo*.
+   1. In the **Add an optional extended description** box, provide a brief explanation of your change.
+   1. Select **Propose changes**  to go to the **Comparing changes** page. 
+1. On the **Comparing changes** page, select **Create pull request** to go to the **Open a pull request** page.
+1. On the **Open a pull request page**, select **Create pull request** to submit your pull request to the content team. 
+
+The following GIF demonstrates the end-to-end process for submitting changes in your browser:
+
+Screenshot of Edit SQL Docs.
+
+After you create your pull request, the content team reviews your proposed changes. If they accept your changes, they merge them into the documentation and publish them. You receive email notifications about the status of your pull request, depending on your Github notification settings.
+
+<a id="tools"></a>
+
+## Edit locally by using tools
+
+Another option is to fork the `sql-docs` or `azure-docs` repositories and clone them locally to your machine. You can then use a Markdown editor and a git client to submit the changes. This workflow is good for edits that are more complex or involve multiple files. It's also good for frequent contributors to Microsoft technical documentation.
+
+To contribute with this method, see the following articles:
+
+- [Create a GitHub account](https://learn.microsoft.com/contribute/get-started-setup-github)
+- [Install content authoring tools](https://learn.microsoft.com/contribute/get-started-setup-tools)
+- [Set up a Git repository locally](https://learn.microsoft.com/contribute/get-started-setup-local)
+- [Use tools to contribute](https://learn.microsoft.com/contribute/how-to-write-workflows-major)
+
+If you submit a pull request with significant changes to documentation, you receive a comment in GitHub that asks you to submit an online **Contribution License Agreement (CLA)**. You must complete the online form before your pull request can be accepted.
+
+## Overview: sql-docs repository
+
+This section provides more guidance on working in the `sql-docs` repository.
+
+> **Important:**  
+> The information in this section is specific to `sql-docs`. If you're editing a SQL article in the Azure documentation, see [the Readme for the azure-docs repository on GitHub](https://github.com/MicrosoftDocs/azure-docs/blob/master/README.md).
+
+The [sql-docs](https://github.com/MicrosoftDocs/sql-docs) repository uses several standard folders to organize the content.
+
+| Folder | Description |
+| --- | --- |
+| [docs](https://github.com/MicrosoftDocs/sql-docs/tree/live/docs) | Contains all published SQL Server content. Subfolders logically organize different areas of the content. |
+| [docs/includes](https://github.com/MicrosoftDocs/sql-docs/tree/live/docs/includes) | Contains include files. These files are blocks of content that can be included in one or more other articles. |
+| `./media` | Each folder can have one `media` subfolder for article images. The `media` folder in turn has subfolders with the same name as the articles that the image appears in. Images should be `.png` files with all lowercase letters and no spaces. |
+| `TOC.yml` | A table-of-contents file. Each subfolder has the option of using one `TOC.yml` file. |
+
+## Contributor resources
+
+- [Contributor guide](https://learn.microsoft.com/contribute/)
+- [Microsoft Style Guide](https://learn.microsoft.com/teamblog/style-guide)
+- [Markdown basics](https://docs.github.com/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github)
+
+> **Tip:**  
+> If you have product feedback instead of documentation feedback, [provide feedback](https://feedback.azure.com/forums/908035-sql-server).
+
+## Next step
+
+Find an article, submit a change, and help the SQL Server community.
+
+> 
+> [Explore the sql-docs repository on GitHub](https://github.com/MicrosoftDocs/sql-docs)

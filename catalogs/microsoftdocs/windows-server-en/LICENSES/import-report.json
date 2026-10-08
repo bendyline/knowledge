@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "repository": "MicrosoftDocs/windowsserverdocs",
+  "revision": "b30da775fdeb9df0c446fda330fd0f101422edbe",
+  "documents": 2594,
+  "codeDocuments": 0,
+  "unresolved": [
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/Storage-Spaces-Direct-Disaster-Recovery.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/Storage-Spaces-Direct-Disaster-Recovery.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/Storage-class-memory-health.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/Storage-class-memory-health.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/add-nodes.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/add-nodes.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/delimit-volume-allocation.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/delimit-volume-allocation.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-clusters.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-clusters.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-drives.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-drives.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-network-adapters.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-network-adapters.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-servers.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-servers.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-vhds.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-vhds.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-vms.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-vms.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-for-volumes.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-for-volumes.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history-scripting.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history-scripting.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/performance-history.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/performance-history.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/quorum.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/quorum.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 9, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/replace-drives.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/replace-drives.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 9, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/storage-spaces-direct-overview.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/storage-spaces-direct-overview.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/storage-spaces-states.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/storage-spaces-states.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/troubleshooting-storage-spaces.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/troubleshooting-storage-spaces.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 9, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/storage/storage-spaces/understand-storage-resync.md",
+      "kind": "Original metadata retained as code",
+      "target": "WindowsServerDocs/storage/storage-spaces/understand-storage-resync.md: Flow sequence in block collection must be sufficiently indented and end with a ] at line 8, column 4:\n\n\t\t\t\"✅ <a href=\\\"https://learn.microsoft.com/windows-server/get-started/windows-…\n   ^\n"
+    },
+    {
+      "path": "WindowsServerDocs/identity/ad-fs/operations/configure-ad-fs-and-azure-mfa.md",
+      "kind": "Include",
+      "target": "~/../WindowsServerDocs/reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    }
+  ],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

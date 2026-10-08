@@ -1,0 +1,140 @@
+{
+  "$schema": "../../../schemas/catalog.schema.json",
+  "schemaVersion": 1,
+  "id": "microsoftdocs-sql-server-en",
+  "name": "Microsoft technology: SQL Server and Azure SQL",
+  "description": "Preserved English SQL Server and Azure SQL documentation from MicrosoftDocs/sql-docs, with normalized Markdown, complete selected code examples, source revisions, and license notices.",
+  "language": "en",
+  "enabled": true,
+  "contentStorage": "git",
+  "publisher": {
+    "id": "bendyline",
+    "name": "Bendyline",
+    "url": "https://github.com/bendyline/knowledge"
+  },
+  "source": {
+    "type": "github",
+    "repository": "MicrosoftDocs/sql-docs",
+    "ref": "e261e18779bfc7d6123e89ebb40055901b927c2a",
+    "paths": [
+      "."
+    ],
+    "include": [
+      "docs/**/*.md",
+      "azure-sql/**/*.md",
+      "data-migration/**/*.md"
+    ],
+    "exclude": [],
+    "transport": "files",
+    "codeFiles": [
+      "docs/**/codesnippet/**/*.java",
+      "docs/**/codesnippet/**/*.cs",
+      "docs/**/codesnippet/**/*.vb",
+      "docs/**/codesnippet/**/*.cpp",
+      "docs/**/codesnippet/**/*.h",
+      "docs/**/codesnippet/**/*.sql",
+      "docs/**/codesnippet/**/*.xml",
+      "docs/**/codesnippet/**/*.xsd"
+    ],
+    "docfxRoot": "docs",
+    "maxArchiveBytes": 2000000000,
+    "publishedBaseUrl": "https://learn.microsoft.com/sql/",
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "license": "docs"
+      },
+      {
+        "path": "LICENSE-CODE",
+        "license": "code"
+      }
+    ],
+    "noticeFiles": [
+      {
+        "path": "ThirdPartyNotices",
+        "sha256": "f90a4ebe55a146d29bae7ce11cb57faf7346beab9dd9db5f15b533ac6c48a37f"
+      }
+    ],
+    "downloadConcurrency": 8
+  },
+  "licensing": {
+    "status": "automatic",
+    "policy": "standard-open-v1",
+    "notice": "NOTICE.md",
+    "licenses": [
+      {
+        "id": "docs",
+        "name": "Creative Commons Attribution 4.0",
+        "spdx": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "text": "LICENSES/CC-BY-4.0.txt",
+        "attribution": "Microsoft and contributors. Documentation: CC BY 4.0; embedded code: MIT. Adapted by Bendyline through Markdown normalization, include expansion, image omission, and reference conversion. No Microsoft endorsement."
+      },
+      {
+        "id": "code",
+        "name": "MIT License",
+        "spdx": "MIT",
+        "url": "https://opensource.org/license/mit",
+        "text": "LICENSES/MIT.txt",
+        "attribution": "Copyright (c) Microsoft Corporation and contributors. Code examples retain their MIT license."
+      }
+    ],
+    "rules": [
+      {
+        "include": [
+          "docs/**/*.md",
+          "azure-sql/**/*.md",
+          "data-migration/**/*.md"
+        ],
+        "license": "docs"
+      },
+      {
+        "include": [
+          "_code/**/*.md",
+          "docs/**/codesnippet/**/*.java",
+          "docs/**/codesnippet/**/*.cs",
+          "docs/**/codesnippet/**/*.vb",
+          "docs/**/codesnippet/**/*.cpp",
+          "docs/**/codesnippet/**/*.h",
+          "docs/**/codesnippet/**/*.sql",
+          "docs/**/codesnippet/**/*.xml",
+          "docs/**/codesnippet/**/*.xsd"
+        ],
+        "license": "code"
+      }
+    ]
+  },
+  "normalization": {
+    "images": "omit",
+    "docfx": true,
+    "docfxReferences": "preserve"
+  },
+  "sync": {
+    "maxFileBytes": 20000000,
+    "maxTotalBytes": 1500000000,
+    "maxDeleteFraction": 0.2
+  },
+  "build": {
+    "embeddingProfile": "bge-small-en-v1.5@1",
+    "toc": {
+      "format": "folders"
+    },
+    "ignore": [
+      "**/includes/**"
+    ]
+  },
+  "publish": {
+    "enabled": true,
+    "huggingFace": "Bendyline/knowledge",
+    "github": "bendyline/knowledge",
+    "gilde": {
+      "repository": "bendyline/gilde",
+      "category": "technology",
+      "tags": [
+        "microsoft",
+        "technology",
+        "sql-server"
+      ]
+    }
+  }
+}

@@ -1,0 +1,68 @@
+---
+title: "How To: Configure Permissions for a Local Service (Transact-SQL)"
+description: "SQL Server enforces SEND permission for each service and RECEIVE permissions for each queue."
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: maghan
+ms.date: 08/29/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+---
+
+# How to: Configure permissions for a local service (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+SQL Server enforces `SEND` permission for each service and `RECEIVE` permissions for each queue. The security principal that owns the initiating service must have `SEND` permission on the target service. The security principal for an application must have `RECEIVE` permission for each queue that the application receives messages from.
+
+This procedure is a simplified form of the procedure for creating a remote security configuration. In both cases, you grant `SEND` permission on the destination service and `RECEIVE` permission on the queue for the service that sends the messages. For a remote security configuration, however, you must also configure Service Broker security to correctly identify the remote user. For a configuration within a single database, you only need to grant permissions.
+
+## Grant permissions for a local service
+
+1. Grant permission for the user to receive from the queue that the application uses.
+
+1. Grant permission for the user that owns the initiating service to send messages to the services that the application communicates with.
+
+## Examples
+
+This example configures permissions to allow `BrokerApplicationUser` to send messages from the service that uses the queue `StoreFrontQueue` to the service Ordering. This procedure assumes that the user, the services, and the queue already exist.
+
+> **Note:**  
+> The code samples in this article were tested using the  `AdventureWorks2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+
+```sql
+USE AdventureWorks2008R2;
+GO
+
+-- This example sets permissions for a service
+-- program that sends messages to the Ordering service
+-- and receives messages from the StoreFrontQueue queue.
+-- Grant SEND permission on the service to the owner
+-- of the initiating service.
+GRANT SEND ON SERVICE::[Ordering] TO [BrokerApplicationUser];
+GO
+
+-- Grant RECEIVE permission on the queue.
+GRANT RECEIVE ON [StoreFrontQueue] TO [BrokerApplicationUser];
+GO
+```
+
+## Related content
+
+- [How to: Configure target services for anonymous dialog security (Transact-SQL)](how-to-configure-target-services-for-anonymous-dialog-security-transact-sql.md)
+- [How to: Configure target services for full dialog security (Transact-SQL)](how-to-configure-target-services-for-full-dialog-security-transact-sql.md)
+- [How to: Configure initiating services for full dialog security (Transact-SQL)](how-to-configure-initiating-services-for-full-dialog-security-transact-sql.md)
+- [How to: Configure initiating services for anonymous dialog security (Transact-SQL)](how-to-configure-initiating-services-for-anonymous-dialog-security-transact-sql.md)
+- [GRANT Service Broker Permissions (Transact-SQL)](../../t-sql/statements/grant-service-broker-permissions-transact-sql.md)
+- [Identity and access control (Service Broker)](identity-and-access-control.md)

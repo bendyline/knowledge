@@ -1,0 +1,53 @@
+---
+title: "getTimestamp Method (int, java.util.Calendar) (SQLServerResultSet)"
+description: "getTimestamp Method (int, java.util.Calendar) (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.getTimestamp (int, java.util.Calendar)"
+apitype: "Assembly"
+---
+# getTimestamp Method (int, java.util.Calendar) (SQLServerResultSet)
+
+
+  Retrieves the value of the designated column index in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a java.sql.Timestamp object in the Java programming language, using a Calendar object.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.Timestamp getTimestamp(int columnIndex,  
+                                       java.util.Calendar cal)  
+```  
+  
+#### Parameters  
+ *columnIndex*  
+  
+ An **int** that indicates the column index.  
+  
+ *cal*  
+  
+ A Calendar object.  
+  
+## Return Value  
+ A Timestamp object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getTimestamp method is specified by the getTimestamp method in the java.sql.ResultSet interface.  
+  
+ This method returns values only from  SQL Server 
+ datetime and smalldatetime columns.  
+  
+## Related content
+
+- [getTimestamp Method (SQLServerResultSet)](gettimestamp-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

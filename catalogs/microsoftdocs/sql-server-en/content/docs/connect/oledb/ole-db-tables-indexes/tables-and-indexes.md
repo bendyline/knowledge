@@ -1,0 +1,84 @@
+---
+title: Tables and indexes (OLE DB driver)
+description: Learn about the OLE DB Driver interfaces IIndexDefinition and ITableDefinition, which allow consumers to create, alter, and drop SQL Server tables and indexes.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "06/14/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "OLE DB, indexes"
+  - "OLE DB, tables"
+  - "ITableDefinition interface"
+  - "tables [OLE DB]"
+  - "IIndexDefinition interface"
+  - "OLE DB Driver for SQL Server, tables"
+  - "OLE DB Driver for SQL Server, indexes"
+  - "indexes [OLE DB]"
+---
+# Tables and Indexes
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  The OLE DB Driver for SQL Server exposes the **IIndexDefinition** and **ITableDefinition** interfaces, allowing consumers to create, alter, and drop  SQL Server 
+ tables and indexes. Valid table and index definitions depend on the version of  SQL Server 
+.  
+  
+ The ability to create or drop tables and indexes depends on the  SQL Server 
+ access rights of the consumer-application user. Dropping a table can be further constrained by the presence of declarative referential integrity constraints or other factors.  
+  
+ Most applications targeting  SQL Server 
+ use SQL-DMO instead of these OLE DB Driver for SQL Server interfaces. SQL-DMO is a collection of OLE Automation objects that support all the administrative functions of  SQL Server 
+. Applications targeting multiple OLE DB providers use these generic OLE DB interfaces that are supported by the various OLE DB providers.  
+  
+ In the provider-specific property set DBPROPSET_SQLSERVERCOLUMN,  SQL Server 
+ defines the following property.  
+  
+| Property ID | Description |
+| --- | --- |
+| SSPROP_COL_COLLATIONNAME | Type: VT_BSTR<br /><br /> R/W: Write<br /><br /> Default: Null<br /><br /> Description: This property is used only in **ITableDefinition**. The string specified in this property is used when creating a [CREATE TABLE](../../../t-sql/statements/create-table-transact-sql.md)<br /><br /> statement. |
+  
+## In This Section  
+  
+-   [Creating SQL Server Tables](creating-sql-server-tables.md)  
+  
+-   [Adding a Column to a SQL Server Table](adding-a-column-to-a-sql-server-table.md)  
+  
+-   [Removing a Column from a SQL Server Table](removing-a-column-from-a-sql-server-table.md)  
+  
+-   [Dropping a SQL Server Table](dropping-a-sql-server-table.md)  
+  
+-   [Creating SQL Server Indexes](creating-sql-server-indexes.md)  
+  
+-   [Dropping a SQL Server Index](dropping-a-sql-server-index.md)  
+  
+## Related content
+
+- [OLE DB Driver for SQL Server Programming](../ole-db/oledb-driver-for-sql-server-programming.md)
+- [DROP TABLE (Transact-SQL)](../../../t-sql/statements/drop-table-transact-sql.md)
+- [CREATE INDEX (Transact-SQL)](../../../t-sql/statements/create-index-transact-sql.md)
+- [DROP INDEX (Transact-SQL)](../../../t-sql/statements/drop-index-transact-sql.md)

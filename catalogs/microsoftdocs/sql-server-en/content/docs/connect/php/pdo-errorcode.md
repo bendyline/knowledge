@@ -1,0 +1,52 @@
+---
+title: "PDO::errorCode"
+description: "API reference for the PDO::errorCode function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDO::errorCode
+
+
+
+PDO::errorCode retrieves the SQLSTATE of the most recent operation on the database handle.  
+  
+## Syntax  
+  
+```php  
+  
+mixed PDO::errorCode();  
+```  
+  
+## Return Value  
+PDO::errorCode returns a five-char SQLSTATE as a string or NULL if there was no operation on the database handle.  
+  
+## Remarks  
+PDO::errorCode in the PDO_SQLSRV driver returns warnings on some successful operations. For example, on a successful connection, PDO::errorCode returns "01000" indicating SQL_SUCCESS_WITH_INFO.  
+  
+PDO::errorCode only retrieves error codes for operations performed directly on the database connection. If you create a PDOStatement instance through PDO::prepare or PDO::query and an error is generated on the statement object, PDO::errorCode does not retrieve that error. You must call PDOStatement::errorCode to return the error code for an operation performed on a particular statement object.  
+  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+In this example, the name of the column is misspelled (`Cityx` instead of `City`), causing an error, which is then reported.  
+  
+```php  
+<?php  
+$conn = new PDO( "sqlsrv:server=(local) ; Database = AdventureWorks ", "", "");  
+$query = "SELECT * FROM Person.Address where Cityx = 'Essen'";  
+  
+$conn->query($query);  
+print $conn->errorCode();  
+?>  
+```  
+  
+## Related content
+
+- [PDO Class](pdo-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

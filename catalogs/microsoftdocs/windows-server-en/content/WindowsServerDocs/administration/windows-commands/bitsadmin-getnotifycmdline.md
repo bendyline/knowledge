@@ -1,0 +1,41 @@
+---
+title: bitsadmin getnotifycmdline
+description: Reference article for the bitsadmin getnotifycmdline command, which retrieves the command-line command that is run when the job finishes transferring data.
+ms.topic: reference
+ms.author: roharwoo
+author: robinharwood
+ms.date: 10/16/2017
+---
+
+# bitsadmin getnotifycmdline
+
+Retrieves the command-line command to run after the specified job finishes transferring data.
+
+> **Note:**
+> This command isn't supported by BITS 1.2 and earlier.
+
+## Syntax
+
+```
+bitsadmin /getnotifycmdline <job>
+```
+
+### Parameters
+
+| Parameter | Description |
+| --- | --- |
+| job | The job's display name or GUID. |
+
+## Examples
+
+To retrieve the command-line command used by the service when the job named *myDownloadJob* completes.
+
+```
+bitsadmin /getnotifycmdline myDownloadJob
+```
+
+## Related links
+
+- [Command-Line Syntax Key](command-line-syntax-key.md)
+
+- [bitsadmin command](bitsadmin.md)

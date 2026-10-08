@@ -1,0 +1,76 @@
+---
+title: Staging Stored Procedure
+description: Use one of three stored procedures to initiate the staging process from SQL Server Management Studio in Master Data Services.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+---
+# Staging Stored Procedure (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  When initiating the staging process from  SQL Server Management Studio 
+, you use one of three stored procedures.  
+  
+-   stg.udp_\<name>_Leaf  
+  
+-   stg.udp_\<name>_Consolidated  
+  
+-   stg.udp_\<name>_Relationship  
+  
+ Where name is the name of the staging table that was specified when the entity was created.  
+  
+## Staging Process Stored Procedure Parameters  
+ The following table lists the parameters of these stored procedures.  
+  
+| Parameter | Description |
+| --- | --- |
+| **VersionName**<br /><br /> Required | The name of the version. This may or may not be case-sensitive, depending on your  SQL Server |
+ | collation setting. |
+| **LogFlag**<br /><br /> Required | Determines whether transactions are logged during the staging process. Possible values are:<br /><br /> **0**: Do not log transactions.<br /><br /> **1**: Log transactions.<br /><br /> <br /><br /> For more information about transactions, see [Transactions (Master Data Services)](transactions-master-data-services.md). |
+| **BatchTag**<br /><br /> Required, except by web service | The **BatchTag** value as specified in the staging table. |
+| **Batch_ID**<br /><br /> Required by web service only | The **Batch_ID** value as specified in the staging table. |
+| **User Name** | Optional parameter |
+| **User ID** | Optional parameter |
+  
+### Staging Process Stored Procedure Example  
+ The following example shows how to start the staging process by using the staging stored procedure.  
+  
+```  
+USE [DATABASE_NAME]  
+GO  
+  
+EXEC[stg].[udp_name_Leaf]  
+      @VersionName = N'VERSION_1',  
+@LogFlag = 1,  
+@BatchTag = N'batch1'  
+      @UserName=N'domain\user'  
+  
+GO  
+  
+```  
+  
+## Related content
+
+- [Validation Stored Procedure (Master Data Services)](validation-stored-procedure-master-data-services.md)
+- [View Errors that Occur During Staging (Master Data Services)](view-errors-that-occur-during-staging-master-data-services.md)

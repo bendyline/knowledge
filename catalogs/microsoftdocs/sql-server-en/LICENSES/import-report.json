@@ -1,0 +1,1695 @@
+{
+  "schemaVersion": 1,
+  "repository": "MicrosoftDocs/sql-docs",
+  "revision": "e261e18779bfc7d6123e89ebb40055901b927c2a",
+  "documents": 14666,
+  "codeDocuments": 230,
+  "unresolved": [
+    {
+      "path": "azure-sql/database/automated-backups-change-settings.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "azure-sql/database/az-cli-script-samples-content-guide.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/azure-sql-javascript-mssql-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure-typescript-e2e-apps/quickstarts/azure-sql/connect-and-query/js/index.js"
+    },
+    {
+      "path": "azure-sql/database/azure-sql-javascript-mssql-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure-typescript-e2e-apps/quickstarts/azure-sql/connect-and-query/js/person.js"
+    },
+    {
+      "path": "azure-sql/database/azure-sql-javascript-mssql-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure-typescript-e2e-apps/quickstarts/azure-sql/connect-and-query/js/openapi.js"
+    },
+    {
+      "path": "azure-sql/database/azure-sql-javascript-mssql-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure-typescript-e2e-apps/quickstarts/azure-sql/connect-and-query/ts/src/openApiSchema.yml"
+    },
+    {
+      "path": "azure-sql/database/azure-sql-javascript-mssql-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure-typescript-e2e-apps/quickstarts/azure-sql/connect-and-query/js/config.js"
+    },
+    {
+      "path": "azure-sql/database/azure-sql-javascript-mssql-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure-typescript-e2e-apps/quickstarts/azure-sql/connect-and-query/js/database.js"
+    },
+    {
+      "path": "azure-sql/database/connect-github-actions-sql-db.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/github-actions/generate-deployment-credentials.md"
+    },
+    {
+      "path": "azure-sql/database/connect-github-actions-sql-db.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/github-actions/create-secrets-with-openid.md"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-single-db-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-single-db-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-single-db-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-single-db-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-single-db-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-single-db-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-single-db-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-single-db-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-single-db-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/failover-group-configure-sql-db.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/hyperscale-database-create-quickstart.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-h3.md"
+    },
+    {
+      "path": "azure-sql/database/hyperscale-database-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/create-and-configure-database/create-and-configure-database.sh"
+    },
+    {
+      "path": "azure-sql/database/long-term-backup-retention-configure.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-intro.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-intro.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-tableheader.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/metrics/microsoft-sql-servers-databases-metrics-include.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-tableheader.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/metrics/microsoft-sql-servers-elasticpools-metrics-include.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-tableheader.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/metrics/microsoft-sql-servers-jobagents-metrics-include.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions-intro.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-resource-logs.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/logs/microsoft-sql-servers-databases-logs-include.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-logs-tables.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-activity-log.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-logs.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md"
+    },
+    {
+      "path": "azure-sql/database/monitoring-sql-database-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/add-database-to-failover-group-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/add-database-to-failover-group-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-single-db-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/add-database-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-single-db-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/add-elastic-pool-to-failover-group-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/add-elastic-pool-to-failover-group-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/failover-groups/add-elastic-pool-to-failover-group-az-cli.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/add-elastic-pool-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/failover-groups/add-elastic-pool-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/backup-database-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/backup-database-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/backup-database/backup-database.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/copy-database-to-new-server-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/copy-database-to-new-server-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/copy-database-to-new-server/copy-database-to-new-server.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/copy-database-to-new-server-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/copy-database-to-new-server/copy-database-to-new-server-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/create-and-configure-database-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/create-and-configure-database-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/create-and-configure-database/create-and-configure-database.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/create-and-configure-database-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/create-and-configure-database/create-and-configure-database-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/import-from-bacpac-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/import-from-bacpac-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/import-from-bacpac/import-from-bacpac.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/import-from-bacpac-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/import-from-bacpac/import-from-bacpac-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/monitor-and-scale-database-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/monitor-and-scale-database-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/monitor-and-scale-database/monitor-and-scale-database.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/monitor-and-scale-database-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/monitor-and-scale-database/monitor-and-scale-database-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/monitor-and-scale-pool-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/monitor-and-scale-pool/monitor-and-scale-pool-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/move-database-between-elastic-pools-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/move-database-between-elastic-pools-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/move-database-between-pools/move-database-between-pools.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/move-database-between-elastic-pools-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/move-database-between-pools-and-standalone/move-database-between-pools-and-standalone-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/restore-database-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/restore-database-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/restore-database/restore-database.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/restore-database-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/restore-database/restore-database-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/scale-pool-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/scale-pool-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/scale-pool/scale-pool.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-and-failover-database-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/setup-geodr-and-failover/setup-geodr-and-failover-single-database-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-and-failover-elastic-pool-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/database/setup-geodr-and-failover/setup-geodr-and-failover-elastic-pool-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-failover-database-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-failover-database-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/setup-geodr-and-failover/setup-geodr-and-failover-single-database.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-failover-group-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-failover-group-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/setup-geodr-and-failover/setup-geodr-and-failover-database-failover-group.sh"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-failover-pool-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/database/scripts/setup-geodr-failover-pool-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/setup-geodr-and-failover/setup-geodr-and-failover-elastic-pool.sh"
+    },
+    {
+      "path": "azure-sql/database/secure-database.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/security/zero-trust-security-horizontal.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-arm-template-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../quickstart-templates/quickstarts/microsoft.sql/sql-database/azuredeploy.json"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-bicep-quickstart.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-bicep-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../quickstart-templates/quickstarts/microsoft.sql/sql-database/main.bicep"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-quickstart.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-quickstart.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-h3.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/create-and-configure-database/create-and-configure-database.sh"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/create-and-configure-database/create-and-configure-database.sh"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/create-and-configure-database/create-and-configure-database.sh"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/create-and-configure-database/create-and-configure-database.sh"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/abstract.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-plan-destroy.md"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_samples/quickstart/101-sql-database//providers.tf"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_samples/quickstart/101-sql-database//main.tf"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_samples/quickstart/101-sql-database//variables.tf"
+    },
+    {
+      "path": "azure-sql/database/single-database-create-terraform-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_samples/quickstart/101-sql-database//outputs.tf"
+    },
+    {
+      "path": "azure-sql/database/transparent-data-encryption-byok-create-server-cross-tenant.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    },
+    {
+      "path": "azure-sql/database/transparent-data-encryption-byok-database-level-basic-actions.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/msgraph-powershell/includes/aad-powershell-deprecation-note.md"
+    },
+    {
+      "path": "azure-sql/database/transparent-data-encryption-tde-overview.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/automated-backups-change-settings.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/az-cli-script-samples-content-guide.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/create-bicep-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../quickstart-templates/quickstarts/microsoft.sql/sqlmi-new-vnet/main.bicep"
+    },
+    {
+      "path": "azure-sql/managed-instance/create-template-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../quickstart-templates/quickstarts/microsoft.sql/sqlmi-new-vnet/azuredeploy.json"
+    },
+    {
+      "path": "azure-sql/managed-instance/failover-group-configure-sql-mi.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/failover-group-configure-sql-mi.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/failover-group-configure-sql-mi.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/failover-group-configure-sql-mi.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/failover-group-configure-sql-mi.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/failover-group-configure-sql-mi.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/create-and-configure-managed-instance.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/create-and-configure-managed-instance.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/create-and-configure-managed-instance.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/create-and-configure-managed-instance.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/managed-instance/create-managed-instance.sh"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/managed-instance/create-managed-instance.sh"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/managed-instance/create-managed-instance.sh"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/managed-instance/create-managed-instance.sh"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/create-and-configure-managed-instance.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-quickstart.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/managed-instance/create-managed-instance.sh"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/abstract.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/includes/open-source-devops-prereqs-azure-subscription.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-init.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-plan.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-apply-plan.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Include",
+      "target": "~/../azure-dev-docs-pr/articles/terraform/includes/terraform-plan-destroy.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_scripts/quickstart/101-managed-instance/providers.tf"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_scripts/quickstart/101-managed-instance/main.tf"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-create-terraform.md",
+      "kind": "Code reference",
+      "target": "~/../terraform_scripts/quickstart/101-managed-instance/variables.tf"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-pools-configure.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/instance-pools-configure.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/long-term-backup-retention-configure.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment-no-header.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-intro.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-intro.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-tableheader.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/metrics/microsoft-sql-managedinstances-metrics-include.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-metrics-dimensions-intro.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-no-metrics-dimensions.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-resource-logs.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/logs/microsoft-sql-managedinstances-logs-include.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/reference/logs/microsoft-sql-managedinstances-databases-logs-include.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-logs-tables.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor-reference.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-ref-activity-log.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-logs.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights-alerts.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/monitoring-sql-managed-instance-azure-monitor.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/add-to-failover-group-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/failover-groups/add-managed-instance-to-failover-group-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/create-configure-managed-instance-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/create-configure-managed-instance-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/managed-instance/create-managed-instance.sh"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/create-configure-managed-instance-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/create-and-configure-managed-instance.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/transparent-data-encryption-byok-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/managed-instance/transparent-data-encryption/setup-tde-byok-sqlmi-az-ps.ps1"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/transparent-data-encryption-byok-sql-managed-instance-cli.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/managed-instance/scripts/transparent-data-encryption-byok-sql-managed-instance-cli.md",
+      "kind": "Code reference",
+      "target": "~/../azure_cli_scripts/sql-database/transparent-data-encryption/setup-tde-byok-sqlmi.sh"
+    },
+    {
+      "path": "azure-sql/virtual-machines/linux/rhel-high-availability-fencing-tutorial.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/virtual-machines/linux/sles-high-availability-fencing-tutorial.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/virtual-machines/linux/ubuntu-high-availability-fencing-tutorial.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/azure-cli/azure-cli-prepare-your-environment.md"
+    },
+    {
+      "path": "azure-sql/virtual-machines/scripts/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/scripts/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/scripts/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-bicep.md",
+      "kind": "Code reference",
+      "target": "~/../quickstart-templates/quickstarts/microsoft.sqlvirtualmachine/sql-vm-new-storage/main.bicep"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-powershell.md",
+      "kind": "Code reference",
+      "target": "~/../azure_powershell_scripts/azure-sql/virtual-machine/create-sql-server-vm.ps1"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/create-sql-vm-resource-manager-template.md",
+      "kind": "Code reference",
+      "target": "~/../quickstart-templates/quickstarts/microsoft.sqlvirtualmachine/sql-vm-new-storage/azuredeploy.json"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/storage-configuration-premium-ssd-v2.md",
+      "kind": "Include",
+      "target": "~/../azure-compute-docs-pr/articles/virtual-machines/includes/disks-premv2-performance.md"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/storage-configuration-premium-ssd-v2.md",
+      "kind": "Include",
+      "target": "~/../azure-compute-docs-pr/articles/virtual-machines/includes/disks-prem-v2-limitations.md"
+    },
+    {
+      "path": "azure-sql/virtual-machines/windows/storage-performance-analysis.md",
+      "kind": "Code reference",
+      "target": "~/../sql-server-samples/samples/manage/sql-vm-io-analysis.ps1"
+    },
+    {
+      "path": "docs/connect/ado-net/add-existing-constraints-to-dataset.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_FillDataSet.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/add-existing-constraints-to-dataset.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_FillDataSet.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteNonQuery.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteNonQueryAsync.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_OpenAsync_ContinueWith.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_OpenAsync_ContinueWith.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_ProviderModel.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_SqlTransaction.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_DistributedTransaction.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_Cancellation.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_SqlBulkCopy.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_MultipleCommands.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/asynchronous-programming.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_AsyncProgramming_MultipleCommandsEx.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/batch-operations-using-dataadapters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Batch.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#6"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#7"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#8"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#4"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#5"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-core-apis-sqlclient.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_CustomProvider.cs#3"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-sqlclient-introduction.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_OpenConnection.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-sqlclient-introduction.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_OpenConnection.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/configurable-retry-logic-sqlclient-introduction.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConfigurableRetryLogic_StepByStep_OpenConnection.cs#3"
+    },
+    {
+      "path": "docs/connect/ado-net/configure-parameters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_StoredProcedure.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-events.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_InfoMessage_StateChange.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-events.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_InfoMessage_StateChange.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-string-builders.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnectionStringBuilder_InjectionAttack.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-string-builders.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnectionStringBuilder_UserNamePwd.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-strings-and-configuration-files.md",
+      "kind": "Code reference",
+      "target": "~/../SqlClient/doc/samples/ConnectionStringSettings_RetrieveFromConfig.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-strings-and-configuration-files.md",
+      "kind": "Code reference",
+      "target": "~/../SqlClient/doc/samples/ConnectionStringSettings_RetrieveFromConfigByName.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-strings-and-configuration-files.md",
+      "kind": "Code reference",
+      "target": "~/../SqlClient/doc/samples/ConnectionStringSettings_RetrieveFromConfigByProvider.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-strings-and-configuration-files.md",
+      "kind": "Code reference",
+      "target": "~/../SqlClient/doc/samples/ConnectionStrings_Encrypt.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/connection-strings-and-configuration-files.md",
+      "kind": "Code reference",
+      "target": "~/../SqlClient/doc/samples/ConnectionStringsWeb_Encrypt.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/dataadapter-datatable-datacolumn-mappings.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_TableMappings.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/dataadapter-datatable-datacolumn-mappings.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_TableMappings.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/dataadapter-datatable-datacolumn-mappings.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_TableMappings.cs#3"
+    },
+    {
+      "path": "docs/connect/ado-net/dataadapter-parameters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_SqlDataAdapter.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/dataadapter-parameters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_SqlDataAdapter.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/enable-eventsource-tracing.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClientEventSource.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/establishing-connection.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_Open.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/event-counters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClientDiagnosticCounter.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/execute-command.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_StoredProcedure.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/generate-commands-with-commandbuilders.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommandBuilder_Create.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/generate-commands-with-commandbuilders.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommandBuilder_Create.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/generate-commands-with-commandbuilders.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommandBuilder_Create.cs#3"
+    },
+    {
+      "path": "docs/connect/ado-net/getschema-and-schema-collections.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_GetSchema_Tables.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/handle-dataadapter-events.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Events.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/handle-dataadapter-events.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Events.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/local-transactions.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlTransactionLocal.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/modify-data-with-stored-procedures.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_SPIdentityReturn.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/obtain-single-value-from-database.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteScalar_Return_Id.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/obtain-sqlclientfactory.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClientFactory_Netcoreapp.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/optimistic-concurrency.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Concurrency.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/paging-through-query-result.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Paging.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/paging-through-query-result.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Paging.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/paging-through-query-result.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Paging.cs#4"
+    },
+    {
+      "path": "docs/connect/ado-net/paging-through-query-result.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Paging.cs#3"
+    },
+    {
+      "path": "docs/connect/ado-net/paging-through-query-result.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Paging.cs#5"
+    },
+    {
+      "path": "docs/connect/ado-net/perform-catalog-operations.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteNonQuery_SP_DML.cs#3"
+    },
+    {
+      "path": "docs/connect/ado-net/performance-counters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_PerformanceCounter.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/populate-dataset-from-dataadapter.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_FillDataSet.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/populate-dataset-from-dataadapter.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_FillDataSet.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-binary-data.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteReader_SequentialAccess.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-data-by-datareader.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataReader_HasRows.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-data-by-datareader.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataReader_NextResult.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-data-by-datareader.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataReader_GetSchemaTable.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-identity-or-autonumber-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_RetrieveIdentityStoredProcedure.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-identity-or-autonumber-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_MergeIdentity.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-identity-or-autonumber-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_MergeIdentity.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/retrieve-identity-or-autonumber-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_RetrieveIdentity.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/schema-restrictions.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlConnection_GetSchema_Restriction.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/azure-key-vault-enclave-example.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/AzureKeyVaultProviderWithEnclaveProviderExample_2_0.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/azure-key-vault-enclave-example.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/AzureKeyVaultProviderWithEnclaveProviderExample.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/azure-key-vault-example.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/AzureKeyVaultProviderExample_2_0.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/azure-key-vault-example.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/AzureKeyVaultProviderExample.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/bulk-copy-order-hints.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBulkCopy_ColumnOrderHint.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/compare-guid-uniqueidentifier-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlGuid.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/data-classification.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataReader_DataDiscoveryAndClassification.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/enable-query-notifications.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClientPermission_Demand.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/handle-null-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlInt32_IsNull.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/handle-null-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlString_Equals.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/json-data-sql-server.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlJsonExample.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/modify-large-value-max-data.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBytes_Stream.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/modify-large-value-max-data.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlParameter_Value.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/multiple-bulk-copy-operations.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBulkCopy_ColumnMappingOrdersDetails.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/single-bulk-copy-operations.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBulkCopy_WriteToServer.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/snapshot-isolation-sql-server.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/Isolation_Snapshot.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/snapshot-isolation-sql-server.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/Isolation_Snapshot1.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sql-xml-column-values.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataReader_GetSqlXml.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqlclient-support-always-encrypted.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/AzureKeyVaultProvider_ColumnEncryptionKeyCacheScope.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqlclient-support-always-encrypted.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/RegisterCustomKeyStoreProvider_ConnectionPrecedence.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqlclient-support-always-encrypted.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/RegisterCustomKeyStoreProvider_CommandPrecedence.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqlclient-support-always-encrypted.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/RegisterCustomKeyStoreProvider_Example.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqldependency-aspnet-app.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDependency_Start.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqldependency-aspnet-app.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDependency_Start.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/sqltypes-dataset.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/DataColumn_DataType.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/transaction-bulk-copy-operations.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBulkCopyOptions_Default.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/transaction-bulk-copy-operations.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBulkCopyOptions_UseInternalTransaction.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/transaction-bulk-copy-operations.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlBulkCopy_ExternalTransaction.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sql/vector-data-sql-server.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlVectorExample.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sqlclient-streaming-support.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_Streaming_FromServer.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sqlclient-streaming-support.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_Streaming_ToServer.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/sqlclient-streaming-support.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlClient_Streaming_ServerToServer.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/system-transactions-integration-with-sql-server.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlTransactionScope.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/update-data-inside-data-source.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteNonQuery_SP_DML.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/update-data-inside-data-source.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlCommand_ExecuteNonQuery_SP_DML.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/update-data-sources-with-dataadapters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Update.cs#1"
+    },
+    {
+      "path": "docs/connect/ado-net/update-data-sources-with-dataadapters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Update.cs#2"
+    },
+    {
+      "path": "docs/connect/ado-net/update-data-sources-with-dataadapters.md",
+      "kind": "Code reference",
+      "target": "~/../sqlclient/doc/samples/SqlDataAdapter_Properties.cs#1"
+    },
+    {
+      "path": "docs/relational-databases/performance/query-store-hints.md",
+      "kind": "Code reference",
+      "target": "../../../sql-server-samples/samples/features/query-store/query_store_hints_demo.sql"
+    },
+    {
+      "path": "docs/relational-databases/security/networking/connect-with-tls-1-3.md",
+      "kind": "Code reference",
+      "target": "~/../sql-server-samples/samples/features/security/tls-1-3/set-reset-tls.ps1"
+    },
+    {
+      "path": "docs/relational-databases/security/secure-sql-server.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/security/zero-trust-security-horizontal.md"
+    },
+    {
+      "path": "docs/sql-server/azure-arc/troubleshoot-telemetry-endpoint.md",
+      "kind": "Code reference",
+      "target": "~/../sql-server-samples/samples/features/azure-arc/troubleshooting/test-connectivity.ps1"
+    },
+    {
+      "path": "docs/sql-server/azure-arc/troubleshoot-telemetry-endpoint.md",
+      "kind": "Code reference",
+      "target": "~/../sql-server-samples/samples/features/azure-arc/troubleshooting/hybrid-compute-extension-last-connect.kql"
+    },
+    {
+      "path": "docs/t-sql/statements/create-database-transact-sql.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "docs/t-sql/statements/create-database-transact-sql.md",
+      "kind": "Include",
+      "target": "~/../reusable-content/ce-skilling/azure/includes/databases/resource-naming-customer-data-note.md"
+    },
+    {
+      "path": "docs/t-sql/statements/drop-certificate-transact-sql.md",
+      "kind": "Include",
+      "target": "../../includes/\\synapse-analytics-od-unsupported-syntax.md"
+    }
+  ],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

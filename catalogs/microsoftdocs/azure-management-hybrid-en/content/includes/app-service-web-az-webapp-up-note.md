@@ -1,0 +1,25 @@
+---
+title: "include file"
+description: "include file"
+services: app-service
+author: msangapu
+ms.service: azure-app-service
+ms.topic: "include"
+ms.date: 09/14/2021
+ms.author: msangapu
+ms.custom: "include file"
+---
+
+> **Note:**
+> The `az webapp up` command does the following actions:
+>
+>- Create a default [resource group](https://learn.microsoft.com/cli/azure/group#az-group-create).
+>
+>- Create a default [App Service plan](https://learn.microsoft.com/cli/azure/appservice/plan#az-appservice-plan-create).
+>
+>- [Create an app](https://learn.microsoft.com/cli/azure/webapp#az-webapp-create) with the specified name.
+>
+>- [Zip deploy](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/deploy-zip.md#deploy-a-zip-package) all files from the current working directory, [with build automation enabled](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/deploy-zip.md#enable-build-automation-for-zip-deploy).
+>
+>- Cache the parameters locally in the *.azure/config* file so that you don't need to specify them again when deploying later with `az webapp up` or other `az webapp` commands from the project folder. The cached values are used automatically by default.
+>

@@ -1,0 +1,47 @@
+---
+title: "recover Method (SQLServerXAResource)"
+description: "recover Method (SQLServerXAResource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerXAResource.recover"
+apitype: "Assembly"
+---
+# recover Method (SQLServerXAResource)
+
+
+  Obtains a list of prepared transaction branches from a resource manager.  
+  
+## Syntax  
+  
+```  
+  
+public javax.transaction.xa.Xid[] recover(int flags)  
+```  
+  
+#### Parameters  
+ *flags*  
+  
+ An **int** value that can take one of the following values: XAResource.TMSTARTRSCAN or XAResource.TMENDRSCAN or XAResource.TMNOFLAGS or XAResource.TMSTARTTRSCAN | XAResource.TMENDRSCAN.  
+  
+## Return Value  
+ An Xid object.  
+  
+## Exceptions  
+ javax.transaction.xa.XAException  
+  
+## Remarks  
+ This recover method is specified by the recover method in the javax.transaction.xa.XAResource interface.  
+  
+ If the parameter **flag** is not XAResource.TMSTARTRSCAN or XAResource.TMSTARTRSCAN | XAResource.TMENDRSCAN, a recovery scan must be in progress.  
+  
+## Related content
+
+- [SQLServerXAResource Methods](sqlserverxaresource-methods.md)
+- [SQLServerXAResource Members](sqlserverxaresource-members.md)
+- [SQLServerXAResource Class](sqlserverxaresource-class.md)

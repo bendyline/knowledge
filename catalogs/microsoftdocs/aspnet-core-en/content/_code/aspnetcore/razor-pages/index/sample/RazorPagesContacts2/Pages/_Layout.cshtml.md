@@ -1,0 +1,24 @@
+# Source code: aspnetcore/razor-pages/index/sample/RazorPagesContacts2/Pages/_Layout.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Razor Pages Sample</title>      
+</head>
+<body>    
+   <a asp-page="/Index">Home</a>
+    @RenderBody()  
+    <a asp-page="/Customers/Create">Create</a> <br />
+    <a asp-page="/Customers/CreateDot">Create ./Index</a><br />
+    <a asp-page="/Customers/Create2Dot">Create ../Index</a><br />
+    <a asp-page="/Customers/CreateBlank">Create Index</a><br />
+    <a asp-page="/Customers/CreateFATH">Create Form Action TH</a><br />
+    <a asp-page="/Customers/CreateRoute">Create Route</a><br />
+
+</body>
+</html>
+
+```

@@ -1,0 +1,57 @@
+# Source code: docs/azure/sdk/snippets/unit-testing/ResourceManager/NonLibrary/MockMockableComputeResourceGroupResource.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Azure.Core;
+
+namespace UnitTestingSampleApp.ResourceManager.NonLibrary;
+
+public sealed class MockMockableComputeResourceGroupResource : MockableComputeResourceGroupResource
+{
+    private VirtualMachineCollection _virtualMachineCollection;
+    public MockMockableComputeResourceGroupResource(VirtualMachineCollection virtualMachineCollection)
+    {
+        _virtualMachineCollection = virtualMachineCollection;
+    }
+
+    public override VirtualMachineCollection GetVirtualMachines()
+    {
+        return _virtualMachineCollection;
+    }
+}
+
+public sealed class MockResourceGroupResource : ResourceGroupResource
+{
+    private readonly MockableComputeResourceGroupResource _mockableComputeResourceGroupResource;
+    public MockResourceGroupResource(VirtualMachineCollection virtualMachineCollection)
+    {
+        _mockableComputeResourceGroupResource =
+            new MockMockableComputeResourceGroupResource(virtualMachineCollection);
+    }
+
+    internal MockResourceGroupResource(ArmClient client, ResourceIdentifier id) : base(client, id)
+    {
+        // Initialize with an empty mock to satisfy non-null contract
+        _mockableComputeResourceGroupResource =
+            new MockMockableComputeResourceGroupResource(new MockVirtualMachineCollection(client, id));
+    }
+
+    public override T GetCachedClient<T>(Func<ArmClient, T> factory) where T : class
+    {
+        if (typeof(T) == typeof(MockableComputeResourceGroupResource))
+            return (T)(object)_mockableComputeResourceGroupResource;
+        return base.GetCachedClient(factory);
+    }
+}
+
+public sealed class MockVirtualMachineCollection : VirtualMachineCollection
+{
+    public MockVirtualMachineCollection()
+    {}
+
+    internal MockVirtualMachineCollection(ArmClient client, ResourceIdentifier id) : base(client, id)
+    {}
+}
+
+```

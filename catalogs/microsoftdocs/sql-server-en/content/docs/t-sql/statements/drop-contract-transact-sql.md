@@ -1,0 +1,72 @@
+---
+title: "DROP CONTRACT (Transact-SQL)"
+description: DROP CONTRACT (Transact-SQL)
+author: markingmyname
+ms.author: maghan
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "DROP_CONTRACT_TSQL"
+  - "DROP CONTRACT"
+helpviewer_keywords:
+  - "dropping contracts"
+  - "removing contracts"
+  - "deleting contracts"
+  - "contracts [Service Broker], dropping"
+  - "DROP CONTRACT statement"
+dev_langs:
+  - "TSQL"
+---
+# DROP CONTRACT (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Drops an existing contract from a database.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+DROP CONTRACT contract_name   
+[ ; ]  
+```  
+  
+## Arguments
+ *contract_name*  
+ The name of the contract to drop. Server, database, and schema names cannot be specified.  
+  
+## Remarks  
+ You cannot drop a contract if any services or conversation priorities refer to the contract.  
+  
+ When you drop a contract,  Service Broker 
+ ends any existing conversations that use the contract with an error.  
+  
+## Permissions  
+ Permission for dropping a contract defaults to the owner of the contract, members of the db_ddladmin or db_owner fixed database roles, and members of the sysadmin fixed server role.  
+  
+## Examples  
+ The following example removes the contract `//Adventure-Works.com/Expenses/ExpenseSubmission` from the database.  
+  
+```sql  
+DROP CONTRACT [//Adventure-Works.com/Expenses/ExpenseSubmission] ;  
+```  
+  
+## Related content
+
+- [ALTER BROKER PRIORITY (Transact-SQL)](alter-broker-priority-transact-sql.md)
+- [ALTER SERVICE (Transact-SQL)](alter-service-transact-sql.md)
+- [CREATE CONTRACT (Transact-SQL)](create-contract-transact-sql.md)
+- [DROP BROKER PRIORITY (Transact-SQL)](drop-broker-priority-transact-sql.md)
+- [DROP SERVICE (Transact-SQL)](drop-service-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../functions/eventdata-transact-sql.md)

@@ -1,0 +1,47 @@
+---
+title: "IServerVirtualDeviceSet2::GetConfiguration"
+titleSuffix: SQL Server VDI reference
+description: "This article provides reference for the IServerVirtualDeviceSet2::GetConfiguration command."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 08/30/2019
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: reference
+---
+
+# IServerVirtualDeviceSet2::GetConfiguration (VDI)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **GetConfiguration** function obtains the configuration requested by the client.
+
+## Syntax
+
+```c
+HRESULT IServerVirtualDeviceSet2::GetConfiguration (
+   VDConfig*   pCfg
+);
+```
+
+## Parameters
+
+*pCfg*
+This is the configuration specified by the client using IClientVirtualDeviceSet2::Create.
+
+## Return Value
+
+Returns an *HRESULT* indicating success or failure of the method call. A value of NOERROR indicates that the method call was successful. A non-zero value indicates that an error has occurred.
+
+## Remarks
+
+The server is expected to inspect and respond to the settings provided by the client. For more information, see Configuration. The server can use SignalAbort if it determines that it cannot operate correctly with the provided configuration.
+
+## Related content
+
+- [Virtual device interface (VDI) reference](reference-virtual-device-interface.md)

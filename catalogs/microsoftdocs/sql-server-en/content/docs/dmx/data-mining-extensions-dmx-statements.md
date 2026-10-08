@@ -1,0 +1,72 @@
+---
+title: "Data Mining Extensions (DMX) Statement Reference"
+description: "Data Mining Extensions (DMX) Statement Reference"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: dmx
+---
+# Data Mining Extensions (DMX) Statements
+
+**Applies to:**
+ 
+
+  Analysis Services 
+
+
+
+  Working with data mining models in  Microsoft 
+  SQL Server 
+  Analysis Services 
+ involves the following primary tasks:  
+  
+-   Creating mining structures and mining models  
+  
+-   Processing mining structures and mining models  
+  
+-   Deleting or dropping mining structures or mining models  
+  
+-   Copying mining models  
+  
+-   Browsing mining models  
+  
+-   Predicting against mining models  
+  
+ You can use Data Mining Extensions (DMX) statements to perform each of these tasks programmatically.  
+  
+ Creating mining structures and mining models  
+ Use the [CREATE MINING STRUCTURE (DMX)](create-mining-structure-dmx.md) statement to add a new mining structure to a database. You can then use the [ALTER MINING STRUCTURE (DMX)](alter-mining-structure-dmx.md) statement to add mining models to the mining structure.  
+  
+ Use the [CREATE MINING MODEL (DMX)](create-mining-model-dmx.md) statement to build a new mining model and associated mining structure.  
+  
+ Processing mining structures and mining models  
+ Use the [INSERT INTO (DMX)](insert-into-dmx.md) statement to process a mining structure and mining model.  
+  
+ Deleting or dropping mining structures or mining models  
+ Use the [DELETE (DMX)](delete-dmx.md) statement to remove all the trained data from a mining model or mining structure. Use the [DROP MINING STRUCTURE (DMX)](drop-mining-structure-dmx.md) or [DROP MINING MODEL (DMX)](drop-mining-model-dmx.md) statements to completely remove a mining structure or mining model from a database.  
+  
+ Copying mining models  
+ Use the [SELECT INTO (DMX)](select-into-dmx.md) statement to copy the structure of an existing mining model into a new mining model and to train the new model with the same data.  
+  
+ Browsing mining models  
+ Use the [SELECT (DMX)](select-dmx.md) statement to browse the information that the data mining algorithm calculates and stores in the data mining model during model training. Much like with  Transact-SQL , you can use several clauses with the SELECT statement, to extend its power. These clauses include [DISTINCT FROM \<model>](select-distinct-from-model-dmx.md), [FROM \<model>.CASES](select-from-model-cases-dmx.md), [FROM \<model>.SAMPLE_CASES](select-from-model-sample-cases-dmx.md), [FROM \<model>.CONTENT](select-from-model-content-dmx.md) and [FROM \<model>.DIMENSION_CONTENT](select-from-model-dimension-content-dmx.md).  
+  
+ Predicting against mining models  
+ Use the [PREDICTION JOIN](select-from-model-prediction-join-dmx.md) clause of the SELECT statement to create predictions that are based on an existing mining model.  
+  
+ You can also import and export models by using the [IMPORT (DMX)](import-dmx.md) and [EXPORT (DMX)](export-dmx.md) statements.  
+  
+ These tasks fall into two categories, data definition statements and data manipulation statements, which are described in the following table.  
+  
+| Topic | Description |
+| --- | --- |
+| [Data Mining Extensions (DMX) Data Definition Statements](dmx-statements-data-definition.md) | Part of the data definition language (DDL). Used to define a new mining model (including training) or to drop an existing mining model from a database. |
+| [Data Mining Extensions (DMX) Data Manipulation Statements](dmx-statements-data-manipulation.md) | Part of the data manipulation language (DML). Used to work with existing mining models, including browsing a model or creating predictions. |
+  
+## Related content
+
+- [Data Mining Extensions (DMX) Function Reference](data-mining-extensions-dmx-function-reference.md)
+- [Data Mining Extensions (DMX) Operator Reference](data-mining-extensions-dmx-operator-reference.md)
+- [Data Mining Extensions (DMX) Syntax Conventions](data-mining-extensions-dmx-syntax-conventions.md)
+- [Data Mining Extensions (DMX) Syntax Elements](data-mining-extensions-dmx-syntax-elements.md)

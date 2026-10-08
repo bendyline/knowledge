@@ -1,0 +1,96 @@
+---
+title: "DROP SECURITY POLICY (Transact-SQL)"
+description: DROP SECURITY POLICY a security policy for use with row-level security.
+author: VanMSFT
+ms.author: vanto
+ms.date: 10/04/2023
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "DROP_SECURITY_POLICY_TSQL"
+  - "DROP SECURITY POLICY"
+  - "DROP SECURITY"
+  - "DROP_SECURITY_TSQL"
+helpviewer_keywords:
+  - "DROP SECURITY POLICY statement"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# DROP SECURITY POLICY (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Deletes a security policy.  
+  
+ 
+  
+## Syntax
+  
+```syntaxsql
+DROP SECURITY POLICY [ IF EXISTS ] [schema_name. ] security_policy_name    
+[;]  
+```  
+
+## Arguments
+
+#### IF EXISTS
+ **Applies to**:  SQL Server 
+ (  SQL Server 2016 (13.x) 
+ through [current version](https://learn.microsoft.com/troubleshoot/sql/general/determine-version-edition-update-level)).  
+  
+ Conditionally drops the security policy only if it already exists.  
+  
+#### *schema_name*
+
+
+ Is the name of the schema to which the security policy belongs.  
+  
+#### *security_policy_name*
+
+
+ The name of the security policy. Security policy names must comply with the rules for identifiers and must be unique within the database and to its schema.  
+  
+## Remarks
+  
+## Permissions
+
+
+ Requires the ALTER ANY SECURITY POLICY permission and ALTER permission on the schema.  
+  
+## Examples
+  
+```sql  
+DROP SECURITY POLICY secPolicy;  
+```  
+  
+## Related content
+
+- [Row-level security](../../relational-databases/security/row-level-security.md)
+- [CREATE SECURITY POLICY (Transact-SQL)](create-security-policy-transact-sql.md)
+- [ALTER SECURITY POLICY (Transact-SQL)](alter-security-policy-transact-sql.md)
+- [sys.security_policies (Transact-SQL)](../../relational-databases/system-catalog-views/sys-security-policies-transact-sql.md)
+- [sys.security_predicates (Transact-SQL)](../../relational-databases/system-catalog-views/sys-security-predicates-transact-sql.md)

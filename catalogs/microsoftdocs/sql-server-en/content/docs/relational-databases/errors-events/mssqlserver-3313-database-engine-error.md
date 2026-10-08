@@ -1,0 +1,79 @@
+---
+title: "MSSQLSERVER_3313"
+description: "MSSQLSERVER_3313"
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: jopilov
+ms.date: 02/16/2023
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "3313 (Database Engine error)"
+---
+# MSSQLSERVER_3313
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+## Details
+
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 3313 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | ERR_LOG_RID1 |
+| Message Text | During redoing of a logged operation in database '%.*ls', an error occurred at log record ID %S_LSN. Typically, the specific failure is previously logged as an error in the Windows Event Log service. Restore the database from a full backup, or repair the database. |
+
+## Explanation
+
+Error 3313 is a roll-up error for redo recovery. This error indicates that SQL Server has placed the database into the SUSPECT state when it fails to apply committed transactions to the database files (redo). The transaction log file, the primary filegroup, and possibly other filegroups, may be damaged. The database failed recovery during startup of  SQL Server 
+ and is therefore unavailable. You must take action to resolve the problem.
+
+If this error occurs for `tempdb`, the  SQL Server 
+ instance shuts down.
+
+This error may appear with other errors in the SQL Server error log. Examples of such errors include [9001](mssqlserver-9002-database-engine-error.md), [823](mssqlserver-823-database-engine-error.md), [824](mssqlserver-824-database-engine-error.md), [17204](mssqlserver-17204-database-engine-error.md) (shows OS error when accessing a file), [17053](mssqlserver-17053-database-engine-error.md) (shows OS error). These last two errors may provide insight into the underlying reason for I/O failures.
+
+## Cause
+
+This error can be caused by a transient condition that existed on the system during an attempt to recover a database. This error can also be a result a permanent failure that occurs every time that you attempt to start the database. Examples of common causes include:
+
+- The transaction log or database file(s) reside on a storage device that failed or isn't available
+- Physically damaged file(s) that leads to inability to write to or read from them
+
+
+## User Action
+
+
+For information about the cause of this occurrence of error 3313, examine the Windows System Event Log and SQL Server error log for a previous error that indicates the specific failure. The appropriate user action depends on whether the information in the Windows Event Log indicates that the  SQL Server 
+ error was caused by a transient condition or a permanent failure. 
+
+To address issues that lead to this error:
+
+- Ensure that the storage volumes where the database and log files reside are online, the entire I/O path from machine to storage is stable and it doesn't lead to physical file damage.
+- Work with your hardware and device manufacturer to ensure that hardware and its configuration is suitable to the I/O requirements of a database system. Ensure that device drivers, firmware, BIOS and other supporting software components in the I/O path are up to date.
+- Run DBCC CHECKDB to check the consistency of the database, if you can bring it online with a restart
+- If the database and log files aren't intact and as a result the database can't come online, restore the last known good backup of the database
+- For troubleshooting suggestions, see [MSSQLSERVER error 823](mssqlserver-823-database-engine-error.md) and [Troubleshoot database consistency errors reported by DBCC CHECKDB](https://learn.microsoft.com/troubleshoot/sql/database-engine/database-file-operations/troubleshoot-dbcc-checkdb-errors)
+
+
+When this error condition is encountered,  SQL Server 
+ may generate dump-related files in the  SQL Server 
+ **LOG** folder. The SQLDump*nnnn*.mdmp and SQLDump*nnnn*.txt files contains advanced diagnostic information relating to the failures, including the details about the transaction and the page that encountered the problem. This information can be used by the Microsoft team to analyze the reason for the failure.
+
+## Related content
+
+- [DBCC CHECKDB (Transact-SQL)](../../t-sql/database-console-commands/dbcc-checkdb-transact-sql.md)
+- [Complete Database Restores (Simple Recovery Model)](../backup-restore/complete-database-restores-simple-recovery-model.md)
+- [MSSQLSERVER_9001](mssqlserver-9001-database-engine-error.md)
+- [MSSQLSERVER_824](mssqlserver-824-database-engine-error.md)
+- [MSSQLSERVER error 823](mssqlserver-823-database-engine-error.md)
+- [sys.databases (Transact-SQL)](../system-catalog-views/sys-databases-transact-sql.md)
+- [ALTER DATABASE SET options (Transact-SQL)](../../t-sql/statements/alter-database-transact-sql-set-options.md)

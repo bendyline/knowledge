@@ -1,0 +1,46 @@
+---
+title: "Availability database is suspended for an availability group"
+description: "Identify possible causes for why a database in an Always On availability group might be suspended."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: reference
+f1_keywords:
+  - "sql13.swb.agdashboard.drp1notsuspended.issues.f1"
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], policies"
+---
+# Availability database is suspended for an availability group
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+    
+## Introduction  
+  
+- **Policy Name**: Availability Database Suspension State
+- **Issue**: Availability database is suspended.
+- **Category**: **Warning**
+- **Facet**: Availability database  
+  
+## Description  
+ This policy checks the state of data movement of the secondary database (also known as a "secondary database replica"). The policy is in an unhealthy state when the data movement is suspended. The policy is otherwise in a healthy state.  
+  
+## Possible Causes  
+ Data synchronization on this availability database might have been suspended because of the following:  
+  
+-   Due to an error, the system might have suspended data synchronization.  
+  
+-   The database administrator might have suspended data synchronization for maintenance purposes.  
+  
+## Possible Solution  
+ Resume data synchronization by right-clicking the availability group and selecting **Resume Data Movement**. If the issue persists, check the availability group in the Event log, and then diagnose why the system suspended data movement.  
+  
+## Related content
+
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Use the Always On Availability Group dashboard (SQL Server Management Studio)](use-the-always-on-dashboard-sql-server-management-studio.md)

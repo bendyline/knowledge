@@ -1,0 +1,106 @@
+---
+title: "sp_help_jobcount (Transact-SQL)"
+description: sp_help_jobcount provides the number of jobs that a schedule is attached to.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_help_jobcount"
+  - "sp_help_jobcount_TSQL"
+helpviewer_keywords:
+  - "sp_help_jobcount"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# sp_help_jobcount (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Provides the number of jobs that a schedule is attached to.
+
+
+
+## Syntax
+
+```syntaxsql
+dbo.sp_help_jobcount
+    [ [ @schedule_name = ] N'schedule_name' ]
+    [ , [ @schedule_id = ] schedule_id ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @schedule_name = ] N'*schedule_name*'
+
+The name of the schedule to list. *@schedule_name* is **sysname**, with no default.
+
+Either *@schedule_id* or *@schedule_name* can be specified.
+
+#### [ @schedule_id = ] *schedule_id*
+
+The identifier of the schedule to list. *@schedule_id* is **int**, with no default.
+
+Either *@schedule_id* or *@schedule_name* can be specified.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Result set
+
+Returns the following result set:
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `JobCount` | **int** | Number of jobs for the specified schedule. |
+
+## Remarks
+
+This procedure lists the number of jobs attached to the specified schedule.
+
+## Permissions
+
+You can grant `EXECUTE` permissions on this procedure, but these permissions might be overridden during a SQL Server upgrade.
+
+
+Other users must be granted one of the following  SQL Server 
+ Agent fixed database roles in the `msdb` database:
+
+- **SQLAgentUserRole**
+- **SQLAgentReaderRole**
+- **SQLAgentOperatorRole**
+
+For details about the permissions of these roles, see [SQL Server Agent Fixed Database Roles](https://learn.microsoft.com/ssms/agent/sql-server-agent-fixed-database-roles).
+
+Only members of **sysadmin** can view counts for jobs that are owned by others.
+
+## Examples
+
+The following example lists the number of jobs attached to the `NightlyJobs` schedule.
+
+```sql
+USE msdb;
+GO
+
+EXECUTE sp_help_jobcount @schedule_name = N'NightlyJobs';
+GO
+```
+
+## Related content
+
+- [SQL Server Agent stored procedures (Transact-SQL)](sql-server-agent-stored-procedures-transact-sql.md)
+- [sp_add_schedule (Transact-SQL)](sp-add-schedule-transact-sql.md)
+- [sp_attach_schedule (Transact-SQL)](sp-attach-schedule-transact-sql.md)
+- [sp_delete_schedule (Transact-SQL)](sp-delete-schedule-transact-sql.md)
+- [sp_detach_schedule (Transact-SQL)](sp-detach-schedule-transact-sql.md)

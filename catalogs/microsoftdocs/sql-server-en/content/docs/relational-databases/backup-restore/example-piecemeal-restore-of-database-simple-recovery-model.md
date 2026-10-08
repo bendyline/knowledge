@@ -1,0 +1,68 @@
+---
+title: "Piecemeal restore: simple recovery model"
+description: This example shows a piecemeal restore in SQL Server of a database to a new computer using the simple recovery model.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "12/17/2019"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "piecemeal restores [SQL Server], simple recovery model"
+  - "restore sequences [SQL Server], piecemeal"
+  - "simple recovery model [SQL Server], RESTORE examples"
+---
+# Example: Piecemeal Restore of Database (Simple Recovery Model)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  A piecemeal restore sequence restores and recovers a database in stages at the filegroup level, starting with the primary and all read/write, secondary filegroups.  
+  
+ In this example, database `adb` is restored to a new computer after a disaster. The database is using the simple recovery model. Before the disaster, all the filegroups are online. Filegroups `A` and `C` are read/write, and filegroup `B` is read-only. Filegroup `B` became read-only before the most recent partial backup, which contains the primary filegroup and the read/write secondary filegroups, `A` and `C`. After filegroup `B` became read-only, a separate file backup of filegroup `B` was taken.  
+  
+## Restore Sequences  
+  
+1.  Partial restore of the primary and filegroups `A` and `C`.  
+  
+    ```  
+    RESTORE DATABASE adb FILEGROUP='A',FILEGROUP='C'   
+       FROM partial_backup   
+       WITH PARTIAL, RECOVERY;  
+  
+    ```  
+  
+     At this point, the primary and filegroups `A` and `C` are online. All files in filegroup `B` are recovery pending, and the filegroup is offline.  
+  
+2.  Online restore of filegroup `B`.  
+  
+    ```  
+    RESTORE DATABASE adb FILEGROUP='B' FROM backup WITH RECOVERY;  
+  
+    ```  
+  
+     All filegroups are now online.  
+  
+## Additional Examples  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Simple Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-simple-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Only File (Simple Recovery Model)](example-online-restore-of-a-read-only-file-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Database (Full Recovery Model)](example-piecemeal-restore-of-database-full-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Full Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-full-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Write File (Full Recovery Model)](example-online-restore-of-a-read-write-file-full-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Only File (Full Recovery Model)](example-online-restore-of-a-read-only-file-full-recovery-model.md)  
+  
+## Related content
+
+- [Online Restore (SQL Server)](online-restore-sql-server.md)
+- [BACKUP (Transact-SQL)](../../t-sql/statements/backup-transact-sql.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)
+- [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)

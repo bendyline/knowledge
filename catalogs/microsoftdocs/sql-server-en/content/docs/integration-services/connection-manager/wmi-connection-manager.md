@@ -1,0 +1,82 @@
+---
+title: "WMI Connection Manager"
+description: "WMI Connection Manager"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.wmiconnection.f1"
+helpviewer_keywords:
+  - "connections [Integration Services], WMI"
+  - "connection managers [Integration Services], WMI"
+  - "WMI connection manager [Integration Services]"
+---
+# WMI Connection Manager
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  A WMI connection manager enables a package to use Windows Management Instrumentation (WMI) to manage information in an enterprise environment. The Web Service task that  Microsoft 
+  SQL Server 
+  Integration Services 
+ includes uses a WMI connection manager.  
+  
+ When you add a WMI connection manager to a package,  Integration Services 
+ creates a connection manager that will resolve to a WMI connection at run time, sets the connection manager properties, and adds the connection manager to the **Connections** collection on the package. The **ConnectionManagerType** property of the connection manager is set to **WMI**.  
+  
+## Configuration of the WMI Connection Manager  
+ You can configure a WMI connection manager in the following ways:  
+  
+-   Specify the name of a server.  
+  
+-   Specify a namespace on the server.  
+  
+-   Select the authentication mode for connecting to the server.  
+  
+ You can set properties through  SSIS 
+ Designer or programmatically.  
+  
+ For information about configuring a connection manager programmatically, see [Microsoft.SqlServer.Dts.Runtime.ConnectionManager](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.ConnectionManager) and [Adding Connections Programmatically](../building-packages-programmatically/adding-connections-programmatically.md).  
+  
+## WMI Connection Manager Editor
+  Use the **WMI Connection Manager** dialog box to specify a Microsoft Windows Management Instrumentation (WMI) connection to a server.  
+  
+ To learn more about the WMI connection manager, see [WMI Connection Manager](#wmi-connection-manager).  
+  
+### Options  
+ **Name**  
+ Provide a unique name for the connection manager.  
+  
+ **Description**  
+ Describe the connection manager. As a best practice, describe the connection manager in terms of its purpose, to make packages self-documenting and easier to maintain.  
+  
+ **Server name**  
+ Provide the name of the server to which you want to make the WMI connection.  
+  
+ **Namespace**  
+ Specify the WMI namespace.  
+  
+ **Use Windows authentication**  
+ Select to use Windows Authentication. If you use Windows Authentication, you do not need to provide a user name or password for the connection.  
+  
+ **User name**  
+ If you do not use Windows Authentication, you must provide a user name for the connection.  
+  
+ **Password**  
+ If you do not use Windows Authentication, you must provide the password for the connection.  
+  
+ **Test**  
+ Test the connection manager settings.  
+  
+## Related content
+
+- [Web Service Task](../control-flow/web-service-task.md)
+- [Integration Services (SSIS) Connections](integration-services-ssis-connections.md)

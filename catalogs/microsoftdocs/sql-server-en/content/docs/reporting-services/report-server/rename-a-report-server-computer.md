@@ -1,0 +1,52 @@
+---
+title: "Rename a report server computer"
+description: Learn how to reconfigure a report server after a computer name change. SQL Server Reporting Services might not be accessible after a computer name change.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "renaming report servers"
+---
+# Rename a report server computer
+  Renaming a computer causes a corresponding name change for the Web server and  SQL Server 
+ instance, if the change is on the same computer. In some cases,  SQL Server 
+  Reporting Services 
+ might not be accessible after a computer name change. Use the steps provided in this article to reconfigure a report server after a computer name change.  
+  
+## Rename a SQL Server database engine  
+ If you rename the   SQL Server Database Engine 
+ instance that runs the report server database, complete the following steps:  
+  
+1.  Start the Reporting Services Configuration tool and connect to the report server that uses the report server database on the renamed server.  
+  
+1.  Open the **Database Setup** page.  
+  
+1.  In **Server Name**, enter or select the  SQL Server 
+ name, and then select **Connect**.  
+  
+1.  Select **Apply**.  
+  
+ If the report server is using a local  Database Engine 
+ instance, you can use `(local)` or `(local)\instancename` to specify the server. If you use `(local)` to refer to the server, you can rename the server and the connections continue to work. If you're using a remote server, update the database connection information. This action must be done whenever the server name is changed or if  Reporting Services 
+ is configured using the server name.
+  
+## Rename a report server computer  
+ If you rename a computer that runs a report server, complete the following steps:  
+  
+1.  Open `RSReportServer.config` in a text editor and modify the **UrlRoot** setting to reflect the new server name. The **UrlRoot** setting is used by delivery extensions to compose the URL used to access items stored on the report server. Changing the report server URL address requires that you update the **UrlRoot** setting so that subscriptions continue to deliver reports as expected.  
+  
+2.  In the same file, if the setting is set, modify the **ReportServerUrl** setting to reflect the new server name. This setting isn't used in every installation. If the setting is empty, do nothing.  
+  
+    > **Note:**  
+    >  If you are using Windows Internet Naming Service (WINS) on your corporate network, the report server and web portal might continue to be available under the previous name for a period of time. WINS maps an IP address to each computer it services. After WINS refreshes the IP address for the renamed computer, the old computer name can no longer be used to access the report server or web portal.  
+  
+## Related content
+
+- [RsReportServer.config configuration file](rsreportserver-config-configuration-file.md)
+- [What is the Report Server configuration manager (native mode)?](../install-windows/reporting-services-configuration-manager-native-mode.md)
+- [Reporting Services report server (native mode)](reporting-services-report-server-native-mode.md)
+- [Start and stop the Report Server service](start-and-stop-the-report-server-service.md)
+- [rsconfig utility (SSRS)](../tools/rsconfig-utility-ssrs.md)

@@ -1,0 +1,50 @@
+---
+title: "Namespace Support in PATH Mode"
+description: Learn about namespace support when using PATH mode to generate XML from a SELECT query.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 05/05/2022
+ms.service: sql
+ms.subservice: xml
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "PATH FOR XML mode, namespace support"
+  - "namespaces [XML in SQL Server]"
+---
+# Namespace support in PATH mode
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Namespace support in the PATH mode is provided by using WITH NAMESPACES. For example, the following query demonstrates the WITH NAMESPACES syntax to declare a namespace ("a:") that can then be used in the subsequent SELECT statement:
+
+```sql
+WITH XMLNAMESPACES('a' as a)
+SELECT 1 as 'a:b'
+FOR XML PATH;
+```
+
+## Examples
+
+These samples illustrate the use of PATH mode in generating XML from a SELECT query. Many of these queries are specified against the bicycle manufacturing instructions XML documents that are stored in the Instructions column of the ProductModel table.
+
+## Related content
+
+- [Use PATH mode with FOR XML](use-path-mode-with-for-xml.md)

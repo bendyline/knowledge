@@ -1,0 +1,35 @@
+---
+title: "rsModelGenerationError - Reporting Services error"
+description: "In this error reference page, learn about event ID 'rsModelGenerationError': An error occurred while generating model."
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: troubleshooting
+ms.topic: error-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "rsModelGenerationError"
+---
+# rsModelGenerationError - Reporting Services error
+    
+## Details  
+  
+| Category | Value |
+| --- | --- |
+| Product Name | SQL Server |
+|  |
+| Event ID | rsRenderingError |
+| Event Source | Microsoft.ReportingServices.Diagnostics.Utilities.ErrorStrings |
+| Component | Reporting Services |
+|  |
+| Message Text | An error occurred while generating model. (rsModelGenerationError) (ReportingServicesLibrary) %1 |
+  
+## Explanation  
+ The report model couldn't be generated. In  Microsoft 
+  SQL Server 
+2005 SP1 and earlier versions, this error is most likely displayed when the System.Data.DataSet object can't handle a table or relationship within the database schema. For example, when two foreign keys are defined on the same column within a table.  
+  
+## User action  
+ Determine the specific reason that caused this message to appear. Then, review the report server log files, which are located at \Microsoft SQL Server\\&lt;SQL Server Instance&gt;\Reporting Services\LogFiles.  
+  
+## Internal-only

@@ -1,0 +1,30 @@
+---
+title: "updateNull Method (SQLServerResultSet)"
+description: "updateNull Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.updateNull"
+apitype: "Assembly"
+---
+# updateNull Method (SQLServerResultSet)
+
+
+  Updates the designated column with a null value.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [updateNull (int)](updatenull-method-int.md) | Updates the designated column with a null value given the column index. |
+| [updateNull (java.lang.String)](updatenull-method-java-lang-string.md) | Updates the designated column with a null value given the column name. |
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

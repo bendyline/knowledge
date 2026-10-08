@@ -1,0 +1,40 @@
+---
+title: "getDriverMinorVersion Method (SQLServerDatabaseMetaData)"
+description: "getDriverMinorVersion Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.getDriverMinorVersion"
+apitype: "Assembly"
+---
+# getDriverMinorVersion Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves the minor version number of this JDBC driver.  
+  
+## Syntax  
+  
+```  
+  
+public int getDriverMinorVersion()  
+```  
+  
+## Return Value  
+ An **int** that indicates the JDBC driver minor version.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getDriverMinorVersion method is specified by the getDriverMinorVersion method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

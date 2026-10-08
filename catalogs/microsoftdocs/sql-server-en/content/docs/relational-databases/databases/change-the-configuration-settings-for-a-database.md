@@ -1,0 +1,76 @@
+---
+title: "Change the Configuration Settings for a Database"
+description: "Learn how to change database-level options in SQL Server 2019 by using SQL Server Management Studio or Transact-SQL."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+helpviewer_keywords:
+  - "database configuration [SQL Server]"
+  - "configuration options [SQL Server], databases"
+  - "modifying database configuration settings"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Change the Configuration Settings for a Database
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  This topic describes how to change database-level options in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL . These options are unique to each database and do not affect other databases.  
+
+<a id="BeforeYouBegin"></a>
+
+##  <a name="Restrictions"></a> Limitations and Restrictions
+  
+-   Only the system administrator, database owner, members of the **sysadmin** and **dbcreator** fixed server roles and **db_owner** fixed database roles can modify these options.  
+  
+  
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires ALTER permission on the database.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To change the option settings for a database  
+  
+1.  In Object Explorer, connect to a  Database Engine 
+ instance, expand the server, expand **Databases**, right-click a database, and then click **Properties**.  
+  
+2.  In the **Database Properties** dialog box, click **Options** to access most of the configuration settings. File and filegroup configurations, mirroring and log shipping are on their respective pages.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To change the option settings for a database  
+  
+1.  Connect to the  Database Engine 
+.  
+  
+2.  From the Standard bar, click **New Query**.  
+  
+3.  Copy and paste the following example into the query window and click **Execute**. This example sets the recovery model and data page verification options for the  `AdventureWorks2025`  sample database.  
+  
+ [language="sql" source="codesnippet/tsql/change-the-configuration_1.sql"::: (complete source file; reference: codesnippet/tsql/change-the-configuration_1.sql)](../../../_code/docs/relational-databases/databases/codesnippet/tsql/change-the-configuration_1.sql.md)
+  
+ For more examples, see [ALTER DATABASE SET Options &#40;Transact-SQL&#41;](../../t-sql/statements/alter-database-transact-sql-set-options.md).  
+  
+## Related content
+
+- [ALTER DATABASE (Transact-SQL) compatibility level](../../t-sql/statements/alter-database-transact-sql-compatibility-level.md)
+- [ALTER DATABASE (Transact-SQL) Database Mirroring](../../t-sql/statements/alter-database-transact-sql-database-mirroring.md)
+- [ALTER DATABASE (Transact-SQL) SET HADR](../../t-sql/statements/alter-database-transact-sql-set-hadr.md)
+- [Rename a database](rename-a-database.md)
+- [Shrink a database](shrink-a-database.md)

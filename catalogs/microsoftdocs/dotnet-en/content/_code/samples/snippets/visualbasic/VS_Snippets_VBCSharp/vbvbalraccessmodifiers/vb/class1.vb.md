@@ -1,0 +1,36 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_VBCSharp/vbvbalraccessmodifiers/vb/class1.vb
+
+Complete source file; linked examples may select a region or line range.
+
+```
+Option Strict On
+
+'<Snippet1>
+Class CustomerInfo
+
+    Private p_CustomerID As Integer
+
+    Public ReadOnly Property CustomerID() As Integer
+        Get
+            Return p_CustomerID
+        End Get
+    End Property
+
+    ' Allow friend access to the empty constructor.
+    Friend Sub New()
+
+    End Sub
+
+    ' Require that a customer identifier be specified for the public constructor.
+    Public Sub New(ByVal customerID As Integer)
+        p_CustomerID = customerID
+    End Sub
+
+    ' Allow friend programming elements to set the customer identifier.
+    Friend Sub SetCustomerID(ByVal customerID As Integer)
+        p_CustomerID = customerID
+    End Sub
+End Class
+'</Snippet1>
+
+```

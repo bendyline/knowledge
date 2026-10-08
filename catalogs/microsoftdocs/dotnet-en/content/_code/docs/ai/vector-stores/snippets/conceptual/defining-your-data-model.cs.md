@@ -1,0 +1,34 @@
+# Source code: docs/ai/vector-stores/snippets/conceptual/defining-your-data-model.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.Extensions.VectorData;
+
+// <Overview>
+public class Hotel
+{
+    // <VectorStoreKeyAttribute>
+    [VectorStoreKey]
+    public ulong HotelId { get; set; }
+    // </VectorStoreKeyAttribute>
+
+    // <VectorStoreDataAttribute>
+    [VectorStoreData(IsIndexed = true)]
+    public required string HotelName { get; set; }
+    // </VectorStoreDataAttribute>
+
+    [VectorStoreData(IsFullTextIndexed = true)]
+    public required string Description { get; set; }
+
+    // <VectorStoreVectorAttribute1>
+    [VectorStoreVector(dimensions: 4, DistanceFunction = DistanceFunction.CosineSimilarity, IndexKind = IndexKind.Hnsw)]
+    public ReadOnlyMemory<float>? DescriptionEmbedding { get; set; }
+    // </VectorStoreVectorAttribute1>
+
+    [VectorStoreData(IsIndexed = true)]
+    public required string[] Tags { get; set; }
+}
+// </Overview>
+
+```

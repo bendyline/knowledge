@@ -1,0 +1,149 @@
+---
+title: "Configure Report Builder access"
+description: Configure Report Builder, a report design tool to use with a SQL Server Reporting Services report server. It uses either native or SharePoint integration mode.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+
+# Configure Report Builder access
+
+  **Applies to:**
+ 
+ Reporting Services and later versions
+ 
+
+Microsoft Report Builder is a reporting tool that can be used with a  SQL Server 
+  Reporting Services 
+ report server configured for either native mode or SharePoint integration mode.  
+
+Access to Report Builder depends on the following factors:  
+
+- Role assignments or permissions that make Report Builder available to individual users or groups.  
+
+- Authentication settings that determine whether user credentials can be passed through to the report server.
+
+## Prerequisites
+
+The client computer must have  Microsoft 
+  .NET Framework 
+ 4.6.1 or higher installed.
+
+## Enable and disable Report Builder  
+
+Downloading Report Builder via the portal is enabled by default. Report server administrators have the option of disabling the Report Builder download by setting the report server system property `ShowDownloadMenu` to **false**. Setting this property disables Report Builder, Mobile Report Publisher, Power BI Desktop, and Power BI Mobile downloads for that report server.  
+
+ To set report server system properties, you can use Management Studio or script:      
+
+ - To use Management Studio, connect to the report server and use the Advanced Server Properties page to set `ShowDownloadMenu` to **false**. For more information about how to open this page, see [Set report server properties (Management Studio)](../tools/set-report-server-properties-management-studio.md).      
+
+ - To view a sample script that sets a report server property, see [Script deployment and administrative tasks](../tools/script-deployment-and-administrative-tasks.md).  
+
+## Role assignments granting Report Builder access on a native mode report server  
+
+On a native mode report server, create user role assignments that include tasks for using Report Builder. You must be a Content Manager and System Administrator to create or modify role definitions and role assignments on items and at the site level.  
+
+The following instructions assume that you're using predefined roles. If you modified the role definitions, check the roles to verify they contain the necessary tasks. For more information about creating role assignments, see [Grant user access to a report server](../security/grant-user-access-to-a-report-server.md).
+
+After you create the role assignments, users have permission to do the following tasks:  
+
+- Users assigned to the System User and Browser roles can view published Report Builder reports on a report server, without having to launch Report Builder.  
+
+- Users assigned to the System User and Report Builder roles can generate models, start Report Builder and create reports, and save reports to the report server.  
+
+- Users assigned to the System User and Publisher roles can publish models from Model Designer to the report server. Models are used as data sources in Report Builder.  
+
+- Users assigned to the System Administrator and Content Manager roles have full permissions to create, view, and manage Report Builder reports.  
+
+### Verify required tasks are in the role definitions  
+
+1. Start Management Studio and connect to the report server.  
+
+1. Open the **Security** folder.  
+
+1. Open the **System Roles** folder.  
+
+1. Right-click **System Administrator**, and select **Properties**.  
+
+1. Choose **Execute report definitions** and select **OK**.  
+
+1. Right-click **System User**, and select **Properties**.  
+
+1. Choose  **Execute report definitions** and select **OK**.  
+
+1. Open the **Roles** folder.  
+
+1. Right-click **Browser**, and select **Properties**.  
+
+1. Choose **View models** and select **OK**.  
+
+1. Right-click **Content Manager**, and select **Properties**.  
+
+1. Choose **View models**, **Manage models**, **Consume reports**, and select **OK**.  
+
+1. Right-click **Publisher**, and select **Properties**.  
+
+1. Choose **Manage models** and select **OK**.  
+
+1. Create the Report Builder role if it doesn't exist:  
+
+    1. Open the **Security** folder.  
+
+    1. Right-click **Roles**, and select **New Role**.  
+
+    1. In **Name**, enter **Report Builder**.  
+
+    1. In **Description**, enter a description for the role so that users in the web portal know what the role is for.  
+
+    1. Add the following tasks: **Consume reports**, **View reports**, **View models**, **View resources**, **View folders**, and **Manage individual subscriptions**.  
+
+    1. Select **OK** to save the role.  
+
+#### Create role assignments that grant access to Report Builder  
+
+1. Start the web portal.  
+
+1. Select the gear icon on the top right of the web portal home page and choose **Site Settings** from the menu.  
+Screenshot of the web portal gear icon and menu.
+
+1. Select **Security**.  
+
+1. If a role assignment already exists for the user or group for which you want to configure Report Builder access, select **Edit**. Otherwise, select **New Role Assignment**. In **Group or user**, enter a Windows domain user or group account in this format: `<domain>\<account>`. If you're using forms authentication or custom security, specify the user or group account in the format that is correct for your deployment.  
+
+1. Choose **System User**, and then select **OK**.  
+
+1. Select **Home**.  
+
+1. Select the **Folder Settings** tab.  
+
+1. Select the **Security** tab.  
+
+1. If a role assignment already exists for the user or group for which you want to configure Report Builder access, Select **Edit**.  
+
+    Otherwise, select **New Role Assignment**. In **Group or user**, enter a Windows domain user or group account in this format: `<domain>\<account>`. If you're using forms authentication or custom security, specify the user or group account in the format that is correct for your deployment.  
+
+1. Choose **Report Builder**, and then select **Apply**.  
+
+1. Repeat to create or modify role assignments for other users or groups.  
+
+## Permissions granting Report Builder access on a SharePoint integrated mode report server  
+
+On a SharePoint integrated mode report server, Report Builder access is granted to SharePoint users who have either Contribute or Full Control permission levels.  
+
+If you use custom permission levels, you must include Add Items and Edit Items in the permission level. For more information about Report Builder access through built-in permission levels, see [Use built-in security in Windows SharePoint services for report server items](../security/use-built-in-security-in-windows-sharepoint-services-for-report-server-items.md). For more information about permission requirements for custom permission levels, see [Set permissions for report server operations in a SharePoint web application](../security/set-permissions-for-report-server-operations-in-a-sharepoint-web-application.md).  
+
+## Authentication considerations and credential reuse  
+
+Report Builder opens its own connection to a report server. If you're not using Windows integrated security with single sign-on, users must reenter their credentials for the Report Builder connection to the report server.  
+
+## Related content
+
+- [Authentication in a report server](../security/authentication-with-the-report-server.md)
+- [Browser support for Reporting Services and Power View](../browser-support-for-reporting-services-and-power-view.md)
+- [Start Microsoft Report Builder](../report-builder/start-report-builder.md)
+- [What is the report server web portal (Native mode)?](../web-portal-ssrs-native-mode.md)
+- [Connect to a report server in Management Studio](../tools/connect-to-a-report-server-in-management-studio.md)
+- [Reporting Services Properties - Report Server System Properties](../report-server-web-service/net-framework/reporting-services-properties-report-server-system-properties.md)

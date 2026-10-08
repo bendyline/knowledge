@@ -1,0 +1,66 @@
+---
+author: PatAltimore
+ms.service: azure-api-management
+ms.topic: include
+ms.date: 04/17/2025
+ms.author: patricka
+ms.custom: sfi-image-nochange
+---
+
+## Troubleshooting
+
+### Unsuccessful initial deployment of API Management service into a subnet 
+
+* Deploy a virtual machine into the same subnet. 
+* Connect to the virtual machine and validate connectivity to one of each of the following resources in your Azure subscription:
+  * Azure Storage blob
+  * Azure SQL Database
+  * Azure Storage Table
+  * Azure Key Vault
+
+> **Important:**
+> After validating the connectivity, remove all the resources in the subnet before deploying API Management into the subnet.
+
+### Verify network status  
+
+* After deploying API Management into the subnet, use the portal to check the connectivity of your instance to dependencies, such as Azure Storage. 
+* In the portal, in the sidebar menu, under **Deployment + infrastructure**, select **Network** > **Network status**.
+
+  Screenshot of verify network connectivity status in the portal.
+
+| Filter | Description |
+| --- | --- |
+| **Required** | Select to review the required Azure services connectivity for API Management. Failure indicates that the instance is unable to perform core operations to manage APIs. |
+| **Optional** | Select to review the optional services connectivity. Failure indicates only that the specific functionality won't work (for example, SMTP). Failure may lead to degradation in using and monitoring the API Management instance and providing the committed SLA. |
+
+To help troubleshoot connectivity issues, select:
+
+* **Metrics** - to review network connectivity status metrics 
+
+* **Diagnose** - to run a virtual network verifier over a specified time period
+
+To address connectivity issues, review [network configuration settings](../articles/api-management/virtual-network-reference.md) and fix required network settings.
+
+### Incremental updates  
+
+When making changes to your network, refer to [NetworkStatus API](https://learn.microsoft.com/rest/api/apimanagement/current-ga/network-status) to verify that the API Management service hasn't lost access to critical resources. The connectivity status should be updated every 15 minutes. 
+
+To apply a network configuration change to the API Management instance using the portal:
+
+  1. In the left-hand menu for your instance, under **Deployment and infrastructure**, select **Network** > **Virtual network**.
+  1. Select **Apply network configuration**. 
+
+ 
+ ### Challenges encountered in reassigning API Management instance to previous subnet
+  * **VNet lock** - When moving an API Management instance back to its original subnet, immediate reassignment may not be possible due to the VNet lock, which takes up to one hour to be removed.  
+  * **Resource group lock** - Another scenario to consider is the presence of a scope lock at the resource group level or higher, hindering the Resource Navigation Link Deletion process. To resolve this, remove the scope lock and allow a delay of approximately 4-6 hours for the API Management service to unlink from the original subnet before the lock removal, enabling deployment to the desired subnet.
+
+### Troubleshoot connection to Microsoft Graph from inside a VNet
+
+Network connectivity to Microsoft Graph is needed for features including user sign-in to the developer portal using the Microsoft Entra identity provider.
+
+To troubleshoot connectivity to Microsoft Graph from inside a VNet:
+    
+* Ensure that NSG and other network rules are configured for outbound connectivity from your API Management instance to Microsoft Graph (using the **AzureActiveDirectory** service tag).
+
+* Ensure DNS resolution and network access to `graph.microsoft.com` from within the VNet. For example, provision a new VM inside the VNet, connect to it, and try to `GET https://graph.microsoft.com/v1.0/$metadata` from a browser or using cURL, PowerShell, or other tools.

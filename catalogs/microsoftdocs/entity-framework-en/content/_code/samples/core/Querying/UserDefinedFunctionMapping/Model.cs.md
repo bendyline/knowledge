@@ -1,0 +1,264 @@
+# Source code: samples/core/Querying/UserDefinedFunctionMapping/Model.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
+
+namespace EFQuerying.UserDefinedFunctionMapping;
+
+#region Entities
+public class Blog
+{
+    public int BlogId { get; set; }
+    public string Url { get; set; }
+    public int? Rating { get; set; }
+
+    public List<Post> Posts { get; set; }
+}
+
+public class Post
+{
+    public int PostId { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public int Rating { get; set; }
+    public int BlogId { get; set; }
+
+    public Blog Blog { get; set; }
+    public List<Comment> Comments { get; set; }
+}
+
+public class Comment
+{
+    public int CommentId { get; set; }
+    public string Text { get; set; }
+    public int Likes { get; set; }
+    public int PostId { get; set; }
+
+    public Post Post { get; set; }
+}
+#endregion
+
+public class JsonEntity
+{
+    public int Id { get; set; }
+    public Dictionary<string, string> Metadata { get; set; }
+}
+
+public class BloggingContext : DbContext
+{
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<JsonEntity> JsonEntities { get; set; }
+
+    #region BasicFunctionDefinition
+    public int ActivePostCountForBlog(int blogId)
+        => throw new NotSupportedException();
+    #endregion
+
+    #region BuiltInFunctionDefinition
+    public static int IsDate(string value)
+        => throw new NotSupportedException();
+    #endregion
+
+    #region JsonFunctionDefinition
+    [DbFunction(Name = "JSON_VALUE", IsBuiltIn = true, IsNullable = true)]
+    public static string JsonValue(Dictionary<string, string> json, string path)
+        => throw new NotSupportedException();
+    #endregion
+
+    #region HasTranslationFunctionDefinition
+    public double PercentageDifference(double first, int second)
+        => throw new NotSupportedException();
+    #endregion
+
+    #region QueryableFunctionDefinition
+    public IQueryable<Post> PostsWithPopularComments(int likeThreshold)
+        => FromExpression(() => PostsWithPopularComments(likeThreshold));
+    #endregion
+
+    #region NullabilityPropagationFunctionDefinition
+    public string ConcatStrings(string prm1, string prm2)
+        => throw new InvalidOperationException();
+
+    public string ConcatStringsOptimized(string prm1, string prm2)
+        => throw new InvalidOperationException();
+    #endregion
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        #region EntityConfiguration
+        modelBuilder.Entity<Blog>()
+            .HasMany(b => b.Posts)
+            .WithOne(p => p.Blog);
+
+        modelBuilder.Entity<Post>()
+            .HasMany(p => p.Comments)
+            .WithOne(c => c.Post);
+        #endregion
+
+        modelBuilder.Entity<Blog>()
+            .HasData(
+                new Blog { BlogId = 1, Url = @"https://devblogs.microsoft.com/dotnet", Rating = 5 },
+                new Blog { BlogId = 2, Url = @"https://mytravelblog.com/", Rating = 4 });
+
+        modelBuilder.Entity<Post>()
+            .HasData(
+                new Post
+                {
+                    PostId = 1,
+                    BlogId = 1,
+                    Title = "What's new",
+                    Content = "Lorem ipsum dolor sit amet",
+                    Rating = 5
+                },
+                new Post
+                {
+                    PostId = 2,
+                    BlogId = 2,
+                    Title = "Around the World in Eighty Days",
+                    Content = "consectetur adipiscing elit",
+                    Rating = 5
+                },
+                new Post
+                {
+                    PostId = 3,
+                    BlogId = 2,
+                    Title = "Glamping *is* the way",
+                    Content = "sed do eiusmod tempor incididunt",
+                    Rating = 4
+                },
+                new Post
+                {
+                    PostId = 4,
+                    BlogId = 2,
+                    Title = "Travel in the time of pandemic",
+                    Content = "ut labore et dolore magna aliqua",
+                    Rating = 3
+                });
+
+        modelBuilder.Entity<Comment>()
+            .HasData(
+                new Comment { CommentId = 1, PostId = 1, Text = "Exciting!", Likes = 3 },
+                new Comment
+                {
+                    CommentId = 2,
+                    PostId = 1,
+                    Text = "Dotnet is useless - why use C# when you can write super fast assembly code instead?",
+                    Likes = 0
+                },
+                new Comment { CommentId = 3, PostId = 2, Text = "Didn't think you would make it!", Likes = 3 },
+                new Comment { CommentId = 4, PostId = 2, Text = "Are you going to try 70 days next time?", Likes = 5 },
+                new Comment { CommentId = 5, PostId = 2, Text = "Good thing the earth is round :)", Likes = 5 },
+                new Comment { CommentId = 6, PostId = 3, Text = "I couldn't agree with you more", Likes = 2 });
+
+        #region BasicFunctionConfiguration
+        modelBuilder.HasDbFunction(() => ActivePostCountForBlog(default))
+            .HasName("CommentedPostCountForBlog")
+            .HasSchema("dbo");
+        #endregion
+
+        #region JsonFunctionConfiguration
+        modelBuilder.Entity<JsonEntity>()
+            .Property(e => e.Metadata)
+            .HasConversion(
+                value => JsonSerializer.Serialize(value, (JsonSerializerOptions)null),
+                value => JsonSerializer.Deserialize<Dictionary<string, string>>(value, (JsonSerializerOptions)null),
+                new ValueComparer<Dictionary<string, string>>(
+                    (c1, c2) => c1.Count == c2.Count && !c1.Except(c2).Any(),
+                    c => c.Aggregate(0, (a, kvp) => a ^ HashCode.Combine(kvp.Key, kvp.Value)),
+                    c => c.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)));
+
+        var jsonValueFunction = modelBuilder.HasDbFunction(() => JsonValue(default, default));
+        jsonValueFunction.HasStoreType("nvarchar(4000)");
+        jsonValueFunction.HasParameter("json").HasStoreType("nvarchar(max)");
+        #endregion
+
+        #region BuiltInFunctionConfiguration
+        modelBuilder.HasDbFunction(typeof(BloggingContext).GetMethod(nameof(IsDate), [typeof(string)]))
+            .HasName("ISDATE")
+            .IsBuiltIn();
+        #endregion
+
+        #region HasTranslationFunctionConfiguration
+        // 100 * ABS(first - second) / ((first + second) / 2)
+        modelBuilder.HasDbFunction(
+                typeof(BloggingContext).GetMethod(nameof(PercentageDifference), [typeof(double), typeof(int)]))
+            .HasTranslation(
+                args =>
+                    new SqlBinaryExpression(
+                        ExpressionType.Multiply,
+                        new SqlConstantExpression(100, new IntTypeMapping("int", DbType.Int32)),
+                        new SqlBinaryExpression(
+                            ExpressionType.Divide,
+                            new SqlFunctionExpression(
+                                "ABS",
+                                [
+                                    new SqlBinaryExpression(
+                                        ExpressionType.Subtract,
+                                        args.First(),
+                                        args.Skip(1).First(),
+                                        args.First().Type,
+                                        args.First().TypeMapping)
+                                ],
+                                nullable: true,
+                                argumentsPropagateNullability: [true, true],
+                                type: args.First().Type,
+                                typeMapping: args.First().TypeMapping),
+                            new SqlBinaryExpression(
+                                ExpressionType.Divide,
+                                new SqlBinaryExpression(
+                                    ExpressionType.Add,
+                                    args.First(),
+                                    args.Skip(1).First(),
+                                    args.First().Type,
+                                    args.First().TypeMapping),
+                                new SqlConstantExpression(2, new IntTypeMapping("int", DbType.Int32)),
+                                args.First().Type,
+                                args.First().TypeMapping),
+                            args.First().Type,
+                            args.First().TypeMapping),
+                        args.First().Type,
+                        args.First().TypeMapping));
+        #endregion
+
+        #region NullabilityPropagationModelConfiguration
+        modelBuilder
+            .HasDbFunction(typeof(BloggingContext).GetMethod(nameof(ConcatStrings), [typeof(string), typeof(string)]))
+            .HasName("ConcatStrings");
+
+        modelBuilder.HasDbFunction(
+            typeof(BloggingContext).GetMethod(nameof(ConcatStringsOptimized), [typeof(string), typeof(string)]),
+            b =>
+            {
+                b.HasName("ConcatStrings");
+                b.HasParameter("prm1").PropagatesNullability();
+                b.HasParameter("prm2").PropagatesNullability();
+            });
+        #endregion
+
+        #region QueryableFunctionConfigurationHasDbFunction
+        modelBuilder.Entity<Post>().ToTable("Posts");
+        modelBuilder.HasDbFunction(typeof(BloggingContext).GetMethod(nameof(PostsWithPopularComments), [typeof(int)]));
+        #endregion
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer(
+            @"Server=(localdb)\mssqllocaldb;Database=EFQuerying.UserDefinedFunctionMapping;Trusted_Connection=True;ConnectRetryCount=0");
+    }
+}
+
+```

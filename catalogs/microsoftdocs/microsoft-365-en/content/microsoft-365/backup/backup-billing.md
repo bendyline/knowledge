@@ -1,0 +1,125 @@
+---
+title: Manage consumption and invoices for Microsoft 365 Backup
+ms.author: chucked
+author: chuckedmonson
+manager: jtremper
+audience: admin
+ms.reviewer: sreelakshmi
+ms.date: 06/16/2025
+ms.topic: how-to
+ms.service: microsoft-365-backup
+ms.custom: backup
+search.appverid:
+ms.collection:
+    - essentials-get-started
+ms.localizationpriority:  medium
+description: Learn how to set up and manage usage and invoices in the Azure portal for Microsoft 365 Backup.
+---
+
+# Departmental Billing for Microsoft 365 Backup 
+
+If you're a large organization with multiple departments and want to manage Microsoft 365 Backup within departments or groups, departmental billing may be the right fit for you. With Departmental billing, you can manage Backup with the following features: 
+
+1. Breakdown backup costs by different azure subscriptions.
+2. Limit Backup management (creation and update) to certain admins within departments with Role-based-access-control(RBAC).
+3. Prevent admins from another department using your azure subscription to cause unapproved backup charges.
+
+
+**Role-Based-Access-Control within departments(RBAC)**: To limit admins who can manage Backup within a department or group, every backup admin should also have an Owner or Contributor role on the subscription. This way only an approved admin who is given spending power on a subscription can create and edit backups and cause consumption to the department's azure subscription. If you're an owner for the department's subscription, we recommend giving the lower privileged 'Contributor' role to backup admins in your department if they don't need privileges to add other admins to the subscription. 
+
+### Set up departmental billing
+
+To set up departmental billing for your tenant, follow these steps. 
+
+1. Create billing policies and connect them to Microsoft 365 Backup following the instructions in <a href="https://learn.microsoft.com/microsoft-365/commerce/services/pay-as-you-go-setup-billing-node" target="_blank"></a>**Pay-as-you-go Setup**</a> for Microsoft 365 Backup.
+2. In the **Services** tab of **Pay-as-you-go** page, select **Microsoft 365 Backup**.
+3. To enable departmental billing, in the **Settings** tab of Microsoft 365 Backup page, select the checkbox for limiting management of Backup within departments.
+   
+   image
+
+    Now that departmental billing with Backup is enabled for your tenant, Admins are assigned Owner / Contributor Azure roles to the billing policies connected to Backup can only create and edit backup policies.
+   
+5. You can create backup for your department by creating <a href="https://learn.microsoft.com/microsoft-365/backup/backup-setup?view=o365-worldwide#2-create-backup-policies-to-protect-your-data" target="_blank"></a>**backup policies as outlined here**</a>.
+   In Create / Edit policy wizard, admins need to associate a Billing Policy with a Backup Policy. In the billing policy list, admins are shown only billing policies that they have Owner/Contributor access.  
+    rbac
+
+> **Note:**
+> **Once you have enabled departmental billing, admins who have been assigned Owner / Contributor Azure roles to the billing policies connected to Backup can only create and edit backup policies.**
+
+Admins who don't have RBAC rights to your backup policies will not be able to use your billing policy to create backup policies or edit backup policies created by admins in your department. Billing policies show as **Confidential** for admins who don't have access. 
+
+image-confidential
+
+### Change Billing policies associated with Backup policies 
+Once a Billing Policy is associated with a Backup Policy, it can be updated from the Backup Dashboard  
+
+  1. Select the Backup policy you want to update the Billing Policy. Click on the 3-dots next to backup policy name and select **Update Billing policy**.
+        image-updatebillingpolicy
+
+### Disable departmental billing
+If you wish to manage Backup without the RBAC control of restricting Backup management to Owner or Contributor of subscriptions, uncheck the box in Settings tab Microsoft 365 Backup page.  
+
+### Manage consumption and invoices for Microsoft 365 Backup
+
+You can view actual and accumulated cost breakdown by tenants and service type for OneDrive, SharePoint, and Exchange in Microsoft Cost Management in the Azure portal or by accessing the [Cost Management public APIs](https://learn.microsoft.com/rest/api/cost-management/operation-groups). Cost breakdown by application ID is coming soon.
+
+</br>
+
+> [!VIDEO https://learn-video.azurefd.net/vod/player?id=a87d77a7-2c88-43fc-ae8c-5ba42765f956]
+
+</br>
+
+1. Sign in to the [Azure portal](https://portal.azure.com/).
+
+2. Search for *Cost Management + Billing*.
+
+3. Select **Cost analysis** to see:
+
+    - Accumulated cost and forecast cost.
+
+    - Select **+Add Filter** to see breakdown of cost by meters and tags.
+
+       Screenshot of the cost analysis page in Microsoft Cost Management.
+
+You can also export daily cost information using billing export feature in Azure portal. For more information, see [Tutorial: Create and manage exported data](https://learn.microsoft.com/azure/cost-management-billing/costs/tutorial-export-acm-data?tabs=azure-portal).
+
+### Billing attribution by tenants, service type, and applications
+
+You can see actual cost breakdown by tags in Azure portal. There are currently three tags available for Microsoft 365 Backup: **tenants**, **servicetype** and **protectionunitid**.
+
+To view tags:
+
+1. Select **+Add Filter** to see breakdown of cost by meters and tags.
+
+2. Select the tag:
+
+    - In the key-value pair, select **tenants** or **servicetype**, and then select the respective tenant ID or service type.
+
+        - **tenants** shows a list of tenant IDs.
+
+        - **servicetype** is OneDrive, SharePoint, or Exchange.
+
+        - **applications** shows a list of app IDs.
+     
+        - **protectionunitid** shows a list of Site IDs.
+
+        - Exchange mailbox - Not available.
+
+        - OneDrive account - SiteId of the corresponding OneDrive site.
+
+        - SharePoint site - SiteId of the corresponding SharePoint site.
+
+    - Azure cost analysis - filter by tag.
+    
+    - The tag for OneDrive is its siteID. To convert this back to a userID, you can use the following API: `https://graph.microsoft.com/v1.0/sites/<siteid>/drive?select=owner`
+
+4. In the left navigation, select **Billing** to see monthly invoices.
+
+    We recommend using this view to see the costs by resources for Microsoft 365 Backup.
+
+    Screenshot of the recommended view to see costs by resources in Microsoft Cost Management.
+
+5. Set up budget alerts on cost by following the steps in the [Cost Management public APIs](https://learn.microsoft.com/rest/api/cost-management/operation-groups).
+
+> **Warning:**  
+>The **MailboxDbGuid** tag in the Azure consumption report is intended for Microsoft internal use only. We recommend that you don't rely on it because its value might change. Note that this is different from the MailboxId.

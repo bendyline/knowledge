@@ -1,0 +1,50 @@
+---
+title: "LinkMember (MDX)"
+description: "LinkMember (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# LinkMember (MDX)
+
+
+  Returns the member equivalent to a specified member in a specified hierarchy.  
+  
+## Syntax  
+  
+```  
+  
+LinkMember(Member_Expression, Hierarchy_Expression)   
+```  
+  
+## Arguments  
+ *Member_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a member.  
+  
+ *Hierarchy_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a hierarchy.  
+  
+## Remarks  
+ The **LinkMember** function returns the member from the specified hierarchy that matches the key values at each level of the specified member in a related hierarchy. Attributes at each level must have the same key cardinality and data type. In unnatural hierarchies, if there is more than one match for an attribute's key value, the result will be an error or indeterminate.  
+  
+## Examples  
+ The following example uses the **LinkMember** function to return the default measure in the Adventure Works cube for the ascendants of the July 1, 2002 member of the Date.Date attribute hierarchy in the Calendar hierarchy.  
+  
+```  
+SELECT  Hierarchize  
+   (Ascendants   
+      (LinkMember   
+         ([Date].[Date].[July 1, 2002], [Date].[Calendar]  
+         )  
+       )  
+    ) ON 0  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [Hierarchize (MDX)](hierarchize-mdx.md)
+- [Ascendants (MDX)](ascendants-mdx.md)
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

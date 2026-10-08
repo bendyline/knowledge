@@ -1,0 +1,37 @@
+# Source code: aspnetcore/mvc/models/file-uploads/samples/3.x/SampleApp/Pages/BufferedSingleFileUploadPhysical.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model BufferedSingleFileUploadPhysicalModel
+@{
+    ViewData["Title"] = "Buffered Single File Upload (Physical)";
+}
+
+<h1>Upload one buffered file to physical storage with one file upload control</h1>
+
+<p>The following form's page handler saves the file to disk.</p>
+
+<form enctype="multipart/form-data" method="post">
+    <dl>
+        <dt>
+            <label asp-for="FileUpload.FormFile"></label>
+        </dt>
+        <dd>
+            <input asp-for="FileUpload.FormFile" type="file" />
+            <span asp-validation-for="FileUpload.FormFile"></span>
+        </dd>
+    </dl>
+    <input asp-page-handler="Upload" class="btn" type="submit" value="Upload" />
+</form>
+
+<p class="result">
+    @Model.Result
+</p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+```

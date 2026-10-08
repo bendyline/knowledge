@@ -1,0 +1,44 @@
+---
+title: "getEncrypt Method (SQLServerDataSource)"
+description: "getEncrypt Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "getEncrypt Method (SQLServerDataSource)"
+apiname: "getEncrypt Method (SQLServerDataSource)"
+apitype: "Assembly"
+---
+# getEncrypt Method (SQLServerDataSource)
+
+
+  Returns a **Boolean** value that indicates if the encrypt property is enabled.  
+  
+## Syntax  
+  
+```  
+  
+public boolean getEncrypt()  
+```  
+  
+## Return Value  
+ **true** if encrypt is enabled. Otherwise, **false**.  
+  
+## Remarks  
+ If the encrypt property is set to **true**, the  Microsoft JDBC Driver for SQL Server 
+ ensures that  SQL Server 
+ uses TLS encryption for all data sent between the client and the server if the server has a certificate installed.  
+  
+ If the encrypt property is unspecified or set to **false**, the driver will not enforce the  SQL Server 
+ to support TLS encryption. If the  SQL Server 
+ instance is not configured to force the TLS encryption, a connection is established without any encryption. If the  SQL Server 
+ instance is configured to force the TLS encryption, the  Microsoft JDBC Driver for SQL Server 
+ will automatically enable TLS encryption when running on properly configured Java Virtual Machine (JVM), or else the connection is terminated and the driver will raise an error. If the encryption property is not set, the [getEncrypt](#getencrypt-method-sqlserverdatasource) method returns the default value of **false**.  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

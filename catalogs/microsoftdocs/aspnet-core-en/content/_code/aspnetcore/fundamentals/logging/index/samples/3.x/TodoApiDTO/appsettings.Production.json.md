@@ -1,0 +1,57 @@
+# Source code: aspnetcore/fundamentals/logging/index/samples/3.x/TodoApiDTO/appsettings.Production.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "Logging": {
+    "LogLevel": { // No provider, LogLevel applies to all the enabled providers.
+      "Default": "Error",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Warning"
+    },
+    "Debug": { // Debug provider.
+      "LogLevel": {
+        "Default": "Information" // Overrides preceding LogLevel:Default setting.
+      }
+    },
+    "Console": {
+      "IncludeScopes": true,
+      "LogLevel": {
+        "Microsoft.AspNetCore.Mvc.Razor.Internal": "Warning",
+        "Microsoft.AspNetCore.Mvc.Razor.Razor": "Debug",
+        "Microsoft.AspNetCore.Mvc.Razor": "Error",
+        "Default": "Information"
+      }
+    },
+    "EventSource": {
+      "LogLevel": {
+        "Microsoft": "Information"
+      }
+    },
+    "EventLog": {
+      "LogLevel": {
+        "Microsoft": "Information"
+      }
+    },
+    "AzureAppServicesFile": {
+      "IncludeScopes": true,
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    },
+    "AzureAppServicesBlob": {
+      "IncludeScopes": true,
+      "LogLevel": {
+        "Microsoft": "Information"
+      }
+    },
+    "ApplicationInsights": {
+      "LogLevel": {
+        "Default": "Information"
+      }
+    }
+  }
+}
+
+```

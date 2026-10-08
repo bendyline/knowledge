@@ -1,0 +1,66 @@
+---
+title: "Optimization using Single Phase Commit and Promotable Single Phase Notification"
+description: Optimize performance using single phase commit and promotable single phase notification. Learn about the System.Transactions infrastructure in .NET.
+ms.date: "03/30/2017"
+ms.assetid: 57beaf1a-fb4d-441a-ab1d-bc0c14ce7899
+---
+
+# Optimization using Single Phase Commit and Promotable Single Phase Notification
+
+This topic describes the mechanisms provided by the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure to optimize performance.
+
+## Promotable Single Phase Enlistment
+
+The [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure administrates a transaction inside a single application domain that involves at most a single durable resource or multiple volatile resources. Since the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure uses only intra-application domain calls, it yields the best throughput and performance.
+
+However, if the transaction is provided to another object in another application domain (including across process and machine boundaries) on the same computer, or if you were to enlist another durable resource manager, the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure automatically escalates the transaction to be managed by the MSDTC. A transaction managed by MSDTC is not as performance-wise as one managed by the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure.
+
+To optimize performance, the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure provides the Promotable Single Phase Enlistment (PSPE) that allows a single remote durable resource, located in a different application domain, process or machine, to participate in a [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) transaction without causing it to be escalated to an MSDTC transaction. This resource manager (RM) can host and "own" a transaction that can later be escalated to a distributed transaction (or MSDTC transaction) if necessary. This reduces the chance of using the MSDTC.
+
+This specific resource manager usually has its own internal non distributed transactions and it needs to support converting those transactions to distributed transactions at runtime. For example, SQL Server 2005 is such a resource manager. In such case, the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure takes a passive management role by just monitoring the transaction for a need for escalation. To support the interaction between the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) infrastructure and resource manager, the latter needs to implement the interface [System.Transactions.IPromotableSinglePhaseNotification](https://learn.microsoft.com/search/?terms=System.Transactions.IPromotableSinglePhaseNotification).
+
+The [System.Transactions.Transaction.EnlistPromotableSinglePhase*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistPromotableSinglePhase*) method is used to enlist a single durable resource that can be escalated later. This method ensures that the enlistment can be escalated as needed. If the enlistment succeeds, the RM creates its internal transaction and associates it with the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) transaction. If the PSPE enlistment fails, the RM should instead enlist using the [System.Transactions.Transaction.EnlistDurable*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistDurable*) method. Failures to enlist in PSPE might happen when the transaction is already a distributed transaction, or when another RM has already performed a PSPE enlistment
+
+Once enlisted, calls by clients to commit or abort the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) transaction are converted to calls on the Resource Manager by invoking the [System.Transactions.IPromotableSinglePhaseNotification.SinglePhaseCommit*](https://learn.microsoft.com/search/?terms=System.Transactions.IPromotableSinglePhaseNotification.SinglePhaseCommit*) method, or the [System.Transactions.IPromotableSinglePhaseNotification.Rollback*](https://learn.microsoft.com/search/?terms=System.Transactions.IPromotableSinglePhaseNotification.Rollback*) respectively.
+
+If the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) transaction never requires escalation, when the transaction is committed, the RM receives a [System.Transactions.IPromotableSinglePhaseNotification.SinglePhaseCommit*](https://learn.microsoft.com/search/?terms=System.Transactions.IPromotableSinglePhaseNotification.SinglePhaseCommit*) notification. It can then commit the internal transaction that was initially created.
+
+If the [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) transaction needs to be escalated (e.g., to support multiple RMs), [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) informs the resource manager by calling the [System.Transactions.ITransactionPromoter.Promote*](https://learn.microsoft.com/search/?terms=System.Transactions.ITransactionPromoter.Promote*) method on the [System.Transactions.ITransactionPromoter](https://learn.microsoft.com/search/?terms=System.Transactions.ITransactionPromoter) interface, from which the [System.Transactions.IPromotableSinglePhaseNotification](https://learn.microsoft.com/search/?terms=System.Transactions.IPromotableSinglePhaseNotification) interface derives. The resource manager then converts the transaction internally from a local transaction (which does not require logging) to a transaction object that is capable of participating in a DTC transaction, and associates it with the work already done. When the transaction is asked to commit, the transaction manager still sends the [System.Transactions.IPromotableSinglePhaseNotification.SinglePhaseCommit*](https://learn.microsoft.com/search/?terms=System.Transactions.IPromotableSinglePhaseNotification.SinglePhaseCommit*) notification to the resource manager, which commits the distributed transaction that it created during escalation.
+
+> **Note:**
+> The `TransactionCommitted` traces (that are generated when a Commit is invoked on the escalated transaction) contain the activity ID of the DTC transaction.
+
+For more information on management escalation, see [Transaction Management Escalation](transaction-management-escalation.md).
+
+## Transaction Management Escalation Scenario
+
+The following scenario demonstrates an escalation to a distributed transaction using the [System.Data](https://learn.microsoft.com/search/?terms=System.Data) namespace as the ‘proxy’ for the resource manager. This scenario assumes that there is already one [System.Data](https://learn.microsoft.com/search/?terms=System.Data) connection to the database, CN1, involved in the transaction, and the application wants to involve another [System.Data](https://learn.microsoft.com/search/?terms=System.Data) connection, CN2. The transaction must be escalated to DTC, as a full distributed two-phase commit transaction.
+
+In this scenario,
+
+1. CN1 calls the [System.Transactions.Transaction.EnlistPromotableSinglePhase*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistPromotableSinglePhase*) method to enlist in the transaction. Then, the transaction is still local and there are no other promotable enlistments on the transaction, so the [System.Transactions.Transaction.EnlistPromotableSinglePhase*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistPromotableSinglePhase*) call succeeds.
+
+2. When the second connection, CN2 calls [System.Transactions.Transaction.EnlistPromotableSinglePhase*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistPromotableSinglePhase*), the call fails because there is another promotable enlistment involved. Because of this, CN2 must get a DTC transaction in order to pass it to SQL. To do this, it uses one of the methods provided by the [System.Transactions.TransactionInterop](https://learn.microsoft.com/search/?terms=System.Transactions.TransactionInterop) class to produce a format of the transaction that can be given to SQL.
+
+3. [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) calls the [System.Transactions.ITransactionPromoter.Promote*](https://learn.microsoft.com/search/?terms=System.Transactions.ITransactionPromoter.Promote*) method on the [System.Transactions.ITransactionPromoter](https://learn.microsoft.com/search/?terms=System.Transactions.ITransactionPromoter) interface implemented by CN1.
+
+4. At this point, CN1 escalates the transaction, using some mechanism specific to SQL 2005 and [System.Data](https://learn.microsoft.com/search/?terms=System.Data).
+
+5. The return value from the [System.Transactions.ITransactionPromoter.Promote*](https://learn.microsoft.com/search/?terms=System.Transactions.ITransactionPromoter.Promote*) method is a byte array that contains a propagation token for the transaction. [System.Transactions](https://learn.microsoft.com/search/?terms=System.Transactions) uses this propagation token to create a DTC transaction that it can incorporate into the local transaction.
+
+6. At this point, CN2 can use the data received from calling one of the methods by [System.Transactions.TransactionInterop](https://learn.microsoft.com/search/?terms=System.Transactions.TransactionInterop) to pass the transaction to SQL.
+
+7. Now, both are enlisted in a DTC distributed transaction.
+
+## Single Phase Commit Optimization
+
+The Single Phase Commit protocol is more efficient at runtime as all updates are done without any explicit coordination. To take advantage of this optimization, you should implement a resource manager using [System.Transactions.ISinglePhaseNotification](https://learn.microsoft.com/search/?terms=System.Transactions.ISinglePhaseNotification) interface for the resource and enlist in a transaction using the [System.Transactions.Transaction.EnlistDurable*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistDurable*) or [System.Transactions.Transaction.EnlistVolatile*](https://learn.microsoft.com/search/?terms=System.Transactions.Transaction.EnlistVolatile*) method. Specifically, the *EnlistmentOptions* parameter should equal to [System.Transactions.EnlistmentOptions.None](https://learn.microsoft.com/search/?terms=System.Transactions.EnlistmentOptions.None) to ensure that a single phase commit would be performed.
+
+Since the [System.Transactions.ISinglePhaseNotification](https://learn.microsoft.com/search/?terms=System.Transactions.ISinglePhaseNotification) interface derives from the [System.Transactions.IEnlistmentNotification](https://learn.microsoft.com/search/?terms=System.Transactions.IEnlistmentNotification) interface, if your RM is not eligible for single phase commit, it can still receive the two phase commit notifications. If your RM receives a [System.Transactions.ISinglePhaseNotification.SinglePhaseCommit*](https://learn.microsoft.com/search/?terms=System.Transactions.ISinglePhaseNotification.SinglePhaseCommit*) notification from the TM, it should try to do the work necessary for it to commit and correspondingly inform the transaction manager if the transaction is to be committed or rolled back by calling the [System.Transactions.SinglePhaseEnlistment.Committed*](https://learn.microsoft.com/search/?terms=System.Transactions.SinglePhaseEnlistment.Committed*), [System.Transactions.SinglePhaseEnlistment.Aborted*](https://learn.microsoft.com/search/?terms=System.Transactions.SinglePhaseEnlistment.Aborted*), or [System.Transactions.SinglePhaseEnlistment.InDoubt*](https://learn.microsoft.com/search/?terms=System.Transactions.SinglePhaseEnlistment.InDoubt*) method on the [System.Transactions.SinglePhaseEnlistment](https://learn.microsoft.com/search/?terms=System.Transactions.SinglePhaseEnlistment) parameter. A response of [System.Transactions.Enlistment.Done*](https://learn.microsoft.com/search/?terms=System.Transactions.Enlistment.Done*) on the enlistment at this stage implies ReadOnly semantics. Therefore, you should not reply [System.Transactions.Enlistment.Done*](https://learn.microsoft.com/search/?terms=System.Transactions.Enlistment.Done*) in addition to any of the other methods.
+
+If there is only one volatile enlistment and no durable enlistment, the volatile enlistment receives SPC notification. If there are any volatile enlistments and only one durable enlistment, the volatile enlistments receive 2PC. When it is completed, the durable enlistment receives SPC.
+
+## See also
+
+- [Enlisting Resources as Participants in a Transaction](enlisting-resources-as-participants-in-a-transaction.md)
+- [Committing a Transaction in Single-Phase and Multi-Phase](committing-a-transaction-in-single-phase-and-multi-phase.md)

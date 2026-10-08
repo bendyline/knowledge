@@ -1,0 +1,65 @@
+---
+title: "STAsBinary (geometry Data Type)"
+description: "STAsBinary (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STAsBinary_TSQL"
+  - "STAsBinary (geometry Data Type)"
+helpviewer_keywords:
+  - "STAsBinary (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STAsBinary (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation of a geometry instance.  
+ 
+## Syntax  
+  
+```  
+  
+.STAsBinary ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **varbinary(max)**  
+  
+ CLR return type: **SqlBytes**  
+  
+## Examples  
+ The following example creates a `LineString` geometry instance from (0,0) to (2,3) from text. `STAsBinary()` returns the result in WKB.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('LINESTRING(0 0, 2 3)', 0);  
+SELECT @g.STAsBinary();  
+```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

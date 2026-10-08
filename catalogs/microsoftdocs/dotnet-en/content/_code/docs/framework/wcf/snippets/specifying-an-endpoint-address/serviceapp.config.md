@@ -1,0 +1,43 @@
+# Source code: docs/framework/wcf/snippets/specifying-an-endpoint-address/serviceapp.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <snippet1> -->
+<configuration>
+  <system.serviceModel>
+    <services>
+      <service name="UE.Samples.HelloService"
+               behaviorConfiguration="HelloServiceBehavior">
+        <endpoint address="/Address1"
+                  binding="basicHttpBinding" 
+                  contract="UE.Samples.IHello">
+          <headers>
+            <Member xmlns="http://tempuri1.org/">Gold</Member>
+          </headers>
+        </endpoint>
+        <endpoint address="/Address2"
+          binding="basicHttpBinding" 
+          contract="UE.Samples.IHello">
+          <headers>
+            <Member xmlns="http://tempuri2.org/">Silver</Member>
+          </headers>
+        </endpoint>
+
+        <endpoint address="mex"
+                  binding="mexHttpBinding"
+                  contract="IMetadataExchange" />
+      </service>
+    </services>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="HelloServiceBehavior">
+          <serviceMetadata httpGetEnabled="true" />
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+  </system.serviceModel>
+</configuration>
+<!-- </snippet1> -->
+```

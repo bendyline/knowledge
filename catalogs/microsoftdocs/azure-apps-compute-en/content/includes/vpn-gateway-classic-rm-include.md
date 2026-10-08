@@ -1,0 +1,12 @@
+---
+ title: include file
+ description: include file
+ services: vpn-gateway
+ author: duongau
+ ms.service: azure-vpn-gateway
+ ms.topic: include
+ ms.date: 03/21/2018
+ ms.author: duau
+ ms.custom: include file
+---
+Azure currently works with two deployment models: Resource Manager and classic. The two models are not completely compatible with each other. Before you begin, you need to know which model that you want to work in. For information about the deployment models, see [Understanding deployment models](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/deployment-models.md). If you are new to Azure, we recommend that you use the Resource Manager deployment model.

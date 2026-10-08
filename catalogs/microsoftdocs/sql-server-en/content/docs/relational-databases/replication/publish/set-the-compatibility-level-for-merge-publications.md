@@ -1,0 +1,127 @@
+---
+title: "Set compatibility level for Merge Publications"
+description: Learn how to set the compatibility level for Merge Publications using SQL Server Management Studio (SSMS) or Transact-SQL (T-SQL).
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "compatibility [SQL Server], replication"
+  - "backward compatibility [SQL Server], replication"
+  - "publications [SQL Server replication], backward compatibility"
+---
+# Set the Compatibility Level for Merge Publications
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to set the compatibility level for merge publications in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL . Merge replication uses the publication compatibility level to determine which features can be used by publications in a given database.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+ Set the compatibility level on the **Subscriber Types** page of the New Publication Wizard. For more information on accessing this wizard, see [Create a Publication](create-a-publication.md). After a publication snapshot is created, the compatibility level can be increased but cannot be decreased. Increase the compatibility level on the **General** page of the **Publication Properties - \<Publication>** dialog box. For more information about accessing this dialog box, see [View and Modify Publication Properties](view-and-modify-publication-properties.md). If you increase the publication compatibility level, any existing subscriptions at servers running versions prior to the compatibility level will no longer be able to synchronize.  
+  
+> **Note:**  
+>  Because the compatibility level has implications for other publication properties and for which article properties are valid, do not change the compatibility level and other properties in the same use of the dialog box. The snapshot for the publication should be regenerated after the property is changed.  
+  
+#### To set the publication compatibility level  
+  
+-   On the **Subscriber Types** page of the New Publication Wizard, select the types of Subscribers that the publication should support.  
+  
+#### To increase the publication compatibility level  
+  
+-   On the **General** page of the **Publication Properties - \<Publication>** dialog box, select for **Compatibility level**.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+ The compatibility level for a merge publication can either be set programmatically when a publication is created or modified programmatically at a later time. You can use replication stored procedures to set or change this publication property.  
+  
+#### To set the publication compatibility level for a merge publication  
+  
+1.  At the Publisher, execute [sp_addmergepublication (Transact-SQL)](../../system-stored-procedures/sp-addmergepublication-transact-sql.md), specifying a value for `@publication_compatibility_level` to make the publication compatible with older versions of  Microsoft 
+  SQL Server 
+. For more information, see [Create a Publication](create-a-publication.md).  
+
+#### To change the publication compatibility level of a merge publication  
+  
+1.  Execute [sp_changemergepublication (Transact-SQL)](../../system-stored-procedures/sp-changemergepublication-transact-sql.md), specifying **publication_compatibility_level** for `@property` and the appropriate publication compatibility level for `@value`.  
+  
+#### To determine the publication compatibility level of a merge publication  
+  
+1.  Execute [sp_helpmergepublication (Transact-SQL)](../../system-stored-procedures/sp-helpmergepublication-transact-sql.md), specifying the desired publication.  
+  
+2.  Locate the publication compatibility level in the **backward_comp_level** column in the result set.  
+  
+###  <a name="TsqlExample"></a> Examples (Transact-SQL)  
+ This example creates a merge publication and sets the publication compatibility level.  
+  
+```sql  
+-- To avoid storing the login and password in the script file, the values   
+-- are passed into SQLCMD as scripting variables. For information about   
+-- how to use scripting variables on the command line and in SQL Server  
+-- Management Studio, see the "Executing Replication Scripts" section in  
+-- the topic "Programming Replication Using System Stored Procedures".  
+
+--Add a new merge publication.  
+DECLARE @publicationDB AS sysname;
+DECLARE @publication AS sysname;
+DECLARE @login AS sysname;
+DECLARE @password AS sysname;
+SET @publicationDB = N'AdventureWorks2022';
+SET @publication = N'AdvWorksSalesOrdersMerge';
+SET @login = $(Login);
+SET @password = $(Password);
+
+-- Create a new merge publication.   
+USE [AdventureWorks2022];
+EXEC sp_addmergepublication
+    @publication = @publication,
+    -- Set the compatibility level to SQL Server 2014.  
+    @publication_compatibility_level = '120RTM';
+
+-- Create the snapshot job for the publication.  
+EXEC sp_addpublication_snapshot
+    @publication = @publication,
+    @job_login = @login,
+    @job_password = @password;
+GO
+```  
+  
+ This example changes the publication compatibility level for the merge publication.  
+  
+> **Note:**  
+>  Changing the publication compatibility level might not be allowed if the publication uses any features that require a particular compatibility level. For more information, see [Replication Backward Compatibility](../replication-backward-compatibility.md).  
+  
+```sql  
+DECLARE @publication AS sysname;
+SET @publication = N'AdvWorksSalesOrdersMerge';
+
+-- Change the publication compatibility level to   
+-- SQL Server 2008 or later.
+EXEC sp_changemergepublication
+    @publication = @publication,
+    @property = N'publication_compatibility_level',
+    @value = N'100RTM';
+GO  
+  
+```  
+  
+ This example returns the current publication compatibility level for the merge publication.  
+  
+```sql  
+DECLARE @publication AS sysname;
+SET @publication = N'AdvWorksSalesOrdersMerge';
+EXEC sp_helpmergepublication
+    @publication = @publication;
+GO
+```  
+  
+## Related content
+
+- [Create a publication](create-a-publication.md)

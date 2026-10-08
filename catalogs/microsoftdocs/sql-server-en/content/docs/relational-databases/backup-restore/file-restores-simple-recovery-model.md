@@ -1,0 +1,100 @@
+---
+title: "File Restores (Simple Recovery Model)"
+description: In SQL Server, a file restore applies to one or more damaged files without restoring the whole database.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/24/2017"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "file restores [SQL Server]"
+  - "simple recovery model [SQL Server]"
+  - "restoring files [SQL Server], Transact-SQL restore sequence"
+  - "restoring files [SQL Server]"
+  - "Transact-SQL restore sequence"
+  - "restoring files [SQL Server], simple recovery model"
+  - "file restores [SQL Server], simple recovery model"
+  - "file restores [SQL Server], Transact-SQL restore sequence"
+---
+# File Restores (Simple Recovery Model)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This topic is relevant only for simple-model databases that contain at least one read-only secondary filegroup.  
+  
+ In a file restore, the goal is to restore one or more damaged files without restoring the whole database. Under the simple recovery model, file backups are supported only for read-only files. The primary filegroup and read/write secondary filegroups are always restored together, by restoring a database or partial backup.  
+  
+ The file-restore scenarios are as follows:  
+  
+-   Offline file restore  
+  
+     In an *offline file restore*, the database is offline while damaged files or filegroups are restored. At the end of the restore sequence, the database comes online.  
+  
+     All editions of  SQL Server 
+ support offline file restore.  
+  
+-   Online file restore  
+  
+     In an *online file restore*, if database is online at restore time, it remains online during the file restore. However, each filegroup in which a file is being restored is offline during the restore operation. After all the files in an offline filegroup are recovered, the filegroup is automatically brought online.  
+  
+     For information about support for online page and file restore, see [Database Engine Features and Tasks](../../sql-server/what-s-new-in-sql-server-2019.md). For more information about online restores, see [Online Restore (SQL Server)](online-restore-sql-server.md).  
+  
+    > **Tip:**  
+    >  If you want the database to be offline for a file restore, take the database offline before you start the restore sequence by executing the following [ALTER DATABASE](../../t-sql/statements/alter-database-transact-sql-set-options.md) statement: ALTER DATABASE *database_name* SET OFFLINE.  
+  
+##  <a name="Overview"></a> Overview of File and Filegroup Restore Under the Simple Recovery Model  
+ A file restore scenario consists of a single restore sequence that copies, rolls forward, and recovers the appropriate data as follows:  
+  
+1.  Restore each damaged file from its most recent file backup.  
+  
+2.  Restore the most recent differential file backup for each restored file and recover the database.  
+  
+### Transact-SQL Steps for File Restore Sequence (Simple Recovery Model)  
+ This section shows the essential  Transact-SQL [RESTORE](../../t-sql/statements/restore-statements-transact-sql.md) options for a simple file-restore sequence. Syntax and details that are not relevant to this purpose are omitted.  
+  
+ The restore sequence contains only two  Transact-SQL  statements. The first statement restores a secondary file, file `A`, which is restored using WITH NORECOVERY. The second operation restores two other files, `B` and `C` which are restored using WITH RECOVERY from a different backup device:  
+  
+1.  RESTORE DATABASE *database* FILE **=**_name_of_file_A_  
+  
+     FROM *file_backup_of_file_A*  
+  
+     WITH NORECOVERY**;**  
+  
+2.  RESTORE DATABASE *database* FILE **=**_name_of_file_B_**,**_name_of_file_C_  
+  
+     FROM *file_backup_of_files_B_and_C*  
+  
+     WITH RECOVERY**;**  
+  
+### Examples  
+  
+-   [Example: Online Restore of a Read-Only File (Simple Recovery Model)](example-online-restore-of-a-read-only-file-simple-recovery-model.md)  
+  
+-   [Example: Offline Restore of Primary and One Other Filegroup (Full Recovery Model)](example-offline-restore-of-primary-and-one-other-filegroup-full-recovery-model.md)  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+ **To restore files and filegroups**  
+  
+-   [Restore Files and Filegroups over Existing Files (SQL Server)](restore-files-and-filegroups-over-existing-files-sql-server.md)  
+  
+-   [Restore Files and Filegroups (SQL Server)](restore-files-and-filegroups-sql-server.md)  
+  
+-   [Restore Files and Filegroups (SQL Server)](restore-files-and-filegroups-sql-server.md)  
+  
+-   [Restore.SqlRestore Method (Server) (SMO)](https://learn.microsoft.com/dotnet/api/microsoft.sqlserver.management.smo.restore.sqlrestore)   
+  
+## Related content
+
+- [Backup and Restore: Interoperability and Coexistence (SQL Server)](backup-and-restore-interoperability-and-coexistence-sql-server.md)
+- [Differential backups (SQL Server)](differential-backups-sql-server.md)
+- [Full File Backups (SQL Server)](full-file-backups-sql-server.md)
+- [Backup overview (SQL Server)](backup-overview-sql-server.md)
+- [Restore and recovery overview (SQL Server)](restore-and-recovery-overview-sql-server.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)
+- [Complete Database Restores (Simple Recovery Model)](complete-database-restores-simple-recovery-model.md)
+- [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)

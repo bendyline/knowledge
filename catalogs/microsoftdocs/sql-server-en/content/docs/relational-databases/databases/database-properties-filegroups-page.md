@@ -1,0 +1,66 @@
+---
+title: "Database Properties (Filegroups Page)"
+description: "Learn how to use the Filegroups tab in the Database Properties dialog box to view the filegroups of a database or to add a new filegroup."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: configuration
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.swb.databaseproperties.filegroups.f1"
+---
+# Database Properties (Filegroups Page)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Use this page to view the filegroups or add a new filegroup to the selected database. Filegroup types are separated into *row* filegroups, FILESTREAM data, and memory-optimized filegroups.  
+  
+ Row filegroups contain regular data and log files. FILESTREAM data filegroups contain FILESTREAM data files. These data files store information about how binary large object (BLOB) data is stored on the file system when you are using FILESTREAM storage. The options are the same for both types of filegroups.  
+  
+ If FILESTREAM is not enabled, the **Filestream** section will not be available. You can enable FILESTREAM storage by using [Server Properties (Advanced Page)](https://learn.microsoft.com/ssms/server-properties/advanced-page).  
+  
+ For information about how  SQL Server 
+ uses row filegroups, see [Database Files and Filegroups](database-files-and-filegroups.md). For more information about FILESTREAM data and filegroups, see [FILESTREAM (SQL Server)](../blob/filestream-sql-server.md).  
+  
+ Memory-optimized file groups are required for a database to contain one or more memory-optimized tables.  
+  
+## Row and FILESTREAM Data Filegroup Options  
+ **Name**  
+ Enter the name of the filegroup.  
+  
+ **Files**  
+ Displays the count of files in the filegroup.  
+  
+ **Read-only**  
+ Select to set the filegroup to a read-only status.  
+  
+ **Default**  
+ Select to make this filegroup the default filegroup. You can have one default filegroup for rows and one default filegroup for FILESTREAM data.  
+  
+ **Add**  
+ Adds a new blank row to the grid listing filegroups for the database.  
+  
+ **Remove**  
+ Removes the selected filegroup row from the grid.  
+  
+## Memory-Optimized Data Filegroup Options  
+ **Name**  
+ Enter the name of the memory-optimized filegroup.  
+  
+ **Filestream Files**  
+ Displays the number of files (containers) in the memory-optimized data filegroup. You can add containers in the **Files** page.  
+  
+ **Add**  
+ Adds a new blank row to the grid listing filegroups for the database.  
+  
+ **Remove**  
+ Removes the selected filegroup row from the grid.  
+  
+## Related content
+
+- [ALTER DATABASE (Transact-SQL)](../../t-sql/statements/alter-database-transact-sql.md)
+- [sys.databases (Transact-SQL)](../system-catalog-views/sys-databases-transact-sql.md)

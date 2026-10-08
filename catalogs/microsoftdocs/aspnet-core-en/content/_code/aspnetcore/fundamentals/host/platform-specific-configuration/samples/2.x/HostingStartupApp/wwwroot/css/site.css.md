@@ -1,0 +1,39 @@
+# Source code: aspnetcore/fundamentals/host/platform-specific-configuration/samples/2.x/HostingStartupApp/wwwroot/css/site.css
+
+Complete source file; linked examples may select a region or line range.
+
+```
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size:16px
+}
+
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.panel-body {
+    font-size: 16px;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+```

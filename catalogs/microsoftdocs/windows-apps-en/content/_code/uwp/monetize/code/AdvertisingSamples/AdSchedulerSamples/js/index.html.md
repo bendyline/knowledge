@@ -1,0 +1,24 @@
+# Source code: uwp/monetize/code/AdvertisingSamples/AdSchedulerSamples/js/index.html
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>AdSchedulerSamples</title>
+    <link href="css/default.css" rel="stylesheet" />
+    <script src="//Microsoft.Advertising.JavaScript/ad.js"></script>
+    <script src="/js/adscheduler.js"></script>
+</head>
+<body>
+    <div>Content goes here!</div>
+    <script src="js/main.js"></script>
+    <div id="MediaPlayerDiv" data-win-control="TVJS.MediaPlayer">
+        <video src="URL to your content"></video>
+    </div>
+</body>
+</html>
+
+```

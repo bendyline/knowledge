@@ -1,0 +1,26 @@
+# Source code: aspnetcore/fundamentals/host/platform-specific-configuration/samples/2.x/RuntimeStore/Store.manifest.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <RestoreSources>
+            $(RestoreSources);
+            https://api.nuget.org/v3/index.json;
+            obj\packages
+        </RestoreSources>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="StartupDiagnostics" Version="1.0.0-*" />
+        <!-- This is required to get all Microsoft.AspNetCore.App packages trimmed from the store -->
+        <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" IsImplicitlyDefined="true" />
+        <!-- This is required to avoid Microsoft.NETCore.App package getting into the store -->
+        <PackageReference Remove="Microsoft.NETCore.App" />
+    </ItemGroup>
+</Project>
+
+```

@@ -1,0 +1,114 @@
+{
+  "repository": "MicrosoftDocs/azure-docs",
+  "branch": "main",
+  "revision": "4260367da6fe93d74e80662f882dd4e9f52b8924",
+  "tree": "697ba15fa940792a0ecb930b19a200a1bef6b70c",
+  "licenseFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "15c406491bac79b9344852d0dc85a3345528dbdadf2c812f9468e0629258be90",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "15c406491bac79b9344852d0dc85a3345528dbdadf2c812f9468e0629258be90",
+        "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE-CODE",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices.md",
+      "sha256": "2ef59328f75d44d3dcf2526630cc6e5985b021bf116ee60c9f0de480d15ab174"
+    }
+  ],
+  "selection": {
+    "roots": [
+      "articles/api-center",
+      "articles/api-management",
+      "articles/app-service",
+      "articles/app-testing",
+      "articles/azure-app-configuration",
+      "articles/azure-boost",
+      "articles/azure-compute-fleet",
+      "articles/azure-fluid-relay",
+      "articles/azure-functions",
+      "articles/azure-large-instances",
+      "articles/azure-maps",
+      "articles/azure-relay",
+      "articles/azure-signalr",
+      "articles/azure-web-pubsub",
+      "articles/batch",
+      "articles/business-process-tracking",
+      "articles/cloud-services-extended-support",
+      "articles/communication-services",
+      "articles/connector-namespace",
+      "articles/connectors",
+      "articles/container-apps",
+      "articles/cyclecloud",
+      "articles/deployment-environments",
+      "articles/dev-box",
+      "articles/devtest-labs",
+      "articles/devtest",
+      "articles/durable-task",
+      "articles/event-grid",
+      "articles/event-hubs",
+      "articles/high-performance-computing",
+      "articles/integration-environments",
+      "articles/lab-services",
+      "articles/logic-apps",
+      "articles/notification-hubs",
+      "articles/service-bus-messaging",
+      "articles/service-connector",
+      "articles/spring-apps",
+      "articles/static-web-apps"
+    ],
+    "shared": [
+      "includes"
+    ],
+    "markdownGlobs": [
+      "articles/**/*.md",
+      "includes/**/*.md"
+    ],
+    "codeGlobs": [
+      "articles/**/*.cs",
+      "articles/**/*.ps1",
+      "articles/**/*.sh",
+      "articles/**/*.py",
+      "articles/**/*.js",
+      "articles/**/*.ts",
+      "articles/**/*.java",
+      "articles/**/*.sql",
+      "articles/**/*.json",
+      "articles/**/*.xml",
+      "articles/**/*.config",
+      "articles/**/*.csproj",
+      "articles/**/*.bicep",
+      "articles/**/*.tf",
+      "articles/**/*.cpp",
+      "articles/**/*.h"
+    ],
+    "exclude": [
+      "**/node_modules/**",
+      "**/bin/**",
+      "**/obj/**",
+      "**/package-lock.json",
+      "**/docfx.json"
+    ]
+  }
+}

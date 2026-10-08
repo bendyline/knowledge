@@ -1,0 +1,98 @@
+---
+title: "Prerequisites to convert log shipping to availability groups"
+description: "A description of the prerequisites necessary to convert log shipping to an Always On availability group."
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: maghan
+ms.date: 02/23/2026
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: checklist
+ms.custom:
+  - intro-migration
+helpviewer_keywords:
+  - "log shipping [SQL Server], AlwaysOn Availability Groups"
+  - "log shipping [SQL Server], Always On Availability Groups"
+  - "Availability Groups [SQL Server], interoperability"
+---
+
+# Prerequisites to convert log shipping to Always On availability groups
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This article describes the prerequisites for converting a log shipping primary database and one or more secondary databases to an Always On primary and secondary database(s).
+
+> **Note:**  
+> You can configure any primary or secondary database (possibly readable) as a log shipping primary database in an availability group.
+
+## <a id="AGPrereqsRealAddress"></a> Availability Group Prerequisites
+
+To allow backup jobs to run on the primary replica of the availability group, use the following Always On Availability Groups backup settings:
+
+| Property | Setting |
+| --- | --- |
+| Automated backup preference of availability group | Only on the primary replica |
+| Back up priority of the primary replica. | >0 |
+
+**For more information:**
+
+[View Availability Group Properties (SQL Server)](view-availability-group-properties-sql-server.md)
+
+[Configure Backup on Availability Replicas (SQL Server)](configure-backup-on-availability-replicas-sql-server.md)
+
+## <a id="LogShipPrereqs"></a> Log Shipping Prerequisites
+
+- The log shipping primary database must reside on the instance of  SQL Server 
+ that hosts the initial/current primary replica of the availability group.
+
+- For a given log shipping secondary database to be converted to an Always On secondary database, it must:
+
+  - Use the same name as the primary database.
+
+  - Reside on a server instance that hosts a secondary replica for the availability group.
+
+Once the backup job has run on the primary database, disable the backup job, and once the restore job has run on a given secondary database, disable the restore job.
+
+After you have created all the secondary databases for the availability group, if you want to perform backups on secondary replicas, you need to reconfigure the automated backup preference of the availability group.
+
+**For more information:**
+
+[Converting a log shipping configuration to Availability Group](https://learn.microsoft.com/archive/blogs/sqlalwayson/converting-a-logshipping-configuration-to-availability-group) (a SQL Server blog)
+
+## <a id="RelatedTasks"></a> Related Tasks
+
+**Log shipping**
+
+- [Upgrade SQL Server with log shipping (Transact-SQL)](../../log-shipping/upgrade-sql-server-log-shipping-transact-sql.md)
+
+- [Remove Log Shipping (SQL Server)](../../log-shipping/remove-log-shipping-sql-server.md)
+
+**Always On Availability Groups**
+
+- [Use the Availability Group Wizard (SQL Server Management Studio)](use-the-availability-group-wizard-sql-server-management-studio.md)
+
+- [Use the New Availability Group Dialog Box (SQL Server Management Studio)](use-the-new-availability-group-dialog-box-sql-server-management-studio.md)
+
+- [Create an Availability Group (Transact-SQL)](create-an-availability-group-transact-sql.md)
+
+- [Create an Availability Group (SQL Server PowerShell)](create-an-availability-group-sql-server-powershell.md)
+
+- [Join a Secondary Database to an Availability Group (SQL Server)](join-a-secondary-database-to-an-availability-group-sql-server.md)
+
+- [Configure Backup on Availability Replicas (SQL Server)](configure-backup-on-availability-replicas-sql-server.md)
+
+## Related content
+
+- [Converting a logshipping configuration to Availability Group](https://learn.microsoft.com/archive/blogs/sqlalwayson/converting-a-logshipping-configuration-to-availability-group)
+- [Add a Log Shipping Primary Database and Secondary Database(s) to an Existing Availability Group](https://learn.microsoft.com/archive/blogs/sqlalwayson/add-a-log-shipping-primary-database-and-secondary-databases-to-an-existing-availability-group)
+- [SQL Server Always On Team Blogs: The official SQL Server Always On Team Blog](https://learn.microsoft.com/archive/blogs/sqlalwayson/)
+- [CSS SQL Server Engineers Blogs](https://learn.microsoft.com/archive/blogs/psssql/)
+- [Migration Guide: Migrating to Always On Availability Groups from Prior Deployments Combining Database Mirroring and Log Shipping](https://learn.microsoft.com/previous-versions/sql/sql-server-2012/jj635217\(v=msdn.10\))
+- [About log shipping (SQL Server)](../../log-shipping/about-log-shipping-sql-server.md)
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Tools to monitor Always On availability groups](monitoring-of-availability-groups-sql-server.md)

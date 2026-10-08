@@ -1,0 +1,41 @@
+---
+title: "Working with result sets"
+description: "Learn how to work with data using result sets in the JDBC Driver for SQL Server in these sample applications."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "08/12/2019"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+---
+# Working with result sets
+
+
+
+When you work with the data contained in a  SQL Server 
+ database, one method of manipulating the data is to use a result set. The  Microsoft JDBC Driver for SQL Server 
+ supports the use of result sets through the [SQLServerResultSet](reference/sqlserverresultset-class.md) object. By using the SQLServerResultSet object, you can retrieve the data returned from a SQL statement or stored procedure, update the data as needed, and then persist that data back to the database.
+
+In addition, the SQLServerResultSet object provides methods for navigating through its rows of data, getting or setting the data that it contains, and for establishing various levels of sensitivity to changes in the underlying database.
+
+> **Note:**
+> For more information about managing result sets, including their sensitivity to changes, see [Managing result sets with the JDBC driver](managing-result-sets-with-the-jdbc-driver.md).
+
+The topics in this section describe different ways that you can use a result set to manipulate the data contained in a  SQL Server 
+ database.
+
+## In this section
+
+| Topic | Description |
+| --- | --- |
+| [Retrieving result set data sample](retrieving-result-set-data-sample.md) | Describes how to use a result set to retrieve data from a  SQL Server |
+ | database and display it. |
+| [Modifying result set data sample](modifying-result-set-data-sample.md) | Describes how to use a result set to insert, retrieve, and modify data in a  SQL Server |
+ | database. |
+| [Caching result set data sample](caching-result-set-data-sample.md) | Describes how to use a result set to retrieve large amounts of data from a  SQL Server |
+ | database, and to control how that data is cached on the client. |
+
+## Related content
+
+- [Sample JDBC driver applications](sample-jdbc-driver-applications.md)

@@ -1,0 +1,361 @@
+---
+title: Logical and Physical Showplan Operator Reference
+description: Learn about the logical and physical operators for XML and graphical showplans.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 04/24/2026
+ms.service: sql
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+ai-usage: ai-assisted
+f1_keywords:
+  - "sql13.swb.showplan.leftouterjoin.f1"
+  - "sql13.swb.showplan.remotedelete.f1"
+  - "sql13.swb.showplan.parallelism.f1"
+  - "sql13.swb.showplan.indexspool.f1"
+  - "sql13.swb.showplan.result.f1"
+  - "sql13.swb.showplan.bitmapcreate.f1"
+  - "sql13.swb.showplan.remotescan.f1"
+  - "sql13.swb.showplan.union.f1"
+  - "sql13.swb.showplan.bitmap.f1"
+  - "sql13.swb.showplan.RIDLookup"
+  - "sql13.swb.showplan.innerjoin.f1"
+  - "sql13.swb.showplan.dynamic.f1"
+  - "sql13.swb.showplan.distributestreams.f1"
+  - "sql13.swb.showplan.clusteredindexdelete.f1"
+  - "sql13.swb.showplan.keylookup.f1"
+  - "sql13.swb.showplan.partialaggregate.f1"
+  - "sql13.swb.showplan.distinctsort.f1"
+  - "sql13.swb.showplan.collapse.f1"
+  - "sql13.swb.showplan.print.f1"
+  - "sql13.swb.showplan.crossjoin.f1"
+  - "sql13.swb.showplan.convert.f1"
+  - "sql13.swb.showplan.split.f1"
+  - "sql13.swb.showplan.top.f1"
+  - "sql13.swb.showplan.update.f1"
+  - "sql13.swb.showplan.keyset.f1"
+  - "sql13.swb.showplan.fetchquery.f1"
+  - "sql13.swb.showplan.mergejoin.f1"
+  - "sql13.swb.showplan.branchrepartition.f1"
+  - "sql13.swb.showplan.tableinsert.f1"
+  - "sql13.swb.showplan.clusteredindexseek.f1"
+  - "sql13.swb.showplan.indexupdate.f1"
+  - "sql13.swb.showplan.indexinsert.f1"
+  - "sql13.swb.showplan.clusteredindexupdate.f1"
+  - "sql13.swb.showplan.streamaggregate.f1"
+  - "sql13.swb.showplan.columnstoreindexdelete.f1"
+  - "sql13.swb.showplan.snapshot.f1"
+  - "sql13.swb.showplan.remotequery.f1"
+  - "sql13.swb.showplan.constantscan.f1"
+  - "sql13.swb.showplan.rank.f1"
+  - "sql13.swb.showplan.rightsemijoin.f1"
+  - "sql13.swb.showplan.delete.f1"
+  - "sql13.swb.showplan.sequence.f1"
+  - "sql13.swb.showplan.locate.f1"
+  - "sql13.swb.showplan.aggregate.f1"
+  - "sql13.swb.showplan.rightouterjoin.f1"
+  - "sql13.swb.showplan.columnstoreindexupdate.f1"
+  - "sql13.swb.showplan.clusteredindexinsert.f1"
+  - "sql13.swb.showplan.rowcountspool.f1"
+  - "sql13.swb.showplan.columnstoreindexscan.f1"
+  - "sql13.swb.showplan.leftantisemijoin.f1"
+  - "sql13.swb.showplan.sort.f1"
+  - "sql13.swb.showplan.leftsemijoin.f1"
+  - "sql13.swb.showplan.columnstoreindexinsert.f1"
+  - "sql13.swb.showplan.indexscan.f1"
+  - "sql13.swb.showplan.columnstoreindexmerge.f1"
+  - "sql13.swb.showplan.lazyspool.f1"
+  - "sql13.swb.showplan.rightantisemijoin.f1"
+  - "sql13.swb.showplan.bookmarklookup.f1"
+  - "sql13.swb.showplan.remoteinsert.f1"
+  - "sql13.swb.showplan.intrinsic.f1"
+  - "sql13.swb.showplan.arithmeticexpression.f1"
+  - "sql13.swb.showplan.populationquery.f1"
+  - "sql13.swb.showplan.filter.f1"
+  - "sql13.swb.showplan.if.f1"
+  - "sql13.swb.showplan.hashmatchteam.f1"
+  - "sql13.swb.showplan.tablevaluedfunction.f1"
+  - "sql13.swb.showplan.assign.f1"
+  - "sql13.swb.showplan.nestedloops.f1"
+  - "sql13.swb.showplan.buildhash.f1"
+  - "sql13.swb.showplan.mergeinterval.f1"
+  - "sql13.swb.showplan.hashmatch.f1"
+  - "sql13.swb.showplan.parametertablescan.f1"
+  - "sql13.swb.showplan.tablemerge.f1"
+  - "sql13.swb.showplan.switch.f1"
+  - "sql13.swb.showplan.sql.f1"
+  - "sql13.swb.showplan.repartitionstreams.f1"
+  - "sql13.swb.showplan.logrowscan.f1"
+  - "sql13.swb.showplan.assert.f1"
+  - "sql13.swb.showplan.computescalar.f1"
+  - "sql13.swb.showplan.broadcast.f1"
+  - "sql13.swb.showplan.indexseek.f1"
+  - "sql13.swb.showplan.gatherstreams.f1"
+  - "sql13.swb.showplan.remoteindexscan.f1"
+  - "sql13.swb.showplan.segment.f1"
+  - "sql13.swb.showplan.tableupdate.f1"
+  - "sql13.swb.showplan.clusteredindexscan.f1"
+  - "sql13.swb.showplan.cache.f1"
+  - "sql13.swb.showplan.spool.f1"
+  - "sql13.swb.showplan.indexdelete.f1"
+  - "sql13.swb.showplan.distinct.f1"
+  - "sql13.swb.showplan.deletedscan.f1"
+  - "sql13.swb.showplan.eagerspool.f1"
+  - "sql13.swb.showplan.hashmatchroot.f1"
+  - "sql13.swb.showplan.setfunction.f1"
+  - "sql13.swb.showplan.clusteredindexmerge.f1"
+  - "sql13.swb.showplan.flowdistinct.f1"
+  - "sql13.swb.showplan.tabledelete.f1"
+  - "sql13.swb.showplan.tablescan.f1"
+  - "sql13.swb.showplan.refreshquery.f1"
+  - "sql13.swb.showplan.tablespool.f1"
+  - "sql13.swb.showplan.insertedscan.f1"
+  - "sql13.swb.showplan.insert.f1"
+  - "sql13.swb.showplan.remoteindexseek.f1"
+  - "sql13.swb.showplan.fullouterjoin.f1"
+  - "sql13.swb.showplan.declare.f1"
+  - "sql13.swb.showplan.udx.f1"
+  - "sql13.swb.showplan.while.f1"
+  - "sql13.swb.showplan.remoteupdate.f1"
+  - "sql13.swb.showplan.concatenation.f1"
+  - "sql13.swb.showplan.computescalar"
+  - "sql13.swb.showplan.foreignkeyreferencescheck"
+helpviewer_keywords:
+  - "execution plans [SQL Server], operators"
+  - "ActualRows attribute"
+  - "reading execution plan output"
+  - "ActualRewinds attribute"
+  - "ActualEndOfScans attribute"
+  - "query tuning [SQL Server]"
+  - "mapping operators [SQL Server]"
+  - "operators [Database Engine query tuning]"
+  - "logical operators [SQL Server], execution plans"
+  - "logical operators [SQL Server], listed"
+  - "physical operators [SQL Server]"
+  - "ActualRebinds attribute"
+  - "execution plans [SQL Server], reading output"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Logical and physical showplan operator reference
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Operators describe how the  SQL Server Database Engine 
+ runs a query. The Query Optimizer uses operators to build a query plan to create the result or perform the operation specified in the query. The query plan is a tree consisting of physical operators. The leftmost operator is the root, which drives overall execution. For a `SELECT` statement, the root typically returns a result set to the client. For data modification statements (`INSERT`, `UPDATE`, `DELETE`, `MERGE`) or statements like `SELECT...INTO`, the root drives the modification and might not return rows. Operators with no inputs, at the far right of the tree, are leaf nodes that typically read data from storage. Intermediate operators transform, filter, or join data as it flows from right to left through the plan.
+
+You can view the query plan by using the `SET SHOWPLAN` statements, the graphical execution plan options in  SQL Server Management Studio 
+, or the Extended Events showplan events.
+
+## Operator types
+
+Operators are classified as logical and physical operators.
+
+### Logical operators
+
+Logical operators describe the relational algebraic operation used to process a query. In other words, logical operators describe conceptually what operation needs to be performed.
+
+### Physical operators
+
+Physical operators implement the operation described by logical operators. Each physical operator is an object or routine that performs an operation. For example, some physical operators access columns or rows from a table, index or view. Other physical operators perform operations such as calculations, aggregations, data integrity checks or joins. Physical operators have costs associated with them.
+
+The physical operators initialize, collect data, and close. Specifically, the physical operator can answer the following three method calls:
+
+- `Open()`: The `Open()` method causes a physical operator to initialize itself and set up any required data structures. While the physical operator might receive many `Open()` calls, it usually receives only one.
+
+- `GetRow()`: The `GetRow()` method causes a physical operator to get the first, or subsequent row of data. The physical operator might receive zero or many `GetRow()` calls.
+
+- `Close()`: The `Close()` method causes a physical operator to perform some clean-up operations and shut itself down. A physical operator only receives one `Close()` call, but a `Close()` call isn't always guaranteed.
+
+The `GetRow()` method returns one row of data, and the number of times it's called appears as **ActualRows** in the showplan output that is produced by the graphical and XML showplan. For more information about these `SET` options, see [SET STATISTICS PROFILE](../t-sql/statements/set-statistics-profile-transact-sql.md) and [SET STATISTICS XML](../t-sql/statements/set-statistics-xml-transact-sql.md).
+
+### Language elements
+
+Some operators in a query plan represent  Transact-SQL  *language elements* rather than relational operations. These include constructs such as variable assignment, type conversion, and control flow (`IF`/`WHILE`). Language elements aren't classified as logical or physical operators.
+
+## Rebinds, rewinds, and end-of-scans
+
+The following counters appear in showplan output and help you understand how often an operator runs again.
+
+The **ActualRebinds** and **ActualRewinds** counts that appear in showplan output refer to the number of times that the `Open()` method is called. Unless an operator is on the inner side of a nested loops join, **ActualRebinds** equals one, and **ActualRewinds** equals zero. If an operator is on the inner side of a loop join, the total number of rebinds and rewinds should equal the number of rows processed on the outer side of the join. A rebind means that one or more of the correlated parameters of the join changed and the inner side must be reevaluated. A rewind means that none of the correlated parameters changed and the prior inner result set might be reused.
+
+**ActualRebinds** and **ActualRewinds** are present in XML showplan output produced by using `SET STATISTICS XML ON` and the graphical showplan. They're populated for operators such as **Index Spool**, **Remote Query**, **Row Count Spool**, **Sort**, **Table Spool**, and **Table-valued function**. **ActualRebinds** and **ActualRewinds** might also be populated for operators such as **Assert** and **Filter** when the **StartupExpression** attribute is set to `TRUE`.
+
+When **ActualRebinds** and **ActualRewinds** are present in an XML showplan, they're comparable to **EstimateRebinds** and **EstimateRewinds**. When they're absent, the estimated number of rows (**EstimateRows**) is comparable to the actual number of rows (**ActualRows**). Actual graphical showplan output displays zeros for the actual rebinds and actual rewinds when they're absent.
+
+A related counter, **ActualEndOfScans**, is available in the XML and graphical showplan. Whenever a physical operator reaches the end of its data stream, this counter increments by one. A physical operator can reach the end of its data stream zero, one, or multiple times. As with rebinds and rewinds, the end of scans count can be more than one, only if the operator is on the inner side of a loop join. The end of scans count should be less than or equal to the sum of the number of rebinds and rewinds.
+
+## How the Query Optimizer maps logical and physical operators
+
+The Query Optimizer creates a query plan as a tree consisting of logical operators. After the Query Optimizer creates the plan, it chooses a physical operator for each logical operator. The Query Optimizer uses a [cost-based approach](query-processing-architecture-guide.md#optimizing-select-statements) to determine which physical operator implements a logical operator.
+
+Usually, a logical operation can be implemented by multiple physical operators. However, in rare cases, a physical operator can implement multiple logical operations as well.
+
+## Batch mode execution
+
+Batch mode execution is a query processing method used to process multiple rows together (hence the term *batch*) rather than one row at a time. Batch mode processing uses algorithms that are optimized for multi-core CPUs and increased memory throughput on modern hardware. Batch mode can be used by a set of operators for both rowstore and columnstore objects. For more information, see [Query processing architecture guide](query-processing-architecture-guide.md).
+
+## How to read an execution plan
+
+In the graphical execution plan, arrows point from right to left, representing data flow. At run time, this works in the opposite direction: operators are pull-based and only do work when asked for data.
+
+The root operator calls `GetRow()` on its child, which calls its own children, until a leaf node reads a row from storage and returns it up the chain. A **Clustered Index Scan** under a **Top** operator, for example, doesn't scan the entire table. The scan stops as soon as **Top** has enough rows. In batch mode, each call returns a batch of rows instead of a single row. Both reading directions are useful: right to left shows what data enters each operator, while left to right shows which operator drives the work.
+
+## Operator descriptions
+
+This section contains descriptions of the logical and physical operators. You can view the properties of query plans and operators using the **Properties** pane in the Query Plan view of [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/sql-server-management-studio-ssms).
+
+> **Tip:**  
+> Whenever a given graphical execution plan icon has a yellow circle with two right-to-left arrows, it means the operator ran in parallel. For more information about parallelism, see the [Thread and Task Architecture Guide](thread-and-task-architecture-guide.md#sql-server-task-scheduling).
+
+| Icon | Showplan operator | Description |
+| --- | --- | --- |
+|  | **Adaptive Join** | The **Adaptive Join** operator enables the choice of a hash join or nested loops join method to be deferred until after the first input has been scanned.<br /><br />**Adaptive Join** is a physical operator. For more information, see [Understanding Adaptive joins](performance/joins.md#adaptive). |
+|  | **Aggregate** | The **Aggregate** operator calculates expressions containing one or more aggregate functions.<br /><br />**Aggregate** is a logical operator. It can be implemented by the **Stream Aggregate**, **Hash Match**, **Window Aggregate**, or **UserDefinedAggregate** (CLR) operator. |
+|  | **Arithmetic Expression** | The **Arithmetic Expression** operator computes a new value from existing values in a row. **Arithmetic Expression** isn't used in newer versions of  SQL Server |
+| . |
+|  | **Assert** | The **Assert** operator verifies a condition. For example, it validates referential integrity or ensures that a scalar subquery returns one row. For each input row, the **Assert** operator evaluates the expression in the **Properties** pane of the execution plan. If this expression evaluates to `NULL`, the row is passed through the **Assert** operator and the query execution continues. If this expression evaluates to a non-null value, the appropriate error is raised.<br /><br />**Assert** is a physical operator. |
+|  | **Assign** | The **Assign** operator assigns the value of an expression or a constant to a variable.<br /><br />**Assign** is a language element. |
+| None | **Async Concat** | The **Async Concat** operator is used only in remote queries (distributed queries). It has *n* children and one parent node. Usually, some of the children are remote computers that participate in a distributed query. **Async Concat** issues `Open()` calls to all of the children simultaneously and then applies a bitmap to each child. For each bit that is a `1`, **Async Concat** sends the output rows to the parent node on demand.<br /><br />**Async Concat** is a physical operator. |
+|  | **Batch Hash Table Build** | The **Batch Hash Table Build** operator builds a batch hash table for a memory-optimized columnstore index.<br /><br />**Applies to**:  SQL Server 2012 (11.x) |
+ | only. |
+|  | **Bitmap** | SQL Server |
+ | uses the **Bitmap** operator to implement bitmap filtering in parallel query plans. Bitmap filtering speeds up query processing by eliminating rows with key values that can't produce any join records before passing rows through another operator such as the **Parallelism** operator. A bitmap filter uses a compact representation of a set of values from a table in one part of the operator tree to filter rows from a second table in another part of the tree. By removing unnecessary rows early in the query, subsequent operators have fewer rows to work with, and the overall performance of the query improves. The optimizer determines when a bitmap is selective enough to be useful and in which operators to apply the filter.<br /><br />**Bitmap** is a physical operator. |
+|  | **Bitmap Create** | The **Bitmap Create** operator appears in the showplan output where bitmaps are built.<br /><br />**Bitmap Create** is a logical operator. |
+| None | **Branch Repartition** | In a parallel query plan, sometimes there are conceptual regions of iterators. All of the iterators within such a region can run on parallel threads. The regions themselves must run serially. Some of the **Parallelism** iterators within an individual region are called **Branch Repartition**. The **Parallelism** iterator at the boundary of two such regions is called **Segment Repartition**.<br /><br />**Branch Repartition** and **Segment Repartition** are logical operators. |
+|  | **Broadcast** | **Broadcast** has one child node and *n* parent nodes. **Broadcast** sends its input rows to multiple consumers on demand. Each consumer gets all of the rows. For example, if all of the consumers are build sides of a hash join, then *n* copies of the hash tables are built.<br /><br />**Broadcast** is a logical operator. |
+|  | **Clustered Index Delete** | The **Clustered Index Delete** operator deletes rows from the clustered index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. If the **SeekPredicates** or **Predicate** property is present, then only those rows that satisfy the predicate are deleted.<br /><br />**Note**: The **Object** property might list additional nonclustered indexes that the operator modifies at the same time as the clustered index.<br /><br />**Clustered Index Delete** is a physical operator. |
+|  | **Clustered Index Insert** | The **Clustered Index Insert** operator inserts rows from its input into the clustered index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. The XML showplan includes **SetPredicate** and **ColumnReference** properties, which can be used to determine the value to which each column is set. If **Clustered Index Insert** has no children for insert values, the row inserted is taken from the **Insert** operator itself.<br /><br />**Note**: The **Object** property might list additional nonclustered indexes that the operator modifies at the same time as the clustered index.<br /><br />**Clustered Index Insert** is a physical operator. |
+|  | **Clustered Index Merge** | The **Clustered Index Merge** operator applies a merge data stream to a clustered index. The operator deletes, updates, or inserts rows from the clustered index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. The actual operation performed depends on the runtime value of the **ActionColumn** property.<br /><br />**Note**: The **Object** property might list additional nonclustered indexes that the operator modifies at the same time as the clustered index.<br /><br />**Clustered Index Merge** is a physical operator. |
+|  | **Clustered Index Scan** | The **Clustered Index Scan** operator scans the clustered index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. When an optional **Predicate** property is present, only those rows that satisfy the predicate are returned. If the **Ordered** property in the **Properties** pane or XML showplan is **True**, the query processor has determined that the rows must be returned in the order in which the clustered index has sorted them. If the **Ordered** property is **False**, the  Database Engine |
+ | scans the index without guaranteeing the order of the output. The **SeekPredicates** property is only available for a partitioned clustered index.<br /><br />**Clustered Index Scan** is a logical and physical operator. |
+|  | **Clustered Index Seek** | The **Clustered Index Seek** operator uses the seeking ability of indexes to retrieve rows from a clustered index. The **Object** property, listed in the **Properties** pane of the graphical and XML showplans, contains the name of the clustered index being used. The **SeekPredicates** property contains the predicate for the seek. The  Database Engine |
+ | uses the index to process only those rows that satisfy the **SeekPredicates** property. It can also include the **Predicate** property, which the  Database Engine |
+ | evaluates against all rows that satisfy the **SeekPredicates** property, but this is optional and doesn't use indexes to complete this process. The **Ordered** property is typically **True** for this operator.<br /><br />**Clustered Index Seek** is a logical and physical operator. |
+|  | **Clustered Index Update** | The **Clustered Index Update** operator updates input rows in the clustered index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. If a **Predicate** property is present, only those rows that satisfy this predicate are updated. If the **SetPredicate** property is present, each updated column is set to this value. If the **DefinedValues** property is present, the values that this operator defines are listed. These values might be referenced in the `SET` clause or elsewhere within this operator and elsewhere within this query.<br /><br />**Note**: The **Object** property might list additional nonclustered indexes that the operator modifies at the same time as the clustered index.<br /><br />**Clustered Index Update** is a logical and physical operator. |
+|  | **Collapse** | The **Collapse** operator optimizes update processing. When an update is performed, it can be split (using the **Split** operator) into a delete and an insert. The **Properties** pane contains the **GroupBy** property that specifies a list of key columns. If the query processor encounters adjacent rows that delete and insert the same key values, it replaces these separate operations with a single, more efficient update operation.<br /><br />**Collapse** is a logical and physical operator. |
+|  | **Columnstore Index Delete** | The **Columnstore Index Delete** operator represents the deletion of rows from the columnstore index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. Deletion occurs via the **Clustered Index Delete** for a clustered columnstore index, and via the **Index Delete** operator for a nonclustered columnstore index. The index type (*Clustered*, *NonClustered*, *ViewClustered*, or *ViewNonClustered*) is specified in the **IndexKind** property in the XML showplan. The **SeekPredicates** property isn't supported for a **Columnstore Index Delete**. Rows to be deleted are read from a child operator.<br /><br />**Columnstore Index Delete** is a physical operator. |
+|  | **Columnstore Index Insert** | The **Columnstore Index Insert** operator represents the insertion of rows from its input into the columnstore index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. Insertion occurs via the **Clustered Index Insert** for a clustered columnstore index, and via the **Index Insert** operator for a nonclustered columnstore index. The index type (*Clustered*, *NonClustered*, *ViewClustered*, or *ViewNonClustered*) is specified in the **IndexKind** property in the XML showplan. The XML showplan includes **SetPredicate** and **ColumnReference** properties, which can be used to determine the value to which each column is set.<br /><br />**Columnstore Index Insert** is a physical operator. |
+|  | **Columnstore Index Merge** | The **Columnstore Index Merge** represents the application of a merge data stream using the **Clustered Index Merge** operator. The operator deletes, updates, or inserts rows from the clustered columnstore index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. The index type (*Clustered*, *NonClustered*, *ViewClustered*, or *ViewNonClustered*) is specified in the **IndexKind** property in the XML showplan. The actual operation performed depends on the runtime value of the **ActionColumn** property.<br /><br />**Columnstore Index Merge** is a physical operator. |
+|  | **Columnstore Index Scan** | The **Columnstore Index Scan** operator represents a scan of the columnstore index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. The scan occurs via the **Clustered Index Scan** for a clustered columnstore index, and via the **Index Scan** operator for a nonclustered columnstore index. The index type (*Clustered*, *NonClustered*, *ViewClustered*, or *ViewNonClustered*) is specified in the **IndexKind** property in the XML showplan. When an optional **Predicate** property is present, only those rows that satisfy the predicate are returned. The **SeekPredicates** property is only available for a partitioned columnstore index, and only equality or inequality conditions. If the partitioned column is in query predicate, partition elimination and rowgroup elimination can both reduce the number of rowgroups to scan.<br /><br />**Columnstore Index Scan** is a physical operator. |
+|  | **Columnstore Index Update** | The **Columnstore Index Update** operator represents an update to one or more rows in the columnstore index specified in the **Object** property, listed in the **Properties** pane of the graphical and XML showplans. Updates occur via the **Clustered Index Update** operator for a clustered columnstore index, and via the **Index Update** operator for a nonclustered columnstore index. The index type (*Clustered*, *NonClustered*, *ViewClustered*, or *ViewNonClustered*) is specified in the **IndexKind** property in the XML showplan. The **SeekPredicates** property isn't supported for a **Columnstore Index Update**. Rows to be updated are read from a child operator. If the **SetPredicate** property is present, each updated column is set to this value. If the **DefinedValues** property is present, the values that this operator defines are listed. These values might be referenced in the `SET` clause or elsewhere within this operator and elsewhere within this query.<br /><br />**Columnstore Index Update** is a physical operator. |
+|  | **Compute Scalar** | The **Compute Scalar** operator evaluates an expression to produce a computed scalar value. This might then be returned to the user, referenced elsewhere in the query, or both. An example of both is in a filter predicate or join predicate.<br /><br />**Compute Scalar** operators that appear in showplans generated by `SET STATISTICS XML` might not contain the **RunTimeInformation** element. In graphical showplans, **Actual Rows**, **Actual Rebinds**, and **Actual Rewinds** might be absent from the **Properties** window when the **Include Actual Execution Plan** option is selected in  SQL Server Management Studio |
+| . When this occurs, it means that although these operators were used in the compiled query plan, their work was performed by other operators in the runtime query plan. The number of executions in showplan output generated by `SET STATISTICS PROFILE` is equivalent to the sum of rebinds and rewinds in showplans generated by `SET STATISTICS XML`.<br /><br />**Compute Scalar** is a logical and physical operator. |
+|  | **Concatenation** | The **Concatenation** operator scans multiple inputs, returning each row scanned. **Concatenation** is typically used to implement the  Transact-SQL  `UNION ALL` construct. The **Concatenation** physical operator has two or more inputs and one output. Concatenation copies rows from the first input stream to the output stream, then repeats this operation for each additional input stream.<br /><br />**Concatenation** is a logical and physical operator. |
+|  | **Conditional** (**If** and **While**) | The **Conditional** operator carries out conditional processing based on an `IF` or `WHILE` loop. **If** and **While** are language elements. |
+|  | **Constant Scan** | The **Constant Scan** operator introduces one or more constant rows into a query. A **Compute Scalar** operator is often used after a **Constant Scan** to add columns to a row produced by the **Constant Scan** operator. **Constant Scan** can generate one or more rows with zero or more columns.<br /><br />**Constant Scan** is a physical operator. |
+|  | **Convert** | The **Convert** operator converts one scalar data type to another.<br /><br />**Convert** is a language element. |
+|  | **Cross Join** | The **Cross Join** operator joins each row from the first (top) input with each row from the second (bottom) input.<br /><br />**Cross Join** is a logical operator. |
+|  | **Cursor** | The **Cursor** logical and physical operators are used to describe how a query or update involving cursor operations is executed. The physical operators describe the physical implementation algorithm used to process the cursor; for example, using a keyset-driven cursor. Each step when running a cursor involves a physical operator. The logical operators describe a property of the cursor, such as the cursor is read only.<br /><br />Logical operators include **Asynchronous**, **Optimistic**, **Primary**, **Read Only**, **Scroll Locks**, **Secondary**, and **Synchronous**.<br /><br />Physical operators include **Dynamic**, **Fetch Query**, **Keyset**, **Population Query**, **Refresh Query**, and **Snapshot**. |
+|  | **Declare** | The **Declare** operator allocates a local variable in the query plan.<br /><br />**Declare** is a language element. |
+|  | **Delete** | The **Delete** operator deletes rows (from an object) that satisfy the optional predicate in the **Properties** pane.<br /><br />**Delete** is a logical operator. |
+|  | **Deleted Scan** | In triggers, the **Deleted Scan** operator scans the **deleted** table.<br /><br />**Deleted Scan** is a logical and physical operator. |
+| None | **Distinct** | The **Distinct** operator removes duplicates from a rowset or from a collection of values.<br /><br />**Distinct** is a logical operator. |
+| None | **Distinct Sort** | The **Distinct Sort** logical operator scans the input, removing duplicates and sorting by the columns specified in the **OrderBy** property of the **Properties** pane.<br /><br />**Distinct Sort** is a logical operator. |
+|  | **Distribute Streams** | The **Distribute Streams** operator is used only in parallel query plans. The **Distribute Streams** operator takes a single input stream of records and produces multiple output streams. The record contents and format aren't changed. Each record from the input stream appears in one of the output streams, unless the partitioning type is **Broadcast**, in which case each input row appears on all output streams. This operator automatically preserves the relative order of the input records in the output streams. Usually, hashing is used to decide to which output stream a particular input record belongs.<br /><br />If the output is partitioned, then the **Properties** pane contains the **PartitionColumns** property and the partitioning columns.<br /><br />**Distribute Streams** is a logical operator. |
+|  | **Dynamic** | The **Dynamic** operator uses a cursor that can see all changes made by others.<br /><br />**Dynamic** is a physical operator. |
+|  | **Eager Spool** | The **Eager Spool** operator takes the entire input, storing each row in a hidden temporary object stored in the [tempdb database](databases/tempdb-database.md). If the operator is rewound (for example, by a **Nested Loops** operator) but no rebinding is needed, the spooled data is used instead of rescanning the input. If rebinding is needed, the spooled data is discarded and the spool object is rebuilt by rescanning the (rebound) input. The **Eager Spool** operator builds its spool file in an "eager" manner: when the spool's parent operator asks for the first row, the spool operator consumes all rows from its input operator and stores them in the spool.<br /><br />**Eager Spool** is a logical operator. |
+|  | **Fetch Query** | The **Fetch Query** operator retrieves rows when a fetch is issued against a cursor.<br /><br />**Fetch Query** is a physical operator. |
+|  | **Filter** | The **Filter** operator scans the input, returning only those rows that satisfy the filter expression (predicate) that appears in the **Properties** pane. |
+| None | **Flow Distinct** | The **Flow Distinct** operator scans the input, removing duplicates. Whereas the **Distinct** operator consumes all input before producing any output, the **Flow Distinct** operator returns each row as it's obtained from the input (unless that row is a duplicate, in which case it's discarded).<br /><br />**Flow Distinct** is a logical operator. |
+|  | **Foreign Key References Check** | The **Foreign Key References Check** operator performs referential integrity checks in place, by comparing the modified row to the rows in the referencing tables to verify that the modification doesn't break the referential integrity. The **Foreign Key References Check** operator is used when more than 253 foreign key references exist on the same primary or unique key.<br /><br />**Foreign Key References Check** is a logical and physical operator. |
+|  | **Full Outer Join** | The **Full Outer Join** logical operator returns each row satisfying the join predicate from the first (top) input joined with each row from the second (bottom) input. It also returns rows from:<br /><br />- The first input that had no matches in the second input.<br /><br />- The second input that had no matches in the first input.<br /><br />The input that doesn't contain the matching values is returned as a null value.<br /><br />**Full Outer Join** is a logical operator. |
+|  | **Gather Streams** | The **Gather Streams** operator is only used in parallel query plans. The **Gather Streams** operator consumes several input streams and produces a single output stream of records by combining the input streams. The record contents and format aren't changed. If this operator is order preserving, all input streams must be ordered. If the output is ordered, the **Properties** pane contains an **OrderBy** property and the names of columns being ordered.<br /><br />**Gather Streams** is a logical operator. |
+|  | **Hash Match** | The **Hash Match** operator builds a hash table by computing a hash value for each row from its build input. The **HashKeysBuild** and **HashKeysProbe** properties list the columns used to create the hash value for the build and probe inputs, and appear in the **Properties** pane. Then, for each probe row (as applicable), it computes a hash value (using the same hash function) and looks in the hash table for matches. If a residual predicate is present (shown as the **BuildResidual** or **ProbeResidual** property in the **Properties** pane), that predicate must also be satisfied for rows to be considered a match. Behavior depends on the logical operation being performed:<br /><br />- For any joins, use the first (top) input to build the hash table and the second (bottom) input to probe the hash table. Output matches (or nonmatches) as dictated by the join type. If multiple joins use the same join column, these operations are grouped into a hash team.<br /><br />- For the distinct or aggregate operators, use the input to build the hash table (removing duplicates and computing any aggregate expressions). When the hash table is built, scan the table and output all entries.<br /><br />- For the union operator, use the first input to build the hash table (removing duplicates). Use the second input (which must have no duplicates) to probe the hash table, returning all rows that have no matches, then scan the hash table and return all entries.<br /><br />**Hash Match** is a physical operator. For more information, see [Understanding Hash joins](performance/joins.md#hash). |
+|  | **Index Delete** | The **Index Delete** operator deletes rows from the nonclustered index specified in the **Properties** pane.<br /><br />**Index Delete** is a physical operator. |
+|  | **Index Insert** | The **Index Insert** operator inserts rows from its input into the nonclustered index specified in the **Properties** pane. The **Properties** pane also contains the **SetPredicate** property, which indicates the value to which each column is set.<br /><br />**Index Insert** is a physical operator. |
+|  | **Index Scan** | The **Index Scan** operator retrieves all rows from the nonclustered index specified in the **Properties** pane. If an optional **Predicate** property appears in the **Properties** pane, only those rows that satisfy the predicate are returned. If the **Ordered** property is **True**, the rows are returned in the order in which the nonclustered index has sorted them. If the **Ordered** property is **False**, the  Database Engine |
+ | scans the index without guaranteeing the order of the output.<br /><br />**Index Scan** is a logical and physical operator. |
+|  | **Index Seek** | The **Index Seek** operator uses the seeking ability of indexes to retrieve rows from a nonclustered index. The **Properties** pane contains the name of the nonclustered index being used. It also contains the **SeekPredicates** property. The  Database Engine |
+ | uses the index to process only those rows that satisfy the **SeekPredicates** property. It optionally might include the **Predicate** property, which the  Database Engine |
+ | evaluates against all rows that satisfy the **SeekPredicates** property (it doesn't use the indexes to do this).<br /><br />**Index Seek** is a logical and physical operator. |
+|  | **Index Spool** | The **Index Spool** operator contains the **SeekPredicates** property in the **Properties** pane. The **Index Spool** operator scans its input rows, placing a copy of each row in a hidden spool file (stored in the [tempdb database](databases/tempdb-database.md) and existing only for the lifetime of the query), and builds an index on the rows. This allows you to use the seeking capability of indexes to output only those rows that satisfy the **SeekPredicates** property.<br /><br />**Index Spool** is a physical operator. |
+|  | **Index Update** | The **Index Update** physical operator updates rows from its input in the nonclustered index specified in the **Properties** pane. If the **SetPredicate** property is present, each updated column is set to this value.<br /><br />**Index Update** is a physical operator. |
+|  | **Inner Join** | The **Inner Join** operator returns each row that satisfies the join predicate of the first (top) input with the second (bottom) input.<br /><br />**Inner Join** is a logical operator. |
+|  | **Insert** | The **Insert** operator inserts each row from its input into the object specified in the **Properties** pane. The physical operator is either the **Table Insert**, **Index Insert**, or **Clustered Index Insert** operator.<br /><br />**Insert** is a logical operator. |
+|  | **Inserted Scan** | In triggers, the **Inserted Scan** operator scans the **inserted** table.<br /><br />**Inserted Scan** is a logical and physical operator. |
+|  | **Intrinsic** | The **Intrinsic** operator invokes an internal  Transact-SQL  function.<br /><br />**Intrinsic** is a language element. |
+|  | **Iterator** | The **Iterator** catchall icon is displayed when a suitable icon for the iterator can't be found by the logic that produces graphical showplans. The catchall icon doesn't necessarily indicate an error condition. |
+|  | **Key Lookup** | The **Key Lookup** operator is a bookmark lookup on a table with a clustered index or a clustered columnstore index. For a clustered index, the **Properties** pane contains the name of the clustered index and the clustering key used to look up the row. For a clustered columnstore index, the **ColStoreLoc** is provided instead of the clustering key. **Key Lookup** is always accompanied by a **Nested Loops** operator. If the `WITH PREFETCH` clause appears in the **Properties** pane, the query processor has determined that it's optimal to use asynchronous prefetching (read-ahead) when looking up bookmarks in the clustered index.<br /><br />A **Key Lookup** with a high number of executions relative to the table size might benefit from adding a covering index. A low number of executions is typically not a performance concern. |
+|  | **Keyset** | The **Keyset** operator uses a cursor that can see updates, but not inserts, made by others.<br /><br />**Keyset** is a physical operator. |
+|  | **Language Element** | The **Language Element** catchall icon is displayed when a suitable icon for the iterator can't be found by the logic that produces graphical showplans. The catchall icon doesn't necessarily indicate an error condition. |
+|  | **Lazy Spool** | The **Lazy Spool** logical operator stores each row from its input in a hidden temporary object stored in the [tempdb database](databases/tempdb-database.md). If the operator is rewound (for example, by a **Nested Loops** operator) but no rebinding is needed, the spooled data is used instead of rescanning the input. If rebinding is needed, the spooled data is discarded and the spool object is rebuilt by rescanning the (rebound) input. The **Lazy Spool** operator builds its spool file in a "lazy" manner, that is, each time the spool's parent operator asks for a row, the spool operator gets a row from its input operator and stores it in the spool, rather than consuming all rows at once.<br /><br />**Lazy Spool** is a logical operator. |
+| None | **Left Anti Semi Join** | The **Left Anti Semi Join** operator returns each row from the first (top) input when there's no matching row in the second (bottom) input. If no join predicate exists in the **Properties** pane, each row is a matching row.<br /><br />**Left Anti Semi Join** is a logical operator. |
+| None | **Left Outer Join** | The **Left Outer Join** operator returns each row that satisfies the join predicate of the first (top) input with the second (bottom) input. It also returns any rows from the first input that have no matching rows in the second input. The nonmatching rows in the second input are returned as null values. If no join predicate exists in the **Properties** pane, each row is a matching row.<br /><br />**Left Outer Join** is a logical operator. |
+| None | **Left Semi Join** | The **Left Semi Join** operator returns each row from the first (top) input when there's a matching row in the second (bottom) input. If no join predicate exists in the **Properties** pane, each row is a matching row.<br /><br />**Left Semi Join** is a logical operator. |
+|  | **Log Row Scan** | The **Log Row Scan** operator scans the transaction log.<br /><br />**Log Row Scan** is a logical and physical operator. |
+|  | **Merge Interval** | The **Merge Interval** operator merges multiple (potentially overlapping) intervals to produce minimal, nonoverlapping intervals that are then used to seek index entries. This operator typically appears before one or more **Compute Scalar** operators over **Constant Scan** operators, which construct the intervals (represented as columns in a row) that this operator merges.<br /><br />**Merge Interval** is a logical and physical operator. |
+|  | **Merge Join** | The **Merge Join** operator performs the inner join, left outer join, left semi join, left anti semi join, right outer join, right semi join, right anti semi join, full outer join, concatenation, and union logical operations.<br /><br />In the **Properties** pane, the **Merge Join** operator lists the join columns in the **InnerSideJoinColumns** and **OuterSideJoinColumns** properties. The **ManyToMany** attribute is `True` for a many-to-many join; it's absent or `False` for a one-to-many join. When present, the **Residual** property holds any additional predicate beyond the merge keys, evaluated against rows that match on the join columns. The **Merge Join** operator requires two inputs sorted on their respective columns, possibly by inserting explicit sort operations into the query plan. Merge join is particularly effective if explicit sorting isn't required, for example, if there's a suitable B-tree index in the database or if the sort order can be exploited for multiple operations, such as a merge join and grouping with rollup.<br /><br />**Merge Join** is a physical operator. For more information, see [Understanding Merge joins](performance/joins.md#merge). |
+|  | **Nested Loops** | The **Nested Loops** operator performs the inner join, left outer join, left semi join, and left anti semi join logical operations.<br /><br />Nested loop joins run the inner (bottom) input once for each row of the outer (top) input. When the **OuterReferences** property is present, the join is *dynamic*: the listed column values from the outer row are pushed into the inner input so that its operators return only matching rows. The **Predicate** property isn't used in this case. When **OuterReferences** is absent, the join is *static*: the inner input returns the same rows on each execution, and a **Predicate** property in the **Properties** pane determines which combinations qualify as matches.<br /><br />When the `OPTIMIZED` attribute is set to `True`, the operator reorders the outer input to improve I/O locality when accessing the inner input. This is sometimes called an Optimized Nested Loops join.<br /><br />**Nested Loops** is a physical operator. For more information, see [Understanding Nested Loops joins](performance/joins.md#nested_loops). |
+| None | **Online Index Insert** | The **Online Index Insert** operator indicates that an index operation (create, alter, or drop) is performed online. That is, the underlying table data remains available to users during the index operation.<br /><br />**Online Index Insert** is a physical operator. |
+| <a id="exchange"></a> None | **Parallelism** | The **Parallelism** operator (or Exchange Iterator) performs the distribute streams, gather streams, and repartition streams logical operations. The **Properties** pane can contain the **PartitionColumns** property with a comma-separated list of the columns being partitioned. The **Properties** pane can also contain an **OrderBy** property, listing the columns to preserve the sort order for during partitioning.<br /><br />**Note**: If a query has been compiled as a parallel query, but at run time it's run as a serial query, the showplan output generated by `SET STATISTICS XML` or by using the **Include Actual Execution Plan** option in  SQL Server Management Studio |
+ | doesn't contain the `RunTimeInformation` element for the **Parallelism** operator. In `SET STATISTICS PROFILE` output, the actual row counts and actual number of executions display zeroes for the **Parallelism** operator. When either condition occurs, it means that the **Parallelism** operator was only used during query compilation and not in the runtime query plan. Sometimes parallel query plans are run in serial if there's a high concurrent load on the server.<br /><br />**Parallelism** is a physical operator. For more information about the Parallelism operator, see [The Parallelism Operator](https://learn.microsoft.com/archive/blogs/craigfr/the-parallelism-operator-aka-exchange). |
+|  | **Parameter Table Scan** | The **Parameter Table Scan** operator reads the internal rowset that's produced during an `INSERT ... EXEC` statement. This rowset contains the output of the executed module, such as a stored procedure or dynamic SQL batch, when those results are inserted into a table, temporary table, or table variable.<br /><br />**Parameter Table Scan** is a logical and physical operator. |
+| None | **Partial Aggregate** | **Partial Aggregate** is typically used in parallel plans. It applies an aggregation function to as many input rows as possible so that writing to disk (known as a "spill") isn't necessary. **Hash Match** is the only physical operator (iterator) that implements partial aggregation.<br /><br />**Partial Aggregate** is a logical operator. |
+|  | **Population Query** | The **Population Query** operator populates the work table of a cursor when the cursor is opened.<br /><br />**Population Query** is a physical operator. |
+|  | **Put** | The **Put** operator inserts data into an external (PolyBase) table. Unlike other insert operators, **Put** doesn't return any rows to its parent operator. In  SQL Server 2016 (13.x) |
+ | through  SQL Server 2019 (15.x) |
+| , the **Put** operator targets Hadoop and runs in row mode. In  SQL Server 2022 (16.x) |
+ | and later versions, the **Put** operator targets Azure Storage or S3-compatible storage and runs in batch mode. For more information, see [CREATE EXTERNAL TABLE AS SELECT (CETAS)](../t-sql/statements/create-external-table-as-select-transact-sql.md).<br /><br />**Put** is a physical operator.<br /><br />**Applies to**:  SQL Server 2016 (13.x) |
+ | and later versions. |
+|  | **Refresh Query** | The **Refresh Query** operator fetches current data for rows in the fetch buffer.<br /><br />**Refresh Query** is a physical operator. |
+|  | **Remote Delete** | The **Remote Delete** operator deletes the input rows from a remote object.<br /><br />**Remote Delete** is a logical and physical operator. |
+|  | **Remote Index Scan** | The **Remote Index Scan** operator scans the remote index specified in the **Properties** pane.<br /><br />**Remote Index Scan** is a logical and physical operator. |
+|  | **Remote Index Seek** | The **Remote Index Seek** operator uses the seeking ability of a remote index object to retrieve rows. The **Properties** pane contains the name of the remote index being used and the **SeekPredicates** property.<br /><br />**Remote Index Seek** is a logical and physical operator. |
+|  | **Remote Insert** | The **Remote Insert** operator inserts the input rows into a remote object.<br /><br />**Remote Insert** is a logical and physical operator. |
+|  | **Remote Query** | The **Remote Query** operator submits a query to a remote source. The text of the query sent to the remote server appears in the **Properties** pane.<br /><br />**Remote Query** is a logical and physical operator. |
+|  | **Remote Scan** | The **Remote Scan** operator scans a remote object. The name of the remote object appears in the **Properties** pane.<br /><br />**Remote Scan** is a logical and physical operator. |
+|  | **Remote Update** | The **Remote Update** operator updates the input rows in a remote object.<br /><br />**Remote Update** is a logical and physical operator. |
+|  | **Repartition Streams** | The **Repartition Streams** operator (or exchange iterator) consumes multiple streams and produces multiple streams of records. The record contents and format aren't changed. If the Query Optimizer uses a bitmap filter, the number of rows in the output stream is reduced. Each record from an input stream is placed into one output stream. If this operator is order preserving, all input streams must be ordered and merged into several ordered output streams. If the output is partitioned, the **Properties** pane contains the **PartitionColumns** property and the partitioning columns. If the output is ordered, the **Properties** pane contains an **OrderBy** and the columns being ordered. The operator is used only in parallel query plans.<br /><br />**Repartition Streams** is a logical operator. |
+|  | **Result** | The **Result** operator is the data returned at the end of a query plan. This is usually the root element of a showplan.<br /><br />**Result** is a language element. |
+|  | **RID Lookup** | **RID Lookup** is a bookmark lookup on a heap using a supplied row identifier (RID). The **Properties** pane contains the bookmark label used to look up the row in the table and the name of the table in which the row is looked up. **RID Lookup** is always accompanied by a **Nested Loops** operator.<br /><br />**RID Lookup** is a physical operator. For more information about bookmark lookups, see [Read Committed and Bookmark Lookup](https://learn.microsoft.com/archive/blogs/craigfr/read-committed-and-bookmark-lookup). |
+| None | **Right Anti Semi Join** | The **Right Anti Semi Join** operator outputs each row from the second (bottom) input when a matching row in the first (top) input doesn't exist. A matching row is defined as a row that satisfies the predicate in the **Properties** pane (if no predicate exists, each row is a matching row).<br /><br />**Right Anti Semi Join** is a logical operator. |
+| None | **Right Outer Join** | The **Right Outer Join** operator returns each row that satisfies the join of the second (bottom) input with each matching row from the first (top) input. It also returns any rows from the second input that had no matching rows in the first input, joined with `NULL`. If no join predicate exists in the **Properties** pane, each row is a matching row.<br /><br />**Right Outer Join** is a logical operator. |
+| None | **Right Semi Join** | The **Right Semi Join** operator returns each row from the second (bottom) input when there's a matching row in the first (top) input. If no join predicate exists in the **Properties** pane, each row is a matching row.<br /><br />**Right Semi Join** is a logical operator. |
+|  | **Row Count Spool** | The **Row Count Spool** operator scans the input, counting how many rows are present and returning the same number of rows without any data in them. This operator is used when it's important to check for the existence of rows, rather than the data contained in the rows. For example, if a **Nested Loops** operator performs a left semi join operation and the join predicate applies to inner input, a row count spool might be placed at the top of the inner input of the **Nested Loops** operator. Then the **Nested Loops** operator can determine how many rows are output by the row count spool (because the actual data from the inner side isn't needed) to determine whether to return the outer row.<br /><br />**Row Count Spool** is a physical operator. |
+| None | **Segment Repartition** | In a parallel query plan, sometimes there are conceptual regions of iterators. All of the iterators within such a region can run on parallel threads. The regions themselves must run serially. Some of the **Parallelism** iterators within an individual region are called **Branch Repartition**. The **Parallelism** iterator at the boundary of two such regions is called **Segment Repartition**.<br /><br />**Branch Repartition** and **Segment Repartition** are logical operators. |
+|  | **Segment** | The **Segment** operator divides the input set into segments based on the value of one or more columns. These columns are shown as arguments in the **Segment** operator. The input is sorted by these columns. The operator uses the segment column to mark the first row of each segment.<br /><br />**Segment** is a physical and logical operator. |
+|  | **Sequence Project** | The **Sequence Project** operator adds columns to perform computations over an ordered set. It requires dividing the input set into segments based on the value of one or more columns.<br /><br />**Sequence Project** is a logical and physical operator. |
+|  | **Sequence** | The **Sequence** operator runs each input in sequence (top to bottom) and returns only those rows that come from its last (bottom) input. Common uses include wide update plans (where each input is typically an update of a different object), queries that use multi-statement table-valued functions, and queries that use `SHORTEST_PATH` on a graph table.<br /><br />**Sequence** is a logical and physical operator. |
+|  | **Snapshot** | The **Snapshot** operator creates a cursor that doesn't see changes made by others.<br /><br />**Snapshot** is a physical operator. |
+|  | **Sort** | The **Sort** operator sorts all incoming rows. The **Properties** pane contains the **OrderBy** property with a comma-separated list of the columns being sorted. The **Distinct** attribute is `True` when duplicates are removed by this operation. The columns are prefixed with the value `ASC` if the columns are sorted in ascending order, or the value `DESC` if the columns are sorted in descending order.<br /><br />**Sort** is a logical and physical operator. |
+|  | **Split** | The **Split** operator is used to optimize update processing. It splits each update operation into a delete and an insert operation.<br /><br />**Split** is a logical and physical operator. |
+|  | **Spool** | The **Spool** operator saves an intermediate query result to the [tempdb database](databases/tempdb-database.md). |
+|  | **Stream Aggregate** | The **Stream Aggregate** operator groups rows by one or more columns and then calculates one or more aggregate expressions returned by the query. The **Stream Aggregate** operator requires input ordered by the columns within its groups. The optimizer uses a **Sort** operator before this operator if the data isn't already sorted due to a previous **Sort** operator, or due to an ordered index seek or scan. In the `SHOWPLAN_ALL` statement or the graphical execution plan in  SQL Server Management Studio |
+| , the columns in the **GroupBy** property are listed in the **Properties** pane, and the aggregate expressions are listed in the **DefinedValues** column.<br /><br />**Stream Aggregate** is a physical operator. |
+|  | **Switch** | **Switch** is a special type of concatenation iterator that has *n* inputs. An expression is associated with each **Switch** operator. Depending on the return value of the expression (between 0 and *n*-1), **Switch** runs the appropriate input and returns its rows. **Switch** is used to implement query plans for `INSERT INTO` statements against partitioned views. It's also used to implement query plans involving fast forward cursors with certain operators such as the `TOP` operator.<br /><br />**Switch** is a logical and physical operator. |
+|  | **Table Delete** | The **Table Delete** operator deletes rows from the table specified in the **Properties** pane of the query execution plan.<br /><br />**Table Delete** is a physical operator. |
+|  | **Table Insert** | The **Table Insert** operator inserts rows from its input into the table specified in the **Properties** pane of the query execution plan. The **Properties** pane also contains the **SetPredicate** property, which indicates the value to which each column is set. If **Table Insert** has no children for insert values, then the row inserted is taken from the Insert operator itself.<br /><br />**Table Insert** is a physical operator. |
+|  | **Table Merge** | The **Table Merge** operator applies a merge data stream to a heap. The operator deletes, updates, or inserts rows in the table specified in the **Properties** pane of the operator. The actual operation performed depends on the runtime value of the **ActionColumn** property<br /><br />**Table Merge** is a physical operator. |
+|  | **Table Scan** | The **Table Scan** operator retrieves all rows from the heap table specified in the **Properties** pane of the query execution plan. When an optional **Predicate** property is present, only those rows that satisfy the predicate are returned.<br /><br />**Table Scan** is a logical and physical operator. |
+|  | **Table Spool** | The **Table Spool** operator scans the input and places a copy of each row in a hidden spool table that is stored in the [tempdb database](databases/tempdb-database.md) and exists only for the lifetime of the query. If the operator is rewound (for example, by a **Nested Loops** operator) but no rebinding is needed, the spooled data is used instead of rescanning the input.<br /><br />**Table Spool** is a physical operator. |
+|  | **Table Update** | The **Table Update** operator updates input rows in the heap table specified in the **Properties** pane of the query execution plan. The **SetPredicate** property determines the value of each updated column. These values might be referenced in the `SET` clause or elsewhere within this operator, and elsewhere within this query.<br /><br />**Table Update** is a physical operator. |
+|  | **Table-valued function** | The **Table-valued function** operator evaluates a table-valued function (either  Transact-SQL  or CLR), and stores the resulting rows in the [tempdb database](databases/tempdb-database.md). When the parent iterators request the rows, **Table-valued function** returns the rows from `tempdb`. **Table-valued function** can be evaluated with different parameter values:<br /><br />- **Table-valued function XML Reader** inputs an XML BLOB as a parameter and produces a rowset representing XML nodes in XML document order. Other input parameters might restrict XML nodes returned to a subset of XML document.<br /><br />- **Table Valued function XML Reader with XPath filter** is a special type of **XML Reader Table-valued function** that restricts output to XML nodes satisfying an XPath expression.<br /><br />Queries with calls to table-valued functions generate query plans with the **Table-valued function** iterator.<br /><br />**Table-valued function** is a logical and physical operator. |
+|  | **Top** | The **Top** operator scans the input, returning only the first specified number or percent of rows from its input, possibly based on a sort order. The **Properties** pane can contain a list of the columns that are being checked for ties. In update plans, the **Top** operator is also used to enforce row count limits.<br /><br />**Top** is a logical and physical operator. |
+| None | **TopN Sort** | **TopN Sort** is similar to the **Sort** iterator, except that only the first *N* rows are needed, and not the entire result set. For small values of *N*, the  SQL Server |
+ | query execution engine attempts to perform the entire sort operation in memory. For large values of *N*, the query execution engine resorts to the more generic method of sorting to which *N* isn't a parameter. |
+|  | **UDX** | Extended Operators (UDX) implement one of many XQuery and XPath operations in  SQL Server |
+| .<br /><br />- Extended operator (UDX) `FOR XML` is used to serialize the relational row set it inputs into XML representation in a single BLOB column in a single output row. It's an order sensitive XML aggregation operator.<br /><br />- Extended operator (UDX) `XML SERIALIZER` is an order sensitive XML aggregation operator. It inputs rows representing XML nodes or XQuery scalars in XML document order and produces a serialized XML BLOB in a single XML column in a single output row.<br /><br />- Extended operator (UDX) `XML FRAGMENT SERIALIZER` is a special type of `XML SERIALIZER` that is used for processing input rows representing XML fragments being inserted in XQuery insert data modification extension.<br /><br />- Extended operator (UDX) `XQUERY STRING` evaluates the XQuery string value of input rows representing XML nodes. It's an order sensitive string aggregation operator. It outputs one row with columns representing the XQuery scalar that contains string value of the input.<br /><br />- Extended operator (UDX) `XQUERY LIST DECOMPOSER` is an XQuery list decomposition operator. For each input row representing an XML node, it produces one or more rows each representing XQuery scalar containing a list element value if the input is of XSD list type.<br /><br />- Extended operator (UDX) `XQUERY DATA` evaluates the XQuery `fn:data()` function on input representing XML nodes. It's an order sensitive string aggregation operator. It outputs one row with columns representing XQuery scalar that contains the result of `fn:data()`.<br /><br />- Extended operator `XQUERY CONTAINS` evaluates the XQuery `fn:contains()` function on input representing XML nodes. It's an order sensitive string aggregation operator. It outputs one row with columns representing XQuery scalar that contains the result of `fn:contains()`.<br /><br />- Extended operator `UPDATE XML NODE` updates XML node in the XQuery replace data modification extension in the `modify()` method on XML type.<br /><br />**UDX** operators are both logical and physical operators. |
+|  | **Union** | The **Union** operator scans multiple inputs, outputting each row scanned and removing duplicates.<br /><br />**Union** is a logical operator. |
+|  | **Update** | The **Update** operator updates each row from its input in the object specified in the **Properties** pane of the query execution plan.<br /><br />**Update** is a logical operator. The physical operator is **Table Update**, **Index Update**, **Clustered Index Update**, or **Columnstore Index Update**. |
+| None | **Vector Index Seek** | The **Vector Index Seek** operator uses a vector index to find approximate nearest-neighbor matches during a vector search.<br /><br />**Vector Index Seek** is a logical and physical operator. |
+| None | **Window Aggregate** | The **Window Aggregate** operator evaluates one or more aggregate expressions with a window definition and adds their results to the data stream.<br /><br />**Window Aggregate** is a logical and physical operator. |
+|  | **Window Spool** | The **Window Spool** operator expands each row into the set of rows that represents the window associated with it. In a query, the `OVER` clause defines the window within a query result set and a window function then computes a value for each row in the window. The operator stores all input rows in a hidden worktable in the [tempdb database](databases/tempdb-database.md) or in memory.<br /><br />**Window Spool** is a logical and physical operator. |
+
+> **Note:**  
+> Documentation uses the term B-tree generally in reference to indexes. In rowstore indexes, the Database Engine implements a B+ tree. This does not apply to columnstore indexes or indexes on memory-optimized tables. For more information, see the [SQL Server and Azure SQL index architecture and design guide](sql-server-index-design-guide.md).

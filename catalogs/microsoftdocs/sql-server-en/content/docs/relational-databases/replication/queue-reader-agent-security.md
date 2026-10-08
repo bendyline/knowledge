@@ -1,0 +1,41 @@
+---
+title: "Queue Reader Agent Security"
+description: "Queue Reader Agent Security"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.security.QRA.f1"
+helpviewer_keywords:
+  - "Queue Reader Agent Security dialog box"
+---
+# Queue Reader Agent Security
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  The **Queue Reader Agent Security** dialog box allows you to specify the  Microsoft 
+ Windows account under which the Queue Reader Agent runs and makes local connections to the Distributor. The agent connects to the Publisher using the account specified in the **Publisher Properties** dialog box (available from the **Distributor Properties** dialog box); the agent connects to the Subscriber using the same context as the Distribution Agent for the subscription. For more information, see [View and Modify Replication Security Settings](security/view-and-modify-replication-security-settings.md).  
+  
+ The account must be valid with the correct password specified. Accounts and passwords are not validated until an agent runs.  
+  
+## Options  
+ **Process account**  
+ Enter a Windows account under which the Queue Reader Agent runs at the Distributor. The Windows account you specify must at minimum be a member of the **db_owner** fixed database role in the distribution database.  
+  
+ **Password** and **Confirm password**  
+ Enter the password for the Windows account.  
+  
+## Related content
+
+- [Identity and Access Control (Replication)](security/identity-and-access-control-replication.md)
+- [Replication Agent Security Model](security/replication-agent-security-model.md)
+- [Replication Agents Overview](agents/replication-agents-overview.md)
+- [Replication Security Best Practices](security/replication-security-best-practices.md)

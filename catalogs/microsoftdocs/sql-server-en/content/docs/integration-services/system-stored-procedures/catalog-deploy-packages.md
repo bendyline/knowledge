@@ -1,0 +1,74 @@
+---
+title: "catalog.deploy_packages"
+description: "catalog.deploy_packages"
+ms.date: "03/04/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: reference
+---
+# catalog.deploy_packages 
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Deploys one or more packages to a folder in the  Integration Services 
+ catalog or updates an existing package that has been deployed previously.  
+  
+## Syntax  
+  
+```sql  
+catalog.deploy_packages [ @folder_name = ] folder_name
+    , [ @project_name = ] project_name
+    , [ @packages_table = ] packages_table
+    [, [ @operation_id OUTPUT = ] operation_id OUTPUT]
+```  
+  
+## Arguments  
+ [ @folder_name = ] *folder_name*  
+ The name of the folder. The *folder_name* is **nvarchar(128)**.  
+  
+ [ @project_name = ] *project_name*  
+ The name of the project in the folder. The *project_name* is **nvarchar(128)**.  
+  
+ [ @packages_table = ] *packages_table*  
+ The binary contents of  Integration Services 
+ package (.dtsx) file(s). The *packages_table* is **[catalog].[Package_Table_Type]**  
+  
+ [ @operation_id = ] *operation_id*  
+ Returns the unique identifier for the deployment operation. The *operation_id* is **bigint**.  
+  
+## Return Code Value  
+ 0 (success)  
+  
+## Result Sets  
+ None  
+  
+## Permissions  
+ This stored procedure requires one of the following permissions:  
+  
+-   CREATE_OBJECTS permissions on the project or MODIFY permissions on the package to update a package.  
+  
+-   Membership to the **ssis_admin** database role  
+  
+-   Membership to the **sysadmin** server role  
+  
+## Errors and Warnings  
+ The following list describes some conditions that may cause this stored procedure to raise an error:  
+  
+-   A parameter refers to an object that does not exist, a parameter tries to create an object that already exists, or a parameter is invalid in some other way.  
+  
+-   The user does not have sufficient permissions

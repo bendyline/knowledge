@@ -1,0 +1,16 @@
+# Source code: aspnetcore/common/samples/WebApplication1DotNetCore2.0App/Pages/About.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model AboutModel
+@{
+    ViewData["Title"] = "About";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@Model.Message</h3>
+
+<p>Use this area to provide additional information.</p>
+
+```

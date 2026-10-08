@@ -1,0 +1,119 @@
+---
+title: "getCrossReference Method (SQLServerDatabaseMetaData)"
+description: "getCrossReference Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.getCrossReference"
+apitype: "Assembly"
+---
+# getCrossReference Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves a description of the foreign key columns in the given foreign key table that references the primary key columns of the given primary key table.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.ResultSet getCrossReference(java.lang.String cat1,  
+                                            java.lang.String schem1,  
+                                            java.lang.String tab1,  
+                                            java.lang.String cat2,  
+                                            java.lang.String schem2,  
+                                            java.lang.String tab2)  
+```  
+  
+#### Parameters  
+ *cat1*  
+  
+ A **String** that contains the catalog name of the table that contains the primary key.  
+  
+ *schem1*  
+  
+ A **String** that contains the schema name of the table that contains the primary key.  
+  
+ *tab1*  
+  
+ A **String** that contains the table name of the table that contains the primary key.  
+  
+ *cat2*  
+  
+ A **String** that contains the catalog name of the table that contains the foreign key.  
+  
+ *schem2*  
+  
+ A **String** that contains the schema name of the table that contains the foreign key.  
+  
+ *tab2*  
+  
+ A **String** that contains the table name of the table that contains the foreign key.  
+  
+## Return Value  
+ A [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getCrossReference method is specified by the getCrossReference method in the java.sql.DatabaseMetaData interface.  
+  
+ The result set returned by the getCrossReference method will contain the following information:  
+  
+| Name | Type | Description |
+| --- | --- | --- |
+| PKTABLE_CAT | **String** | The name of the catalog that contains the primary key table. |
+| PKTABLE_SCHEM | **String** | The name of the schema of the primary key table. |
+| PKTABLE_NAME | **String** | The name of the primary key table. |
+| PKCOLUMN_NAME | **String** | The column name of the primary key. |
+| FKTABLE_CAT | **String** | The name of the catalog that contains the foreign key table. |
+| FKTABLE_SCHEM | **String** | The name of the schema of the foreign key table. |
+| FKTABLE_NAME | **String** | The name of the foreign key table. |
+| FKCOLUMN_NAME | **String** | The column name of the foreign key. |
+| KEY_SEQ | **short** | The sequence number of the column in a multicolumn primary key. |
+| UPDATE_RULE | **short** | The action applied to the foreign key when the SQL operation is an update. It can be one of the following values:<br /><br /> importedKeyNoAction (3)<br /><br /> importedKeyCascade (0)<br /><br /> importedKeySetNull (2)<br /><br /> importedKeySetDefault (4)<br /><br /> importedKeyRestrict (1) |
+| DELETE_RULE | **short** | The action applied to the foreign key when the SQL operation is a deletion. It can be one of the following values:<br /><br /> importedKeyNoAction (3)<br /><br /> importedKeyCascade (0)<br /><br /> importedKeySetNull (2)<br /><br /> importedKeySetDefault (4)<br /><br /> importedKeyRestrict (1) |
+| FK_NAME | **String** | The name of the foreign key. |
+| PK_NAME | **String** | The name of the primary key. |
+| DEFERRABILITY | **short** | Indicates if the evaluation of the foreign key constraint can be deferred until a commit. It can be one of the following values:<br /><br /> importedKeyInitiallyDeferred (5)<br /><br /> importedKeyInitiallyImmediate (6)<br /><br /> importedKeyNotDeferrable (7) |
+  
+> **Note:**  
+>  For more information about the data returned by the getCrossReference method, see "sp_fkeys (Transact-SQL)" in  SQL Server 
+ Books Online.  
+  
+## Example  
+ The following example demonstrates how to use the getCrossReference method to return information about the primary and foreign key relationship between the Person.Contact and HumanResources.Employee tables in the  AdventureWorks2025  sample database.  
+  
+```  
+public static void executeGetCrossReference(Connection con) {  
+   try {  
+      DatabaseMetaData dbmd = con.getMetaData();  
+      ResultSet rs = dbmd.getCrossReference("AdventureWorks", "Person", "Contact", null, "HumanResources", "Employee");  
+      ResultSetMetaData rsmd = rs.getMetaData();  
+  
+      // Display the result set data.  
+      int cols = rsmd.getColumnCount();  
+      while(rs.next()) {  
+         for (int i = 1; i <= cols; i++) {  
+            System.out.println(rs.getString(i));  
+         }  
+      }  
+      rs.close();  
+   }   
+  
+   catch (Exception e) {  
+      e.printStackTrace();  
+   }  
+}  
+```  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

@@ -1,0 +1,30 @@
+---
+title: "Host a report server database in a SQL Server failover cluster"
+description: "Host a report server database in a SQL Server failover cluster"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+# Host a report server database in a SQL Server failover cluster
+
+   SQL Server 
+ provides failover clustering support so that you can use multiple disks for one or more  SQL Server 
+ instances. Failover clustering is supported only for the report server database; you can't run the Report Server service as part of a failover cluster.  
+  
+ To host a report server database on a  SQL Server 
+ failover cluster, the cluster must already be installed and configured. You can then select the failover cluster as the server name when you create the report server database in the Database Setup page of the  Reporting Services 
+ Configuration tool.  
+  
+ Although the Report Server service can't participate in a failover cluster, you can install  Reporting Services 
+ on a computer that has a  SQL Server 
+ failover cluster installed. The report server runs independently of the failover cluster. If you install a report server on a computer that is part of a  SQL Server 
+ failover instance, you aren't required to use the failover cluster for the report server database. You can use a different  SQL Server 
+ instance to host the database.  
+  
+## Related content
+
+- [Report server database (SSRS native mode)](../report-server/report-server-database-ssrs-native-mode.md)
+- [Create a report server database, Report Server Configuration Manager](ssrs-report-server-create-a-report-server-database.md)

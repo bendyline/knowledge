@@ -1,0 +1,46 @@
+---
+title: "Initialize Subscriptions"
+description: "Initialize Subscriptions"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.newsubwizard.initializesubscriptions.f1"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Initialize Subscriptions
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  Subscribers must be initialized before they can begin receiving replicated data. An initial dataset is not required, but the Subscriber must at least have the schema for each replicated object and any metadata tables and procedures required by replication.  
+  
+## Options  
+ **Subscription properties**  
+ Select the check box in the **Initialize** column for each Subscriber that requires an initial data set. If the check box is cleared, only the replication metadata and procedures will be initialized. For more information about initializing a subscription without a snapshot, see [Initialize a Transactional Subscription Without a Snapshot](initialize-a-transactional-subscription-without-a-snapshot.md).  
+  
+ Select **Immediately** from the dropdown list in the **Initialize When** column to have the Merge Agent or Distribution Agent transfer snapshot files to the Subscriber after this wizard is completed. Select **At first synchronization** to have the agent transfer the files the next time it is scheduled to run. The **Immediately** option is not available for pull subscriptions to  Microsoft 
+  SQL Server Express 
+. The Merge Agent and Distribution Agent do not run on instances of  SQL Server Express 
+; therefore the subscription must be initialized through another method.  
+  
+> **Note:**  
+>  The wizard might prompt for a connection to the Distributor in order to start the appropriate job for the Distribution Agent or Merge Agent.  
+  
+## Related content
+
+- [Create a Pull Subscription](create-a-pull-subscription.md)
+- [Create a push subscription](create-a-push-subscription.md)
+- [Initialize a Subscription](initialize-a-subscription.md)
+- [Subscribe to Publications](subscribe-to-publications.md)

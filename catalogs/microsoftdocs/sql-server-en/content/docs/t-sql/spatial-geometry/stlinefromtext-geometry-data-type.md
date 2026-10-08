@@ -1,0 +1,97 @@
+---
+title: "STLineFromText (geometry Data Type)"
+description: "STLineFromText (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "10/11/2019"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STLineFromText (geometry Data Type)"
+  - "STLineFromText_TSQL"
+helpviewer_keywords:
+  - "STLineFromText (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# STLineFromText (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **geometry** instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.
+  
+## Syntax  
+  
+```  
+  
+STLineFromText ( 'linestring_tagged_text' , SRID )  
+```  
+  
+## Arguments
+ *linestring_tagged_text*  
+ Is the WKT representation of the **geometryLineString** instance you want to return. *linestring_tagged_text* is an **nvarchar(max)** expression.  
+  
+ *SRID*  
+ Is an **int** expression representing the spatial reference ID (SRID) of the **geometryLineString** instance you want to return.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+ OGC type: **LineString**  
+  
+## Remarks  
+This method throws a **FormatException** if the input isn't well-formatted. Three-dimension and measured geometry WKT notation from the Open Geospatial Consortium (OGC) Simple Features for SQL Specification version 1.2.1 aren't supported. See examples for the supported representation of Z (elevation) and M (measure) values.
+  
+## Examples  
+ The following examples use `STLineFromText()` to create a `geometry` instance.
+
+### Example 1: Two-dimension geometry WKT
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STLineFromText('LINESTRING (100 100, 200 200)', 0);  
+SELECT @g.ToString();  
+```  
+  
+### Example 2: Three-dimension geometry WKT
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STLineFromText('LINESTRING (100 100 100, 200 200 200)', 0);  
+SELECT @g.ToString();  
+``` 
+
+### Example 3: Two-dimension measured geometry WKT
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STLineFromText('LINESTRING (100 100 NULL 100, 200 200 NULL 200)', 0);  
+SELECT @g.ToString();  
+``` 
+
+### Example 4: Three-dimension measured geometry WKT
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STLineFromText('LINESTRING (100 100 100 100, 200 200 200 200)', 0);  
+SELECT @g.ToString();  
+``` 
+## Related content
+
+- [OGC Static Geometry Methods](ogc-static-geometry-methods.md)

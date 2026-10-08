@@ -1,0 +1,55 @@
+{
+  "repository": "dotnet/docs",
+  "branch": "main",
+  "revision": "77bc2511d224447ac13474e7757e3600ad30c3de",
+  "tree": "f2435a2fb9fd9f90143cb197a89abcddc026b1c6",
+  "licenseFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "243f341367f0ee35271c8924aaf5d075157c62538042e2f3c11ff9a1fcc5539c",
+      "assessment": {
+        "spdx": "CC-BY-4.0",
+        "sha256": "243f341367f0ee35271c8924aaf5d075157c62538042e2f3c11ff9a1fcc5539c",
+        "reference": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "LICENSE-CODE",
+      "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+      "assessment": {
+        "spdx": "MIT",
+        "sha256": "91f7258203fd43ba6d6f7f72b644eaedee9e3430f035c053beb6f34052f045e2",
+        "reference": "https://raw.githubusercontent.com/spdx/license-list-data/31ba1a50e5397e00a304dbadc76531740e89ee48/json/details/MIT.json",
+        "obligations": [
+          "retain-license-and-notices",
+          "attribute-source",
+          "mark-modifications"
+        ]
+      }
+    },
+    {
+      "path": "ThirdPartyNotices.md",
+      "sha256": "5475fc89bfee030d104954a7ffff30e150e91c1b80b1511e4e06553b77a0062c"
+    }
+  ],
+  "markdownFiles": 13919,
+  "markdownBytes": 57778818,
+  "roots": [
+    ".github",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "SECURITY.md",
+    "ThirdPartyNotices.md",
+    "admin",
+    "api",
+    "docs",
+    "includes",
+    "samples"
+  ]
+}

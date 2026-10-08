@@ -1,0 +1,80 @@
+---
+title: "InstanceOf (geography Data Type)"
+description: "InstanceOf (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "InstanceOf"
+  - "InstanceOf_TSQL"
+helpviewer_keywords:
+  - "InstanceOf method"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# InstanceOf (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Tests if the **geography** instance is the same as the specified type.  
+  
+## Syntax  
+  
+```sql  
+  
+.InstanceOf ( 'geography_type')  
+```  
+  
+## Arguments
+*geography_type*  
+The **nvarchar(4000)** string specifying one of 16 types exposed in the **geography** type hierarchy.  
+  
+## Return Types  
+ SQL Server 
+ return type: **bit**  
+  
+CLR return type: **SqlBoolean**  
+  
+## Remarks  
+Returns 1 if the type of a **geography** instance is the same as the specified type, or if the specified type is an ancestor of the instance type; otherwise, returns 0.  
+  
+This **geography** data type method supports **FullGlobe** instances or spatial instances that are larger than a hemisphere.  
+  
+The input for the method must be one of these types: Geometry, Point, Curve, LineString, CircularString, Surface, Polygon, CurvePolygon, **GeometryCollection**, **MultiSurface**, **MultiPolygon, MultiCurve, MultiLineString**, **MultiPoint**, or **FullGlobe**.  
+  
+This method throws an `ArgumentException` if you use any other strings for the input.  
+  
+This method isn't precise.  
+  
+## Examples  
+The following example creates a `MultiPoint` instance and uses `InstanceOf()` to see whether the instance is a `GeometryCollection`.  
+  
+```sql  
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('MULTIPOINT(-122.360 47.656, -122.343 47.656)', 4326);  
+SELECT @g.InstanceOf('GEOMETRYCOLLECTION');  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)

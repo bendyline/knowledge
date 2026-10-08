@@ -1,0 +1,26 @@
+# Source code: docs/azure/sdk/snippets/dependency-injection/HostBuilder/HostBuilder.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-HostBuilder-3f144e50-3cf7-463d-b3e7-33f5e9a62474</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" />
+    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="Microsoft.Extensions.Azure" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="OpenAI" />
+  </ItemGroup>
+</Project>
+
+```

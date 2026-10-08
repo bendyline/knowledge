@@ -1,0 +1,91 @@
+---
+title: Members
+description: In Master Data Services, members are the physical master data, such as a Road-150 bike in a Product entity or a specific customer in a Customer entity.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "leaf members [Master Data Services]"
+  - "consolidated members [Master Data Services]"
+  - "consolidated members [Master Data Services], about consolidated members"
+  - "members [Master Data Services], about members"
+  - "leaf members [Master Data Services], about leaf members"
+  - "members [Master Data Services]"
+---
+# Members (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, members are the physical master data. For example, a member can be a Road-150 bike in a Product entity or a specific customer in a Customer entity.  
+  
+## How Members Relate to Other Model Objects  
+ You can think of members as rows in a table. Related members are contained in an entity, and each member is defined by attribute values.  
+  
+ In this example, the table represents an entity, the rows in the table represent members, and the columns in the table represent attributes. Each cell represents an attribute value for a specific member.  
+  
+ Master Data Services Entity Represented as Table  
+  
+## Member Types  
+ There are three types of members: leaf members, consolidated members, and collection members.  
+  
+ Leaf members are the default members in an entity.  
+  
+-   In derived hierarchies, leaf members are the only type of member. Leaf members from one entity are used as parents of leaf members from another entity.  
+  
+-   In explicit hierarchies, leaf members are the lowest level and cannot have children.  
+  
+ Consolidated members exist only when explicit hierarchies and collections are enabled for the entity.  
+  
+-   Derived hierarchies do not contain consolidated members.  
+  
+-   In explicit hierarchies, consolidated members can be parents of other members within the hierarchy, or they can be children.  
+  
+## Use Hierarchies and Collections to Organize Members  
+ Hierarchies and collections can be used to group members for reporting or analysis. For more information, see [Hierarchies (Master Data Services)](hierarchies-master-data-services.md) and [Collections (Master Data Services)](collections-master-data-services.md).  
+  
+## Member Example  
+ In the following example, each member is made up of a Name, Code, Subcategory, StandardCost, ListPrice, and FilePhoto attribute value.  
+  
+ Bike Product Entity Table  
+  
+## Related Tasks  
+  
+| Task Description | Topic |
+| --- | --- |
+| Create a new leaf member. | [Create a Leaf Member (Master Data Services)](create-a-leaf-member-master-data-services.md) |
+| Create a new consolidated member. | [Create a Consolidated Member (Master Data Services)](create-a-consolidated-member-master-data-services.md) |
+| Delete an existing member or collection. | [Delete a Member or Collection (Master Data Services)](delete-a-member-or-collection-master-data-services.md) |
+| Reactivate a deleted member or collection. | [Reactivate a Member or Collection (Master Data Services)](reactivate-a-member-or-collection-master-data-services.md) |
+| Update the attribute values of a member. | [Change the Attribute Type (MDS Add-in for Excel)](microsoft-excel-add-in/change-the-attribute-type-mds-add-in-for-excel.md) |
+
+  
+## Related content
+
+- [Master Data Services Overview (MDS)](master-data-services-overview-mds.md)
+- [Entities (Master Data Services)](entities-master-data-services.md)
+- [Attributes (Master Data Services)](attributes-master-data-services.md)
+- [Hierarchies (Master Data Services)](hierarchies-master-data-services.md)
+- [Collections (Master Data Services)](collections-master-data-services.md)
+- [Leaf Permissions (Master Data Services)](leaf-permissions-master-data-services.md)
+- [Filter Operators (Master Data Services)](filter-operators-master-data-services.md)

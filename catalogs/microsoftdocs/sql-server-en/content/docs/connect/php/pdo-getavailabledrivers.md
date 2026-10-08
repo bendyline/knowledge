@@ -1,0 +1,47 @@
+---
+title: "PDO::getAvailableDrivers"
+description: "API reference for the PDO::getAvailableDrivers function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDO::getAvailableDrivers
+
+
+
+Returns an array of the PDO drivers in your PHP installation.  
+  
+## Syntax  
+  
+```php  
+  
+array PDO::getAvailableDrivers ();  
+```  
+  
+## Return Value  
+An array with the list of PDO drivers.  
+  
+## Remarks  
+The name of the PDO driver is used in PDO::__construct, to create a PDO instance.  
+  
+PDO::getAvailableDrivers is not required to be implemented by PHP drivers. For more information about this method, see the PHP documentation.  
+  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+  
+```php  
+<?php  
+print_r(PDO::getAvailableDrivers());  
+?>  
+```  
+  
+## Related content
+
+- [PDO Class](pdo-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

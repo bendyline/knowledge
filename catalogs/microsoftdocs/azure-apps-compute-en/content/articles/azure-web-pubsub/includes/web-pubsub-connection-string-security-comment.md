@@ -1,0 +1,9 @@
+---
+author: vicancy
+ms.service: azure-web-pubsub
+ms.topic: include
+ms.date: 08/28/2026
+ms.author: lianwei
+---
+
+Raw connection strings appear in this article for demonstration purposes only. In production environments, always protect your access keys. Use Azure Key Vault to manage and rotate your keys securely and [secure your connection with `WebPubSubServiceClient`](../howto-use-azure-identity.md).

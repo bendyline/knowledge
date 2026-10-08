@@ -1,0 +1,279 @@
+---
+title: "tablediff Utility"
+description: Use the tablediff utility to compare the data in two tables for non-convergence and troubleshoot non-convergence in a replication topology.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/16/2025
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: concept-article
+ms.collection:
+  - data-tools
+helpviewer_keywords:
+  - "comparing data"
+  - "tablediff utility"
+  - "tables [SQL Server replication]"
+  - "table comparisons [SQL Server]"
+  - "command prompt utilities [SQL Server], tablediff"
+  - "troubleshooting [SQL Server replication], non-convergence"
+  - "non-convergence [SQL Server]"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017"
+---
+# tablediff utility
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+The **tablediff** utility is used to compare the data in two tables for non-convergence, and is useful for troubleshooting nonconvergence in a replication topology. This utility can be used from the command prompt or in a batch file to perform the following tasks:
+
+- Compare each row between a source table in an instance of  SQL Server 
+ acting as a replication Publisher, and the destination table at one or more instances of  SQL Server 
+ acting as replication Subscribers.
+
+- Perform a fast comparison by only comparing row counts and schema.
+
+- Perform column-level comparisons.
+
+- Generate a  Transact-SQL  script to fix discrepancies at the destination server and bring the source and destination tables into convergence.
+
+- Log results to an output file or into a table in the destination database.
+
+> **Note:**  
+> The **tablediff** utility is part of the  SQL Server 
+ Replication tools. In  SQL Server 2022 (16.x) 
+, you can find `tablediff.exe` at its default location of `C:\Program Files\Microsoft SQL Server\160\COM` after installing the replication feature.
+
+## Syntax
+
+```output
+tablediff
+[ -? ] |
+{
+      -sourceserver source_server_name [ \instance_name ]
+      -sourcedatabase source_database
+      -sourcetable source_table_name
+    [ -sourceschema source_schema_name ]
+    [ -sourcepassword source_password ]
+    [ -sourceuser source_login ]
+    [ -sourcelocked ]
+      -destinationserver destination_server_name [ \instance_name ]
+      -destinationdatabase subscription_database
+      -destinationtable destination_table
+    [ -destinationschema destination_schema_name ]
+    [ -destinationpassword destination_password ]
+    [ -destinationuser destination_login ]
+    [ -destinationlocked ]
+    [ -b large_object_bytes ]
+    [ -bf number_of_statements ]
+    [ -c ]
+    [ -dt ]
+    [ -et table_name ]
+    [ -f [ file_name ] ]
+    [ -o output_file_name ]
+    [ -q ]
+    [ -rc number_of_retries ]
+    [ -ri retry_interval ]
+    [ -strict ]
+    [ -t connection_timeouts ]
+}
+```
+
+## Arguments
+
+#### [ -? ]
+
+Returns the list of supported parameters.
+
+#### -sourceserver *source_server_name*[\\*instance_name*]
+
+Specifies the name of the source server. Specify *source_server_name* for the default instance of  SQL Server 
+. Specify *source_server_name*\\*instance_name* for a named instance of  SQL Server 
+.
+
+#### -sourcedatabase *source_database*
+
+Specifies the name of the source database.
+
+#### -sourcetable *source_table_name*
+
+Specifies the name of the source table being checked.
+
+#### -sourceschema *source_schema_name*
+
+The schema owner of the source table. By default, the table owner is assumed to be dbo.
+
+#### -sourcepassword *source_password*
+
+Specifies the password for the login used to connect to the source server using  SQL Server 
+ Authentication.
+
+> **Important:**  
+> When possible, supply security credentials at runtime. If you must store credentials in a script file, secure the file to prevent unauthorized access.
+
+#### -sourceuser *source_login*
+
+Specifies the login used to connect to the source server using  SQL Server 
+ Authentication. If *source_login* isn't supplied, then Windows Authentication is used when connecting to the source server.  When possible, use Windows authentication. 
+
+
+#### -sourcelocked
+
+Locks the source table during the comparison by using the `TABLOCK` and `HOLDLOCK` table hints.
+
+#### -destinationserver *destination_server_name*[\\*instance_name*]
+
+Specifies the name of the destination server. Specify *destination_server_name* for the default instance of  SQL Server 
+. Specify `<destination_server_name>\<instance_name>` for a named instance of  SQL Server 
+.
+
+#### -destinationdatabase *subscription_database*
+
+Specifies the name of the destination database.
+
+#### -destinationtable *destination_table*
+
+Specifies the name of the destination table.
+
+#### -destinationschema *destination_schema_name*
+
+The schema owner of the destination table. By default, the table owner is assumed to be dbo.
+
+#### -destinationpassword *destination_password*
+
+Specifies the password for the login used to connect to the destination server using  SQL Server 
+ Authentication.
+
+> **Important:**  
+> When possible, supply security credentials at runtime. If you must store credentials in a script file, secure the file to prevent unauthorized access.
+
+#### -destinationuser *destination_login*
+
+Specifies the login used to connect to the destination server using  SQL Server 
+ authentication. If you don't provide *destination_login*, the connection uses Windows authentication.  When possible, use Windows authentication. 
+
+
+#### -destinationlocked
+
+Locks the destination table during the comparison by using the `TABLOCK` and `HOLDLOCK` table hints.
+
+#### -b *large_object_bytes*
+
+Specifies the number of bytes to compare for large object data type columns, which include **text**, **ntext**, **image**, **varchar(max)**, **nvarchar(max)**, and **varbinary(max)**. The default value for *large_object_bytes* is the size of the column. Any data greater than *large_object_bytes* isn't compared.
+
+#### -bf *number_of_statements*
+
+Specifies the number of  Transact-SQL  statements to write to the current  Transact-SQL  script file when the `-f` option is used. When the number of  Transact-SQL  statements exceeds *number_of_statements*, a new  Transact-SQL  script file is created.
+
+#### -c
+
+Compares column-level differences.
+
+#### -dt
+
+Drops the result table specified by *table_name* if the table already exists.
+
+#### -et *table_name*
+
+Specifies the name of the result table to create. If this table already exists, you must use `-DT` or the operation fails.
+
+#### -f [ *file_name* ]
+
+Generates a  Transact-SQL  script to bring the table at the destination server into convergence with the table at the source server. You can optionally specify a name and path for the generated  Transact-SQL  script file. If you don't specify *file_name*, the utility generates the  Transact-SQL  script file in the directory where it runs.
+
+#### -o *output_file_name*
+
+Specifies the full name and path of the output file.
+
+#### -q
+
+Performs a fast comparison by only comparing row counts and schema.
+
+#### -rc *number_of_retries*
+
+Number of times that the utility retries a failed operation.
+
+#### -ri *retry_interval*
+
+Interval, in seconds, to wait between retries.
+
+#### -strict
+
+Compares source and destination schema strictly.
+
+#### -t *connection_timeouts*
+
+Sets the connection timeout period, in seconds, for connections to the source server and destination server.
+
+## Return value
+
+| Value | Description |
+| --- | --- |
+| `0` | Success |
+| `1` | Critical error |
+| `2` | Table differences |
+
+## Remarks
+
+You can't use the **tablediff** utility with non- SQL Server 
+ servers.
+
+Tables with **sql_variant** data type columns aren't supported.
+
+By default, the **tablediff** utility supports the following data type mappings between source and destination columns.
+
+| Source data type | Destination data type |
+| --- | --- |
+| **tinyint** | **smallint**, **int**, or **bigint** |
+| **smallint** | **int** or **bigint** |
+| **int** | **bigint** |
+| **timestamp** | **varbinary** |
+| **varchar(max)** | **text** |
+| **nvarchar(max)** | **ntext** |
+| **varbinary(max)** | **image** |
+| **text** | **varchar(max)** |
+| **ntext** | **nvarchar(max)** |
+| **image** | **varbinary(max)** |
+
+Use the `-strict` option to disallow these mappings and perform a strict validation.
+
+The source table in the comparison must contain at least one primary key, identity, or `ROWGUID` column. When you use the `-strict` option, the destination table must also have a primary key, identity, or `ROWGUID` column.
+
+The  Transact-SQL  script generated to bring the destination table into convergence doesn't include the following data types:
+
+- **varchar(max)**
+- **nvarchar(max)**
+- **varbinary(max)**
+- **timestamp**
+- **xml**
+- **text**
+- **ntext**
+- **image**
+
+## Permissions
+
+To compare tables, you need `SELECT ALL` permissions on the table objects you're comparing.
+
+To use the `-et` option, you must be a member of the **db_owner** fixed database role, or at least have `CREATE TABLE` permission in the subscription database and `ALTER` permission on the destination owner schema at the destination server.
+
+To use the `-dt` option, you must be a member of the **db_owner** fixed database role, or at least have `ALTER` permission on the destination owner schema at the destination server.
+
+To use the `-o` or `-f` options, you must have write permissions to the specified file directory location.
+
+## Related content
+
+- [Compare differences between replicated tables (Replication Programming)](../relational-databases/replication/administration/compare-replicated-tables-for-differences-replication-programming.md)

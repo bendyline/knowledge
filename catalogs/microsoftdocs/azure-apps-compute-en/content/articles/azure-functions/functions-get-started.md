@@ -1,0 +1,164 @@
+---
+title: Get Started with Azure Functions
+description: Take the first steps toward working with Azure Functions.
+ms.topic: overview
+ms.custom: devx-track-extended-java, devx-track-js, devx-track-python, devx-track-ts
+ms.date: 03/23/2026
+zone_pivot_groups: programming-languages-set-functions-full
+---
+
+# Get started with Azure Functions
+
+Azure Functions lets you implement your system's logic as event-driven, readily available blocks of code. These code blocks are called functions. This article helps you find the most useful Azure Functions content quickly. For more general information about Azure Functions, see the [Introduction to Azure Functions](functions-overview.md).
+
+Choose your preferred development language at the top of the article. 
+
+## Create your first function
+
+Complete a quickstart article to create and deploy your first functions in less than five minutes. 
+
+You can create your first function by using one of the following tools:
+
++ [Azure Developer CLI (azd)](create-first-function-azure-developer-cli.md)
+
++ [Command line](how-to-create-function-azure-cli.md)
+
++ [Visual Studio Code](how-to-create-function-vs-code.md)
+**Applies to: programming-language-csharp**
+
++ [Visual Studio](functions-create-your-first-function-visual-studio.md)
+
+**Applies to: programming-language-java**
+
++ [Eclipse](functions-create-maven-eclipse.md)
+
++ [Gradle](functions-create-first-java-gradle.md)
+
++ [IntelliJ IDEA](functions-create-maven-intellij.md) 
+
++ [Quarkus](functions-create-first-quarkus.md)
+
++ [Spring Cloud](https://learn.microsoft.com/azure/developer/java/spring-framework/getting-started-with-spring-cloud-function-in-azure?toc=/azure/azure-functions/toc.json)
+
+**Applies to: programming-language-other**
+
+Besides the natively supported programming languages, you can use [custom handlers](functions-custom-handlers.md) to create functions in any language that supports HTTP primitives. To use custom handlers to write your function code in Rust, see [Create a Rust function in Azure using Visual Studio Code](how-to-create-function-vs-code.md?pivots=programming-language-other). 
+
+**Applies to: programming-language-go**
+
+Get started with Go on Azure Functions:
+
++ [Command line quickstart](how-to-create-function-azure-cli.md?pivots=programming-language-go)
+
+**Applies to: programming-language-csharp,programming-language-java,programming-language-javascript,programming-language-powershell,programming-language-python,programming-language-typescript**
+
+## Review end-to-end samples
+
+These sites let you browse existing functions reference projects and samples in your desired language:
+
+**Applies to: programming-language-go**
+
+## Review end-to-end samples
+
++ [Azure Functions Go worker samples](https://github.com/Azure/azure-functions-golang-worker/tree/main/samples)
+
+**Applies to: programming-language-csharp**
+
++ [Awesome azd template library](https://azure.github.io/awesome-azd/?tags=functions&tags=dotnetCsharp)
++ [Azure Functions samples in GitHub](https://github.com/search?q=topic%3Aazure-functions+org%3AAzure-Samples+fork%3Atrue+language%3AC%23&type=repositories&l=C%23)
++ [Azure samples browser](https://learn.microsoft.com/samples/browse/?expanded=azure\&languages=csharp\&products=azure-functions) 
+
+**Applies to: programming-language-java**
+
++ [Awesome azd template library](https://azure.github.io/awesome-azd/?tags=functions&tags=java)
++ [Azure Functions samples in GitHub](https://github.com/search?q=topic%3Aazure-functions+org%3AAzure-Samples+fork%3Atrue+language%3AJava&type=repositories&l=Java)
++ [Azure samples browser](https://learn.microsoft.com/samples/browse/?expanded=azure\&languages=java\&products=azure-functions)
+
+**Applies to: programming-language-javascript**
+
++ [Awesome azd template library](https://azure.github.io/awesome-azd/?tags=functions&tags=javascript)
++ [Azure Functions samples in GitHub](https://github.com/search?q=topic%3Aazure-functions+org%3AAzure-Samples+fork%3Atrue+language%3AJavaScript&type=repositories)
++ [Azure samples browser](https://learn.microsoft.com/samples/browse/?expanded=azure\&languages=javascript\&products=azure-functions)
+
+**Applies to: programming-language-typescript**
+
++ [Awesome azd template library](https://azure.github.io/awesome-azd/?tags=functions&tags=typescript)
++ [Azure Functions samples in GitHub](https://github.com/search?q=topic%3Aazure-functions+org%3AAzure-Samples+fork%3Atrue+language%3ATypeScript+&type=repositories)
++ [Azure samples browser](https://learn.microsoft.com/samples/browse/?expanded=azure\&languages=typescript\&products=azure-functions)
+
+**Applies to: programming-language-powershell**
+
++ [Awesome azd template library](https://azure.github.io/awesome-azd/?tags=functions&tags=powershell)
++ [Azure Functions samples in GitHub](https://github.com/search?q=topic%3Aazure-functions+org%3AAzure-Samples+fork%3Atrue+language%3APowerShell&type=repositories) 
++ [Azure samples browser](https://learn.microsoft.com/samples/browse/?expanded=azure\&languages=powershell\&products=azure-functions)
+
+**Applies to: programming-language-python**
+
++ [Awesome azd template library](https://azure.github.io/awesome-azd/?tags=functions&tags=python)
++ [Azure Functions samples in GitHub](https://github.com/search?q=topic%3Aazure-functions+org%3AAzure-Samples+fork%3Atrue+language%3APython+&type=repositories) 
++ [Azure samples browser](https://learn.microsoft.com/samples/browse/?expanded=azure\&languages=python\&products=azure-functions)
+
+
+## Scenarios
+
+Here are some common scenarios to help you get started: 
+
++ [Process file uploads](functions-scenarios.md#process-file-uploads)
++ [Real-time stream and event processing](functions-scenarios.md#real-time-stream-and-event-processing)
++ [Build AI-enabled apps](functions-scenarios.md#build-ai-enabled-apps)
++ [Run scheduled tasks](functions-scenarios.md#run-scheduled-tasks)
++ [Build a scalable web API](functions-scenarios.md#build-a-scalable-web-api)
++ [Build a serverless workflow](functions-scenarios.md#build-a-serverless-workflow)
++ [Respond to database changes](functions-scenarios.md#respond-to-database-changes)
++ [Create reliable message systems](functions-scenarios.md#create-reliable-message-systems)
+
+## Explore an interactive tutorial
+
+Complete one of the following interactive training modules to learn more about Functions:
+
++ [Well-Architected Framework - Performance efficiency](https://learn.microsoft.com/training/modules/azure-well-architected-performance-efficiency/)
++ [Azure Functions triggers and bindings](functions-triggers-bindings.md)
+
+To learn even more, see the [full listing of interactive tutorials](https://learn.microsoft.com/training/browse/?expanded=azure\&products=azure-functions).
+ 
+## Related content
+
+**Applies to: programming-language-csharp**
+
+Learn more about developing functions by reviewing one of these C# reference articles:
+
++ [In-process C# class library functions](functions-dotnet-class-library.md)
++ [Isolated worker process C# class library functions](dotnet-isolated-process-guide.md)
+
+**Applies to: programming-language-java**
+
+Learn more about developing functions by reviewing the [Java language reference](functions-reference-java.md) article. 
+
+**Applies to: programming-language-javascript,programming-language-typescript**
+
+Learn more about developing functions by reviewing the [Node.js language reference](functions-reference-node.md) article. 
+
+**Applies to: programming-language-powershell**
+
+Learn more about developing functions by reviewing the [PowerShell language reference](functions-reference-powershell.md) article. 
+
+**Applies to: programming-language-python**
+
+Learn more about developing functions by reviewing the [Python language reference](functions-reference-python.md) article. 
+
+**Applies to: programming-language-other**
+
+Learn more about developing functions using Rust and other languages by reviewing the [custom handlers](functions-custom-handlers.md) documentation. 
+
+**Applies to: programming-language-go**
+
+Learn more about developing functions by reviewing the [Go developer reference](functions-reference-go.md) guide. 
+
+
+You might also be interested in these articles:
+
++ [Deployment technologies in Azure Functions](functions-deployment-technologies.md)
++ [Monitor executions in Azure Functions](functions-monitoring.md) 
++ [Best practices for reliable Azure Functions](functions-best-practices.md)
++ [Securing Azure Functions](security-concepts.md)
++ [What is Durable Task?](../durable-task/common/what-is-durable-task.md)

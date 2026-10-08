@@ -1,0 +1,28 @@
+# Source code: samples/core/Miscellaneous/Multitenancy/MultiDb/Pages/Index.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "/"
+
+@using Common
+@using Microsoft.EntityFrameworkCore
+@using TenantControls
+
+@inject ITenantService Service
+@inject IDbContextFactory<ContactContext> Factory
+
+<PageTitle>Contacts for @Service.Tenant</PageTitle>
+
+<ContactList FetchContacts="RefreshContacts"/>
+
+@code {
+
+    private List<Contact> RefreshContacts()
+    {
+        using var ctx = Factory.CreateDbContext();
+        return new List<Contact>(ctx.Contacts);
+    }
+}
+
+```

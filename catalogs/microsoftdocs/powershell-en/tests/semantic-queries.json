@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Get-Command discovers cmdlets, functions, scripts, and applications installed on the computer.",
+    "expectedDocumentIds": [
+      "reference/7.6/Microsoft.PowerShell.Core/Get-Command"
+    ]
+  }
+]

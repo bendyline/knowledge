@@ -1,0 +1,20 @@
+# Source code: aspnetcore/fundamentals/middleware/request-response/samples/3.x/RequestResponseSample/RequestResponseSample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" Version="4.7.2" />
+  </ItemGroup>
+
+  
+</Project>
+
+```

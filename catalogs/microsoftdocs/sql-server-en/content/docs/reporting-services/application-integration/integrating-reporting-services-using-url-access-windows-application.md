@@ -1,0 +1,121 @@
+---
+title: "Use URL access in Windows applications"
+description: URL access to a report server is optimized for a Web environment, but you can also use URL access to embed Reporting Services reports in a Windows application.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: application-integration
+ms.topic: reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Windows applications [Reporting Services]"
+  - "Web Browser controls [Reporting Services]"
+  - "Windows Forms [Reporting Services]"
+  - "browser controls [Reporting Services]"
+  - "URL access [Reporting Services], Windows applications"
+---
+# Integrate Reporting Services by using URL access - Windows application
+  Although URL access to a report server is optimized for a Web environment, you can also use URL access to embed  Reporting Services 
+ reports into a  Microsoft 
+ Windows application. However, URL access that involves Windows Forms still requires that you use Web browser technology. You can use the following integration scenarios with URL access and Windows Forms:  
+  
+-   Display a report from a Windows Form application by starting a Web browser programmatically.  
+  
+-   Use the [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser) control on a Windows Form to display a report.  
+  
+## Start Internet Explorer from a Windows Form  
+ You can use the [System.Diagnostics.Process](https://learn.microsoft.com/search/?terms=System.Diagnostics.Process) class to access a process that is running on a computer. The [System.Diagnostics.Process](https://learn.microsoft.com/search/?terms=System.Diagnostics.Process) class is a useful  Microsoft 
+  .NET Framework 
+ construct for starting, stopping, controlling, and monitoring applications. To view a specific report in your report server database, you can start the **IExplore** process, passing in the URL to the report. The following code example can be used to start  Microsoft 
+ Internet Explorer and pass a specific report URL when the user selects a button on a Windows Form.  
+  
+```vb  
+Private Sub viewReportButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles viewReportButton.Click  
+   ' Build the URL access string based on values supplied by a user  
+   Dim url As String = serverUrlTextBox.Text + "?" & reportPathTextBox.Text & _  
+   "&rs:Command=Render" & "&rs:Format=HTML4.0"  
+  
+   ' If the user does not select the toolbar check box,  
+   ' turn the toolbar off in the HTML Viewer  
+   If toolbarCheckBox.Checked = False Then  
+      url += "&rc:Toolbar=False"  
+   End If  
+   ' load report in the Web browser  
+   Try  
+      System.Diagnostics.Process.Start("IExplore", url)  
+   Catch  
+      MessageBox.Show("The system could not start the specified report using Internet Explorer.", _  
+      "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error)  
+   End Try  
+End Sub 'viewReportButton_Click  
+```  
+  
+```csharp  
+// Sample click event for a Button control on a Windows Form  
+private void viewReportButton_Click(object sender, System.EventArgs e)  
+{  
+   // Build the URL access string based on values supplied by a user  
+   string url = serverUrlTextBox.Text + "?" + reportPathTextBox.Text +  
+      "&rs:Command=Render" + "&rs:Format=HTML4.0";  
+  
+   // If the user does not check the toolbar check box,  
+   // turn the toolbar off in the HTML Viewer  
+   if (toolbarCheckBox.Checked == false)  
+      url += "&rc:Toolbar=False";  
+  
+   // load report in the Web browser  
+   try  
+   {  
+      System.Diagnostics.Process.Start("IExplore", url);  
+   }  
+  
+   catch (Exception)  
+   {  
+      MessageBox.Show(  
+         "The system could not open the specified report using Internet Explorer.",   
+         "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);  
+   }  
+}  
+```  
+  
+## Embed a browser control on a Windows Form  
+ If you don't want to view your report in an external Web browser, you can embed a Web browser seamlessly as part of your Windows Form by using the [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser) control.  
+  
+###### To add the WebBrowser control to your Windows Form  
+  
+1.  Create a new Windows application in either  Microsoft 
+  C# 
+ or  Microsoft 
+  Visual Basic .  
+  
+2.  Locate the [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser) control in the **Toolbox** Dialog Box.  
+  
+     If the **Toolbox** isn't visible, you can access it by selecting the **View** menu item and selecting **Toolbox**.  
+  
+3.  Drag the [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser)control onto the design surface of your Windows Form.  
+  
+     The [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser)control named webBrowser1 is added to the Form  
+  
+ You direct the [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser) control to a URL by calling its **Navigate** method. You can assign a specific URL access string to your [System.Windows.Forms.WebBrowser](https://learn.microsoft.com/search/?terms=System.Windows.Forms.WebBrowser) control at run time as shown in the following example.  
+  
+```vb  
+Dim url As String = "https://localhost/reportserver?/" & _  
+                    "AdventureWorks Sample Reports/" & _  
+                    "Company Sales&rs:Command=Render"  
+WebBrowser1.Navigate(url)  
+```  
+  
+```csharp  
+string url = "https://localhost/reportserver?/" +  
+             "AdventureWorks Sample Reports/" +  
+             "Company Sales&rs:Command=Render";  
+webBrowser1.Navigate(url);  
+```  
+  
+## Related content
+
+- [Integrating Reporting Services into Applications](https://learn.microsoft.com/previous-versions/sql/reporting-services/application-integration/integrating-reporting-services-into-applications)
+- [Integrate Reporting Services by using URL access](integrating-reporting-services-using-url-access.md)
+- [Integrate Reporting Services by using SOAP](integrating-reporting-services-using-soap.md)
+- [Integrate Reporting Services by using Report Viewer controls](integrating-reporting-services-using-reportviewer-controls.md)
+- [URL access (SSRS)](../url-access-ssrs.md)

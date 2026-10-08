@@ -1,0 +1,63 @@
+---
+title: "sys.hash_indexes (Transact-SQL)"
+description: sys.hash_indexes (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.hash_indexes_TSQL"
+  - "hash_indexes"
+  - "sys.hash_indexes"
+  - "hash_indexes_TSQL"
+helpviewer_keywords:
+  - "sys.hash_indexes catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.hash_indexes (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+
+  Shows the current hash indexes and the hash index properties. Hash indexes are supported only on [In-Memory OLTP &#40;In-Memory Optimization&#41;](../in-memory-oltp/overview-and-usage-scenarios.md).  
+  
+ The sys.hash_indexes view contains the same columns as the sys.indexes view and an additional column named **bucket_count**. For more information about the other columns in the sys.hash_indexes view, see [sys.indexes (Transact-SQL)](sys-indexes-transact-sql.md).  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **\<inherited columns>** |  | Inherits columns from [sys.indexes (Transact-SQL)](sys-indexes-transact-sql.md). |
+| **bucket_count** | **int** | Count of hash buckets for hash indexes.<br /><br /> For more information about the bucket_count value, including guidelines for setting the value, see [CREATE TABLE &#40;Transact-SQL&#41;](../../t-sql/statements/create-table-transact-sql.md). |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+. For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Examples  
+  
+```  
+SELECT object_name([object_id]) AS 'table_name', [object_id],  
+     [name] AS 'index_name', [type_desc], [bucket_count]   
+FROM sys.hash_indexes   
+WHERE OBJECT_NAME([object_id]) = 'T1';  
+```  
+  
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

@@ -1,0 +1,42 @@
+---
+title: "NonEmptyCrossjoin (MDX)"
+description: "NonEmptyCrossjoin (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# NonEmptyCrossjoin (MDX)
+
+
+  Returns a set that contains the cross product of one or more sets, excluding empty tuples and tuples without associated fact table data.  
+  
+## Syntax  
+  
+```  
+  
+NonEmptyCrossjoin(Set_Expression1 [ ,Set_Expression2,...] [,Count ] )  
+```  
+  
+## Arguments  
+ *Set_Expression1*  
+ A valid Multidimensional Expressions (MDX) expression that returns a set.  
+  
+ *Set_Expression2*  
+ A valid Multidimensional Expressions (MDX) expression that returns a set.  
+  
+ *Count*  
+ A valid numeric expression that specifies the number of sets to be returned.  
+  
+## Remarks  
+ The **NonEmptyCrossjoin** function returns the cross product of two or more sets as a set, excluding empty tuples or tuples without data supplied by underlying fact tables. Because of how the **NonEmptyCrossjoin** function works, all calculated members are automatically excluded.  
+  
+ If *Count* is not specified, the function cross joins all specified sets and excludes empty members from the resulting set. If a number of sets is specified, the function cross joins the numbers of sets specified, starting with the first specified set. The **NonEmptyCrossjoin** function uses any remaining sets that are specified in subsequent specified sets, but which have not been cross joined to determine which members are considered nonempty in the resulting cross joined set. The **NonEmptyCrossjoin** function respects the **NON_EMPTY_BEHAVIOR** setting of calculated measures.  
+  
+> **Important:**  
+>  This function is deprecated and you should not use it; it is retained only to maintain backward compatibility. Instead, you should use the [Exists (MDX)](exists-mdx.md) function with the measure group name argument or the [NonEmpty (MDX)](nonempty-mdx.md) function.  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

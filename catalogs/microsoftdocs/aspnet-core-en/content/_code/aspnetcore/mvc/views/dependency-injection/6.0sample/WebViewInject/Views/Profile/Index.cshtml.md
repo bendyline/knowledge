@@ -1,0 +1,37 @@
+# Source code: aspnetcore/mvc/views/dependency-injection/6.0sample/WebViewInject/Views/Profile/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using System.Threading.Tasks
+@using ViewInjectSample.Model.Services
+@model ViewInjectSample.Model.Profile
+@inject ProfileOptionsService Options
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Profile</title>
+</head>
+<body>
+<div>
+    <h1>Update Profile</h1>
+    Name: @Html.TextBoxFor(m => m.Name)
+    <br/>
+    Gender: @Html.DropDownList("Gender",
+           Options.ListGenders().Select(g => 
+                new SelectListItem() { Text = g, Value = g }))
+    <br/>
+
+    State: @Html.DropDownListFor(m => m.State!.Code,
+           Options.ListStates().Select(s => 
+                new SelectListItem() { Text = s.Name, Value = s.Code}))
+    <br />
+
+    Fav. Color: @Html.DropDownList("FavColor",
+           Options.ListColors().Select(c => 
+                new SelectListItem() { Text = c, Value = c }))
+    </div>
+</body>
+</html>
+
+```

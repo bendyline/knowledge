@@ -1,0 +1,43 @@
+# Source code: samples/end2end/PlanetaryDocs/PlanetaryDocs/Shared/DocHistory.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@inherits DocHistoryBase
+
+@if (History != null)
+{
+    <div class="container">
+        @if (History.Count == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-warning"><span class="oi oi-circle-x"></span>&nbsp;No audits found for the document.</div>
+                </div>
+            </div>
+        }
+        @if (History.Count > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info"><span class="oi oi-circle-check"></span>&nbsp;@History.Count audit@(History.Count == 1 ? string.Empty : "s") found for the document.</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">Date Modified</div>
+                <div class="col-3">Alias</div>
+                <div class="col-6">Title</div>
+            </div>
+            @foreach (var item in History)
+            {
+                <div class="row summary" @onclick="() => Navigate(item)">
+                    <div class="col-3">@item.Timestamp</div>
+                    <div class="col-3">@item.Alias</div>
+                    <div class="col-3">@item.Title</div>
+                </div>
+            }
+        }
+    </div>
+}
+
+```

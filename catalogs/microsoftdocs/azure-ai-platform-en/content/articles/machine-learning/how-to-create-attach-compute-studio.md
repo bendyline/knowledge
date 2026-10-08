@@ -1,0 +1,118 @@
+---
+title: Manage training & deploy computes (studio)
+titleSuffix: Azure Machine Learning
+description: Use studio to manage training and deployment compute resources (compute targets) for machine learning.
+services: machine-learning
+author: s-polly
+ms.author: scottpolly
+ms.reviewer: jturuk
+ms.service: azure-machine-learning
+ms.subservice: compute
+ms.date: 02/28/2026
+ms.topic: how-to
+ms.custom: build-2023, FY25Q1-Linter
+# customer intent: As a professional data scientist, I want to manage compute resources for model training and deployment in Azure Machine Learning studio.
+---
+
+# Manage compute resources for model training and deployment in studio
+
+In this article, learn how to manage the compute resources you use for model training and deployment in Azure Machine Learning studio. 
+
+With Azure Machine Learning, you can train your model on various resources or environments, collectively referred to as _compute targets_. A compute target can be a local machine or a cloud resource, such as an Azure Machine Learning compute cluster, an Azure Machine Learning compute instance, or a remote virtual machine. 
+
+You can also use [serverless compute](how-to-use-serverless-compute.md) as a compute target. There's nothing for you to manage when you use serverless compute.
+
+## Prerequisites
+
+* If you don't have an Azure subscription, create a free account before you begin. Try the [free or paid version of Azure Machine Learning](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) today
+* An [Azure Machine Learning workspace](quickstart-create-resources.md)
+
+## View compute targets
+
+To see all compute targets for your workspace, use the following steps:
+
+1. Navigate to [Azure Machine Learning studio](https://ml.azure.com).
+ 
+1. Under __Manage__, select __Compute__.
+
+1. Select tabs at the top to show each type of compute target.
+
+    Screenshot of view list of compute targets.
+
+## Create compute instance and clusters
+
+You can create compute instances and compute clusters in your workspace, using the Azure Machine Learning SDK (v2), CLI (v2), or studio:
+
+* [Compute instance](how-to-create-compute-instance.md)
+* [Compute cluster](how-to-create-attach-compute-cluster.md)
+
+In addition, you can use the [VS Code extension](how-to-manage-resources-vscode.md#compute-clusters) to create compute instances and compute clusters in your workspace.
+
+## Attach Kubernetes clusters
+
+For information on configuring and attaching a Kubernetes cluster to your workspace, see [Configure Kubernetes cluster for Azure Machine Learning](how-to-attach-kubernetes-anywhere.md).
+
+## <a name="other-compute-targets"></a>Attach other compute targets
+
+To use VMs created outside the Azure Machine Learning workspace, you must first attach them to your workspace. Attaching the compute resource makes it available to your workspace. 
+
+1. Navigate to [Azure Machine Learning studio](https://ml.azure.com).
+ 
+1. Under __Manage__, select __Compute__.
+
+1. In the tabs at the top, select **Attached compute** to attach a compute target for **training**. 
+
+1. Select +New, then select the type of compute to attach. Not all compute types can be attached from Azure Machine Learning studio.
+
+1. Fill out the form and provide values for the required properties.
+
+    > **Note:**
+    > Microsoft recommends that you use SSH keys, which are more secure than passwords. Passwords are vulnerable to brute force attacks. SSH keys rely on cryptographic signatures. For information on how to create SSH keys for use with Azure Virtual Machines, see the following documents:
+    >
+    > * [Create and use SSH keys on Linux or macOS](https://learn.microsoft.com/azure/virtual-machines/linux/mac-create-ssh-keys)
+    > * [Create and use SSH keys on Windows](https://learn.microsoft.com/azure/virtual-machines/linux/ssh-from-windows)
+
+1. Select __Attach__.
+
+
+Detach your compute with the following steps:
+
+1. In Azure Machine Learning studio, select __Compute__, __Attached compute__, and the compute you wish to remove.
+1. Use the __Detach__ link to detach your compute.
+
+## Connect with SSH access
+
+
+After you create a compute with SSH access enabled, use these steps for access.
+
+1. Find the compute in your workspace resources:
+    1. On the left, select **Compute**.
+    1. Use the tabs at the top to select **Compute instance** or **Compute cluster** to find your machine.
+1. Select the compute name in the list of resources.
+1. Find the connection string:
+
+    * For a **compute instance**, select **Connect** at the top of the **Details** section.
+
+        Screenshot that shows connect tool at the top of the Details page.
+
+    * For a **compute cluster**, select **Nodes** at the top, then select the **Connection string** in the table for your node.
+        Screenshot that shows connection string for a node in a compute cluster.
+
+1. Copy the connection string.
+1. For Windows, open PowerShell or a command prompt:
+   1. Go into the directory or folder where your key is stored
+   1. Add the -i flag to the connection string to locate the private key and point to where it is stored:
+    
+      `ssh -i <keyname.pem> azureuser@... (rest of connection string)`
+
+1. For Linux users, follow the steps from [Create and use an SSH key pair for Linux VMs in Azure](https://learn.microsoft.com/azure/virtual-machines/linux/mac-create-ssh-keys)
+1. For SCP use: 
+
+   `scp -i key.pem -P {port} {fileToCopyFromLocal }  azureuser@yourComputeInstancePublicIP:~/{destination}`
+
+
+## Related content
+
+* Use the compute resource to [submit a training run](how-to-train-model.md).
+* Once you have a trained model, learn [how and where to deploy models](how-to-deploy-online-endpoints.md).
+* [Use Azure Machine Learning with Azure Virtual Networks](how-to-network-security-overview.md)

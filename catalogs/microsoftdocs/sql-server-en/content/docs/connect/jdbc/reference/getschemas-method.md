@@ -1,0 +1,80 @@
+---
+title: "getSchemas Method ()"
+description: "getSchemas Method ()"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.getSchemas"
+apitype: "Assembly"
+---
+# getSchemas Method ()
+
+
+  Retrieves the schema names that are available in the current database.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.ResultSet getSchemas()  
+```  
+  
+## Return Value  
+ A [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getSchemas method is specified by the getSchemas method in the java.sql.DatabaseMetaData interface.  
+  
+ The result set returned by the getSchemas method contains the following information:  
+  
+| Name | Type | Description |
+| --- | --- | --- |
+| TABLE_SCHEM | **String** | The name of the schema. |
+| TABLE_CATALOG | **String** | The catalog name for the schema. |
+  
+ The results are ordered by TABLE_CATALOG, and then TABLE_SCHEM. Each row has TABLE_SCHEM as the first column and TABLE_CATALOG as the second column.  
+  
+> **Note:**  
+>  For more information about the data returned by the getSchemas method, see "sys.schemas (Transact-SQL)" in  SQL Server 
+ Books Online.  
+  
+## Example  
+ The following example demonstrates how to use the getSchemas method to return information about the catalog and its associated schema names in  SQL Server 
+ when the connection argument specifies the database to be used.  
+  
+```  
+public static void executeGetSchemas(Connection con) {  
+   try {  
+      DatabaseMetaData dbmd = con.getMetaData();  
+      ResultSet rs = dbmd.getSchemas();  
+      ResultSetMetaData rsmd = rs.getMetaData();  
+  
+      // Display the result set data.  
+      int cols = rsmd.getColumnCount();  
+      while(rs.next()) {  
+         for (int i = 1; i <= cols; i++) {  
+            System.out.println(rs.getString(i));  
+         }  
+      }  
+      rs.close();  
+   }   
+  
+   catch (Exception e) {  
+      e.printStackTrace();  
+   }  
+}  
+```  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

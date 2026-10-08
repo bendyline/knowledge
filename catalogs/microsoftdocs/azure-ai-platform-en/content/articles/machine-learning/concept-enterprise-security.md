@@ -1,0 +1,124 @@
+---
+title: Enterprise security and governance
+titleSuffix: Azure Machine Learning
+description: 'Securely use Azure Machine Learning: authentication, authorization, network security, data encryption, and monitoring.'
+services: machine-learning
+ms.service: azure-machine-learning
+ms.subservice: enterprise-readiness
+ms.custom: build-2023
+ms.topic: concept-article
+ms.author: scottpolly
+author: s-polly
+ms.reviewer: shshubhe
+ms.date: 10/30/2025
+ai-usage: ai-assisted
+# Customer Intent: As an admin, I want to understand how to secure Azure Machine Learning resources and workflows so that I can comply with my organization's security policies.
+---
+
+# Enterprise security and governance for Azure Machine Learning
+
+In this article, you learn about security and governance features that are available for Azure Machine Learning. These features are useful for administrators, DevOps engineers, and MLOps engineers who want to create a secure configuration that complies with an organization's policies.
+
+With Azure Machine Learning and the Azure platform, you can:
+
+* Restrict access to resources and operations by user account or groups.
+* Restrict incoming and outgoing network communications.
+* Encrypt data in transit and at rest.
+* Scan for vulnerabilities.
+* Apply and audit configuration policies.
+
+## Restrict access to resources and operations
+
+[Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/whatis) is the identity service provider for Azure Machine Learning. You can use it to create and manage the security objects (user, group, service principal, and managed identity) that are used to authenticate to Azure resources. Multifactor authentication (MFA) is supported if Microsoft Entra ID is configured to use it.
+
+Here's the authentication process for Azure Machine Learning through MFA in Microsoft Entra ID:
+
+1. The client signs in to Microsoft Entra ID and gets an Azure Resource Manager token.
+1. The client presents the token to Azure Resource Manager and to Azure Machine Learning.
+1. Azure Machine Learning provides a Machine Learning service token to the user compute target (for example, Machine Learning compute cluster or [serverless compute](how-to-use-serverless-compute.md)). The user compute target uses this token to call back into the Machine Learning service after the job is complete. The scope is limited to the workspace.
+
+[Diagram that illustrates authentication in Azure Machine Learning.](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/media/concept-enterprise-security/authentication.png#lightbox)
+
+Each workspace has an associated system-assigned [managed identity](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) that has the same name as the workspace. This managed identity is used to securely access resources that the workspace uses. It has the following Azure role-based access control (RBAC) permissions on associated resources:
+
+| Resource | Permissions |
+| --- | --- |
+| Workspace | Contributor |
+| Storage account | Storage Blob Data Contributor |
+| Key vault | Access to all keys, secrets, certificates |
+| Container registry | Contributor |
+| Resource group that contains the workspace | Contributor |
+
+The system-assigned managed identity is used for internal service-to-service authentication between Azure Machine Learning and other Azure resources. Users can't access the identity token, and they can't use it to gain access to these resources. Users can access the resources only through [Azure Machine Learning control and data plane APIs](how-to-assign-roles.md), if they have sufficient RBAC permissions.
+
+Don't revoke the access of the managed identity to the resources mentioned in the preceding table. You can restore access by using the [resync keys operation](how-to-change-storage-access-key.md).
+
+Don't grant permission on the workspace's storage account to users that you don't want to access workspace computes or identities. The workspace's storage account contains code and executables that run on your workspace computes. Users with access to that storage account can edit or change code that runs in the context of the workspace, granting access to workspace data and credentials.
+
+> **Note:**
+> If your Azure Machine Learning workspace has compute targets (for example, compute cluster, compute instance, or Azure Kubernetes Service [AKS] instance) that you created _before May 14, 2021_, you might have an additional Microsoft Entra account. The account name starts with `Microsoft-AzureML-Support-App-` and has contributor-level access to your subscription for every workspace region.
+>
+> If your workspace doesn't have an AKS instance attached, you can safely delete this Microsoft Entra account.
+>
+> If your workspace has an attached AKS cluster, and you created it before May 14, 2021, _don't delete this Microsoft Entra account_. In this scenario, you must delete and re-create the AKS cluster before you can delete the Microsoft Entra account.
+
+You can provision the workspace to use a user-assigned managed identity, and then grant the managed identity other roles. For example, you might grant a role to access your own Azure Container Registry instance for base Docker images.
+
+You can also configure managed identities for use with an Azure Machine Learning compute cluster. This managed identity is independent of the workspace managed identity. With a compute cluster, the managed identity is used to access resources such as secured datastores that the user running the training job might not have access to. For more information, see [Use managed identities for access control](how-to-identity-based-service-authentication.md).
+
+> **Tip:**
+> There are exceptions to the use of Microsoft Entra ID and Azure RBAC in Azure Machine Learning:
+> * You can optionally enable Secure Shell (SSH) access to compute resources such as an Azure Machine Learning compute instance and a compute cluster. SSH access is based on public/private key pairs, not Microsoft Entra ID. Azure RBAC doesn't govern SSH access.
+> * You can authenticate to models deployed as online endpoints by using key-based, Azure Machine Learning token-based, or Microsoft Entra token-based authentication. Keys are static strings, whereas tokens are retrieved through a Microsoft Entra security object. For more information, see [Authenticate clients for online endpoints](how-to-authenticate-online-endpoint.md).
+
+For more information, see the following articles:
+
+* [Set up authentication for Azure Machine Learning resources and workflows](how-to-setup-authentication.md)
+* [Manage access to an Azure Machine Learning workspace](how-to-assign-roles.md)
+* [Use datastores](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/machine-learning/how-to-access-data.md)
+* [Use authentication credential secrets in Azure Machine Learning jobs](how-to-use-secrets-in-runs.md)
+* [Set up authentication between Azure Machine Learning and other services](how-to-identity-based-service-authentication.md)
+
+## Provide network security and isolation
+
+To restrict network access to Azure Machine Learning resources, use an [Azure Machine Learning managed virtual network](how-to-managed-network.md) or an [Azure Virtual Network instance](https://learn.microsoft.com/azure/virtual-network/virtual-networks-overview). Using a virtual network reduces the attack surface for your solution and the chances of data exfiltration.
+
+You don't have to choose one or the other. For example, you can use an Azure Machine Learning managed virtual network to help secure managed compute resources and an Azure Virtual Network instance for your unmanaged resources or to help secure client access to the workspace.
+
+* __Azure Machine Learning managed virtual network__: Provides a fully managed solution that enables network isolation for your workspace and managed compute resources. Use private endpoints to help secure communication with other Azure services, and restrict outbound communication. Use a managed virtual network to help secure the following managed compute resources:
+
+  * Serverless compute (including Spark serverless)
+  * Compute cluster
+  * Compute instance
+  * Managed online endpoint
+  * Batch endpoint
+
+* __Azure Virtual Network instance__: Provides a more customizable virtual network offering. However, you're responsible for configuration and management. You might need to use network security groups, user-defined routes, or a firewall to restrict outbound communication.
+
+For more information, see [Compare network isolation configurations](concept-network-isolation-configurations.md).
+
+<a id="encryption-at-rest"></a><a id="azure-blob-storage"></a>
+
+## Encrypt data
+
+Azure Machine Learning uses various compute resources and datastores on the Azure platform. To learn more about how each of these resources supports data encryption at rest and in transit, see [Data encryption with Azure Machine Learning](concept-data-encryption.md).
+
+## Prevent data exfiltration
+
+Azure Machine Learning has several inbound and outbound network dependencies. Some of these dependencies can expose a data exfiltration risk by malicious agents within your organization. These risks are associated with the outbound requirements to Azure Storage, Azure Front Door, and Azure Monitor. For recommendations on mitigating this risk, see [Azure Machine Learning data exfiltration prevention](how-to-prevent-data-loss-exfiltration.md).
+
+## Scan for vulnerabilities
+
+[Microsoft Defender for Cloud](https://learn.microsoft.com/azure/security-center/security-center-introduction) provides unified security management and advanced threat protection across hybrid cloud workloads. For Azure Machine Learning, enable scanning of your [Azure Container Registry](https://learn.microsoft.com/azure/container-registry/container-registry-intro) resource and AKS resources. For more information, see [Introduction to Microsoft Defender for Containers](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-containers-introduction).
+
+## Audit and manage compliance
+
+[Azure Policy](https://learn.microsoft.com/azure/governance/policy/) is a governance tool that helps you ensure that Azure resources comply with your policies. Set policies to allow or enforce specific configurations, such as whether your Azure Machine Learning workspace uses a private endpoint.
+
+For more information on Azure Policy, see the [Azure Policy documentation](https://learn.microsoft.com/azure/governance/policy/overview). For more information on the policies that are specific to Azure Machine Learning, see [Audit and manage Azure Machine Learning](how-to-integrate-azure-policy.md).
+
+## Related content
+
+* [Azure Machine Learning best practices for enterprise security](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/ai-machine-learning-enterprise-security)
+* [Use Azure Machine Learning with a managed virtual network](how-to-managed-network.md)
+* [Build a real-time recommendation API on Azure](https://learn.microsoft.com/azure/architecture/reference-architectures/ai/real-time-recommendation)

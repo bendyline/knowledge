@@ -1,0 +1,41 @@
+---
+title: "IsWebServiceEnabled property (WMI MSReportServer_ConfigurationSetting)"
+description: "IsWebServiceEnabled property (WMI MSReportServer_ConfigurationSetting)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "IsWebServiceEnabled property"
+apilocation: "reportingservices.mof"
+apiname: "IsWebServiceEnabled"
+apitype: MOFDef
+---
+# ConfigurationSetting property - IsWebServiceEnabled
+  Indicates whether the Report Server Web service is enabled. Read-only.  
+  
+## Syntax  
+  
+```vb  
+Public Dim IsWebServiceEnabled As Boolean  
+```  
+  
+```csharp  
+public boolean IsWebServiceEnabled;  
+```  
+  
+## Property values  
+ A read-only **Boolean** value. A value of **true** indicates that the Report Server Web service is enabled.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

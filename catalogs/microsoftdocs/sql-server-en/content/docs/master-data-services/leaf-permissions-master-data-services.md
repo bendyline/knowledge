@@ -1,0 +1,87 @@
+---
+title: Leaf Permissions
+description: Leaf Permissions (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "attribute groups [Master Data Services], permissions"
+  - "members [Master Data Services], leaf member permissions"
+  - "permissions [Master Data Services], leaf members"
+  - "leaf members [Master Data Services], attribute permissions"
+  - "attributes [Master Data Services], leaf member attribute permissions"
+---
+# Leaf Permissions (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Leaf permissions apply to the attribute values for all leaf members of an entity.  
+  
+ For entities without explicit hierarchies enabled, assigning permission to **Leaf** is the same as assigning permission to the entity.  
+  
+ **Notes:**  
+  
+-   Leaf permissions apply to the **Explorer** functional area of the user interface only.  
+  
+-   Permissions assigned to **Name** and **Code** attributes are not enforced.  
+  
+| Permission | Description |
+| --- | --- |
+| **Read** | User can read leaf members, attributes. |
+| **Create** | User can create leaf members, and assign attribute values during create. |
+| **Update** | User can update leaf members and attributes. |
+| **Delete** | User can delete leaf members. |
+| **Deny** | Deny all access to the leaf members. |
+  
+ The Read, Create, Update, and Delete permissions can be combined. When Create, Update and Delete are assigned, the read permission is assigned automatically.  
+  
+## Attribute Permissions  
+ Attribute permissions apply to the attribute's values for the specific entity. Users with attribute permissions only cannot add or remove members.  
+  
+| Permission | Description |
+| --- | --- |
+| **Read** | User can read attributes. |
+| **Create** | User can assign values when they create members. |
+| **Update** | User can update attributes. |
+| **Delete** | No effect. |
+| **Deny** | The attribute is not displayed.<br /><br /> Note: You cannot explicitly deny access to Name and Code attributes. |
+  
+### Example  
+ For the Product entity, assign **Update** permission to Subcategory attribute. Deny permission to all other attributes.  
+  
+| Name | Code | Subcategory (Update) |
+| --- | --- | --- |
+| Mountain-100 | BK-M101 | {5} Mountain Bikes |
+| Mountain-100 | BK-M201 | {5} Mountain Bikes |
+  
+ In **Explorer**, you can update any attribute value in the Subcategory column. If you do not have permission to an attribute, the attribute is not displayed.  
+  
+> **Note:**  
+>  In this example, Subcategory is a domain-based attribute, based on the SubcategoryList entity. You can select a different subcategory for Mountain-100 but you cannot add members to or delete members from the SubcategoryList entity.  
+  
+## Related content
+
+- [Assign Model Object Permissions (Master Data Services)](assign-model-object-permissions-master-data-services.md)
+- [Model Object Permissions (Master Data Services)](model-object-permissions-master-data-services.md)
+- [Members (Master Data Services)](members-master-data-services.md)
+- [Attributes (Master Data Services)](attributes-master-data-services.md)

@@ -1,0 +1,67 @@
+---
+title: "Lat (geography Data Type)"
+description: "Lat (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "Lat"
+  - "Lat_TSQL"
+helpviewer_keywords:
+  - "Lat method"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Lat (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  The latitude property of the **geography** instance.  
+  
+## Syntax  
+  
+```  
+.Lat  
+```  
+  
+## Return Types
+  SQL Server 
+ type: **float**  
+  
+ CLR type: **SqlDouble**  
+  
+## Remarks  
+ In the OpenGIS model, Lat is defined only on **geography** instances composed of a single point. This property will return NULL if **geography** instances contain more than a single point. This property is precise and read-only.  
+  
+## Examples  
+ This example creates a point and returns the latitude of the point.  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('POINT(-122.34900 47.65100)', 4326);  
+SELECT @g.Lat;  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)

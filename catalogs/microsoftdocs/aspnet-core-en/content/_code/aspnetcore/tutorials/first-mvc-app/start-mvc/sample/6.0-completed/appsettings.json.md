@@ -1,0 +1,19 @@
+# Source code: aspnetcore/tutorials/first-mvc-app/start-mvc/sample/6.0-completed/appsettings.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "MvcMovieContext": "Server=(localdb)\\mssqllocaldb;Database=MvcMovieContext-64cb22b9-d140-400e-9a7a-37e8517e2817;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+}
+```

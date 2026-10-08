@@ -1,0 +1,15 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_VBCSharp/vbvbalrwithstatement/vb/mainwindow.xaml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Window x:Class="MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Button Content="Button" Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="Button1" VerticalAlignment="Top" Width="75" />
+    </Grid>
+</Window>
+
+```

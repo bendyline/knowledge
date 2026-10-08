@@ -1,0 +1,48 @@
+---
+title: "SQL Server XTP IO Governor object"
+description: Learn about the SQL Server XTP IO Governor performance object, which contains counters related to the In-Memory OLTP IO Rate Governor.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "SQL Server 2016 XTP IO Governor"
+  - "SQL Server 2017 XTP IO Governor"
+  - "SQL Server XTP IO Governor"
+---
+# SQL Server XTP IO Governor object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **SQL Server XTP IO Governor** performance object contains counters related to the In-Memory OLTP IO Rate Governor.
+
+This table describes the **SQL Server XTP IO Governor** counters.
+
+| Counter | Description |
+| --- | --- |
+| **Insufficient Credits Waits/sec** | Number of waits due to insufficient credits in the rate objects (per second). |
+| **Io Issued/sec** | Number of Io issued per second by flush threads. |
+| **Log Blocks/sec** | Number of log blocks processed by controller per second. |
+| **Missed Credit Slots** | Number of credit slots missed because of wait for credits from rate object. |
+| **Stale Rate Object Waits/sec** | Number of waits due to stale rate objects (per second). |
+| **Total Rate Objects Published** | Total number of Rate objects published. |
+ 
+## Example
+
+You begin to explore the query performance counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT * FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%XTP IO Governor%';
+```  
+
+## Related content
+
+- [In-Memory OLTP overview and usage scenarios](../in-memory-oltp/overview-and-usage-scenarios.md)
+- [SQL Server XTP (In-memory OLTP) Performance Counters](sql-server-xtp-in-memory-oltp-performance-counters.md)

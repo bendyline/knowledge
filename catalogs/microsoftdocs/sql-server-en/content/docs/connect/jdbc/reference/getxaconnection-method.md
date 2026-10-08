@@ -1,0 +1,44 @@
+---
+title: "getXAConnection Method ()"
+description: "getXAConnection Method ()"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerXADataSource.getXAConnection ()"
+apitype: "Assembly"
+---
+# getXAConnection Method ()
+
+
+  Tries to establish a physical database connection that can be used in a distributed transaction.  
+  
+## Syntax  
+  
+```  
+  
+public javax.sql.XAConnection getXAConnection()  
+```  
+  
+## Return Value  
+ An XAConnection object.  
+  
+## Exceptions  
+ java.sql.SQLException  
+  
+## Remarks  
+ This getXAConnection method is specified by the getXAConnection method in the javax.sql.XADataSource interface.  
+  
+> **Note:**  
+>  This method is typically called by XA connection pool implementations and not by regular JDBC application code.  
+  
+## Related content
+
+- [getXAConnection Method (SQLServerXADataSource)](getxaconnection-method-sqlserverxadatasource.md)
+- [SQLServerXADataSource Methods](sqlserverxadatasource-methods.md)
+- [SQLServerXADataSource Members](sqlserverxadatasource-members.md)
+- [SQLServerXADataSource Class](sqlserverxadatasource-class.md)

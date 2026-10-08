@@ -1,0 +1,21 @@
+---
+title: "SQL Statements"
+description: "SQL Statements"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# SQL Statements
+ODBC applications perform almost all database access by executing SQL statements. The form of these statements - hard-coded or constructed at run time, interoperable or data source-specific, and so on - depends on the needs of the application.  
+  
+ This section contains the following topics.  
+  
+-   [Constructing SQL Statements](constructing-sql-statements.md)  
+  
+-   [Interoperability of SQL Statements](interoperability-of-sql-statements.md)  
+  
+-   [Escape Sequences in ODBC](escape-sequences-in-odbc.md)

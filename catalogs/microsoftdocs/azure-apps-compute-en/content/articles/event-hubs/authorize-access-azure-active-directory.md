@@ -1,0 +1,81 @@
+---
+title: Authorize Azure Event Hubs Access With Microsoft Entra ID
+description: Learn how to authorize access to Azure Event Hubs resources using Microsoft Entra ID with Azure role-based access control (RBAC) for secure authentication and permissions.
+#customer intent: As a cloud security administrator, I want to configure Microsoft Entra ID authentication for Event Hubs resources so that I can implement secure role-based access control instead of using shared access keys.
+ms.topic: concept-article
+ms.date: 08/25/2026
+ai-usage: ai-assisted
+ms.custom:
+  - ai-gen-docs-bap
+  - ai-gen-title
+  - ai-seo-date:07/25/2025
+  - ai-gen-description
+---
+
+# Authorize access to Azure Event Hubs resources using Microsoft Entra ID
+Azure Event Hubs supports using Microsoft Entra ID to authorize requests to Event Hubs resources, which provides secure authentication and granular access control. By using Microsoft Entra ID, you use Azure role-based access control (Azure RBAC) to grant permissions to security principals, such as users and application service principals. This approach eliminates the need for shared access keys and improves the security of your Event Hubs solutions.
+
+## Overview
+When a security principal (a user, or an application) attempts to access an Event Hubs resource, the request must be authorized. By using Microsoft Entra ID, access to a resource is a two-step process. 
+
+ 1. First, the security principal's identity is authenticated, and an OAuth 2.0 token is returned. The resource name to request a token is `https://eventhubs.azure.net/`, and it's the same for all clouds and tenants. For Kafka clients, the resource to request a token is `https://<namespace>.servicebus.windows.net`.
+ 1. Next, the token is passed as part of a request to the Event Hubs service to authorize access to the specified resource.
+
+The authentication step requires that an application request contains an OAuth 2.0 access token at runtime. If an application runs within an Azure entity such as an Azure virtual machine (VM), a Virtual Machine Scale Set, or an Azure Functions app, it can use a managed identity to access the resources. To learn how to authenticate requests made by a managed identity to the Event Hubs service, see [Authenticate access to Azure Event Hubs resources with Microsoft Entra ID and managed identities for Azure resources](authenticate-managed-identity.md). 
+
+The authorization step requires that one or more Azure roles be assigned to the security principal. Azure Event Hubs provides Azure roles that encompass sets of permissions for Event Hubs resources. The roles that are assigned to a security principal determine the permissions that the principal has. For more information about Azure roles, see [Azure built-in roles for Azure Event Hubs](#azure-built-in-roles-for-azure-event-hubs). 
+
+Native applications and web applications that make requests to Event Hubs can also authorize by using Microsoft Entra ID. To learn how to request an access token and use it to authorize requests for Event Hubs resources, see [Authenticate access to Azure Event Hubs with Microsoft Entra ID from an application](authenticate-application.md). 
+
+## Assign Azure roles for access rights
+Microsoft Entra authorizes access rights to secured resources through [Azure role-based access control (Azure RBAC)](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/overview.md). Azure Event Hubs defines a set of Azure built-in roles that encompass common sets of permissions used to access event hub data, and you can also define custom roles for accessing the data.
+
+When you assign an Azure role to a Microsoft Entra security principal, Azure grants access to those resources for that security principal. You can scope access to the level of subscription, the resource group, the Event Hubs namespace, or any resource under it. A Microsoft Entra security principal can be a user, an application service principal, or a [managed identity for Azure resources](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview).
+
+## Azure built-in roles for Azure Event Hubs
+Azure provides the following built-in roles for authorizing access to Event Hubs data by using Microsoft Entra ID and OAuth:
+
+| Role | Description |
+| --- | --- |
+| [Azure Event Hubs Data owner](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/built-in-roles.md#azure-event-hubs-data-owner) | Use this role to give complete access to Event Hubs resources. |
+| [Azure Event Hubs Data sender](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/built-in-roles.md#azure-event-hubs-data-sender) | Use this role to allow the security principal to send events to Event Hubs resources. |
+| [Azure Event Hubs Data receiver](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/built-in-roles.md#azure-event-hubs-data-receiver) | Use this role to allow the security principal to receive events from Event Hubs resources. |
+
+For Schema Registry built-in roles, see [Schema Registry roles](schema-registry-concepts.md#azure-role-based-access-control).
+
+## Resource scope 
+Before you assign an Azure role to a security principal, determine the scope of access that the security principal should have. Grant only the narrowest possible scope.
+
+The following list describes the levels at which you can scope access to Event Hubs resources, starting with the narrowest scope:
+
+- **Consumer group**: At this scope, role assignment applies only to this entity. Currently, the Azure portal doesn't support assigning an Azure role to a security principal at this level. 
+- **Event hub**: Role assignment applies to event hubs and their consumer groups.
+- **Namespace**: Role assignment spans the entire topology of Event Hubs under the namespace and to the consumer group associated with it.
+- **Resource group**: Role assignment applies to all the Event Hubs resources under the resource group.
+- **Subscription**: Role assignment applies to all the Event Hubs resources in all of the resource groups in the subscription.
+
+> **Note:**
+> - Keep in mind that Azure role assignments might take up to five minutes to propagate. 
+> - This content applies to both Event Hubs and Event Hubs for Apache Kafka. For more information on Event Hubs for Kafka support, see [Event Hubs for Kafka - security and authentication](azure-event-hubs-apache-kafka-overview.md#security-and-authentication).
+
+
+For more information about how built-in roles are defined, see [Understand role definitions](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/role-definitions.md#control-and-data-actions). For information about creating Azure custom roles, see [Azure custom roles](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/role-based-access-control/custom-roles.md).
+
+
+
+## Samples
+- [Microsoft.Azure.EventHubs samples](https://github.com/Azure/azure-event-hubs/tree/master/samples/DotNet/Microsoft.Azure.EventHubs/Rbac). 
+    
+    These samples use the legacy **Microsoft.Azure.EventHubs** library, but you can easily update it to using the latest **Azure.Messaging.EventHubs** library. To move the sample from using the legacy library to new one, see the [Guide to migrate from Microsoft.Azure.EventHubs to Azure.Messaging.EventHubs](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/eventhub/Azure.Messaging.EventHubs/MigrationGuide.md).
+- [Azure.Messaging.EventHubs samples](https://github.com/Azure/azure-event-hubs/tree/master/samples/DotNet/Azure.Messaging.EventHubs/ManagedIdentityWebApp)
+
+    This sample has been updated to use the latest **Azure.Messaging.EventHubs** library.
+- [Event Hubs for Kafka - OAuth samples](https://github.com/Azure/azure-event-hubs-for-kafka/tree/master/tutorials/oauth). 
+
+
+## Related content
+
+- [Authenticate requests to Azure Event Hubs from an application using Microsoft Entra ID](authenticate-application.md)
+- [Authenticate a managed identity with Microsoft Entra ID to access Event Hubs resources](authenticate-managed-identity.md)
+- [Authenticate requests to Azure Event Hubs using shared access signatures](authenticate-shared-access-signature.md)
+- [Authorize access to Event Hubs resources using shared access signatures](authorize-access-shared-access-signature.md)

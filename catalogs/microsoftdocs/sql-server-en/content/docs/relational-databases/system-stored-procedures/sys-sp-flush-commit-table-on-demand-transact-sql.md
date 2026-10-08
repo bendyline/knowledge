@@ -1,0 +1,114 @@
+---
+title: "sys.sp_flush_commit_table_on_demand (Transact-SQL)"
+description: Deletes rows from syscommittab in batches.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: roblescarlos, bspendolini, randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_flush_commit_table_on_demand "
+  - "sp_flush_commit_table_on_demand_TSQL"
+  - "sys.sp_flush_commit_table_on_demand"
+  - "sys.sp_flush_commit_table_on_demand_TSQL"
+helpviewer_keywords:
+  - "sys.sp_flush_commit_table_on_demand"
+  - "sp_flush_commit_table_on_demand"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_flush_commit_table_on_demand (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Deletes rows from `syscommittab` in batches.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_flush_commit_table_on_demand
+    [ @numrows = ] numrows
+    , [ @deleted_rows = ] deleted_rows OUTPUT
+    , [ @date_cleanedup = ] date_cleanedup OUTPUT
+    , [ @cleanup_ts = ] cleanup_ts OUTPUT
+[ ; ]
+```
+
+## Arguments
+
+#### [ @numrows = ] *numrows*
+
+Specifies the number of rows you want to delete from syscommittab. *@numrows* is **bigint**, and can't be `NULL`.
+
+#### [ @deleted_rows = ] *deleted_rows* OUTPUT
+
+*@deleted_rows* is an `OUTPUT` parameter of type **bigint**.
+
+#### [ @date_cleanedup = ] *date_cleanedup* OUTPUT
+
+*@date_cleanedup* is an `OUTPUT` parameter of type **datetime**.
+
+#### [ @cleanup_ts = ] *cleanup_ts* OUTPUT
+
+*@cleanup_ts* is an `OUTPUT` parameter of type **bigint**.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Examples
+
+```sql
+DECLARE @deleted_rows AS BIGINT;
+DECLARE @date_cleanedup AS DATETIME;
+DECLARE @cleanup_ts AS BIGINT;
+
+EXECUTE sys.sp_flush_commit_table_on_demand 3000,
+    @deleted_rows = @deleted_rows OUTPUT,
+    @date_cleanedup = @date_cleanedup OUTPUT,
+    @cleanup_ts = @cleanup_ts OUTPUT;
+
+PRINT CONCAT('Number of rows deleted: ', @deleted_rows);
+PRINT CONCAT('Cleanup date: ', @date_cleanedup);
+PRINT CONCAT('Change tracking version: ', @cleanup_ts);
+GO
+```
+
+ Here's the result set. 
+
+
+```output
+Started executing query at Line 1
+The value returned by change_tracking_hardened_cleanup_version() is 17.
+The value returned by safe_cleanup_version() is 17.
+(0 rows affected)
+Number of rows deleted: 100
+Cleanup date: Aug 29 2022  8:59PM
+Change tracking Version: 17
+Total execution time: 00:00:02.008
+```
+
+## Remarks
+
+This procedure must be run in a database that has change tracking enabled.
+
+## Permissions
+
+Only a member of the **sysadmin** server role or **db_owner** database role can execute this procedure.
+
+## Related content
+
+- [About Change Tracking (SQL Server)](../track-changes/about-change-tracking-sql-server.md)
+- [Troubleshoot change tracking auto cleanup issues](../track-changes/cleanup-and-troubleshoot-change-tracking-sql-server.md)
+- [Change Tracking Functions (Transact-SQL)](../system-functions/change-tracking-functions-transact-sql.md)
+- [Change Tracking tables (Transact-SQL)](../system-tables/change-tracking-tables-transact-sql.md)
+- [Change Tracking stored procedures (Transact-SQL)](change-tracking-stored-procedures-transact-sql.md)

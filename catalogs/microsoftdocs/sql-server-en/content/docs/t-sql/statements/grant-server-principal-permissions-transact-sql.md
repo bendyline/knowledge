@@ -1,0 +1,163 @@
+---
+title: "GRANT Server Principal Permissions (Transact-SQL)"
+description: GRANT Server Principal Permissions (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "08/10/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+helpviewer_keywords:
+  - "impersonate [SQL Server], granting"
+  - "granting permissions [SQL Server], logins"
+  - "permissions [SQL Server], impersonate"
+  - "permissions [SQL Server], logins"
+  - "GRANT statement, impersonation"
+  - "GRANT statement, logins"
+  - "logins [SQL Server], granting access"
+  - "granting permissions [SQL Server], impersonation"
+dev_langs:
+  - "TSQL"
+---
+# GRANT Server Principal Permissions (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Grants permissions on a  SQL Server 
+ login.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+GRANT permission [ ,...n ] }   
+    ON   
+    { [ LOGIN :: SQL_Server_login ]  
+      | [ SERVER ROLE :: server_role ] }   
+    TO <server_principal> [ ,...n ]  
+    [ WITH GRANT OPTION ]  
+    [ AS SQL_Server_login ]   
+  
+<server_principal> ::=   
+    SQL_Server_login  
+    | SQL_Server_login_from_Windows_login   
+    | SQL_Server_login_from_certificate   
+    | SQL_Server_login_from_AsymKey   
+    | server_role  
+```  
+  
+## Arguments
+ *permission*  
+ Specifies a permission that can be granted on a  SQL Server 
+ login. For a list of the permissions, see the Remarks section later in this topic.  
+  
+ LOGIN **::** *SQL_Server_login*  
+ Specifies the  SQL Server 
+ login on which the permission is being granted. The scope qualifier (**::**) is required.  
+  
+ SERVER ROLE **::** *server_role*  
+ Specifies the user-defined server role on which the permission is being granted. The scope qualifier (**::**) is required.  
+  
+ TO \<server_principal> 
+ Specifies the  SQL Server 
+ login or server role to which the permission is being granted.  
+  
+ *SQL_Server_login*  
+ Specifies the name of a  SQL Server 
+ login.  
+  
+ *SQL_Server_login_from_Windows_login*  
+ Specifies the name of a  SQL Server 
+ login created from a Windows login.  
+  
+ *SQL_Server_login_from_certificate*  
+ Specifies the name of a  SQL Server 
+ login mapped to a certificate.  
+  
+ *SQL_Server_login_from_AsymKey*  
+ Specifies the name of a  SQL Server 
+ login mapped to an asymmetric key.  
+  
+ *server_role*  
+ Specifies the name of a user-defined server role.  
+  
+ WITH GRANT OPTION  
+ Indicates that the principal will also be given the ability to grant the specified permission to other principals.  
+  
+ AS *SQL_Server_login*  
+ Specifies the  SQL Server 
+ login from which the principal executing this query derives its right to grant the permission.  
+  
+## Remarks  
+ Permissions at the server scope can be granted only when the current database is master.  
+  
+ Information about server permissions is visible in the [sys.server_permissions](../../relational-databases/system-catalog-views/sys-server-permissions-transact-sql.md) catalog view. Information about server principals is visible in the [sys.server_principals](../../relational-databases/system-catalog-views/sys-server-principals-transact-sql.md) catalog view.  
+  
+  SQL Server 
+ logins and server roles are server-level securables. The most specific and limited permissions that can be granted on a  SQL Server 
+ login or server role are listed in the following table, together with the more general permissions that include them by implication.  
+  
+| SQL Server login or server role permission | Implied by SQL Server login or server role permission | Implied by server permission |
+| --- | --- | --- |
+| CONTROL | CONTROL | CONTROL SERVER |
+| IMPERSONATE | CONTROL | CONTROL SERVER |
+| VIEW DEFINITION | CONTROL | VIEW ANY DEFINITION |
+| ALTER | CONTROL | ALTER ANY LOGIN<br /><br /> ALTER ANY SERVER ROLE |
+  
+## Permissions  
+ For logins, requires CONTROL permission on the login or ALTER ANY LOGIN permission on the server.  
+  
+ For server roles, requires CONTROL permission on the server role or ALTER ANY SERVER ROLE permission on the server.  
+  
+## Examples  
+  
+### A. Granting IMPERSONATE permission on a login  
+ The following example grants `IMPERSONATE` permission on the  SQL Server 
+ login `WanidaBenshoof` to a  SQL Server 
+ login created from the Windows user `AdvWorks\YoonM`.  
+  
+```sql  
+USE master;  
+GRANT IMPERSONATE ON LOGIN::WanidaBenshoof to [AdvWorks\YoonM];  
+GO  
+```  
+  
+### B. Granting VIEW DEFINITION permission with GRANT OPTION  
+ The following example grants `VIEW DEFINITION` on the  SQL Server 
+ login `EricKurjan` to the  SQL Server 
+ login `RMeyyappan` with `GRANT OPTION`.  
+  
+```sql  
+USE master;  
+GRANT VIEW DEFINITION ON LOGIN::EricKurjan TO RMeyyappan   
+    WITH GRANT OPTION;  
+GO   
+```  
+  
+### C. Granting VIEW DEFINITION permission on a server role  
+ The following example grants `VIEW DEFINITION` on the `Sales` server role to the `Auditors` server role.  
+  
+```sql  
+USE master;  
+GRANT VIEW DEFINITION ON SERVER ROLE::Sales TO Auditors ;  
+GO   
+```  
+  
+## Related content
+
+- [sys.server_principals (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-principals-transact-sql.md)
+- [sys.server_permissions (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-permissions-transact-sql.md)
+- [CREATE LOGIN (Transact-SQL)](create-login-transact-sql.md)
+- [Principals (Database Engine)](../../relational-databases/security/authentication-access/principals-database-engine.md)
+- [Permissions (Database Engine)](../../relational-databases/security/permissions-database-engine.md)
+- [Security Functions (Transact-SQL)](../functions/security-functions-transact-sql.md)
+- [Security stored procedures (Transact-SQL)](../../relational-databases/system-stored-procedures/security-stored-procedures-transact-sql.md)

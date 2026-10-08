@@ -1,0 +1,19 @@
+# Source code: docs/csharp/language-reference/statements/snippets/selection-statements/selection-statements.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SelectionStatements</RootNamespace>
+    <StartupObject>SelectionStatements.Program</StartupObject>
+  </PropertyGroup>
+
+</Project>
+
+```

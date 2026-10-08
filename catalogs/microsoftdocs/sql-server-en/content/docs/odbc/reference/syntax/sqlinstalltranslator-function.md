@@ -1,0 +1,26 @@
+---
+title: "SQLInstallTranslator Function"
+description: "SQLInstallTranslator Function"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+f1_keywords:
+  - "SQLInstallTranslator"
+helpviewer_keywords:
+  - "SQLInstallTranslator function [ODBC]"
+apilocation: "sqlsrv32.dll"
+apiname: "SQLInstallTranslator"
+apitype: "dllExport"
+---
+# SQLInstallTranslator Function
+**Conformance**  
+ Version Introduced: ODBC 2.5, Deprecated  
+  
+ **Summary**  
+ In ODBC 3.0, **SQLInstallTranslator** has been replaced by [SQLInstallTranslatorEx](sqlinstalltranslatorex-function.md). Calls to **SQLInstallTranslator** will be mapped to **SQLInstallTranslatorEx**. For more information, see **SQLInstallTranslatorEx**.  
+  
+ **SQLInstallTranslator** will return FALSE if an application calls it in the ODBC *3.x* Driver Manager with the *lpszInfFile* argument set to a value other than NULL. The Odbc.inf file used in ODBC *2.x* is no longer supported in ODBC *3.x*, even for backward compatibility.

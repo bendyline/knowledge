@@ -1,0 +1,638 @@
+---
+title: Configure Virtual Networks for Foundry Tools
+titleSuffix: Foundry Tools
+description: Configure layered network security for your Foundry Tools resources.
+author: aahill
+manager: mcleans
+ms.service: foundry-tools
+ms.topic: how-to
+ms.date: 02/17/2026
+ms.author: aahi
+ms.custom:
+  - devx-track-azurepowershell
+  - devx-track-azurecli
+  - sfi-image-nochange
+---
+
+# Configure Foundry Tools virtual networks
+
+Foundry Tools provide a layered security model. This model enables you to secure your Foundry Tools accounts to a specific subset of networks​. When network rules are configured, only applications that request data over the specified set of networks can access the account. You can limit access to your resources with *request filtering*, which allows requests that originate only from specified IP addresses, IP ranges, or from a list of subnets in [Azure Virtual Networks](https://learn.microsoft.com/azure/virtual-network/virtual-networks-overview).
+
+An application that accesses a Foundry resource when network rules are in effect requires authorization. Authorization is supported with [Microsoft Entra ID](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) credentials or with a valid API key.
+
+> **Important:**
+> Turning on firewall rules for your Foundry Tools account blocks incoming requests for data by default. To allow requests through, one of the following conditions needs to be met:
+>
+> - The request originates from a service that operates within an Azure Virtual Network on the allowed subnet list of the target Foundry Tools account. The endpoint request that originated from the virtual network needs to be set as the [custom subdomain](cognitive-services-custom-subdomains.md) of your Foundry Tools account.
+> - The request originates from an allowed list of IP addresses.
+>
+> Requests that are blocked include those from other Azure services, from the Azure portal, and from logging and metrics services.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/updated-for-az.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/cognitive-services-virtual-networks.md)
+
+## Scenarios
+
+To secure your Foundry Tools resource, you should first configure a rule to deny access to traffic from all networks, including internet traffic, by default. Then, configure rules that grant access to traffic from specific virtual networks. This configuration enables you to build a secure network boundary for your applications. You can also configure rules to grant access to traffic from select public internet IP address ranges and enable connections from specific internet or on-premises clients.
+
+Network rules are enforced on all network protocols to Foundry Tools, including REST and WebSocket. To access data by using tools such as the Azure test consoles, explicit network rules must be configured. You can apply network rules to existing Foundry Tools resources, or when you create new Foundry Tools resources. After network rules are applied, they're enforced for all requests.
+
+## Supported regions and service offerings
+
+Virtual networks are supported in [regions where Foundry Tools are available](https://azure.microsoft.com/global-infrastructure/services/). Foundry Tools support service tags for network rules configuration. The services listed here are included in the `CognitiveServicesManagement` service tag.
+
+> 
+> - Anomaly Detector
+> - Azure OpenAI
+> - Content Moderator
+> - Content Understanding
+> - Custom Vision
+> - Document Intelligence 
+> - Face
+> - Language Understanding (LUIS)
+> - Personalizer
+> - Speech service
+> - Language
+> - QnA Maker
+> - Translator
+
+> **Note:**
+> If you use Azure OpenAI, LUIS, Speechs, or Languages, the `CognitiveServicesManagement` tag only enables you to use the service by using the SDK or REST API. To access and use the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs), LUIS portal, Speech Studio, or Language Studio from a virtual network, you need to use the following tags:
+>
+> - `AzureActiveDirectory`
+> - `AzureFrontDoor.Frontend`
+> - `AzureResourceManager`
+> - `CognitiveServicesManagement`
+> - `CognitiveServicesFrontEnd`
+> - `Storage` (Speech Studio only)
+> 
+> For information on [Foundry portal](https://ai.azure.com/?cid=learnDocs) configurations, see the [Foundry documentation](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-foundry/how-to/configure-private-link.md).
+
+## Change the default network access rule
+
+By default, Foundry Tools resources accept connections from clients on any network. To limit access to selected networks, you must first change the default action.
+
+> **Warning:**
+> Making changes to network rules can impact your applications' ability to connect to Foundry Tools. Setting the default network rule to *deny* blocks all access to the data unless specific network rules that *grant* access are also applied.
+>
+> Before you change the default rule to deny access, be sure to grant access to any allowed networks by using network rules. If you allow listing for the IP addresses for your on-premises network, be sure to add all possible outgoing public IP addresses from your on-premises network.
+
+### Manage default network access rules
+
+You can manage default network access rules for Foundry Tools resources through the Azure portal, PowerShell, or the Azure CLI.
+
+# [Azure portal](#tab/portal)
+
+1. Go to the Foundry Tools resource you want to secure.
+
+1. Select **Resource Management** to expand it, then select **Networking**. To deny access by default, under **Firewalls and virtual networks**, select **Selected Networks and Private Endpoints**.
+
+   Screenshot shows the Networking page with Selected Networks and Private Endpoints selected.
+
+   With this setting alone, unaccompanied by configured virtual networks or address ranges, all access is effectively denied. When all access is denied, requests that attempt to consume the Foundry Tools resource aren't permitted. The Azure portal, Azure PowerShell, or the Azure CLI can still be used to configure the Foundry Tools resource.
+
+1. To allow traffic from all networks, select **All networks**.
+
+   Screenshot shows the Networking page with All networks selected.
+
+1. Select **Save** to apply your changes.
+
+# [PowerShell](#tab/powershell)
+
+1. Install the [Azure PowerShell](https://learn.microsoft.com/powershell/azure/install-azure-powershell) and [sign in](https://learn.microsoft.com/powershell/azure/authenticate-azureps), or select **Open Cloudshell**.
+
+1. Display the status of the default rule for the Foundry Tools resource.
+
+   ```azurepowershell-interactive
+   $parameters = @{
+     "ResourceGroupName" = "myresourcegroup"
+     "Name" = "myaccount"
+   }
+   (Get-AzCognitiveServicesAccountNetworkRuleSet @parameters).DefaultAction
+   ```
+
+   You can get values for your resource group `myresourcegroup` and the name of your Azure services resource `myaccount` from the Azure portal.
+
+1. Set the default rule to deny network access.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "DefaultAction" = "Deny"
+    }
+    Update-AzCognitiveServicesAccountNetworkRuleSet @parameters
+    ```
+
+1. Set the default rule to allow network access.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "DefaultAction" = "Allow"
+    }
+    Update-AzCognitiveServicesAccountNetworkRuleSet @parameters
+    ```
+
+# [Azure CLI](#tab/azure-cli)
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) and [sign in](https://learn.microsoft.com/cli/azure/authenticate-azure-cli), or select **Open Cloudshell**.
+
+1. Display the status of the default rule for the Foundry Tools resource.
+
+    ```azurecli-interactive
+    az cognitiveservices account show \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --query properties.networkAcls.defaultAction
+    ```
+
+1. Get the resource ID for use in the later steps.
+
+   ```azurecli-interactive
+   resourceId=$(az cognitiveservices account show
+       --resource-group "myresourcegroup" \
+       --name "myaccount" --query id --output tsv)
+   ```
+
+1. Set the default rule to deny network access by default.
+
+    ```azurecli-interactive
+    az resource update \
+        --ids $resourceId \
+        --set properties.networkAcls="{'defaultAction':'Deny'}"
+    ```
+
+1. Set the default rule to allow network access by default.
+
+    ```azurecli-interactive
+    az resource update \
+        --ids $resourceId \
+        --set properties.networkAcls="{'defaultAction':'Allow'}"
+    ```
+
+***
+
+## Grant access from a virtual network
+
+You can configure Foundry Tools resources to allow access from specific subnets only. The allowed subnets might belong to a virtual network in the same subscription or in a different subscription. The other subscription can belong to a different Microsoft Entra tenant. When the subnet belongs to a different subscription, the Microsoft.CognitiveServices resource provider needs to be also registered for that subscription.
+
+Enable a *service endpoint* for Foundry Tools within the virtual network. The service endpoint routes traffic from the virtual network through an optimal path to Foundry Tools. For more information, see [Virtual Network service endpoints](https://learn.microsoft.com/azure/virtual-network/virtual-network-service-endpoints-overview).
+
+The identities of the subnet and the virtual network are also transmitted with each request. Administrators can then configure network rules for the Foundry Tools resource to allow requests from specific subnets in a virtual network. Clients granted access by these network rules must continue to meet the authorization requirements of the Foundry Tools resource to access the data.
+
+Each Foundry Tools resource supports up to 100 virtual network rules, which can be combined with IP network rules. For more information, see [Grant access from an internet IP range](#grant-access-from-an-internet-ip-range) later in this article.
+
+> **Note:**
+> When configuring IP network rules for your Cognitive Services endpoint, only the IP addresses included in the allowed list can successfully access the endpoint. Requests from IP addresses not listed will be blocked. This ensures that the endpoint is only accessible from authorized networks, reducing exposure to unauthorized or unlisted IPs.
+
+### Set required permissions
+
+To apply a virtual network rule to a Foundry resource, you need the appropriate permissions for the subnets to add. The required permission is the default *Contributor* role or the *Cognitive Services Contributor* role. Required permissions can also be added to custom role definitions.
+
+The Foundry Tools resource and the virtual networks that are granted access might be in different subscriptions, including subscriptions that are part of a different Microsoft Entra tenant.
+
+> **Note:**
+> Configuration of rules that grant access to subnets in virtual networks that are a part of a different Microsoft Entra tenant are currently supported only through PowerShell, the Azure CLI, and the REST APIs. You can view these rules in the Azure portal, but you can't configure them.
+
+### Configure virtual network rules
+
+You can manage virtual network rules for Foundry Tools resources through the Azure portal, PowerShell, or the Azure CLI.
+
+# [Azure portal](#tab/portal)
+
+To grant access to a virtual network with an existing network rule:
+
+1. Go to the Foundry Tools resource you want to secure.
+
+1. Select **Resource Management** to expand it, then select **Networking**.
+
+1. Confirm that you selected **Selected Networks and Private Endpoints**.
+
+1. Under **Allow access from**, select **Add existing virtual network**.
+
+   Screenshot shows the Networking page with Selected Networks and Private Endpoints selected and Add existing virtual network highlighted.
+
+1. Select the **Virtual networks** and **Subnets** options, and then select **Enable**.
+
+   Screenshot shows the Add networks dialog box where you can enter a virtual network and subnet.
+
+   > **Note:**
+   > If a service endpoint for Foundry Tools wasn't previously configured for the selected virtual network and subnets, you can configure it as part of this operation.
+   >
+   > Currently, only virtual networks that belong to the same Microsoft Entra tenant are available for selection during rule creation. To grant access to a subnet in a virtual network that belongs to another tenant, use PowerShell, the Azure CLI, or the REST APIs.
+
+1. Select **Save** to apply your changes.
+
+To create a new virtual network and grant it access:
+
+1. On the same page as the previous procedure, select **Add new virtual network**.
+
+   Screenshot shows the Networking page with Selected Networks and Private Endpoints selected and Add new virtual network highlighted.
+
+1. Provide the information necessary to create the new virtual network, and then select **Create**.
+
+   Screenshot shows the Create virtual network dialog box.
+
+1. Select **Save** to apply your changes.
+
+To remove a virtual network or subnet rule:
+
+1. On the same page as the previous procedures, select **...(More options)** to open the context menu for the virtual network or subnet, and select **Remove**.
+
+   Screenshot shows the option to remove a virtual network.
+
+1. Select **Save** to apply your changes.
+
+# [PowerShell](#tab/powershell)
+
+1. Install the [Azure PowerShell](https://learn.microsoft.com/powershell/azure/install-azure-powershell) and [sign in](https://learn.microsoft.com/powershell/azure/authenticate-azureps), or select **Open Cloudshell**.
+
+1. List the configured virtual network rules.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+       "ResourceGroupName" = "myresourcegroup"
+       "Name" = "myaccount"
+    }
+    (Get-AzCognitiveServicesAccountNetworkRuleSet @parameters).VirtualNetworkRules
+    ```
+
+1. Enable a service endpoint for Foundry Tools on an existing virtual network and subnet.
+
+    ```azurepowershell-interactive
+    Get-AzVirtualNetwork -ResourceGroupName "myresourcegroup" `
+        -Name "myvnet" | Set-AzVirtualNetworkSubnetConfig -Name "mysubnet" `
+        -AddressPrefix "CIDR" `
+        -ServiceEndpoint "Microsoft.CognitiveServices" | Set-AzVirtualNetwork
+    ```
+
+1. Add a network rule for a virtual network and subnet.
+
+    ```azurepowershell-interactive
+    $subParameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myvnet"
+    }
+    $subnet = Get-AzVirtualNetwork @subParameters | Get-AzVirtualNetworkSubnetConfig -Name "mysubnet"
+
+    $parameters = @{
+        -ResourceGroupName "myresourcegroup"
+        -Name "myaccount"
+        -VirtualNetworkResourceId $subnet.Id
+    }
+    Add-AzCognitiveServicesAccountNetworkRule @parameters
+    ```
+
+    > **Tip:**
+    > To add a network rule for a subnet in a virtual network that belongs to another Microsoft Entra tenant, use a fully-qualified `VirtualNetworkResourceId` parameter in the form `/subscriptions/subscription-ID/resourceGroups/resourceGroup-Name/providers/Microsoft.Network/virtualNetworks/vNet-name/subnets/subnet-name`.
+
+1. Remove a network rule for a virtual network and subnet.
+
+    ```azurepowershell-interactive
+    $subParameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myvnet"
+    }
+    $subnet = Get-AzVirtualNetwork @subParameters | Get-AzVirtualNetworkSubnetConfig -Name "mysubnet"
+
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "VirtualNetworkResourceId" = $subnet.Id
+    }
+    Remove-AzCognitiveServicesAccountNetworkRule @parameters
+    ```
+
+# [Azure CLI](#tab/azure-cli)
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) and [sign in](https://learn.microsoft.com/cli/azure/authenticate-azure-cli), or select **Open Cloudshell**.
+
+1. List the configured virtual network rules.
+
+    ```azurecli-interactive
+    az cognitiveservices account network-rule list \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --query virtualNetworkRules
+    ```
+
+1. Enable a service endpoint for Foundry Tools on an existing virtual network and subnet.
+
+    ```azurecli-interactive
+    az network vnet subnet update --resource-group "myresourcegroup" --name "mysubnet" \
+    --vnet-name "myvnet" --service-endpoints "Microsoft.CognitiveServices"
+    ```
+
+1. Add a network rule for a virtual network and subnet.
+
+    ```azurecli-interactive
+    subnetid=$(az network vnet subnet show \
+        --resource-group "myresourcegroup" --name "mysubnet" --vnet-name "myvnet" \
+        --query id --output tsv)
+
+    # Use the captured subnet identifier as an argument to the network rule addition
+    az cognitiveservices account network-rule add \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --subnet $subnetid
+    ```
+
+    > **Tip:**
+    > To add a rule for a subnet in a virtual network that belongs to another Microsoft Entra tenant, use a fully-qualified subnet ID in the form `/subscriptions/subscription-ID/resourceGroups/resourceGroup-Name/providers/Microsoft.Network/virtualNetworks/vNet-name/subnets/subnet-name`.
+    > 
+    > You can use the `--subscription` parameter to retrieve the subnet ID for a virtual network that belongs to another Microsoft Entra tenant.
+
+1. Remove a network rule for a virtual network and subnet.
+
+    ```azurecli-interactive
+    $subnetid=(az network vnet subnet show \
+        --resource-group "myresourcegroup" --name "mysubnet" --vnet-name "myvnet" \
+        --query id --output tsv)
+
+    # Use the captured subnet identifier as an argument to the network rule removal
+    az cognitiveservices account network-rule remove \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --subnet $subnetid
+    ```
+
+***
+
+> **Important:**
+> Be sure to [set the default rule](#change-the-default-network-access-rule) to *deny*, or network rules have no effect.
+
+## Grant access from an internet IP range
+
+You can configure Foundry Tools resources to allow access from specific public internet IP address ranges. This configuration grants access to specific services and on-premises networks, which effectively block general internet traffic.
+
+You can specify the allowed internet address ranges by using [CIDR format (RFC 4632)](https://tools.ietf.org/html/rfc4632) in the form `192.168.0.0/16` or as individual IP addresses like `192.168.0.1`.
+
+   > **Tip:**
+   > Small address ranges that use `/31` or `/32` prefix sizes aren't supported. Configure these ranges by using individual IP address rules.
+
+IP network rules are only allowed for *public internet* IP addresses. IP address ranges reserved for private networks aren't allowed in IP rules. Private networks include addresses that start with `10.*`, `172.16.*` - `172.31.*`, and `192.168.*`. For more information, see [Private Address Space (RFC 1918)](https://tools.ietf.org/html/rfc1918#section-3).
+
+Currently, only IPv4 addresses are supported. Each Foundry Tools resource supports up to 100 IP network rules, which can be combined with [virtual network rules](#grant-access-from-a-virtual-network).
+
+### Configure access from on-premises networks
+
+To grant access from your on-premises networks to your Foundry Tools resource with an IP network rule, identify the internet-facing IP addresses used by your network. Contact your network administrator for help.
+
+If you use Azure ExpressRoute on-premises for Microsoft peering, you need to identify the NAT IP addresses. For more information, see [What is Azure ExpressRoute](https://learn.microsoft.com/azure/expressroute/expressroute-introduction).
+
+For Microsoft peering, the NAT IP addresses that are used are either customer provided or supplied by the service provider. To allow access to your service resources, you must allow these public IP addresses in the resource IP firewall setting.
+
+### Managing IP network rules
+
+You can manage IP network rules for Foundry Tools resources through the Azure portal, PowerShell, or the Azure CLI.
+
+# [Azure portal](#tab/portal)
+
+1. Go to the Foundry Tools resource you want to secure.
+
+1. Select **Resource Management** to expand it, then select **Networking**.
+
+1. Confirm that you selected **Selected Networks and Private Endpoints**.
+
+1. Under **Firewalls and virtual networks**, locate the **Address range** option. To grant access to an internet IP range, enter the IP address or address range (in [CIDR format](#grant-access-from-an-internet-ip-range)). Only valid public IP (nonreserved) addresses are accepted.
+
+   Screenshot shows the Networking page with Selected Networks and Private Endpoints selected and the Address range highlighted.
+
+   To remove an IP network rule, select the trash can <span class="docon docon-delete x-hidden-focus"></span> icon next to the address range.
+
+1. Select **Save** to apply your changes.
+
+# [PowerShell](#tab/powershell)
+
+1. Install the [Azure PowerShell](https://learn.microsoft.com/powershell/azure/install-azure-powershell) and [sign in](https://learn.microsoft.com/powershell/azure/authenticate-azureps), or select **Open Cloudshell**.
+
+1. List the configured IP network rules.
+
+   ```azurepowershell-interactive
+   $parameters = @{
+     "ResourceGroupName" = "myresourcegroup"
+     "Name" = "myaccount"
+   }
+   (Get-AzCognitiveServicesAccountNetworkRuleSet @parameters).IPRules
+   ```
+
+1. Add a network rule for an individual IP address.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "IPAddressOrRange" = "ipaddress"
+    }
+    Add-AzCognitiveServicesAccountNetworkRule @parameters
+    ```
+
+1. Add a network rule for an IP address range.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "IPAddressOrRange" = "CIDR"
+    }
+    Add-AzCognitiveServicesAccountNetworkRule @parameters
+    ```
+
+1. Remove a network rule for an individual IP address.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "IPAddressOrRange" = "ipaddress"
+    }
+    Remove-AzCognitiveServicesAccountNetworkRule @parameters
+    ```
+
+1. Remove a network rule for an IP address range.
+
+    ```azurepowershell-interactive
+    $parameters = @{
+        "ResourceGroupName" = "myresourcegroup"
+        "Name" = "myaccount"
+        "IPAddressOrRange" = "CIDR"
+    }
+    Remove-AzCognitiveServicesAccountNetworkRule @parameters
+    ```
+
+# [Azure CLI](#tab/azure-cli)
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) and [sign in](https://learn.microsoft.com/cli/azure/authenticate-azure-cli), or select **Open Cloudshell**.
+
+1. List the configured IP network rules.
+
+    ```azurecli-interactive
+    az cognitiveservices account network-rule list \
+        --resource-group "myresourcegroup" --name "myaccount" --query ipRules
+    ```
+
+1. Add a network rule for an individual IP address.
+
+    ```azurecli-interactive
+    az cognitiveservices account network-rule add \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --ip-address "ipaddress"
+    ```
+
+1. Add a network rule for an IP address range.
+
+    ```azurecli-interactive
+    az cognitiveservices account network-rule add \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --ip-address "CIDR"
+    ```
+
+1. Remove a network rule for an individual IP address.
+
+    ```azurecli-interactive
+    az cognitiveservices account network-rule remove \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --ip-address "ipaddress"
+    ```
+
+1. Remove a network rule for an IP address range.
+
+    ```azurecli-interactive
+    az cognitiveservices account network-rule remove \
+        --resource-group "myresourcegroup" --name "myaccount" \
+        --ip-address "CIDR"
+    ```
+
+***
+
+> **Important:**
+> Be sure to [set the default rule](#change-the-default-network-access-rule) to *deny*, or network rules have no effect.
+
+## Use private endpoints
+
+You can use [private endpoints](https://learn.microsoft.com/azure/private-link/private-endpoint-overview) for your Foundry Tools resources to allow clients on a virtual network to securely access data over  [Azure Private Link](https://learn.microsoft.com/azure/private-link/private-link-overview). The private endpoint uses an IP address from the virtual network address space for your Foundry Tools resource. Network traffic between the clients on the virtual network and the resource traverses the virtual network and a private link on the Microsoft Azure backbone network, which eliminates exposure from the public internet.
+
+Private endpoints for Foundry Tools resources let you:
+
+- Secure your Foundry Tools resource by configuring the firewall to block all connections on the public endpoint for Foundry Tools.
+- Increase security for the virtual network, by enabling you to block exfiltration of data from the virtual network.
+- Securely connect to Foundry Tools resources from on-premises networks that connect to the virtual network by using [Azure VPN Gateway](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-about-vpngateways) or [ExpressRoutes](https://learn.microsoft.com/azure/expressroute/expressroute-locations) with private-peering.
+
+### Understand private endpoints
+
+A private endpoint is a special network interface for an Azure resource in your [virtual network](https://learn.microsoft.com/azure/virtual-network/virtual-networks-overview). Creating a private endpoint for your Foundry Tools resource provides secure connectivity between clients in your virtual network and your resource. The private endpoint is assigned an IP address from the IP address range of your virtual network. The connection between the private endpoint and Foundry Tools uses a secure private link.
+
+Applications in the virtual network can connect to the service over the private endpoint seamlessly. Connections use the same connection strings and authorization mechanisms that they would use otherwise. The exception is Speechs, which require a separate endpoint. For more information, see [Private endpoints with the Speechs](#use-private-endpoints-with-the-speech-service) in this article. Private endpoints can be used with all protocols supported by the Foundry Tools resource, including REST.
+
+Private endpoints can be created in subnets that use service endpoints. Clients in a subnet can connect to one Foundry Tools resource using private endpoint, while using service endpoints to access others. For more information, see [Virtual Network service endpoints](https://learn.microsoft.com/azure/virtual-network/virtual-network-service-endpoints-overview).
+
+When you create a private endpoint for a Foundry resource in your virtual network, Azure sends a consent request for approval to the Foundry Tools resource owner. If the user who requests the creation of the private endpoint is also an owner of the resource, this consent request is automatically approved.
+
+Foundry Tools resource owners can manage consent requests and the private endpoints through the **Private endpoint connection** tab for the Foundry Tools resource in the [Azure portal](https://portal.azure.com).
+
+### Specify private endpoints
+
+When you create a private endpoint, specify the Foundry Tools resource that it connects to. For more information on creating a private endpoint, see:
+
+- [Create a private endpoint by using the Azure portal](https://learn.microsoft.com/azure/private-link/create-private-endpoint-portal)
+- [Create a private endpoint by using Azure PowerShell](https://learn.microsoft.com/azure/private-link/create-private-endpoint-powershell)
+- [Create a private endpoint by using the Azure CLI](https://learn.microsoft.com/azure/private-link/create-private-endpoint-cli)
+
+### Connect to private endpoints
+
+> **Note:**
+> Azure OpenAI in Foundry Models uses a different private DNS zone and public DNS zone forwarder than other Foundry Tools. For the correct zone and forwarder names, see [Azure services DNS zone configuration](https://learn.microsoft.com/azure/private-link/private-endpoint-dns#azure-services-dns-zone-configuration).
+
+> **Warning:**
+> Requests from clients to the private endpoint MUST specify the [custom subdomain](https://learn.microsoft.com/azure/ai-services/cognitive-services-custom-subdomains) of your Foundry Tools resource as the endpoint base URL. Do NOT call the internal URL `*.privatelink.openai.azure.com` which is part of the intermediary CNAME resolution internal to Azure.
+
+Clients on a virtual network that use the private endpoint use the same connection string for the Foundry Tools resource as clients connecting to the public endpoint. The exception is the Speech service, which requires a separate endpoint. For more information, see [Use private endpoints with the Speech service](#use-private-endpoints-with-the-speech-service) in this article. DNS resolution automatically routes the connections from the virtual network to the Foundry Tools resource over a private link.
+
+By default, Azure creates a [private DNS zone](https://learn.microsoft.com/azure/dns/private-dns-overview) attached to the virtual network with the necessary updates for the private endpoints. If you use your own DNS server, you might need to make more changes to your DNS configuration. For updates that might be required for private endpoints, see [Apply DNS changes for private endpoints](#apply-dns-changes-for-private-endpoints) in this article.
+
+### Use private endpoints with the Speech service
+
+See [Use Speech service through a private endpoint](speech-service/speech-services-private-link.md).
+
+### Apply DNS changes for private endpoints
+
+When you create a private endpoint, the DNS `CNAME` resource record for the Foundry Tools resource is updated to an alias in a subdomain with the prefix `privatelink`. By default, Azure also creates a private DNS zone that corresponds to the `privatelink` subdomain, with the DNS A resource records for the private endpoints. For more information, see [What is Azure Private DNS](https://learn.microsoft.com/azure/dns/private-dns-overview).
+
+When you resolve the endpoint URL from outside the virtual network with the private endpoint, it resolves to the public endpoint of the Foundry Tools resource. When it's resolved from the virtual network hosting the private endpoint, the endpoint URL resolves to the private endpoint's IP address.
+
+This approach enables access to the Foundry Tools resource using the same connection string for clients in the virtual network that hosts the private endpoints and clients outside the virtual network.
+
+If you use a custom DNS server on your network, clients must be able to resolve the fully qualified domain name (FQDN) for the Foundry Tools resource endpoint to the private endpoint IP address. Configure your DNS server to delegate your private link subdomain to the private DNS zone for the virtual network.
+
+> **Tip:**
+> When you use a custom or on-premises DNS server, you should configure your DNS server to resolve the Foundry Tools resource name in the `privatelink` subdomain to the private endpoint IP address. Delegate the `privatelink` subdomain to the private DNS zone of the virtual network. Alternatively, configure the DNS zone on your DNS server and add the DNS A records.
+
+For more information on configuring your own DNS server to support private endpoints, see the following resources:
+
+- [Name resolution that uses your own DNS server](https://learn.microsoft.com/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances#name-resolution-that-uses-your-own-dns-server)
+- [DNS configuration](https://learn.microsoft.com/azure/private-link/private-endpoint-overview#dns-configuration)
+
+## Grant access to trusted Azure services for Azure OpenAI
+
+You can grant a subset of trusted Azure services access to Azure OpenAI, while maintaining network rules for other apps. These trusted services will then use managed identity to authenticate your Azure OpenAI service. The following table lists the services that can access Azure OpenAI if the managed identity of those services have the appropriate role assignment.
+
+
+| Service | Resource provider name |
+| --- | --- |
+| Foundry Tools | `Microsoft.CognitiveServices` |
+| Azure Machine Learning | `Microsoft.MachineLearningServices` |
+| Azure Search | `Microsoft.Search` |
+
+
+You can grant networking access to trusted Azure services by creating a network rule exception using the REST API or Azure portal:
+
+### Using the Azure CLI
+
+```bash
+
+accessToken=$(az account get-access-token --resource https://management.azure.com --query "accessToken" --output tsv)
+rid="/subscriptions/<your subscription id>/resourceGroups/<your resource group>/providers/Microsoft.CognitiveServices/accounts/<your Foundry Tools resource name>"
+
+curl -i -X PATCH https://management.azure.com$rid?api-version=2023-10-01-preview \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $accessToken" \
+-d \
+'
+{
+    "properties":
+    {
+        "networkAcls": {
+            "bypass": "AzureServices"
+        }
+    }
+}
+'
+```
+
+To revoke the exception, set `networkAcls.bypass` to `None`. 
+
+To verify if the trusted service has been enabled from the Azure portal, 
+
+1. Use the **JSON View** from the Azure OpenAI resource overview page
+
+    A screenshot showing the JSON view option for resources in the Azure portal.
+
+1.  Choose your latest API version under **API versions**. Only the latest API version is supported, `2023-10-01-preview` .
+
+    A screenshot showing the trusted service is enabled.
+
+### Using the Azure portal
+
+1. Navigate to your Azure OpenAI resource, and select **Networking** from the navigation menu. 
+1. Under **Exceptions**, select **Allow Azure services on the trusted services list to access this cognitive services account.**
+    > **Tip:**
+    > You can view the **Exceptions** option by selecting either **Selected networks and private endpoints** or **Disabled** under **Allow access from**.    
+
+    A screenshot showing the networking settings for a resource in the Azure portal.
+***
+
+### Pricing
+
+For pricing details, see [Azure Private Link pricing](https://azure.microsoft.com/pricing/details/private-link).
+
+## Next steps
+
+- Explore the various [Foundry Tools](what-are-ai-services.md)
+- Learn more about [Virtual Network service endpoints](https://learn.microsoft.com/azure/virtual-network/virtual-network-service-endpoints-overview)

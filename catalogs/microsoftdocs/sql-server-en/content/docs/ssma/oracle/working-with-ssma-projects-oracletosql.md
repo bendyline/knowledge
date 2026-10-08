@@ -1,0 +1,142 @@
+---
+title: Work with SSMA Projects (OracleToSQL)
+description: Learn how to create, customize, save, and open projects in SQL Server Migration Assistant (SSMA) for Oracle.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: niball
+ms.date: 04/20/2026
+ms.service: sql
+ms.subservice: ssma
+ms.topic: how-to
+ms.collection:
+  - sql-migration-content
+f1_keywords:
+  - "ssma.oracle.workplacedialog.f1"
+helpviewer_keywords:
+  - "Customizing Project Settings"
+---
+# Work with SSMA projects (OracleToSQL)
+
+To migrate Oracle databases to  SQL Server 
+, you first create an SSMA project. The project is a file that contains the following information:
+
+- Metadata about the Oracle databases you want to migrate to  SQL Server 
+.
+- Metadata about the target instance of  SQL Server 
+ that receive the migrated objects and data.
+-  SQL Server 
+ connection information.
+- Project settings.
+
+When you open a project, it's disconnected from Oracle and  SQL Server 
+. That lets you work offline. For information about reconnecting to  SQL Server 
+, see [Connecting to SQL Server (OracleToSQL)](connecting-to-sql-server-oracletosql.md).
+
+## Review default project settings
+
+SSMA contains several settings for converting and loading database objects, migrating data, and synchronizing SSMA with Oracle and  SQL Server 
+. The default settings are appropriate for many users. However, before you create a new SSMA project, you should review the settings. If you want to, you can change the default settings that will be used for all your new projects.
+
+#### Review default project settings
+
+1. On the **Tools** menu, select **Default Project Settings**.
+
+1. Select the project type in **Migration Target Version** dropdown list for which settings are required to be viewed or changed and then Select **General** tab.
+
+1. In the left pane, select **Conversion**.
+
+1. In the right pane, review and change the settings as necessary. For more information about these settings, see [Project Settings (Conversion) (OracleToSQL)](project-settings-conversion-oracletosql.md).
+
+1. Repeat Steps 1-3 for the Migration, Synchronization, Loading System Objects, GUI, and Type Mapping pages.
+
+   - For information about migration settings, see [Project Settings (Migration) (OracleToSQL)](project-settings-migration-oracletosql.md).
+
+   - For information about system object settings, see [Project Settings (Loading System objects) (OracleToSQL)](project-settings-loading-system-objects-oracletosql.md).
+
+   - For information about settings for synchronization to  SQL Server 
+, see [Project Settings (Synchronization) (OracleToSQL)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/ssma/oracle/project-settings-synchronization-oracletosql.md).
+
+   - For information about GUI settings, see [Project Settings (GUI) (OracleToSQL)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/ssma/oracle/project-settings-gui-oracletosql.md).
+
+   - For information about data type mapping settings, see [Project Settings (Type Mapping) (OracleToSQL)](project-settings-type-mapping-oracletosql.md).
+
+## Create new projects
+
+To migrate data from Oracle databases to  SQL Server 
+, you must first create a project.
+
+#### Create a project
+
+1. On the **File** menu, select **New Project**.
+
+   The **New Project** dialog box appears.
+
+1. In the **Name** box, enter a name for your project.
+
+1. In the **Location** box, enter or select a folder for the project, and then select **OK**.
+
+1. In the **Migration To** dropdown list, select the version of target  SQL Server 
+ used for migration. The options available are:
+
+      -  SQL Server 2019 (15.x) 
+ on Windows and Linux
+   -  SQL Server 2022 (16.x) 
+ on Windows and Linux
+   -  SQL Server 2025 (17.x) 
+ on Windows and Linux
+   -  Azure SQL Database 
+
+   - Azure SQL Managed Instance
+
+
+   And then select **OK**.
+
+## Customize project settings
+
+In addition to defining default project settings that apply to all new SSMA projects, you can customize the settings for each project. For more information, see [Set project options (OracleToSQL)](setting-project-options-oracletosql.md).
+
+When you customize data type mappings between source and target databases, you can define mappings at the project, database, or object level. For more information, see [Map Oracle and SQL Server data types (OracleToSQL)](mapping-oracle-and-sql-server-data-types-oracletosql.md).
+
+## Save projects
+
+When you save a project, SSMA retains the project settings, and optionally the database metadata, to the project file.
+
+#### Save a project
+
+- On the **File** menu, select **Save Project**.
+
+  If schemas in the project have changed or haven't been converted, SSMA prompts you to load and save metadata. Loading and saving metadata lets you work offline. It also lets you send a complete project file to other people, such as technical support personnel. If you're prompted to save metadata, do the following:
+
+  1. For each schema that shows a status of **Metadata missing**, select the check box next to the database name.
+
+     Saving metadata might take several minutes. If you don't want to save metadata yet, don't select any check boxes.
+
+  1. Select the **Save** button.
+
+     SSMA parses the Oracle schemas and saves the metadata to the project file.
+
+## Open projects
+
+When you open a project, it's disconnected from Oracle and from  SQL Server 
+. That lets you work offline. To update metadata, load database objects into  SQL Server 
+. To migrate data, you must reconnect to Oracle and  SQL Server 
+.
+
+#### Open a project
+
+1. Use one of the following procedures:
+
+   - On the **File** menu, point to **Recent Projects**, and then select the project you want to open.
+
+   - On the **File** menu, select **Open Project**, locate the `.o2ssproj` project file, select the file, and then select **Open**.
+
+1. To reconnect to Oracle, on the **File** menu, select **Reconnect to Oracle**.
+
+1. To reconnect to  SQL Server 
+, on the **File** menu, select **Reconnect to SQL Server**.
+
+## Related content
+
+- [Migrate Oracle Databases to SQL Server](migrating-oracle-databases-to-sql-server-oracletosql.md)
+- [Connecting to Oracle Database](connecting-to-oracle-database-oracletosql.md)
+- [Connecting to SQL Server](connecting-to-sql-server-oracletosql.md)

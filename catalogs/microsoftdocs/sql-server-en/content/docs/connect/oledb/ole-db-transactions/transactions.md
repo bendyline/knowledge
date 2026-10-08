@@ -1,0 +1,60 @@
+---
+title: Transactions (OLE DB driver)
+description: Learn how the OLE DB Driver for SQL Server supports local transactions. Use the Microsoft Distributed Transaction Coordinator for distributed transactions.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "06/14/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "OLE DB, transactions"
+  - "transactions [OLE DB]"
+  - "OLE DB Driver for SQL Server, transactions"
+---
+# Transactions
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  The OLE DB Driver for SQL Server implements local transaction support. The consumer can use distributed or coordinated transactions by using Microsoft Distributed Transaction Coordinator (MS DTC). For consumers requiring transaction control that spans multiple sessions, the OLE DB Driver for SQL Server can join transactions initiated and maintained by MS DTC.  
+  
+ By default, the OLE DB Driver for SQL Server uses an autocommit transaction mode, where each discrete action on a consumer session comprises a complete transaction against an instance of  SQL Server 
+. The OLE DB Driver for SQL Server autocommit mode is local, and autocommit transactions never span more than a single session.  
+  
+ The OLE DB Driver for SQL Server exposes the **ITransactionLocal** interface, allowing the consumer to use explicitly and implicitly start transactions on a single connection to an instance of  SQL Server 
+. The OLE DB Driver for SQL Server does not support nested local transactions.  
+  
+## In This Section  
+  
+-   [Supporting Local Transactions](supporting-local-transactions.md)  
+  
+-   [Supporting Distributed Transactions](supporting-distributed-transactions.md)  
+  
+-   [Isolation Levels (OLE DB)](isolation-levels-ole-db.md)  
+  
+## Related content
+
+- [OLE DB Driver for SQL Server Programming](../ole-db/oledb-driver-for-sql-server-programming.md)

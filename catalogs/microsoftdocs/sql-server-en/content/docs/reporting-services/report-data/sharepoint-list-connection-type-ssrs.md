@@ -1,0 +1,176 @@
+---
+title: "SharePoint List Connection Type"
+description: Use the information in this article about the SharePoint List connection type to learn how to build a data source.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+# SharePoint List Connection Type (SSRS)
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+ 
+
+
+
+
+To include data from a Microsoft SharePoint list in your report, you must add or create a dataset that is based on a report data source of type Microsoft SharePoint List. This is a built-in data source type based on the Microsoft SQL Server Reporting Services SharePoint List data extension. Use this data source type to connect to and retrieve list data from SharePoint 2013 and later.
+
+Use the information in this topic to build a data source. For step-by-step instructions, see [Add and Verify a Data Connection (Report Builder and SSRS)](add-and-verify-a-data-connection-report-builder-and-ssrs.md).  
+
+##  <a name="Connection"></a> Connection String  
+ The connection string to a SharePoint list is the URL to the SharePoint site or subsite, for example, `https://MySharePointWeb/MySharePointSite` or `https://MySharePointWeb/MySharePointSite/Subsite`.  
+  
+ The query designer automatically displays the SharePoint lists that you have sufficient permissions to access.  
+  
+ For more connection string examples, see [Create data connection strings - Report Builder & SSRS](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md).  
+  
+##  <a name="Credentials"></a> Credentials  
+ Credentials are required to run queries, to preview the report locally, and to preview the report from the report server. After you publish your report, you may need to change the credentials for the data source so that when the report runs on the report server, the permissions to retrieve the data are valid. The types of credentials that can be used with this data extension depend on the SharePoint technology configuration for the SharePoint list that you are using as a data source.  
+  
+ The following tables outline credential retrieval behavior for the SharePoint list extension, when connecting to a local farm SharePoint list and to a remote SharePoint list.  
+  
+ **Table 1** is for reports deployed to a legacy Windows SharePoint Site. A legacy Windows site supports only Kerberos, NTLM, and Forms Based Authentication (FBA). **Table 2** is for reports deployed to a Claims-based SharePoint site.  
+  
+ **Table 1**  
+  
+| Retrieval Type | Supported Credentials | Classic Mode Windows Authentication | *Claims Authentication |
+| --- | --- | --- | --- |
+| Local farm SharePoint List | Windows Authentication (integrated) or SharePoint User Token | Yes | Yes |
+|  | Stored, Prompt, None (with Windows credentials)<br /><br /> Stored and prompt credentials with non-Windows credentials is not supported. | Yes | No |
+| Remote SharePoint List | Windows Authentication (integrated) or SharePoint User Token | Yes | No<br /><br /> Forms-based authentication and Claims authentication are not supported for remote SharePoint lists. |
+|  | Stored, Prompt, None (with Windows credentials)<br /><br /> Stored and prompt credentials with non-Windows credentials is not supported. | Yes | No<br /><br /> Forms-based authentication and Claims authentication are not supported for remote SharePoint lists. |
+  
+ *Windows authentication, Forms Based authentication (FBA), Secure Application Markup Language (SAML) tokens, other identity providers or a combination of more than one of the above mentioned authentication providers.  
+  
+ **Table 2**  
+  
+| Retrieval Type | Supported Credentials | Classic Mode Windows Authentication | *Claims Authentication |
+| --- | --- | --- | --- |
+| Local Farm SharePoint List | Windows Authentication (integrated) or SharePoint User Token | Yes | Yes |
+|  | Stored, Prompt, None (with Windows credentials)<br /><br /> Stored and prompt credentials with non-Windows credentials is not supported. | No | No |
+| Remote SharePoint List | Windows Authentication (integrated) or SharePoint User Token | Yes | No<br /><br /> Forms-based authentication and Claims authentication are not supported for remote SharePoint lists. |
+|  | Stored, Prompt, None (with Windows credentials)<br /><br /> Stored and prompt credentials with non-Windows credentials is not supported. | No | No<br /><br /> Forms-based authentication and Claims authentication are not supported for remote SharePoint lists. |
+  
+ *Windows authentication, Forms Based authentication (FBA), Secure Application Markup Language (SAML) tokens, other identity providers or a combination of more than one of the above mentioned authentication providers.  
+  
+ **Windows Authentication**  
+ For a SharePoint technology that is configured to work with a report server in Trusted Account mode, this option is not supported. This applies only to releases prior to SQL Server 2012 Reporting Services.
+
+ For a SharePoint technology that is configured to work with a report server in Windows Integrated mode, this option applies to both the current Windows user and the current SharePoint user.
+ 
+ For a SharePoint technology that is configured to work without a Report Server (local mode), this option is not supported. For more information on local mode, see [Local Mode vs. Connected Mode Reports in the Report Viewer (Reporting Services in SharePoint Mode)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/reporting-services/report-server-sharepoint/local-mode-vs-connected-mode-reports-in-the-report-viewer.md).  
+  
+ **Credentials are not required (Do not use credentials):**  
+ To use this option, the unattended execution account must be configured on the report server. For more information, see [Configure the Unattended Execution Account (Report Server Configuration Manager)](../install-windows/configure-the-unattended-execution-account-ssrs-configuration-manager.md).  
+  
+For more information, see [Create data connection strings - Report Builder & SSRS](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md), [Specify Credential and Connection Information for Report Data Sources](specify-credential-and-connection-information-for-report-data-sources.md), and [Data Sources Supported by Reporting Services (SSRS)](data-sources-supported-by-reporting-services-ssrs.md).  
+  
+##  <a name="Query"></a> Queries  
+ To design a query, create a new dataset based on the data source, and then open the associated query designer. For more information, see [Create a Shared Dataset or Embedded Dataset (Report Builder and SSRS)](create-a-shared-dataset-or-embedded-dataset-report-builder-and-ssrs.md).  
+  
+ The SharePoint List graphical query designer displays four panes:  
+  
+ **SharePoint Lists**  Displays a list of all the SharePoint lists on the site for this data source. Select a list and then select the fields that you want in your query. The names of fields in this pane are the SharePoint friendly names, also known as display names. Hover over an item to display the following properties in the tooltip:  
+  
+-   **Name** The unique name of the field.  
+  
+-   **Identifier** The unique identifier of the field.  
+  
+-   **Field Type** The data type of the field.  
+  
+-   **Hidden** Whether the field displays in the SharePoint list view.  
+  
+ Selecting fields from multiple lists is not supported. You can create a dataset for each list and select fields from each dataset. If the lists have a common field, you can use the Lookup function in a tablix data region that is bound to one dataset to retrieve a value from the other dataset that is not bound to the data region. For more information, see [Lookup Function (Report Builder and SSRS)](../report-design/report-builder-functions-lookup-function.md).  
+  
+-   **Selected Fields**  Displays the fields that you have selected. The names of fields in this pane are friendly names that a SharePoint user has specified. When you close the query designer, you see these names in the dataset field collection in the Report Data pane. The relationship between unique names and friendly names is available in the [Dataset Properties Dialog Box, Fields (Report Builder)](dataset-fields-collection-report-builder-and-ssrs.md) page.  
+  
+-   **Applied Filters**  Limits the data that is returned from the SharePoint list, before the data is returned to the report. Select the field name, operator, and value to use to limit the data that is retrieved in the list. The operators vary depending on the data type of the value that you select.  
+  
+     You cannot change the sort order or specify groups in the graphical query designer. To do that, set sort expressions on the report dataset, and group expressions on the data regions in the report. Query parameters are not supported. To filter data in the report, use report filters or report parameters that you create. For more information, see [Filter, Group, and Sort Data (Report Builder and SSRS)](../report-design/filter-group-and-sort-data-report-builder-and-ssrs.md) and [Report Parameters (Report Builder and Report Designer)](../report-design/report-parameters-report-builder-and-report-designer.md).  
+  
+-   **Query Results**  Displays example rows that are returned when the query runs. If the SharePoint list values change frequently on the SharePoint site, the values that you see in the query results pane might differ from the values that you see in the report.  
+  
+-   **Selected Fields**  Displays the fields that you have selected. The names of fields in this pane are friendly names that a SharePoint user has specified. When you close the query designer, you see these names in the dataset field collection in the Report Data pane. The relationship between unique names and friendly names is available in the [Dataset Properties Dialog Box, Fields (Report Builder)](dataset-fields-collection-report-builder-and-ssrs.md) page.  
+  
+-   **Applied Filters**  Limits the data that is returned from the SharePoint list, before the data is returned to the report. Select the field name, operator, and value to use to limit the data that is retrieved in the list. The operators vary depending on the data type of the value that you select.  
+  
+     You cannot change the sort order or specify groups in the graphical query designer. To do that, set sort expressions on the report dataset, and group expressions on the data regions in the report. Query parameters are not supported. To filter data in the report, use report filters or report parameters that you create. For more information, see [Filter, Group, and Sort Data (Report Builder and SSRS)](../report-design/filter-group-and-sort-data-report-builder-and-ssrs.md) and [Report Parameters (Report Builder and Report Designer)](../report-design/report-parameters-report-builder-and-report-designer.md).  
+  
+-   **Query Results**  Displays example rows that are returned when the query runs. If the SharePoint list values change frequently on the SharePoint site, the values that you see in the query results pane might differ from the values that you see in the report.  
+  
+ For more information, see [SharePoint List Query Designer (Report Builder)](sharepoint-list-query-designer-report-builder.md).  
+  
+### Query Text  
+ To view the query that is generated by the graphical query designer, switch to the text-based query designer. In this view, you can see the XML that is created by the graphical query designer. The XML includes elements for the list name, the field collection, and the filter.  
+  
+#### Example 1. Specified fields for a list  
+ The following example shows a well-formed SharePoint query:  
+  
+```  
+<RSSharePointList>  
+<listName>MyList</listName>  
+<viewFields>  
+  <FieldRef Name="Field1"/>  
+  <FieldRef Name="Field4"/>  
+</viewFields>  
+<Query>  
+  <Where>  
+    <And>  
+      <Gt>  
+        <FieldRef Name="Field1"/>  
+        <Value Type="Integer">1</Value>  
+      </Gt>  
+      <IsNotNull>  
+        <FieldRef Name="Field2"/>  
+        <Value Type="string"/>  
+      </IsNotNull>   
+    </And>  
+  </Where>  
+</Query>  
+</RSSharePointList>  
+```  
+  
+ You can edit this view of the query as long as it remains well-formed XML text.  
+  
+#### Example 2. All fields for a list  
+ You can also specify only the name of a list, and all fields, including hidden fields, are returned. The following example retrieves all the fields from a list that is named Tasks:  
+  
+```  
+<RSSharePointList>  
+<listName>Tasks</listName>  
+</RSSharePointList>  
+```  
+  
+ All fields for the list Tasks are returned in the query results.  
+  
+##  <a name="Parameters"></a> Parameters  
+ Parameters are not supported by this data extension.  
+  
+##  <a name="HowTo"></a> How-To Topics  
+ This section contains step-by-step instructions for working with data connections, data sources, and datasets.  
+  
+ [Add and Verify a Data Connection (Report Builder and SSRS)](add-and-verify-a-data-connection-report-builder-and-ssrs.md)  
+  
+ [Create a Shared Dataset or Embedded Dataset (Report Builder and SSRS)](create-a-shared-dataset-or-embedded-dataset-report-builder-and-ssrs.md)  
+  
+ [Add a Filter to a Dataset (Report Builder and SSRS)](add-a-filter-to-a-dataset-report-builder-and-ssrs.md)  
+  
+## Related content
+
+- [Report Datasets (SSRS)](report-datasets-ssrs.md)
+- [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)
+- [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md)
+- [Dataset Fields Collection (Report Builder and SSRS)](dataset-fields-collection-report-builder-and-ssrs.md)
+- [Data Sources Supported by Reporting Services (SSRS)](data-sources-supported-by-reporting-services-ssrs.md)
+- [Paginated report parameters in Report Builder](../report-design/report-parameters-report-builder-and-report-designer.md)
+- [Filter, group, and sort data in Report Builder paginated reports](../report-design/filter-group-and-sort-data-report-builder-and-ssrs.md)
+- [Expressions in a paginated report (Report Builder)](../report-design/expressions-report-builder-and-ssrs.md)
+- [Try asking the Reporting Services forum](https://go.microsoft.com/fwlink/?LinkId=620231)

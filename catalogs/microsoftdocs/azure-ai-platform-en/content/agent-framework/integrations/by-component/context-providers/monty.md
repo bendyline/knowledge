@@ -1,0 +1,91 @@
+---
+title: Monty
+description: Add cross-platform CodeAct execution to Agent Framework Python agents with Monty.
+author: eavanvalkenburg
+ms.topic: article
+ms.author: edvan
+ms.date: 10/07/2026
+ms.service: agent-framework
+ai-usage: ai-assisted
+---
+
+# Monty
+
+Monty is a Rust-based interpreter for a restricted Python subset. `MontyCodeActProvider` gives an Agent Framework agent one `execute_code` tool and lets generated code call provider-owned tools as typed async functions or through `call_tool(...)`.
+
+This integration uses the CodeAct pattern with a restricted interpreter rather than a hardware-isolated sandbox.
+
+Use Monty when you need a cross-platform CodeAct runtime without Hyperlight's hypervisor or WASM guest dependency.
+
+> **Note:**
+> `agent-framework-monty` is a beta package. Monty restricts operating-system, subprocess, and direct network access, but it isn't a hardware-isolated virtual machine.
+
+> **Warning:**
+> `MontyCodeActProvider` and `MontyExecuteCodeTool` don't currently support [FIDES](../../../agents/security.md). Provider-managed host-tool calls don't pass through the agent's per-function middleware pipeline.
+>
+> Checks on direct agent tools or the outer `execute_code` call don't cover nested calls, code-internal intermediate values, or file and network capabilities. Host tools must enforce their own authorization and destination controls.
+>
+> Keep FIDES-dependent tools as direct agent tools, not Monty-managed tools, or leave CodeAct disabled for workflows requiring those guarantees. See [CodeAct's current limitations](../../../agents/code-act.md#current-limitations).
+
+## Install the packages
+
+```bash
+pip install agent-framework-monty agent-framework-foundry --pre
+```
+
+## Add `MontyCodeActProvider`
+
+Register host tools on the provider rather than directly on the agent. The model sees `execute_code` and calls those tools from generated code.
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/02-agents/context_providers/code_act/monty_code_act.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/integrations/by-component/context-providers/monty.md)
+
+### Control host tool parameter descriptions
+
+`MontyCodeActProvider` and `MontyExecuteCodeTool` accept `tool_description_format`. The default, `"compact"`, includes scalar parameter types, required or optional status, descriptions, enum values, and defaults in the `execute_code` description and CodeAct instructions. Use `"json"` for complete JSON Schema, or select a format by exact, case-sensitive tool name:
+
+```python
+codeact = MontyCodeActProvider(
+    tools=[compute, fetch_data],
+    tool_description_format={
+        "compute": "json",
+        "fetch_data": "compact",
+    },
+)
+```
+
+Tools omitted from a mapping use compact format. Compact rendering automatically falls back to complete JSON Schema when it can't represent a schema without losing constraints, such as nested objects, arrays, references, or unions. Parameter schemas are visible to the model, so don't include credentials or other secrets in descriptions, enum values, defaults, or custom schema fields.
+
+## Configure capabilities
+
+`MontyCodeActProvider` and `MontyExecuteCodeTool` support:
+
+- host tools and runtime tool management
+- `never_require` or `always_require` approval for `execute_code`
+- a workspace root and explicit file mounts
+- Monty resource limits
+- files returned from read-write mounts as Agent Framework content
+
+## Network access and Python packages
+
+Monty runs its own Python interpreter, not the host's Python environment. This
+integration doesn't provide `pip` or another package-installation option.
+Installing a dependency on the host doesn't make it importable in Monty code.
+Use the interpreter's supported modules for code that runs inside Monty.
+
+Monty doesn't provide an `allowed_domains` option. For external API calls or
+operations that require host-installed packages, register a narrow host tool
+and invoke it from Monty code. Keep credentials, authorization, and
+destination allow-list checks in that function because it executes on the
+host, outside the Monty interpreter.
+
+## Choose Monty or Hyperlight
+
+| Runtime | Choose it when |
+| --- | --- |
+| Monty | Cross-platform execution and a restricted interpreter are sufficient. |
+| [Hyperlight](hyperlight.md) | You need a hardened sandbox, filesystem controls, or outbound-domain allow lists. |
+
+## Next steps
+
+> 
+> [Review the CodeAct pattern](../../../agents/code-act.md)

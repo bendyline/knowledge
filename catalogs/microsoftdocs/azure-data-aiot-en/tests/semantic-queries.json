@@ -1,0 +1,8 @@
+[
+  {
+    "query": "What types of data can Azure Storage store, and how do Blob, File, Queue, and Table storage differ?",
+    "expectedDocumentIds": [
+      "articles/storage/common/storage-introduction"
+    ]
+  }
+]

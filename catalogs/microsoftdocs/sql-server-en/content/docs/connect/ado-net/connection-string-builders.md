@@ -1,0 +1,71 @@
+---
+title: Connection string builders
+description: Learn about the connection string builder classes used for different providers in ADO.NET. These classes all inherit from DbConnectionStringBuilder.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, paulmedynski, cmalhotra
+ms.date: 11/13/2020
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+dev_langs:
+  - "csharp"
+ms.custom: sfi-ropc-nochange
+---
+# Connection string builders
+
+ **Applies to**:  .NET Framework  .NET  .NET Standard 
+
+
+
+
+In earlier versions of ADO.NET, compile-time checking of connection strings with concatenated string values didn't occur, so that at run time, an incorrect keyword generated an [System.ArgumentException](https://learn.microsoft.com/search/?terms=System.ArgumentException). The Microsoft SqlClient Data Provider for SQL Server includes the connection string builder class [Microsoft.Data.SqlClient.SqlConnectionStringBuilder](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder) that inherits from [System.Data.Common.DbConnectionStringBuilder](https://learn.microsoft.com/search/?terms=System.Data.Common.DbConnectionStringBuilder).
+
+## Connection string injection attacks
+
+A connection string injection attack can occur when dynamic string concatenation is used to build connection strings that are based on user input. If the string isn't validated and malicious text or characters not escaped, an attacker can potentially access sensitive data or other resources on the server. For example, an attacker could mount an attack by supplying a semicolon and appending another value. The connection string is parsed by using a "**last one wins**" algorithm, and the hostile input is replaced for a legitimate value.
+
+The connection string builder classes are designed to eliminate guesswork and protect against syntax errors and security vulnerabilities. They provide methods and properties corresponding to the known key/value pairs permitted by the data provider. Each class maintains a fixed collection of synonyms and can translate from a synonym to the corresponding well-known key name. Checks are done for valid key/value pairs and an invalid pair throws an exception. Also, injected values are handled in a safe manner.
+
+The following example demonstrates how the [Microsoft.Data.SqlClient.SqlConnectionStringBuilder](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder) handles an inserted extra value for the `Initial Catalog` setting.
+
+[Code reference unavailable in this source snapshot: ~/../sqlclient/doc/samples/SqlConnectionStringBuilder_InjectionAttack.cs#1](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/connect/ado-net/connection-string-builders.md)
+
+The output shows that the [Microsoft.Data.SqlClient.SqlConnectionStringBuilder](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder) handled it correctly by escaping the extra value in double quotation marks instead of appending it to the connection string as a new key/value pair.
+
+```output
+data source=(local);Integrated Security=True;
+initial catalog="AdventureWorks;NewValue=Bad"
+```
+
+## Build connection strings from configuration files
+
+If certain elements of a connection string are known beforehand, they can be stored in a configuration file and retrieved at run time to construct a complete connection string. For example, the name of the database might be known in advance, but not the name of the server. Or you might want a user to supply a name and password at run time without the ability to inject other values into the connection string.
+
+One of the overloaded constructors for a connection string builder takes a [System.String](https://learn.microsoft.com/search/?terms=System.String) as an argument, which enables you to supply a partial connection string that can then be completed from user input. The partial connection string can be stored in a configuration file and retrieved at run time.
+
+> **Note:**
+> The [System.Configuration](https://learn.microsoft.com/search/?terms=System.Configuration) namespace allows programmatic access to configuration files that use the [System.Web.Configuration.WebConfigurationManager](https://learn.microsoft.com/search/?terms=System.Web.Configuration.WebConfigurationManager) for Web applications and the [System.Configuration.ConfigurationManager](https://learn.microsoft.com/search/?terms=System.Configuration.ConfigurationManager) for Windows applications. For more information about working with connection strings and configuration files, see [Connection Strings and Configuration Files](connection-strings-and-configuration-files.md).
+
+### Example
+
+This example demonstrates retrieving a partial connection string from a configuration file and completing it by setting the [Microsoft.Data.SqlClient.SqlConnectionStringBuilder.DataSource%2A](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder.DataSource%252A), [Microsoft.Data.SqlClient.SqlConnectionStringBuilder.UserID%2A](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder.UserID%252A), and [Microsoft.Data.SqlClient.SqlConnectionStringBuilder.Password%2A](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder.Password%252A) properties of the [Microsoft.Data.SqlClient.SqlConnectionStringBuilder](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnectionStringBuilder). The configuration file is defined as follows.
+
+```xml
+<connectionStrings>
+  <clear/>
+  <add name="partialConnectString"
+    connectionString="Initial Catalog=Northwind;"
+    providerName="Microsoft.Data.SqlClient" />
+</connectionStrings>
+```
+
+> **Note:**
+> You must set a reference to the `System.Configuration.dll` in your project for the code to run.
+
+[Code reference unavailable in this source snapshot: ~/../sqlclient/doc/samples/SqlConnectionStringBuilder_UserNamePwd.cs#1](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/connect/ado-net/connection-string-builders.md)
+  
+## Related content
+
+- [Connection strings in ADO.NET](connection-strings.md)
+- [Microsoft.Data.SqlClient for SQL Server](microsoft-ado-net-sql-server.md)

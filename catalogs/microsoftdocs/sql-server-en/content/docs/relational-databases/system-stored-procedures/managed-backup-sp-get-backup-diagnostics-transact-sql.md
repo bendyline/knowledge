@@ -1,0 +1,111 @@
+---
+title: "smart_admin.sp_get_backup_diagnostics (Transact-SQL)"
+description: "Returns the Extended Events logged by Smart Admin."
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_get_backup_diagnostics_TSQL"
+  - "sp_get_backup_diagnostics"
+  - "smart_admin.sp_get_backup_diagnostics_TSQL"
+  - "smart_admin.sp_get_backup_diagnostics"
+helpviewer_keywords:
+  - "sp_get_backup_diagnostics"
+  - "smart_admin.sp_get_backup_diagnostics"
+dev_langs:
+  - "TSQL"
+---
+# smart_admin.sp_get_backup_diagnostics (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions
+
+Returns the Extended Events logged by Smart Admin.
+
+Use this stored procedure to monitor Extended Events logged by Smart Admin.  SQL Server managed backup to Microsoft Azure 
+ events are logged in this system, and can be reviewed and monitored using this stored procedure.
+
+
+
+## Syntax
+
+```syntaxsql
+smart_admin.sp_get_backup_diagnostics
+    [ [ @xevent_channel = ] 'xevent_channel' ]
+    [ , [ @begin_time = ] begin_time ]
+    [ , [ @end_time = ] end_time ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @xevent_channel = ] '*xevent_channel*'
+
+The type of Extended Event. The default value is set to return all events logged for the previous 30 minutes. The events logged depend on the type of Extended Events enabled. You can use this parameter to filter the stored procedure to show only events of a certain type. You can either specify the full event name or specify a substring such as: `Admin`, `Analytic`, `Operational`, and `Debug`. *@event_channel* is **varchar(255)**.
+
+To get a list of event types currently enabled use the `managed_backup.fn_get_current_xevent_settings` function.
+
+#### [ @begin_time = ] *begin_time*
+
+The start of the time period from which the events should be displayed. *@begin_time* is **datetime** with a default value of `NULL`. If this isn't specified, then the events from the past 30 minutes are displayed.
+
+#### [ @end_time = ] *end_time*
+
+The end of the time period up to which the events should be displayed. *@end_time* is **datetime** with a default value of `NULL`. If this isn't specified, then the events up to the current time is displayed.
+
+## Table returned
+
+This stored procedure returns a table with the following information:
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `event_type` | **nvarchar(512)** | Type of Extended Event |
+| `Event` | **nvarchar(512)** | Summary of the event logs |
+| `Timestamp` | **timestamp** | Timestamp of the event that shows when the event was raised |
+
+## Permissions
+
+Requires EXECUTE permissions on the stored procedure. It also requires VIEW SERVER STATE permissions since it internally calls other system objects that require this permission.
+
+### Permissions for SQL Server 2022 and later
+
+Requires EXECUTE permission on the stored procedure, and `VIEW SERVER PERFORMANCE STATE` permission on the server (or `VIEW DATABASE PERFORMANCE STATE` permission on the database for Azure SQL Database contexts).
+
+## Examples
+
+The following example returns all the events logged for the past 30 minutes.
+
+```sql
+USE msdb;
+GO
+
+EXECUTE managed_backup.sp_get_backup_diagnostics;
+```
+
+The following example returns all the events logged for a specific time range.
+
+```sql
+USE msdb;
+GO
+
+EXECUTE managed_backup.sp_get_backup_diagnostics
+    @xevent_channel = 'Admin',
+    @begin_time = '2022-06-01',
+    @end_time = '2022-06-10';
+```
+
+The following example returns all the analytical events logged for the past 30 minutes
+
+```sql
+USE msdb;
+GO
+
+EXECUTE managed_backup.sp_get_backup_diagnostics @xevent_channel = 'Analytic';
+```

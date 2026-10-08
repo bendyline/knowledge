@@ -1,0 +1,26 @@
+---
+title: Include file
+description: Include file
+ms.service: azure-backup
+ms.topic: include
+ms.date: 01/22/2026
+author: AbhishekMallick-MS
+ms.author: v-mallicka
+---
+
+## Run an on-demand backup
+
+To trigger an on-demand backup (that's not in the schedule specified in the policy) for the database, follow these steps:
+
+1. Go to **Resiliency** > **Protection inventory** > **Protected items**, and then select the **Datasource type** as **Azure Database for PostgreSQL flexible servers** to view the protected items.
+
+   screenshot shows the selection of datasource type.
+
+2. Select the protected item to run an on-demand backup.
+3. On the **Protected items** pane, select **more** icon under the **Associated items** section, and then select **Backup now**.
+
+   screenshot shows how to run an on-demand backup.
+
+4. On the **Backup Now** pane, validate Retention rules as per the associated Backup policy, and then select **Backup now**.
+
+   screenshot shows how to start the Backup now operation.

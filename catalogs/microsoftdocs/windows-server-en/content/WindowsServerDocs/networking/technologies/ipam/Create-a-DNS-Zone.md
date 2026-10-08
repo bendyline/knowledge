@@ -1,0 +1,31 @@
+---
+title: Create a DNS Zone
+description: Learn how to create a DNS zone by using the IPAM client console.
+ms.topic: how-to
+author: robinharwood
+ms.author: roharwoo
+ms.date: 08/07/2020
+---
+# Create a DNS Zone
+
+You can use this topic to create a DNS zone by using the IPAM client console.
+
+Membership in **Administrators**, or equivalent, is the minimum required to perform this procedure.
+
+### To create a DNS zone
+
+1.  In Server Manager, click  **IPAM**. The IPAM client console appears.
+
+2.  In the navigation pane, in **MONITOR AND MANAGE**, click **DNS and DHCP Servers**. In the display pane, click **Server Type**, and then click **DNS**. All DNS servers that are managed by IPAM are listed in the search results.
+
+3.  Locate the server where you want to add a zone, and right-click the server.  Click **Create DNS zone**.
+
+    Create DNS zone
+
+4.  The **Create DNS Zone** dialog box opens. In **General Properties**, select a zone category, a zone type , and enter a name in **Zone name**. Also select values appropriate for your deployment in **Advanced Properties**, and then click **OK**.
+
+    Advanced Properties
+
+## See Also
+[DNS Zone Management](DNS-Zone-Management.md)
+[Manage IPAM](Manage-IPAM.md)

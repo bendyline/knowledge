@@ -1,0 +1,100 @@
+---
+title: "DROP XML SCHEMA COLLECTION (Transact-SQL)"
+description: DROP XML SCHEMA COLLECTION deletes the whole XML schema collection and all of its components.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 10/20/2025
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "DROP XML SCHEMA COLLECTION"
+  - "DROP_XML_SCHEMA_COLLECTION_TSQL"
+helpviewer_keywords:
+  - "deleting XML schema collections"
+  - "XML schema collections [SQL Server], removing"
+  - "schema collections [SQL Server], removing"
+  - "removing XML schema collections"
+  - "dropping XML schema collections"
+  - "DROP XML SCHEMA COLLECTION statement"
+dev_langs:
+  - TSQL
+---
+# DROP XML SCHEMA COLLECTION (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Deletes the whole XML schema collection and all of its components.
+
+
+
+## Syntax
+
+```syntaxsql
+DROP XML SCHEMA COLLECTION [ relational_schema. ] sql_identifier
+```
+
+## Arguments
+
+#### *relational_schema*
+
+Identifies the relational schema name. If not specified, the default relational schema is assumed.
+
+#### *sql_identifier*
+
+Name of the XML schema collection to drop.
+
+## Remarks
+
+Dropping an XML schema collection is a transactional operation. When you drop an XML schema collection inside a transaction and later roll back the transaction, the XML schema collection isn't dropped.
+
+You can't drop an XML schema collection when it's in use. So, the collection being dropped can't be in any of the following conditions:
+
+- Associated with any **xml** type parameter or column.
+
+- Specified in any table constraints.
+
+- Referenced in a schema-bound function or stored procedure. For example, the following function locks the XML schema collection `MyCollection` because the function specifies `WITH SCHEMABINDING`. If you remove it, there's no lock on the `XML SCHEMA COLLECTION`.
+
+  ```sql
+  CREATE FUNCTION dbo.MyFunction()
+  RETURNS INT
+  WITH SCHEMABINDING
+  AS
+  BEGIN
+  /* some code may go here */
+      DECLARE @x AS XML( MyCollection);
+  /* more code may go here */
+  END
+  ```
+
+## Permissions
+
+To drop an `XML SCHEMA COLLECTION` requires `DROP` permission on the collection.
+
+## Examples
+
+The following example shows removing an XML schema collection.
+
+```sql
+DROP XML SCHEMA COLLECTION ManuInstructionsSchemaCollection;
+GO
+```
+
+## Related content
+
+- [CREATE XML SCHEMA COLLECTION (Transact-SQL)](create-xml-schema-collection-transact-sql.md)
+- [ALTER XML SCHEMA COLLECTION (Transact-SQL)](alter-xml-schema-collection-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../functions/eventdata-transact-sql.md)
+- [Compare typed XML to untyped XML](../../relational-databases/xml/compare-typed-xml-to-untyped-xml.md)
+- [Requirements and limitations for XML schema collections on the server](../../relational-databases/xml/requirements-and-limitations-for-xml-schema-collections-on-the-server.md)

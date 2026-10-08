@@ -1,0 +1,48 @@
+---
+title: "Enable a database for Replication (SSMS)"
+description: Learn how to enable a database for Replication using SQL Server Management Studio (SSMS) or Transact-SQL (T-SQL).
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "databases [SQL Server replication]"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Enable a Database for Replication (SQL Server Management Studio)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  
+A database is implicitly enabled for replication when a member of the **sysadmin** fixed server role creates a publication with the New Publication Wizard. A member of the **sysadmin** fixed server role can also enable a database for replication explicitly, so that a member of the **db_owner** fixed database role can create one or more publications in that database. To enable a database explicitly, use the **Publication Databases** page of the **Publisher Properties - \<Publisher>** dialog box. For more information about accessing this dialog box, see [Create a Publication](publish/create-a-publication.md).  
+  
+## Using SQL Server Management Studio (SSMS)
+  
+1.  On the **Publication Databases** page of the **Publisher Properties - \<Publisher>** dialog box, select the **Transactional** and/or **Merge** check box for each database you want to replicate. Select **Transactional** to enable the database for snapshot replication.  
+  
+2.  Select **OK**.
+  
+  
+## Using Transact-SQL (T-SQL)
+You can enable a database for replication with the following Transact-SQL code: 
+
+```sql
+USE master
+EXEC sp_replicationdboption @dbname = 'AdventureWorks2022',
+@optname = 'publish',
+@value = 'true'
+GO
+```
+
+To disable publishing, set the @value = 'false'.

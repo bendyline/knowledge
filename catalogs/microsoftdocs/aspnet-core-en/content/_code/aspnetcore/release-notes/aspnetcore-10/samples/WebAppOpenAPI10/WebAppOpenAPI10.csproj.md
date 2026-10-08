@@ -1,0 +1,25 @@
+# Source code: aspnetcore/release-notes/aspnetcore-10/samples/WebAppOpenAPI10/WebAppOpenAPI10.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<!-- <snippet_ConfigBuildTimeOpenApiDocVersion> -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+		<!-- Configure build-time OpenAPI generation to produce an OpenAPI 3.1 document. -->
+		<OpenApiGenerateDocumentsOptions>--openapi-version OpenApi3_1</OpenApiGenerateDocumentsOptions>
+	</PropertyGroup>
+	<!-- </snippet_ConfigBuildTimeOpenApiDocVersion> -->
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.4.24272.1" />
+    </ItemGroup>
+
+</Project>
+
+```

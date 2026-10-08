@@ -1,0 +1,29 @@
+# Source code: docs/core/extensions/snippets/logging/log-buffering/global/file-based/appsettings.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    },
+
+    "GlobalLogBuffering": {
+      "MaxBufferSizeInBytes": 104857600,
+      "MaxLogRecordSizeInBytes": 51200,
+      "AutoFlushDuration": "00:00:30",
+      "Rules": [
+        {
+          "CategoryName": "BufferingDemo",
+          "LogLevel": "Information"
+        },
+        {
+          "EventId": 1001
+        }
+      ]
+    }
+  }
+}
+
+```

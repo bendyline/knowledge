@@ -1,0 +1,64 @@
+---
+title: Include file
+description: Include file
+author: sdgilley
+ms.reviewer: meerakurup
+ms.author: sgilley
+ms.service: microsoft-foundry
+ms.topic: include
+ms.date: 03/20/2026
+ms.custom: include
+---
+
+## Appendix
+
+### Access Isolation Examples
+
+Each organization may have different access isolation requirements depending on the user personas in their enterprise. Access isolation refers to which users in your enterprise are given what role assignments for either a separation of permissions using our built-in roles or a unified, highly permissive role. There are three access isolation options for Foundry that you can select for your organization depending on your access isolation requirements. 
+
+**No access isolation.** This means in your enterprise, you don't have any requirements separating permissions between a developer, project manager, or an admin. The permissions for these roles can be assigned across teams. 
+
+Therefore, you should...
+* Grant all users in your enterprise the **Foundry Owner** role on the resource scope 
+
+  
+> **Important:**
+> The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+
+**Partial access isolation.** This means the project manager in your enterprise should be able to develop within projects as well as create projects. But your admins shouldn't be able to develop within Foundry, only create Foundry projects and accounts. 
+
+Therefore, you should...
+* Grant your admin with **Foundry Account Owner** on the resource scope
+* Grant your developer and project managers with **Foundry Project Manager** role on the resource 
+
+**Full access isolation.** This means your admins, project managers, and developers have clear permissions assigned that don't overlap for their different functions within an enterprise. 
+
+Therefore you should...
+* Grant your admin the **Foundry Account Owner** on resource scope
+* Grant your developer the **Reader** role on Foundry resource scope and **Foundry User** on project scope
+* Grant your project manager the **Foundry Project Manager** role on resource scope
+* Grant your agent consumers the **Foundry Agent Consumer** role on project scope (or agent scope for per-agent control)
+
+### Use Microsoft Entra groups with Foundry
+
+Microsoft Entra ID provides several ways to manage access to resources, applications, and tasks. By using Microsoft Entra groups, you can grant access and permissions to a group of users instead of to each individual user. Enterprise IT admins can create Microsoft Entra groups in the Azure portal to simplify the role assignment process for developers. When you create a Microsoft Entra group, you can minimize the number of role assignments required for new developers working on Foundry projects by assigning the group the required role assignment on the necessary resource.
+
+Complete the following steps to use Microsoft Entra ID groups with Foundry:
+
+1. Create a **Security** group in **Groups** in the Azure portal.
+1. Add an owner and the user principals in your organization who need shared access.
+1. Open the target resource and go to **Access control (IAM)**.
+1. Assign the required role to **User, group, or service principal**, and select the new security group.
+1. Select **Review + assign** so the role assignment applies to all members of the group.
+
+Common examples:
+
+* To build agents, run traces, and use core Foundry capabilities, assign **Foundry User** to the Microsoft Entra group.
+* To allow interaction with agents without broader development access, assign **Foundry Agent Consumer** to the Microsoft Entra group.
+* To use Tracing and Monitoring features, assign **Reader** on the connected Application Insights resource to the same group.
+
+To learn more about Microsoft Entra ID groups, prerequisites, and limitations, refer to:
+
+- [Learn about groups, group membership, and access in Microsoft Entra](https://learn.microsoft.com/entra/fundamentals/concept-learn-about-groups).
+- [How to manage groups in Microsoft Entra](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups).

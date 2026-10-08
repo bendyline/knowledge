@@ -1,0 +1,35 @@
+---
+title: "SQLSetParam Function"
+description: "SQLSetParam Function"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+f1_keywords:
+  - "SQLSetParam"
+helpviewer_keywords:
+  - "SQLSetParam function [ODBC]"
+apilocation: "sqlsrv32.dll"
+apiname: "SQLSetParam"
+apitype: "dllExport"
+---
+# SQLSetParam Function
+**Conformance**  
+ Version Introduced: ODBC 1.0 Standards Compliance: Deprecated  
+  
+ **Summary**  
+ In ODBC 2.0, the ODBC 1.0 function **SQLSetParam** has been replaced by **SQLBindParameter**. For more information, see [SQLBindParameter Function](sqlbindparameter-function.md).  
+  
+> **Note:**  
+>  For more information about what the Driver Manager maps this function to when an ODBC 2.*x* application is working with an ODBC 3.*x* driver, see [Mapping Deprecated Functions](../appendixes/mapping-deprecated-functions.md).  
+  
+## Remarks  
+ See [ODBC 64-Bit Information](../odbc-64-bit-information.md), if your application will run on a 64-bit operating system.  
+  
+## Related content
+
+- [ODBC API reference](odbc-api-reference.md)
+- [ODBC Header Files](../install/odbc-header-files.md)

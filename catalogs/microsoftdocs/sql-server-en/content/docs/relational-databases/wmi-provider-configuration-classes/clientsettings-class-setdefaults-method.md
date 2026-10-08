@@ -1,0 +1,49 @@
+---
+title: "SetDefaults Method (ClientSettings)"
+description: "ClientSettings Class - SetDefaults Method"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: wmi
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SetDefaults method"
+apilocation: "sqlmgmproviderxpsp2up.mof"
+apiname: "SetDefaults Method (ClientSettings Class)"
+apitype: "MOFDef"
+---
+# ClientSettings Class - SetDefaults Method
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Sets all the default values for the instance of the  Microsoft 
+  SQL Server 
+ client with the option to overwrite existing data.  
+  
+## Syntax  
+  
+```  
+  
+object.SetDefaults(OverwriteAll)  
+```  
+  
+## Parts  
+ *object*  
+ A **ClientSettings** object that represents a  SQL Server 
+ client instance.  
+  
+#### Parameters  
+  
+| Parameter | Description |
+| --- | --- |
+| *OverwriteAll* | A Boolean value that specifies whether to overwrite existing values on the instance of the  SQL Server |
+ | client. **true** to overwrite existing data; **false** if existing data is not to be overwritten. |
+  
+## Property Value/Return Value  
+ A **uint32** value, which is 0 if the service was successfully modified, 1 if the request is not supported, and any other number to indicate an error.  
+  
+## Remarks

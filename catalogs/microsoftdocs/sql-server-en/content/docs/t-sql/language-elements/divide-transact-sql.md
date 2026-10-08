@@ -1,0 +1,123 @@
+---
+title: "(Division) (Transact-SQL)"
+description: "/ (Division) (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "/"
+  - "/_TSQL"
+helpviewer_keywords:
+  - "/ (divide)"
+  - "division [SQL Server]"
+  - "divide operator (/)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# / (Division) (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Divides one number by another (an arithmetic division operator).  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql  
+dividend / divisor  
+```  
+  
+## Arguments
+ *dividend*  
+ Is the numeric expression to divide. *dividend* can be any valid [expression](expressions-transact-sql.md) of any one of the data types of the numeric data type category, except the **datetime** and **smalldatetime** data types.  
+  
+ *divisor*  
+ Is the numeric expression by which to divide the dividend. *divisor* can be any valid expression of any one of the data types of the numeric data type category, except the **datetime** and **smalldatetime** data types.  
+  
+## Result Types  
+ Returns the data type of the argument with the higher precedence. For more information, see [Data Type Precedence (Transact-SQL)](../data-types/data-type-precedence-transact-sql.md).  
+  
+ If an integer *dividend* is divided by an integer *divisor*, the result is an integer that has any fractional part of the result truncated.  
+  
+## Remarks  
+ The actual value returned by the / operator is the quotient of the first expression divided by the second expression.  
+  
+## Examples  
+ The following example uses the division arithmetic operator to calculate the sales target per month for the sales people at  Adventure Works Cycles 
+.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT s.BusinessEntityID AS SalesPersonID, FirstName, LastName, SalesQuota, SalesQuota/12 AS 'Sales Target Per Month'  
+FROM Sales.SalesPerson AS s   
+JOIN HumanResources.Employee AS e   
+    ON s.BusinessEntityID = e.BusinessEntityID  
+JOIN Person.Person AS p   
+    ON e.BusinessEntityID = p.BusinessEntityID;  
+```  
+  
+ Here is a partial result set.  
+  
+```  
+  
+SalesPersonID FirstName    LastName          SalesQuota  Sales Target Per Month  
+------------- ------------ ----------------- ----------- ------------------  
+274           Stephen      Jiang             NULL        NULL  
+275           Michael      Blythe            300000.00   25000.00  
+276           Linda        Mitchell          250000.00   20833.3333  
+277           Jillian      Carson            250000.00   20833.3333  
+  
+```  
+  
+## Examples:  Azure Synapse Analytics 
+ The following example uses the division arithmetic operator to calculate a simple ratio of each employees' vacation hours to sick hours.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT FirstName, LastName, VacationHours/SickLeaveHours AS PersonalTimeRatio  
+FROM DimEmployee;  
+  
+```  
+  
+## Related content
+
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)
+- [What are the SQL database functions?](../functions/functions.md)
+- [Operators (Transact-SQL)](operators-transact-sql.md)
+- [SELECT (Transact-SQL)](../queries/select-transact-sql.md)
+- [WHERE (Transact-SQL)](../queries/where-transact-sql.md)
+- [/= (Division assignment) (Transact-SQL)](divide-equals-transact-sql.md)
+- [Compound operators (Transact-SQL)](compound-operators-transact-sql.md)

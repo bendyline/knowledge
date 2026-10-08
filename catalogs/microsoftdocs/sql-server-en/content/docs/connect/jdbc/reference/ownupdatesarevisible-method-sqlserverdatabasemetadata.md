@@ -1,0 +1,63 @@
+---
+title: "ownUpdatesAreVisible Method (SQLServerDatabaseMetaData)"
+description: "ownUpdatesAreVisible Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.ownUpdatesAreVisible"
+apitype: "Assembly"
+---
+# ownUpdatesAreVisible Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether the result set's own updates are visible.  
+  
+## Syntax  
+  
+```  
+  
+public boolean othersUpdatesAreVisible(int type)  
+```  
+  
+#### Parameters  
+ *type*  
+  
+ An integer that indicates the result set type, which can be one of the following values as defined in java.sql.ResultSet or SQLServerResultSet:  
+  
+## java.sql.ResultSet Types  
+ TYPE_FORWARD_ONLY  
+  
+ TYPE_SCROLL_SENSITIVE  
+  
+ TYPE_SCROLL_INSENSITIVE  
+  
+## SQLServerResultSet Types  
+ TYPE_SS_SCROLL_STATIC  
+  
+ TYPE_SS_SCROLL_KEYSET  
+  
+ TYPE_SS_DIRECT_FORWARD_ONLY  
+  
+ TYPE_SS_SERVER_CURSOR_FORWARD_ONLY  
+  
+ TYPE_SS_SCROLL_DYNAMIC  
+  
+## Return Value  
+ **true** if the updates are visible. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This ownUpdatesAreVisible method is specified by the ownUpdatesAreVisible method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

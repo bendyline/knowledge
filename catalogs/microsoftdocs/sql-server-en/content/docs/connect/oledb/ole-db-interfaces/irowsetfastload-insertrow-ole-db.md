@@ -1,0 +1,94 @@
+---
+title: "IRowsetFastLoad::InsertRow (OLE DB driver)"
+description: "Learn how the IRowsetFastLoad::InsertRow method adds a row to the bulk copy rowset in OLE DB Driver for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "06/14/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "InsertRow method"
+apiname: "IRowsetFastLoad::InsertRow (OLE DB)"
+apitype: "COM"
+---
+# IRowsetFastLoad::InsertRow (OLE DB)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  Adds a row to the bulk copy rowset. For samples, see [Bulk Copy Data Using IRowsetFastLoad (OLE DB)](../ole-db-how-to/bulk-copy-data-using-irowsetfastload-ole-db.md) and [Send BLOB Data to SQL SERVER Using IROWSETFASTLOAD and ISEQUENTIALSTREAM (OLE DB)](../ole-db-how-to/send-blob-data-to-sql-server-using-irowsetfastload-and-isequentialstream-ole-db.md).  
+  
+## Syntax  
+  
+```  
+  
+HRESULT InsertRow(  
+      HACCESSOR hAccessor,  
+      void* pData);  
+```  
+  
+## Arguments  
+ *hAccessor*[in]  
+ The handle of the accessor defining the row data for bulk copy. The accessor referenced is a row accessor, binding consumer-owned memory containing data values.  
+  
+ *pData*[in]  
+ A pointer to the consumer-owned memory containing data values. For more information, see [DBBINDING Structures](https://learn.microsoft.com/previous-versions/windows/desktop/ms716845\(v=vs.85\)).  
+  
+## Return Code Values  
+ S_OK  
+ The method succeeded. Any bound status values for all columns have value DBSTATUS_S_OK or DBSTATUS_S_NULL.  
+  
+ E_FAIL  
+ An error occurred. Error information is available from the rowset's error interfaces.  
+  
+ E_INVALIDARG  
+ The *pData* argument was set to a NULL pointer.  
+  
+ E_OUTOFMEMORY  
+ MSOLEDBSQL was unable to allocate sufficient memory to complete the request.  
+  
+ E_UNEXPECTED  
+ The method was called on a bulk copy rowset previously invalidated by the [IRowsetFastLoad::Commit](irowsetfastload-commit-ole-db.md) method.  
+  
+ DB_E_BADACCESSORHANDLE  
+ The *hAccessor* argument provided by the consumer was invalid.  
+  
+ DB_E_BADACCESSORTYPE  
+ The specified accessor was not a row accessor or did not specify consumer-owned memory.  
+  
+## Remarks  
+ An error converting consumer data to the  SQL Server 
+ data type for a column causes an E_FAIL return from the OLE DB Driver for SQL Server. Data can be transmitted to  SQL Server 
+ on any **InsertRow** method or only on **Commit** method. The consumer application can call the **InsertRow** method many times with erroneous data before it receives notice that a data type conversion error exists. Because the **Commit** method ensures that all data is correctly specified by the consumer, the consumer can use the **Commit** method appropriately to validate data as necessary.  
+  
+ The OLE DB Driver for SQL Server bulk copy rowsets are write-only. The OLE DB Driver for SQL Server exposes no methods allowing consumer query of the rowset. To terminate processing, the consumer can release its reference on the [IRowsetFastLoad](irowsetfastload-ole-db.md) interface without calling the **Commit** method. There are no facilities for accessing a consumer-inserted row in the rowset and changing its values, or removing it individually from the rowset.  
+  
+ Bulk copied rows are formatted on the server for  SQL Server 
+. The row format is affected by any options that may have been set for the connection or session such as ANSI_PADDING. This option is set on by default for any connection made through the OLE DB Driver for SQL Server.  
+  
+## Related content
+
+- [IRowsetFastLoad (OLE DB)](irowsetfastload-ole-db.md)

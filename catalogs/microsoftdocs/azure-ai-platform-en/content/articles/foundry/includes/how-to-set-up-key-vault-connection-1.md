@@ -1,0 +1,25 @@
+---
+title: Include file
+description: Include file
+author: s-polly
+ms.reviewer: andyaviles
+ms.author: scottpolly
+ms.service: microsoft-foundry
+ms.topic: include
+ms.date: 08/14/2026
+ms.custom: include
+---
+
+If you don't set up a Key Vault connection, Microsoft Foundry stores connection details in a Microsoft-managed Key Vault outside your subscription. To manage your own secrets, connect your Azure Key Vault to Foundry. Before you begin, review the [limitations](#limitations) for Key Vault connections.
+
+Azure Key Vault is a cloud service for securely storing and accessing secrets. A secret is anything that you want to tightly control access to, such as API keys, passwords, certificates, or cryptographic keys. For more information, see [About Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview).
+
+## Prerequisites
+
+- An Azure subscription.
+- A Foundry resource with no existing connections at the resource or project level.
+- An Azure Key Vault in your subscription, or permissions to create one.
+- One of the following Azure RBAC roles on your Key Vault:
+  - [Key Vault Secrets Officer](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/security#key-vault-secrets-officer) (minimal permissions)
+  - [Key Vault Contributor](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/security#key-vault-contributor)
+  - [Key Vault Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/security#key-vault-administrator)

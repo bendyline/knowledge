@@ -1,0 +1,40 @@
+---
+title: "Installing SSMA for SAP ASE (SybaseToSQL)"
+description: Use these articles to install, upgrade, and uninstall SQL Server Migration Assistant for SAP ASE, which includes a client application and an extension pack.
+author: nilabjaball
+ms.author: niball
+ms.date: "11/29/2017"
+ms.service: sql
+ms.subservice: ssma
+ms.topic: install-set-up-deploy
+ms.collection:
+  - sql-migration-content
+ms.custom:
+  - intro-installation
+---
+# Installing SSMA for SAP ASE (SybaseToSQL)
+ Microsoft 
+  SQL Server 
+ Migration Assistant (SSMA) for SAP Adaptive Server Enterprise (ASE) consists of a client application that you use to perform a migration from SAP ASE  to  SQL Server 
+ or Azure SQL Database. It also contains an extension pack that supports data migration and the use of ASE system functions in your migrated databases.  
+  
+Install the client application on the computer from which you plan to perform the migration steps. Install the extension pack files on the computer that is running  SQL Server 
+ on which the migrated databases are to be hosted.  
+  
+## Upgrading SSMA for SAP ASE  
+If you want to upgrade to a later version of SSMA for SAP ASE, you must first uninstall the client and the server extension pack. Then install the newer version.  
+  
+If you open a project from an earlier version of SSMA for SAP ASE, SSMA asks if you want to convert the project to the newer version. Click **Yes** to work with the project in the newer version of SSMA.  
+  
+## Contents  
+  
+| Article | Description |
+| --- | --- |
+| [Installing the SSMA for SAP ASE Client (SybaseToSQL)](installing-ssma-for-sybase-client-sybasetosql.md) | Provides information about and instructions for installing the SSMA for SAP ASE client. |
+| [Installing SSMA Components on SQL Server (SybaseToSQL)](installing-ssma-components-on-sql-server-sybasetosql.md) | Provides information about and instructions for installing the extension pack on instances of  SQL Server |
+| . |
+| [Removing SSMA for SAP ASE Components (SybaseToSQL)](removing-ssma-for-sybase-components-sybasetosql.md) | Provides instructions for uninstalling the client program and extension pack. |
+  
+## Related content
+
+- [Migrating SAP ASE databases to SQL Server - Azure SQL Database](migrating-sybase-ase-databases-to-sql-server-azure-sql-db-sybasetosql.md)

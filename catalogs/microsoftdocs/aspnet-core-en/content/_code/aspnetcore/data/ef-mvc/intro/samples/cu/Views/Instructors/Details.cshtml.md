@@ -1,0 +1,43 @@
+# Source code: aspnetcore/data/ef-mvc/intro/samples/cu/Views/Instructors/Details.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@model ContosoUniversity.Models.Instructor
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Instructor</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstMidName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FirstMidName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HireDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HireDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+```

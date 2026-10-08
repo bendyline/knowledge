@@ -1,0 +1,25 @@
+---
+description: "Learn more about: How to: Specify Database Data Types"
+title: "How to: Specify Database Data Types"
+ms.date: "03/30/2017"
+ms.assetid: 2228fdad-7e6a-4b1b-b4d1-79d0198b7c28
+---
+# How to: Specify Database Data Types
+
+Use the LINQ to SQL
+ [System.Data.Linq.Mapping.ColumnAttribute.DbType](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute.DbType) property on a [System.Data.Linq.Mapping.ColumnAttribute](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute) attribute to specify the exact text that defines the column in a T-SQL table declaration.
+
+ You must specify the [System.Data.Linq.Mapping.ColumnAttribute.DbType](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute.DbType) property only if you plan to use [System.Data.Linq.DataContext.CreateDatabase*](https://learn.microsoft.com/search/?terms=System.Data.Linq.DataContext.CreateDatabase*) to create an instance of the database.
+
+ For code examples, see [System.Data.Linq.Mapping.ColumnAttribute.DbType*](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute.DbType*).
+
+### To specify text to define a data type in a T-SQL table
+
+1. Add the [System.Data.Linq.Mapping.ColumnAttribute.DbType](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute.DbType) property to the [System.Data.Linq.Mapping.ColumnAttribute](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute) attribute.
+
+2. Set the value of the [System.Data.Linq.Mapping.ColumnAttribute.DbType](https://learn.microsoft.com/search/?terms=System.Data.Linq.Mapping.ColumnAttribute.DbType) property to the exact text that is used by T-SQL.
+
+## See also
+
+- [The LINQ to SQL Object Model](the-linq-to-sql-object-model.md)
+- [How to: Customize Entity Classes by Using the Code Editor](how-to-customize-entity-classes-by-using-the-code-editor.md)

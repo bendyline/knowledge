@@ -1,0 +1,83 @@
+---
+title: Prepare Input Trace Data
+titleSuffix: SQL Server Distributed Replay
+description: Before you can start a distributed replay with SQL Server Distributed Replay, prepare the input trace data by initiating the preprocess stage.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/17/2023
+ms.service: sql
+ms.subservice: distributed-replay
+ms.topic: how-to
+ms.collection:
+  - data-tools
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017"
+---
+# Prepare input trace data
+
+
+**Applies to:**
+ 
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+> **Important:**  
+> SQL Server Distributed Replay isn't available with  SQL Server 2022 (16.x) 
+ and later versions.
+
+
+Before you can start a distributed replay with the Microsoft  SQL Server 
+ Distributed Replay feature, you must prepare the input trace data by initiating the preprocess stage from the distributed replay administration tool. In the preprocess stage, the distributed replay controller processes the trace data and generates an intermediate file:
+
+Diagram showing the Distributed Replay preprocess stage.
+
+For more information about the preprocess stage, see [SQL Server Distributed Replay](sql-server-distributed-replay.md).
+
+> **Note:**  
+> The input trace data must be captured in a version of  SQL Server 
+ that is compatible with Distributed Replay. The input trace data must also be compatible with the target server that you want to replay the trace data against. For more information about version requirements, see [Distributed Replay Requirements](sql-server-distributed-replay.md).
+
+## Prepare the input trace data
+
+1. **(Optional) Modify preprocess configuration settings**: If you want to modify the preprocess configuration settings, such as whether to filter system sessions or to configure the maximum idle time, you must modify the `<PreprocessModifiers>` element of the XML-based preprocess configuration file, `DReplay.exe.preprocess.config`. If you modify the preprocess configuration file, we recommend that you modify a copy rather than the original. To modify settings, follow these steps:
+
+   1. Make a copy of the default preprocess configuration file, `DReplay.exe.preprocess.config`, and rename the new file. The default preprocess configuration file is located in the administration tool installation folder.
+
+   1. Modify the preprocess configuration settings in the new configuration file.
+
+   1. When initiating the preprocess stage (the next step), use the *config_file* parameter of the **preprocess** option to specify the location of the modified configuration file.
+
+   For more information about the preprocess configuration file, see [Configure Distributed Replay](configure-distributed-replay.md).
+
+1. **Initiate the preprocess stage**: To prepare the input trace data, you must run the administration tool with the **preprocess** option. For more information, see [Preprocess Option (Distributed Replay Administration Tool)](preprocess-option-distributed-replay-administration-tool.md).
+
+   1. Open the Windows Command Prompt utility (**CMD.exe**), and navigate to the installation location of the Distributed Replay administration tool (**DReplay.exe**).
+
+   1. (Optional) Use the *controller* parameter, **-m**, to specify the controller, if the controller service is running on a computer different from the administration tool.
+
+   1. Use the *input_trace_file* parameter, **-i**, to specify the location and name of the input trace files.
+
+   1. Use the *controller_working_directory* parameter, **-d**, to specify where the intermediate file should be saved on the controller.
+
+   1. (Optional) Use the *config_file* parameter, **-c**, to specify location of the preprocess configuration file. Use this parameter to point to the new configuration file if you've modified a copy of the default preprocess configuration file.
+
+   1. (Optional) Use the *status_interval* parameter, **-f**, to specify if you want the administration tool to display status messages at a frequency different than 30 seconds.
+
+   For example, initiating the preprocess stage on the same computer as the controller service, for a trace file located at `c:\trace1.trc`, a controller working directory located at `c:\WorkingDir` , and a status message displayed at the default value of 30 seconds, requires the syntax: `dreplay preprocess -i c:\trace1.trc -d c:\WorkingDir`
+
+1. After the preprocess stage is complete, the intermediate file is stored in the controller working directory. To initiate the event replay stage, you must run the administration tool with the **replay** option. For more information, see [Replay Trace Data](replay-trace-data.md).
+
+## Related content
+
+- [SQL Server Distributed Replay overview](sql-server-distributed-replay.md)
+- [Administration Tool Command-line Options (Distributed Replay Utility)](administration-tool-command-line-options-distributed-replay-utility.md)
+- [Configure Distributed Replay](configure-distributed-replay.md)

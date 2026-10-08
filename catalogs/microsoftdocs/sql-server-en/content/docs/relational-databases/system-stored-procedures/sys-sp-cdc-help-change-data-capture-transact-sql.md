@@ -1,0 +1,131 @@
+---
+title: "sys.sp_cdc_help_change_data_capture (Transact-SQL)"
+description: "Returns the change data capture configuration for each table enabled for change data capture in the current database."
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_cdc_help_change_data_capture_TSQL"
+  - "sys.sp_cdc_help_change_data_capture_TSQL"
+  - "sp_cdc_help_change_data_capture"
+  - "sys.sp_cdc_help_change_data_capture"
+helpviewer_keywords:
+  - "change data capture [SQL Server], querying metadata"
+  - "sys.sp_cdc_help_change_data_capture"
+  - "sp_cdc_help_change_data_capture"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_cdc_help_change_data_capture (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Returns the change data capture configuration for each table enabled for change data capture in the current database. Up to two rows can be returned for each source table, one row for each capture instance. Change data capture isn't available in every edition of  SQL Server 
+. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_cdc_help_change_data_capture
+    [ [ @source_schema = ] N'source_schema' ]
+    [ , [ @source_name = ] N'source_name' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @source_schema = ] N'*source_schema*'
+
+The name of the schema in which the source table belongs. *@source_schema* is **sysname**, with a default of `NULL`. When *@source_schema* is specified, *@source_name* must also be specified.
+
+If non-null, *@source_schema* must exist in the current database.
+
+If *@source_schema* is non-null, *@source_name* must also be non-null.
+
+#### [ @source_name = ] N'*source_name*'
+
+The name of the source table. *@source_name* is **sysname**, with a default of `NULL`. When *@source_name* is specified, *@source_schema* must also be specified.
+
+If non-null, *@source_name* must exist in the current database.
+
+If *@source_name* is non-null, *@source_schema* must also be non-null.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Result set
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `source_schema` | **sysname** | Name of the source table schema. |
+| `source_table` | **sysname** | Name of the source table. |
+| `capture_instance` | **sysname** | Name of the capture instance. |
+| `object_id` | **int** | ID of the change table associated with the source table. |
+| `source_object_id` | **int** | ID of the source table. |
+| `start_lsn` | **binary(10)** | Log sequence number (LSN) representing the low endpoint for querying the change table.<br /><br />NULL = the low endpoint hasn't been established. |
+| `end_lsn` | **binary(10)** | LSN representing the high endpoint for querying the change table. In  SQL Server 2012 (11.x) |
+| , this column is always `NULL`. |
+| `supports_net_changes` | **bit** | Net change support is enabled. |
+| `has_drop_pending` | **bit** | Not used in  SQL Server 2012 (11.x) |
+| . |
+| `role_name` | **sysname** | Name of the database role used to control access to the change data.<br /><br />NULL = a role isn't used. |
+| `index_name` | **sysname** | Name of the index used to uniquely identify rows in the source table. |
+| `filegroup_name` | **sysname** | Name of the filegroup in which the change table resides.<br /><br />NULL = change table is in the default filegroup of the database. |
+| `create_date` | **datetime** | Date that the capture instance was enabled. |
+| `index_column_list` | **nvarchar(max)** | List of index columns used to uniquely identify rows in the source table. |
+| `captured_column_list` | **nvarchar(max)** | List of captured source columns. |
+
+## Remarks
+
+When both *@source_schema* and *@source_name* default to `NULL`, or are explicitly set the `NULL`, this stored procedure returns information for all of the database capture instances that the caller has SELECT access to. When *@source_schema* and *@source_name* are non-null, only information on the specific named enabled table is returned.
+
+## Permissions
+
+When *@source_schema* and *@source_name* are `NULL`, the caller's authorization determines which enabled tables are included in the result set. Callers must have SELECT permission on all of the captured columns of the capture instance and also membership in any defined gating roles for the table information to be included.
+
+Members of the **db_owner** database role can view information about all defined capture instances. When information for a specific enabled table is requested, the same SELECT and membership criteria are applied for the named table.
+
+## Examples
+
+### A. Return change data capture configuration information for a specified table
+
+The following example returns the change data capture configuration for the `HumanResources.Employee` table.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sys.sp_cdc_help_change_data_capture
+    @source_schema = N'HumanResources',
+    @source_name = N'Employee';
+GO
+```
+
+### B. Return change data capture configuration information for all tables
+
+The following example returns configuration information for all enabled tables in the database that contain change data that the caller is authorized to access.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sys.sp_cdc_help_change_data_capture;
+GO
+```

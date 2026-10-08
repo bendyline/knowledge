@@ -1,0 +1,21 @@
+# Source code: aspnetcore/client-side/libman/samples/LibManSample/LibManSample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- <snippet_RestoreOnBuildPackage> -->
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
+    <!-- </snippet_RestoreOnBuildPackage> -->
+  </ItemGroup>
+
+</Project>
+
+```

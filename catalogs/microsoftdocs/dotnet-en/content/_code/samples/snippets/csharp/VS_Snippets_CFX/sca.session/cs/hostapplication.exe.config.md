@@ -1,0 +1,42 @@
+# Source code: samples/snippets/csharp/VS_Snippets_CFX/sca.session/cs/hostapplication.exe.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <!-- <snippet2> -->
+  <appSettings>
+    <!-- use appSetting to configure base address provided by host -->
+    <add key="baseAddress" value="http://localhost:8080/ServiceMetadata" />
+  </appSettings>
+  <system.serviceModel>
+    <services>
+      <service 
+        name="Microsoft.WCF.Documentation.DuplexHello"
+        behaviorConfiguration="mex"
+      >
+        <endpoint
+          address="/DuplexService"
+          binding="wsDualHttpBinding"
+          contract="Microsoft.WCF.Documentation.IDuplexHello"
+         />
+        <endpoint
+          address=""
+          binding="mexHttpBinding"
+          contract="IMetadataExchange"
+        />
+      </service>
+    </services>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="mex" >
+          <serviceMetadata httpGetEnabled="true" />
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+  </system.serviceModel>
+  <!-- </snippet2> -->
+</configuration>
+
+```

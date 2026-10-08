@@ -1,0 +1,66 @@
+# Source code: samples/core/Miscellaneous/Multitenancy/TenantControls/ContactList.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@inject ITenantService Service
+
+<h1>Contacts for @Service.Tenant</h1>
+
+@if (Contacts == null)
+{
+    <p class="alert alert-info">Loading...</p>
+}
+else
+{
+    if (Contacts.Count < 1)
+    {
+        <p class="alert alert-warning">No contacts found.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var contact in Contacts)
+            {
+                <li>
+                    @contact.Name
+                    @if (contact.IsUnicorn)
+                    {
+                        <span>&nbsp;🦄</span>
+                    }
+                </li>
+            }
+        </ul>    
+    }
+}
+
+@code {
+    [Parameter]
+    public Func<List<Contact>>? FetchContacts { get; set; }             
+
+    [Parameter]
+    public Func<Task<List<Contact>>> FetchContactsAsync { get; set; } =
+            async () => await Task.FromResult(new List<Contact>());
+
+    private List<Contact>? Contacts = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Service.OnTenantChanged += async (o, e) =>
+        {
+            await RefreshContactsAsync();
+            StateHasChanged();
+        };
+        await RefreshContactsAsync();
+    }
+
+    private async Task RefreshContactsAsync()
+    {
+        Contacts = null;
+        var list = FetchContacts == null ? await FetchContactsAsync() : FetchContacts();
+        Contacts = new List<Contact>(list);
+    }
+}
+
+```

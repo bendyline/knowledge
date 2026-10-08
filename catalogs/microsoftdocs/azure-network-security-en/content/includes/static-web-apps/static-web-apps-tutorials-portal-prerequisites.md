@@ -1,0 +1,22 @@
+---
+ms.service: azure-static-web-apps
+ms.topic:  include
+ms.date: 07/21/2023
+author: cjk7989
+ms.author: jikunchen
+---
+
+**Applies to: github**
+
+| Resource | Notes |
+| --- | --- |
+| Azure subscription | If you don't have an Azure subscription, [create a free trial account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn). |
+| GitHub account | If you don't have a GitHub account, you can [create one for free](https://github.com). |
+
+
+**Applies to: azure-devops**
+
+| Resource | Notes |
+| --- | --- |
+| Azure subscription | If you don't have an Azure subscription, [create a free trial account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn). |
+| Azure DevOps account | If you don't have a GitHub account, you can [create one](https://azure.microsoft.com/services/devops). |

@@ -1,0 +1,133 @@
+---
+title: Start, Stop, and Restart SQL Server Services on Linux
+description: Find out how to start, stop, or restart various SQL Server services on Linux. See how to use Transact-SQL and command-line tools for these actions.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/03/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+ms.custom:
+  - linux-related-content
+helpviewer_keywords:
+  - "SQL Server on Linux, startup options"
+  - "Database Engine [SQL Server], starting and stopping services on Linux"
+  - "command line [SQL Server], starting and stopping SQL Server services on Linux"
+  - "starting SQL Server Database Engine on Linux"
+  - "command prompt [SQL Server] on Linux"
+  - "startup options [SQL Server] on Linux"
+  - "systemctl commands [SQL Server]"
+  - "SQL Server on Linux, starting and stopping"
+  - "stopping SQL Server on Linux"
+  - "SQL Server Database Engine on Linux setting startup options"
+  - "administering SQL Server on Linux, starting and stopping services"
+---
+
+# Start, stop, and restart SQL Server services on Linux
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Linux
+
+
+This article describes how to start, stop, or restart the  Database Engine 
+ and  SQL Server 
+ Agent on Linux by using the command line.
+
+For  SQL Server 
+ on Windows, see [Start, stop, pause, resume, and restart SQL Server services](../database-engine/configure-windows/start-stop-pause-resume-restart-sql-server-services.md).
+
+For  SQL Server 
+ on Linux containers, see [Configure and customize SQL Server Linux containers](containers/configure.md).
+
+## Identify the service
+
+ SQL Server 
+ components are executable programs that run as services (also known as *daemons* on Linux). Linux services can run without displaying any activity on the computer screen and without user interaction on the command line.
+
+### SQL Server Database Engine service
+
+The  Database Engine 
+ service is the default instance, with a limit of one per computer. Named instances aren't supported on Linux. To run multiple instances of  SQL Server 
+ on a single computer using containers, see [Deploy and connect to SQL Server Linux containers](containers/deploy.md).
+
+### SQL Server Agent service
+
+The SQL Server Agent service executes scheduled administrative tasks, which are called jobs and alerts. For more information, see [SQL Server Agent](https://learn.microsoft.com/ssms/agent/sql-server-agent). SQL Server Agent isn't available in every edition of  SQL Server 
+. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../sql-server/editions-and-components-of-sql-server-2025.md).
+
+### Additional information
+
+On Linux, you can't pause the  Database Engine 
+ service like you can on Windows. The SQL Server Agent service also can't be paused or resumed.
+
+When running on a cluster, use the appropriate cluster management tool to manage the  Database Engine 
+ for your Linux distribution. See [Deploy a Pacemaker cluster for SQL Server on Linux](business-continuity/failover-cluster-instance/deploy-pacemaker-cluster.md) for an example using Pacemaker.
+
+### Permissions
+
+By default, only members of the local administrator group can start, stop, or restart a service.
+
+Stopping the  Database Engine 
+ by using the Transact-SQL (T-SQL) `SHUTDOWN` command requires membership in the **sysadmin** or **serveradmin** fixed server roles, and isn't transferable.
+
+<a id="CommandLine"></a>
+
+## Use command-line tools
+
+The following steps show how to start, stop, restart, and check the status of the  Database Engine 
+ service on Linux. To troubleshoot a SQL Server container, see [Troubleshoot SQL Server on Linux](sql-server-linux-troubleshooting-guide.md).
+
+Check the status of the  Database Engine 
+ service using this command:
+
+   ```bash
+   sudo systemctl status mssql-server
+   ```
+
+You can stop, start, or restart the  Database Engine 
+ service as needed using the following commands:
+
+   ```bash
+   sudo systemctl stop mssql-server
+   sudo systemctl start mssql-server
+   sudo systemctl restart mssql-server
+   ```
+
+To set up and manage the SQL Server Agent, see [Install SQL Server Agent on Linux](install-upgrade/setup-sql-agent.md). To restart the SQL Server Agent service, you must restart the  Database Engine 
+ service.
+
+<a id="TsqlProcedure"></a>
+
+## Transact-SQL
+
+The  Database Engine 
+ can be stopped by using the `SHUTDOWN` statement.
+
+### Stop the Database Engine with Transact-SQL
+
+- To wait for currently running T-SQL statements and stored procedures to finish, and then stop the  Database Engine 
+, execute the following statement.
+
+  ```sql
+  SHUTDOWN;
+  ```
+
+- To stop the  Database Engine 
+ immediately, execute the following statement.
+
+  ```sql
+  SHUTDOWN WITH NOWAIT;
+  ```
+
+For more information, see [SHUTDOWN](../t-sql/language-elements/shutdown-transact-sql.md).
+
+## Related content
+
+- [Installation guidance for SQL Server on Linux](install-upgrade/setup.md)
+- [Troubleshoot SQL Server on Linux](sql-server-linux-troubleshooting-guide.md)
+- [Install the sqlcmd and bcp SQL Server command-line tools on Linux](install-upgrade/setup-tools.md)

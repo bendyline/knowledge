@@ -1,0 +1,41 @@
+---
+title: "User-Configurable Event Category"
+description: "User-Configurable Event Category"
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "SQL Server event classes, User-Configurable event category"
+  - "event classes [SQL Server], User-Configurable event category"
+  - "User-Configurable event category [SQL Server]"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# User-Configurable Event Category
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  The **User-Configurable** event category contains the **User-Configurable** event classes.  
+  
+## In This Section  
+  
+| Topic | Description |
+| --- | --- |
+| [User-Configurable Event Class](user-configurable-event-class.md) | Used to monitor user-defined events that cannot be monitored by the system-supplied events in other event categories. |

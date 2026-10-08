@@ -1,0 +1,190 @@
+---
+title: "include file"
+description: "include file"
+services: storage
+author: pauljewellmsft
+ms.service: azure-blob-storage
+ms.topic: include
+ms.date: 05/16/2023
+ms.author: pauljewell
+ms.custom: include file
+---
+
+## Set up your project
+
+To work with the code examples in this article, follow these steps to set up your project.
+
+### Install packages
+
+Install the following packages:
+
+### [.NET CLI](#tab/packages-dotnetcli)
+
+```dotnetcli
+dotnet add package Azure.Identity
+dotnet add package Azure.Storage.Blobs
+```
+
+### [PowerShell](#tab/packages-powershell)
+
+```powershell
+Install-Package Azure.Identity
+Install-Package Azure.Storage.Blobs
+```
+---
+
+### Set up the app code
+
+Add the following `using` directives for Blobs:
+
+```csharp
+using Azure;
+using Azure.Identity;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Sas;
+```
+Add the following `using` directives for Files:
+
+```csharp
+using Azure;
+using Azure.Identity;
+using Azure.Storage.Files;
+using Azure.Storage.Files.Models;
+using Azure.Storage.Files.Specialized;
+using Azure.Storage.Sas;
+```
+Add the following `using` directives for Queues:
+
+```csharp
+using Azure;
+using Azure.Identity;
+using Azure.Storage.Queues;
+using Azure.Storage.Queues.Models;
+using Azure.Storage.Queues.Specialized;
+using Azure.Storage.Sas;
+```
+
+
+## Get an authenticated token credential
+
+To get a token credential that your code can use to authorize requests to Blob Storage, create an instance of the [DefaultAzureCredential](https://learn.microsoft.com/dotnet/api/azure.identity.defaultazurecredential) class. For more information about using the DefaultAzureCredential class to authorize a managed identity to access Blob Storage, see [Azure Identity client library for .NET](https://learn.microsoft.com/dotnet/api/overview/azure/identity-readme?toc=/azure/storage/blobs/toc.json).
+
+The following code snippet shows how to get the authenticated token credential and use it to create a service client for Blob storage:
+
+```csharp
+// Construct the blob endpoint from the account name.
+string endpoint = $"https://{accountName}.blob.core.windows.net";
+
+// Create a blob service client object using DefaultAzureCredential
+BlobServiceClient blobServiceClient = new BlobServiceClient(
+    new Uri(endpoint),
+    new DefaultAzureCredential());
+```
+
+To learn more about authorizing access to Blob Storage from your applications with the .NET SDK, see [How to authenticate .NET applications with Azure services](https://learn.microsoft.com/dotnet/azure/sdk/authentication).
+
+The following code snippet shows how to get the authenticated token credential and use it to create a service client for File storage:
+
+```csharp
+// Construct the file endpoint from the account name.
+string endpoint = $"https://{accountName}.file.core.windows.net”;
+
+// Create a file service client object using DefaultAzureCredential
+FilesServiceClient filesServiceClient = new filesServiceClient(
+    new Uri(endpoint),
+    new DefaultAzureCredential());
+```
+
+The following code snippet shows how to get the authenticated token credential and use it to create a service client for Queue storage:
+
+```csharp
+// Construct the queue endpoint from the account name.
+string endpoint = $"https://{accountName}.queue.core.windows.net";
+
+// Create a queue service client object using DefaultAzureCredential
+QueueServiceClient queueServiceClient = new QueueServiceClient(
+    new Uri(endpoint),
+    new DefaultAzureCredential());
+```
+
+## Get the user delegation key
+
+Every SAS is signed with a key. To create a user delegation SAS, you must first request a user delegation key, which is then used to sign the SAS. The user delegation key is analogous to the account key used to sign a service SAS or an account SAS, except that it relies on your Microsoft Entra credentials. When a client requests a user delegation key using an OAuth 2.0 token, Blob Storage returns the user delegation key on behalf of the user.
+
+Once you have the user delegation key, you can use that key to create any number of user delegation shared access signatures, over the lifetime of the key. The user delegation key is independent of the OAuth 2.0 token used to acquire it, so the token doesn't need to be renewed if the key is still valid. You can specify the length of time that the key remains valid, up to a maximum of seven days.
+
+You can now optionally provide the `delegatedUserId` when you get the user delegation key. By providing this value, you specify the identity of the intended end user of the SAS token. This user delegation key creates a user-bound user delegation SAS token.
+
+Use one of the following methods to request the user delegation key:
+
+- [GetUserDelegationKey](https://learn.microsoft.com/dotnet/api/azure.storage.blobs.blobserviceclient.getuserdelegationkey)
+- [GetUserDelegationKeyAsync](https://learn.microsoft.com/dotnet/api/azure.storage.blobs.blobserviceclient.getuserdelegationkeyasync)
+
+The following code example shows how to request the user delegation for Blobs:
+
+```csharp
+public static async Task<UserDelegationKey> RequestUserDelegationKey(
+    BlobServiceClient blobServiceClient)
+{
+    // Get a user delegation key for the Blob service that's valid for 1 day
+    UserDelegationKey userDelegationKey =
+        await blobServiceClient.GetUserDelegationKeyAsync(
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddDays(1));
+
+    return userDelegationKey;
+}
+```
+
+The following code example shows how to request the user delegation for Files:
+
+```csharp
+public static async Task<UserDelegationKey> RequestUserDelegationKey(
+    FileServiceClient fileServiceClient)
+{
+    // Get a user delegation key for the Azure Files Service that's valid for 1 day
+    UserDelegationKey userDelegationKey =
+        await fileServiceClient.GetUserDelegationKeyAsync(
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddDays(1));
+
+    return userDelegationKey;
+}
+```
+
+The following code example shows how to request the user delegation for Queues:
+
+```csharp
+public static async Task<UserDelegationKey> RequestUserDelegationKey(
+    QueueServiceClient queueServiceClient)
+{
+    // Get a user delegation key for the Queue service that's valid for 1 day
+    UserDelegationKey userDelegationKey =
+        await queueServiceClient.GetUserDelegationKeyAsync(
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddDays(1));
+
+    return userDelegationKey;
+}
+```
+
+The following code sample shows how to request the user-bound user delegation key for blobs:
+
+```csharp
+
+public static async Task<UserDelegationKey> RequestUserDelegationKey(
+BlobServiceClient blobServiceClient)
+{     
+    //Get a user-bound user delegation key for the Blob service that's valid for 1 day 
+    BlobGetUserDelegationKeyOptions options =
+        new BlobGetUserDelegationKeyOptions(startsOn: DateTimeOffset.UtcNow, endsOn: DateTimeOffset.UtcNow.AddDays(1)){ 
+        DelegatedUserTenantId = "delegatedUserTenantId" 
+    }; 
+
+    Task<UserDelegationKey> userDelegationKey = await blobServiceClient.GetUserDelegationKeyAsync(options); 
+    return userDelegationKey.Value; 
+
+}
+```

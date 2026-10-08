@@ -1,0 +1,45 @@
+---
+title: "sys.assembly_files (Transact-SQL)"
+description: sys.assembly_files (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.assembly_files"
+  - "assembly_files_TSQL"
+  - "assembly_files"
+  - "sys.assembly_files_TSQL"
+helpviewer_keywords:
+  - "sys.assembly_files catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.assembly_files (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains a row for each file that makes up an assembly.  
+    
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **assembly_id** | **int** | ID of the assembly to which this file belongs. |
+| **name** | **nvarchar(260)** | Name of the assembly file. |
+| **file_id** | **int** | ID of the file. Is unique within an assembly. The file ID numbered 1 represents the assembly DLL. |
+| **content** | **varbinary(max)** | Content of file. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [CLR Assembly Catalog Views (Transact-SQL)](clr-assembly-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [ASSEMBLYPROPERTY (Transact-SQL)](../../t-sql/functions/assemblyproperty-transact-sql.md)

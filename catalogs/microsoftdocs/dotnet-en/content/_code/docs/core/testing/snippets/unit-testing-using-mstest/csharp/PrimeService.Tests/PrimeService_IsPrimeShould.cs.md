@@ -1,0 +1,44 @@
+# Source code: docs/core/testing/snippets/unit-testing-using-mstest/csharp/PrimeService.Tests/PrimeService_IsPrimeShould.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Prime.Services;
+
+namespace Prime.UnitTests.Services
+{
+    [TestClass]
+    public class PrimeService_IsPrimeShould
+    {
+        private readonly PrimeService _primeService;
+
+        public PrimeService_IsPrimeShould()
+        {
+            _primeService = new PrimeService();
+        }
+
+        [TestMethod]
+        public void IsPrime_InputIs1_ReturnFalse()
+        {
+            bool result = _primeService.IsPrime(1);
+
+            Assert.IsFalse(result, $"1 should not be prime");
+        }
+
+        #region Sample_TestCode
+        [TestMethod]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(1)]
+        public void IsPrime_ValuesLessThan2_ReturnFalse(int value)
+        {
+            bool result = _primeService.IsPrime(value);
+
+            Assert.IsFalse(result, $"{value} should not be prime");
+        }
+        #endregion
+    }
+}
+
+```

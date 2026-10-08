@@ -1,0 +1,8 @@
+[
+  {
+    "query": "How does ASP.NET Core middleware form a request pipeline and decide whether to pass a request to the next component?",
+    "expectedDocumentIds": [
+      "aspnetcore/fundamentals/middleware/index"
+    ]
+  }
+]

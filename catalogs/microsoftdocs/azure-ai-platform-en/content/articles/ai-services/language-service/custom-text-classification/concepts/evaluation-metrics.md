@@ -1,0 +1,283 @@
+---
+title: Custom text classification model concepts
+titleSuffix: Foundry Tools
+description: "Learn core concepts for custom text classification models: evaluation metrics and accepted data formats."
+#services: cognitive-services
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: concept-article
+ms.date: 06/30/2026
+ms.author: lajanuar
+ms.custom: language-service-custom-classification
+---
+<!-- markdownlint-disable MD025 -->
+# Custom text classification model concepts
+
+This article covers core concepts for building custom text classification models, including how model performance is measured and the data formats that custom text classification accepts.
+
+## Evaluation metrics
+
+You [split your dataset](../how-to/build-train-deploy-model.md#data-splitting) into two parts: a set for training and a set for testing. Use the training set to train the model. Use the testing set as a test for the model after training to calculate the model performance and evaluation. The training process doesn't introduce the testing set to the model, so the model is tested on new data.
+
+Model evaluation is triggered automatically after training is completed successfully. The evaluation process starts by using the trained model to predict user defined classes for documents in the test set, and compares them with the provided data tags (which establishes a baseline of truth). The results are returned so you can review the model's performance. For evaluation, custom text classification uses the following metrics:
+
+* **Precision**: Measures how precise/accurate your model is. It's the ratio between the correctly identified positives (true positives) and all identified positives. The precision metric reveals how many of the predicted classes are correctly labeled. 
+
+    `Precision = #True_Positive / (#True_Positive + #False_Positive)`
+
+* **Recall**: Measures the model's ability to predict actual positive classes. It's the ratio between the predicted true positives and what was tagged. The recall metric reveals how many of the predicted classes are correct.
+
+    `Recall = #True_Positive / (#True_Positive + #False_Negatives)`
+
+* **F1 score**: The F1 score is a function of precision and recall. Needed when you seek a balance between precision and recall.
+
+    `F1 Score = 2 * Precision * Recall / (Precision + Recall)` <br> 
+
+>**Note:**
+> Precision, recall, and F1 score are calculated for each class separately (*class-level* evaluation) and for the model collectively (*model-level* evaluation).
+## Model-level and Class-level evaluation metrics
+
+The definitions of precision, recall, and evaluation are the same for both class-level and model-level evaluations. However, the count of *True Positive*, *False Positive*, and *False Negative* differ as shown in the following example.
+
+The below sections use the following example dataset:
+
+| Document | Actual classes | Predicted classes |
+| --- | --- | --- |
+| 1 | action, comedy | comedy |
+| 2 | action | action |
+| 3 | romance | romance |
+| 4 | romance, comedy | romance |
+| 5 | comedy | action |
+
+### Class-level evaluation for the *action* class 
+
+| Key | Count | Explanation |
+| --- | --- | --- |
+| True Positive | 1 | Document 2 was correctly classified as *action*. |
+| False Positive | 1 | Document 5 was mistakenly classified as *action*. |
+| False Negative | 1 | Document 1 wasn't classified as *Action* though it should have. |
+
+**Precision** = `#True_Positive / (#True_Positive + #False_Positive) = 1 / (1 + 1) = 0.5`
+
+**Recall** = `#True_Positive / (#True_Positive + #False_Negatives) = 1 / (1 + 1) = 0.5`
+
+**F1 Score** = `2 * Precision * Recall / (Precision + Recall) =  (2 * 0.5 * 0.5) / (0.5 + 0.5) = 0.5`
+
+### Class-level evaluation for the *comedy* class 
+
+| Key | Count | Explanation |
+| --- | --- | --- |
+| True positive | 1 | Document 1 was correctly classified as *comedy*. |
+| False positive | 0 | No documents were mistakenly classified as *comedy*. |
+| False negative | 2 | Documents 5 and 4 aren't classified as *comedy* though they should have. |
+
+**Precision** = `#True_Positive / (#True_Positive + #False_Positive) = 1 / (1 + 0) = 1`
+
+**Recall** = `#True_Positive / (#True_Positive + #False_Negatives) = 1 / (1 + 2) = 0.33`
+
+**F1 Score** = `2 * Precision * Recall / (Precision + Recall) =  (2 * 1 * 0.67) / (1 + 0.67) = 0.80`
+
+### Model-level evaluation for the collective model
+
+| Key | Count | Explanation |
+| --- | --- | --- |
+| True Positive | 4 | Documents 1, 2, 3, and 4 were given correct classes at prediction. |
+| False Positive | 1 | Document 5 assigned the wrong class at prediction. |
+| False Negative | 2 | Documents 1 and 4 aren't given all correct class at prediction. |
+
+**Precision** = `#True_Positive / (#True_Positive + #False_Positive) = 4 / (4 + 1) = 0.8`
+
+**Recall** = `#True_Positive / (#True_Positive + #False_Negatives) = 4 / (4 + 2) = 0.67`
+
+**F1 Score** = `2 * Precision * Recall / (Precision + Recall) =  (2 * 0.8 * 0.67) / (0.8 + 0.67) = 0.73`
+
+> **Note:** 
+> For single-label classification models, the number of false negatives and false positives are always equal. Custom single-label classification models always predict one class for each document. If the prediction isn't correct, `FP` count of the predicted class increases by one and `FN` of the actual class increases by one, overall count of `FP` and `FN` for the model is always equal. Not the case for multi-label classification, because failing to predict one of the classes of a document is counted as a false negative. 
+## Interpreting class-level evaluation metrics
+
+So what does it actually mean to have a high precision or a high recall for a certain class?
+
+| Recall | Precision | Interpretation |
+| --- | --- | --- |
+| High | High | The model successfully handled the class designation. |
+| Low | High | The model can't always predict this class but when it does it is with high confidence. This evaluation may be because this class is underrepresented in the dataset so consider balancing your data distribution. |
+| High | Low | The model predicts this class well; however it is with low confidence. May be due to class over-representation in the dataset so consider balancing your data distribution. |
+| Low | Low | The model handled this class poorly without high confidence. |
+
+Custom text classification models are expected to experience both false negatives and false positives. You need to consider how each affects the overall system. Carefully consider scenarios where the model ignores correct predictions and recognize incorrect predictions. Depending on your scenario, either *precision* or *recall* could be more suitable evaluating your model's performance.  
+
+For example, if your scenario involves processing technical support tickets, predicting the wrong class could cause it to be forwarded to the wrong department/team. In this example, you should consider making your system more sensitive to false positives, and precision would be a more relevant metric for evaluation. 
+
+As another example, if your scenario involves categorizing email as  "*important*" or "*spam*," an incorrect prediction could cause you to miss a useful email if labeled "*spam*." However, if a spam email is labeled *important* you can disregard it. In this example, you should consider making your system more sensitive to false negatives, and recall would be a more relevant metric for evaluation. 
+
+If you want to optimize for general purpose scenarios or when precision and recall are both important, you can utilize the F1 score. Evaluation scores are subjective depending on your scenario and acceptance criteria. There's no absolute metric that works for every scenario. 
+
+## Guidance
+
+After you trained your model, you can see some guidance and recommendation on how to improve the model. We recommend having a model covering all points in the guidance section.
+
+* Training set has enough data: A class type with fewer than 15 labeled instances in the training data can lead to lower accuracy due to the model having inadequate training on cases.
+
+* All class types are present in test set: When the testing data lacks labeled instances for a class type, the model's test performance may become less comprehensive due to untested scenarios.
+
+* Class types are balanced within training and test sets: When sampling bias causes an inaccurate representation of a class type's frequency, it can lead to lower accuracy due to the model expecting that class type to occur too often or too little.
+
+* Class types are evenly distributed between training and test sets: When the mix of class types doesn't match between training and test sets, it can lead to lower testing accuracy due to the model being trained differently from how it's being tested.
+
+* Class types in training set are clearly distinct: When the training data is similar for multiple class types, it can lead to lower accuracy because the class types may be frequently misclassified as each other.
+
+## Confusion matrix
+
+> **Important:**
+> Confusion matrix is not available for multi-label classification projects.
+A Confusion matrix is an N x N matrix used for model performance evaluation, where N is the number of classes.
+The matrix compares the expected labels with the ones predicted by the model.
+This gives a holistic view of how well the model is performing and what kinds of errors it is making.
+
+You can use the Confusion matrix to identify classes that are too close to each other and often get mistaken (ambiguity). In this case consider merging these classes together. If that isn't possible, consider labeling more documents with both classes to help the model differentiate between them.
+
+All correct predictions are located in the diagonal of the table, so it's easy to visually inspect the table for prediction errors.
+
+A screenshot of an example confusion matrix.
+
+You can calculate the class-level and model-level evaluation metrics from the confusion matrix:
+
+* The values in the diagonal are the *True Positive* values of each class.
+* The sum of the values in the class rows (excluding the diagonal) is the *false positive* of the model.
+* The sum of the values in the class columns (excluding the diagonal) is the *false Negative* of the model.
+
+Similarly,
+
+* The *true positive* of the model is the sum of *true Positives* for all classes.
+* The *false positive* of the model is the sum of *false positives* for all classes.
+* The *false Negative* of the model is the sum of *false negatives* for all classes.
+
+
+## Accepted data formats
+
+To import your data into custom text classification, it must follow a specific format. If you don't have data to import, you can [create your project](../how-to/create-project.md) and use Microsoft Foundry to [label your documents](../how-to/build-train-deploy-model.md#label-your-data).
+
+### Labels file format
+
+To [import](../how-to/create-project.md#import-a-custom-text-classification-project-rest-api) your labels into a project, your Labels file should be in the `json` format.
+
+# [Multi label classification](#tab/multi-classification)
+
+```json
+{
+    "projectFileVersion": "2022-05-01",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "CustomMultiLabelClassification",
+        "storageInputContainerName": "{CONTAINER-NAME}",
+        "projectName": "{PROJECT-NAME}",
+        "multilingual": false,
+        "description": "Project-description",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "CustomMultiLabelClassification",
+        "classes": [
+            {
+                "category": "Class1"
+            },
+            {
+                "category": "Class2"
+            }
+        ],
+        "documents": [
+            {
+                "location": "{DOCUMENT-NAME}",
+                "language": "{LANGUAGE-CODE}",
+                "dataset": "{DATASET}",
+                "classes": [
+                    {
+                        "category": "Class1"
+                    },
+                    {
+                        "category": "Class2"
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| multilingual | `true` | A boolean value that enables you to have documents in multiple languages in your dataset. When you deploy your model, you can query the model in any supported language (not necessarily included in your training documents). See [language support](../language-support.md#multi-lingual-option) to learn more about multilingual support. | `true` |
+| projectName | `{PROJECT-NAME}` | Project name | myproject |
+| storageInputContainerName | `{CONTAINER-NAME}` | Container name | `mycontainer` |
+| classes | [] | Array containing all the classes you have in the project. | [] |
+| documents | [] | Array containing all the documents in your project and the classes labeled for this document. | [] |
+| location | `{DOCUMENT-NAME}` | The location of the documents in the storage container. Since all the documents are in the root of the container, this value should be the document name. | `doc1.txt` |
+| dataset | `{DATASET}` | The test set to which this file goes when split before training. See [How to train a model](../how-to/build-train-deploy-model.md#data-splitting). Possible values for this field are `Train` and `Test`. | `Train` |
+
+
+# [Single label classification](#tab/single-classification)
+
+```json
+{
+    
+    "projectFileVersion": "2022-05-01",
+    "stringIndexType": "Utf16CodeUnit",
+    "metadata": {
+        "projectKind": "CustomSingleLabelClassification",
+        "storageInputContainerName": "{CONTAINER-NAME}",
+        "settings": {},
+        "projectName": "{PROJECT-NAME}",
+        "multilingual": false,
+        "description": "Project-description",
+        "language": "en-us"
+    },
+    "assets": {
+        "projectKind": "CustomSingleLabelClassification",
+        "classes": [
+            {
+                "category": "Class1"
+            },
+            {
+                "category": "Class2"
+            }
+        ],
+        "documents": [
+            {
+                "location": "{DOCUMENT-NAME}",
+                "language": "{LANGUAGE-CODE}",
+                "dataset": "{DATASET}",
+                "class": {
+                    "category": "Class2"
+                }
+            },
+            {
+                "location": "{DOCUMENT-NAME}",
+                "language": "{LANGUAGE-CODE}",
+                "dataset": "{DATASET}",
+                "class": {
+                    "category": "Class1"
+                }
+            }
+        ]
+    }
+}
+```
+| Key | Placeholder | Value | Example |
+| --- | --- | --- | --- |
+| projectName | `{PROJECT-NAME}` | Project name | myproject |
+| storageInputContainerName | `{CONTAINER-NAME}` | Container name | `mycontainer` |
+| multilingual | `true` | A boolean value that enables you to have documents in multiple languages in your dataset. When you deploy your model, you can query the model in any supported language (not necessarily included in your training documents). See [language support](../language-support.md#multi-lingual-option) to learn more about multilingual support. | `true` |
+| classes | [] | Array containing all the classes you have in the project. | [] |
+| documents | [] | Array containing all the documents in your project and which class this document belongs to. | [] |
+| location | `{DOCUMENT-NAME}` | The location of the documents in the storage container. Since all the documents are in the root of the container, use the document name. | `doc1.txt` |
+| dataset | `{DATASET}` | The test set to which this file goes when split before training. See [How to train a model](../how-to/build-train-deploy-model.md#data-splitting). Possible values for this field are `Train` and `Test`. | `Train` |
+
+
+---
+
+## Next steps
+
+* [Train a model](../how-to/build-train-deploy-model.md#train-your-model)
+* You can import your labeled data into your project directly. See [How to create a project](../how-to/create-project.md#import-a-custom-text-classification-project-rest-api) to learn more about importing projects.
+* See the [how-to article](../how-to/build-train-deploy-model.md#label-your-data) for more information about labeling your data.

@@ -1,0 +1,81 @@
+---
+title: "How to: specify parameter direction using the SQLSRV driver"
+description: "Learn how to specify parameter direction when calling a stored procedure using the Microsoft SQLSRV Driver for PHP for SQL Server"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: "08/10/2020"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+helpviewer_keywords:
+  - "stored procedure support"
+---
+# How to: Specify Parameter Direction Using the SQLSRV Driver
+
+
+
+This topic describes how to use the SQLSRV driver to specify parameter direction when you call a stored procedure. The parameter direction is specified when you construct a parameter array (step 3) that is passed to [sqlsrv_query](sqlsrv-query.md) or [sqlsrv_prepare](sqlsrv-prepare.md).  
+  
+### To specify parameter direction  
+  
+1.  Define a Transact-SQL query that calls a stored procedure. Use question marks (?) instead of the parameters to be passed to the stored procedure. For example, this string calls a stored procedure (UpdateVacationHours) that accepts two parameters:  
+  
+    ```  
+    $tsql = "{call UpdateVacationHours(?, ?)}";  
+    ```  
+  
+    > **Note:**  
+    > Calling stored procedures by using canonical syntax is the recommended practice. For more information about canonical syntax, see [Procedure Calls](../../odbc/reference/develop-app/procedure-calls.md).  
+  
+2.  Initialize or update PHP variables that correspond to the placeholders in the Transact-SQL query. For example, the following code initializes the two parameters for the UpdateVacationHours stored procedure:  
+  
+    ```  
+    $employeeId = 101;  
+    $usedVacationHours = 8;  
+    ```  
+  
+    > **Note:**  
+    > Variables that are initialized or updated to **null**, **DateTime**, or stream types cannot be used as output parameters.  
+  
+3.  Use your PHP variables from step 2 to create or update an array of parameter values that correspond, in order, to the parameter placeholders in the Transact-SQL string. Specify the direction for each parameter in the array. The direction of each parameter is determined in one of two ways: by default (for input parameters) or by using **SQLSRV_PARAM_\*** constants (for output and bidirectional parameters). For example, the following code specifies the *$employeeId* parameter as an input parameter and the *$usedVacationHours* parameter as a bidirectional parameter:  
+  
+    ```  
+    $params = array(  
+                     array($employeeId, SQLSRV_PARAM_IN),  
+                     array($usedVacationHours, SQLSRV_PARAM_INOUT)  
+                    );  
+    ```  
+  
+    To understand the syntax for specifying parameter direction in general, suppose that *$var1*, *$var2*, and *$var3* correspond to input, output, and bidirectional parameters, respectively. You can specify the parameter direction in either of the following ways:  
+  
+    -   Implicitly specify the input parameter, explicitly specify the output parameter, and explicitly specify a bidirectional parameter:  
+  
+        ```  
+        array(   
+               array($var1),  
+               array($var2, SQLSRV_PARAM_OUT),  
+               array($var3, SQLSRV_PARAM_INOUT)  
+               );  
+        ```  
+  
+    -   Explicitly specify the input parameter, explicitly specify the output parameter, and explicitly specify a bidirectional parameter:  
+  
+        ```  
+        array(   
+               array($var1, SQLSRV_PARAM_IN),  
+               array($var2, SQLSRV_PARAM_OUT),  
+               array($var3, SQLSRV_PARAM_INOUT)  
+               );  
+        ```  
+  
+4.  Execute the query with [sqlsrv_query](sqlsrv-query.md) or with [sqlsrv_prepare](sqlsrv-prepare.md) and [sqlsrv_execute](sqlsrv-execute.md). For example, the following code uses the connection *$conn* to execute the query *$tsql* with parameter values specified in *$params*:  
+  
+    ```  
+    sqlsrv_query($conn, $tsql, $params);  
+    ```  
+  
+## Related content
+
+- [How to: Retrieve Output Parameters Using the SQLSRV Driver](how-to-retrieve-output-parameters-using-the-sqlsrv-driver.md)
+- [How to: Retrieve Input and Output Parameters Using the SQLSRV Driver](how-to-retrieve-input-and-output-parameters-using-the-sqlsrv-driver.md)

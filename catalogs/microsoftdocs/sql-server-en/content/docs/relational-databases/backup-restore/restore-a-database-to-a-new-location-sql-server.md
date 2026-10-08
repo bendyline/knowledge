@@ -1,0 +1,216 @@
+---
+title: "Restore a Database to a New Location (SQL Server)"
+description: Restore a SQL Server database to a new location by using SQL Server Management Studio or Transact-SQL.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: randolphwest
+ms.date: 08/25/2025
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+ms.update-cycle: 1825-days
+helpviewer_keywords:
+  - "restoring databases [SQL Server], moving"
+  - "database restores [SQL Server], creating new databases"
+  - "restoring [SQL Server], with move"
+  - "restoring databases [SQL Server], creating new databases"
+  - "database backups [SQL Server], creating new database from"
+  - "backing up databases [SQL Server], creating new database from"
+  - "restoring databases [SQL Server], renaming"
+  - "database creation [SQL Server], restoring with move"
+---
+# Restore a database to a new location (SQL Server)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This article describes how to restore a  SQL Server 
+ database to a new location, and optionally rename the database in  SQL Server 
+, by using SQL Server Management Studio (SSMS) or  Transact-SQL . You can move a database to a new directory path or create a copy of a database on either the same server instance or a different server instance.
+
+## Limitations
+
+- The system administrator restoring a full database backup must be the only person currently using the database to be restored.
+
+## Prerequisites
+
+- When you use the full or bulk-logged recovery model, before you can restore a database, you must back up the active transaction log. For more information, see [Back up a transaction log](back-up-a-transaction-log-sql-server.md).
+
+- To restore an encrypted database, you must have access to the certificate or asymmetric key used to encrypt the database. Without that certificate or asymmetric key, you can't restore the database. You must retain the certificate used to encrypt the database encryption key for as long as you need the backup. For more information, see [SQL Server certificates and asymmetric Keys](../security/sql-server-certificates-and-asymmetric-keys.md).
+
+## Recommendations
+
+- For other considerations for moving a database, see [Copy databases with backup and restore](../databases/copy-databases-with-backup-and-restore.md).
+
+- If you restore a  SQL Server 2005 (9.x) 
+ or higher database to  SQL Server 
+, the database is automatically upgraded. Typically, the database becomes available immediately. However, if a  SQL Server 2005 (9.x) 
+ database has full-text indexes, the upgrade process either imports, resets, or rebuilds them, depending on the setting of the `upgrade_option` server property. If the upgrade option is set to import (`upgrade_option = 2`) or rebuild (`upgrade_option = 0`), the full-text indexes are unavailable during the upgrade. Depending on the amount of data being indexed, importing can take several hours, and rebuilding can take up to 10 times longer. Also, when the upgrade option is set to import, the associated full-text indexes are rebuilt if a full-text catalog isn't available. To change the setting of the `upgrade_option` server property, use [sp_fulltext_service](../system-stored-procedures/sp-fulltext-service-transact-sql.md).
+
+## Security
+
+For security purposes, we don't recommend that you attach or restore databases from unknown or untrusted sources. Such databases could contain malicious code that might run unintended  Transact-SQL  code or cause errors by modifying the schema or the physical database structure. Before you use a database from an unknown or untrusted source, run [DBCC CHECKDB](../../t-sql/database-console-commands/dbcc-checkdb-transact-sql.md) on the database on a nonproduction server and also examine the code, such as stored procedures or other user-defined code, in the database.
+
+### Permissions
+
+If the database being restored doesn't exist, the user must have `CREATE DATABASE` permissions to be able to run `RESTORE`. If the database exists, `RESTORE` permissions default to members of the **sysadmin** and **dbcreator** fixed server roles and the owner (`dbo`) of the database.
+
+`RESTORE` permissions are given to roles in which membership information is always readily available to the server. Because fixed database role membership can be checked only when the database is accessible and undamaged, which isn't always the case when `RESTORE` is run, members of the **db_owner** fixed database role don't have `RESTORE` permissions.
+
+## Restore a database to a new location, and optionally rename the database, by using SSMS
+
+1. Connect to the appropriate instance of the  SQL Server Database Engine 
+, and then, in **Object Explorer**, select the server name to expand the server tree.
+
+1. Right-click **Databases**, and then select **Restore Database...**. The **Restore Database** dialog opens.
+
+1. On the **General** page, in the **Source** section, specify the source and location of the backup sets to restore. Select one of the following options:
+
+   - **Database**
+
+     Select the database to restore from the dropdown list. The list contains only databases that have been backed up according to the `msdb` backup history.
+
+     > **Note:**  
+     > If the backup is created from a different server, the destination server won't have the backup history information for the specified database. In this case, select **Device** to manually specify the file or device to restore.
+
+   - **Device**
+
+     Select the browse (**...**) button to open the **Select backup devices** dialog. In the **Backup media type** box, select one of the listed device types. To select one or more devices for the **Backup media** box, select **Add**.
+
+     After you add the devices you want to add to the **Backup media** list, select **OK** to return to the **General** page.
+
+     In the **Source: Device: Database** list, select the name of the database that should be restored.
+
+     > **Note:**  
+     > This list is only available when **Device** is selected. Only databases that have backups on the selected device are available.
+
+1. In the **Destination** section, the **Database** box is automatically populated with the name of the database to be restored. To change the name of the database, enter the new name in the **Database** box.
+
+1. In the **Restore to** box, leave the default of **To the last backup taken** or select **Timeline** to access the **Backup Timeline** dialog to manually select a point in time to stop the recovery action. See [Backup timeline](backup-timeline.md) for more information on designating a specific point in time.
+
+1. In the **Backup sets to restore** grid, select the backups to restore. This grid displays the backups available for the specified location. By default, a recovery plan is suggested. To override the suggested recovery plan, you can change the selections in the grid. Backups that depend on the restoration of an earlier backup are automatically deselected when the earlier backup is deselected.
+
+   For information about the columns in the **Backup sets to restore** grid, see [Restore Database (General page)](restore-database-general-page.md).
+
+1. To specify the new location of the database files, select the **Files** page, and then select **Relocate all files to folder**. Provide a new location for the **Data file folder** and **Log file folder**. For more information about this grid, see [Restore Database (Files Page)](restore-database-files-page.md).
+
+1. On the **Options** page, adjust the options if you want to. For more information about these options, see [Restore Database (Options Page)](restore-database-options-page.md).
+
+## Restore database to a new location, and optionally rename the database, by using T-SQL
+
+1. Optionally, determine the logical and physical names of the files in the backup set that contains the full database backup that you want to restore. This statement shows the basic syntax for returning a list of the database and log files contained in the backup set:
+
+   ```sql
+   RESTORE FILELISTONLY FROM backup_device WITH FILE = *backup_set_file_number
+   ```
+
+   Here, *backup_set_file_number* indicates the position of the backup in the media set. You can obtain the position of a backup set by using the [RESTORE HEADERONLY](../../t-sql/statements/restore-statements-headeronly-transact-sql.md) statement. For more information, see [Specifying a backup set](../../t-sql/statements/restore-statements-arguments-transact-sql.md#specifying-a-backup-set).
+
+   This statement also supports several `WITH` options. For more information, see [RESTORE FILELISTONLY](../../t-sql/statements/restore-statements-filelistonly-transact-sql.md).
+
+1. Use the [RESTORE DATABASE](../../t-sql/statements/restore-statements-transact-sql.md) statement to restore the full database backup. By default, data and log files are restored to their original locations. To relocate a database, use the `MOVE` option to relocate each of the database files, and to avoid collisions with existing files.
+
+The basic  Transact-SQL  syntax for restoring the database to a new location with a new name is:
+
+  ```syntaxsql
+  RESTORE DATABASE <new_database_name>
+  FROM <backup_device> [ , ...n ]
+  [ WITH
+   {
+      [ RECOVERY | NORECOVERY ]
+      [ , ] [ FILE = { <backup_set_file_number> | @backup_set_file_number } ]
+      [ , ] MOVE 'logical_file_name_in_backup' TO 'operating_system_file_name' [ , ...n ]
+  } ]
+  [ ; ]
+  ```
+
+  > **Note:**  
+  > When preparing to relocate a database on a different disk, you should verify that sufficient space is available and identify any potential collisions with existing files. This verification involves using a [RESTORE statements - VERIFYONLY](../../t-sql/statements/restore-statements-verifyonly-transact-sql.md) statement that specifies the same `MOVE` parameters that you plan to use in your `RESTORE DATABASE` statement.
+
+The following information describes arguments of this `RESTORE` statement that relate to restoring a database to a new location. For more information about these arguments, see [RESTORE Statements](../../t-sql/statements/restore-statements-transact-sql.md).
+
+***new_database_name***
+
+The new name for the database.
+
+  > **Note:**  
+  > If you're restoring the database to a different server instance, you can use the original database name instead of a new name.
+
+***backup_device* [ , ...*n* ]**
+
+Specifies a comma-separated list of between 1 and 64 backup devices from which the database backup is to be restored. You can specify a physical backup device, or you can specify a corresponding logical backup device, if one is defined. To specify a physical backup device, use the `DISK` or `TAPE` option:
+
+**{ DISK | TAPE } = *physical_backup_device_name***
+
+For more information, see [Backup devices](backup-devices-sql-server.md).
+
+**{ RECOVERY | NORECOVERY }**
+
+If the database uses the full recovery model, you might need to apply transaction log backups after you restore the database. In this case, specify the `NORECOVERY` option.
+
+Otherwise, use the `RECOVERY` option, which is the default.
+
+**FILE = { *backup_set_file_number* | *@backup_set_file_number* }**
+
+Identifies the backup set to be restored. For example, a *backup_set_file_number* of `1` indicates the first backup set on the backup medium, and a *backup_set_file_number* of `2` indicates the second backup set. You can obtain the *backup_set_file_number* of a backup set by using the [RESTORE statements - HEADERONLY](../../t-sql/statements/restore-statements-headeronly-transact-sql.md) statement.
+
+When this option isn't specified, the default is to use the first backup set on the backup device.
+
+For more information, see [RESTORE arguments (Transact-SQL)](../../t-sql/statements/restore-statements-arguments-transact-sql.md#specifying-a-backup-set).
+
+**MOVE '*logical_file_name_in_backup*' TO '*operating_system_file_name*' [ , ...*n* ]**
+
+Specifies that the data or log file specified by `logical_file_name_in_backup` is to be restored to the location specified by `operating_system_file_name`. Specify a `MOVE` statement for every logical file you want to restore from the backup set to a new location.
+
+| Option | Description |
+| --- | --- |
+| `logical_file_name_in_backup` | Specifies the logical name of a data or log file in the backup set. The logical file name of a data or log file in a backup set matches its logical name in the database when the backup set was created.<br /><br /><br /><br />Note: To obtain a list of the logical files from the backup set, use [RESTORE statements - FILELISTONLY](../../t-sql/statements/restore-statements-filelistonly-transact-sql.md). |
+| `operating_system_file_name` | Specifies a new location for the file specified by `logical_file_name_in_backup`. The file is restored to this location.<br /><br />Optionally, `operating_system_file_name` specifies a new file name for the restored file. A new name is necessary if you're creating a copy of an existing database on the same server instance. |
+| `n` | A placeholder indicating that you can specify additional `MOVE` statements. |
+
+<a id="TsqlExample"></a>
+
+### Example (Transact-SQL)
+
+This example creates a new database named `MyAdvWorks` by restoring a backup of the  `AdventureWorks2025`  sample database, which includes two files:  `AdventureWorks2025` `_Data` and  `AdventureWorks2025` `_Log`. This database uses the simple recovery model. The  `AdventureWorks2025`  database already exists on the server instance, so the files in the backup must be restored to a new location. The `RESTORE FILELISTONLY` statement is used to determine the number and names of the files in the database being restored. The database backup is the first backup set on the backup device.
+
+> **Note:**  
+> The examples of backing up and restoring the transaction log, including point-in-time restores, use the `MyAdvWorks_FullRM` database that's created from  `AdventureWorks2025` , just like the following `MyAdvWorks` example. However, the resulting `MyAdvWorks_FullRM` database must be changed to use the full recovery model by using the following  Transact-SQL  statement: `ALTER DATABASE <database_name> SET RECOVERY FULL`.
+
+```sql
+USE master;
+GO
+-- First determine the number and names of the files in the backup.
+-- AdventureWorks2022_Backup is the name of the backup device.
+RESTORE FILELISTONLY
+   FROM AdventureWorks2022_Backup;
+
+-- Restore the files for MyAdvWorks.
+RESTORE DATABASE MyAdvWorks
+   FROM AdventureWorks2022_Backup
+   WITH RECOVERY,
+   MOVE 'AdventureWorks2022_Data' TO 'D:\MyData\MyAdvWorks_Data.mdf',
+   MOVE 'AdventureWorks2022_Log' TO 'F:\MyLog\MyAdvWorks_Log.ldf';
+GO
+```
+
+For an example of how to create a full database backup of the  `AdventureWorks2025`  database, see [Create a full database backup](create-a-full-database-backup-sql-server.md).
+
+<a id="RelatedTasks"></a>
+
+## Related tasks
+
+- [Create a full database backup](create-a-full-database-backup-sql-server.md)
+- [Restore a database backup using SSMS](restore-a-database-backup-using-ssms.md)
+- [Back up a transaction log](back-up-a-transaction-log-sql-server.md)
+- [Restore a transaction log backup (SQL Server)](restore-a-transaction-log-backup-sql-server.md)
+
+## Related content
+
+- [Manage Metadata When Making a Database Available on Another Server](../databases/manage-metadata-when-making-a-database-available-on-another-server.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)
+- [Copy Databases with Backup and Restore](../databases/copy-databases-with-backup-and-restore.md)

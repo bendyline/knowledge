@@ -1,0 +1,68 @@
+---
+title: Include file
+description: Include file
+author: sdgilley
+ms.reviewer: meerakurup
+ms.author: sgilley
+ms.service: microsoft-foundry
+ms.topic: include
+ms.date: 09/16/2026
+ms.custom: include
+ai-usage: ai-assisted
+---
+
+## Create custom roles for projects
+
+If the built-in roles don't meet your enterprise requirements, create a custom role that allows for precise control over allowed actions and scopes. Here's an example subscription-level custom role definition:
+
+```json
+{
+  "Name": "My Enterprise Foundry User",
+  "IsCustom": true,
+  "Description": "Custom role for Foundry at my enterprise to only allow building Agents. Assign at subscription level.",
+  "Actions": [
+    "Microsoft.CognitiveServices/*/read",
+    "Microsoft.Authorization/*/read",
+    "Microsoft.CognitiveServices/accounts/listkeys/action",
+    "Microsoft.Resources/deployments/*"
+  ],
+  "NotActions": [],
+  "DataActions": [
+    "Microsoft.CognitiveServices/accounts/AIServices/agents/*"
+  ],
+  "NotDataActions": [],
+  "AssignableScopes": ["/subscriptions/<your-subscription-id>"]
+}
+```
+
+Save the definition to a file and create the role:
+
+```azurecli
+az role definition create --role-definition custom-role.json
+```
+
+> **Note:**
+> This format is what the Azure CLI and Azure PowerShell accept. The REST API and Azure Resource Manager templates wrap the same fields in a `properties` object and use camel case, such as `roleName` instead of `Name`.
+
+For more information on creating a custom role, see the following articles.
+
+- [Azure portal](https://learn.microsoft.com/azure/role-based-access-control/custom-roles-portal)
+- [Azure CLI](https://learn.microsoft.com/azure/role-based-access-control/custom-roles-cli)
+- [Azure PowerShell](https://learn.microsoft.com/azure/role-based-access-control/custom-roles-powershell)
+- [Disable preview features in Microsoft Foundry](../how-to/disable-preview-features.md). This article provides more details on specific permissions in Foundry across control and data plane which you can utilize when building custom roles.
+
+## Notes and limitations
+
+* To view and purge deleted Foundry accounts, you must have the Contributor role assigned at the subscription scope.
+* Users with the Contributor role can deploy models in Foundry.
+* You need the Owner role on a resource's scope to create custom roles in the resource.
+* If you have permissions to role assign in Azure (for example, the Owner role assigned on the account scope) to your user principal, and you deploy a Foundry resource from the Azure portal or Foundry portal UI, then the Foundry User role gets automatically assigned to your user principal. This assignment doesn't apply when deploying Foundry from SDK or CLI. 
+
+  
+> **Important:**
+> The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+* When you create a Foundry resource, the built-in role-based access control (RBAC) permissions give you access to the resource. To use resources created outside Foundry, ensure the resource has permissions that let you access it. Here are some examples: 
+    * To use a new Azure Blob Storage account, add the Foundry account resource's managed identity to the Storage Blob Data Reader role on that storage account. 
+    * To use a new Azure AI Search source, add Foundry to the Azure AI Search role assignments.
+* To fine-tune a model in Foundry, you need both data plane and control plane permissions. Deploying a fine-tuned model is a control plane permission. Therefore, the only built-in role with both data plane and control plane permissions is the **Foundry Owner** role. Or, if you prefer, you can also assign the **Foundry User** role for data plane permissions and the **Foundry Account Owner** role for control plane permissions.

@@ -1,0 +1,38 @@
+---
+title: include file
+description: include file
+author: dominicbetts
+ms.topic: include
+ms.date: 10/22/2024
+ms.author: dobett
+ms.service: azure-iot-operations
+---
+
+Verify data is flowing to the MQTT broker by using the **mosquitto_sub** tool. In this example, you run the **mosquitto_sub** tool inside your Kubernetes cluster:
+
+1. Run the following command to deploy a pod that includes the **mosquitto_pub** and **mosquitto_sub** tools that are useful for interacting with the MQTT broker in the cluster:
+
+    ```console
+    kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/explore-iot-operations/main/samples/quickstarts/mqtt-client.yaml
+    ```
+
+    The following snippet shows the YAML file that you applied:
+
+    [Code reference unavailable in this source snapshot: ~/azure-iot-operations-samples/samples/quickstarts/mqtt-client.yaml](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/iot-operations/includes/deploy-mqttui.md)
+
+    > **Caution:**
+    > This configuration isn't secure. Don't use this configuration in a production environment.
+
+1. When the **mqtt-client** pod is running, run the following command to create a shell environment in the pod you created:
+
+    ```console
+    kubectl exec --stdin --tty mqtt-client -n azure-iot-operations -- sh
+    ```
+
+1. At the Bash shell in the **mqtt-client** pod, run the following command to connect to the MQTT broker using the **mosquitto_sub** tool and use a wildcard to subscribe to the `data/#` topics:
+
+    ```bash
+    mosquitto_sub --host aio-broker --port 18883 --topic "azure-iot-operations/data/#" -v --debug --cafile /var/run/certs/ca.crt -D CONNECT authentication-method 'K8S-SAT' -D CONNECT authentication-data $(cat /var/run/secrets/tokens/broker-sat)
+    ```
+
+    This command continues to run and displays messages as they arrive on any `data/#` topics until you press **Ctrl+C** to stop it. To exit the shell environment, type `exit`.

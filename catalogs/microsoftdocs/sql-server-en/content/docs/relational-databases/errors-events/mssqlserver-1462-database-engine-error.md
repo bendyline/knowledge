@@ -1,0 +1,44 @@
+---
+title: "MSSQLSERVER_1462"
+description: "MSSQLSERVER_1462"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "1462 (Database Engine error)"
+---
+# MSSQLSERVER_1462
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 1462 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | DBM_DISABLED_DUE_TO_FAILED_REDO |
+| Message Text | Database mirroring is disabled due to a failed redo operation. Unable to resume. |
+  
+## Explanation  
+Database mirroring failed to redo a log record on the mirror.  
+  
+### Possible Causes  
+The most likely cause is that an add-file operation completed on the principal database but then failed on the mirror database because file names or directory structures differ on the principal server and mirror server.  
+  
+## User Action  
+Look in the  SQL Server 
+ error log for the cause of this error. Try to resolve the cause and resume mirroring on the database.  
+  
+## Related content
+
+- [Troubleshoot Database Mirroring Configuration (SQL Server)](../../database-engine/database-mirroring/troubleshoot-database-mirroring-configuration-sql-server.md)

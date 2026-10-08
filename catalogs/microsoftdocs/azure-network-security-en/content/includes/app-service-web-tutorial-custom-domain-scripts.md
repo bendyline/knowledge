@@ -1,0 +1,46 @@
+---
+title: "include file"
+description: "include file"
+services: app-service
+author: msangapu-msft
+ms.service: azure-app-service
+ms.topic: "include"
+ms.date: 12/14/2021
+ms.author: msangapu
+ms.custom: include file
+---
+
+You can automate management of custom domains with scripts by using the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) or [Azure PowerShell](https://learn.microsoft.com/powershell/azure/).
+
+# [Azure CLI](#tab/azurecli)
+The following command adds a configured custom DNS name to an App Service app.
+
+```azurecli 
+az webapp config hostname add \
+    --webapp-name <app-name> \
+    --resource-group <resource-group-name> \
+    --hostname <fully-qualified-domain-name>
+``` 
+
+For more information, see [Map a custom domain to a web app](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/scripts/cli-configure-custom-domain.md).
+
+# [PowerShell](#tab/powershell)
+
+The following command adds a configured custom DNS name to an App Service app.
+
+```powershell  
+$subscriptionId = "<subscription-ID>"
+$resourceGroup = "<resource-group-name>"
+$appName = "<app-name>"
+$hostname = "<fully-qualified-domain-name>"
+$apiVersion = "2024-04-01"
+ 
+$restApiPath = "/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/sites/{2}/hostNameBindings/{3}?api-version={4}" `
+    -f $subscriptionId, $resourceGroup, $appName, $hostname, $apiVersion
+ 
+Invoke-AzRestMethod -Method PUT -Path $restApiPath
+```
+
+For more information, see [Assign a custom domain to a web app](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/scripts/powershell-configure-custom-domain.md).
+
+---

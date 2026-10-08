@@ -1,0 +1,48 @@
+---
+title: "WSFC cluster service is offline"
+description: WSFC Cluster State checks the state of the Windows Server Failover Cluster. The policy is unhealthy when the cluster is offline or in the forced quorum state.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: troubleshooting-general
+f1_keywords:
+  - "sql13.swb.agdashboard.agp1WSFCquorum.issues.f1"
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], policies"
+monikerRange: ">=sql-server-2017"
+---
+# WSFC cluster service is offline
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+    
+## Introduction  
+  
+- **Policy Name**: WSFC Cluster State
+- **Issue**: WSFC cluster service is offline.
+- **Category**: **Critical**
+- **Facet**: Instance of SQL Server  
+  
+## Description  
+ This policy checks the state of the Windows Server Failover Cluster (WSFC). The policy is in an unhealthy state and an alert is raised when the WSFC cluster is offline or in the forced quorum state. All availability groups hosted within this cluster are offline or a disaster recovery action is required.  
+  
+ The policy state is healthy when the cluster state is in the normal quorum.
+
+## Possible Causes  
+ This issue can be caused by a cluster service issue or by the loss of the quorum in the cluster.  
+  
+## Possible Solution  
+ Use the Cluster Administrator tool to perform the forced quorum or disaster recovery workflow. If you cannot resolve the issue by performing the forced quorum or disaster recovery, contact your cluster administrator to help resolve this issue. For more information, see [Force a WSFC Cluster to Start Without a Quorum](../../../sql-server/failover-clusters/windows/force-a-wsfc-cluster-to-start-without-a-quorum.md) in  SQL Server 
+ Books Online.  
+  
+## Related content
+
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Use the Always On Availability Group dashboard (SQL Server Management Studio)](use-the-always-on-dashboard-sql-server-management-studio.md)

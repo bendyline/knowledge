@@ -1,0 +1,44 @@
+---
+title: "getSQLStateType Method (SQLServerDatabaseMetaData)"
+description: "getSQLStateType Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.getSQLStateType"
+apitype: "Assembly"
+---
+# getSQLStateType Method (SQLServerDatabaseMetaData)
+
+
+  Indicates whether the SQLSTATE that is returned by the SQLException.getSQLState method is X/Open (now known as Open Group) SQL CLI, SQL99 (JDBC 3.0), or SQL:2003 (JDBC 4.0).  
+  
+## Syntax  
+  
+```  
+  
+public int getSQLStateType()  
+```  
+  
+## Return Value  
+ An **int** that indicates the type of SQLSTATE, which can be one of the following values:  
+  
+-   For Java Runtime Environment version 5.0: If the **xopenStates** connection property is set to **true**, this method returns DatabaseMetaData.sqlStateXOpen. Otherwise, DatabaseMetaData.sqlStateSQL99.  
+  
+-   For Java Runtime Environment version 6.0: If the **xopenStates** connection property is set to **true**, this method returns DatabaseMetaData.sqlStateXOpen. Otherwise, DatabaseMetaData.sqlStateSQL.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getSQLStateType method is specified by the getSQLStateType method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

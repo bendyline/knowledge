@@ -1,0 +1,182 @@
+---
+title: Manage storage account resources with the Azure Storage management library for .NET
+titleSuffix: Azure Storage
+description: Learn how to manage storage account resources with the Azure Storage management library for .NET.
+services: storage
+author: stevenmatthew
+ms.author: shaas
+ms.date: 11/19/2024
+ms.service: azure-blob-storage
+ms.topic: how-to
+ms.devlang: csharp
+ms.custom: devx-track-csharp, devguide-csharp, devx-track-dotnet
+# Customer intent: “As a .NET developer, I want to manage Azure storage account resources programmatically, so that I can create, update, list, and delete storage accounts efficiently within my applications.”
+---
+
+# Manage storage account resources with .NET
+
+This article shows you how to manage storage account resources by using the Azure Storage management library for .NET. You can create and update storage accounts, list storage accounts in a subscription or resource group, manage storage account keys, and delete storage accounts. You can also configure client options to use a custom retry policy or set other options.
+
+## Prerequisites
+
+- Azure subscription - [create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+- Latest [.NET SDK](https://dotnet.microsoft.com/download/dotnet) for your operating system. Be sure to get the SDK and not the runtime.
+
+## Set up your environment
+
+If you don't have an existing project, this section walks you through preparing a project to work with the Azure Storage management library for .NET. To learn more about project setup, see [Get started with Azure Storage management library for .NET](storage-srp-dotnet-get-started.md).
+
+#### Install packages
+
+From your project directory, install packages for the Azure Storage Resource Manager and Azure Identity client libraries using the `dotnet add package` command. The Azure.Identity package is needed for passwordless connections to Azure services.
+
+```dotnetcli
+dotnet add package Azure.Identity
+dotnet add package Azure.ResourceManager.Storage
+```
+
+#### Add using directives
+
+Add these `using` directives to the top of your code file:
+
+```csharp
+using Azure.Identity;
+using Azure.ResourceManager;
+```
+
+#### Create an ArmClient object
+
+To connect an application and manage storage account resources, create an [ArmClient](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.armclient) object. This client object is the entry point for all ARM clients. Since all management APIs go through the same endpoint, you only need to create one top-level `ArmClient` to interact with resources.
+
+The following example creates an `ArmClient` object authorized using `DefaultAzureCredential`, then gets the subscription resource for the specified subscription ID:
+
+```csharp
+ArmClient armClient = new ArmClient(new DefaultAzureCredential());
+
+// Create a resource identifier, then get the subscription resource
+ResourceIdentifier resourceIdentifier = new($"/subscriptions/{subscriptionId}");
+SubscriptionResource subscription = armClient.GetSubscriptionResource(resourceIdentifier);
+```
+
+To learn about creating client object for a resource group or storage account resource, see [Create a client for managing storage account resources](storage-srp-dotnet-get-started.md#create-a-client-for-managing-storage-account-resources).
+
+#### Authorization
+
+Azure provides built-in roles that grant permissions to call management operations. Azure Storage also provides built-in roles specifically for use with the Azure Storage resource provider. To learn more, see [Built-in roles for management operations](authorization-resource-provider.md).
+
+## Create a storage account
+
+You can asynchronously create a storage account with specified parameters. If a storage account already exists and a subsequent create request is issued with the same parameters, the request succeeds. If the parameters are different, the storage account properties are updated. For an example of updating an existing storage account, see [Update the storage account SKU](#update-the-storage-account-sku).
+
+Each storage account name must be unique within Azure. To check for the availability of a storage account name, you can use the following method:
+
+- [CheckStorageAccountNameAvailability](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageextensions.checkstorageaccountnameavailability)
+
+The following code example shows how to check the availability of a storage account name:
+
+```csharp
+// Check if the account name is available
+bool? nameAvailable = subscription
+    .CheckStorageAccountNameAvailability(new StorageAccountNameAvailabilityContent(storageAccountName)).Value.IsNameAvailable;
+```
+
+You can create a storage account using the following method from the [StorageAccountCollection](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountcollection) class:
+
+- [CreateOrUpdateAsync](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountcollection.createorupdateasync)
+
+When creating a storage account resource, you can set the properties for the storage account by including a [StorageAccountCreateOrUpdateContent](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.models.storageaccountcreateorupdatecontent) instance in the `content` parameter.
+
+The following code example creates a storage account and configures properties for SKU, kind, location, access tier, and shared key access:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+## List storage accounts
+
+You can list storage accounts in a subscription or a resource group. The following code example takes a [SubscriptionResource](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.resources.subscriptionresource) instance and lists storage accounts in the subscription:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+The following code example takes a [ResourceGroupResource](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.resources.resourcegroupresource) instance and lists storage accounts in the resource group:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+## Manage storage account keys
+
+You can get storage account access keys using the following method:
+
+- [GetKeysAsync](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountresource.getkeysasync)
+
+This method returns an iterable collection of [StorageAccountKey](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.models.storageaccountkey) instances.
+
+The following code example gets the keys for a storage account and writes the names and values to the console for example purposes:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+You can regenerate a storage account access key using the following method:
+
+- [RegenerateKeyAsync](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountresource.regeneratekeyasync)
+
+This method regenerates a storage account key and returns the new key value as part of an iterable collection of [StorageAccountKey](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.models.storageaccountkey) instances.
+
+The following code example regenerates a storage account key:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+## Update the storage account SKU
+
+You can update existing storage account settings by passing updated parameters to one of the following methods:
+
+- [StorageAccountCollection.CreateOrUpdateAsync](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountcollection.createorupdateasync) (updated parameters passed as a [StorageAccountCreateOrUpdateContent](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.models.storageaccountcreateorupdatecontent) instance)
+- [StorageAccountResource.UpdateAsync](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountresource.updateasync) (updated parameters passed as a [StorageAccountPatch](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.models.storageaccountpatch) instance)
+
+The following code example updates the storage account SKU from `Standard_LRS` to `Standard_GRS`:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+## Delete a storage account
+
+You can delete a storage account using the following method:
+
+- [DeleteAsync](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.storage.storageaccountresource.deleteasync)
+
+The following code example shows how to delete a storage account:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/ManagementTasks.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+## Configure ArmClient options
+
+You can pass an [ArmClientOptions](https://learn.microsoft.com/dotnet/api/azure.resourcemanager.armclientoptions) instance when creating an `ArmClient` object. This class allows you to configure values for diagnostics, environment, transport, and retry options for a client object. 
+
+### Example: Configure retry options
+
+The following code example shows how to configure the `ArmClient` object to use a custom retry policy:
+
+[Code reference unavailable in this source snapshot: ~/storage-mgmt-devguide-dotnet/StorageAccountManagement/Program.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-srp-manage-account-dotnet.md)
+
+If you don't specify a custom retry policy, the default retry values are used. The following table lists the properties of the [RetryOptions](https://learn.microsoft.com/dotnet/api/azure.core.retryoptions) class, along with the type, a brief description, and the default value:
+
+| Property | Type | Description | Default value |
+| --- | --- | --- | --- |
+| [Delay](https://learn.microsoft.com/dotnet/api/azure.core.retryoptions.delay) | [TimeSpan](https://learn.microsoft.com/dotnet/api/system.timespan) | The delay between retry attempts for a fixed approach or the delay on which to base calculations for a backoff-based approach. If the service provides a Retry-After response header, the next retry is delayed by the duration specified by the header value. | 0.8 second |
+| [MaxDelay](https://learn.microsoft.com/dotnet/api/azure.core.retryoptions.maxdelay) | [TimeSpan](https://learn.microsoft.com/dotnet/api/system.timespan) | The maximum permissible delay between retry attempts when the service doesn't provide a Retry-After response header. If the service provides a Retry-After response header, the next retry is delayed by the duration specified by the header value. | 1 minute |
+| [MaxRetries](https://learn.microsoft.com/dotnet/api/azure.core.retryoptions.maxretries) | int | The maximum number of retry attempts before giving up. | 3 |
+| [Mode](https://learn.microsoft.com/dotnet/api/azure.core.retryoptions.mode) | [RetryMode](https://learn.microsoft.com/dotnet/api/azure.core.retrymode) | The approach to use for calculating retry delays. | Exponential |
+| [NetworkTimeout](https://learn.microsoft.com/dotnet/api/azure.core.retryoptions.networktimeout) | [TimeSpan](https://learn.microsoft.com/dotnet/api/system.timespan) | The timeout applied to an individual network operation. | 100 seconds |
+
+As you configure retry options for an `ArmClient` object, it's important to note that the [scale targets](scalability-targets-resource-provider.md) are different between the Storage resource provider (management plane) and the data plane. Be sure to configure retry options with these limits in mind.
+
+If you exceed the rate limit for Azure Storage management plane APIs, you receive an HTTP status code `429 Too Many Requests`, which indicates that the request is being throttled. The response includes a `Retry-After` value, which specifies the number of seconds your application should wait (or sleep) before sending the next request. If you send a request before the retry value elapses, your request isn't processed and a new `Retry-After` value is returned.
+
+## Resources
+
+To learn more about resource management using the Azure management library for .NET, see the following resources.
+
+### Code samples
+
+- [View code samples from this article (GitHub)](https://github.com/Azure-Samples/storage-mgmt-devguide-dotnet/blob/main/StorageAccountManagement/ManagementTasks.cs)
+
+### REST API operations
+
+The Azure SDK for .NET contains libraries that build on top of the Storage resource provider REST API, allowing you to interact with REST API operations through familiar .NET paradigms. The management library methods for managing storage account resources use REST API operations described in the following article:
+
+- [Storage Accounts operation overview](https://learn.microsoft.com/rest/api/storagerp/storage-accounts) (REST API)

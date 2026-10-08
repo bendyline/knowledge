@@ -1,0 +1,41 @@
+---
+title: "getNString Method (java.lang.String)"
+description: "getNString Method (java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# getNString Method (java.lang.String)
+
+
+  Retrieves the value of the designated **NCHAR**, **NVARCHAR**, or **LONGNVARCHAR** parameter as a String in the Java programming language.  
+  
+## Syntax  
+  
+```  
+  
+public final java.lang.String getNString(java.lang.String parameterName)  
+```  
+  
+#### Parameters  
+ *parameterName*  
+  
+ A **String** that contains the parameter name.  
+  
+## Return Value  
+ AStringobject.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getNString method is specified by the getNString method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [getNString Method (SQLServerCallableStatement)](getnstring-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Methods](sqlservercallablestatement-methods.md)

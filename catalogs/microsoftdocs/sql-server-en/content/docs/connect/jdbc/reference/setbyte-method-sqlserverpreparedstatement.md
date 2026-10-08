@@ -1,0 +1,46 @@
+---
+title: "setByte Method (SQLServerPreparedStatement)"
+description: "setByte Method (SQLServerPreparedStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPreparedStatement.setByte"
+apitype: "Assembly"
+---
+# setByte Method (SQLServerPreparedStatement)
+
+
+  Sets the designated parameter to the given **byte** value.  
+  
+## Syntax  
+  
+```  
+  
+public final void setByte(int n,  
+                          byte x)  
+```  
+  
+#### Parameters  
+ *n*  
+  
+ An **int** that indicates the parameter number.  
+  
+ *x*  
+  
+ A **byte** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setByte method is specified by the setByte method in the java.sql.PreparedStatement interface.  
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

@@ -1,0 +1,38 @@
+# Source code: aspnetcore/mvc/views/display-templates/sample/Pages/Adr2/Edit.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model WebAddress.Pages.Adr.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Address</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Address.Id" />
+             @Html.EditorFor(model => model.Address)
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+```

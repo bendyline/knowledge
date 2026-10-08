@@ -1,0 +1,15 @@
+# Source code: docs/standard/serialization/system-text-json/snippets/how-to/vb/ValueTextEqualsExample.vb
+
+Complete source file; linked examples may select a region or line range.
+
+```
+' <DefineUtf8Var>
+' This code example doesn't apply to Visual Basic. For more information, go to the following URL:
+' https://learn.microsoft.com/dotnet/standard/serialization/system-text-json-how-to#visual-basic-support
+' </DefineUtf8Var>
+' <UseUtf8Var>
+' This code example doesn't apply to Visual Basic. For more information, go to the following URL:
+' https://learn.microsoft.com/dotnet/standard/serialization/system-text-json-how-to#visual-basic-support
+' </UseUtf8Var>
+
+```

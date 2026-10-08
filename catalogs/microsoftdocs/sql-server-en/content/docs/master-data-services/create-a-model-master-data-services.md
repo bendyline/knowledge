@@ -1,0 +1,92 @@
+---
+title: Create a Model
+description: Learn how to create a model in Master Data Services to contain model objects. You must have permissions for the System Administration area.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "models [Master Data Services], creating models"
+  - "creating models [Master Data Services]"
+---
+# Create a Model (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, create a model to contain model objects.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **System Administration** functional area.  
+  
+-   You must be a model administrator. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md).  
+  
+### To create a model  
+  
+1.  In  Master Data Manager 
+, click **System Administration**.  
+  
+2.  On the **Model View** page, from the menu bar, point to **Manage** and click **Models**.  
+  
+3.  On the **Manage Models** page, click **Add**. A panel is displayed on the right side.  
+  
+4.  In the **Name** box, type the name of the model.  
+  
+5.  (Optionally) In the **Description** field, type the model description.  
+  
+6.  In the **Log Retention Days** field, select one of the options for retaining log data. The default value is **System Setting**, which indicates that the value is inherited from system settings in the  Master Data Services Configuration Manager 
+. For more information, see [System Settings (Master Data Services)](system-settings-master-data-services.md).  
+  
+     To override the system setting and not remove transaction log data, select **NO**. To retain only today's log data and truncate log data for all previous days, select **YES** and set the **Days** field to 0. To retain log data for a specified number of days, select **YES** and set the **Days** field to the number of days.  
+  
+7.  Optionally, select **Create entity with same name as model** to create an entity with the same name as the model.  
+  
+8.  Click **Save model**.  
+  
+ For each created model, a row with eight columns is added to the grid. The eight columns are:  
+  
+-   **Status**: The model status. When you click the **Save model** button, the Updating image is displayed, which indicates that the model is updating. If there are errors when creating or editing a model, the Error image is displayed. Otherwise, the status is OK and the OK image is displayed.  
+  
+-   **Name**: The model name.  
+  
+-   **Description**: The model description.  
+  
+-   **Log Retention Days**: The number of days the log is retained for the model.  
+  
+-   **Created By**: The username of the user who created the model.  
+  
+-   **Created Date and Time**: The date and time when the model was created.  
+  
+-   **Updated By**: The username of the user who last updated the model.  
+  
+-   **Updated Date and Time**: The date and time when the model was last updated.  
+  
+## Related content
+
+- [Models (Master Data Services)](models-master-data-services.md)
+- [Entities (Master Data Services)](entities-master-data-services.md)
+- [Delete a Model (Master Data Services)](delete-a-model-master-data-services.md)
+- [Edit Model (Master Data Services)](edit-model-master-data-services.md)
+- [Transactions (Master Data Services)](transactions-master-data-services.md)
+- [Create an Entity (Master Data Services)](create-an-entity-master-data-services.md)

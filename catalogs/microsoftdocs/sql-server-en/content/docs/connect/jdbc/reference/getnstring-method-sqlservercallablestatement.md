@@ -1,0 +1,27 @@
+---
+title: "getNString Method (SQLServerCallableStatement)"
+description: "getNString Method (SQLServerCallableStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# getNString Method (SQLServerCallableStatement)
+
+
+  Retrieves the value of the designated **NCHAR**, **NVARCHAR**, or **LONGNVARCHAR** parameter as a String in the Java programming language.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [getNString Method (int)](getnstring-method-int.md) | Retrieves the value of the designated **NCHAR**, **NVARCHAR**, or **LONGNVARCHAR** parameter as a String in the Java programming language. |
+| [getNString Method (java.lang.String)](getnstring-method-java-lang-string.md) | Retrieves the value of the designated **NCHAR**, **NVARCHAR**, or **LONGNVARCHAR** parameter as a String in the Java programming language. |
+  
+## Related content
+
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

@@ -1,0 +1,101 @@
+---
+title: "ceiling Function (XQuery)"
+description: Learn how to use the XQuery ceiling() function to return the smallest number without a fractional part that is not less than the value of the function argument.
+author: "rothja"
+ms.author: "jroth"
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: xml
+ms.topic: reference
+helpviewer_keywords:
+  - "fn:ceiling function"
+  - "ceiling function [XQuery]"
+dev_langs:
+  - "XML"
+---
+# Numeric Values Functions - ceiling 
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns the smallest number without a fractional part and that is not less than the value of its argument. If the argument is an empty sequence, it returns the empty sequence.  
+  
+## Syntax  
+  
+```  
+  
+fn:ceiling ( $arg as numeric?) as numeric?  
+```  
+  
+## Arguments  
+ *$arg*  
+ Number to which the function is applied.  
+  
+## Remarks  
+ If the type of *$arg* is one of the three numeric base types, **xs:float**, **xs:double**, or **xs:decimal**, the return type is the same as the *$arg* type.  
+  
+ If the type of *$arg* is a type that is derived from one of the numeric types, the return type is the base numeric type.  
+  
+ If the input to the fn:floor, fn:ceiling, or fn:round functions is **xdt:untypedAtomic**, it is implicitly cast to **xs:double**.  
+  
+ Any other type generates a static error.  
+  
+## Examples  
+ This topic provides XQuery examples against XML instances that are stored in various **xml** type columns in the AdventureWorks database.  
+  
+### A. Using the ceiling() XQuery function  
+ For product model 7, this query returns a list of the work center locations in the manufacturing process of the product model. For each work center location, the query returns the location ID, labor hours, and lot size, if documented. The query uses the **ceiling** function to return the labor hours as values of type **decimal**.  
+  
+```  
+SELECT ProductModelID, Instructions.query('  
+declare namespace AWMI="https://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelManuInstructions";   
+     for $i in /AWMI:root/AWMI:Location  
+     return   
+       <Location LocationID="{ $i/@LocationID }"   
+                   LaborHrs="{ ceiling($i/@LaborHours) }" >  
+                    {   
+                      $i/@LotSize  
+                    }    
+       </Location>  
+') AS Result  
+FROM Production.ProductModel  
+WHERE ProductModelID=7  
+```  
+  
+ Note the following from the previous query:  
+  
+-   The AWMI namespace prefix stands for Adventure Works Manufacturing Instructions. This prefix refers to the same namespace used in the document being queried.  
+  
+-   **Instructions** is an **xml** type column. Therefore, the [query() method (XML data type)](../t-sql/xml/query-method-xml-data-type.md) is used to specify XQuery. The XQuery statement is specified as the argument to the query method.  
+  
+-   **for ... return** is a loop construct. In the query, the **for** loop identifies a list of \<Location> elements. For each work center location, the **return** statement in the **for** loop describes the XML to be generated:  
+  
+    -   A \<Location> element that has LocationID and LaborHrs attributes. The corresponding expression inside the braces ({ }) retrieves the required values from the document.  
+  
+    -   The { $i/@LotSize } expression retrieves the LotSize attribute from the document, if present.  
+  
+    -   This is the result:  
+  
+```  
+ProductModelID Result    
+-------------- ------------------------------------------------------  
+7      <Location LocationID="10" LaborHrs="3" LotSize="100"/>  
+       <Location LocationID="20" LaborHrs="2" LotSize="1"/>     
+       <Location LocationID="30" LaborHrs="1" LotSize="1"/>     
+       <Location LocationID="45" LaborHrs="1" LotSize="20"/>  
+       <Location LocationID="60" LaborHrs="3" LotSize="1"/>     
+       <Location LocationID="60" LaborHrs="4" LotSize="1"/>  
+```  
+  
+### Implementation Limitations  
+ These are the limitations:  
+  
+-   The **ceiling()** function maps all integer values to xs:decimal.  
+  
+## Related content
+
+- [Numeric Values Functions - floor](numeric-values-functions-floor.md)
+- [Numeric Values Functions - round](numeric-values-functions-round.md)

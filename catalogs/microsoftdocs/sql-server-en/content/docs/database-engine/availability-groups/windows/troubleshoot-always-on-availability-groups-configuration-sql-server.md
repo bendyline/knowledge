@@ -1,0 +1,407 @@
+---
+title: "Troubleshoot Always On Availability Groups Configuration (SQL Server)"
+description: Troubleshoot typical problems with configuring server instances for Always On availability groups in SQL Server.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 03/24/2026
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: troubleshooting
+helpviewer_keywords:
+  - "troubleshooting [SQL Server], deploying"
+  - "Availability Groups [SQL Server], troubleshooting"
+  - "Availability Groups [SQL Server], configuring"
+---
+# Troubleshoot Always On Availability Groups Configuration (SQL Server)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This article provides information to help you troubleshoot typical problems with configuring server instances for  Always On availability groups 
+. Typical configuration problems include  Always On availability groups 
+ is disabled, accounts are incorrectly configured, the database mirroring endpoint doesn't exist, the endpoint is inaccessible (SQL Server Error 1418), network access doesn't exist, and a join database command fails (SQL Server Error 35250).  
+  
+> **Note:**  
+>  Ensure that you're meeting the  Always On availability groups 
+ prerequisites. For more information, see [Prerequisites, Restrictions, and Recommendations for Always On Availability Groups (SQL Server)](prereqs-restrictions-recommendations-always-on-availability.md).  
+
+##  <a name="IsHadrEnabled"></a> Always On Availability Groups Isn't Enabled  
+
+The  Always On availability groups 
+ feature must be enabled on each of the instances of  SQL Server 
+. 
+
+If the Always On Availability Groups feature isn't enabled, you'll get this error message when you try to create an Availability group on SQL Server.
+
+`The Always On Availability Groups feature must be enabled for server instance 'SQL1VM' before you can create an availability group on this instance. To enable this feature, open the SQL Server Configuration Manager, select SQL Server Services, right-click on the SQL Server service name, select Properties, and use the Always On Availability Groups tab of the Server Properties dialog. Enabling Always On Availability Groups may require that the server instance is hosted by a Windows Server Failover Cluster (WSFC) node. (Microsoft.SqlServer.Management.HadrTasks)`
+
+The error message clearly indicates that the AG feature isn't enabled and also directs you how to enable it. There are two scenarios where you can get in this state besides the obvious one where AG wasn't enabled in the first place. 
+
+1. If SQL Server was installed and the Always On Availability Groups feature was enabled before you installed the Windows Server Failover Clustering (WSFC) feature, you might get this error  when you attempt to create an Always On AG. 
+2. If you remove an existing WSFC feature and rebuild it while SQL Server still has Always On configured, when you attempt to use AG again this error may occur.
+
+In such cases you can take the following steps to resolve it: 
+
+1. Disable the AG feature
+1. Restart SQL Server service
+1. Enable the AG feature back
+1. Again restart the SQL Service
+
+For more information, see [Enable and Disable Always On Availability Groups (SQL Server)](enable-and-disable-always-on-availability-groups-sql-server.md).  
+
+##  <a name="Accounts"></a> Accounts  
+ The accounts under which  SQL Server 
+ is running must be correctly configured.  
+  
+1.  Do the accounts have the correct permissions?  
+  
+    1.  If the partners run under the same domain account, the correct user logins exist automatically in both **master** databases. This simplifies the security configuration and is recommended.  
+  
+    2.  If two server instances run under different accounts, then each account must be created in **master** on the remote server instance, and that server principal must be granted CONNECT permissions to connect to the database mirroring endpoint of that server instance. For more information, see [Set Up Login Accounts for Database Mirroring or Always On Availability Groups (SQL Server)](../../database-mirroring/set-up-login-accounts-database-mirroring-always-on-availability.md).  You can use the following query on each instance to check if the logins have CONNECT permissions:
+
+    ```sql
+    SELECT 
+      perm.class_desc,
+      prin.name,
+      perm.permission_name,
+      perm.state_desc,
+      prin.type_desc as PrincipalType,
+      prin.is_disabled
+    FROM sys.server_permissions perm
+      LEFT JOIN sys.server_principals prin ON perm.grantee_principal_id = prin.principal_id
+      LEFT JOIN sys.tcp_endpoints tep ON perm.major_id = tep.endpoint_id
+    WHERE 
+      perm.class_desc = 'ENDPOINT'
+      AND perm.permission_name = 'CONNECT'
+      AND tep.type = 4    
+    ```
+
+  
+2.  If  SQL Server 
+ is running under a built-in account, such as Local System, Local Service, or Network Service, or a nondomain account, you must use certificates for endpoint authentication. If your service accounts are using domain accounts in the same domain, you can choose to grant CONNECT access for each service account on all the replica locations or you can use certificates. For more information, see [Use Certificates for a Database Mirroring Endpoint (Transact-SQL)](../../database-mirroring/use-certificates-for-a-database-mirroring-endpoint-transact-sql.md).  
+  
+##  <a name="Endpoints"></a> Endpoints  
+ Endpoints must be correctly configured.  
+  
+1.  Make sure that each instance of  SQL Server 
+ that's going to host an availability replica (each *replica location*) has a database mirroring endpoint. To determine whether a database mirroring endpoint exists on a given server instance, use the [sys.database_mirroring_endpoints](../../../relational-databases/system-catalog-views/sys-database-mirroring-endpoints-transact-sql.md) catalog view:
+
+    ```sql
+    SELECT name, state_desc FROM sys.database_mirroring_endpoints  
+    ```
+
+    For more information on creating endpoints, see either [Create a Database Mirroring Endpoint for Windows Authentication (Transact-SQL)](../../database-mirroring/create-a-database-mirroring-endpoint-for-windows-authentication-transact-sql.md) or [Allow a Database Mirroring Endpoint to Use Certificates for Outbound Connections (Transact-SQL)](../../database-mirroring/database-mirroring-use-certificates-for-outbound-connections.md).  
+  
+2.  Check that the port numbers are correct.  
+  
+     To identify the port currently associated with database mirroring endpoint of a server instance, use the following  Transact-SQL  statement:  
+  
+    ```sql
+    SELECT type_desc, port FROM sys.tcp_endpoints;  
+    GO  
+    ```  
+  
+3.  For  Always On availability groups 
+ setup issues that are difficult to explain, we recommend that you inspect each server instance to determine whether it's listening on the correct ports.  
+  
+4.  Make sure that the endpoints are started (STATE=STARTED). On each server instance, use the following  Transact-SQL  statement:  
+  
+    ```  
+    SELECT state_desc FROM sys.database_mirroring_endpoints  
+    ```  
+  
+     For more information about the **state_desc** column, see [sys.database_mirroring_endpoints &#40;Transact-SQL&#41;](../../../relational-databases/system-catalog-views/sys-database-mirroring-endpoints-transact-sql.md).  
+  
+     To start an endpoint, use the following  Transact-SQL  statement:  
+  
+    ```  
+    ALTER ENDPOINT Endpoint_Mirroring   
+    STATE = STARTED   
+    AS TCP (LISTENER_PORT = <port_number>)  
+    FOR database_mirroring (ROLE = ALL);  
+    GO  
+    ```  
+  
+     For more information, see [ALTER ENDPOINT &#40;Transact-SQL&#41;](../../../t-sql/statements/alter-endpoint-transact-sql.md).  
+     
+     >**Note:**
+     >In some cases, if the endpoint is started but the AG replicas aren't communicating, try to stop and restart the endpoint. You can use ALTER ENDPOINT [Endpoint_Mirroring] STATE = STOPPED followed by ALTER ENDPOINT [Endpoint_Mirroring] STATE = STARTED
+  
+5.  Make sure that the login from the other server has CONNECT permission. To determine who has CONNECT permission for an endpoint, on each server instance use the following  Transact-SQL  statement:  
+  
+    ```sql  
+    SELECT 'Metadata Check';  
+    SELECT EP.name, SP.STATE,   
+       CONVERT(nvarchar(38), suser_name(SP.grantor_principal_id))   
+          AS GRANTOR,   
+       SP.TYPE AS PERMISSION,  
+       CONVERT(nvarchar(46),suser_name(SP.grantee_principal_id))   
+          AS GRANTEE   
+       FROM sys.server_permissions SP , sys.endpoints EP  
+       WHERE SP.major_id = EP.endpoint_id  
+       ORDER BY Permission,grantor, grantee;   
+    ```  
+
+6. Ensure correct server name is used in the endpoint URL
+
+    For server name in an endpoint URL, it's recommended to use fully qualified domain name (FQDN), although you can use any name that uniquely identifies the machine. The server address can be a Netbios name (if the systems are in the same domain), a fully qualified domain name (FQDN), or an IP address (preferably, a static IP address). Using the fully qualified domain name is the recommended option. 
+
+    If you've already defined an Endpoint URL, you can query it by using:
+
+    ```sql
+    select endpoint_url from sys.availability_replicas
+    ```
+
+    Next, compare the endpoint_url output to the server name (NetBIOS name or FQDN).
+    To query the server name, run the following commands in a PowerShell on the replica locally:
+
+    ```PowerShell
+    $env:COMPUTERNAME
+    [System.Net.Dns]::GetHostEntry([string]$env:computername).HostName
+    ```
+
+    To validate the server name on a remote computer, run this command from PowerShell. 
+
+    ```PowerShell
+    $servername_from_endpoint_url = "server_from_endpoint_url_output"
+
+    Test-NetConnection -ComputerName $servername_from_endpoint_url
+    ```
+
+
+    For more information, see [Specify the Endpoint URL When Adding or Modifying an Availability Replica (SQL Server)](specify-endpoint-url-adding-or-modifying-availability-replica.md).  
+  
+> **Note:**
+> To use Kerberos authentication for the communication between availability group (AG) endpoints, [register a Service Principal Name for Kerberos Connections](../../configure-windows/register-a-service-principal-name-for-kerberos-connections.md) for the database mirroring endpoints used by the AG.
+ 
+##  <a name="NetworkAccess"></a> Network Access  
+ Each server instance that's hosting an availability replica must be able to access the port of each of the other server instance over TCP. This is especially important if the server instances are in different domains that don't trust each other (untrusted domains).  Check if you can connect to the endpoints by following these steps:
+
+- Use Test-NetConnection (equivalent to Telnet)  to validate connectivity. Here are examples of commands you can use:
+
+   ```PowerShell
+   $server_name = "your_server_name"
+   $IP_address = "your_ip_address"
+   $port_number = "your_port_number"
+
+   Test-NetConnection -ComputerName $server_name -Port $port_number
+   Test-NetConnection -ComputerName $IP_address -Port $port_number
+   ```
+
+- If the endpoint is listening and connection is successful, you see "TcpTestSucceeded : True". If not, you receive a "TcpTestSucceeded : False".
+- If Test-NetConnection (Telnet) connection to the IP address works but to the ServerName it doesn't, there's likely a DNS or name resolution issue
+- If connection works by ServerName and not by IP address, then there could be more than one endpoint defined on that server (another SQL instance perhaps) that's listening on that port. Though the status of the endpoint on the instance in question shows "STARTED", another instance might actually have the port bound and prevent the correct instance from listening and establishing TCP connections.
+- If Test-NetConnection fails to connect, look for Firewall and/or Anti-virus software that might be blocking the endpoint port in question. Check the firewall setting to see if it allows the endpoint port communication between the server instances that host primary replica and the secondary replica (port 5022 by default).
+Run the following PowerShell script to examine for disabled inbound traffic rules
+- If you're running  SQL Server 
+ on Azure VM, you also need to [ensure Network Security Group (NSG) allows the traffic to endpoint port](https://learn.microsoft.com/azure/virtual-machines/windows/nsg-quickstart-portal#create-an-inbound-security-rule). Check the firewall (and NSG, for Azure VM) setting to see if it allows the endpoint port communication between the server instances that host primary replica and the secondary replica (port 5022 by default)
+
+   ```powershell
+   Get-NetFirewallRule -Action Block -Enabled True -Direction Inbound |Format-Table
+   ```
+
+- Capture the output from Get-NetTCPConnection cmdlet (equivalent of NETSTAT -a) and verify the status is a LISTENING or ESTABLISHED on the IP:Port for the endpoint specified
+
+   ```PowerShell
+   Get-NetTCPConnection 
+   ```
+
+
+##  <a name="Listener"></a> Listener
+
+For correct configuration of an Availability Group listener, follow "[Configure a listener for an Always On availability group](create-or-configure-an-availability-group-listener-sql-server.md)"
+
+1. Once the listener is configured, you can validate the IP address and port it's listening on by using the following query:
+
+   ```PowerShell
+   $server_name = $env:computername  #replace this with your sql instance "server\instance"
+
+   sqlcmd -E -S$server_name -Q"SELECT dns_name AS AG_listener_name, port, ip_configuration_string_from_cluster 
+   FROM sys.availability_group_listeners"
+   ```
+
+1. You can also find the listener information together with the SQL Server ports using this query:
+ 
+   ```PowerShell
+   $server_name = $env:computername      #replace this with your sql instance "server\instance"
+
+   sqlcmd -E -S($server_name) -Q("SELECT  convert(varchar(32), SERVERPROPERTY ('servername')) servername, convert(varchar(32),ip_address) ip_address, port, type_desc,state_desc, start_time 
+   FROM sys.dm_tcp_listener_states 
+   WHERE ip_address not in ('127.0.0.1', '::1') and type <> 2")
+   ```
+
+1. If you need to establish connectivity to the listener and suspect a port is blocked, you can perform a test using the PowerShell Test-NetConnection cmdlet (equivalent to telnet). 
+
+   ```PowerShell
+   $listener_name = "your_ag_listener"
+   $IP_address = "your_ip_address"
+   $port_number = "your_port_number"
+
+   Test-NetConnection -ComputerName $listener_name -Port $port_number
+   Test-NetConnection -ComputerName $IP_address -Port $port_number
+   ```
+
+1. Finally, check if the listener is listening on the specified port:
+
+   ```PowerShell
+   $port_number = "your_port_number"
+
+   Get-NetTCPConnection -LocalPort $port_number -State Listen
+   ```
+  
+##  <a name="Msg1418"></a> Endpoint Access (SQL Server Error 1418)  
+ This  SQL Server 
+ message indicates that the server network address specified in the endpoint URL can't be reached or doesn't exist, and it suggests that you verify the network address name and reissue the command.  
+  
+##  <a name="JoinDbFails"></a> Join Database Fails (SQL Server Error 35250)  
+ This section discusses the possible causes and resolution of a failure to join secondary databases to the availability group because the connection to the primary replica isn't active. This is the full error message:
+
+`Msg 35250 The connection to the primary replica is not active.  The command cannot be processed.`
+
+ **Resolution:**  
+ 
+Summary of steps is outlined below. 
+
+For **detailed** step-by-step instructions, refer to Engine error [MSSQLSERVER_35250](../../../relational-databases/errors-events/mssqlserver-35250-database-engine-error.md)
+
+1. Ensure the endpoint is created and started. 
+2. Check if you can connect to the endpoint via Telnet and ensure no firewall rules are blocking connectivity
+3. Check for errors in the system. You can query the **sys.dm_hadr_availability_replica_states** for the last_connect_error_number that might help you diagnose the join issue.
+4. Ensure the endpoint is defined so it correctly matches the IP/port that AG is using.
+5. Check whether the network service account has CONNECT permission to the endpoint.
+6. Check for possible name resolution issues
+7. Ensure your  SQL Server 
+ is running a recent build (preferably the [latest build](https://learn.microsoft.com/troubleshoot/sql/general/determine-version-edition-update-level#latest-updates-available-for-currently-supported-versions-of-sql-server) to protect from running into fixed issues.
+
+## <a name="ROR"></a> Read-Only Routing isn't Working Correctly  
+
+1. Ensure that you have set up read-only routing by following [Configure read-only routing](configure-read-only-routing-for-an-availability-group-sql-server.md) document.
+
+2. Ensure Client Driver Support
+
+    The client application must use a client provider that supports `ApplicationIntent` parameter. See [Driver and client connectivity support for availability groups](always-on-client-connectivity-sql-server.md)
+
+   > **Note:**  
+   > If you're connecting to a distributed network name (DNN) Listener, the provider must also support `MultiSubnetFailover` parameter
+
+3. Ensure connection string properties are set correctly
+
+    For read-only routing to work properly, your client application must use these properties in the connection string:
+  
+   - A database name that belongs to the AG
+   - An availability group listener name
+      - If you're using DNN, you must specify DNN listener name and DNN port number `<DNN name,DNN port>`
+   - ApplicationIntent set to ReadOnly 
+   - MultiSubnetFailover set to true is required for Distributed network name (DNN)
+
+    ### Examples
+
+    This example illustrates the connection string for the .NET `Microsoft.Data.SqlClient` or `System.Data.SqlClient` provider for a virtual network name (VNN) listener:
+
+   ```csharp
+   Server=tcp:VNN_AgListener,1433;Database=AgDb1;ApplicationIntent=ReadOnly;MultiSubnetFailover=True
+   ```
+
+   This example illustrates the connection string for the .NET `Microsoft.Data.SqlClient` or `System.Data.SqlClient` provider for a distributed network name (DNN) listener:
+
+   ```csharp
+   Server=tcp:DNN_AgListener,DNN_Port;Database=AgDb1;ApplicationIntent=ReadOnly;MultiSubnetFailover=True
+   ```
+
+   > **Note:**  
+   > If you're using command line programs like SQLCMD, ensure that you specify the correct switches for server name. For instance, in SQLCMD you must use the upper case -S switch that specifies server name, not the lower case -s switch that is used for column separator.
+   > <br />Example: `sqlcmd -S AG_Listener,port -E -d AgDb1 -K ReadOnly -M`
+
+4. Ensure that the availability group listener is online. To ensure that the availability group listener is online run the following query on the primary replica: 
+
+    ```sql
+   SELECT * FROM sys.dm_tcp_listener_states;
+    ```
+
+   If you find the listener is offline, you can attempt to bring it online using a command like this:
+
+   ```sql
+   ALTER AVAILABILITY GROUP myAG RESTART LISTENER 'AG_Listener';
+   ```
+
+5. Ensure READ_ONLY_ROUTING_LIST is correctly populated. On Primary replica, ensure that the READ_ONLY_ROUTING_LIST contains only server instances that are hosting readable secondary replicas.
+
+   To view the properties of each replica, you can run this query and examine the connectivity endpoint (URL) of the read only replica.
+
+   ```sql
+   SELECT replica_id, replica_server_name, secondary_role_allow_connections_desc, read_only_routing_url 
+   FROM sys.availability_replicas;   
+   ```
+
+   To view a read-only routing list and compare to the endpoint URL:
+
+   ```sql
+   SELECT * FROM sys.availability_read_only_routing_lists;
+   ```
+
+   To change a read-only routing list, you can use a query like this:
+
+   ```sql
+   ALTER AVAILABILITY GROUP [AG1]   
+   MODIFY REPLICA ON  
+   N'COMPUTER02' WITH   
+   (PRIMARY_ROLE (READ_ONLY_ROUTING_LIST=('COMPUTER01','COMPUTER02')));  
+   ```
+  
+   For more information, see [Configure read-only routing for an availability group - SQL Server Always On](configure-read-only-routing-for-an-availability-group-sql-server.md)
+
+6. Check that READ_ONLY_ROUTING_URL port is open. Ensure that the Windows Firewall isn't blocking the READ_ONLY_ROUTING_URL port. Configure a Windows Firewall for database engine access on every replica in the read_only_routing_list and any for clients that connect to those replicas.
+
+   >**Note:**
+   > If you're running  SQL Server 
+ on Azure VM, you must take additional configuration steps. Ensure that the network security group (NSG) of each replica VM allows traffic to the endpoint port and the DNN port, if you're using DNN listener. If you're using VNN listener, you must ensure the [load balancer is configured correctly](https://learn.microsoft.com/azure/azure-sql/virtual-machines/windows/availability-group-load-balancer-portal-configure).
+
+7. Ensure that the READ_ONLY_ROUTING_URL (TCP://system-address:port) contains the correct fully qualified domain name (FQDN) and port number. See:  
+   - [Calculating read_only_routing_url for Always On](https://learn.microsoft.com/archive/blogs/mattn/calculating-read_only_routing_url-for-alwayson) 
+   - [sys.availability_replicas (Transact-SQL)](../../../relational-databases/system-catalog-views/sys-availability-replicas-transact-sql.md)
+   - [ALTER AVAILABILITY GROUP (Transact-SQL)](../../../t-sql/statements/alter-availability-group-transact-sql.md) 
+
+8. Ensure proper SQL Server Networking configuration in the  SQL Server 
+ Configuration Manager.
+
+   Verify on every replica in the read_only_routing_list that:
+   -  SQL Server 
+ remote connectivity is enabled
+   - TCP/IP is enabled
+   - The IP addresses are configured correctly
+  
+    > **Note:**
+    > You can quickly verify all of these are properly configured if you can connect from a remote machine to a target secondary replica's  SQL Server 
+ instance name using `TCP:SQL_Instance` syntax.
+
+  See: [Configure a Server to Listen on a Specific TCP Port (SQL Server Configuration Manager)](../../configure-windows/configure-a-server-to-listen-on-a-specific-tcp-port.md) and [View or Change Server Properties (SQL Server)](../../configure-windows/view-or-change-server-properties-sql-server.md)
+
+
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+  
+-   [Creation and Configuration of Availability Groups (SQL Server)](creation-and-configuration-of-availability-groups-sql-server.md)  
+  
+-   [Create a Database Mirroring Endpoint for Windows Authentication (Transact-SQL)](../../database-mirroring/create-a-database-mirroring-endpoint-for-windows-authentication-transact-sql.md)  
+  
+-   [Specify the Endpoint URL When Adding or Modifying an Availability Replica (SQL Server)](specify-endpoint-url-adding-or-modifying-availability-replica.md)  
+  
+-   [Manually Prepare a Secondary Database for an Availability Group (SQL Server)](manually-prepare-a-secondary-database-for-an-availability-group-sql-server.md)  
+  
+-   [Troubleshoot a Failed Add-File Operation (Always On Availability Groups)](troubleshoot-a-failed-add-file-operation-always-on-availability-groups.md)  
+  
+-   [Management of Logins and Jobs for the Databases of an Availability Group (SQL Server)](logins-and-jobs-for-availability-group-databases.md)  
+  
+-   [Manage Metadata When Making a Database Available on Another Server Instance &#40;SQL Server&#41;](../../../relational-databases/databases/manage-metadata-when-making-a-database-available-on-another-server.md)  
+  
+## Related content
+
+- [View Events and Logs for a Failover Cluster](https://technet.microsoft.com/library/cc772342\(WS.10\).aspx)
+- [Get-ClusterLog Failover Cluster Cmdlet](https://learn.microsoft.com/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/ee461045\(v=technet.10\))
+- [SQL Server Always On Team Blog: The official SQL Server Always On Team Blog](https://learn.microsoft.com/archive/blogs/sqlalwayson/)
+- [Transport security in availability groups and database mirroring](../../database-mirroring/transport-security-database-mirroring-always-on-availability.md)
+- [Client network configuration](../../configure-windows/client-network-configuration.md)
+- [Prerequisites, restrictions, and recommendations for Always On availability groups](prereqs-restrictions-recommendations-always-on-availability.md)

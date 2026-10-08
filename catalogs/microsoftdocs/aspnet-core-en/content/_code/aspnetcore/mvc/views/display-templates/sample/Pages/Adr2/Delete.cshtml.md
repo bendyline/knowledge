@@ -1,0 +1,30 @@
+# Source code: aspnetcore/mvc/views/display-templates/sample/Pages/Adr2/Delete.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model WebAddress.Pages.Adr2.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Address</h4>
+    <hr />
+    <dl class="row">
+           @Html.DisplayFor(model => model.Address)
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Address.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>
+
+```

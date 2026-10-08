@@ -1,0 +1,148 @@
+---
+title: "Graphical Query Designer User Interface"
+description: Learn about the graphical query designer user interface so you can retrieve data from a relational database for a report dataset in Report Designer.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rtp.rptdesigner.dataview.vdtquerydesigner.f1"
+helpviewer_keywords:
+  - "graphical query designer [Reporting Services]"
+  - "data sources [Reporting Services], creating"
+  - "text-based query designer [Reporting Services]"
+  - "query designers [Reporting Services]"
+  - "Reporting Services, query designers"
+---
+# Graphical Query Designer User Interface
+   Reporting Services 
+ provides both a graphical query designer and a text-based query designer for creating queries to retrieve data from a relational database for a report dataset in Report Designer. Use the graphical query designer to interactively build a query and view the results for data source types  SQL Server 
+, Oracle, OLE DB, and ODBC. Use the text-based query designer to specify multiple  Transact-SQL  statements, complex query or command syntax, and expression-based queries. For more information, see [Text-based Query Designer User Interface](https://learn.microsoft.com/previous-versions/sql/). For more information about working with specific data source types, see [Report Datasets (SSRS)](report-datasets-ssrs.md).  
+  
+ .  
+  
+## Graphical Query Designer  
+ This graphical query designer supports three types of query commands: **Text**, **StoredProcedure**, or **TableDirect**. Before you create a query for your dataset, you must select a command type option on the Query page of the [Dataset Properties](https://learn.microsoft.com/previous-versions/sql/) dialog box.  
+  
+ The following options are available for query type:  
+  
+-   **Text** Supports standard  Transact-SQL  query text for relational database data sources, including data processing extensions for  Microsoft 
+  SQL Server 
+ and Oracle.  
+  
+-   **TableDirect** Selects all the columns from the specified table. For example, for a table named Customers, this is the equivalent of the  Transact-SQL  statement `SELECT * FROM Customers`.  
+  
+-   **StoredProcedure** Supports calls to stored procedures on the data source. To use this option, you must have been granted Execute permissions on the stored procedure by the database administrator on the data source.  
+  
+ The default command type is **Text**.  
+  
+> **Note:**  
+>  Not all data processing extensions support all types. The underlying data provider must support a command type before the option is available.  
+  
+### Command Type Text  
+ In **Text** type, the graphical query designer presents four areas, or panes. You can specify columns, aliases, sort values, and filter values for a  Transact-SQL  query. You can view the query text generated from your selections, run the query, and view the result set. The following figure shows the four panes.  
+  
+ Graphical query designer for sql query  
+  
+ The following table describes the function of each pane.  
+  
+| Pane | Function |
+| --- | --- |
+| Diagram | Displays graphic representations of the tables in the query. Use this pane to select fields and define relationships between tables. |
+| Grid | Displays a list of fields returned by the query. Use this pane to define aliases, sort order, filters, groups, and parameters. |
+| SQL | Displays the  Transact-SQL  query represented by the diagram and Grid panes. Use this pane to write or update a query using  Transact-SQL . |
+| Result | Displays the results of the query. To run the query, right-click in any pane, and then click **Run**, or click the **Run** button on the toolbar. |
+  
+ When you change information in any one of the first three panes, those changes will appear in the other panes. For example, if you add a table in the Diagram pane, it will automatically be added to the  Transact-SQL  query in the SQL pane. Adding a field to the query in the SQL pane will automatically add the field to the list in the Grid pane and update the table in the Diagram pane.  
+  
+ For more information, see [Query and View Designer Tools (Visual Database Tools)](https://learn.microsoft.com/ssms/visual-db-tools/query-and-view-designer-tools-visual-database-tools).  
+  
+#### Toolbar for the Graphical Query Designer  
+ The graphical query designer toolbar provides buttons to help you design  Transact-SQL  queries using the graphical interface.  
+  
+| Button | Description |
+| --- | --- |
+| **Edit As Text** | Toggle between the text-based query designer and the graphical query designer. |
+| **Import** | Import an existing query from a file or report. Only file types .sql and .rdl are supported. For more information, see [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md). |
+| Show/Hide diagram pane toggle button | Show or hide the Diagram pane. |
+| Show or Hide Grid pane toggle | Show or hide the Grid pane. |
+| Show or hide sql pane toggle | Show or hide the SQL pane. |
+| Show or Hide Result pane toggle | Show or hide the Result pane. |
+| Run the query | Run the query. |
+| Verify SQL in SQL pane button | Check that the syntax of the query text is correct. |
+| Set Sort Ascending on selected field | Set the sort order to **Sort Ascending** for the selected column in the Diagram pane, |
+| Set Sort Descending on selected field | Set the sort order to **Sort Descending** for the selected column in the Diagram pane, |
+| Remove filter on selected field | Remove the filter for the selected column in the Diagram pane that is marked as having a filter (Filter graphic next to selected filter column). |
+| Use Group By for the selected field | Show or hide the **Group By** column in the Grid pane. When the **Group By** toggle is on, an extra column named **Group By** appears in the Grid pane, and each value for the selected columns in the query defaults to **Group By**, which causes the selected column to be included in a Group By clause in the SQL text. Use the Group By button to automatically add a GROUP BY clause that includes all columns in the SELECT clause. When your SELECT clause includes aggregate function calls (for example, SUM(ColumnName)), include each non-aggregate column in the GROUP BY clause if you want it to appear in the result set.<br /><br /> To appear in the Result pane, each column in the query must have an aggregate function defined for use in calculating the value to display in the Result pane, or the column in the query has to be specified in the GROUP BY clause of the SQL query. |
+| Add a new table to the diagram pane | Add a new table from the data source to the Diagram pane.<br /><br /> **Note** When you add a new table, the query designer tries to match up foreign key relationships from the data source. After you add a table, confirm that the foreign key relationships represented by linkages between the tables are correct. |
+  
+#### Example  
+ The following query returns the list of last names from the  `AdventureWorks2025`  database **Person** table:  
+  
+```  
+SELECT LastName FROM Person.Person;  
+```  
+  
+ You can also run stored procedures from the SQL pane. The following query runs the stored procedure **uspGetEmployeeManagers** in the  `AdventureWorks2025`  database:  
+  
+```  
+EXEC uspGetEmployeeManagers '1';  
+```  
+  
+### Command Type TableDirect  
+ In **TableDirect** type, the graphical query designer displays a dropdown list of the available tables from the data source and a Result pane. If you select a table and click the **Run** button, all the columns for that table are returned.  
+  
+> **Note:**  
+>  the TableDirect feature is supported only by **OLE DB** and **ODBC** data source types.  
+  
+ The following table describes the function of each pane.  
+  
+| Pane | Function |
+| --- | --- |
+| Table dropdown list | Lists all the available tables from the data source. Select one from the list to make it active. |
+| Result | Displays all columns from the selected table. To run the table query, click the **Run** button on the toolbar. |
+  
+#### Toolbar Buttons for the Command Type TableDirect  
+ The graphical query designer toolbar provides a dropdown list of tables on the data source. The following table lists each button and its function.  
+  
+| Button | Description |
+| --- | --- |
+| **Edit As Text** | Toggle between the text-based query designer and the graphical query designer. |
+| **Import** | Import an existing query from a file or report. Only file types .sql and .rdl are supported. For more information, see [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md). |
+| Icon of the Generic Query Designer button | Toggle between generic query designer and graphical query designer, preserving the query text or stored procedure view. |
+| Run the query | Select all columns from the selected table. |
+  
+### Command Type StoredProcedure  
+ In **StoredProcedure** type, the graphical query designer displays a dropdown list of the available stored procedures from the data source and a Result pane. The following table describes the function of each pane.  
+  
+| Pane | Function |
+| --- | --- |
+| Stored procedure dropdown list | Lists all the available stored procedures from the data source. Select one from the list to make it active. |
+| Result | Displays the result of running the stored procedure. To run the selected stored procedure, click the **Run** button on the toolbar. |
+  
+#### Toolbar Buttons for Command Type StoredProcedure  
+ The graphical query designer toolbar provides a dropdown list of stored procedures on the data source. The following table lists each button and its function.  
+  
+| Button | Description |
+| --- | --- |
+| **Edit As Text** | Toggle between the text-based query designer and the graphical query designer. |
+| **Import** | Import an existing query from a file or report. Only file types .sql and .rdl are supported. For more information, see [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md). |
+| Run the query | Run the selected stored procedure. |
+| Stored procedure dropdown list | Click the down arrow to display a list of available stored procedures from the data source. Click any stored procedure from the list to select it. |
+  
+#### Example  
+ The following stored procedure calls a chain-of-command list of managers from the  `AdventureWorks2025`  database. This stored procedure accepts *BusinessEntityID* as parameter. You can enter any small integer.  
+  
+ `uspGetEmployeeManagers '1';`  
+  
+## Related content
+
+- [Query Design Tools (SSRS)](query-design-tools-ssrs.md)
+- [Report Datasets (SSRS)](report-datasets-ssrs.md)
+- [SQL Server Connection Type (SSRS)](sql-server-connection-type-ssrs.md)
+- [OLE DB Connection Type (SSRS)](ole-db-connection-type-ssrs.md)
+- [Set up the Oracle connection type with SSRS and a Power BI report server](oracle-connection-type-ssrs.md)
+- [RSReportDesigner configuration file](../report-server/rsreportdesigner-configuration-file.md)
+- [Design Queries and Views How-to Topics (Visual Database Tools)](https://learn.microsoft.com/ssms/visual-db-tools/design-queries-and-views-how-to-topics-visual-database-tools)

@@ -1,0 +1,963 @@
+---
+title: Create an MCP Server Knowledge Source
+description: Learn how to create an MCP Server knowledge source for agentic retrieval in Azure AI Search, which connects to any external Model Context Protocol server.
+ms.service: azure-ai-search
+ms.topic: how-to
+ms.date: 08/17/2026
+ms.custom: doc-kit-assisted
+ai-usage: ai-assisted
+zone_pivot_groups: search-csharp-python-rest
+#customer intent: As an application developer, I want to create an MCP Server knowledge source and configure its authentication, tool selection, and result processing so that agentic retrieval can invoke selected external tools and use their live results.
+---
+
+# Create an MCP Server knowledge source (preview)
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+
+> **Important:**
+> Features, capabilities, or properties marked (preview) aren't covered by a service-level agreement, aren't recommended for production workloads, and might change or be constrained before they become generally available. The [Azure AI Search preview terms](https://learn.microsoft.com/azure/search/search-preview-terms) apply to all preview functionality, whether it's standalone or part of a generally available feature.
+
+
+An *MCP Server knowledge source* (preview) connects any system that exposes a [Model Context Protocol](https://modelcontextprotocol.io/docs/getting-started/intro) (MCP)–compatible endpoint to an agentic retrieval pipeline in Azure AI Search. [Knowledge sources](agentic-knowledge-source-overview.md) are created independently, referenced in a [knowledge base](agentic-retrieval-how-to-create-knowledge-base.md), and used as grounding data when the knowledge base is [queried at runtime](agentic-retrieval-how-to-retrieve.md).
+
+MCP tools surface data and functionality from external systems as callable functions that agents invoke at query time. This makes MCP Server knowledge sources useful when the information you need lives in internal tools, third-party APIs, or custom backends that Azure AI Search doesn't natively support.
+
+Unlike indexed knowledge sources, MCP Server knowledge sources query live data directly at retrieval time. No ingestion pipeline is needed. You provide the MCP server URL and specify which tools Azure AI Search can call at query time.
+
+> **Warning:**
+> MCP implementations are susceptible to risks, such as attacks, cascading failures, and loss of human oversight. You can mitigate these risks by vetting MCP servers for security and reliability, following [Microsoft's recommended practices](https://learn.microsoft.com/azure/api-management/secure-mcp-servers) and [industry best practices](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices), and implementing approval mechanisms and monitoring cascading behaviors.
+
+### Usage support
+
+| [Azure portal](get-started-portal-agentic-retrieval.md) | [Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/agents/concepts/what-is-foundry-iq#workflow) | [.NET SDK](https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/search/Azure.Search.Documents/CHANGELOG.md) | [Python SDK](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/CHANGELOG.md) | [Java SDK](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/search/azure-search-documents/CHANGELOG.md) | [JavaScript SDK](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/search/search-documents/CHANGELOG.md) | [REST API](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources?view=rest-searchservice-2026-08-01-preview\&preserve-view=true) |
+| --- | --- | --- | --- | --- | --- | --- |
+| ✔️ | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+
+## Prerequisites
+
++ An Azure AI Search service in any [region that provides agentic retrieval](search-region-support.md).
+
++ An MCP server with one or more tools. The server must be reachable from Azure AI Search over HTTPS. For testing, you can use the public Microsoft Learn MCP server at `https://learn.microsoft.com/api/mcp`.
+
++ Permission to create knowledge sources. Configure [keyless authentication](search-get-started-rbac.md) with the **Search Service Contributor** role assigned to your user account (recommended) or use an [admin API key](search-security-api-keys.md).
+
+**Applies to: csharp**
+
+
++ The latest [`Azure.Search.Documents`](https://www.nuget.org/packages/Azure.Search.Documents) preview package: `dotnet add package Azure.Search.Documents --prerelease`
+
++ For keyless authentication, the [`Azure.Identity`](https://www.nuget.org/packages/Azure.Identity) package: `dotnet add package Azure.Identity`
+
+
+
+**Applies to: python**
+
+
++ The latest [`azure-search-documents`](https://pypi.org/project/azure-search-documents/#history) preview package: `pip install --pre azure-search-documents`
+
++ For keyless authentication, the [`azure-identity`](https://pypi.org/project/azure-identity/) package: `pip install azure-identity`
+
+
+
+**Applies to: rest**
+
+
++ The [2026-08-01-preview](https://learn.microsoft.com/rest/api/searchservice/operation-groups?view=rest-searchservice-2026-08-01-preview\&preserve-view=true) version of the Search Service REST API.
+
++ For keyless authentication, include a [Microsoft Entra ID token](search-get-started-rbac.md?pivots=rest#get-token) in the `Authorization` header of each HTTP request.
+
+
+
+## Limitations and considerations
+
++ The `minimal` [retrieval reasoning effort](agentic-retrieval-how-to-set-retrieval-reasoning-effort.md) isn't supported. Use `low` or `medium` instead.
+
++ `alwaysQuerySource` isn't supported on retrieve requests that reference an MCP Server knowledge source.
+
++ MCP server tool calls involve external network requests and can take longer than typical search queries. Set `maxRuntimeInSeconds` on retrieve requests to give all configured tools sufficient time to respond.
+
+## Check for existing knowledge sources
+
+
+A knowledge source is a top-level, reusable object. Knowing about existing knowledge sources is helpful for either reuse or naming new objects.
+
+Run the following code to list knowledge sources by name and type.
+
+**Applies to: csharp**
+
+
+```csharp
+// List knowledge sources by name and type
+using Azure.Search.Documents.Indexes;
+
+var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+var knowledgeSources = indexClient.GetKnowledgeSourcesAsync();
+
+Console.WriteLine("Knowledge Sources:");
+
+await foreach (var ks in knowledgeSources)
+{
+    Console.WriteLine($"  Name: {ks.Name}, Type: {ks.GetType().Name}");
+}
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: python**
+
+
+```python
+# List knowledge sources by name and type
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.indexes import SearchIndexClient
+
+index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+
+for ks in index_client.list_knowledge_sources():
+    print(f"  - {ks.name} ({ks.kind})")
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: rest**
+
+
+```http
+### List knowledge sources by name and type
+GET {{search-url}}/knowledgesources?api-version={{api-version}}&$select=name,kind
+Authorization: Bearer {{token}}
+```
+
+**Reference:** [Knowledge Sources - List](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/list)
+
+
+
+You can also return a single knowledge source by name to review its JSON definition.
+
+**Applies to: csharp**
+
+
+```csharp
+using Azure.Search.Documents.Indexes;
+using System.Text.Json;
+
+var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+
+// Specify the knowledge source name to retrieve
+string ksNameToGet = "earth-knowledge-source";
+
+// Get its definition
+var knowledgeSourceResponse = await indexClient.GetKnowledgeSourceAsync(ksNameToGet);
+var ks = knowledgeSourceResponse.Value;
+
+// Serialize to JSON for display
+var jsonOptions = new JsonSerializerOptions 
+{ 
+    WriteIndented = true,
+    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never
+};
+Console.WriteLine(JsonSerializer.Serialize(ks, ks.GetType(), jsonOptions));
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: python**
+
+
+```python
+# Get a knowledge source definition
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.indexes import SearchIndexClient
+import json
+
+index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+
+ks = index_client.get_knowledge_source("knowledge_source_name")
+print(json.dumps(ks.as_dict(), indent = 2))
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: rest**
+
+
+```http
+### Get a knowledge source definition
+GET {{search-url}}/knowledgesources/{{knowledge-source-name}}?api-version={{api-version}}
+Authorization: Bearer {{token}}
+```
+
+**Reference:** [Knowledge Sources - Get](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/get)
+
+
+
+
+The following JSON is an example response for an MCP Server knowledge source.
+
+```json
+{
+  "name": "my-mcp-server-ks",
+  "kind": "mcpServer",
+  "description": "An MCP Server knowledge source.",
+  "resultsProcessing": "rerank",
+  "encryptionKey": null,
+  "mcpServerParameters": {
+    "serverURL": "https://learn.microsoft.com/api/mcp",
+    "authentication": null,
+    "tools": [
+      {
+        "name": "microsoft_docs_search",
+        "resultsProcessing": "none",
+        "maxOutputTokens": 1000,
+        "outputParsing": {
+          "kind": "auto",
+          "jsonParameters": null,
+          "splitParameters": null
+        }
+      }
+    ]
+  }
+}
+```
+
+## Create a knowledge source
+
+Run the following code to create an MCP Server knowledge source.
+
+**Applies to: csharp**
+
+
+```csharp
+using Azure.Identity;
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
+
+Uri searchEndpoint = new Uri("<search-endpoint>");
+DefaultAzureCredential credential = new DefaultAzureCredential();
+var indexClient = new SearchIndexClient(searchEndpoint, credential);
+
+var mcpServer = new McpServerKnowledgeSource(
+    "my-mcp-server-ks",
+    new McpServerKnowledgeSourceParameters(
+        "https://learn.microsoft.com/api/mcp",
+        new[]
+        {
+            new McpServerTool
+            {
+                Name = "microsoft_docs_search",
+                OutputParsing = new McpServerAutoOutputParsing(),
+                ResultsProcessing = KnowledgeSourceResultsProcessing.None,
+                MaxOutputTokens = 1000
+            }
+        }))
+{
+    Description = "An MCP Server knowledge source.",
+    ResultsProcessing = KnowledgeSourceResultsProcessing.Rerank
+};
+
+await indexClient.CreateOrUpdateKnowledgeSourceAsync(mcpServer);
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient?view=azure-dotnet-preview\&preserve-view=true)
+
+
+
+**Applies to: python**
+
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import (
+    McpServerAutoOutputParsing,
+    McpServerKnowledgeSource,
+    McpServerKnowledgeSourceParameters,
+    McpServerTool,
+)
+
+index_client = SearchIndexClient(
+    endpoint="<search-endpoint>",
+    credential=DefaultAzureCredential(),
+)
+
+knowledge_source = McpServerKnowledgeSource(
+    name="my-mcp-server-ks",
+    description="An MCP Server knowledge source.",
+    results_processing="rerank",
+    mcp_server_parameters=McpServerKnowledgeSourceParameters(
+        server_url="https://learn.microsoft.com/api/mcp",
+        tools=[
+            McpServerTool(
+                name="microsoft_docs_search",
+                output_parsing=McpServerAutoOutputParsing(),
+                results_processing="none",
+                max_output_tokens=1000,
+            )
+        ],
+    ),
+)
+
+index_client.create_or_update_knowledge_source(knowledge_source)
+
+saved_source = index_client.get_knowledge_source(
+    knowledge_source.name
+)
+assert saved_source.results_processing == "rerank"
+assert (
+    saved_source.mcp_server_parameters.tools[0].results_processing
+    == "none"
+)
+```
+
+**Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient?view=azure-python-preview\&preserve-view=true), [McpServerKnowledgeSource](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.models.mcpserverknowledgesource?view=azure-python-preview\&preserve-view=true), [McpServerTool](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.models.mcpservertool?view=azure-python-preview\&preserve-view=true)
+
+
+
+**Applies to: rest**
+
+
+```http
+### Create an MCP Server knowledge source
+PUT {{search-endpoint}}/knowledgesources/my-mcp-server-ks?api-version=2026-08-01-preview
+Authorization: Bearer {{search-access-token}}
+Content-Type: application/json
+Prefer: return=representation
+
+{
+  "name": "my-mcp-server-ks",
+  "kind": "mcpServer",
+  "description": "An MCP Server knowledge source.",
+  "resultsProcessing": "rerank",
+  "encryptionKey": null,
+  "mcpServerParameters": {
+    "serverURL": "https://learn.microsoft.com/api/mcp",
+    "tools": [
+      {
+        "name": "microsoft_docs_search",
+        "outputParsing": {
+          "kind": "auto"
+        },
+        "resultsProcessing": "none",
+        "maxOutputTokens": 1000
+      }
+    ]
+  }
+}
+```
+
+**Reference:** [Knowledge Sources - Create or Update](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/create-or-update?view=rest-searchservice-2026-08-01-preview\&preserve-view=true)
+
+
+
+### Authentication options
+
+If your MCP server requires authentication, use one of the following options.
+
+# [foundryConnection](#tab/foundry-connection)
+
+Use `foundryConnection` only when an agent from Foundry Agent Service invokes a knowledge base that includes this MCP Server knowledge source. In that flow, the service resolves the connection and injects the required credentials when it calls the MCP server. If you call the knowledge base directly or from a client other than Foundry Agent Service, `foundryConnection` doesn't work.
+
+```json
+"authentication": {
+  "kind": "foundryConnection",
+  "foundryConnectionParameters": {
+    "connectionId": "<foundry-connection-id>"
+  }
+}
+```
+
+# [storedHeaders](#tab/stored-headers)
+
+Use `storedHeaders` to send static HTTP headers with every MCP request. We recommend this option for static, long-lived credentials, such as API keys. Stored headers aren't intended for per-user credentials or rotating tokens.
+
+```json
+"authentication": {
+  "kind": "storedHeaders",
+  "storedHeadersParameters": {
+    "headers": {
+      "x-custom-auth": "<header-value>"
+    }
+  }
+}
+```
+
+> **Note:**
+> Header values are write-only. When you retrieve the knowledge source definition, header values appear masked in the response.
+
+---
+
+### Pass headers at query time
+
+If an MCP server requires per-request credentials, pass them on the retrieve request using paired control headers. This syntax forwards headers to the MCP server without conflicting with the `Authorization` or `api-key` header used to authenticate to Azure AI Search.
+
+Use the knowledge source name as the prefix:
+
+| Control header | Description |
+| --- | --- |
+| `<knowledge-source-name>-header-name<N>` | The name of the HTTP header to send to the MCP server. |
+| `<knowledge-source-name>-header-value<N>` | The value of the HTTP header to send to the MCP server. |
+
+`<N>` is an optional numeric suffix that pairs multiple headers. For example, `my-mcp-server-ks-header-name1` pairs with `my-mcp-server-ks-header-value1`.
+
+**Applies to: csharp**
+
+
+Create the retrieval client with a policy that adds the control headers to the retrieve request.
+
+```csharp
+using Azure.Identity;
+using Azure.Core;
+using Azure.Core.Pipeline;
+using Azure.Search.Documents;
+using Azure.Search.Documents.KnowledgeBases;
+using Azure.Search.Documents.KnowledgeBases.Models;
+
+string knowledgeSourceName = "my-mcp-server-ks";
+
+var options = new SearchClientOptions();
+options.AddPolicy(new McpPassthroughHeaderPolicy(knowledgeSourceName), HttpPipelinePosition.PerCall);
+
+var retrievalClient = new KnowledgeBaseRetrievalClient(
+    endpoint: new Uri(searchEndpoint),
+    knowledgeBaseName: knowledgeBaseName,
+    credential: credential,
+    options: options);
+
+var request = new KnowledgeBaseRetrievalRequest();
+request.Messages.Add(
+    new KnowledgeBaseMessage(new[] { new KnowledgeBaseMessageTextContent("Find Azure AI Search MCP guidance.") })
+    {
+        Role = "user"
+    });
+request.KnowledgeSourceParams.Add(new SearchIndexKnowledgeSourceParams(knowledgeSourceName));
+
+Response<KnowledgeBaseRetrievalResponse> response = await retrievalClient.RetrieveAsync(request);
+
+sealed class McpPassthroughHeaderPolicy(string knowledgeSourceName) : HttpPipelineSynchronousPolicy
+{
+    public override void OnSendingRequest(HttpMessage message)
+    {
+        message.Request.Headers.Add($"{knowledgeSourceName}-header-name", "Authorization");
+        message.Request.Headers.Add($"{knowledgeSourceName}-header-value", "Bearer <mcp-server-access-token>");
+        message.Request.Headers.Add($"{knowledgeSourceName}-header-name1", "x-custom-auth");
+        message.Request.Headers.Add($"{knowledgeSourceName}-header-value1", "<mcp-server-header-value>");
+    }
+}
+```
+
+
+
+**Applies to: python**
+
+
+Pass the control headers in the `headers` keyword argument on the retrieve call.
+
+```python
+from azure.search.documents.knowledgebases.models import (
+    KnowledgeBaseMessage,
+    KnowledgeBaseMessageTextContent,
+    KnowledgeBaseRetrievalRequest,
+    SearchIndexKnowledgeSourceParams,
+)
+
+knowledge_source_name = "my-mcp-server-ks"
+
+request = KnowledgeBaseRetrievalRequest(
+    messages=[
+        KnowledgeBaseMessage(
+            role="user",
+            content=[
+                KnowledgeBaseMessageTextContent(
+                    text="Find Azure AI Search MCP guidance."
+                )
+            ],
+        )
+    ],
+    knowledge_source_params=[
+        SearchIndexKnowledgeSourceParams(knowledge_source_name=knowledge_source_name)
+    ],
+)
+
+result = retrieval_client.retrieve(
+    request,
+    headers={
+        f"{knowledge_source_name}-header-name": "Authorization",
+        f"{knowledge_source_name}-header-value": "Bearer <mcp-server-access-token>",
+        f"{knowledge_source_name}-header-name1": "x-custom-auth",
+        f"{knowledge_source_name}-header-value1": "<mcp-server-header-value>",
+    },
+)
+```
+
+
+
+**Applies to: rest**
+
+
+```http
+POST {{search-endpoint}}/knowledgebases/{{knowledge-base-name}}/retrieve?api-version=2026-08-01-preview
+Authorization: Bearer {{search-access-token}}
+Content-Type: application/json
+my-mcp-server-ks-header-name: Authorization
+my-mcp-server-ks-header-value: Bearer {{mcp-server-access-token}}
+my-mcp-server-ks-header-name1: x-custom-auth
+my-mcp-server-ks-header-value1: {{mcp-server-header-value}}
+
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Find Azure AI Search MCP guidance."
+        }
+      ]
+    }
+  ],
+  "knowledgeSourceParams": [
+    {
+      "knowledgeSourceName": "my-mcp-server-ks",
+      "kind": "mcpServer"
+    }
+  ]
+}
+```
+
+
+
+Each header pair must include exactly one name control header and one matching value control header. Header names and values must be valid HTTP request headers. If a query-time header uses the same target header name as a `storedHeaders` entry, the query-time value overrides the stored value for that request.
+
+### Configure tools
+
+Each entry in the `tools` array specifies an allowed MCP tool, optional output parsing behavior, and how the tool's results are processed.
+
+Use `resultsProcessing` to control whether the retrieval engine reranks a tool's results. Valid values are `rerank` and `none`. For mappings from earlier contracts, see [Migrate agentic retrieval code to the latest version](agentic-retrieval-how-to-migrate.md).
+
+For each MCP tool, the service resolves `resultsProcessing` in this order: the tool value, the request value in `knowledgeSourceParams`, the stored knowledge source value, and then `rerank`. A tool value applies only to that tool.
+
+### Output parsing modes
+
+By default, the retrieval engine applies automatic heuristics (`auto`) to convert raw MCP tool output into rankable documents. You can override this behavior per tool using the `outputParsing` property.
+
+# [auto](#tab/auto)
+
+The `auto` mode requires no configuration. The retrieval engine applies heuristics to parse the tool output.
+
+# [json](#tab/json)
+
+The `json` mode extracts documents from a specific location in the JSON output using a JSONPath expression. Use this mode when your tool returns a structured JSON response with a predictable array field.
+
+```json
+"outputParsing": {
+  "kind": "json",
+  "jsonParameters": {
+    "documentsPath": "$.results[*]",
+    "includeContext": false
+  }
+}
+```
+
+# [split](#tab/split)
+
+The `split` mode chunks large text, HTML, or Markdown output into smaller segments. Use this mode when a tool returns long-form content. This mode supports the same parameters as the [Text Split skill](cognitive-search-skill-textsplit.md#skill-parameters).
+
+```json
+"outputParsing": {
+  "kind": "split",
+  "splitParameters": {
+    "textSplitMode": "pages",
+    "maximumPageLength": 2000,
+    "pageOverlapLength": 200
+  }
+}
+```
+
+# [none](#tab/none)
+
+The `none` mode requires no configuration. The entire tool output is treated as a single document. Use this mode when the raw output doesn't require splitting or structured extraction.
+
+---
+
+## Assign to a knowledge base
+
+If you're satisfied with the knowledge source, [add it to a knowledge base](agentic-retrieval-how-to-create-knowledge-base.md).
+
+## Query a knowledge base
+
+After the knowledge base is configured, [call the retrieve action or MCP endpoint](agentic-retrieval-how-to-retrieve.md) to query MCP server content. MCP Server knowledge sources have source-specific retrieval behavior and response fields.
+
+### How retrieval works for MCP Server knowledge sources
+
+At query time, the large language model (LLM) configured in the knowledge base reviews the configured tools, selects which ones to call based on the user query, and generates the arguments for each call. Azure AI Search then invokes the selected tools on the MCP server and returns the results as ranked references.
+
+### MCP Server–specific response fields
+
+MCP Server knowledge sources return per-document citations in the `references` array and per-invocation diagnostics in the `activity` array. If the knowledge source lists multiple tools and the model selects more than one, a separate activity record appears for each invocation.
+
+The following example shows a retrieve response containing an MCP Server knowledge source reference and its corresponding activity record. For broader guidance on interpreting retrieve responses, see [Review the response](agentic-retrieval-how-to-retrieve.md#review-the-response).
+
+> **Tip:**
+> To receive `sourceData` for references, set `includeReferenceSourceData` to `true` on the knowledge source entry within `knowledgeSourceParams` on the retrieve request.
+
+```json
+{
+  "response": [
+      // ... Response omitted for brevity
+  ],
+  "activity": [
+    {
+      "type": "mcpServer",
+      "id": 1,
+      "knowledgeSourceName": "my-mcp-server-ks",
+      "queryTime": "2026-05-11T15:42:33.0888894Z",
+      "count": 10,
+      "elapsedMs": 768,
+      "mcpServerArguments": {
+        "toolName": "microsoft_docs_search",
+        "toolArguments": {
+          "query": "Azure AI Search features"
+        }
+      }
+    },
+    {
+      // ... Additional activity records omitted for brevity
+    }
+  ],
+  "references": [
+    {
+      "type": "mcpServer",
+      "id": "0",
+      "activitySource": 1,
+      "sourceData": {
+        "title": "What is a knowledge source?",
+        "content": "..."
+      },
+      "rerankerScore": 2.96,
+      "toolName": "microsoft_docs_search",
+      "title": "my-mcp-server-ks microsoft_docs_search 1"
+    },
+    {
+      // ... Additional references omitted for brevity
+    }
+  ]
+}
+```
+
+## Delete a knowledge source
+
+
+Before you can delete a knowledge source, you must delete any knowledge base that references it or update the knowledge base definition to remove the reference. For knowledge sources that generate an index and indexer pipeline, all *generated objects* are also deleted. However, if you used an existing index to create a knowledge source, your index isn't deleted.
+
+If you try to delete a knowledge source that's in use, the action fails and returns a list of affected knowledge bases.
+
+To delete a knowledge source:
+
+**Applies to: csharp**
+
+
+1. Get a list of all knowledge bases on your search service.
+
+    ```csharp
+    using Azure.Search.Documents.Indexes;
+    
+    var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+    var knowledgeBases = indexClient.GetKnowledgeBasesAsync();
+    
+    Console.WriteLine("Knowledge Bases:");
+    
+    await foreach (var kb in knowledgeBases)
+    {
+        Console.WriteLine($"  - {kb.Name}");
+    }
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+        "@odata.context": "https://my-search-service.search.windows.net/$metadata#knowledgebases(name)",
+        "value": [
+        {
+            "name": "my-kb"
+        },
+        {
+            "name": "my-kb-2"
+        }
+        ]
+    }
+   ```
+
+1. Get an individual knowledge base definition to check for knowledge source references.
+
+    ```csharp
+    using Azure.Search.Documents.Indexes;
+    using System.Text.Json;
+    
+    var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+    
+    // Specify the knowledge base name to retrieve
+    string kbNameToGet = "earth-knowledge-base";
+    
+    // Get a specific knowledge base definition
+    var knowledgeBaseResponse = await indexClient.GetKnowledgeBaseAsync(kbNameToGet);
+    var kb = knowledgeBaseResponse.Value;
+    
+    // Serialize to JSON for display
+    string json = JsonSerializer.Serialize(kb, new JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine(json);
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+      "Name": "earth-knowledge-base",
+      "KnowledgeSources": [
+        {
+          "Name": "earth-knowledge-source"
+        }
+      ],
+      "Models": [
+        {}
+      ],
+      "RetrievalReasoningEffort": {},
+      "OutputMode": {},
+      "ETag": "\u00220x8DE278629D782B3\u0022",
+      "EncryptionKey": null,
+      "Description": null,
+      "RetrievalInstructions": null,
+      "AnswerInstructions": null
+    }
+   ```
+
+1. Either delete the knowledge base or, if you have multiple knowledge sources, update the knowledge base to remove the source. This example shows deletion.
+
+    ```csharp
+    using Azure.Search.Documents.Indexes;
+    var indexClient = new SearchIndexClient(new Uri(searchEndpoint), credential);
+    
+    await indexClient.DeleteKnowledgeBaseAsync(knowledgeBaseName);
+    System.Console.WriteLine($"Knowledge base '{knowledgeBaseName}' deleted successfully.");
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+1. Delete the knowledge source.
+
+    ```csharp
+    await indexClient.DeleteKnowledgeSourceAsync(knowledgeSourceName);
+    System.Console.WriteLine($"Knowledge source '{knowledgeSourceName}' deleted successfully.");
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/dotnet/api/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: python**
+
+
+1. Get a list of all knowledge bases on your search service.
+
+    ```python
+    # Get knowledge bases
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    
+    print("Knowledge Bases:")
+    for kb in index_client.list_knowledge_bases():
+        print(f"  - {kb.name}")
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+        "@odata.context": "https://my-search-service.search.windows.net/$metadata#knowledgebases(name)",
+        "value": [
+        {
+            "name": "my-kb"
+        },
+        {
+            "name": "my-kb-2"
+        }
+        ]
+    }
+   ```
+
+1. Get an individual knowledge base definition to check for knowledge source references.
+
+    ```python
+    # Get a knowledge base definition
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    kb = index_client.get_knowledge_base("knowledge_base_name")
+    print(kb)
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+   An example response might look like the following:
+
+   ```json
+    {
+      "name": "my-kb",
+      "description": null,
+      "retrievalInstructions": null,
+      "answerInstructions": null,
+      "outputMode": null,
+      "knowledgeSources": [
+        {
+          "name": "my-blob-ks"
+        }
+      ],
+      "models": [],
+      "encryptionKey": null,
+      "retrievalReasoningEffort": {
+        "kind": "low"
+      }
+    }
+   ```
+
+1. Either delete the knowledge base or, if you have multiple knowledge sources, update the knowledge base to remove the source. This example shows deletion.
+
+    ```python
+    # Delete a knowledge base
+    from azure.core.credentials import AzureKeyCredential 
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    index_client.delete_knowledge_base("knowledge_base_name")
+    print(f"Knowledge base deleted successfully.")
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+1. Delete the knowledge source.
+
+    ```python
+    # Delete a knowledge source
+    from azure.core.credentials import AzureKeyCredential 
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    index_client = SearchIndexClient(endpoint = "search_url", credential = AzureKeyCredential("api_key"))
+    index_client.delete_knowledge_source("knowledge_source_name")
+    print(f"Knowledge source deleted successfully.")
+    ```
+
+   **Reference:** [SearchIndexClient](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient)
+
+
+
+**Applies to: rest**
+
+
+1. Get a list of all knowledge bases on your search service.
+
+    ```http
+    ### Get knowledge bases
+    GET {{search-url}}/knowledgebases?api-version={{api-version}}&$select=name
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Bases - List](https://learn.microsoft.com/rest/api/searchservice/knowledge-bases/list)
+
+   An example response might look like the following:
+
+   ```json
+    {
+        "@odata.context": "https://my-search-service.search.windows.net/$metadata#knowledgebases(name)",
+        "value": [
+        {
+            "name": "my-kb"
+        },
+        {
+            "name": "my-kb-2"
+        }
+        ]
+    }
+   ```
+
+1. Get an individual knowledge base definition to check for knowledge source references.
+
+    ```http
+    ### Get a knowledge base definition
+    GET {{search-url}}/knowledgebases/{{knowledge-base-name}}?api-version={{api-version}}
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Bases - Get](https://learn.microsoft.com/rest/api/searchservice/knowledge-bases/get)
+
+   An example response might look like the following:
+
+   ```json
+    {
+      "name": "my-kb",
+      "description": null,
+      "retrievalInstructions": null,
+      "answerInstructions": null,
+      "outputMode": null,
+      "knowledgeSources": [
+        {
+          "name": "my-blob-ks"
+        }
+      ],
+      "models": [],
+      "encryptionKey": null,
+      "retrievalReasoningEffort": {
+        "kind": "low"
+      }
+    }
+   ```
+
+1. Either delete the knowledge base or, if you have multiple knowledge sources, update the knowledge base to remove the source. This example shows deletion.
+
+    ```http
+    ### Delete a knowledge base
+    DELETE {{search-url}}/knowledgebases/{{knowledge-base-name}}?api-version={{api-version}}
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Bases - Delete](https://learn.microsoft.com/rest/api/searchservice/knowledge-bases/delete)
+
+1. Delete the knowledge source.
+
+    ```http
+    ### Delete a knowledge source
+    DELETE {{search-url}}/knowledgesources/{{knowledge-source-name}}?api-version={{api-version}}
+    Authorization: Bearer {{token}}
+    ```
+
+   **Reference:** [Knowledge Sources - Delete](https://learn.microsoft.com/rest/api/searchservice/knowledge-sources/delete)
+
+
+
+
+## Related content
+
++ [Agentic retrieval in Azure AI Search](agentic-retrieval-overview.md)
++ [What is a knowledge source?](agentic-knowledge-source-overview.md)
++ [Create a knowledge base](agentic-retrieval-how-to-create-knowledge-base.md)
++ [Query a knowledge base](agentic-retrieval-how-to-retrieve.md)

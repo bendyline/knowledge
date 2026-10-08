@@ -1,0 +1,101 @@
+---
+title: "* (Multiplication) (Transact-SQL)"
+description: "* (Multiplication) (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "*_TSQL"
+  - "*"
+helpviewer_keywords:
+  - "* (multiply operator)"
+  - "multiplication [SQL Server]"
+  - "multiply operator (*)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# * (Multiplication) (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Multiplies two expressions (an arithmetic multiplication operator).  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql  
+expression * expression  
+```  
+  
+## Arguments
+ *expression*  
+ Is any valid [expression](expressions-transact-sql.md) of any one of the data types of the numeric data type category, except the **datetime** and **smalldatetime** data types.  
+  
+## Result Types  
+ Returns the data type of the argument with the higher precedence. For more information, see [Data Type Precedence (Transact-SQL)](../data-types/data-type-precedence-transact-sql.md).  
+  
+## Examples  
+ The following example retrieves the product identification number, name, the list price and the new list price of all the mountain bicycles in the `Product` table. The new list price is calculated by using the `*` arithmetic operator to multiply `ListPrice` by `1.15`.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT ProductID, Name, ListPrice, ListPrice * 1.15 AS NewPrice  
+FROM Production.Product  
+WHERE Name LIKE 'Mountain-%'  
+ORDER BY ProductID ASC;  
+GO  
+```  
+  
+## Examples:  Azure Synapse Analytics 
+ The following example retrieves the first and last name of employees in the `dimEmployee` table, and calculates the pay for `VacationHours` for each..  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT FirstName, LastName, BaseRate * VacationHours AS VacationPay  
+FROM DimEmployee  
+ORDER BY lastName ASC;  
+```  
+  
+## Related content
+
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)
+- [Expressions (Transact-SQL)](expressions-transact-sql.md)
+- [What are the SQL database functions?](../functions/functions.md)
+- [Operators (Transact-SQL)](operators-transact-sql.md)
+- [SELECT (Transact-SQL)](../queries/select-transact-sql.md)
+- [WHERE (Transact-SQL)](../queries/where-transact-sql.md)
+- [*= (Multiplication assignment) (Transact-SQL)](multiply-equals-transact-sql.md)
+- [Compound operators (Transact-SQL)](compound-operators-transact-sql.md)

@@ -1,0 +1,75 @@
+---
+title: What is Azure Public DNS?
+description: Overview of DNS hosting service on Microsoft Azure. Host your domain on Microsoft Azure.
+author: asudbring
+ms.service: azure-dns
+ms.topic: overview
+ms.date: 06/01/2026
+ms.author: allensu
+#Customer intent: As an administrator, I want to evaluate Azure Public DNS so I can determine if I want to use it instead of my current DNS service.
+# Customer intent: As an IT administrator, I want to evaluate Azure Public DNS as a potential DNS hosting solution, so that I can ensure it meets my organization's requirements for reliability, security, and ease of management.
+---
+
+# What is Azure Public DNS?
+
+Azure Public DNS is a hosting service for DNS domains that provides name resolution by using Microsoft Azure infrastructure. By hosting your domains in Azure, you can manage your DNS records by using the same credentials, APIs, tools, and billing as your other Azure services.
+
+You can't use Azure Public DNS to buy a domain name. For an annual fee, you can buy a domain name by using [App Service domains](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/manage-custom-dns-buy-domain.md#buy-and-map-an-app-service-domain) or a third-party domain name registrar. Your domains then can be hosted in Azure Public DNS for record management. For more information, see [Delegate a domain to Azure DNS](dns-domain-delegation.md).
+
+The following features are included with Azure Public DNS.
+
+## Reliability and performance
+
+DNS domains in Azure Public DNS are hosted on Azure's global network of DNS name servers. Azure Public DNS uses anycast networking. Each DNS query is answered by the closest available DNS server to provide fast performance and high availability for your domain.
+
+## Security
+
+ Azure Public DNS is based on Azure Resource Manager, which provides features such as:
+
+* [Azure role-based access control (Azure RBAC)](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/overview.md) to control who has access to specific actions for your organization.
+* [Activity logs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/overview.md) to monitor how a user in your organization modified a resource or to find an error when troubleshooting.
+* [Resource locking](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/lock-resources.md) to lock a subscription, resource group, or resource. Locking prevents other users in your organization from accidentally deleting or modifying critical resources.
+
+For more information, see [How to protect DNS zones and records](dns-protect-zones-recordsets.md). 
+
+## DNSSEC
+
+Azure Public DNS supports DNSSEC. For more information, see [DNSSEC overview](dnssec.md).
+
+## Ease of use
+
+ Azure Public DNS can manage DNS records for your Azure services and provide DNS for your external resources as well. Azure Public DNS is integrated in the Azure portal and uses the same credentials, support contract, and billing as your other Azure services. 
+
+DNS billing is based on the number of DNS zones hosted in Azure and on the number of DNS queries received. To learn more about pricing, see [Azure DNS pricing](https://azure.microsoft.com/pricing/details/dns/).
+
+Your domains and records can be managed by using the Azure portal, Azure PowerShell cmdlets, and the cross-platform Azure CLI. Applications that require automated DNS management can integrate with the service by using the REST API and SDKs.
+
+## Customizable virtual networks with private domains
+
+Azure Public DNS also supports private DNS domains. This feature allows you to use your own custom domain names in your private virtual networks rather than the Azure-provided names available today.
+
+For more information, see [Use Azure DNS for private domains](private-dns-overview.md).
+
+## Alias records
+
+Azure Public DNS supports alias record sets. You can use an alias record set to refer to an Azure resource, such as an Azure public IP address or an Azure Content Delivery Network (CDN) endpoint. If the IP address of the underlying resource changes, the alias record set seamlessly updates itself during DNS resolution. The alias record set points to the service instance, and the service instance is associated with an IP address.
+
+Also, you can now point your apex or naked domain to a CDN endpoint using an alias record. An example is contoso.com.
+
+For more information, see [Overview of Azure DNS alias records](dns-alias.md).
+
+## Traffic Manager Linked Records
+
+> **Important:**
+> Traffic Manager Linked Records is currently in PREVIEW. See the [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/) for legal terms that apply to Azure features that are in beta, preview, or otherwise not yet released into general availability.
+
+Traffic Manager Linked Records is an Azure DNS feature that creates a direct link between a DNS record set and an Azure Traffic Manager profile. Unlike alias records, Traffic Manager Linked Records always use integrated resolution mode—returning endpoint IP addresses directly to the client without an intermediate CNAME hop to `trafficmanager.net`. This keeps the shared `trafficmanager.net` domain off the wire, simplifies firewall policies, and preserves the DNSSEC chain of trust for signed zones. [Strictly Typed Profiles](../traffic-manager/traffic-manager-strictly-typed-profiles.md) enforce endpoint type consistency on the Traffic Manager side.
+
+For more information, see [Traffic Manager Linked Records overview](dns-traffic-manager-linked-records.md).
+
+## Next steps
+
+* To learn about DNS zones and records, see [DNS zones and records overview](dns-zones-records.md).
+* To learn how to create a zone in Azure Public DNS, see [Create a DNS zone](dns-getstarted-portal.md).
+* For frequently asked questions about Azure DNS, see the [Azure DNS FAQ](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/dns/dns-faq.yml).
+* [Learn module: Introduction to Azure DNS](https://learn.microsoft.com/training/modules/intro-to-azure-dns).

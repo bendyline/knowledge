@@ -1,0 +1,54 @@
+---
+title: Indexer Connection to SQL Managed Instances
+description: Enable public endpoint to allow connections to SQL Managed Instances from an indexer on Azure AI Search.
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ms.topic: how-to
+ms.date: 07/11/2025
+ms.update-cycle: 365-days
+ai-usage: ai-assisted
+---
+
+# Indexer connections to Azure SQL Managed Instance through a public endpoint
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+> **Important:**
+> These features and functionality support connections to other Microsoft services and third-party services. Use of these services is subject to their respective terms and might result in data processing or storage outside of the Azure compliance boundary, as well as data flowing into the Azure compliance boundary.
+>
+> It's your responsibility to manage whether your data will flow outside of your organization's compliance and geographic boundaries and any related implications, and that appropriate permissions, boundaries, and approvals are provisioned.
+>
+> You're responsible for carefully reviewing and testing applications you build in the context of your specific use cases and making all appropriate decisions and customizations. This includes implementing your own responsible AI mitigations, such as metaprompts, content filters, or other safety systems, and ensuring your applications meet appropriate quality, reliability, security, and trustworthiness standards. For more information, see the [Azure AI Search Transparency Note](https://learn.microsoft.com/azure/foundry/responsible-ai/search/transparency-note).
+
+An *Azure SQL indexer* connects Azure AI Search to external data sources over a public endpoint. If you're setting up a connection to Azure SQL Managed Instance, follow the steps in this article to ensure the public endpoint is set up correctly.
+
+Alternatively, for private connections, [create a shared private link](search-indexer-how-to-access-private-sql.md) instead.
+
+> **Note:**
+> [Always Encrypted](https://learn.microsoft.com/sql/relational-databases/security/encryption/always-encrypted-database-engine) columns are not currently supported by Azure AI Search indexers.
+
+## Enable a public endpoint
+
+This article highlights just the steps for an indexer connection in Azure AI Search. If you want more background, see [Configure public endpoint in Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/public-endpoint-configure) instead.
+
+1. For a new SQL Managed Instance, create the resource with the **Enable public endpoint** option selected.
+
+   Enable public endpoint
+
+1. Alternatively, if the instance already exists, you can enable public endpoint on an existing SQL Managed Instance under **Security** > **Networking** > **Public endpoint** > **Enable**.
+
+   Enable public endpoint using managed instance VNET
+
+## Get public endpoint connection string
+
+1. To get a connection string, go to **Settings** > **Connection strings**.
+
+1. Copy the connection string to use in the search indexer's data source connection. Be sure to copy the connection string for the **public endpoint** (port 3342, not port 1433).
+
+## Next steps
+
+With configuration out of the way, you can now specify a SQL managed instance as an indexer data source using the basic instructions for [setting up an Azure SQL indexer](search-how-to-index-sql-database.md).

@@ -1,0 +1,119 @@
+---
+title: "AND (Transact-SQL)"
+description: "AND (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "AND_TSQL"
+  - "AND"
+helpviewer_keywords:
+  - "values [SQL Server], TRUE"
+  - "TRUE"
+  - "AND, about AND operators"
+  - "AND"
+  - "combining expressions"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# AND (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Combines two Boolean expressions and returns **TRUE** when both expressions are **TRUE**. When more than one logical operator is used in a statement, the **AND** operators are evaluated first. You can change the order of evaluation by using parentheses.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+boolean_expression AND boolean_expression  
+```  
+  
+## Arguments
+ *boolean_expression*  
+ Is any valid [expression](expressions-transact-sql.md) that returns a Boolean value: **TRUE**, **FALSE**, or **UNKNOWN**.  
+  
+## Result Types  
+ **Boolean**  
+  
+## Result Value  
+ Returns TRUE when both expressions are TRUE.  
+  
+## Remarks  
+ The following chart shows the outcomes when you compare TRUE and FALSE values by using the AND operator.  
+  
+|  | TRUE | FALSE | UNKNOWN |
+| --- | --- | --- | --- |
+| **TRUE** | TRUE | FALSE | UNKNOWN |
+| **FALSE** | FALSE | FALSE | FALSE |
+| **UNKNOWN** | UNKNOWN | FALSE | UNKNOWN |
+  
+## Examples  
+  
+### A. Using the AND operator  
+ The following example selects information about employees who have both the title of `Marketing Assistant` and more than `41` vacation hours available.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT  BusinessEntityID, LoginID, JobTitle, VacationHours   
+FROM HumanResources.Employee  
+WHERE JobTitle = 'Marketing Assistant'  
+AND VacationHours > 41 ;  
+```  
+  
+### B. Using the AND operator in an IF statement  
+ The following examples show how to use AND in an IF statement. In the first statement, both `1 = 1` and `2 = 2` are true; therefore, the result is true. In the second example, the argument `2 = 17` is false; therefore, the result is false.  
+  
+```sql  
+IF 1 = 1 AND 2 = 2  
+BEGIN  
+   PRINT 'First Example is TRUE'  
+END  
+ELSE PRINT 'First Example is FALSE' ;  
+GO  
+  
+IF 1 = 1 AND 2 = 17  
+BEGIN  
+   PRINT 'Second Example is TRUE'  
+END  
+ELSE PRINT 'Second Example is FALSE' ;  
+GO  
+```  
+  
+## Related content
+
+- [What are the SQL database functions?](../functions/functions.md)
+- [Operators (Transact-SQL)](operators-transact-sql.md)
+- [SELECT (Transact-SQL)](../queries/select-transact-sql.md)
+- [WHERE (Transact-SQL)](../queries/where-transact-sql.md)

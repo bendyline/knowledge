@@ -1,0 +1,420 @@
+---
+title: "Tutorial: Configure Availability Group in Multiple Subnets"
+description: "This tutorial shows how to create an Always On availability group within multiple subnets for SQL Server on Azure Virtual Machines (VMs). "
+author: AbdullahMSFT
+ms.author: amamun
+ms.reviewer: mathoma
+ms.date: 09/17/2025
+ms.service: azure-vm-sql-server
+ms.subservice: hadr
+ms.topic: tutorial
+ms.custom:
+  - sfi-image-nochange
+editor: monicar
+tags: azure-service-management
+---
+
+# Tutorial: Configure an availability group in multiple subnets (SQL Server on Azure VMs)
+
+
+
+  **Applies to:**    [SQL Server on Azure VM](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+> **Tip:**
+> There are many [methods to deploy an availability group](availability-group-overview.md#deployment-options). Simplify your deployment and eliminate the need for an Azure Load Balancer or distributed network name (DNN) for your Always On availability group by creating your SQL Server virtual machines (VMs) in [multiple subnets](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md) within the same Azure virtual network. If you've already created your availability group in a single subnet, you can [migrate it to a multi-subnet environment](availability-group-manually-migrate-multi-subnet.md). 
+
+This tutorial shows how to create an Always On availability group for SQL Server on Azure Virtual Machines (VMs) within multiple subnets. The complete tutorial creates a Windows Server Failover Cluster and an availability group with a two SQL Server replicas and a listener.
+
+**Time estimate**: Assuming your [Prerequisites](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md) are complete, this tutorial should take about 30 minutes to complete.
+
+## Prerequisites
+
+The following table lists the [Prerequisites](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md) that you need to complete before starting this tutorial:
+
+| Requirement | Description |
+| --- | --- |
+| **Two SQL Server instances** | - Each VM in two different Azure availability zones or the same availability set <br /> - In separate subnets within an Azure Virtual Network <br /> - With two secondary IPs assigned to each VM <br /> - In a single domain <br /> |
+| **SQL Server service account** | A domain account used by the SQL Server service for each machine |
+| **Open firewall ports** | - SQL Server: **1433** for default instance <br /> - Database mirroring endpoint: **5022** or any available port <br /> |
+| **Domain installation account** | - Local administrator on each SQL Server <br /> - Member of SQL Server **sysadmin** fixed server role for each instance of SQL Server |
+
+The tutorial assumes you have a basic understanding of [SQL Server Always On availability groups](https://learn.microsoft.com/sql/database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server).
+
+<a id="CreateCluster"></a>
+
+## Create the cluster
+
+The Always On availability group lives on top of the Windows Server Failover Cluster infrastructure. Before deploying your availability group, you must first configure the Windows Server Failover Cluster, which includes adding the feature, creating the cluster, and setting the cluster IP address.
+
+### Add failover cluster feature
+
+Add the failover cluster feature to both SQL Server VMs. To do so, follow these steps:
+
+1. Connect to the SQL Server virtual machine through [Bastion](https://learn.microsoft.com/azure/bastion/bastion-connect-vm-rdp-windows) using a domain account that has permissions to create objects in AD, such as the **CORP\Install** domain account created in the [prerequisites article](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md).
+1. Open **Server Manager Dashboard**.
+1. Select the **Add roles and features** link on the dashboard.
+
+   Screenshot to select the Add roles and features link on the dashboard.
+
+1. Select **Next** until you get to the **Server Features** section.
+1. In **Features**, select **Failover Clustering**.
+1. Add any additional required features.
+1. Select **Install** to add the features.
+1. Repeat the steps on the other SQL Server VM.
+
+### Create cluster
+
+After the cluster feature has been added to each SQL Server VM, you're ready to create the Windows Server Failover Cluster.
+
+To create the cluster, follow these steps:
+
+1. Use [Bastion](https://learn.microsoft.com/azure/bastion/bastion-connect-vm-rdp-windows) to connect to the first SQL Server VM (such as **SQL-VM-1**) using a domain account that has permissions to create objects in AD, such as the **CORP\Install** domain account created in the [Prerequisites article](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md).
+1. In the **Server Manager** dashboard, select **Tools**, and then select **Failover Cluster Manager**.
+1. In the left pane, right-click **Failover Cluster Manager**, and then select **Create a Cluster**.
+
+   Screenshot of the right-click menu of Failover Cluster Manager with Create Cluster selected.
+
+1. In the **Create Cluster Wizard**, create a two-node cluster by stepping through the pages using the settings provided in the following table:
+
+   | Page | Settings |
+   | --- | --- |
+   | Before You Begin | Use defaults. |
+   | Select Servers | Type the first SQL Server name (such as **SQL-VM-1**) in **Enter server name** and select **Add**.<br />Type the second SQL Server name (such as **SQL-VM-2**) in **Enter server name** and select **Add**. |
+   | Validation Warning | Select **Yes. When I click Next, run configuration validation tests, and then return to the process of creating the cluster**. |
+   | Before you Begin | Select Next. |
+   | Testing Options | Choose **Run only the tests I select**. |
+   | Test Selection | Uncheck Storage. Ensure **Inventory**, **Network**, and **System Configuration** are selected. |
+   | Confirmation | Select Next.<br />Wait for the validation to complete.<br />Select **View Report** to review the report. You can safely ignore the warning regarding VMs being reachable on only one network interface. Azure infrastructure has physical redundancy, and therefore it isn't required to add additional network interfaces.<br /> Select **Finish**. |
+   | Access Point for Administering the Cluster | Type a cluster name, for example **SQLAGCluster1** in **Cluster Name**. |
+   | Confirmation | Uncheck **Add all eligible storage to the cluster** and select **Next**. |
+   | Summary | Select **Finish**. |
+
+   > **Warning:**  
+   > If you don't uncheck **Add all eligible storage to the cluster**, Windows detaches the virtual disks during the clustering process. As a result, they don't appear in Disk Manager or Explorer until the storage is removed from the cluster and reattached using PowerShell.
+   >
+
+### Set the failover cluster IP address
+
+Typically, the IP address assigned to the cluster is the same IP address assigned to the VM, which means that in Azure, the cluster IP address will be in a failed state and can't be brought online. Change the cluster IP address to bring the IP resource online.
+
+During the prerequisites, you should have [assigned secondary IP addresses](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md#add-secondary-ips-to-sql-server-vms) to each SQL Server VM, as the example table here (your specific IP addresses might vary):
+
+| VM Name | Subnet name | Subnet address range | Secondary IP name | Secondary IP address |
+| --- | --- | --- | --- | --- |
+| SQL-VM-1 | SQL-subnet-1 | 10.38.1.0/24 | windows-cluster-ip | 10.38.1.10 |
+| SQL-VM-2 | SQL-subnet-2 | 10.38.2.0/24 | windows-cluster-ip | 10.38.2.10 |
+
+Assign these IP addresses as the cluster IP addresses for each relevant subnet.
+
+> **Note:**  
+> On Windows Server 2019, the cluster creates a **Distributed Server Name** instead of the **Cluster Network Name**. The cluster name object (CNO) is automatically registered with the IP addresses for all of the nodes in the cluster, eliminating the need for a dedicated windows cluster IP address. If you're on Windows Server 2019, either skip this section and any other steps that refer to the **Cluster Core Resources**, or create a virtual network name (VNN)-based cluster using [PowerShell](failover-cluster-instance-storage-spaces-direct-manually-configure.md#create-windows-failover-cluster). See the blog [Failover Cluster: Cluster Network Object](https://blogs.windows.com/windowsexperience/2018/08/14/announcing-windows-server-2019-insider-preview-build-17733/#W0YAxO8BfwBRbkzG.97) for more information.
+
+To change the cluster IP address, follow these steps:
+
+1. In **Failover Cluster Manager**, scroll down to **Cluster Core Resources** and expand the cluster details. You should see the **Name** and two **IP Address** resources from each subnet in the **Failed** state.
+1. Right-click the first failed **IP Address** resource, and then select **Properties**.
+
+   Screenshot of the Cluster Properties in failover cluster manager showing a failed IP address resource.
+
+1. Select **Static IP Address**, and update the IP address to the [dedicated windows cluster IP address](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md#add-secondary-ips-to-sql-server-vms) in the subnet you assigned to the first SQL Server VM (such as **SQL-VM-1**). Select **OK**.
+
+   Screenshot of the IP address resource in Failover Cluster Manager with the static IP address section highlighted.
+
+1. Repeat the steps for the second failed **IP Address** resource, using the [dedicated windows cluster IP address](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md#add-secondary-ips-to-sql-server-vms) for the subnet of the second SQL Server VM (such as **SQL-VM-2**).
+
+   Screenshot of the secondary IP address resource in Failover Cluster Manager with the static IP address section highlighted.
+
+1. In the **Cluster Core Resources** section, right-click cluster name and select **Bring Online**. Wait until the name and one of the IP address resources are online.
+
+Since the SQL Server VMs are in different subnets, the cluster will have an **OR** dependency on the two dedicated windows cluster IP addresses. When the cluster name resource comes online, it updates the domain controller (DC) server with a new Active Directory (AD) computer account. If the cluster core resources move nodes, one IP address goes offline, while the other comes online, updating the DC server with the new IP address association.
+
+> **Tip:**  
+> When running the cluster on Azure VMs in a production environment, change the cluster settings to a more relaxed monitoring state to improve cluster stability and reliability in a cloud environment. To learn more, see [SQL Server VM - HADR configuration best practices](hadr-cluster-best-practices.md#checklist).
+
+## Configure quorum
+
+On a two node cluster, a quorum device is necessary for cluster reliability and stability. On Azure VMs, the cloud witness is the recommended quorum configuration, though there are [other options available](hadr-cluster-quorum-configure-how-to.md). The steps in this section configure a cloud witness for quorum. Identify the access keys to the storage account, and then configure the cloud witness.
+
+## Get access keys for storage account
+
+When you create a Microsoft Azure Storage Account, it's associated with two Access Keys that are automatically generated - primary access key and secondary access key. Use the primary access key the first time you create the cloud witness, but subsequently there are no restrictions to which key to use for the cloud witness.
+
+Use the Azure portal to view and copy storage access keys for the Azure Storage Account created in the [prerequisites article](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md#create-azure-storage-account).
+
+To view and copy the storage access keys, follow these steps:
+
+1. Go to your resource group in the [Azure portal](https://portal.azure.com), and select the storage account you created.
+1. Select **Access Keys** under **Security + networking**.
+1. Select **Show Keys**, and copy the key.
+
+   Screenshot of the access keys for the storage account in the Azure portal.
+
+### Configure cloud witness
+
+After you have the access key copied, create the cloud witness for the cluster quorum.
+
+To create the cloud witness, follow these steps:
+
+1. Connect to the first SQL Server VM **SQL-VM-1** with remote desktop.
+1. Open **Windows PowerShell** in Administrator mode.
+1. Run the PowerShell script to set TLS (Transport Layer Security) value for the connection to 1.2:
+
+   ```powershell
+   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+   ```
+
+1. Use PowerShell to configure the cloud witness. Replace the values for storage account name and access key with your specific information:
+
+   ```powershell
+   Set-ClusterQuorum -CloudWitness -AccountName "Storage_Account_Name" -AccessKey "Storage_Account_Access_Key"
+   ```
+
+1. The following example output indicates success:
+
+   Screenshot of the PowerShell output when setting the cluster quorum option.
+
+The cluster core resources are configured with a cloud witness.
+
+## Enable AG feature
+
+The Always On availability group feature is disabled by default. Use the **SQL Server Configuration Manager** to enable the feature on both SQL Server instances.
+
+To enable the availability group feature, follow these steps:
+
+1. Connect to the first SQL Server VM (such as **SQL-VM-1**) with a domain account that is a member of **sysadmin** fixed server role, such as the **CORP\Install** domain account created in the [prerequisites document](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md)
+1. From the **Start** screen of one your SQL Server VMs, launch **SQL Server Configuration Manager**.
+1. In the browser tree, highlight **SQL Server Services**, right-click the **SQL Server (MSSQLSERVER)** service and select **Properties**.
+1. Select the **Always On High Availability** tab, then check the box to **Enable Always On availability groups**:
+
+   Screenshot of the enable Always On availability groups option in SQL Server Configuration Manager.
+
+1. Select **Apply**. Select **OK** in the pop-up dialog.
+1. Restart the SQL Server service.
+1. Repeat these steps for the other SQL Server instance.
+
+## Enable FILESTREAM feature
+
+If you're not using FILESTREAM for your database in the availability group, skip this step and move to the next step - **Create Database**.
+
+If you plan on adding a database to your availability group that uses [FILESTREAM](https://learn.microsoft.com/sql/database-engine/availability-groups/windows/filestream-and-filetable-with-always-on-availability-groups-sql-server), then FILESTREAM needs to be enabled as the feature is disabled by default. Use the **SQL Server Configuration Manager** to enable the feature on both SQL Server instances.
+
+To [enable the FILESTREAM feature](https://learn.microsoft.com/sql/relational-databases/blob/enable-and-configure-filestream), follow these steps:
+
+1. Connect to the first SQL Server VM (such as **SQL-VM-1**) with a domain account that's a member of **sysadmin** fixed server role, such as the **CORP\Install** domain account created in the [prerequisites document](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md)
+1. From the **Start** screen of one your SQL Server VMs, launch **SQL Server Configuration Manager**.
+1. In the browser tree, highlight **SQL Server Services**, right-click the **SQL Server (MSSQLSERVER)** service, and select **Properties**.
+1. Select the **FILESTREAM** tab, then check the box to **Enable FILESTREAM for Transact-SQL access**:
+1. Select **Apply**. Select **OK** in the pop-up dialog.
+1. In SQL Server Management Studio, select **New Query** to display the Query Editor.
+1. In Query Editor, enter the following Transact-SQL code:
+
+   ```sql
+   EXEC sp_configure filestream_access_level, 2
+   RECONFIGURE
+   ```
+
+1. Select **Execute**.
+1. Restart the SQL Server service.
+1. Repeat these steps for the other SQL Server instance.
+
+## Create database
+
+For your database, you can either follow the steps in this section to create a new database or restore an [AdventureWorks database](https://learn.microsoft.com/sql/samples/sql-samples-where-are). You also need to back up the database to initialize the log chain. Databases that haven't been backed up don't meet the prerequisites for an availability group.
+
+To create a database, follow these steps:
+
+1. Connect to the first SQL Server VM (such as **SQL-VM-1**) with a domain account that's a member of the **sysadmin** fixed server role, such as the **CORP\Install** domain account created in the [prerequisites document](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md).
+1. Open **SQL Server Management Studio** and connect to the SQL Server instance.
+1. In **Object Explorer**, right-click **Databases** and select **New Database**.
+1. In **Database name**, type **MyDB1**.
+1. Select the **Options** page, and choose **Full** from the **Recovery model** dropdown list if it's not full by default. The database must be in the full recovery model to meet the prerequisites of participating in an availability group.
+1. Select **OK** to close the **New Database** page and create your new database.
+
+To back up the database, follow these steps:
+
+1. In **Object Explorer**, right-click the database, highlight **Tasks**, and then select **Back Up...**.
+
+1. Select **OK** to take a full backup of the database to the default backup location.
+
+## Create file share
+
+Create a backup file share that both SQL Server VMs and their service accounts have access to.
+
+To create the backup file share, follow these steps:
+
+1. On the first SQL Server VM in **Server Manager**, select **Tools**. Open **Computer Management**.
+
+1. Select **Shared Folders**.
+
+1. Right-click **Shares**, and select **New Share...**. Then use the **Create a Shared Folder Wizard** to create a share.
+
+   Screenshot of creating a new share in Computer Management.
+
+1. For **Folder Path**, select **Browse** and locate or create a path for the database backup shared folder, such as `C:\Backup`. Select **Next**.
+
+1. In **Name, Description, and Settings** verify the share name and path. Select **Next**.
+
+1. On **Shared Folder Permissions** set **Customize permissions**. Select **Custom**.
+
+1. On **Customize Permissions**, select **Add**.
+
+1. Check **Full Control** to grant full access to the shared folder for the SQL Server service account (`Corp\SQLSvc`):
+
+   Screenshot showing custom folder permissions.
+
+1. Select **OK**.
+
+1. In **Shared Folder Permissions**, select **Finish**. Select **Finish** again.
+
+## Create availability group
+
+After your database has been backed up, you're ready to create your availability group. The process automatically takes a full backup and transaction log backup from the primary SQL Server replica and restores it on the secondary SQL Server instance with the `NORECOVERY` option.
+
+To create your availability group, follow these steps.
+
+1. In **Object Explorer** in SQL Server Management Studio (SSMS) on the first SQL Server VM (such as **SQL-VM-1**), right-click **Always On High Availability** and select **New Availability Group Wizard**.
+
+   Screenshot of selecting the New Availability Group Wizard in the right-click menu of SSMS.
+
+1. On the **Introduction** page, select **Next**. In the **Specify availability group Name** page, type a name for the availability group in **Availability group name**, such as **AG1**. Select **Next**.
+
+   Screenshot of the Specify Options page of the New Availability Group Wizard in SSMS.
+
+1. On the **Select Databases** page, select your database, and then select **Next**. If your database doesn't meet the prerequisites, make sure it's in the full recovery model and [take a backup](#create-database):
+
+   Screenshot of the Select Databases page in the New availability group Wizard within SSMS.
+
+1. On the **Specify Replicas** page, select **Add Replica**.
+
+   Screenshot of the Specify Replicas page in the New Availability Group Wizard in SSMS.
+
+1. The **Connect to Server** dialog pops up. Type the name of the second server in **Server name**, such as **SQL-VM-2**. Select **Connect**.
+1. On the **Specify Replicas** page, check the boxes for **Automatic Failover** and choose **Synchronous commit** for the availability mode from the dropdown list:
+
+   Screenshot of the Specify Replicas page in the New Availability Group Wizard in SSMS, with automatic failover and availability mode highlighted.
+
+1. Select the **Endpoints** tab to confirm the ports used for the database mirroring endpoint are those you [opened in the firewall](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md#configure-the-firewall):
+
+   Screenshot of the Endpoints tab in the New Availability Group Wizard in SSMS.
+
+1. Select the **Listener** tab, and choose to  **Create an availability group listener** using the following values for the listener:
+
+   | Field | Value |
+   | --- | --- |
+   | Listener DNS Name: | AG1-Listener |
+   | Port | Use the default SQL Server port. 1433 |
+   | Network Mode: | Static IP |
+
+1. Select **Add** to provide the secondary dedicated IP address for the listener for both SQL Server VMs.
+
+   The following table shows the example IP addresses created for the listener from the [prerequisites document](availability-group-manually-configure-prerequisites-tutorial-multi-subnet.md) (though your specific IP addresses might vary):
+
+   | VM Name | Subnet name | Subnet address range | Secondary IP name | Secondary IP address |
+   | --- | --- | --- | --- | --- |
+   | SQL-VM-1 | SQL-subnet-1 | 10.38.1.0/24 | availability-group-listener | 10.38.1.11 |
+   | SQL-VM-2 | SQL-subnet-2 | 10.38.2.0/24 | availability-group-listener | 10.38.2.11 |
+
+1. Choose the first subnet (such as 10.38.1.0/24) from the dropdown list on the **Add IP address** dialog box, and then provide the secondary dedicated listener **IPv4 address**, such as `10.38.1.11`. Select **OK**.
+
+   Screenshot of the Add IP address dialog box in the New Availability Group Wizard.
+
+1. Repeat the previous step, but choose the other subnet from the dropdown list (such as 10.38.2.0/24). Provide the secondary dedicated listener **IPv4 address** from the other SQL Server VM, such as `10.38.2.11`. Select **OK**.
+
+   Screenshot of Add IP Address for Listener.
+
+1. After reviewing the values on the **Listener** page, select **Next**:
+
+   Screenshot of the Listener tab in the New Availability Group Wizard in SSMS.
+
+1. On the **Select Initial Data Synchronization** page, choose **Full database and log backup** and provide the [network share location you created previously](#create-file-share), such as `\\SQL-VM-1\Backup`.
+
+   Screenshot of the Select Initial Data Synchronization page in the New Availability Group Wizard in SSMS.
+
+   > **Note:**  
+   > Full synchronization takes a full backup of the database on the first SQL Server instance and restores it to the second instance. For large databases, full synchronization isn't recommended because it can take a long time. You can reduce this time by manually taking a backup of the database and restoring it with `NO RECOVERY`. If the database is already restored with `NO RECOVERY` on the second SQL Server instance before configuring the availability group, choose **Join only**. If you want to take the backup after configuring the availability group, choose **Skip initial data synchronization**.
+
+1. On the **Validation** page, confirm that all validation checks have passed, and then choose **Next**:
+
+   Screenshot of the Validation page in the New Availability Group Wizard in SSMS.
+
+1. On the **Summary** page, select **Finish** and wait for the wizard to configure your new availability group. Choose **More details** on the **Progress** page to view the detailed progress. When you see that the **wizard completed successfully** on the **Results** page, inspect the summary to verify the availability group and listener were created successfully.
+
+   Screenshot of the Results page in the New Availability Group Wizard in SSMS.
+
+1. Select **Close** to exit the wizard.
+
+## Check availability group
+
+You can check the health of the availability group by using **SQL Server Management Studio** and the **Failover Cluster Manager**.
+
+To check the status of the availability group, follow these steps:
+
+1. In **Object Explorer**, expand **Always On High Availability**, and then expand **availability groups**. You should now see the new availability group in this container. Right-click the availability group and select **Show Dashboard**.
+
+   Screenshot of the right-click menu in SSMS Object Explorer with Show Availability Group Dashboard selected.
+
+   The availability group dashboard shows the replica, the failover mode of each replica, and the synchronization state, such as the following example:
+
+   Screenshot of the Availability Group Dashboard in SSMS.
+
+1. Open the **Failover Cluster Manager**, select your cluster, and choose **Roles** to view the availability group role you created within the cluster. Choose the role **AG1**, and select the **Resources** tab to view the listener and the associated IP addresses, such as the following example:
+
+   Screenshot of the Failover Cluster Manager showing the availability group.
+
+At this point, you have an availability group with replicas on two instances of SQL Server and a corresponding availability group listener as well. You can connect using the listener and you can move the availability group between instances using **SQL Server Management Studio**.
+
+> **Warning:**  
+> Don't try to fail over the availability group by using the Failover Cluster Manager. All failover operations should be performed from within **SQL Server Management Studio**, such as by using the **Always On Dashboard** or Transact-SQL (T-SQL). For more information, see [Restrictions for using the Failover Cluster Manager with availability groups](https://learn.microsoft.com/sql/database-engine/availability-groups/windows/failover-clustering-and-always-on-availability-groups-sql-server).
+
+### Set RegisterAllProvidersIP
+
+When you connect to an availability group with replicas in multiple subnets, set the `MultiSubnetFailover=Yes` option in the connection string so that the client attempts to connect to all IP addresses of the listener at the same time. To reduce reconnection time after a failover for clients with connection strings that specify `MultiSubnetFailover=True`, set the [`RegisterAllProvidersIP` property to `1`](https://learn.microsoft.com/sql/database-engine/availability-groups/windows/create-or-configure-an-availability-group-listener-sql-server#RegisterAllProvidersIP) to register all IP addresses of the cluster network name of the listener resource with DNS.
+
+The [RegisterAllProvidersIP](https://learn.microsoft.com/previous-versions/windows/desktop/mscs/registerallprovidersip) setting is a cluster property that determines how the cluster registers the IP address of the cluster network name resource with DNS. The default value is `0`, which means that the cluster registers only the IP address of the node that owns the cluster network name resource.
+
+By default, when you use SQL Server Management Studio (SSMS), Transact-SQL, or PowerShell to create an availability group, the WSFC Client Access Point is created with the `RegisterAllProvidersIP` property set to `1`.
+
+Use the following PowerShell command to check the `RegisterAllProvidersIP` setting for your listener:
+
+```powershell
+Get-ClusterResource | where-object {$_.ResourceType.name -eq "Network Name"} | Get-ClusterParameter | where-object {$_.name -eq "RegisterAllProvidersIP"}
+```
+
+If your client doesn't support the `MultiSubnetFailover` parameter, you can modify the `RegisterAllProvidersIP` and `HostRecordTTL` settings to prevent connectivity delays after failover.
+
+Use PowerShell to modify the `RegisterAllProvidersIp` and `HostRecordTTL` settings:
+
+```powershell
+Get-ClusterResource yourListenerName | Set-ClusterParameter RegisterAllProvidersIP 0
+Get-ClusterResource yourListenerName|Set-ClusterParameter HostRecordTTL 300
+```
+
+> **Note:**  
+> Lowering the `HostRecordTTL` value can increase DNS traffic.
+
+## Test listener connection
+
+After your availability group is ready, and your listener has been configured with the appropriate secondary IP addresses, test the connection to the listener.
+
+To test the connection, follow these steps:
+
+1. Connect to a SQL Server instance that's in the same virtual network, but doesn't own the replica, such as the other SQL Server instance within the cluster or any other VM with **SQL Server Management Studio** installed to it.
+
+1. Open **SQL Server Management Studio**, and in the **Connect to Server** dialog box type the name of the listener (such as **AG1-Listener**) in **Server name:**. Then select **Options**:
+
+   Screenshot of the Connect to Server dialog box in SSMS, connecting to the listener AG1-Listener.
+
+1. Enter `MultiSubnetFailover=True` in the **Additional Connection Parameters** window, and then choose **Connect** to automatically connect to whichever instance is hosting the primary SQL Server replica:
+
+   Screenshot of the Additional Connection Parameters window in SSMS, with MultiSubnetFailover=True entered.
+
+> **Note:**  
+> While connecting to availability group on different subnets, setting `MultiSubnetFailover=true` provides faster detection of and connection to the current primary replica. See [Connecting with MultiSubnetFailover](https://learn.microsoft.com/dotnet/framework/data/adonet/sql/sqlclient-support-for-high-availability-disaster-recovery#connecting-with-multisubnetfailover)
+
+## Related content
+
+- [Configure a multi-subnet availability group across Azure regions - SQL Server on Azure VMs](availability-group-manually-configure-multi-subnet-multiple-regions.md)
+- [Windows Server Failover Cluster with SQL Server on Azure VMs](hadr-windows-server-failover-cluster-overview.md)
+- [Always On availability group on SQL Server on Azure VMs](availability-group-overview.md)
+- [Always On availability groups overview](https://learn.microsoft.com/sql/database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server)
+- [HADR configuration best practices (SQL Server on Azure VMs)](hadr-cluster-best-practices.md)

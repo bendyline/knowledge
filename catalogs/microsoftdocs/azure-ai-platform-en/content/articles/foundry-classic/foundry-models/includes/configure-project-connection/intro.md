@@ -1,0 +1,23 @@
+---
+manager: mcleans
+author: santiagxf
+ms.author: fasantia 
+ms.service: microsoft-foundry
+ms.subservice: foundry-model-inference
+ms.date: 1/21/2025
+ms.topic: include
+---
+
+You can use Microsoft Foundry Models in your projects in Foundry to create rich applications and interact/manage the models available. To use the Foundry Models service in your project, you need to create a connection to the Foundry resource (formerly known Azure AI Services).
+
+The following article explains how to create a connection to the Foundry resource (formerly known Azure AI Services) to use Foundry Models.
+
+A diagram with the overall architecture of Azure Marketplace integration with Foundry Models.
+
+## Prerequisites
+
+To complete this article, you need:
+
+* An Azure subscription.
+
+* A Foundry resource (formerly known as Azure AI Services). For more information, see [Create and configure all the resources for Foundry Models](../../../quickstarts/get-started-code.md).

@@ -1,0 +1,34 @@
+---
+title: "Breaking change: Some TableLayoutSettings properties throw InvalidEnumArgumentException"
+description: Learn about the breaking change in .NET 6 where some TableLayoutSettings APIs now throw an InvalidEnumArgumentException for invalid arguments.
+ms.date: 01/18/2021
+---
+# Selected TableLayoutSettings properties throw InvalidEnumArgumentException
+
+Selected [System.Windows.Forms.TableLayoutSettings](https://learn.microsoft.com/search/?terms=System.Windows.Forms.TableLayoutSettings) properties now throw an [System.ComponentModel.InvalidEnumArgumentException](https://learn.microsoft.com/search/?terms=System.ComponentModel.InvalidEnumArgumentException) if you attempt to assign an incorrect value.
+
+## Change description
+
+In previous .NET versions, these properties throw an [System.ArgumentOutOfRangeException](https://learn.microsoft.com/search/?terms=System.ArgumentOutOfRangeException) if you attempt to assign an incorrect value. Starting in .NET 6, these properties throw an [System.ComponentModel.InvalidEnumArgumentException](https://learn.microsoft.com/search/?terms=System.ComponentModel.InvalidEnumArgumentException) in such cases.
+
+## Change category
+
+This change affects [binary compatibility](../../categories.md#binary-compatibility).
+
+## Reason for change
+
+Throwing [System.ComponentModel.InvalidEnumArgumentException](https://learn.microsoft.com/search/?terms=System.ComponentModel.InvalidEnumArgumentException) is in line with the existing Windows Forms API in similar situations. Throwing this exception also provides developers with a better debug experience.
+
+## Version introduced
+
+.NET 6
+
+## Recommended action
+
+- Update the code to prevent assigning incorrect values.
+- If necessary, handle an [System.ComponentModel.InvalidEnumArgumentException](https://learn.microsoft.com/search/?terms=System.ComponentModel.InvalidEnumArgumentException) when accessing these APIs.
+
+## Affected APIs
+
+- [System.Windows.Forms.TableLayoutPanel.CellBorderStyle](https://learn.microsoft.com/search/?terms=System.Windows.Forms.TableLayoutPanel.CellBorderStyle)
+- [System.Windows.Forms.TableLayoutPanel.GrowStyle](https://learn.microsoft.com/search/?terms=System.Windows.Forms.TableLayoutPanel.GrowStyle)

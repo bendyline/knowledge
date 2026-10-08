@@ -1,0 +1,32 @@
+# Source code: aspnetcore/fundamentals/http-requests/samples/2.x/HttpClientFactorySample/Pages/NamedClient.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model HttpClientFactorySample.Pages.NamedClientModel
+@{
+    ViewData["Title"] = "Pull Requests for Docs Repo";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model.GetPullRequestsError)
+{
+    <p>Unable to get issues from GitHub. Please try again later.</p>
+}
+else if (Model.HasPullRequests)
+{
+    <ul>
+        @foreach (var pr in Model.PullRequests)
+        {
+            <li>@pr.Title</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No pull requests found.</p>
+}
+
+```

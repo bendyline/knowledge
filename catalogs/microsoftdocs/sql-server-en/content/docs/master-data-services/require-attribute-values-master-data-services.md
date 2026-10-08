@@ -1,0 +1,86 @@
+---
+title: Require Attribute Values
+description: Require Attribute Values (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "business rules [Master Data Services], requiring attribute values"
+  - "attributes [Master Data Services], requiring values"
+---
+# Require Attribute Values (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, require attribute values when you want to ensure your master data is complete.  
+  
+> **Note:**  
+>  Members that are missing domain-based attribute values are not displayed in derived hierarchies that are based on those relationships.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **System Administration** functional area.  
+  
+-   You must be a model administrator. For more information, see [Administrators (Master Data Services)](administrators-master-data-services.md).  
+  
+### To require attribute values  
+  
+1.  In  Master Data Manager 
+, click **System Administration**.  
+  
+2.  From the menu bar, point to **Manage** and click **Business Rules**.  
+  
+3.  On the **Business Rules** page, from the **Model** dropdown list, select a model.  
+  
+4.  From the **Entity** dropdown list, select an entity.  
+  
+5.  From the **Member Types** dropdown list, select a type of member for the business rule to apply to.  
+  
+6.  Click **Add**.  
+  
+7.  In the **Name** box, type a name for the business rule.  
+  
+8.  Optionally, in the **Description** field, type the business rule description.  
+  
+9. Under the **Then** block, click **Add**. A panel will be displayed.  
+  
+10. From the **Operator** dropdown list, select **required action**.  
+  
+11. From the **Attribute** dropdown list, select an attribute.  
+  
+12. Click **Save**. A new row will be added to the **Then** grid.  
+  
+13. Click **Save**.  
+  
+14. Click **Publish All**.  
+  
+15. On the confirmation dialog box, click **OK**. The value in the **Business Rule State** column is **Active**.  
+  
+## Related content
+
+- [Business Rules (Master Data Services)](business-rules-master-data-services.md)
+- [Derived Hierarchies (Master Data Services)](derived-hierarchies-master-data-services.md)
+- [Validate Specific Members against Business Rules (Master Data Services)](validate-specific-members-against-business-rules-master-data-services.md)
+- [Validate a Version against Business Rules (Master Data Services)](validate-a-version-against-business-rules-master-data-services.md)

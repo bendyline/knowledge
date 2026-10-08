@@ -1,0 +1,33 @@
+---
+title: Set Access Scope for a DNS Zone
+description: Learn how to set the access scope for a DNS zone by using the IPAM client console.
+ms.topic: how-to
+ms.author: roharwoo
+author: robinharwood
+ms.date: 08/07/2020
+---
+# Set Access Scope for a DNS Zone
+
+You can use this topic to set the access scope for a DNS zone by using the IPAM client console.
+
+Membership in **Administrators**, or equivalent, is the minimum required to perform this procedure.
+
+### To set the access scope for a DNS zone
+
+1.  In Server Manager, click  **IPAM**. The IPAM client console appears.
+
+2.  In the navigation pane, click **DNS Zones**. In the display pane, right-click the DNS zone for which you want to change the access scope., and then click **Set Access Scope**.
+
+    Set Access Scope
+
+3.  The **Set Access Scope** dialog box opens. If required for your deployment, click to deselect **Inherit access scope from parent**. In **Select the access scope**, select an item, and then click **OK**.
+
+    Select the access scope
+
+4.  In the IPAM client console display pane, verify that the access scope for the zone is changed.
+
+    Verify that the access scope for the zone is changed
+
+## See Also
+[Role-based Access Control](Role-based-Access-Control.md)
+[Manage IPAM](Manage-IPAM.md)

@@ -1,0 +1,359 @@
+---
+title: Prepare Bill of Materials for automation
+description: Learn how to prepare a full SAP Bill of Materials (BOM) for use with the SAP on Azure Deployment Automation Framework.
+author: kimforss
+ms.author: kimforss
+ms.date: 04/01/2026
+ms.topic: how-to
+ms.service: sap-on-azure
+ms.subservice: sap-automation
+# Customer intent: As an SAP admin preparing for deployment on Azure, I want to generate an accurate Bill of Materials (BOM) so that I can automate the configuration of SAP systems effectively and streamline the installation process.
+---
+
+# Prepare an SAP BOM
+
+The SAP on Azure Deployment Automation Framework uses a Bill of Materials (BOM) to configure your SAP systems. A BOM defines the software components, installation media, and templates required for deployment. You can create a BOM by using a [script](#create-a-bom) or [manually](#create-a-bom), and optionally include [permalinks](#permalinks) to SAP media.
+
+The automation framework's GitHub repository contains a set of [sample BOMs](https://github.com/Azure/SAP-automation-samples/tree/main/SAP) that you can use to get started. You can also create BOMs for other SAP applications and databases. For more information about the framework, see [SAP Deployment Automation Framework](deployment-framework.md).
+
+> **Note:**
+> This guide covers advanced deployment. For a basic explanation of how to deploy the automation framework, see the [get started guide](get-started.md) instead.
+
+## Prerequisites
+
+- SAP installation media and related files [prepared and uploaded](bom-get-files.md) to your Azure storage account.
+  - SAP Application (database) or HANA media in your Azure storage account.
+- A YAML editor for working with the BOM file.
+- Application installation templates for:
+  - SAP Central Services (SCS)
+  - The SAP Primary Application Server (PAS)
+  - The SAP Additional Application Server (AAS)
+- Downloads of necessary stack files to the folder you created for [acquiring SAP media](bom-get-files.md#acquire-media).
+- A copy of your [SAP Download Basket manifest](bom-get-files.md#get-download-basket-manifest) (`DownloadBasket.json`), downloaded to the [folder you created for acquiring SAP media](bom-get-files.md#acquire-media).
+  - An installation of the [Postman utility](https://www.postman.com/downloads/).
+- An Azure subscription. If you don't already have an Azure subscription, [create a free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- An SAP account with permissions to work with the database you want to use.
+- A system that runs Linux-type commands with `yamllint` and `ansible-lint` installed, for [validating the BOM](#validate-the-bom).
+
+## Create a BOM
+
+### [Script method](#tab/script)
+
+Review the [script limitations](#script-limitations) before using this process.
+
+1. Navigate to your stack files folder.
+
+   ```bash
+   cd stackfiles
+   ```
+
+1. Run the BOM generation script. Replace the example path with the correct path to your utilities folder. For example:
+
+   ```bash
+   cd ~/Azure_SAP_Automated_Deployment/deploy/scripts/generate_bom.sh >../bom.yml
+   ```
+
+1. For the product parameter (`product`), enter the SAP product name. For example, `SAP_S4HANA_1809_SP4`. If you don't enter a value, the script attempts to determine the name from the stack XML file.
+
+1. Open the generated `bom.yml` file for review.
+
+1. Review the templates section (`templates`). Make sure the `file` and `override_target_location` values are correct. If necessary, edit and comment out those lines. For example:
+
+   ```yml
+   templates:
+     # - name:     "S4HANA_2020_ISS_v001 ini file"
+     #   file:     S4HANA_2020_ISS_v001.inifile.params
+     #   override_target_location: "{{ target_media_location }}/config"
+   ```
+
+1. Review the stack files section (`stackfiles`). Make sure the item names and files are correct. If necessary, edit those lines.
+
+### Script limitations
+
+The scripted BOM creation process has the following limitations.
+
+The script has a hard-coded dependency on HANA2. Edit your BOM file manually to match the required dependency name. For example:
+
+```yml
+dependencies:
+  - name: "HANA2"
+```
+
+The media parameters `override_target_filename:`, `override_target_location`, and `version:` don't have default values. Edit your BOM file manually to change these parameters. For example:
+
+```yml
+   - name:     SAPCAR
+     archive:  SAPCAR_1320-80000935.EXE
+     override_target_filename: SAPCAR.EXE
+
+   - name: "SWPM20SP07"
+     archive: "SWPM20SP07_2-80003424.SAR"
+     override_target_filename: SWPM.SAR
+     sapurl: "https://softwaredownloads.sap.com/file/0020000001812632020"
+```
+
+The script generates entries only for media files that the SAP Maintenance Planner identifies, because the script processes the stack `.xsl` file. If you add any files to your download basket separately, such as through SAP Launchpad, you must add those files to the BOM manually.
+
+### [Manual method](#tab/manual)
+
+You can create your BOM through the following manual process.
+
+1. Open the downloads folder you created for [acquiring SAP media](bom-get-files.md#acquire-media).
+
+1. Create an empty YAML file named `bom.yml`.
+
+1. Open `bom.yml` in an editor.
+
+1. Add a BOM header with names for the build and target. The `name` value must be the same as the BOM folder name in your storage account. For example:
+
+   ```yml
+   name:    'S4HANA_2020_ISS_v001'
+   target:  'ABAP PLATFORM 2020'
+   ```
+
+1. Add a defaults section with the target location. Use the path to the folder on the target server where you want to copy installation files. Typically, use `{{ target_media_location }}` as follows:
+
+   ```yml
+   defaults:
+     target_location: "{{ target_media_location }}/download_basket"
+   ```
+
+1. Add a product identifiers section. You populate these values later as part of the template preparation. For example:
+
+   ```yml
+   product_ids:
+     scs:
+     db:
+     pas:
+     aas:
+     web:
+   ```
+
+1. Add a materials section to specify the list of required materials. Add any dependencies on other BOMs in this section. For example:
+
+   ```yml
+   materials:
+   dependencies:
+       - name:     HANA2
+   ```
+
+1. Get a list of media to include in your BOM.
+
+   1. Open your download basket spreadsheet. This file renders as XML.
+
+   1. Format the XML content to be human readable, if necessary.
+
+   1. For each item in the download basket, note the `String` and `Number` data. The `String` data provides the file name (for example, `igshelper_17-10010245.sar`) and a friendly description (for example, `SAP IGS Fonts and Textures`). You'll record the `Number` data after each entry in your BOM.
+
+1. Add the list of media to `bom.yml`. The order of these items doesn't matter, however, you might want to group related items together for readability. Add `SAPCAR` separately, even though your SAP download basket contains this utility. For example:
+
+   ```yml
+   media:
+       - name:     SAPCAR
+         archive:  SAPCAR_1320-80000935.EXE
+
+       - name: "SAP IGS Fonts and Textures"
+         archive: "igshelper_17-10010245.sar"
+         # 61489
+
+       <...>
+   ```
+
+1. If you need to override the target media location, add the parameter `override_target_location` to a media item. For example, `override_target_location: "{{ target_media_location }}/config"`.
+
+1. Add a blank templates section.
+
+   ```yml
+   templates:
+   ```
+
+1. Create a stack files section. For example:
+
+   ```yml
+   stackfiles:
+     - name: Download Basket JSON Manifest
+       file: downloadbasket.json
+
+     - name: Download Basket Spreadsheet
+       file: MP_Excel_2001017452_20201030_SWC.xls
+   ```
+
+1. Save your changes to `bom.yml`.
+
+---
+
+### Permalinks
+
+You can automatically generate a basic BOM that functions. However, the BOM doesn't create permanent URLs (permalinks) to the SAP media by default. If you want to create permalinks, you need to complete other steps before you [acquire the SAP media](bom-get-files.md#acquire-media).
+
+> **Note:**
+> Manually generating a full SAP BOM with permalinks takes about twice as long as preparing a basic BOM manually.
+
+To generate a BOM with permalinks:
+
+1. Open `DownloadBasket.json` in your editor.
+
+1. For each result, note the contents of the `Value` line. For example:
+
+   ```json
+        "Value": "0020000000703122018|SP_B|SAP IGS Fonts and Textures|61489|1|20201023150931|0"
+   ```
+
+1. Copy down the first and fourth values separated by vertical bars.
+
+   1. The first value is the file number. For example, `0020000000703122018`.
+
+   1. The fourth value is the number you need to use to match with your media list. For example, `61489`.
+
+   1. Optionally, copy down the second value, which denotes the file type. For example, `SP_B` for kernel binary files, `SPAT` for non-kernel binary files, and `CD` for database exports.
+
+1. To match your download basket to your media list, use the fourth value as a key. Match the values (for example, `61489`) with the values you added as comments for the media items (for example, `# 61489`).
+
+1. For each matching entry in `bom.yml`, add a new value for the SAP URL. For the URL, use `https://softwaredownloads.sap.com/file/` plus the first value for that item (for example, `0020000000703122018`). For example:
+
+   ```yml
+   - name: "SAP IGS Fonts and Textures"
+     archive: "igshelper_17-10010245.sar"
+     sapurl: "https://softwaredownloads.sap.com/file/0020000000703122018"
+   ```
+
+## Review an example BOM file
+
+The following sample is a small part of an example BOM file for S/4HANA 1909 SP2.
+
+```yml
+name:    'S4HANA_2020_ISS_v001'
+target:  'ABAP PLATFORM 2020'
+
+defaults:
+  target_location: "{{ target_media_location }}/download_basket"
+
+product_ids:
+  scs:
+  db:
+  pas:
+  aas:
+  web:
+
+materials:
+dependencies:
+    - name:     HANA2
+
+media:
+    - name:     SAPCAR
+      archive:  SAPCAR_1320-80000935.EXE
+
+    - name:     SWPM
+      archive:  SWPM20SP06_6-80003424.SAR
+
+    - name:     SAP IGS HELPER
+      archive:  igshelper_17-10010245.sar
+
+    - name:     SAP HR 6.08
+      archive:  SAP_HR608.SAR
+
+    - name:     S4COREOP 104
+      archive:  S4COREOP104.SAR
+
+templates:
+    - name:     "S4HANA_2020_ISS_v001 ini file"
+      file:     S4HANA_2020_ISS_v001.inifile.params
+      override_target_location: "{{ target_media_location }}/config"
+
+stackfiles:
+    - name: Download Basket JSON Manifest
+      file: downloadbasket.json
+      override_target_location: "{{ target_media_location }}/config"
+
+    - name: Download Basket Spreadsheet
+      file: MP_Excel_2001017452_20201030_SWC.xls
+      override_target_location: "{{ target_media_location }}/config"
+
+    - name: Download Basket Plan doc
+      file: MP_Plan_2001017452_20201030_.pdf
+      override_target_location: "{{ target_media_location }}/config"
+
+    - name: Download Basket Stack text
+      file: MP_Stack_2001017452_20201030_.txt
+      override_target_location: "{{ target_media_location }}/config"
+
+    - name: Download Basket Stack XML
+      file: MP_Stack_2001017452_20201030_.xml
+      override_target_location: "{{ target_media_location }}/config"
+
+    - name: Download Basket permalinks
+      file: myDownloadBasketFiles.txt
+      override_target_location: "{{ target_media_location }}/config"
+```
+
+## Validate the BOM
+
+You can validate your BOM structure from any OS that runs Linux-type commands. For Windows, use Windows Subsystem for Linux (WSL). Another option is to run the validation from your deployer if there's a copy of the BOM file there.
+
+
+1. Run the validation script `check_bom.sh` from the directory containing your BOM. For example:
+
+   ```bash
+   cd ~/Azure_SAP_Automated_Deployment/deploy/scripts/check_bom.sh bom.yml
+   ```
+
+1. Review the output.
+
+### Successful validation
+
+A successful validation shows the following output. You already installed `yamllint` and `ansible-lint` commands in the [prerequisites](#prerequisites).
+
+```output
+... yamllint [ok]
+... ansible-lint [ok]
+... bom structure [ok]
+```
+
+### Unsuccessful validation
+
+An unsuccessful validation contains error information. For example:
+
+```output
+../documentation/ansible/system-design-deployment/examples/S4HANA_2020_ISS_v001/bom_with_errors.yml
+  178:16    error    too many spaces after colon  (colons)
+  179:16    error    too many spaces after colon  (colons)
+  180:16    error    too many spaces after colon  (colons)
+
+... yamllint [errors]
+... ansible-lint [ok]
+  - Expected to find key 'defaults' in 'bom' (Check name: S4HANA_2020_ISS_v001)
+  - Unexpected key 'default in 'bom' (Check name: S4HANA_2020_ISS_v001)
+  - Unexpected key 'overide_target_location in 'bom.materials.stackfiles' (Check name: Download Basket Stack text)
+... bom structure [errors]
+```
+
+## Upload the BOM
+
+After you validate the BOM, upload it and its associated files to your SAP Library storage account. To upload the BOM:
+
+1. [Validate the BOM](#validate-the-bom).
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+
+1. Under **Azure services**, select **Resource groups**. Or, enter `resource groups` in the search bar.
+
+1. Select the resource group for your SAP Library.
+
+1. On the resource group page, select the storage account `saplib` in the **Resources** table.
+
+1. On the storage account page's menu, select **Containers** under **Data storage**.
+
+1. Select the `sap bits` container.
+
+1. On the container page, upload your archives and tools.
+
+   1. Select the **Upload** button.
+
+   1. Select **Select a file**.
+
+   1. Navigate to the download directory that you created previously and select the **bom.yml**.
+
+## Next step
+
+> 
+> [How to generate SAP Application BOM](bom-templates-db.md)

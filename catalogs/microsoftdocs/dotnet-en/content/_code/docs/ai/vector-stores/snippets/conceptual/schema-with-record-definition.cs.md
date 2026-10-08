@@ -1,0 +1,36 @@
+# Source code: docs/ai/vector-stores/snippets/conceptual/schema-with-record-definition.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.Extensions.VectorData;
+
+public class RecordDefinitionExample
+{
+    public void CreateHotelDefinition(VectorStore vectorStore)
+    {
+        // <UseRecordDefinition>
+        VectorStoreCollectionDefinition hotelDefinition = new()
+        {
+            Properties =
+            [
+                new VectorStoreKeyProperty("HotelId", typeof(ulong)),
+                new VectorStoreDataProperty("HotelName", typeof(string)) { IsIndexed = true },
+                new VectorStoreDataProperty("Description", typeof(string)) { IsFullTextIndexed = true },
+                new VectorStoreVectorProperty("DescriptionEmbedding", typeof(float), dimensions: 4)
+                {
+                    DistanceFunction = DistanceFunction.CosineSimilarity,
+                    IndexKind = IndexKind.Hnsw
+                },
+            ]
+        };
+        // </UseRecordDefinition>
+
+        // <PassDefinitionToGetCollection>
+        VectorStoreCollection<ulong, Hotel> collection =
+            vectorStore.GetCollection<ulong, Hotel>("hotels", hotelDefinition);
+        // </PassDefinitionToGetCollection>
+    }
+}
+
+```

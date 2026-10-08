@@ -1,0 +1,83 @@
+---
+title: "Import a Knowledge Base from a .dqs File"
+description: "Import a Knowledge Base from a .dqs File"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: data-quality-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+---
+# Import a Knowledge Base from a .dqs File
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+> **Important:**  
+> Data Quality Services (DQS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support DQS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  This topic describes how to import an entire knowledge base from a .dqs data file in  Data Quality Services 
+ (DQS). You create the data file by exporting an existing knowledge base from within the  Data Quality Client 
+ application (see [Export a Knowledge Base to a .dqs File](export-a-knowledge-base-to-a-dqs-file.md)).  
+  
+ Using a .dqs data file to export the contents of a knowledge base and then import the contents into another knowledge base on the same  Data Quality Server 
+ or a different  Data Quality Server 
+ simplifies the knowledge generation process, saving time and effort. It enables you to share a knowledge base and its knowledge with others, saving them time. The .dqs file will contain all knowledge base information, including domains and the matching policy, except for the attached reference data information. Published and unpublished data will be imported.  
+  
+ A .dqs data file is encrypted, so cannot be viewed.  
+  
+ When you import a knowledge base, you can use the same name, unless the knowledge base name already exists in the client application, in which case you must rename it.  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Prerequisites"></a>
+
+## Prerequisites
+
+To import a knowledge base from a .dqs file, you must have already exported the knowledge base into the .dqs file.  
+  
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+You must have the dqs_kb_editor or the dqs_administrator role on the DQS_MAIN database to import a knowledge base from a .dqs data file.  
+  
+##  <a name="Import"></a> Import a knowledge base from a .dqs file  
+  
+1.   Start Data Quality Client. For information about doing so, see 
+ [Run the Data Quality Client Application](run-the-data-quality-client-application.md).  
+  
+2.  In the  Data Quality Client 
+ home screen, click **New knowledge base**.  
+  
+3.  Enter a name for the knowledge base.  
+  
+4.  Click the down arrow for **Create knowledge base from**, and then select **Import from DQS file**.  
+  
+5.  For **Select data file**, click **Browse**.  
+  
+6.  In the **Import from Data File** dialog box, move to the folder that contains the .dqs file that you want to import, and then click the name of the file. Click **Open**.  
+  
+7.  Verify that the correct knowledge base and domains are displayed in the **Domain** list.  
+  
+8.  Select the activity that you want to perform, and then click **Create**.  
+  
+9. In the **Import Knowledge Base** dialog box, verify that the status line indicates that the import completed. Click **OK**.  
+  
+10. Complete the knowledge discovery, domain management, or matching policy tasks that you need to perform, and then click **Finish**.  
+  
+11. Click **Publish** to publish the knowledge in the knowledge base, or **No** not to.  
+  
+12. If you published the knowledge base, click **OK**.  
+  
+13. In the Data Quality Services home page, verify that the knowledge base is listed under **Recent knowledge bases**.  
+  
+##  <a name="FollowUp"></a> Follow Up: After Importing a Knowledge Base from a .dqs File  
+ After you import a knowledge base from a .dqs file, you can add knowledge to the knowledge base or use the knowledge base in a cleansing or matching project, depending on the contents of the knowledge base. For more information, see [Perform Knowledge Discovery](perform-knowledge-discovery.md), [Managing a Domain](managing-a-domain.md), [Managing a Composite Domain](managing-a-composite-domain.md), [Create a Matching Policy](create-a-matching-policy.md), [Data Cleansing](data-cleansing.md), or [Data Matching](data-matching.md).

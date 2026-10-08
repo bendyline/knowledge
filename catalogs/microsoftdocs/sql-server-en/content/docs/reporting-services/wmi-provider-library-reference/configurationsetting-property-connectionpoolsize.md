@@ -1,0 +1,42 @@
+---
+title: "ConnectionPoolSize property (WMI MSReportServer_ConfigurationSetting)"
+description: "ConnectionPoolSize property (WMI MSReportServer_ConfigurationSetting)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "ConnectionPoolSize property"
+apilocation: "reportingservices.mof"
+apiname: "ConnectionPoolSize"
+apitype: MOFDef
+---
+# ConfigurationSetting property - ConnectionPoolSize
+  The connection pool size used by the report server to communicate with the  SQL Server 
+ instance that hosts the report server database. Read-only.  
+  
+## Syntax  
+  
+```vb  
+Public Dim ConnectionPoolSize As UInt32  
+```  
+  
+```csharp  
+public UInt32 ConnectionPoolSize;  
+```  
+  
+## Property values  
+ A read-only **integer** object that returns a value of **768**.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

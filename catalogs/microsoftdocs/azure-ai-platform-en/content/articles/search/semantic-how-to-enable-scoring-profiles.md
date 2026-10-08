@@ -1,0 +1,122 @@
+---
+title: Use Scoring Profiles with Semantic Ranking
+description: Learn how to combine scoring profiles with semantic ranking in Azure AI Search to optimize final document relevance.
+ms.service: azure-ai-search
+ms.update-cycle: 180-days
+ms.topic: how-to
+ms.date: 07/07/2026
+ai-usage: ai-assisted
+---
+
+# Use scoring profiles with semantic ranker in Azure AI Search
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+You can apply a [scoring profile](index-add-scoring-profiles.md) over [semantically ranked search results](semantic-search-overview.md), where the scoring profile is processed last.
+
+To ensure the scoring profile provides the determining score, the semantic ranker adds a response field, `@search.rerankerBoostedScore`, that applies scoring profile logic on semantically ranked results. In search results that include `@search.score` from level 1 ranking, `@search.rerankerScore` from semantic ranker, and `@search.rerankerBoostedScore`, results are sorted by `@search.rerankerBoostedScore`.
+
+## Prerequisites
+
+- [Azure AI Search](search-create-service-portal.md) in any [region that provides semantic ranking](search-region-support.md).
+
+- A search index with a semantic configuration that specifies `"rankingOrder": "boostedRerankerScore"` and a scoring profile that specifies [functions](index-add-scoring-profiles.md#use-functions).
+
+## Limitations
+
+Boosting of semantically ranked results applies to scoring profile functions only. There's no boosting if the scoring profile consists only of weighted text fields.
+
+This behavior applies to semantic queries that you send directly to an index, such as `/docs/search`. Agentic retrieval doesn't apply index [scoring profiles](index-add-scoring-profiles.md), including `defaultScoringProfile` on the underlying index, and retrieve responses don't surface `@search.rerankerBoostedScore`. For more information, see [Create a search index knowledge source](agentic-knowledge-source-how-to-search-index.md) and [Query a knowledge base](agentic-retrieval-how-to-retrieve.md).
+
+## How does semantic configuration with scoring profiles work?
+
+When you execute a semantic query associated with a scoring profile, a third search score, `@search.rerankerBoostedScore` value, is generated for every document in your search results. This boosted score, calculated by applying the scoring profile to the existing reranker score, doesn't have a guaranteed range (0–4) like a normal reranker score, and scores can be significantly higher than 4.
+
+Semantic results are sorted by `@search.rerankerBoostedScore` by default if a scoring profile exists. If the `rankingOrder` property isn't specified, then `BoostedRerankerScore` is the default value in the semantic configuration.
+
+In this scenario, a scoring profile is used twice. 
+
+1. First, the scoring profile defined in your index is used during the initial L1 ranking phase, boosting results from:
+
+   - Text-based queries (BM25 or RRF)
+   - The text portion of vector queries
+   - Hybrid queries that combine both types
+
+1. Next, the semantic ranker rescores the top 50 results, promoting more semantically relevant matches to the top. This step can erase the benefit of the scoring profile. For example, if you boosted based on freshness, then semantic reordering replaces that boost with its own logic of what is most relevant.
+
+1. Finally, the scoring profile is applied again, after reranking, restoring the boosts influence over the final order of results. If you boost by freshness, the semantically ranked results are rescored based on freshness.
+
+## Enable scoring profiles in semantic configuration
+
+To enable scoring profiles for semantically ranked results, [update an index](https://learn.microsoft.com/rest/api/searchservice/indexes/create-or-update#rankingorder) by setting the `rankingOrder` property of its semantic configuration. Use the PUT method to update the index with your revisions. No index rebuild is required.
+
+```json
+PUT https://{service-name}.search.windows.com/indexes/{index-name}?api-version=2026-04-01
+{
+  "semantic": {
+    "configurations": [
+      {
+        "name": "mySemanticConfig",
+        "rankingOrder": "boostedRerankerScore"
+      }
+    ]
+  }
+}
+```
+
+## Disable scoring profiles in semantic configuration
+
+To opt out of sorting by semantic reranker boosted score, set the `rankingOrder` field to `reRankerScore` value in the semantic configuration.
+
+```json
+PUT /indexes/{index-name}?api-version=2026-04-01
+{
+  "semantic": {
+    "configurations": [
+      {
+        "name": "mySemanticConfig",
+        "rankingOrder": "reRankerScore"
+      }
+    ]
+  }
+}
+```
+
+Even if you opt out of sorting by `@search.rerankerBoostedScore`, the `boostedRerankerScore` field is still produced in the response, but it's no longer used to sort results. 
+
+## Example query and response
+
+Start with a [semantic query](semantic-how-to-query-request.md) that specifies a scoring profile. This query targets a search index that has `rankingOrder` set to `boostedRerankerScore`.
+
+```json
+POST /indexes/{index-name}/docs/search?api-version=2026-04-01
+{
+  "search": "my query to be boosted",
+  "scoringProfile": "myScoringProfile",
+  "queryType": "semantic"
+}
+```
+
+The response includes the new `rerankerBoostedScore`, alongside the L1 `@search.score` and the L2 `@search.rerankerScore`. Results are ordered by `@search.rerankerBoostedScore`.
+
+```json
+{
+  "value": [
+    {
+      "@search.score": 0.63,
+      "@search.rerankerScore": 2.98,
+      "@search.rerankerBoostedScore": 7.68,
+      "content": "boosted content 2"
+    },
+    {
+      "@search.score": 1.12,
+      "@search.rerankerScore": 3.12,
+      "@search.rerankerBoostedScore": 5.61,
+      "content": "boosted content 1"
+    }
+  ]
+}
+```

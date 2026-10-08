@@ -1,0 +1,46 @@
+# Source code: docs/azure/sdk/snippets/aspnetcore-guidance/BlazorSample/Components/Pages/Home.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "/"
+@using Azure.Storage.Blobs
+@using Azure.Storage.Blobs.Models
+@using Azure.Messaging.ServiceBus
+@using Microsoft.Extensions.Azure;
+
+<h1>Reports</h1>
+
+<ul>
+    @foreach (var report in reports)
+    {
+        <li>@report.Name</li>
+    }
+</ul>
+
+@code {
+    List<BlobItem> reports = new();
+
+    private BlobServiceClient _blobServiceClient;
+    private ServiceBusSender _serviceBusSender;
+
+    public Home(
+        BlobServiceClient blobServiceClient,
+        IAzureClientFactory<ServiceBusSender> senderFactory)
+    {
+         _blobServiceClient = blobServiceClient;
+        _serviceBusSender = senderFactory.CreateClient("queue1");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        BlobContainerClient containerClient = 
+            _blobServiceClient.GetBlobContainerClient("reports");
+
+        await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
+        {
+            reports.Add(blobItem);
+        }
+    }
+}
+```

@@ -1,0 +1,71 @@
+---
+title: "Deploy and Manage Machine Learning Server Web Services in Python"
+description: "This class is for SQL Machine Learning Services and Machine Learning Server for managing web services."
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 12/08/2025
+ms.service: sql
+ms.subservice: "machine-learning-services"
+ms.topic: "reference"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-ver15"
+---
+
+# Manage web services with azureml-model-management-sdk (Machine Learning Server)
+
+ SQL Server 2017 (14.x) 
+
+
+
+> **Important:**  
+> The support for Machine Learning Server (previously known as R Server) ended on July 1, 2022. For more information, see [What's happening to Machine Learning Server?](https://learn.microsoft.com/machine-learning-server/what-is-happening-to-machine-learning-server)
+
+
+`azureml-model-management-sdk` is a custom Python package developed by Microsoft. This package provides the classes and functions to deploy and interact with analytic web services. These web services are backed by code block and scripts in Python or R.
+
+This article is a high-level description of package functionality. These classes and functions can be called directly. For syntax and other details, see the individual function help topics in the table of contents.
+
+| Package details | Information |
+| --- | --- |
+| Current version: | 1.0.1b7 |
+| Built on: | [Anaconda](https://www.anaconda.com/) distribution of [Python 3.5](https://www.python.org/doc) |
+| Package distribution: | [Machine Learning Server 9.x](https://learn.microsoft.com/machine-learning-server/what-is-machine-learning-server)<br />[SQL Server 2017 Machine Learning Server (Standalone)](../../../r/r-server-standalone.md) |
+
+## How to use this package
+
+The `azureml-model-management-sdk` package is installed as part of Machine Learning Server and SQL Server 2017 Machine Learning Server (Standalone) when you add Python to your installation. It's also [available locally on Windows](https://learn.microsoft.com/machine-learning-server/install/python-libraries-interpreter). When you install these products, you get the full collection of proprietary packages plus a Python distribution with its modules and interpreters.
+
+You can use any Python IDE to write Python scripts that call the classes and functions in `azureml-model-management-sdk`. However, the script must run on a computer having Machine Learning Server or SQL Server 2017 Machine Learning Server (Standalone) with Python.
+
+## Use cases
+
+There are three primary use cases for this release:
+
+- Adding authentication logic to your Python script
+- Deploying standard or real-time Python web services
+- Managing and consuming these web services
+
+## Main classes and functions
+
+- [Class DeployClient](deploy-client.md)
+- [Class MLServer](mlserver.md)
+- [Class Operationalization](operationalization.md)
+- [Class OperationalizationDefinition](operationalization-definition.md)
+- [ServiceDefinition](service-definition.md)
+- [Class RealtimeDefinition](realtime-definition.md)
+- [Class Service](service.md)
+- [Class ServiceResponse](service-response.md)
+- [Class Batch](batch.md)
+- [Class BatchResponse](batch-response.md)
+
+## Related content
+
+- [Library Reference](https://learn.microsoft.com/machine-learning-server/python-reference/introducing-python-package-reference)
+- [Install Machine Learning Server](https://learn.microsoft.com/machine-learning-server/what-is-machine-learning-server)
+- [Install the Python interpreter and libraries on Windows](https://learn.microsoft.com/machine-learning-server/install/python-libraries-interpreter)
+- [How to authenticate in Python with this package](https://learn.microsoft.com/machine-learning-server/operationalize/python/how-to-authenticate-in-python)
+- [How to list, get, and consume services in Python with this package](https://learn.microsoft.com/machine-learning-server/operationalize/python/how-to-consume-web-services)
+- [Machine Learning Server](https://learn.microsoft.com/machine-learning-server/install/machine-learning-server-install)
+- [Install SQL Server Machine Learning Services (Python and R) on Windows](../../../install/sql-machine-learning-services-windows-install.md)
+- [Quickstart: How to deploy Python model as a service](https://learn.microsoft.com/machine-learning-server/operationalize/python/quickstart-deploy-python-web-service)
+- [How to publish and manage web services in Python](https://learn.microsoft.com/machine-learning-server/operationalize/python/how-to-deploy-manage-web-services)

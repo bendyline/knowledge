@@ -1,0 +1,38 @@
+---
+title: "MSpeer_request (Transact-SQL)"
+description: MSpeer_request (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "MSpeer_request"
+  - "MSpeer_request_TSQL"
+helpviewer_keywords:
+  - "MSpeer_request system table"
+dev_langs:
+  - "TSQL"
+---
+# MSpeer_request (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The MSpeer_request table is used in Peer-to-Peer replication to track status requests for a given publication. This table is stored in the publication database.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| id | **int** | Identifies a request. |
+| publication | **sysname** | Name of the publication for which the status request was initiated. |
+| sent_date | **datetime** | Date and time that the status request was initiated. |
+| description | **nvarchar(4000)** | User-defined information that can be used to identify individual status requests. |
+  
+## Related content
+
+- [Replication Tables (Transact-SQL)](replication-tables-transact-sql.md)
+- [Replication Views (Transact-SQL)](../system-views/replication-views-transact-sql.md)

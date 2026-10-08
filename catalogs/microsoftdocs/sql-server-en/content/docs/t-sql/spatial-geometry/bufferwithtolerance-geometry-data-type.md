@@ -1,0 +1,106 @@
+---
+title: "BufferWithTolerance (geometry Data Type)"
+description: "BufferWithTolerance (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "BufferWithTolerance_TSQL"
+  - "BufferWithTolerance"
+helpviewer_keywords:
+  - "BufferWithTolerance (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# BufferWithTolerance (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a geometric object that represents the union of all point values whose distance from a **geometry** instance is less than or equal to a specified value, allowing for a specified tolerance.
+  
+## Syntax  
+  
+```  
+  
+.BufferWithTolerance ( distance, tolerance, relative )  
+```  
+  
+## Arguments
+ *distance*  
+ Is a **float** expression specifying the distance from the **geometry** instance around which to calculate the buffer.  
+  
+ *tolerance*  
+ Is a **float** expression specifying the tolerance of the buffer distance.  
+  
+ *Tolerance* refers to the maximum variation in the ideal buffer distance for the returned linear approximation.  
+  
+ For example, the ideal buffer distance of a point is a circle, but this must be approximated by a polygon. The smaller the tolerance, the more points the polygon will have, which increases the complexity of the result, but decreases the error.  
+  
+ *relative*  
+ Is a **bit** specifying whether the *tolerance* value is relative or absolute. If 'TRUE' or 1, then tolerance is relative and is calculated as the product of the *tolerance* parameter and the diameter of the bounding box of the instance. If 'FALSE' or 0, tolerance is absolute and the *tolerance* value is the absolute maximum variation in the ideal buffer distance for the returned linear approximation.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+## Exceptions  
+ The *tolerance* parameter must be greater than zero. If *tolerance* <= 0 then a `System.ArgumentOutOfRangeException` is thrown.  
+  
+> **Note:**  
+>  Since *tolerance* is a **float** type, a `System.Runtime.InteropServices.COMException` can be thrown if the value given for tolerance is very small because of the rounding issues with floating point types.  
+  
+## Remarks  
+ When *distance* > 0 then either a **Polygon** or **MultiPolygon** instance is returned.  
+  
+> **Note:**  
+>  Since distance is a **float**, an extremely small value can equate to zero in the calculations. When this occurs, a copy of the calling **geometry** instance is returned. See [float and real (Transact-SQL)](../data-types/float-and-real-transact-sql.md).  
+  
+ When *distance* = 0 then a copy of the calling **geometry** instance is returned.  
+  
+ When *distance* < 0 then  
+  
+-   An empty **GeometryCollection** instance is returned when the dimensions of the instance are 0 or 1.  
+  
+-   A negative buffer is returned when the dimensions of the instance are 2 or more.  
+  
+    > **Note:**  
+    >  A negative buffer may also create an empty **GeometryCollection** instance.  
+  
+ A negative buffer removes all points within the given distance of the boundary of the **geometry** instance.  
+  
+ The error between the theoretical and computed buffer is max(tolerance, extents \* 1.E-7) where tolerance is the value of the *tolerance* parameter. For more information on extents, see [geometry Data Type Method Reference](spatial-types-geometry-transact-sql.md).  
+  
+## Examples  
+ The following example creates a `Point` instance and uses `BufferWithTolerance()` to obtain a rough buffer around it.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POINT(3 3)', 0);  
+SELECT @g.BufferWithTolerance(1, .5, 0).ToString();  
+```  
+  
+## Related content
+
+- [STBuffer (geometry Data Type)](stbuffer-geometry-data-type.md)
+- [Extended methods on geometry instances](extended-methods-on-geometry-instances.md)

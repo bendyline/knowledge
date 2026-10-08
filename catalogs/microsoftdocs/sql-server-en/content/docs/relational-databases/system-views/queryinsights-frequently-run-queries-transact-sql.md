@@ -1,0 +1,69 @@
+---
+title: "queryinsights.frequently_run_queries (Transact-SQL)"
+description: "The queryinsights.frequently_run_queries provides information about frequently run queries in Fabric Data Warehouse."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: mariyaali, marakiketema
+ms.date: 08/03/2026
+ms.service: sql
+ms.topic: "reference"
+f1_keywords:
+  - "queryinsights.frequently_run_queries"
+  - "queryinsights.frequently_run_queries_TSQL"
+helpviewer_keywords:
+  - "queryinsights.frequently_run_queries system view"
+  - "queryinsights.frequently_run_queries"
+  - "query insights frequently_run_queries"
+dev_langs:
+  - "TSQL"
+monikerRange: "=fabric"
+---
+# queryinsights.frequently_run_queries (Transact-SQL)
+**Applies to:**
+ 
+ in Microsoft Fabric
+ and Warehouse
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  The `queryinsights.frequently_run_queries` view in Microsoft Fabric provides information about frequently run queries in Fabric Data Warehouse.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `last_run_start_time` | **datetime2** | Time of the most recent query execution. |
+| `last_run_command` | **varchar(8000)** | Text of the last query execution. |
+| `number_of_runs` | **int** | Total number of times the query was executed. |
+| `avg_total_elapsed_time_ms` | **int** | Average query execution time (ms) across all runs. |
+| `last_run_total_elapsed_time_ms` | **int** | Time taken by the last execution (ms). |
+| `last_dist_statement_id` | **uniqueidentifier** | ID linking the query to `queryinsights.exec_requests_history`. |
+| `last_run_session_id` | **smallint** | User session ID for the last execution. |
+| `min_run_total_elapsed_time_ms` | **int** | Shortest query execution time (ms). |
+| `max_run_total_elapsed_time_ms` | **int** | Longest query execution time (ms). |
+| `number_of_successful_runs` | **int** | Number of successful query executions. |
+| `number_of_failed_runs` | **int** | Number of failed query executions. |
+| `number_of_cancelled_runs` | **int** | Number of canceled query executions. |
+| `number_of_accelerated_runs` | **int** | Number of [accelerated](https://learn.microsoft.com/fabric/data-warehouse/query-acceleration) query executions. |
+| `query_hash` | **varchar(200)** | Binary hash value calculated on the query and used to identify semantically similar queries. For example, queries that are identical but have different parameterized values share a `query_hash`. Use the query hash to correlate between Query Insight views. For more information, see [Query Insights - Aggregation](https://learn.microsoft.com/fabric/data-warehouse/query-insights#similar-queries). |
+
+## Permissions
+
+You need access to a [SQL analytics endpoint
+in Microsoft Fabric
+](https://learn.microsoft.com/fabric/data-warehouse/data-warehousing#sql-endpoint-of-the-lakehouse) or [Warehouse
+in Microsoft Fabric
+](https://learn.microsoft.com/fabric/data-warehouse/data-warehousing#synapse-data-warehouse) within a [Premium capacity](https://learn.microsoft.com/power-bi/enterprise/service-premium-what-is) workspace with Contributor or higher permissions.
+
+## Next step
+
+> 
+> [Query insights in Microsoft Fabric](https://learn.microsoft.com/fabric/data-warehouse/query-insights)
+
+## Related content
+
+- [Monitor connections, sessions, and requests using DMVs](https://learn.microsoft.com/fabric/data-warehouse/monitor-using-dmv)
+- [queryinsights.exec_sessions_history (Transact-SQL)](queryinsights-exec-sessions-history-transact-sql.md)
+- [queryinsights.exec_requests_history (Transact-SQL)](queryinsights-exec-requests-history-transact-sql.md)
+- [queryinsights.long_running_queries (Transact-SQL)](queryinsights-long-running-queries-transact-sql.md)
+- [queryinsights.sql_pool_insights (Transact-SQL)](queryinsights-sql-pool-insights-transact-sql.md)

@@ -1,0 +1,179 @@
+---
+title: "Export a BACPAC File"
+description: "Export a BACPAC file from a database."
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: drskwier
+ms.date: 03/11/2025
+ms.service: sql
+ms.subservice: sql-database-projects
+ms.topic: concept-article
+ms.collection:
+  - data-tools
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sql13.swb.exportdac.progress.f1"
+  - "sql13.swb.exportdac.summary.f1"
+  - "sql13.swb.exportdac.results.f1"
+  - "sql13.swb. exportdac.results.f1"
+  - "sql13.swb. exportdac.summary.f1"
+  - "sql13.swb. exportdac.settings.f1"
+  - "sql13.swb.exportdac.welcome.f1"
+  - "sql13.swb.exportdac.settings.f1"
+helpviewer_keywords:
+  - "How to [DAC], export"
+  - "wizard [DAC], export"
+  - "export DAC"
+  - "data-tier application [SQL Server], export"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+
+# Export a BACPAC file
+
+
+**Applies to:**
+ 
+
+](../../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Exporting a database creates an export file that includes the definitions of the objects in the database and all of the data in the tables. The export file (`.bacpac`) can then be imported to another instance of the  Database Engine 
+, or to  Azure SQL Database 
+. The export-import operations can be combined to migrate a `.bacpac` between instances, to create an archive, or to create an on-premises copy of a database deployed in  SQL Database
+.
+
+The data-tier application (DAC) export process is related to the DAC extract process. Both export and extract include the database schema in the produced file, but the export process is limited to functionality available in the Azure SQL Database surface area. Learn more from the [SqlPackage portability documentation](../../../sqlpackage/sqlpackage.md#portability).
+
+## Prerequisites
+
+The export process builds a `.bacpac` export file in two stages.
+
+1. The export builds a portable definition in the export file - `.bacpac` file - the same way a DAC extract builds a DAC definition in a DAC package file. The exported DAC definition includes all of the objects in the current database. Suppose the export process is run against a database initially deployed from a DAC, and changes were made directly to the database after deployment. In that case, the exported definition matches the object set in the database, not what was defined in the original DAC.
+
+1. The export bulk copies out the data from all of the tables in the database and incorporates the data into the export file.
+
+The export process sets the DAC version to 1.0.0.0 and the DAC description in the export file to an empty string. If the database was deployed from a DAC, the DAC definition in the export file contains the name given to the original DAC. Otherwise, the DAC name is set to the database name.
+
+## Permissions
+
+To export a DAC, you need to possess at least ALTER ANY sign-in and database-level `VIEW DEFINITION` permissions and `SELECT` permissions on `sys.sql_expression_dependencies`. This task is achievable for individuals holding membership in the **securityadmin** fixed server role and the **database_owner** fixed database role within the source database of the DAC. Furthermore, exporting a DAC is feasible for those who are part of the **sysadmin** fixed server role or those with access to the built-in SQL Server system administrator account named `sa`.
+
+On Azure SQL Database, you must grant **for each database** `VIEW DEFINITION` and `SELECT` permission on all tables or specific tables.
+
+<a id="UsingDeployDACWizard"></a>
+
+## Use the Export Data-tier Application Wizard
+
+**To Export a DAC Using a Wizard**
+
+1. Connect to the instance of  SQL Server 
+, whether on-premises or in  SQL Database
+.
+
+1. In **Object Explorer**, expand the node for the instance from which you want to export the DAC.
+
+1. Right-click the database name.
+
+1. Select **Tasks** and then select **Export Data-tier Application...**
+
+1. Complete the wizard dialogs:
+
+- [Introduction Page](#Introduction)
+- [Export Settings Page](#Export_settings)
+- [Summary Page](#Summary)
+- [Progress Page](#Progress)
+- [Results Page](#Results)
+
+<a id="Introduction"></a>
+
+### Introduction page
+
+This page describes the steps for the Export Data-tier Application Wizard.
+
+**Options**
+
+**Do not show this page again.** - Select the check box to stop the Introduction page from being displayed in the future.
+
+**Next** - Proceeds to the **Select DAC Package** page.
+
+**Cancel** - Cancels the operation and closes the Wizard.
+
+Screenshot of the export a data-tier application introduction page.
+
+<a id="Export_settings"></a>
+
+### Export Settings page
+
+Use this page to specify the location where you want the `.bacpac` file to be created.
+
+- **Save to local disk** - Creates a `.bacpac` file in a directory on the local computer. Select **Browse...** to navigate to the local computer, or specify the path in the space provided. The path name must include a file name and the `.bacpac` extension.
+
+- **Save to Azure** - Creates a `.bacpac` file in an Azure container. You must connect to an Azure container to validate this option. This option also requires that you specify a local directory for the temporary file. The temporary file will be created at the specified location and remain there after the operation.
+
+To specify a subset of tables to export, use the **Advanced** option.
+
+Screenshot of the export a data-tier application export settings page.
+
+<a id="Summary"></a>
+
+### Summary page
+
+Use this page to review the operation's specified source and target settings. To complete the export operation using the specified settings, select **Finish**. To cancel the export operation and exit the Wizard, select **Cancel**.
+
+Screenshot of the export data- tier summary page.
+
+<a id="Progress"></a>
+
+### Progress page
+
+This page displays a progress bar that indicates the status of the operation. To view detailed status, select the **View details** option.
+
+<a id="Results"></a>
+
+### Results page
+
+This page reports the export operation's success or failure, showing each action's results. Any action that encountered an error has a link in the **Result** column. Select the link to view a report of the error for that action.
+
+Screenshot of the data-tier application results page.
+
+Select **Finish** to close the Wizard.
+
+<a id="LimitationsRestrictions"></a>
+
+## Limitations
+
+A DAC or database can only be exported from a database in  SQL Database
+, or  SQL Server 2005 (9.x) 
+ Service Pack 4 (SP4) or later.
+
+You can't export a database with objects that aren't supported in a DAC or contain users. For more information about the types of objects supported in a DAC, see [DAC Support For SQL Server Objects and Versions](https://learn.microsoft.com/previous-versions/sql/sql-server-2012/ee210549\(v=sql.110\)).
+
+If you receive a *failing with Out of Disk space* message, it's advisable to configure the `%TEMP%` folder of the system to reside on a distinct data disk. By doing so, you can ensure sufficient space for the export process to execute smoothly, avoiding potential disk space complications.
+
+To configure the system's [%TEMP%](../../../sqlpackage/sqlpackage.md#temporary-files) folder:
+
+- In Windows, open the **System Properties** > **Properties**, then select the link labeled **Advanced system settings**.
+
+- In the ensuing System Properties window, navigate to the bottom and select **Environment Variables**.
+
+- Under the **System variables** section, locate the `TEMP` and `TMP` variables, then select **Edit** associated with each.
+
+- Modify the values of both variables to point to a pathway on the separate data disk you have established. For instance, if your data disk is designated as `D:`, set the values as `D:\Temp`.
+
+- Confirm the changes by selecting OK and closing all open windows.
+
+## Related content
+
+- [Data-tier applications (DAC) overview](overview.md)
+- [Extract a DACPAC from a database](extract-dacpac-from-database.md)

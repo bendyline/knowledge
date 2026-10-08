@@ -1,0 +1,66 @@
+---
+title:  SAP Information Lifecycle Management with Microsoft Azure Blob Storage
+description: Learn about SAP Information Lifecycle Management (ILM) with Microsoft Azure Blob Storage.
+services: virtual-machines-linux,virtual-machines-windows
+ms.service: sap-on-azure
+ms.subservice: sap-vm-workloads
+ms.topic: concept-article
+ms.tgt_pltfrm: vm-linux
+manager: timlt
+author: MSSedusch
+ms.author: sedusch
+ms.date: 03/12/2026
+ms.custom: subject-rbac-steps
+# Customer intent: "As a system administrator managing SAP systems, I want to configure Azure Blob Storage for SAP Information Lifecycle Management, so that I can efficiently store and manage archive data while ensuring compliance and security."
+---
+
+# SAP ILM with Microsoft Azure Blob Storage
+
+SAP Information Lifecycle Management (ILM) provides a broad range of capabilities. These capabilities manage data volumes, provides Retention Management, and the decommissioning of legacy systems while balancing total cost of ownership, risks, and legal compliance. SAP ILM Store (a component of ILM) would enable storing of these archive files and attachments from SAP system into Microsoft Azure Blob storage, thus enabling cloud storage.
+
+A diagram of an Azure Blob Storage with the ILM Store.
+
+This document covers creation and configuration of Azure blob storage account to be used with SAP ILM. This account is used to store archive data from S/4HANA System.
+
+The steps to be followed to create a storage account are:
+
+1. Register a new application with your subscription.
+1. Create a Blob storage account.
+1. Create a new custom role or use an existing (built-in or custom) role.
+1. Assign the role to application to allow access to the storage account.
+
+> **Note:**
+> Steps 2, 3 and 4 can either be done manually or by using the Microsoft QuickStart template.
+
+### QuickStart template approach
+
+The QuickStart template is an automated approach to create the Azure account. You can find the template in the [Azure Quickstart Templates library](https://azure.microsoft.com/resources/templates/sap-ilm-store/).
+
+### Manual configuration approach
+
+Azure blob storage account can be configured manually. The steps to be followed are:
+
+1. Register a new application. The details are available at [Register an application in Microsoft Entra ID](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/active-directory/develop/quickstart-register-app.md).
+
+   > **Note:**
+   > Make sure that Client secret is added. To learn more, see [Add and manage application credentials in Microsoft Entra ID](https://learn.microsoft.com/entra/identity-platform/how-to-add-credentials?tabs=client-secret#add-a-credential-to-your-application).
+
+1. Create a Blob Storage account. Refer to steps in the page [Create a storage account](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/storage-account-create.md?tabs=azure-portal).
+1. Ensure **Enable secure transfer** is set. We recommend you set the following property values:
+
+   * Enable blob public access = false
+   * Minimum TLS Version = 1.2
+   * Enable storage account key access = false
+
+1. Maintain Access Control (IAM) for the account.
+
+   In the IAM setting, go to **Role Assignments** and add **Role assignment** for the App created with the role of **Storage Blob Data Contributor**. In the App dialog, choose **User, group or Service Principal** for **Assign Access to** field.
+
+   > **Note:**
+   > Ensure no other user has access to this storage account apart from the registered application.
+
+During the process of the account setup and configuration, refer to [Security recommendations for Blob Storage](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/blobs/security-recommendations.md). With the completion of this setup, we're ready to use this blob storage account with SAP ILM to store archive files from S/4 HANA System.
+
+## Next steps
+
+* [SAP ILM on the SAP help portal](https://help.sap.com/doc/c3b6eda797634474b7a3aac5a48e84d5/1610%20001/en-US/frameset.htm)

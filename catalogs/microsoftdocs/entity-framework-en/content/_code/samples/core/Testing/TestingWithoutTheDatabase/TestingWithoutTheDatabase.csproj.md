@@ -1,0 +1,34 @@
+# Source code: samples/core/Testing/TestingWithoutTheDatabase/TestingWithoutTheDatabase.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <RootNamespace>EF.Testing.UnitTests</RootNamespace>
+    <AssemblyName>EF.Testing.UnitTests</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.7.26381.103" />
+
+    <PackageReference Include="Moq" Version="4.18.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BloggingWebApi\BloggingWebApi.csproj" />
+  </ItemGroup>
+
+</Project>
+
+```

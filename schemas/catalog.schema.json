@@ -90,6 +90,42 @@
               "type": "string",
               "minLength": 1
             },
+            "transport": {
+              "type": "string",
+              "enum": [
+                "files",
+                "archive"
+              ]
+            },
+            "downloadConcurrency": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "codeFiles": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "docfxRoot": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "."
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ]
+            },
+            "maxArchiveBytes": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 10000000000
+            },
             "paths": {
               "minItems": 1,
               "type": "array",
@@ -579,6 +615,22 @@
         "docfx": {
           "default": false,
           "type": "boolean"
+        },
+        "docfxReferences": {
+          "type": "string",
+          "const": "preserve"
+        },
+        "docfxProfile": {
+          "type": "string",
+          "enum": [
+            "rendered-v1",
+            "rendered-v2"
+          ]
+        },
+        "docfxMetadataMaxBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 16384
         }
       },
       "required": [

@@ -1,0 +1,48 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_Wpf/FindText/VisualBasic/Window1.xaml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Window x:Class="SDKSample.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="FindText Sample Target"
+  Width="640" Height="480"
+>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="22"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+
+    <Menu Grid.Row="0">
+      <MenuItem>
+        <MenuItem.Header>File</MenuItem.Header>
+        <MenuItem Click="LoadFile">
+          <MenuItem.Header>Load</MenuItem.Header>
+        </MenuItem>
+        <MenuItem Click="SaveFile">
+          <MenuItem.Header>Save As...</MenuItem.Header>
+        </MenuItem>
+        <MenuItem Click="Clear">
+          <MenuItem.Header>Clear Content</MenuItem.Header>
+        </MenuItem>
+        <MenuItem Click="Exit">
+          <MenuItem.Header>Exit</MenuItem.Header>
+        </MenuItem>
+      </MenuItem>
+    </Menu>
+
+    <FlowDocumentReader
+      Name="FlowDocRdr"
+      Grid.Row="1"
+    />
+
+  </Grid>
+</Window>
+
+```

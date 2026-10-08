@@ -1,0 +1,257 @@
+---
+title: "Configure Replication With Availability Groups"
+description: "Learn the detailed process required to configure SQL Server replication with your Always On availability group."
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: randolphwest
+ms.date: 01/08/2025
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: how-to
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], interoperability"
+  - "replication [SQL Server], AlwaysOn Availability Groups"
+  - "replication [SQL Server], Always On Availability Groups"
+monikerRange: ">=sql-server-2017"
+---
+# Configure replication with Always On availability groups
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+
+Configuring  SQL Server 
+ replication and Always On availability groups involves seven steps. Each step is described in more detail in the following sections.
+
+<a id="step1"></a>
+
+## 1. Configure the database publications and subscriptions
+
+### Configure the distributor
+
+The distribution database can't be placed in an availability group with SQL Server 2012 and SQL Server 2014. Placing the distribution database into an availability group is supported with SQL Server 2016 and greater, except for distribution databases used in merge, bidirectional, or peer-to-peer replication topologies. For more information, see [Set up replication distribution database in Always On availability group](../../../relational-databases/replication/configure-distribution-availability-group.md).
+
+1. Configure distribution at the distributor. If stored procedures are being used for configuration, run `sp_adddistributor` Use the *@password* parameter to identify the password that will be used when a remote publisher connects to the distributor. The password will also be needed at each remote publisher when the remote distributor is set up.
+
+   ```sql
+   USE master;
+   GO
+
+   EXECUTE sys.sp_adddistributor
+       @distributor = 'MyDistributor',
+       @password = '**Strong password for distributor**';
+   ```
+
+1. Create the distribution database at the distributor. If stored procedures are being used for configuration, run `sp_adddistributiondb`
+
+   ```sql
+   USE master;
+   GO
+
+   EXECUTE sys.sp_adddistributiondb
+       @database = 'distribution',
+       @security_mode = 1;
+   ```
+
+1. Configure the remote publisher. If stored procedures are being used to configure the distributor, run `sp_adddistpublisher` The *@security_mode* parameter is used to determine how the publisher validation stored procedure that is run from the replication agents, connects to the current primary. If set to 1 Windows authentication is used to connect to the current primary. If set to 0,  SQL Server 
+ authentication is used with the specified *@login* and *@password* values. The login and password specified must be valid at each secondary replica for the validation stored procedure to successfully connect to that replica.
+
+   > **Note:**  
+   > If any modified replication agents run on a computer other than the distributor, use of Windows authentication for the connection to the primary will require Kerberos authentication to be configured for the communication between the replica host computers. Use of a  SQL Server 
+ login for the connection to the current primary will not require Kerberos authentication.
+
+   ```sql
+   USE master;
+   GO
+
+   EXECUTE sys.sp_adddistpublisher
+       @publisher = 'AGPrimaryReplicaHost',
+       @distribution_db = 'distribution',
+       @working_directory = '\\MyReplShare\WorkingDir',
+       @login = 'MyPubLogin',
+       @password = '**Strong password for publisher**';
+   ```
+
+For more information, see [sp_adddistpublisher](../../../relational-databases/system-stored-procedures/sp-adddistpublisher-transact-sql.md).
+
+### Configure the publisher at the original publisher
+
+1. Configure remote distribution. If stored procedures are being used to configure the publisher, run `sp_adddistributor` Specify the same value for *@password* as that used when `sp_adddistrbutor` was run at the distributor to set up distribution.
+
+   ```sql
+   EXECUTE sys.sp_adddistributor
+       @distributor = 'MyDistributor',
+       @password = 'MyDistPass';
+   ```
+
+1. Enable the database for replication. If stored procedures are being used to configure the publisher, run `sp_replicationdboption` If both transactional and merge replication are to be configured for the database, each must be enabled.
+
+   ```sql
+   USE master;
+   GO
+
+   EXECUTE sys.sp_replicationdboption
+       @dbname = 'MyDBName',
+       @optname = 'publish',
+       @value = 'true';
+
+   EXECUTE sys.sp_replicationdboption
+       @dbname = 'MyDBName',
+       @optname = 'merge publish',
+       @value = 'true';
+   ```
+
+1. Create the replication publication, articles, and subscriptions. For more information about how to configure replication, see Publishing Data and Database objects.
+
+<a id="step2"></a>
+
+## 2. Configure the availability group
+
+At the intended primary, create the availability group with the published (or to be published) database as a member database. If using the Availability Group Wizard, you can either allow the wizard to initially synchronize the secondary replica databases or you can perform the initialization manually by using backup and restore.
+
+Create a DNS listener for the availability group that will be used by the replication agents to connect to the current primary. The listener name that is specified will be used as the target of redirection for the original publisher/published database pair. For example, if you're using DDL to configure the availability group, the following code example can be used to specify an availability group listener for an existing availability group named `MyAG`:
+
+```sql
+ALTER AVAILABILITY GROUP 'MyAG'
+    ADD LISTENER 'MyAGListenerName' (WITH IP (('10.120.19.155', '255.255.254.0')));
+```
+
+For more information, see [Creation and Configuration of Availability Groups (SQL Server)](creation-and-configuration-of-availability-groups-sql-server.md).
+
+<a id="step3"></a>
+
+## 3. Ensure that all of the secondary replica hosts are configured for replication
+
+At each secondary replica host, verify that  SQL Server 
+ has been configured to support replication. The following query can be run at each secondary replica host to determine whether replication is installed:
+
+```sql
+USE master;
+GO
+
+DECLARE @installed AS INT;
+
+EXECUTE @installed = sys.sp_MS_replication_installed;
+
+SELECT @installed;
+```
+
+If *@installed* is 0, replication must be added to the  SQL Server 
+ installation.
+
+<a id="step4"></a>
+
+## 4. Configure the secondary replica hosts as replication publishers
+
+A secondary replica can't act as a replication publisher or republisher but replication must be configured so that the secondary can take over after a failover. At the distributor, configure distribution for each secondary replica host. Specify the same distribution database and working directory as was specified when the original publisher was added to the distributor. If you're using stored procedures to configure distribution, use `sp_adddistpublisher` to associate the remote publishers with the distributor. If *@login* and *@password* were used for the original publisher, specify the same values for each when you add the secondary replica hosts as publishers.
+
+```sql
+EXECUTE sys.sp_adddistpublisher
+    @publisher = 'AGSecondaryReplicaHost',
+    @distribution_db = 'distribution',
+    @working_directory = '\\MyReplShare\WorkingDir',
+    @login = 'MyPubLogin',
+    @password = '**Strong password for publisher**';
+```
+
+At each secondary replica host, configure distribution. Identify the distributor of the original publisher as the remote distributor. Use the same password as that used when `sp_adddistributor` was run originally at the distributor. If stored procedures are being used to configure distribution, the *@password* parameter of `sp_adddistributor` is used to specify the password.
+
+```sql
+EXECUTE sp_adddistributor
+    @distributor = 'MyDistributor',
+    @password = '**Strong password for distributor**';
+```
+
+At each secondary replica host, make sure that the push subscribers of the database publications appear as linked servers. If stored procedures are being used to configure the remote publishers, use `sp_addlinkedserver` to add the subscribers (if not already present) as linked servers to the publishers.
+
+```sql
+EXECUTE sys.sp_addlinkedserver @server = 'MySubscriber';
+```
+
+<a id="step5"></a>
+
+## 5. Redirect the original publisher to the AG listener name
+
+At the distributor, in the distribution database, run the stored procedure `sp_redirect_publisher` to associate the original publisher and the published database with the availability group listener name of the availability group.
+
+```sql
+USE distribution;
+GO
+
+EXECUTE sys.sp_redirect_publisher
+    @original_publisher = 'MyPublisher',
+    @publisher_db = 'MyPublishedDB',
+    @redirected_publisher = 'MyAGListenerName';
+```
+
+<a id="step6"></a>
+
+## 6. Run the replication validation stored procedure to verify the configuration
+
+At the distributor, in the distribution database, run the stored procedure `sp_validate_replica_hosts_as_publishers` to verify that all replica hosts are now configured to serve as publishers for the published database.
+
+```sql
+USE distribution;
+GO
+
+DECLARE @redirected_publisher AS sysname;
+
+EXECUTE sys.sp_validate_replica_hosts_as_publishers
+    @original_publisher = 'MyPublisher',
+    @publisher_db = 'MyPublishedDB',
+    @redirected_publisher = @redirected_publisher OUTPUT;
+```
+
+The stored procedure `sp_validate_replica_hosts_as_publishers` should be run from a login with sufficient authorization at each availability group replica host to query for information about the availability group. Unlike `sp_validate_redirected_publisher`, it uses the credentials of the caller and doesn't use the login retained in `msdb.dbo.MSdistpublishers` to connect to the availability group replicas.
+
+### Error when validating secondary replica hosts
+
+`sp_validate_replica_hosts_as_publishers` fails with the following error when validating secondary replica hosts that don't allow read access, or require read intent to be specified.
+
+> Msg 21899, Level 11, State 1, Procedure `sp_hadr_verify_subscribers_at_publisher`, Line 109
+>  
+> The query at the redirected publisher 'MyReplicaHostName' to determine whether there were sysserver entries for the subscribers of the original publisher 'MyOriginalPublisher' failed with error '976', error message 'Error 976, Level 14, State 1, Message: The target database, 'MyPublishedDB', is participating in an availability group and is currently not accessible for queries. Either data movement is suspended or the availability replica isn't enabled for read access. To allow read-only access to this and other databases in the availability group, enable read access to one or more secondary availability replicas in the group. For more information, see the ALTER AVAILABILITY GROUP statement in SQL Server Books Online.
+>  
+> One or more publisher validation errors were encountered for replica host 'MyReplicaHostName'.
+
+This is expected behavior. You must verify the presence of the subscriber server entries at these secondary replica hosts by querying for the sysserver entries directly at the host.
+
+<a id="step7"></a>
+
+## 7. Add the original publisher to Replication Monitor
+
+At each availability group replica, add the original publisher to Replication Monitor.
+
+## Related tasks
+
+### Replication
+
+- [Maintaining an Always On Publication Database (SQL Server)](maintaining-an-always-on-publication-database-sql-server.md)
+
+- [Replication, Change Tracking, Change Data Capture, and Always On Availability Groups (SQL Server)](replicate-track-change-data-capture-always-on-availability.md)
+
+- [Replication Administration FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/replication/administration/frequently-asked-questions-for-replication-administrators.yml)
+
+### Create and configure an availability group
+
+- [Use the Availability Group Wizard (SQL Server Management Studio)](use-the-availability-group-wizard-sql-server-management-studio.md)
+- [Use the New Availability Group Dialog Box (SQL Server Management Studio)](use-the-new-availability-group-dialog-box-sql-server-management-studio.md)
+- [Create an Availability Group (Transact-SQL)](create-an-availability-group-transact-sql.md)
+- [Create an Availability Group (SQL Server PowerShell)](create-an-availability-group-sql-server-powershell.md)
+- [Specify the Endpoint URL When Adding or Modifying an Availability Replica (SQL Server)](specify-endpoint-url-adding-or-modifying-availability-replica.md)
+- [Create a Database Mirroring Endpoint for Always On Availability Groups (SQL Server PowerShell)](database-mirroring-always-on-availability-groups-powershell.md)
+- [Join a Secondary Replica to an Availability Group (SQL Server)](join-a-secondary-replica-to-an-availability-group-sql-server.md)
+- [Manually Prepare a Secondary Database for an Availability Group (SQL Server)](manually-prepare-a-secondary-database-for-an-availability-group-sql-server.md)
+- [Join a Secondary Database to an Availability Group (SQL Server)](join-a-secondary-database-to-an-availability-group-sql-server.md)
+- [Create or Configure an Availability Group Listener (SQL Server)](create-or-configure-an-availability-group-listener-sql-server.md)
+
+## Related content
+
+- [Prerequisites, restrictions, and recommendations for Always On availability groups](prereqs-restrictions-recommendations-always-on-availability.md)
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [Always On availability groups: interoperability (SQL Server)](always-on-availability-groups-interoperability-sql-server.md)
+- [SQL Server Replication](../../../relational-databases/replication/sql-server-replication.md)

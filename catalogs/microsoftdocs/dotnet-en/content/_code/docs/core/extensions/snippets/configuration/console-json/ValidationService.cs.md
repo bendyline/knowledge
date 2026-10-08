@@ -1,0 +1,37 @@
+# Source code: docs/core/extensions/snippets/configuration/console-json/ValidationService.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace ConsoleJson.Example;
+
+public sealed class ValidationService
+{
+    private readonly ILogger<ValidationService> _logger;
+    private readonly IOptions<SettingsOptions> _config;
+
+    public ValidationService(
+        ILogger<ValidationService> logger,
+        IOptions<SettingsOptions> config)
+    {
+        _config = config;
+        _logger = logger;
+
+        try
+        {
+            SettingsOptions options = _config.Value;
+        }
+        catch (OptionsValidationException ex)
+        {
+            foreach (string failure in ex.Failures)
+            {
+                _logger.LogError("Validation error: {FailureMessage}", failure);
+            }
+        }
+    }
+}
+
+```

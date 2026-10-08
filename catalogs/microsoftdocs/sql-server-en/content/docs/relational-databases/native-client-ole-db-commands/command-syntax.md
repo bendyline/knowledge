@@ -1,0 +1,73 @@
+---
+title: "Command syntax (Native Client OLE DB provider)"
+description: "Command syntax (Native Client OLE DB provider)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQL Server Native Client OLE DB provider, commands"
+  - "commands [OLE DB]"
+  - "SQL Server Native Client OLE DB provider, stored procedures"
+  - "stored procedures [OLE DB], command syntax"
+---
+# SQL Server Native Client Command Syntax
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The  SQL Server 
+ Native Client OLE DB provider recognizes command syntax specified by the DBGUID_SQL macro. For the  SQL Server 
+ Native Client OLE DB provider, the specifier indicates that an amalgam of ODBC SQL, ISO, and  Transact-SQL  is valid syntax. For example, the following SQL statement uses an ODBC SQL escape sequence to specify the LCASE string function:  
+  
+```  
+SELECT customerid={fn LCASE(CustomerID)} FROM Customers  
+```  
+  
+ LCASE returns a character string, converting all uppercase characters to their lowercase equivalents. The ISO string function LOWER performs the same operation, so the following SQL statement is a ISO equivalent to the ODBC statement presented above:  
+  
+```  
+SELECT customerid=LOWER(CustomerID) FROM Customers  
+```  
+  
+ The  SQL Server 
+ Native Client OLE DB provider processes either form of the statement successfully when specified as text for a command.  
+  
+## Stored Procedures  
+ When executing a  SQL Server 
+ stored procedure using a  SQL Server 
+ Native Client OLE DB provider command, use the ODBC CALL escape sequence in the command text. The  SQL Server 
+ Native Client OLE DB provider then uses the remote procedure call mechanism of  SQL Server 
+ to optimize command processing. For example, the following ODBC SQL statement is preferred command text over the  Transact-SQL  form:  
+  
+-   ODBC SQL  
+  
+    ```  
+    {call SalesByCategory('Produce', '1995')}  
+    ```  
+  
+-   Transact-SQL  
+  
+    ```  
+    EXECUTE SalesByCategory 'Produce', '1995'  
+    ```  
+  
+## Related content
+
+- [SQL Server Native Client Commands](commands.md)

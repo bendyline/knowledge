@@ -1,0 +1,43 @@
+---
+title: "sys.xml_schema_model_groups (Transact-SQL)"
+description: sys.xml_schema_model_groups (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.xml_schema_model_groups"
+  - "xml_schema_model_groups"
+  - "sys.xml_schema_model_groups_TSQL"
+  - "xml_schema_model_groups_TSQL"
+helpviewer_keywords:
+  - "sys.xml_schema_model_groups catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.xml_schema_model_groups (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row per XML schema component that is a Model-Group, **symbol_space** of **M**..  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **\<inherited columns>** |  | Inherits columns from [sys.xml_schema_components](sys-xml-schema-components-transact-sql.md). |
+| **compositor** | **char(1)** | Compositor kind of group:<br /><br /> A = XSD \<all> Group<br /><br /> C = XSD \<choice> Group<br /><br /> S = XSD \<sequence> Group |
+| **compositor_desc** | **nvarchar (60)** | Description of compositor kind of group:<br /><br /> XSD_ALL_GROUP<br /><br /> XSD_CHOICE_GROUP<br /><br /> XSD_SEQUENCE_GROUP |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [XML Schemas (XML Type System) Catalog Views (Transact-SQL)](xml-schemas-xml-type-system-catalog-views-transact-sql.md)

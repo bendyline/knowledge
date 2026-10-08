@@ -1,0 +1,60 @@
+---
+title: Merge Conflicts
+description: Merge Conflicts (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+---
+# Merge Conflicts (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, if data that you are attempting to publish has been changed by another user, the publish will fail with a conflict error. To resolve this error, you can perform merge conflicts and republish the changes.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **Explorer** functional area.  
+  
+-   You must have a minimum of Update permission to the leaf model object for the entity you are updating.  
+  
+### To merge conflicts  
+  
+1.  In the **Explorer** page, update the member attribute.  
+  
+2.  If the same member attribute has been changed by another user, the **Merge Conflicts** dialog will appear.  
+  
+3.  In the **Merge Conflicts** dialog, you can either:  
+  
+    -   Choose **Latest** and click **Apply** to undo the pending changes and reload the latest version from the server.  
+  
+    -   Choose **Original** and click **Apply** to apply the original version in the worksheet.  
+  
+    -   Choose **Yours** and click **Apply** to keep the existing local changes.  
+  
+4.  After you click **Apply**, you can make additional changes and publish again. Or you can click **Cancel** to cancel the update and reload the latest version from the server.  
+  
+## Related content
+
+- [Members (Master Data Services)](members-master-data-services.md)

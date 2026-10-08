@@ -1,0 +1,43 @@
+---
+title: "sys.dm_pdw_wait_stats (Transact-SQL)"
+description: sys.dm_pdw_wait_stats (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: data-warehouse
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sys.dm_pdw_wait_stats (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+ 
+
+
+  Holds information related to the  SQL Server 
+ OS state related to instances running on the different nodes. For a list of waits types and their description, see [sys.dm_os_wait_stats](https://msdn.microsoft.com/library/ms179984\(v=sql.120\).aspx).
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+  
+| Column Name | Data Type | Description | Range |
+| --- | --- | --- | --- |
+| **pdw_node_id** | **int** | ID of the node this entry refers to. |  |
+| **wait_name** | **nvarchar(255)** | Name of the wait type. |  |
+| **max_wait_time** | **bigint** | Maximum wait time of this wait type. |  |
+| **request_count** | **bigint** | Number of waits of this wait type outstanding. |  |
+| **signal_time** | **bigint** | Difference between the time that the waiting thread was signaled and when it started running. |  |
+| **completed_count** | **bigint** | Total number of waits of this type completed since the last server restart. |  |
+| **wait_time** | **bigint** | Total wait time for this wait type in milliseconds. Inclusive of signal_time. |  |
+  
+## Related content
+
+- [Azure Synapse Analytics dynamic management objects](azure-synapse-analytics-dynamic-management-objects.md)
+- [sys.dm_pdw_waits (Transact-SQL)](sys-dm-pdw-waits-transact-sql.md)

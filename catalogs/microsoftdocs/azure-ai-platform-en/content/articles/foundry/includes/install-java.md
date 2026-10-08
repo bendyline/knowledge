@@ -1,0 +1,17 @@
+---
+title: include file
+description: include file
+author: sdgilley
+ms.reviewer: sgilley
+ms.author: sgilley
+ms.service: microsoft-foundry
+ms.topic: include
+ms.date: 04/08/2026
+ms.custom: include
+---
+
+
+Install:
+
+- Java Development Kit (JDK) 17 or later
+    - We recommend the [Microsoft Build of OpenJDK](https://learn.microsoft.com/java/openjdk/download), which is a free, Long-Term Support (LTS) distribution of OpenJDK

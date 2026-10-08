@@ -1,0 +1,37 @@
+# Source code: aspnetcore/test/debug-aspnetcore-source/code/launchSettings.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:10892",
+      "sslPort": 44315
+    }
+  },
+  "profiles": {
+    "WebApplication18": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:7045;http://localhost:5045",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "COMPlus_ReadyToRun": "0"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "COMPlus_ReadyToRun": "0"
+      }
+    }
+  }
+}
+
+```

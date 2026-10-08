@@ -1,0 +1,607 @@
+**Applies to: \= aspnetcore-9.0**
+
+This article assumes a basic understanding of unit tests. If unfamiliar with test concepts, see the [Testing in .NET](https://learn.microsoft.com/dotnet/core/testing/) article and its linked content.
+
+[View or download sample code](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample) ([how to download](https://learn.microsoft.com/search/?terms=fundamentals%2Findex%23how-to-download-a-sample))
+
+The sample app is a Razor Pages app and assumes a basic understanding of Razor Pages. If you're unfamiliar with Razor Pages, see the following articles:
+
+* [Introduction to Razor Pages](../../../razor-pages/index.md)
+* [Get started with Razor Pages](../../../tutorials/razor-pages/razor-pages-start.md)
+* [Razor Pages unit tests](../../razor-pages-tests.md)
+
+**For testing SPAs**, we recommend a tool such as [Playwright for .NET](https://playwright.dev/dotnet/), which can automate a browser.
+
+## Introduction to integration tests
+
+Integration tests evaluate an app's components on a broader level than [unit tests](https://learn.microsoft.com/dotnet/core/testing/). Unit tests are used to test isolated software components, such as individual class methods. Integration tests confirm that two or more app components work together to produce an expected result, possibly including every component required to fully process a request.
+
+These broader tests are used to test the app's infrastructure and whole framework, often including the following components:
+
+* Database
+* File system
+* Network appliances
+* Request-response pipeline
+
+Unit tests use fabricated components, known as [*fakes* or *mock objects*](https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices#lets-speak-the-same-language), in place of infrastructure components.
+
+In contrast to unit tests, integration tests:
+
+* Use the actual components that the app uses in production.
+* Require more code and data processing.
+* Take longer to run.
+
+Therefore, limit the use of integration tests to the most important infrastructure scenarios. If a behavior can be tested using either a unit test or an integration test, choose the unit test.
+
+In discussions of integration tests, the tested project is frequently called the ***System Under Test***, or "**SUT**" for short. "SUT" is used throughout this article to refer to the ASP.NET Core app being tested.
+
+***Don't write integration tests for every permutation*** of data and file access with databases and file systems. Regardless of how many places across an app interact with databases and file systems, a focused set of read, write, update, and delete integration tests are usually capable of adequately testing database and file system components. Use unit tests for routine tests of method logic that interact with these components. In unit tests, the use of infrastructure fakes or mocks result in faster test execution.
+
+## ASP.NET Core integration tests
+
+Integration tests in ASP.NET Core require the following:
+
+* A test project is used to contain and execute the tests. The test project has a reference to the SUT.
+* The test project creates a test web host for the SUT and uses a test server client to handle requests and responses with the SUT.
+* A test runner is used to execute the tests and report the test results.
+
+Integration tests follow a sequence of events that include the usual *Arrange*, *Act*, and *Assert* test steps:
+
+1. The SUT's web host is configured.
+1. A test server client is created to submit requests to the app.
+1. The *Arrange* test step is executed: The test app prepares a request.
+1. The *Act* test step is executed: The client submits the request and receives the response.
+1. The *Assert* test step is executed: The *actual* response is validated as a *pass* or *fail* based on an *expected* response.
+1. The process continues until all of the tests are executed.
+1. The test results are reported.
+
+Usually, the test web host is configured differently than the app's normal web host for the test runs. For example, a different database or different app settings might be used for the tests.
+
+Infrastructure components, such as the test web host and in-memory test server ([Microsoft.AspNetCore.TestHost.TestServer](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.TestServer)), are provided or managed by the [Microsoft.AspNetCore.Mvc.Testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) package. Use of this package streamlines test creation and execution.
+
+The `Microsoft.AspNetCore.Mvc.Testing` package handles the following tasks:
+
+* Copies the dependencies file (`.deps`) from the SUT into the test project's `bin` directory.
+* Sets the [content root](https://learn.microsoft.com/search/?terms=fundamentals%2Findex%23content-root) to the SUT's project root so that static files and pages/views are found when the tests are executed.
+* Provides the [WebApplicationFactory](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601) class to streamline bootstrapping the SUT with `TestServer`.
+
+The [unit tests](https://learn.microsoft.com/dotnet/articles/core/testing/unit-testing-with-dotnet-test) documentation describes how to set up a test project and test runner, along with detailed instructions on how to run tests and recommendations for how to name tests and test classes.
+
+**Separate unit tests from integration tests into different projects**. Separating the tests:
+
+* Helps ensure that infrastructure testing components aren't accidentally included in the unit tests.
+* Allows control over which set of tests are run.
+
+
+There's virtually no difference between the configuration for tests of Razor Pages apps and MVC apps. The only difference is in how the tests are named. In a Razor Pages app, tests of page endpoints are usually named after the page model class (for example, `IndexPageTests` to test component integration for the Index page). In an MVC app, tests are usually organized by controller classes and named after the controllers they test (for example, `HomeControllerTests` to test component integration for the Home controller).
+
+## Test app prerequisites
+
+The test project must:
+
+* Reference the [`Microsoft.AspNetCore.Mvc.Testing`](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) package.
+* Specify the Web SDK in the project file (`<Project Sdk="Microsoft.NET.Sdk.Web">`).
+
+These prerequisites can be seen in the [sample app](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample). Inspect the `tests/RazorPagesProject.Tests/RazorPagesProject.Tests.csproj` file. The sample app uses the [xUnit](https://xunit.net/) test framework and the [AngleSharp](https://anglesharp.github.io/) parser library, so the sample app also references:
+
+* [`AngleSharp`](https://www.nuget.org/packages/AngleSharp)
+* [`xunit`](https://www.nuget.org/packages/xunit)
+* [`xunit.runner.visualstudio`](https://www.nuget.org/packages/xunit.runner.visualstudio)
+
+In apps that use [`xunit.runner.visualstudio`](https://www.nuget.org/packages/xunit.runner.visualstudio) version 2.4.2 or later, the test project must reference the [`Microsoft.NET.Test.Sdk`](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) package.
+
+Entity Framework Core is also used in the tests. See the [project file in GitHub](https://github.com/dotnet/AspNetCore.Docs.Samples/blob/main/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/RazorPagesProject.csproj).
+
+## SUT environment
+
+If the SUT's [environment](../../../fundamentals/environments.md) isn't set, the environment defaults to `Development`.
+
+## Basic tests with the default WebApplicationFactory
+
+
+Expose the implicitly defined `Program` class to the test project by doing one of the following:
+
+* Expose internal types from the web app to the test project. This can be done in the SUT project's file (`.csproj`):
+  ```xml
+  <ItemGroup>
+       <InternalsVisibleTo Include="MyTestProject" />
+  </ItemGroup>
+  ```
+* Make the [`Program` class public using a partial class](https://github.com/dotnet/AspNetCore.Docs.Samples/blob/main/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Program.cs) declaration:
+
+  ```diff
+  var builder = WebApplication.CreateBuilder(args);
+  // ... Configure services, routes, etc.
+  app.Run();
+  + public partial class Program { }
+  ```
+
+  The [sample app](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample) uses the `Program` partial class approach.
+
+[Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601) is used to create a [Microsoft.AspNetCore.TestHost.TestServer](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.TestServer) for the integration tests. `TEntryPoint` is the entry point class of the SUT, usually `Program.cs`.
+
+Test classes implement a *class fixture* interface ([`IClassFixture`](https://xunit.net/docs/shared-context#class-fixture)) to indicate the class contains tests and provide shared object instances across the tests in the class.
+
+The following test class, `BasicTests`, uses the `WebApplicationFactory` to bootstrap the SUT and provide an [System.Net.Http.HttpClient](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpClient) to a test method, `Get_EndpointsReturnSuccessAndCorrectContentType`. The method verifies the response status code is successful (200-299) and the `Content-Type` header is `text/html; charset=utf-8` for several app pages.
+
+[Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601.CreateClient](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601.CreateClient) creates an instance of `HttpClient` that automatically follows redirects and handles cookies.
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/BasicTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/BasicTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/BasicTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/BasicTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/BasicTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/BasicTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/BasicTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/BasicTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/BasicTests.cs.md)
+
+
+
+By default, non-essential cookies aren't preserved across requests when the [General Data Protection Regulation consent policy](../../../security/gdpr.md) is enabled. To preserve non-essential cookies, such as those used by the TempData provider, mark them as essential in your tests. For instructions on marking a cookie as essential, see [Essential cookies](https://learn.microsoft.com/search/?terms=security%2Fgdpr%23essential-cookies).
+
+<a name="asap7"></a>
+
+## AngleSharp vs `Application Parts` for antiforgery checks
+
+This article uses the [AngleSharp](https://anglesharp.github.io/) parser to handle the antiforgery checks by loading pages and parsing the HTML. For testing the endpoints of controller and Razor Pages views at a lower-level, without caring about how they render in the browser, consider using `Application Parts`. The [Application Parts](../../../mvc/advanced/app-parts.md) approach injects a controller or Razor Page into the app that can be used to make JSON requests to get the required values. For more information, see the blog [Integration Testing ASP.NET Core Resources Protected with Antiforgery Using Application Parts](https://blog.martincostello.com/integration-testing-antiforgery-with-application-parts/) and [associated GitHub repo](https://github.com/martincostello/antiforgery-testing-application-part) by [Martin Costello](https://github.com/martincostello). <!--See https://github.com/dotnet/AspNetCore.Docs/issues/18860 -->
+
+## Customize WebApplicationFactory
+
+Web host configuration can be created independently of the test classes by inheriting from [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601) to create one or more custom factories:
+
+1. Inherit from `WebApplicationFactory` and override [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601.ConfigureWebHost%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601.ConfigureWebHost%252A). The [Microsoft.AspNetCore.Hosting.IWebHostBuilder](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Hosting.IWebHostBuilder) allows the configuration of the service collection with [`IWebHostBuilder.ConfigureServices`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Hosting.IWebHostBuilder.ConfigureServices%252A)
+
+   **Applies to: xunit**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/xunit/CustomWebApplicationFactory.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/CustomWebApplicationFactory.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/CustomWebApplicationFactory.cs.md)
+
+
+   **Applies to: mstest**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/mstest/CustomWebApplicationFactory.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/CustomWebApplicationFactory.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/CustomWebApplicationFactory.cs.md)
+
+
+   **Applies to: nunit**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/nunit/CustomWebApplicationFactory.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/CustomWebApplicationFactory.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/CustomWebApplicationFactory.cs.md)
+
+
+
+   Database seeding in the [sample app](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample) is performed by the `InitializeDbForTests` method. The method is described in the [Integration tests sample: Test app organization](#test-app-organization) section.
+
+   The SUT's database context is registered in `Program.cs`. The test app's `builder.ConfigureServices` callback is executed *after* the app's `Program.cs` code is executed. To use a different database for the tests than the app's database, the app's database context must be replaced in `builder.ConfigureServices`.
+
+   The sample app finds the service descriptor for the database context and uses the descriptor to remove the service registration. The factory then adds a new `ApplicationDbContext` that uses an in-memory database for the tests..
+
+   To connect to a different database, change the `DbConnection`. To use a SQL Server test database:
+
+   * Reference the [`Microsoft.EntityFrameworkCore.SqlServer`](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer/) NuGet package in the project file.
+   * Call `UseInMemoryDatabase`.
+<!--
+    [!code-csharp[](~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Program.cs?name=snippet_all)]
+-->
+2. Use the custom `CustomWebApplicationFactory` in test classes. The following example uses the factory in the `IndexPageTests` class:
+
+   **Applies to: xunit**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+   **Applies to: mstest**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs.md)
+
+
+   **Applies to: nunit**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+
+   The sample app's client is configured to prevent the `HttpClient` from following redirects. As explained later in the [Mock authentication](#mock-authentication) section, this permits tests to check the result of the app's first response. The first response is a redirect in many of these tests with a `Location` header.
+
+3. A typical test uses the `HttpClient` and helper methods to process the request and the response:
+
+   **Applies to: xunit**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs" id="snippet2"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+   **Applies to: mstest**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs" id="snippet2"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs.md)
+
+
+   **Applies to: nunit**
+
+
+   [language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs" id="snippet2"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+
+Any POST request to the SUT must satisfy the antiforgery check that's automatically made by the app's [data protection antiforgery system](../../../security/data-protection/introduction.md). In order to arrange for a test's POST request, the test app must:
+
+1. Make a request for the page.
+1. Parse the antiforgery cookie and request validation token from the response.
+1. Make the POST request with the antiforgery cookie and request validation token in place.
+
+The `SendAsync` helper extension methods (`Helpers/HttpClientExtensions.cs`) and the `GetDocumentAsync` helper method (`Helpers/HtmlHelpers.cs`) in the [sample app](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample/) use the [AngleSharp](https://anglesharp.github.io/) parser to handle the antiforgery check with the following methods:
+
+* `GetDocumentAsync`: Receives the [System.Net.Http.HttpResponseMessage](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpResponseMessage) and returns an `IHtmlDocument`. `GetDocumentAsync` uses a factory that prepares a *virtual response* based on the original `HttpResponseMessage`. For more information, see the [AngleSharp documentation](https://github.com/AngleSharp/AngleSharp#documentation).
+* `SendAsync` extension methods for the `HttpClient` compose an [System.Net.Http.HttpRequestMessage](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpRequestMessage) and call [System.Net.Http.HttpClient.SendAsync(System.Net.Http.HttpRequestMessage)](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpClient.SendAsync(System.Net.Http.HttpRequestMessage)) to submit requests to the SUT. Overloads for `SendAsync` accept the HTML form (`IHtmlFormElement`) and the following:
+  * Submit button of the form (`IHtmlElement`)
+  * Form values collection (`IEnumerable<KeyValuePair<string, string>>`)
+  * Submit button (`IHtmlElement`) and form values (`IEnumerable<KeyValuePair<string, string>>`)
+
+[AngleSharp](https://anglesharp.github.io/) is a **third-party parsing library used for demonstration purposes** in this article and the sample app. AngleSharp isn't supported or required for integration testing of ASP.NET Core apps. Other parsers can be used, such as the [Html Agility Pack (HAP)](https://html-agility-pack.net/). Another approach is to write code to handle the antiforgery system's request verification token and antiforgery cookie directly. See [AngleSharp vs `Application Parts` for antiforgery checks](#asap7) in this article for more information.
+
+The [EF-Core in-memory database provider](https://learn.microsoft.com/ef/core/testing/choosing-a-testing-strategy#in-memory-as-a-database-fake) can be used for limited and basic testing, however the ***[SQLite provider](https://learn.microsoft.com/ef/core/testing/choosing-a-testing-strategy#sqlite-as-a-database-fake) is the recommended choice for in-memory testing***.
+
+When a test requires a custom middleware, you can use an [Microsoft.AspNetCore.Hosting.IStartupFilter](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Hosting.IStartupFilter). For more information, see [fundamentals/startup#startup-filters](https://learn.microsoft.com/search/?terms=fundamentals%2Fstartup%23startup-filters).
+
+When a test requires a custom service, see the [Inject mock services](#inject-mock-services) section.
+
+## Customize the client with WithWebHostBuilder
+
+When additional configuration is required within a test method, [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601.WithWebHostBuilder%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601.WithWebHostBuilder%252A) creates a new `WebApplicationFactory` with an [Microsoft.AspNetCore.Hosting.IWebHostBuilder](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Hosting.IWebHostBuilder) that is further customized by configuration.
+
+
+The [sample code](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample/tests/RazorPagesProject.Tests/IntegrationTests) calls `WithWebHostBuilder` to replace configured services with test stubs. For more information and example usage, see [Inject mock services](#inject-mock-services) in this article.
+
+The `Post_DeleteMessageHandler_ReturnsRedirectToRoot` test method of the [sample app](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample) demonstrates the use of `WithWebHostBuilder`. This test performs a record delete in the database by triggering a form submission in the SUT.
+
+Because another test in the `IndexPageTests` class performs an operation that deletes all of the records in the database and may run before the `Post_DeleteMessageHandler_ReturnsRedirectToRoot` method, the database is reseeded in this test method to ensure that a record is present for the SUT to delete. Selecting the first delete button of the `messages` form in the SUT is simulated in the request to the SUT:
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs" id="snippet3"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs" id="snippet3"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs" id="snippet3"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+
+## Client options
+
+See the [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions) page for defaults and available options when creating `HttpClient` instances.
+
+Create the `WebApplicationFactoryClientOptions` class and pass it to the [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601.CreateClient](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601.CreateClient) method:
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs" id="snippet1"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+
+***NOTE:*** To avoid HTTPS redirection warnings in logs when using HTTPS redirection middleware, set `BaseAddress = new Uri("https://localhost")`
+
+## Inject mock services
+
+Services can be overridden in a test with a call to [Microsoft.AspNetCore.TestHost.WebHostBuilderExtensions.ConfigureTestServices%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.WebHostBuilderExtensions.ConfigureTestServices%252A) on the host builder. To scope the overridden services to the test itself, the [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%601.WithWebHostBuilder%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601.WithWebHostBuilder%252A) method is used to retrieve a host builder. This can be seen in the following tests:
+
+* [Get_QuoteService_ProvidesQuoteInPage](https://github.com/dotnet/AspNetCore.Docs.Samples/blob/main/test/integration-tests/9.x/IntegrationTestsSample/tests/RazorPagesProject.Tests/IntegrationTests/IndexPageTests.cs#L166-L173)
+* [Get_GithubProfilePageCanGetAGithubUser](https://github.com/dotnet/AspNetCore.Docs.Samples/blob/main/test/integration-tests/9.x/IntegrationTestsSample/tests/RazorPagesProject.Tests/IntegrationTests/AuthTests.cs#L35-L38)
+* [Get_SecurePageIsReturnedForAnAuthenticatedUser](https://github.com/dotnet/AspNetCore.Docs.Samples/blob/main/test/integration-tests/9.x/IntegrationTestsSample/tests/RazorPagesProject.Tests/IntegrationTests/AuthTests.cs#L105-L117)
+
+The sample SUT includes a scoped service that returns a quote. The quote is embedded in a hidden field on the Index page when the Index page is requested.
+
+`Services/IQuoteService.cs`:
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Services/IQuoteService.cs?name=snippet1](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+`Services/QuoteService.cs`:
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Services/QuoteService.cs?name=snippet1](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+`Program.cs`:
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Program.cs?name=snippet2](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+`Pages/Index.cshtml.cs`:
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Pages/Index.cshtml.cs?name=snippet1&highlight=4,9,20,26](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+`Pages/Index.cs`:
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Pages/Index.cshtml?name=snippet_Quote](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+The following markup is generated when the SUT app is run:
+
+```html
+<input id="quote" type="hidden" value="Come on, Sarah. We&#x27;ve an appointment in 
+    London, and we&#x27;re already 30,000 years late.">
+```
+
+To test the service and quote injection in an integration test, a mock service is injected into the SUT by the test. The mock service replaces the app's `QuoteService` with a service provided by the test app, called `TestQuoteService`:
+
+`IntegrationTests.IndexPageTests.cs`:
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs" id="snippet4"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs" id="snippet4"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs" id="snippet4"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+
+`ConfigureTestServices` is called, and the scoped service is registered:
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs" id="snippet5" highlight="7-10,17,20-21"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs" id="snippet5" highlight="7-10,17,20-21"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/IndexPageTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs" id="snippet5" highlight="7-10,17,20-22"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/IndexPageTests.cs.md)
+
+
+
+The markup produced during the test's execution reflects the quote text supplied by `TestQuoteService`, thus the assertion passes:
+
+```html
+<input id="quote" type="hidden" value="Something&#x27;s interfering with time, 
+    Mr. Scarman, and time is my business.">
+```
+
+## Mock authentication
+
+Tests in the `AuthTests` class check that a secure endpoint:
+
+* Redirects an unauthenticated user to the app's sign in page.
+* Returns content for an authenticated user.
+
+In the SUT, the `/SecurePage` page uses an [Microsoft.Extensions.DependencyInjection.PageConventionCollectionExtensions.AuthorizePage%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.PageConventionCollectionExtensions.AuthorizePage%252A) convention to apply an [Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter) to the page. For more information, see [Razor Pages authorization conventions](https://learn.microsoft.com/search/?terms=razor-pages%2Fsecurity%2Fauthorization%2Fconventions%23require-authorization-to-access-a-page).
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/src/RazorPagesProject/Program.cs?name=snippet1](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+In the `Get_SecurePageRedirectsAnUnauthenticatedUser` test, a [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions) is set to disallow redirects by setting [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions.AllowAutoRedirect](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions.AllowAutoRedirect) to `false`:
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs" id="snippet2"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs" id="snippet2"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs" id="snippet2"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs.md)
+
+
+
+By disallowing the client to follow the redirect, the following checks can be made:
+
+* The status code returned by the SUT can be checked against the expected [System.Net.HttpStatusCode.Redirect](https://learn.microsoft.com/search/?terms=System.Net.HttpStatusCode.Redirect) result, not the final status code after the redirect to the sign in page, which would be [System.Net.HttpStatusCode.OK](https://learn.microsoft.com/search/?terms=System.Net.HttpStatusCode.OK).
+* The `Location` header value in the response headers is checked to confirm that it starts with `http://localhost/Identity/Account/Login`, not the final sign in page response, where the `Location` header wouldn't be present.
+
+The test app can mock an [Microsoft.AspNetCore.Authentication.AuthenticationHandler%601](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.AuthenticationHandler%25601) in [Microsoft.AspNetCore.TestHost.WebHostBuilderExtensions.ConfigureTestServices%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.WebHostBuilderExtensions.ConfigureTestServices%252A) in order to test aspects of authentication and authorization. A minimal scenario returns an [Microsoft.AspNetCore.Authentication.AuthenticateResult.Success%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.AuthenticateResult.Success%252A):
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs" id="snippet4" highlight="11-18"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs" id="snippet4" highlight="11-18"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs" id="snippet4" highlight="11-18"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs.md)
+
+
+
+The `TestAuthHandler` is called to authenticate a user when the authentication scheme is set to `TestScheme` where `AddAuthentication` is registered for `ConfigureTestServices`. `DefaultAuthenticateScheme` and `DefaultChallengeScheme` are explicitly set to `TestScheme` to ensure the test handler overrides any authentication configuration set by the app. It's important for the `TestScheme` scheme to match the scheme your app expects. Otherwise, authentication won't work.
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs" id="snippet3" highlight="7-16"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/IntegrationTests/AuthTests.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs" id="snippet3" highlight="7-16"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/IntegrationTests/AuthTests.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs" id="snippet3" highlight="7-16"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/IntegrationTests/AuthTests.cs.md)
+
+
+
+For more information on `WebApplicationFactoryClientOptions`, see the [Client options](#client-options) section.
+
+### Basic tests for authentication middleware
+
+See [this GitHub repository](https://github.com/blowdart/idunno.Authentication/tree/dev/test/idunno.Authentication.Basic.Test) for basic tests of authentication middleware. It contains a [test server](https://github.com/blowdart/idunno.Authentication/blob/dev/test/idunno.Authentication.Basic.Test/BasicAuthenticationTests.cs#L331) that's specific to the test scenario.
+
+## Set the environment
+
+Set the [environment](../../../fundamentals/environments.md) in the custom application factory:
+
+**Applies to: xunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/xunit/CustomWebApplicationFactory.cs" id="snippet1" highlight="36"::: (complete source file; reference: \~/test/integration-tests/snippets/xunit/CustomWebApplicationFactory.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/xunit/CustomWebApplicationFactory.cs.md)
+
+
+**Applies to: mstest**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/mstest/CustomWebApplicationFactory.cs" id="snippet1" highlight="36"::: (complete source file; reference: \~/test/integration-tests/snippets/mstest/CustomWebApplicationFactory.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/mstest/CustomWebApplicationFactory.cs.md)
+
+
+**Applies to: nunit**
+
+
+[language="csharp" source="\~/test/integration-tests/snippets/nunit/CustomWebApplicationFactory.cs" id="snippet1" highlight="36"::: (complete source file; reference: \~/test/integration-tests/snippets/nunit/CustomWebApplicationFactory.cs)](../../../../_code/aspnetcore/test/integration-tests/snippets/nunit/CustomWebApplicationFactory.cs.md)
+
+
+
+## How the test infrastructure infers the app content root path
+
+The `WebApplicationFactory` constructor infers the app [content root](https://learn.microsoft.com/search/?terms=fundamentals%2Findex%23content-root) path by searching for a [Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute) on the assembly containing the integration tests with a key equal to the `TEntryPoint` assembly `System.Reflection.Assembly.FullName`. In case an attribute with the correct key isn't found, `WebApplicationFactory` falls back to searching for a solution file (*.sln*) and appends the `TEntryPoint` assembly name to the solution directory. The app root directory (the content root path) is used to discover views and content files.
+
+## Disable shadow copying
+
+Shadow copying causes the tests to execute in a different directory than the output directory. If your tests rely on loading files relative to `Assembly.Location` and you encounter issues, you might have to disable shadow copying.
+
+To disable shadow copying when using xUnit, create a `xunit.runner.json` file in your test project directory, with the [correct configuration setting](https://xunit.net/docs/configuration-files#shadowCopy):
+
+```json
+{
+  "shadowCopy": false
+}
+```
+
+## Disposal of objects
+
+**Applies to: xunit**
+
+
+After the tests of the `IClassFixture` implementation are executed, [Microsoft.AspNetCore.TestHost.TestServer](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.TestServer) and [System.Net.Http.HttpClient](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpClient) are disposed when xUnit disposes of the [`WebApplicationFactory`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601). If objects instantiated by the developer require disposal, dispose of them in the `IClassFixture` implementation. For more information, see [Implementing a Dispose method](https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose).
+
+
+**Applies to: mstest**
+
+
+After the tests of the `TestClass` are executed, [Microsoft.AspNetCore.TestHost.TestServer](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.TestServer) and [System.Net.Http.HttpClient](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpClient) are disposed when MSTest disposes of the [`WebApplicationFactory`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601) in the `ClassCleanup` method. If objects instantiated by the developer require disposal, dispose of them in the `ClassCleanup` method. For more information, see [Implementing a Dispose method](https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose).
+
+
+**Applies to: nunit**
+
+
+After the tests of the test class are executed, [Microsoft.AspNetCore.TestHost.TestServer](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.TestServer) and [System.Net.Http.HttpClient](https://learn.microsoft.com/search/?terms=System.Net.Http.HttpClient) are disposed when NUnit disposes of the [`WebApplicationFactory`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory%25601) in the `TearDown` method. If objects instantiated by the developer require disposal, dispose of them in the `TearDown` method. For more information, see [Implementing a Dispose method](https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose).
+
+
+
+## Integration tests sample
+
+The [sample app](https://github.com/dotnet/AspNetCore.Docs.Samples/tree/main/test/integration-tests/9.x/IntegrationTestsSample) is composed of two apps:
+
+| App | Project directory | Description |
+| --- | --- | --- |
+| Message app (the SUT) | `src/RazorPagesProject` | Allows a user to add, delete one, delete all, and analyze messages. |
+| Test app | `tests/RazorPagesProject.Tests` | Used to integration test the SUT. |
+
+The tests can be run using the built-in test features of an IDE, such as [Visual Studio](https://visualstudio.microsoft.com). If using [Visual Studio Code](https://code.visualstudio.com/) or the command line, execute the following command at a command prompt in the `tests/RazorPagesProject.Tests` directory:
+
+```console
+dotnet test
+```
+
+### Message app (SUT) organization
+
+The SUT is a Razor Pages message system with the following characteristics:
+
+* The Index page of the app (`Pages/Index.cshtml` and `Pages/Index.cshtml.cs`) provides a UI and page model methods to control the addition, deletion, and analysis of messages (average words per message).
+* A message is described by the `Message` class (`Data/Message.cs`) with two properties: `Id` (key) and `Text` (message). The `Text` property is required and limited to 200 characters.
+* Messages are stored using [Entity Framework's in-memory database](https://learn.microsoft.com/ef/core/providers/in-memory/)&#8224;.
+* The app contains a data access layer (DAL) in its database context class, `AppDbContext` (`Data/AppDbContext.cs`).
+* If the database is empty on app startup, the message store is initialized with three messages.
+* The app includes a `/SecurePage` that can only be accessed by an authenticated user.
+
+&#8224;The EF article, [Test with InMemory](https://learn.microsoft.com/ef/core/miscellaneous/testing/in-memory), explains how to use an in-memory database for tests with MSTest. This topic uses the [xUnit](https://xunit.net/) test framework. Test concepts and test implementations across different test frameworks are similar but not identical.
+
+Although the app doesn't use the repository pattern and isn't an effective example of the [Unit of Work (UoW) pattern](https://martinfowler.com/eaaCatalog/unitOfWork.html), Razor Pages supports these patterns of development. For more information, see [Designing the infrastructure persistence layer](https://learn.microsoft.com/dotnet/standard/microservices-architecture/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design) and [Test controller logic](../../../mvc/controllers/testing.md) (the sample implements the repository pattern).
+
+### Test app organization
+
+The test app is a console app inside the `tests/RazorPagesProject.Tests` directory.
+
+| Test app directory | Description |
+| --- | --- |
+| `AuthTests` | Contains test methods for:<ul><li>Accessing a secure page by an unauthenticated user.</li><li>Accessing a secure page by an authenticated user with a mock [Microsoft.AspNetCore.Authentication.AuthenticationHandler%601](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.AuthenticationHandler%25601).</li><li>Obtaining a GitHub user profile and checking the profile's user login.</li></ul> |
+| `BasicTests` | Contains a test method for routing and content type. |
+| `IntegrationTests` | Contains the integration tests for the Index page using custom `WebApplicationFactory` class. |
+| `Helpers/Utilities` | <ul><li>`Utilities.cs` contains the `InitializeDbForTests` method used to seed the database with test data.</li><li>`HtmlHelpers.cs` provides a method to return an AngleSharp `IHtmlDocument` for use by the test methods.</li><li>`HttpClientExtensions.cs` provide overloads for `SendAsync` to submit requests to the SUT.</li></ul> |
+
+The test framework is [xUnit](https://xunit.net/). Integration tests are conducted using the [Microsoft.AspNetCore.TestHost](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost), which includes the [Microsoft.AspNetCore.TestHost.TestServer](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.TestHost.TestServer). Because the [`Microsoft.AspNetCore.Mvc.Testing`](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) package is used to configure the test host and test server, the `TestHost` and `TestServer` packages don't require direct package references in the test app's project file or developer configuration in the test app.
+
+Integration tests usually require a small dataset in the database prior to the test execution. For example, a delete test calls for a database record deletion, so the database must have at least one record for the delete request to succeed.
+
+The sample app seeds the database with three messages in `Utilities.cs` that tests can use when they execute:
+
+[Code reference unavailable in this source snapshot: ~/../AspNetCore.Docs.Samples/test/integration-tests/9.x/IntegrationTestsSample/tests/RazorPagesProject.Tests/Helpers/Utilities.cs?name=snippet1](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/test/integration-tests/includes/integration-tests9.md)
+
+The SUT's database context is registered in `Program.cs`. The test app's `builder.ConfigureServices` callback is executed *after* the app's `Program.cs` code is executed. To use a different database for the tests, the app's database context must be replaced in `builder.ConfigureServices`. For more information, see the [Customize WebApplicationFactory](#customize-webapplicationfactory) section.
+
+## Additional resources
+
+* [Unit tests](https://learn.microsoft.com/dotnet/articles/core/testing/unit-testing-with-dotnet-test)
+* [test/razor-pages-tests](../../razor-pages-tests.md)
+* [fundamentals/middleware/index](../../../fundamentals/middleware/index.md)
+* [mvc/controllers/testing](../../../mvc/controllers/testing.md)
+* [Basic tests for authentication middleware](https://github.com/blowdart/idunno.Authentication/tree/dev/test/idunno.Authentication.Basic.Test)

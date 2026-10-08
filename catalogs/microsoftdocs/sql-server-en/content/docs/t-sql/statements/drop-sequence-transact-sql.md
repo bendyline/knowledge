@@ -1,0 +1,103 @@
+---
+title: "DROP SEQUENCE (Transact-SQL)"
+description: DROP SEQUENCE (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "05/11/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "DROP SEQUENCE"
+  - "DROP_SEQUENCE_TSQL"
+helpviewer_keywords:
+  - "DROP SEQUENCE statement"
+  - "sequence number object, dropping"
+dev_langs:
+  - "TSQL"
+---
+# DROP SEQUENCE (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Removes a sequence object from the current database.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+DROP SEQUENCE [ IF EXISTS ] { database_name.schema_name.sequence_name | schema_name.sequence_name | sequence_name } [ ,...n ]  
+ [ ; ]  
+```  
+  
+## Arguments
+ *IF EXISTS*  
+ **Applies to**:  SQL Server 
+ (  SQL Server 2016 (13.x) 
+ through [current version](https://learn.microsoft.com/troubleshoot/sql/general/determine-version-edition-update-level)).  
+  
+ Conditionally drops the sequence only if it already exists.  
+  
+ *database_name*  
+ Is the name of the database in which the sequence object was created.  
+  
+ *schema_name*  
+ Is the name of the schema to which the sequence object belongs.  
+  
+ *sequence_name*  
+ Is the name of the sequence to be dropped. Type is **sysname**.  
+  
+## Remarks  
+ After generating a number, a sequence object has no continuing relationship to the number it generated, so the sequence object can be dropped, even though the number generated is still in use.  
+  
+ A sequence object can be dropped while it is referenced by a stored procedure, or trigger, because it is not schema bound. A sequence object cannot be dropped if it is referenced as a default value in a table. The error message will list the object referencing the sequence.  
+  
+ To list all sequence objects in the database, execute the following statement.  
+  
+```sql  
+SELECT sch.name + '.' + seq.name AS [Sequence schema and name]   
+    FROM sys.sequences AS seq  
+    JOIN sys.schemas AS sch  
+        ON seq.schema_id = sch.schema_id ;  
+GO  
+```  
+  
+## Security  
+  
+### Permissions  
+ Requires ALTER or CONTROL permission on the schema.  
+  
+### Audit  
+ To audit **DROP SEQUENCE**, monitor the **SCHEMA_OBJECT_CHANGE_GROUP**.  
+  
+## Examples  
+ The following example removes a sequence object named `CountBy1` from the current database.  
+  
+```sql  
+DROP SEQUENCE CountBy1 ;  
+GO  
+```  
+  
+## Related content
+
+- [ALTER SEQUENCE (Transact-SQL)](alter-sequence-transact-sql.md)
+- [CREATE SEQUENCE (Transact-SQL)](create-sequence-transact-sql.md)
+- [NEXT VALUE FOR (Transact-SQL)](../functions/next-value-for-transact-sql.md)
+- [Sequence numbers](../../relational-databases/sequence-numbers/sequence-numbers.md)

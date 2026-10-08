@@ -1,0 +1,108 @@
+---
+title: "SQL Server Certificates and Asymmetric Keys"
+description: Learn about certificates and asymmetric keys in SQL Server, including externally generated or SQL Server generated certificates, tools, and related tasks.
+author: VanMSFT
+ms.author: vanto
+ms.date: "01/22/2026"
+ai-usage: ai-assisted
+ms.service: sql
+ms.subservice: security
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "security [SQL Server], certificates and asymmetric keys"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# SQL Server Certificates and Asymmetric Keys
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+ Public Key Cryptography is a form of message secrecy in which a user creates a *public* key and a *private* key. The private key is kept secret, whereas the public key can be distributed to others. Although the keys are mathematically related, the private key can't be easily derived by using the public key.
+ 
+ The public key can be used to encrypt data that only the corresponding private key can decrypt. This usage provides confidentiality when sending encrypted messages to the owner of the private key.
+ 
+ Similarly, the owner of a private key can sign data (encrypt a hash) that can be verified (decrypted) with the public key. This usage forms the basis of digital certificates, in which information contained in the certificate is signed by the owner of a private key, assuring the authenticity of the contents and the identity of the signer. Since the encrypting and decrypting keys are different, they're known as *asymmetric* keys.
+  
+ Certificates and asymmetric keys are both ways to use asymmetric encryption. Certificates are often used as containers for asymmetric keys because they can contain more information, such as expiry dates and issuers. There's no difference between the two mechanisms for the cryptographic algorithm, and no difference in strength given the same key length. Generally, you use a certificate to encrypt other types of encryption keys in a database or to sign code modules.  
+  
+ Certificates and asymmetric keys can decrypt data that the other encrypts. Generally, you use asymmetric encryption to encrypt a symmetric key for storage in a database.  
+  
+ A public key doesn't have a particular format like a certificate would have, and you can't export it to a file.  
+  
+> **Note:**  
+>   SQL Server 
+ contains features that enable you to create and manage certificates and keys for use with the server and database.  SQL Server 
+ can't be used to create and manage certificates and keys with other applications or in the operating system.  
+  
+## Certificates  
+ A certificate is a digitally signed security object that contains a public (and optionally a private) key for  SQL Server 
+. You can use externally generated certificates or  SQL Server 
+ can generate certificates.  
+  
+> **Note:**  
+>   SQL Server 
+ certificates comply with the IETF X.509v3 certificate standard.  
+  
+ Certificates are useful because of the option of both exporting and importing keys to X.509 certificate files. The syntax for creating certificates allows for creation options for certificates such as an expiry date.  
+  
+### Using a Certificate in SQL Server  
+ Certificates can be used to help secure connections, in database mirroring, to sign packages and other objects, or to encrypt data or connections. The following table lists additional resources for certificates in  SQL Server 
+.  
+  
+| Topic | Description |
+| --- | --- |
+| [CREATE CERTIFICATE &#40;Transact-SQL&#41;](../../t-sql/statements/create-certificate-transact-sql.md) | Explains the command for creating certificates. |
+| [Identify the Source of Packages with Digital Signatures](../../integration-services/security/identify-the-source-of-packages-with-digital-signatures.md) | Shows information about how to use certificates to sign software packages. |
+| [Use Certificates for a Database Mirroring Endpoint &#40;Transact-SQL&#41;](../../database-engine/database-mirroring/use-certificates-for-a-database-mirroring-endpoint-transact-sql.md) | Covers information about how to use certificates with Database Mirroring. |
+  
+## Asymmetric Keys  
+ Asymmetric keys are used for securing symmetric keys. They can also be used for limited data encryption and to digitally sign database objects. An asymmetric key consists of a private key and a corresponding public key. For more information about asymmetric keys, see [CREATE ASYMMETRIC KEY &#40;Transact-SQL&#41;](../../t-sql/statements/create-asymmetric-key-transact-sql.md).  
+  
+ Asymmetric keys can be imported from strong name key files, but they can't be exported. They also don't have expiry options. Asymmetric keys can't encrypt connections.  
+  
+### Using an Asymmetric Key in SQL Server  
+ Asymmetric keys can be used to help secure data or sign plaintext. The following table lists additional resources for asymmetric keys in  SQL Server 
+.  
+  
+| Topic | Description |
+| --- | --- |
+| [CREATE ASYMMETRIC KEY &#40;Transact-SQL&#41;](../../t-sql/statements/create-asymmetric-key-transact-sql.md) | Explains the command for creating asymmetric keys. |
+| [SIGNBYASYMKEY &#40;Transact-SQL&#41;](../../t-sql/functions/signbyasymkey-transact-sql.md) | Displays the options for signing objects. |
+  
+## Tools  
+  Microsoft 
+ provides tools and utilities that will generate certificates and strong name key files. These tools offer a richer amount of flexibility in the key generation process than the  SQL Server 
+ syntax. You can use these tools to create RSA keys with more complex key lengths and then import them into  SQL Server 
+. The following table shows where to find these tools.  
+  
+| Tool | Purpose |
+| --- | --- |
+| [New-SelfSignedCertificate](https://learn.microsoft.com/powershell/module/pki/new-selfsignedcertificate) | Creates self-signed certificates. |
+| [makecert](https://learn.microsoft.com/windows/desktop/SecCrypto/makecert) | Creates certificates. Deprecated in favor of **New-SelfSignedCertificate**. |
+| [sn](https://learn.microsoft.com/dotnet/framework/tools/sn-exe-strong-name-tool) | Creates strong names for symmetric keys. |
+  
+## Related content
+
+- [Choose an encryption algorithm](encryption/choose-an-encryption-algorithm.md)
+- [CREATE SYMMETRIC KEY (Transact-SQL)](../../t-sql/statements/create-symmetric-key-transact-sql.md)
+- [CREATE CERTIFICATE (Transact-SQL)](../../t-sql/statements/create-certificate-transact-sql.md)
+- [sys.certificates (Transact-SQL)](../system-catalog-views/sys-certificates-transact-sql.md)
+- [Transparent data encryption (TDE)](encryption/transparent-data-encryption.md)

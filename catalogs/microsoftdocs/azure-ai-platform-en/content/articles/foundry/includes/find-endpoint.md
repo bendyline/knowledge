@@ -1,0 +1,14 @@
+---
+title: Include file
+description: Include file
+author: sgilley
+ms.author: sgilley
+ms.service: microsoft-foundry
+ms.topic: include
+ms.date: 08/21/2025
+ms.custom: include file
+---
+
+Find your project endpoint on the welcome screen of the project. 
+
+Screenshot of Microsoft Foundry Models welcome screen showing the endpoint URL and copy button.

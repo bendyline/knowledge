@@ -1,0 +1,62 @@
+---
+title: Create a Vision resource
+author: PatrickFarley
+manager: mcleans
+ms.service: foundry-tools
+ms.topic: include
+ms.date: 02/13/2023
+ms.author: pafarley
+---
+
+#### [Azure Vision in Foundry Tools](#tab/computer-vision)
+
+1. Select the following link to create a Vision resource:
+   - [Vision](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision)
+
+1. On the **Create** page, provide the following information:
+   [Include unavailable in this source snapshot: ./cognitive-resource-project-details.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/includes/quickstarts/create-vision-resource-portal.md)
+1. Mark your acknowledgment of the Responsible AI terms and then select **Review + create**.
+
+#### [Face](#tab/face)
+
+1. Select the following link to create a Face resource:
+   - [Face](https://portal.azure.com/#create/Microsoft.CognitiveServicesFace)
+1. On the **Create** page, provide the following information:
+
+   [Include unavailable in this source snapshot: ./cognitive-resource-project-details.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/includes/quickstarts/create-vision-resource-portal.md)
+1. Mark your acknowledgment of the Face terms of use and then select **Review + create**.
+
+#### [Custom Vision](#tab/custom-vision)
+
+1. Select the following link to create a Custom Vision resource:
+   - [Custom Vision service](https://portal.azure.com/#create/Microsoft.CognitiveServicesCustomVision)
+1. On the **Create** page, provide the following information:
+
+    | Project details | Description |
+    | --- | --- |
+    | **Create options** | Custom Vision uses two separate resources together. The **Training** resource lets you train models, and the **Prediction** resource lets you publish and query models. Select **Both** if you're starting the project from scratch. |
+    | **Subscription** | Select one of your available Azure subscriptions. |
+    | **Resource group** | The Azure resource group that contains your Foundry Tools resource. You can create a new group or add it to a pre-existing group. |
+    | **Region** | The location of your Microsoft Foundry resource. Different locations may introduce latency, but have no impact on the runtime availability of your resource. |
+    | **Name** | A descriptive name for your Foundry Tools resource. For example, *MyCognitiveServicesResource*. |
+    | **Training pricing tier** | The cost of your Foundry Tools account depends on the options you choose and your usage. For more information, see the API [pricing details](../../custom-vision-service/limits-and-quotas.md). |
+    | **Prediction pricing tier** | The cost of your Foundry Tools account depends on the options you choose and your usage. For more information, see the API [pricing details](../../custom-vision-service/limits-and-quotas.md). |
+1. Select **Review + create**.
+
+#### [Document Intelligence](#tab/form-recognizer)
+
+1. Select the following link to create a Document Intelligence resource:
+   - [Document Intelligence service](https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer)
+1. On the **Create** page, provide the following information:
+
+    | Project details | Description |
+    | --- | --- |
+    | **Subscription** | Select one of your available Azure subscriptions. |
+    | **Resource group** | Select the Azure resource group that contains your Foundry Tools resource. You can create a new group or add it to a pre-existing group. |
+    | **Region** | The location of your Foundry resource. Different locations may introduce latency, but have no impact on the runtime availability of your resource. |
+    | **Name** | A descriptive name for your Foundry Tools resource. For example, *MyCognitiveServicesResource*. |
+    | **Pricing tier** | The cost of your Foundry Tools account depends on the options you choose and your usage. For more information, see [service quotas and limits](../../document-intelligence/service-limits.md) and [pricing details](https://azure.microsoft.com/pricing/details/form-recognizer/). |
+
+1. Select **Review + create**.
+
+---

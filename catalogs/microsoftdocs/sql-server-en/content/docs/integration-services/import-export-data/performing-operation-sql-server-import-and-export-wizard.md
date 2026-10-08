@@ -1,0 +1,61 @@
+---
+title: "Performing Operation (SQL Server Import and Export Wizard)"
+description: "Performing Operation (SQL Server Import and Export Wizard)"
+ms.date: "01/11/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+f1_keywords:
+  - "sql13.dts.impexpwizard.performingoperation.f1"
+---
+# Performing Operation (SQL Server Import and Export Wizard)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+After you review the choices that you made in the wizard and click **Finish** on the **Complete the Wizard** page, the  SQL Server 
+ Import and Export Wizard shows **Performing Operation**. On this page, you see the progress and the result of the operation that you configured on the preceding pages. You don't have to take any action on this page.
+
+## Screen shot - Operation in progress 
+ The following screen shot shows the **Performing Operation** page of the wizard while the operation is still in progress.  
+  
+ Performing operation page of the Import and Export Wizard  
+
+## Screen shot - Operation completed 
+ The following screen shot shows the **Performing Operation** page of the wizard after the operation is complete. Click on an item in the **Message** column to get more info about the corresponding step.  
+  
+ Screenshot of the Success page of the Import and Export Wizard.  
+  
+## Watch the progress of the operation
+ **Action**  
+ Displays each step of the operation.  
+  
+ **Status**  
+ Displays the success or failure of each step.  
+  
+ **Message**  
+ Displays informational and error messages about the step. Click on an item in this column to get more info about the corresponding step.
+
+## Interrupt the operation or save the results
+ **Stop**  
+ Interrupt the operation, if necessary, by clicking the **Stop** button.  
+  
+ **Report**  
+ View a report of the results, save the report to a file, copy the report to the clipboard, or send the report by e-mail.  
+  
+## What's next?  
+ After the operation that you configured runs and completes successfully, you're finished running the  SQL Server 
+ Import and Export Wizard.  
+-   If you ran the operation immediately, you can open the destination that you selected to review the data that the wizard copied.  
+-   If you saved the SSIS package created by the wizard, you can open it in SQL Server Data Tools to customize it and reuse it. For info about how to customize the saved package and run it again later, see [Save SSIS Package](save-ssis-package-sql-server-import-and-export-wizard.md).
+
+## Related content
+
+- [Get started with this simple example of the Import and Export Wizard](get-started-with-this-simple-example-of-the-import-and-export-wizard.md)

@@ -1,0 +1,98 @@
+---
+title: PowerToys File Explorer Add-ons Utility for Windows
+description: PowerToys File Explorer add-ons enable preview pane and thumbnail renderers for SVG, PDF, Markdown, and source code files in Windows. Download and configure these utilities to enhance your file browsing experience.
+ms.date: 08/20/2025
+ms.topic: concept-article
+ms.localizationpriority: medium
+no-loc: [PowerToys, Windows, File Explorer, Monaco]
+# customer intent: As a Windows power user, I want to learn how to use the File Explorer add-ons utility in PowerToys.
+---
+
+# File Explorer add-ons utility
+
+PowerToys File Explorer add-ons enhance Windows File Explorer with preview pane and thumbnail support for multiple file types including SVG, PDF, Markdown, and source code files. These utilities allow you to preview file contents directly in File Explorer without opening separate applications.
+
+> **Warning:**
+> Enabling the preview handlers will override other preview handlers already installed - there have been reports of incompatibility between Outlook and the PDF Preview Handler.
+
+## Preview Pane previewers
+
+Preview Pane is an existing feature in Windows File Explorer which allows you to see a preview of the file's contents in the view's reading pane. PowerToys adds multiple extensions: Markdown, SVG, PDF, G-code, Binary G-code (BGCODE), and QOI. In addition to those, PowerToys also adds support for source code files for more than 150 file extensions.
+
+Preview Pane supports:
+
+- SVG images (.svg)
+- Markdown files (.md)
+- Source code files (.cs, .cpp, .rs, …)
+- PDF files (.pdf)
+- G-code files (.gcode)
+- Binary G-code files (.bgcode)
+- QOI images (.qoi)
+
+### Settings for SVG images previewer
+
+Expand the **Scalable Vector Graphics** section to change the following settings.
+
+| Setting | Description |
+| :--- | :--- |
+| Checkered shade | Set the background shade for SVG previews. This helps visualize transparent areas in SVG images. |
+
+### Settings for Source code files previewer
+
+Expand the **Source code files (Monaco)** section to change the following settings.
+
+| Setting | Description |
+| :--- | :--- |
+| Wrap text | Enable or disable word wrapping. |
+| Try to format the source for preview | Enable or disable formatting of the source code for json and xml files.<br />The original file stays unchanged. |
+| Maximum file size to preview | Maximum file size in kilobytes to preview. |
+| Font size | Font size of the editor in points. Recommended: 14pt. |
+| Enable sticky scroll | When enabled, keeps the current scope (such as function or class headers) pinned at the top of the preview while scrolling. |
+| Show minimap | When enabled, displays a minimap overview of the code in the preview window. |
+
+### Enabling Preview Pane support
+
+To enable preview support, set the extension to **On**.
+
+Screenshot of PowerToys settings page showing File Explorer add-ons toggle enabled.
+
+If the preview pane does not appear to work after setting the extension to **On**, there is an advanced setting in Windows that may be blocking the preview handler. Go to **Options** in Windows File Explorer and under the **View** tab, you will see a list of **Advanced settings**. Ensure that **Show preview handlers in preview pane** is selected in order for the preview pane to display.
+
+### Enabling the Explorer pane in Windows 11
+
+Open Windows File Explorer, go to **View** in the Explorer ribbon and select **Preview pane**.
+
+Screenshot of Windows 11 File Explorer showing PowerToys preview pane functionality.
+
+### Enabling the Explorer pane in Windows 10
+
+Open Windows File Explorer, go to **View** in the Explorer ribbon and select **Preview Pane**.
+
+Screenshot of Windows 10 File Explorer showing PowerToys preview pane functionality.
+
+> **Note:**
+> It isn't possible to change the background color of the preview pane, so if you're working with transparent images with white shapes, you may not be able to see them in the preview.
+
+## Thumbnail previews
+
+To enable thumbnail preview support, set the extension to **On**.
+
+Thumbnail preview supports:
+
+- SVG images (.svg)
+- PDF files (.pdf)
+- G-code files (.gcode)
+- Binary G-code files (.bgcode)
+- STL files (.stl)
+- QOI images (.qoi)
+
+> **Note:**
+> A reboot may be required after enabling the thumbnail previewer for the settings to take effect. Thumbnails might not appear on paths managed by cloud storage solutions like OneDrive, since these solutions may get their thumbnails from the cloud instead of generating them locally.
+
+### Settings for Stereolithography (.stl) files
+
+Expand the **Stereolithography** section to change the background color.
+
+## Install PowerToys
+
+This utility is part of the [Microsoft PowerToys](https://learn.microsoft.com/windows/powertoys/) utilities for power users. It provides a set of useful utilities to tune and streamline your Windows experience for greater productivity. To install PowerToys, see [Installing PowerToys](https://learn.microsoft.com/windows/powertoys/install).

@@ -1,0 +1,1150 @@
+{
+  "schemaVersion": 1,
+  "repository": "dotnet/docs",
+  "revision": "77bc2511d224447ac13474e7757e3600ad30c3de",
+  "documents": 20779,
+  "codeDocuments": 6905,
+  "unresolved": [
+    {
+      "path": "docs/visual-basic/misc/sorry-we-don-t-have-specifics-on-this-visual-basic-error.md",
+      "kind": "Original metadata retained as code",
+      "target": "Metadata exceeds 12000 bytes; retained in the article body to fit Gezk document metadata limits"
+    },
+    {
+      "path": "docs/ai/quickstarts/build-mcp-server.md",
+      "kind": "Code reference",
+      "target": "snippets/mcp-server/.mcp/server.json"
+    },
+    {
+      "path": "docs/ai/resources/azure-ai.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/ai/includes/azure-ai-for-developers-dotnet.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/credential-chains.md",
+      "kind": "Code reference",
+      "target": "../snippets/authentication/credential-chains/dac-logs.txt"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-broker.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/broker-introduction.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-broker.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/broker-windows.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-broker.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/broker-mac.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-broker.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/broker-linux.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-broker.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/broker-configure-application.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-broker.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/broker-assign-roles.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-dev-accounts.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/create-entra-group.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-dev-accounts.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/assign-group-roles.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-dev-accounts.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/sign-in-visual-studio-code.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-dev-accounts.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/sign-in-azure-cli.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-dev-accounts.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/sign-in-azure-developer-cli.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-dev-accounts.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/sign-in-azure-powershell.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-service-principal.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/create-app-registration.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-service-principal.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/create-entra-group.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-service-principal.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/assign-group-roles.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/local-development-service-principal.md",
+      "kind": "Include",
+      "target": "<../includes/implement-service-principal.md>"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/on-premises-apps.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/create-app-registration.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/system-assigned-managed-identity.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/managed-identity-concepts.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/system-assigned-managed-identity.md",
+      "kind": "Include",
+      "target": "<../includes/implement-system-assigned-identity.md>"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/user-assigned-managed-identity.md",
+      "kind": "Include",
+      "target": "~/azure-dev-docs/articles/includes/authentication/managed-identity-concepts.md"
+    },
+    {
+      "path": "docs/azure/sdk/authentication/user-assigned-managed-identity.md",
+      "kind": "Include",
+      "target": "<../includes/implement-user-assigned-identity.md>"
+    },
+    {
+      "path": "docs/core/diagnostics/metrics-collection.md",
+      "kind": "Code reference",
+      "target": "snippets/Metrics/prometheus.yml"
+    },
+    {
+      "path": "docs/core/docker/build-container.md",
+      "kind": "Code reference",
+      "target": "snippets/App/Dockerfile"
+    },
+    {
+      "path": "docs/core/extensions/cloud-service.md",
+      "kind": "Code reference",
+      "target": "snippets/workers/cloud-service/Dockerfile"
+    },
+    {
+      "path": "docs/core/extensions/configuration-providers.md",
+      "kind": "Code reference",
+      "target": "snippets/configuration/console-ini/appsettings.ini"
+    },
+    {
+      "path": "docs/core/extensions/localization.md",
+      "kind": "Code reference",
+      "target": "snippets/localization/example/MessageService.resx"
+    },
+    {
+      "path": "docs/core/extensions/localization.md",
+      "kind": "Code reference",
+      "target": "snippets/localization/example/MessageService.sr-Cyrl-RS.resx"
+    },
+    {
+      "path": "docs/core/extensions/localization.md",
+      "kind": "Code reference",
+      "target": "snippets/localization/example/MessageService.sr-Latn.resx"
+    },
+    {
+      "path": "docs/core/extensions/localization.md",
+      "kind": "Code reference",
+      "target": "snippets/localization/example/ParameterizedMessageService.resx"
+    },
+    {
+      "path": "docs/core/extensions/localization.md",
+      "kind": "Code reference",
+      "target": "snippets/localization/example/ParameterizedMessageService.sr-Cyrl-RS.resx"
+    },
+    {
+      "path": "docs/core/extensions/localization.md",
+      "kind": "Code reference",
+      "target": "snippets/localization/example/ParameterizedMessageService.sr-Latn.resx"
+    },
+    {
+      "path": "docs/core/extensions/logging/console-log-formatter.md",
+      "kind": "Code reference",
+      "target": "../snippets/logging/console-formatter-json/example-output.txt"
+    },
+    {
+      "path": "docs/core/extensions/workers.md",
+      "kind": "Code reference",
+      "target": "snippets/workers/background-service/Dockerfile"
+    },
+    {
+      "path": "docs/core/testing/unit-testing-visual-basic-with-nunit.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/core/testing/unit-testing-vb-nunit/vb/PrimeService.Tests/PrimeService.Tests.vbproj#Packages"
+    },
+    {
+      "path": "docs/csharp/fundamentals/tutorials/file-based-programs.md",
+      "kind": "Code reference",
+      "target": "./snippets/file-based-programs/input.txt"
+    },
+    {
+      "path": "docs/csharp/fundamentals/tutorials/file-based-programs.md",
+      "kind": "Code reference",
+      "target": "./snippets/file-based-programs/AsciiArt"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-collections.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToCollections/names1.txt"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-collections.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToCollections/names2.txt"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-collections.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToCollections/names.csv"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-collections.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToCollections/scores.csv"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-files-and-directories.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/spreadsheet1.csv"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-files-and-directories.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/names1.txt"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-files-and-directories.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/names2.txt"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-files-and-directories.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/scores.csv"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-files-and-directories.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/names.csv"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-files-and-directories.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/scores.csv"
+    },
+    {
+      "path": "docs/csharp/linq/how-to-query-strings.md",
+      "kind": "Code reference",
+      "target": "./snippets/HowToFilesAndDirectories/scores.csv"
+    },
+    {
+      "path": "docs/devops/create-dotnet-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/create-dotnet-github-action/Dockerfile"
+    },
+    {
+      "path": "docs/devops/create-dotnet-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/create-dotnet-github-action/action.yml"
+    },
+    {
+      "path": "docs/devops/create-dotnet-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/create-dotnet-github-action/workflow.yml"
+    },
+    {
+      "path": "docs/devops/create-dotnet-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/create-dotnet-github-action/workflow.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-build-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-build-github-action/build-validation.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-build-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-build-github-action/build-validation.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-build-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-build-github-action/build-validation.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-build-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-build-github-action/build-validation.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-build-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-build-github-action/build-validation.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-publish-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-publish-github-action/publish-app.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-publish-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-publish-github-action/publish-app.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-publish-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-publish-github-action/publish-app.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-publish-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-publish-github-action/publish-app.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-publish-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-publish-github-action/publish-app.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-secure-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-secure-github-action/codeql-analysis.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-secure-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-secure-github-action/codeql-analysis.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-secure-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-secure-github-action/codeql-analysis.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-secure-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-secure-github-action/codeql-analysis.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-test-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-test-github-action/build-and-test.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-test-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-test-github-action/build-and-test.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-test-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-test-github-action/build-and-test.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-test-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-test-github-action/build-and-test.yml"
+    },
+    {
+      "path": "docs/devops/dotnet-test-github-action.md",
+      "kind": "Code reference",
+      "target": "snippets/dotnet-test-github-action/build-and-test.yml"
+    },
+    {
+      "path": "docs/framework/data/adonet/association-end-multiplicity.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#associationexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/association-end.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books3.edmx#associationend"
+    },
+    {
+      "path": "docs/framework/data/adonet/association-set-end.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entitycontainerexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/association-set.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entitycontainerexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/association-set.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books3.edmx#multipleassociationsets"
+    },
+    {
+      "path": "docs/framework/data/adonet/association-type.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#associationexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/complex-type.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books2.edmx#complextypeexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/complex-type.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books3.edmx#entitywithcomplextype"
+    },
+    {
+      "path": "docs/framework/data/adonet/ef/language-reference/how-to-call-custom-database-functions.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/csharp/VS_Snippets_Data/dp l2e maptodbfunction/cs/school.edmx#2"
+    },
+    {
+      "path": "docs/framework/data/adonet/ef/language-reference/isof-entity-sql.md",
+      "kind": "Malformed reference retained as code",
+      "target": "[!code-sql[DP EntityServices Concepts#TREAT_ISOF]~/samples/snippets/tsql/VS_Snippets_Data/dp entityservices concepts/tsql/entitysql.sql#treat_isof)]"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-container.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entitycontainerexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-data-model-inheritance.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books5.edmx#derivedtype"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-data-model-key-concepts.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#edmexamplecsdl"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-data-model-namespaces.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books6.edmx#importednamespace"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-key.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entityexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-key.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#compositekeyexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-set.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entitycontainerexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-set.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books2.edmx#mestexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/entity-type.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entityexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/facet.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entityexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/foreign-key-property.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books4.edmx#refconstraint"
+    },
+    {
+      "path": "docs/framework/data/adonet/model-declared-function.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books4.edmx#functionimport"
+    },
+    {
+      "path": "docs/framework/data/adonet/model-defined-function.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books4.edmx#modeldefinedfunction"
+    },
+    {
+      "path": "docs/framework/data/adonet/navigation-property.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entityexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/property.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books.edmx#entityexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/property.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books2.edmx#complextypeexample"
+    },
+    {
+      "path": "docs/framework/data/adonet/referential-integrity-constraint.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/edm_example_model/xml/books4.edmx#refconstraint"
+    },
+    {
+      "path": "docs/fundamentals/code-analysis/quality-rules/ca5393.md",
+      "kind": "Malformed reference retained as code",
+      "target": "<xref:System.Runtime.InteropServices.DllImportSearchPath?displayProperty=fullName:"
+    },
+    {
+      "path": "docs/iot/tutorials/adc.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/AdcTutorial/Program.cs"
+    },
+    {
+      "path": "docs/iot/tutorials/blink-led.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/BlinkTutorial/Program.cs"
+    },
+    {
+      "path": "docs/iot/tutorials/gpio-input.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/InputTutorial/Program.cs"
+    },
+    {
+      "path": "docs/iot/tutorials/lcd-display.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/LcdTutorial/Program.cs"
+    },
+    {
+      "path": "docs/iot/tutorials/temp-sensor.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/SensorTutorial/Program.cs"
+    },
+    {
+      "path": "docs/iot/usb.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/ft232h/ft232h.list/Program.cs"
+    },
+    {
+      "path": "docs/iot/usb.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/ft232h/ft232h.gpio/Program.cs"
+    },
+    {
+      "path": "docs/iot/usb.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/ft232h/ft232h.i2c/Program.cs"
+    },
+    {
+      "path": "docs/iot/usb.md",
+      "kind": "Code reference",
+      "target": "~/iot-samples/tutorials/ft232h/ft232h.spi/Program.cs"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/AnalyzeSentiment.cs#L1-L11"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/DataModels/SentimentData.cs#L1"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/DataModels/SentimentData.cs#L5-L13"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/DataModels/SentimentPrediction.cs#L1"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/DataModels/SentimentPrediction.cs#L5-L14"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/Startup.cs#L1-L7"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/Startup.cs#L14-L15"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/Startup.cs#L17-L30"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/Startup.cs#L32-L36"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/AnalyzeSentiment.cs#L20-L23"
+    },
+    {
+      "path": "docs/machine-learning/how-to-guides/serve-model-serverless-azure-functions-ml-net.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction/SentimentAnalysisFunctionsApp/AnalyzeSentiment.cs#L26-L44"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L1-L6"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L55-L63"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L8-L12"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/DataStructures/ImageNetData.cs#L1-L4"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/DataStructures/ImageNetData.cs#L8-L23"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/DataStructures/ImageNetPrediction.cs#L1"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/DataStructures/ImageNetPrediction.cs#L5-L9"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L15"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/DimensionsBase.cs#L3-L9"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloBoundingBox.cs#L1"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloBoundingBox.cs#L5"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloBoundingBox.cs#L7-L21"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L1-L4"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L10"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L12-L21"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L23-L26"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L28-L34"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L36-L59"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L61-L151"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L155"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L163"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L165"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L167"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L169"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L171-L172"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L174"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L176-L177"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L179-L180"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L182-L194"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L198"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L203-L207"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L209-L211"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L213"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L219-L223"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L227-L239"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L242-L243"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/YoloParser/YoloOutputParser.cs#L246"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L1-L7"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L13-L17"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L19-L24"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L26-L30"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L32-L43"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L47-L49"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L52"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L55-L58"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L61-L63"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L68-L71"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L73"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L75-L77"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/OnnxModelScorer.cs#L80-L85"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L20-L21"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L23-L27"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L30-L35"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L67-L70"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L75-L78"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L81-L84"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L87"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L91-L93"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L95-L103"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L106"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L107-L110"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L114-L119"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L122-L132"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L40-L41"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L43"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L45"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/object-detection-onnx.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/DeepLearning_ObjectDetection_Onnx/ObjectDetectionConsoleApp/Program.cs#L53"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L1-L4"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L106-L113"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L115-L122"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L6-L9"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L11"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L13"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L15"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L17-L19"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L21"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L23-L24"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L26-L35"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L37"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L49"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L52-L54"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L57-L59"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L62"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L65-L66"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L69-L72"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L39"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L41"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L42"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L78"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L80-L95"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L98-L103"
+    },
+    {
+      "path": "docs/machine-learning/tutorials/time-series-demand-forecasting.md",
+      "kind": "Code reference",
+      "target": "~/machinelearning-samples/samples/csharp/getting-started/Forecasting_BikeSharingDemand/BikeDemandForecasting/Program.cs#L44"
+    },
+    {
+      "path": "docs/standard/data/xml/how-to-transform-a-node-fragment.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XSLT_NodeFrag/XML/single.xsl#2"
+    },
+    {
+      "path": "docs/standard/data/xml/insert-xml-data-using-xpathnavigator.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XPathXMLExamples/XML/contosoBooks.xsd#3"
+    },
+    {
+      "path": "docs/standard/data/xml/modify-xml-data-using-xpathnavigator.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XPathXMLExamples/XML/contosoBooks.xsd#3"
+    },
+    {
+      "path": "docs/standard/data/xml/schema-validation-using-xpathnavigator.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XPathXMLExamples/XML/contosoBooks.xsd#3"
+    },
+    {
+      "path": "docs/standard/data/xml/schema-validation-using-xpathnavigator.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XPathXMLExamples/XML/contosoBooks.xsd#3"
+    },
+    {
+      "path": "docs/standard/data/xml/schema-validation-using-xpathnavigator.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XPathXMLExamples/XML/contosoBooks.xsd#3"
+    },
+    {
+      "path": "docs/standard/data/xml/script-blocks-using-msxsl-script.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XSLT_Script/XML/calc.xsl#3"
+    },
+    {
+      "path": "docs/standard/data/xml/validating-an-xml-document-in-the-dom.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XPathXMLExamples/XML/contosoBooks.xsd#3"
+    },
+    {
+      "path": "docs/standard/data/xml/xml-schema-xsd-validation-with-xmlschemaset.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XSDInference Examples/XML/contosoBooks.xsd#6"
+    },
+    {
+      "path": "docs/standard/data/xml/xslt-parameters.md",
+      "kind": "Code reference",
+      "target": "../../../../samples/snippets/xml/VS_Snippets_Data/XSLT_Param/XML/discount.xsl#3"
+    },
+    {
+      "path": "docs/visual-basic/language-reference/error-messages/name-name-is-not-declared.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/visualbasic/language-reference/error-messages/bc30451/vbruntime.vbproj?highlight=6"
+    },
+    {
+      "path": "docs/visual-basic/language-reference/objects/my-request-object.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/visualbasic/VS_Snippets_VBCSharp/VbVbalrMyWeb/VB/Default.aspx#1"
+    },
+    {
+      "path": "docs/visual-basic/language-reference/objects/my-response-object.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/visualbasic/VS_Snippets_VBCSharp/VbVbalrMyWeb/VB/Default.aspx#1"
+    },
+    {
+      "path": "docs/visual-basic/misc/bc30456.md",
+      "kind": "Code reference",
+      "target": "~/samples/snippets/visualbasic/language-reference/error-messages/bc30456/bc30456.vbproj?highlight=6"
+    }
+  ],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

@@ -1,0 +1,1930 @@
+---
+title: ASP.NET Core Blazor authentication and authorization
+ai-usage: ai-assisted
+author: guardrex
+description: Learn about Blazor authentication and authorization scenarios.
+monikerRange: '>= aspnetcore-3.1'
+ms.author: wpickett
+ms.date: 09/18/2026
+uid: blazor/security/index
+---
+# ASP.NET Core Blazor authentication and authorization
+
+**Applies to: < aspnetcore-10.0**
+> **Note:**
+> This isn't the latest version of this article. For the current release, see the [.NET 10 version of this article](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/includes?view=aspnetcore-10.0\&preserve-view=true).
+
+
+**Applies to: \= aspnetcore-7.0 || = aspnetcore-5.0 || = aspnetcore-3.0 || = aspnetcore-3.1 || = aspnetcore-2.0**
+> **Warning:**
+> This version of ASP.NET Core is no longer supported. For more information, see the [.NET and .NET Core Support Policy](https://dotnet.microsoft.com/platform/support/policy/dotnet-core). For the current release, see the [.NET 10 version of this article](https://github.com/dotnet/AspNetCore.Docs/blob/970aa3fd243493b204e11c0f29472fd3f0399fee/aspnetcore/includes?view=aspnetcore-10.0\&preserve-view=true).
+
+
+
+<!-- Exclude until .NET 11 preview is added to the version selector collection
+(add triple colon here) moniker range="> aspnetcore-10.0"
+> [!IMPORTANT]
+> This information relates to a pre-release product that may be substantially modified before it's commercially released. Microsoft makes no warranties, express or implied, with respect to the information provided here.
+>
+> For the current release, see the [.NET 10 version of this article](?view=aspnetcore-10.0&preserve-view=true).
+(add triple colon here) moniker-end
+-->
+
+<!--
+Include either this file or 'not-latest-version-without-not-supported-content.md' at the top 
+of articles.
+
+'not-latest-version.md' (this file): Includes not-supported content.
+'not-latest-version-without-not-supported-content.md': Doesn't include not-supported content.
+
+Use this file in articles that target >=7.0. For articles that target >=8.0 prior to 10.0
+reaching EOL, 'not-latest-version-without-not-supported-content.md' must be used to avoid
+a zone/file moniker range mismatch error.
+
+When a new version is released, it might be necessary to temporarily comment out the current 
+version moniker range section until the new moniker is created.
+
+Markdown to include this file:
+
+[!INCLUDE[](~/includes/not-latest-version.md)]
+-->
+
+
+This article describes ASP.NET Core's support for the configuration and management of security in Blazor apps.
+
+Blazor uses the existing ASP.NET Core authentication mechanisms to establish the user's identity. The exact mechanism depends on how the Blazor app is hosted, server-side or client-side.
+
+Security scenarios differ between authorization code running server-side and client-side in Blazor apps. For authorization code that runs on the server, authorization checks are able to enforce access rules for areas of the app and components. Because client-side code execution can be tampered with, authorization code executing on the client can't be trusted to absolutely enforce access rules or control the display of client-side content.
+
+**Applies to: \>= aspnetcore-8.0**
+
+If authorization rule enforcement must be guaranteed, don't implement authorization checks in client-side code. Build a Blazor Web App that only relies on server-side rendering (SSR) for authorization checks and rule enforcement.
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+If authorization rule enforcement and the security of data and code must be guaranteed, don't develop a client-side app. Build a Blazor Server app.
+
+
+
+[Razor Pages authorization conventions](../../razor-pages/security/authorization/conventions.md) don't apply to routable Razor components. If a non-routable Razor component is [embedded in a page of a Razor Pages app](../components/integration.md), the page's authorization conventions indirectly affect the Razor component along with the rest of the page's content.
+
+**Applies to: < aspnetcore-8.0**
+
+ASP.NET Core Identity is designed to work in the context of HTTP request and response communication, which generally isn't the Blazor app client-server communication model. ASP.NET Core apps that use ASP.NET Core Identity for user management should use Razor Pages instead of Razor components for Identity-related UI, such as user registration, login, logout, and other user management tasks. Building Razor components that directly handle Identity tasks is possible for several scenarios but isn't recommended or supported by Microsoft.
+
+ASP.NET Core abstractions, such as [Microsoft.AspNetCore.Identity.SignInManager%601](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Identity.SignInManager%25601) and [Microsoft.AspNetCore.Identity.UserManager%601](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Identity.UserManager%25601), aren't supported in Razor components. For more information on using ASP.NET Core Identity with Blazor, see [Scaffold ASP.NET Core Identity into a server-side Blazor app](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fscaffold-identity%23scaffold-identity-into-a-server-side-blazor-app).
+
+
+
+> **Note:**
+> The code examples in this article adopt [nullable reference types (NRTs) and .NET compiler null-state static analysis](https://learn.microsoft.com/search/?terms=migration%2F50-to-60%23nullable-reference-types-nrts-and-net-compiler-null-state-static-analysis), which are supported in ASP.NET Core in .NET 6 or later. When targeting .NET 5 or earlier, remove the null type designation (`?`) from examples in this article.
+
+## Securely maintain sensitive data and credentials
+
+Don't store app secrets, connection strings, credentials, passwords, personal identification numbers (PINs), private .NET/C# code, or private keys/tokens in client-side code, which is ***always insecure***. Client-side Blazor code should access secure services and databases through a secure web API that you control.
+
+In test/staging and production environments, server-side Blazor code and web APIs should use secure authentication flows that avoid maintaining credentials within project code or configuration files. Outside of local development testing, we recommend avoiding the use of environment variables to store sensitive data, as environment variables aren't the most secure approach. For local development testing, the [Secret Manager tool](../../security/app-secrets.md) is recommended for securing sensitive data. For more information, see the following resources:
+
+* [Secure authentication flows (ASP.NET Core documentation)](https://learn.microsoft.com/search/?terms=security%2Findex%23secure-authentication-flows)
+* [Managed identities for Microsoft Azure services (this article)](#managed-identities-for-microsoft-azure-services)
+
+For client-side and server-side local development and testing, use the [Secret Manager tool](../../security/app-secrets.md) to secure sensitive credentials.
+
+## Managed identities for Microsoft Azure services
+
+For Microsoft Azure services, we recommend using *managed identities*. Managed identities securely authenticate to Azure services without storing credentials in app code. For more information, see the following resources:
+
+* [What are managed identities for Azure resources? (Microsoft Entra documentation)](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview)
+* Azure services documentation
+  * [Managed identities in Microsoft Entra for Azure SQL](https://learn.microsoft.com/azure/azure-sql/database/authentication-azure-ad-user-assigned-managed-identity)
+  * [How to use managed identities for App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
+
+**Applies to: \>= aspnetcore-8.0**
+
+## Antiforgery support
+
+The Blazor project template:
+
+
+
+**Applies to: \>= aspnetcore-11.0**
+
+* Enables automatic Cross-Site Request Forgery (CSRF) protection middleware in apps built with `WebApplication.CreateBuilder`. The middleware inspects the `Sec-Fetch-Site` and `Origin` headers on unsafe HTTP methods and records a validation verdict on the request. Blazor server-side rendering (SSR) form posts enforce that verdict and return `400 Bad Request` for cross-origin form posts that aren't trusted.
+* Implicitly adds token-based antiforgery *services* to the app when [Microsoft.Extensions.DependencyInjection.RazorComponentsServiceCollectionExtensions.AddRazorComponents%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.RazorComponentsServiceCollectionExtensions.AddRazorComponents%252A) is called in the `Program` file.
+
+Antiforgery *middleware* isn't automatically included in the request processing pipeline without explicitly calling [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A).
+
+To explicitly add antiforgery middleware, call [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) after the call to [Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseRouting%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseRouting%252A). If there are calls to [Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseRouting%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseRouting%252A) and [Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseEndpoints%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseEndpoints%252A), the call to [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) must go between them. A call to [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) must be placed after calls to [Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%252A) and [Microsoft.AspNetCore.Builder.AuthorizationAppBuilderExtensions.UseAuthorization%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AuthorizationAppBuilderExtensions.UseAuthorization%252A).
+
+Adding token-based antiforgery middleware doesn't replace the automatic header-based CSRF protection middleware. When an app calls [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A), both defense mechanisms run for a form post:
+
+* The header-based CSRF protection middleware runs first and records its verdict.
+* Antiforgery middleware performs token-based validation.
+
+The token-based result from antiforgery middleware is authoritative and overrides the earlier header-based CSRF middleware verdict.
+
+To disable the automatic header-based CSRF protection middleware, set the `DisableCsrfProtection` configuration key to true. For example, use the app settings file (`appsettings.json`) to disable the middleware:
+
+```json
+{
+  "DisableCsrfProtection": true
+}
+```
+
+The `DisableCsrfProtection` configuration setting can be supplied by any configuration source, including via an environment variable (`DisableCsrfProtection=true`).
+
+> **Warning:**
+> Disabling the automatic CSRF protection middleware removes the default header-based (`Sec-Fetch-Site`/`Origin`) protection for the entire app. Only disable it if you provide an alternative CSRF defense, such as explicitly adopting token-based antiforgery middleware by calling [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A).
+
+For more information, see [Automatic CSRF protection](https://learn.microsoft.com/search/?terms=security%2Fanti-request-forgery%23automatic-csrf-protection-in-aspnet-core).
+
+> **Important:**
+> The following guidance on the [Microsoft.AspNetCore.Components.Forms.AntiforgeryToken](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.AntiforgeryToken) component and the [Microsoft.AspNetCore.Components.Forms.AntiforgeryStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.AntiforgeryStateProvider) service only apply to an app that explicitly adopts token-based antiforgery middleware by calling [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) in its request processing pipeline.
+
+
+
+**Applies to: \>= aspnetcore-8.0 < aspnetcore-11.0**
+
+* Adds antiforgery services automatically when [Microsoft.Extensions.DependencyInjection.RazorComponentsServiceCollectionExtensions.AddRazorComponents%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.RazorComponentsServiceCollectionExtensions.AddRazorComponents%252A) is called in the `Program` file.
+* Adds antiforgery middleware by calling [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) in its request processing pipeline in the `Program` file and requires endpoint [antiforgery protection](../../security/anti-request-forgery.md) to mitigate the threats of Cross-Site Request Forgery (CSRF/XSRF). [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) is called after [Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%252A). A call to [Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AntiforgeryApplicationBuilderExtensions.UseAntiforgery%252A) must be placed after calls, if present, to [Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%252A) and [Microsoft.AspNetCore.Builder.AuthorizationAppBuilderExtensions.UseAuthorization%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AuthorizationAppBuilderExtensions.UseAuthorization%252A).
+
+
+
+**Applies to: \>= aspnetcore-8.0**
+
+The [Microsoft.AspNetCore.Components.Forms.AntiforgeryToken](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.AntiforgeryToken) component renders an antiforgery token as a hidden field, and this component is automatically added to form ([Microsoft.AspNetCore.Components.Forms.EditForm](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.EditForm)) instances. For more information, see [blazor/forms/index#antiforgery-support](https://learn.microsoft.com/search/?terms=blazor%2Fforms%2Findex%23antiforgery-support).
+
+The [Microsoft.AspNetCore.Components.Forms.AntiforgeryStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.AntiforgeryStateProvider) service provides access to an antiforgery token associated with the current session. Inject the service and call its [Microsoft.AspNetCore.Components.Forms.AntiforgeryStateProvider.GetAntiforgeryToken](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.AntiforgeryStateProvider.GetAntiforgeryToken) method to obtain the current [Microsoft.AspNetCore.Components.Forms.AntiforgeryRequestToken](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Forms.AntiforgeryRequestToken). For more information, see [blazor/call-web-api#antiforgery-support](https://learn.microsoft.com/search/?terms=blazor%2Fcall-web-api%23antiforgery-support).
+
+Blazor stores request tokens in component state, which guarantees that antiforgery tokens are available to interactive components, even when they don't have access to the request.
+
+> **Note:**
+> [Antiforgery mitigation](../../security/anti-request-forgery.md) is only required when submitting form data to the server encoded as `application/x-www-form-urlencoded`, `multipart/form-data`, or `text/plain` since these are the [only valid form enctypes](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#attr-fs-enctype).
+
+For more information, see the following resources:
+
+* [security/anti-request-forgery](../../security/anti-request-forgery.md): This article is the primary ASP.NET Core article on the subject, which applies to server-side Blazor Server, the server project of Blazor Web Apps, and Blazor integration with MVC/Razor Pages.
+* [blazor/forms/index#antiforgery-support](https://learn.microsoft.com/search/?terms=blazor%2Fforms%2Findex%23antiforgery-support): The *Antiforgery support* section of the article pertains to Blazor forms antiforgery support.
+
+
+
+## Server-side Blazor authentication
+
+Server-side Blazor apps are configured for security in the same manner as ASP.NET Core apps. For more information, see the articles under [security/index](../../security/index.md).
+
+The authentication context is only established when the app starts, which is when the app first [connects to the WebSocket over a SignalR connection](../../signalr/authn-and-authz.md) with the client. Authentication can be based on a cookie or some other bearer token, but authentication is managed via the SignalR hub and entirely within the [circuit](https://learn.microsoft.com/search/?terms=blazor%2Fhosting-models%23blazor-server). The authentication context is maintained for the lifetime of the connection and is re-evaluated on reconnection.
+
+If the app must capture users for custom services or react to updates to the user, see [blazor/security/additional-scenarios#circuit-handler-to-capture-users-for-custom-services](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fadditional-scenarios%23circuit-handler-to-capture-users-for-custom-services).
+
+Blazor differs from traditional server-rendered web apps that make new HTTP requests with cookies on every page navigation. Authentication is checked during navigation events. However, cookies aren't involved. Cookies are only sent when making an HTTP request to a server, which isn't what happens when the user navigates in a Blazor app. During navigation, the user's authentication state is checked within the Blazor circuit, which you can update at any time on the server using the [`RevalidatingAuthenticationStateProvider` abstraction](#additional-security-abstractions).
+
+> **Important:**
+> Implementing a custom `NavigationManager` to achieve authentication validation during navigation isn't recommended. If the app must execute custom authentication state logic during navigation, use a [custom `AuthenticationStateProvider`](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fauthentication-state%23implement-a-custom-authenticationstateprovider).
+
+> **Note:**
+> The code examples in this article adopt [nullable reference types (NRTs) and .NET compiler null-state static analysis](https://learn.microsoft.com/search/?terms=migration%2F50-to-60%23nullable-reference-types-nrts-and-net-compiler-null-state-static-analysis), which are supported in ASP.NET Core in .NET 6 or later. When targeting .NET 5 or earlier, remove the null type designation (`?`) from the examples in this article.
+
+The built-in or custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) service obtains authentication state data from ASP.NET Core's [Microsoft.AspNetCore.Http.HttpContext.User%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Http.HttpContext.User%252A). This is how authentication state integrates with existing ASP.NET Core authentication mechanisms.
+
+### Shared state
+
+Server-side Blazor apps live in server memory, and multiple app sessions are hosted within the same process. For each app session, Blazor starts a circuit with its own dependency injection container scope, thus scoped services are unique per Blazor session.
+
+> **Warning:**
+> We don't recommend apps on the same server share state using singleton services unless extreme care is taken, as this can introduce security vulnerabilities, such as leaking user state across circuits.
+
+You can use stateful singleton services in Blazor apps if they're specifically designed for it. For example, use of a singleton memory cache is acceptable because a memory cache requires a key to access a given entry. Assuming users don't have control over the cache keys that are used with the cache, state stored in the cache doesn't leak across circuits.
+
+For general guidance on state management, see [blazor/state-management/index](../state-management/index.md).
+
+
+### Server-side security of sensitive data and credentials
+
+In test/staging and production environments, server-side Blazor code and web APIs should use secure authentication flows that avoid maintaining credentials within project code or configuration files. Outside of local development testing, we recommend avoiding the use of environment variables to store sensitive data, as environment variables aren't the most secure approach. For local development testing, the [Secret Manager tool](../../security/app-secrets.md) is recommended for securing sensitive data. For more information, see the following resources:
+
+* [Secure authentication flows (ASP.NET Core documentation)](https://learn.microsoft.com/search/?terms=security%2Findex%23secure-authentication-flows)
+* [Managed identities for Microsoft Azure services (Blazor documentation)](#managed-identities-for-microsoft-azure-services)
+
+For client-side and server-side local development and testing, use the [Secret Manager tool](../../security/app-secrets.md) to secure sensitive credentials.
+
+### Project template
+
+Create a new server-side Blazor app by following the guidance in [blazor/tooling](../tooling.md).
+
+# [Visual Studio](#tab/visual-studio)
+
+After choosing the server-side app template and configuring the project, select the app's authentication under **Authentication type**:
+
+**Applies to: \>= aspnetcore-8.0**
+
+* **None** (default): No authentication.
+* **Individual Accounts**: User accounts are stored within the app using ASP.NET Core [Identity](../../security/authentication/identity.md).
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+* **None** (default): No authentication.
+* **Individual Accounts**: User accounts are stored within the app using ASP.NET Core [Identity](../../security/authentication/identity.md).
+* **Microsoft identity platform**: For more information, see the links in the [Additional resources](#additional-resources) section.
+* **Windows**: Use Windows Authentication.
+
+
+
+# [Visual Studio Code](#tab/visual-studio-code)
+
+When issuing the .NET CLI command to create and configure the server-side Blazor app, indicate the authentication mechanism with the `-au|--auth` option:
+
+```dotnetcli
+-au {AUTHENTICATION}
+```
+
+> **Note:**
+> For the full command, see [blazor/tooling](../tooling.md).
+
+Permissible authentication values for the `{AUTHENTICATION}` placeholder are shown in the following table.
+
+**Applies to: \>= aspnetcore-8.0**
+
+| Authentication mechanism | Description |
+| --- | --- |
+| `None` (default) | No authentication |
+| `Individual` | Users stored in the app with ASP.NET Core Identity |
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+| Authentication mechanism | Description |
+| --- | --- |
+| `None` (default) | No authentication |
+| `Individual` | Users stored in the app with ASP.NET Core Identity |
+| `IndividualB2C` | Users stored in [Azure AD B2C](../../security/authentication/azure-ad-b2c.md) |
+| `SingleOrg` | Organizational authentication for a single tenant |
+| `MultiOrg` | Organizational authentication for multiple tenants |
+| `Windows` | Windows Authentication |
+
+<!-- UPDATE 15.0 - Remove this INCLUDE file and delete all content
+                   on B2C when .NET 15 releases in 2030, which is 
+                   when B2C support ends for existing customer
+                   accounts established prior to 5/1/25. -->
+
+> **Note:**
+> Azure Active Directory B2C is no longer available as a service to new customers as of May 1, 2025. For more information, see [Azure AD B2C: Frequently asked questions (FAQ)](https://learn.microsoft.com/azure/active-directory-b2c/faq).
+
+
+
+
+For more information, see the [`dotnet new`](https://learn.microsoft.com/dotnet/core/tools/dotnet-new) command in the .NET Guide.
+
+# [.NET CLI](#tab/net-cli/)
+
+When issuing the .NET CLI command to create and configure the server-side Blazor app, indicate the authentication mechanism with the `-au|--auth` option:
+
+```dotnetcli
+-au {AUTHENTICATION}
+```
+
+> **Note:**
+> For the full command, see [blazor/tooling](../tooling.md).
+
+Permissible authentication values for the `{AUTHENTICATION}` placeholder are shown in the following table.
+
+**Applies to: \>= aspnetcore-8.0**
+
+| Authentication mechanism | Description |
+| --- | --- |
+| `None` (default) | No authentication |
+| `Individual` | Users stored in the app with ASP.NET Core Identity |
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+| Authentication mechanism | Description |
+| --- | --- |
+| `None` (default) | No authentication |
+| `Individual` | Users stored in the app with ASP.NET Core Identity |
+| `IndividualB2C` | Users stored in [Azure AD B2C](../../security/authentication/azure-ad-b2c.md) |
+| `SingleOrg` | Organizational authentication for a single tenant |
+| `MultiOrg` | Organizational authentication for multiple tenants |
+| `Windows` | Windows Authentication |
+
+<!-- UPDATE 15.0 - Remove this INCLUDE file and delete all content
+                   on B2C when .NET 15 releases in 2030, which is 
+                   when B2C support ends for existing customer
+                   accounts established prior to 5/1/25. -->
+
+> **Note:**
+> Azure Active Directory B2C is no longer available as a service to new customers as of May 1, 2025. For more information, see [Azure AD B2C: Frequently asked questions (FAQ)](https://learn.microsoft.com/azure/active-directory-b2c/faq).
+
+
+
+
+For more information:
+
+* See the [`dotnet new`](https://learn.microsoft.com/dotnet/core/tools/dotnet-new) command in the .NET Guide.
+* Execute the help command for the template in a command shell:
+
+  ```dotnetcli
+  dotnet new {PROJECT TEMPLATE} --help
+  ```
+
+  In the preceding command, the `{PROJECT TEMPLATE}` placeholder is the project template.
+
+---
+
+**Applies to: \>= aspnetcore-8.0**
+
+### Blazor Identity UI (Individual Accounts)
+
+Blazor supports generating a full Blazor-based Identity UI when you choose the authentication option for *Individual Accounts*.
+
+The Blazor Web App template scaffolds Identity code for a SQL Server database. The command line version uses SQLite and includes a SQLite database for Identity.
+
+The template:
+
+* Supports interactive server-side rendering (interactive SSR) and client-side rendering (CSR) scenarios with authenticated users. 
+* Adds Identity Razor components and related logic for routine authentication tasks, such as signing users in and out. The Identity components also support advanced Identity features, such as [account confirmation and password recovery](../../security/authentication/accconfirm.md) and [multi-factor authentication](../../security/authentication/mfa.md) using a third-party app. Note that the Identity components themselves don't support interactivity.
+* Adds the Identity-related packages and dependencies.
+* References the Identity packages in the imports file (`_Imports.razor`).
+* Creates a custom user Identity class (`ApplicationUser`).
+* Creates and registers an EF Core database context (`ApplicationDbContext`).
+* Configures routing for the built-in Identity endpoints.
+* Includes Identity validation and business logic.
+
+To inspect the Blazor framework's Identity components, access them in the `Pages` and `Shared` folders of the `Components/Account` folder in the server project of the [Blazor Web App project template (`dotnet/aspnetcore` GitHub repository)](https://github.com/dotnet/aspnetcore/tree/main/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp).
+
+
+
+**Applies to: \>= aspnetcore-9.0**
+
+When you choose the Interactive WebAssembly or Interactive Auto render modes, the server handles all authentication and authorization requests, and the Identity components render statically on the server in the Blazor Web App's main project.
+
+The framework provides a custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) in both the server and client (`.Client`) projects to flow the user's authentication state to the browser. The server project calls [Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%252A), while the client project calls [Microsoft.Extensions.DependencyInjection.WebAssemblyAuthenticationServiceCollectionExtensions.AddAuthenticationStateDeserialization%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.WebAssemblyAuthenticationServiceCollectionExtensions.AddAuthenticationStateDeserialization%252A). Authenticating on the server rather than the client allows the app to access authentication state during prerendering and before the .NET WebAssembly runtime is initialized. The custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) implementations use the [Persistent Component State service](../state-management/prerendered-state-persistence.md) ([Microsoft.AspNetCore.Components.PersistentComponentState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.PersistentComponentState)) to serialize the authentication state into HTML comments and then read it back from WebAssembly to create a new [Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState) instance. For more information, see the [Manage authentication state in Blazor Web Apps](#manage-authentication-state-in-blazor-web-apps) section.
+
+Only for Interactive Server solutions, `IdentityRevalidatingAuthenticationStateProvider` (`Components/Account/IdentityRevalidatingAuthenticationStateProvider.cs`) in the server project of the [Blazor Web App project template (`dotnet/aspnetcore` GitHub repository)](https://github.com/dotnet/aspnetcore/tree/main/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp) is a server-side [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) that revalidates the security stamp for the connected user every 30 minutes an interactive circuit is connected.
+
+
+
+**Applies to: \>= aspnetcore-8.0 < aspnetcore-9.0**
+
+When you choose the Interactive WebAssembly or Interactive Auto render modes, the server handles all authentication and authorization requests, and the Identity components render statically on the server in the Blazor Web App's main project. The project template includes a [`PersistentAuthenticationStateProvider` class (reference source)](https://github.com/dotnet/aspnetcore/blob/release/8.0/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp/BlazorWeb-CSharp.Client/PersistentAuthenticationStateProvider.cs) in the `.Client` project to synchronize the user's authentication state between the server and the browser. The class is a custom implementation of [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider). The provider uses the [Persistent Component State service](../state-management/prerendered-state-persistence.md) ([Microsoft.AspNetCore.Components.PersistentComponentState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.PersistentComponentState)) to prerender the authentication state and persist it to the page.
+
+In the main project of a Blazor Web App, the authentication state provider is named either `IdentityRevalidatingAuthenticationStateProvider` in the `Components/Account` folder of the server project in the [Blazor Web App project template (`dotnet/aspnetcore` GitHub repository)](https://github.com/dotnet/aspnetcore/tree/main/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp) (Server interactivity solutions only) or the `PersistingRevalidatingAuthenticationStateProvider` (WebAssembly or Auto interactivity solutions) in the same folder.
+
+
+
+**Applies to: \>= aspnetcore-8.0**
+
+Blazor Identity depends on [Microsoft.EntityFrameworkCore.DbContext](https://learn.microsoft.com/search/?terms=Microsoft.EntityFrameworkCore.DbContext) instances not [created by a factory](https://learn.microsoft.com/search/?terms=blazor%2Fblazor-ef-core%23new-dbcontext-instances), which is intentional because [Microsoft.EntityFrameworkCore.DbContext](https://learn.microsoft.com/search/?terms=Microsoft.EntityFrameworkCore.DbContext) is sufficient for the project template's Identity components to render statically without supporting interactivity.
+
+For a description on how global interactive render modes are applied to non-Identity components while at the same time enforcing static SSR for the Identity components, see [blazor/components/render-modes#area-folder-of-static-ssr-components](https://learn.microsoft.com/search/?terms=blazor%2Fcomponents%2Frender-modes%23area-folder-of-static-ssr-components).
+
+For more information on persisting prerendered state, see [blazor/state-management/prerendered-state-persistence](../state-management/prerendered-state-persistence.md).
+
+> **Note:**
+> Documentation links to .NET reference source usually load the repository's default branch, which represents the current development for the next release of .NET. To select a tag for a specific release, use the **Switch branches or tags** dropdown list. For more information, see [How to select a version tag of ASP.NET Core source code (dotnet/AspNetCore.Docs #26205)](https://github.com/dotnet/AspNetCore.Docs/discussions/26205).
+
+
+### Manage authentication state in Blazor Web Apps
+
+*This section applies to Blazor Web Apps that adopt:*
+
+* Individual Accounts
+* *Client-side rendering (CSR, WebAssembly-based interactivity).*
+
+A client-side authentication state provider is only used within Blazor and isn't integrated with the ASP.NET Core authentication system. During prerendering, Blazor respects the metadata defined on the page and uses the ASP.NET Core authentication system to determine if the user is authenticated. When a user navigates from one page to another, a client-side authentication provider is used. When the user refreshes the page (full-page reload), the client-side authentication state provider isn't involved in the authentication decision on the server. Since the user's state isn't persisted by the server, any authentication state maintained client-side is lost.
+
+To address this, the best approach is to perform authentication within the ASP.NET Core authentication system. The client-side authentication state provider only takes care of reflecting the user's authentication state. Examples for how to accomplish this with authentication state providers are demonstrated by the Blazor Web App project template and described below.
+
+
+
+**Applies to: \>= aspnetcore-9.0**
+
+In the server project's `Program` file, call [Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%252A), which serializes the [Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState) returned by the server-side [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) using the [Persistent Component State service](../state-management/prerendered-state-persistence.md) ([Microsoft.AspNetCore.Components.PersistentComponentState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.PersistentComponentState)):
+
+```csharp
+builder.Services.AddRazorComponents()
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
+```
+
+The API only serializes the server-side name and role claims for access in the browser. To include all claims, set [Microsoft.AspNetCore.Components.WebAssembly.Server.AuthenticationStateSerializationOptions.SerializeAllClaims%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.WebAssembly.Server.AuthenticationStateSerializationOptions.SerializeAllClaims%252A) to `true` in the server-side call to [Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%252A):
+
+```csharp
+builder.Services.AddRazorComponents()
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization(
+        options => options.SerializeAllClaims = true);
+```
+
+In the client (`.Client`) project's `Program` file, call [Microsoft.Extensions.DependencyInjection.WebAssemblyAuthenticationServiceCollectionExtensions.AddAuthenticationStateDeserialization%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.WebAssemblyAuthenticationServiceCollectionExtensions.AddAuthenticationStateDeserialization%252A), which adds an [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) where the [Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState) is deserialized from the server using `AuthenticationStateData` and the [Persistent Component State service](../state-management/prerendered-state-persistence.md) ([Microsoft.AspNetCore.Components.PersistentComponentState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.PersistentComponentState)). There should be a corresponding call to [Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.WebAssemblyRazorComponentsBuilderExtensions.AddAuthenticationStateSerialization%252A) in the server project.
+
+```csharp
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthenticationStateDeserialization();
+```
+
+
+
+**Applies to: \>= aspnetcore-8.0 < aspnetcore-9.0**
+
+* [`PersistingRevalidatingAuthenticationStateProvider` (`dotnet/aspnetcore` GitHub repository)](https://github.com/dotnet/aspnetcore/blob/release/8.0/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp/BlazorWeb-CSharp/Components/Account/PersistingRevalidatingAuthenticationStateProvider.cs): For Blazor Web Apps that adopt interactive server-side rendering (interactive SSR) and client-side rendering (CSR). This is a server-side [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) that revalidates the security stamp for the connected user every 30 minutes an interactive circuit is connected. It also uses the [Persistent Component State service](../state-management/prerendered-state-persistence.md) to flow the authentication state to the client, which is then fixed for the lifetime of CSR.
+
+* [`PersistingServerAuthenticationStateProvider` (`dotnet/aspnetcore` GitHub repository)](https://github.com/dotnet/aspnetcore/blob/release/8.0/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp/BlazorWeb-CSharp/Components/Account/PersistingServerAuthenticationStateProvider.cs): For Blazor Web Apps that only adopt CSR. This is a server-side [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) that uses the [Persistent Component State service](../state-management/prerendered-state-persistence.md) to flow the authentication state to the client, which is then fixed for the lifetime of CSR.
+
+* [`PersistentAuthenticationStateProvider` (`dotnet/aspnetcore` GitHub repository)](https://github.com/dotnet/aspnetcore/blob/release/8.0/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp/BlazorWeb-CSharp.Client/PersistentAuthenticationStateProvider.cs): For Blazor Web Apps that adopt CSR. This is a client-side [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) that determines the user's authentication state by looking for data persisted in the page when it was rendered on the server. This authentication state is fixed for the lifetime of CSR. If the user needs to log in or out, a full-page reload is required. This only provides a user name and email for display purposes. It doesn't include tokens that authenticate to the server when making subsequent requests, which is handled separately using a cookie that's included on `HttpClient` requests to the server.
+
+> **Note:**
+> Documentation links to .NET reference source usually load the repository's default branch, which represents the current development for the next release of .NET. To select a tag for a specific release, use the **Switch branches or tags** dropdown list. For more information, see [How to select a version tag of ASP.NET Core source code (dotnet/AspNetCore.Docs #26205)](https://github.com/dotnet/AspNetCore.Docs/discussions/26205).
+
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+### Scaffold Identity
+
+
+
+**Applies to: \>= aspnetcore-6.0 < aspnetcore-8.0**
+
+For more information on scaffolding Identity into a server-side Blazor app, see [security/authentication/scaffold-identity#scaffold-identity-into-a-server-side-blazor-app](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fscaffold-identity%23scaffold-identity-into-a-server-side-blazor-app).
+
+
+
+**Applies to: < aspnetcore-6.0**
+
+Scaffold Identity into a server-side Blazor app:
+
+* [Without existing authorization](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fscaffold-identity%23scaffold-identity-into-a-server-side-blazor-app-without-existing-authorization).
+* [With authorization](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fscaffold-identity%23scaffold-identity-into-a-server-side-blazor-app-with-authorization).
+
+
+
+### Additional claims and tokens from external providers
+
+To store additional claims from external providers, see [security/authentication/social/additional-claims](../../security/authentication/social/additional-claims.md).
+
+### Azure App Service on Linux with Identity Server
+
+Specify the issuer explicitly when deploying to Azure App Service on Linux with Identity Server. For more information, see [security/authentication/identity/spa#azure-app-service-on-linux](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fidentity%2Fspa%23azure-app-service-on-linux).
+
+### Inject `AuthenticationStateProvider` for services scoped to a component
+
+Don't attempt to resolve [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) within a custom scope because it results in the creation of a new instance of the [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) that isn't correctly initialized.
+
+To access the [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) within a service scoped to a component, inject the [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) into the component and pass it to the service as a parameter. This approach ensures that the correct, initialized instance of the [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) is used for each user app instance.
+  
+`ExampleService.cs`:
+
+```csharp
+public class ExampleService
+{
+    public async Task<string> ExampleMethod(AuthenticationStateProvider authStateProvider)
+    {
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            return $"{user.Identity.Name} is authenticated.";
+        }
+        else
+        {
+            return "The user is NOT authenticated.";
+        }
+    }
+}
+```
+  
+Register the service as scoped. In a server-side Blazor app, scoped services have a lifetime equal to the duration of the client connection [circuit](https://learn.microsoft.com/search/?terms=blazor%2Fhosting-models%23blazor-server).
+
+**Applies to: \>= aspnetcore-6.0**
+
+In the `Program` file:
+
+```csharp
+builder.Services.AddScoped<ExampleService>();
+```
+
+
+
+**Applies to: < aspnetcore-6.0**
+
+In `Startup.ConfigureServices` of `Startup.cs`:
+
+```csharp
+services.AddScoped<ExampleService>();
+```
+
+
+
+In the following `InjectAuthStateProvider` component:
+
+* The component inherits [Microsoft.AspNetCore.Components.OwningComponentBase](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.OwningComponentBase).
+* The [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) is injected and passed to `ExampleService.ExampleMethod`.
+* `ExampleService` is resolved with [Microsoft.AspNetCore.Components.OwningComponentBase.ScopedServices](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.OwningComponentBase.ScopedServices) and [Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService%252A), which returns the correct, initialized instance of `ExampleService` that exists for the lifetime of the user's circuit.
+
+`InjectAuthStateProvider.razor`:
+
+**Applies to: \>= aspnetcore-8.0**
+
+```razor
+@page "/inject-auth-state-provider"
+@inherits OwningComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h1>Inject <code>AuthenticationStateProvider</code> Example</h1>
+
+<p>@message</p>
+
+@code {
+    private string? message;
+    private ExampleService? ExampleService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ExampleService = ScopedServices.GetRequiredService<ExampleService>();
+
+        message = await ExampleService.ExampleMethod(AuthenticationStateProvider);
+    }
+}
+```
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+```razor
+@page "/inject-auth-state-provider"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inherits OwningComponentBase
+
+<h1>Inject <code>AuthenticationStateProvider</code> Example</h1>
+
+<p>@message</p>
+
+@code {
+    private string? message;
+    private ExampleService? ExampleService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ExampleService = ScopedServices.GetRequiredService<ExampleService>();
+
+        message = await ExampleService.ExampleMethod(AuthenticationStateProvider);
+    }
+}
+```
+
+
+
+For more information, see the guidance on [Microsoft.AspNetCore.Components.OwningComponentBase](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.OwningComponentBase) in [blazor/fundamentals/dependency-injection#owningcomponentbase](https://learn.microsoft.com/search/?terms=blazor%2Ffundamentals%2Fdependency-injection%23owningcomponentbase).
+
+### Unauthorized content display while prerendering with a custom `AuthenticationStateProvider`
+
+To avoid showing unauthorized content, for example content in an [`AuthorizeView` component](#authorizeview-component), while prerendering with a [custom `AuthenticationStateProvider`](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fauthentication-state%23implement-a-custom-authenticationstateprovider), adopt ***one*** of the following approaches:
+
+* Implement [Microsoft.AspNetCore.Components.Authorization.IHostEnvironmentAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.IHostEnvironmentAuthenticationStateProvider) for the custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) to support prerendering: For an example implementation of [Microsoft.AspNetCore.Components.Authorization.IHostEnvironmentAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.IHostEnvironmentAuthenticationStateProvider), see the Blazor framework's [Microsoft.AspNetCore.Components.Server.ServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.ServerAuthenticationStateProvider) implementation in [`ServerAuthenticationStateProvider.cs` (reference source)](https://github.com/dotnet/aspnetcore/blob/main/src/Components/Endpoints/src/DependencyInjection/ServerAuthenticationStateProvider.cs).
+
+  > **Note:**
+> Documentation links to .NET reference source usually load the repository's default branch, which represents the current development for the next release of .NET. To select a tag for a specific release, use the **Switch branches or tags** dropdown list. For more information, see [How to select a version tag of ASP.NET Core source code (dotnet/AspNetCore.Docs #26205)](https://github.com/dotnet/AspNetCore.Docs/discussions/26205).
+
+
+**Applies to: \>= aspnetcore-8.0**
+
+* Disable prerendering: Indicate the render mode with the `prerender` parameter set to `false` at the highest-level component in the app's component hierarchy that isn't a root component.
+
+  > **Note:**
+  > Making a root component interactive, such as the `App` component, isn't supported. Therefore, prerendering can't be disabled directly by the `App` component.
+
+  For apps based on the Blazor Web App project template, prerendering is typically disabled where the `Routes` component is used in the `App` component (`Components/App.razor`) :
+
+  ```razor
+  <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+  ```
+
+  Also, disable prerendering for the `HeadOutlet` component:
+
+  ```razor
+  <HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
+  ```
+
+  You can also selectively control the render mode applied to the `Routes` component instance. For example, see [blazor/components/render-modes#static-ssr-pages-in-an-interactive-app](https://learn.microsoft.com/search/?terms=blazor%2Fcomponents%2Frender-modes%23static-ssr-pages-in-an-interactive-app).
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+* Disable prerendering: Open the `_Host.cshtml` file and change the `render-mode` attribute of the [Component Tag Helper](../../mvc/views/tag-helpers/built-in/component-tag-helper.md) to [Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Server](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Server):
+
+  ```cshtml
+  <component type="typeof(App)" render-mode="Server" />
+  ```
+
+
+
+* Authenticate the user on the server before the app starts: To adopt this approach, the app must respond to a user's initial request with the Identity-based sign-in page or view and prevent any requests to Blazor endpoints until they're authenticated. For more information, see [Require global user authentication](https://learn.microsoft.com/search/?terms=security%2Fauthorization%2Fpolicies%23require-global-user-authentication). After authentication, unauthorized content in prerendered Razor components is only shown when the user is truly unauthorized to view the content.
+
+### User state management
+
+In spite of the word "state" in the name, [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) isn't for storing *general user state*. [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) only indicates the user's authentication state to the app, whether they are signed into the app and who they are signed in as.
+
+Authentication uses the same ASP.NET Core Identity authentication as Razor Pages and MVC apps. The user state stored for ASP.NET Core Identity flows to Blazor without adding additional code to the app. Follow the guidance in the ASP.NET Core Identity articles and tutorials for the Identity features to take effect in the Blazor parts of the app.
+
+For guidance on general state management outside of ASP.NET Core Identity, see [blazor/state-management/index](../state-management/index.md).
+
+### Additional security abstractions
+
+Two additional abstractions participate in managing authentication state:
+
+* [Microsoft.AspNetCore.Components.Server.ServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.ServerAuthenticationStateProvider) ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Components/Endpoints/src/DependencyInjection/ServerAuthenticationStateProvider.cs)): An [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) used by the Blazor framework to obtain authentication state from the server.
+
+* [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider) ([reference source](https://github.com/dotnet/aspnetcore/blob/main/src/Components/Server/src/Circuits/RevalidatingServerAuthenticationStateProvider.cs)): A base class for [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) services used by the Blazor framework to receive an authentication state from the host environment and revalidate it at regular intervals, 30 minutes by default.
+
+> **Note:**
+> Documentation links to .NET reference source usually load the repository's default branch, which represents the current development for the next release of .NET. To select a tag for a specific release, use the **Switch branches or tags** dropdown list. For more information, see [How to select a version tag of ASP.NET Core source code (dotnet/AspNetCore.Docs #26205)](https://github.com/dotnet/AspNetCore.Docs/discussions/26205).
+
+
+### Authentication state management at sign out
+
+The default revalidation interval is 30 minutes for either ASP.NET Core Identity-based authentication or cookie-based authentication without Identity. Within the 30-minute window, it remains possible under certain sign-out conditions for a user to retain access to areas of the app that you might wish to prevent.
+
+To control the revalidation period and enforce a complete sign out process for users, begin by implementing a [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider) with a shorter [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%252A).
+
+For an example implementation showing the default 30-minute interval, see the [`IdentityRevalidatingAuthenticationStateProvider` class (reference source)](https://github.com/dotnet/aspnetcore/blob/main/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorWeb-CSharp/BlazorWebCSharp.1/Components/Account/IdentityRevalidatingAuthenticationStateProvider.cs) in the Blazor Web App project template.
+
+In the following example, the interval is set to five minutes:
+
+```csharp
+protected override TimeSpan RevalidationInterval => TimeSpan.FromMinutes(5);
+```
+
+Implementing [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider) with a short [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%252A) only revalidates the authentication state held by the current Blazor circuit. Returning `false` from [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.ValidateAuthenticationStateAsync%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.ValidateAuthenticationStateAsync%252A) flips the circuit's state to unauthenticated, so instances of [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView)/[Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) re-evaluate and redirect the user to sign in. However, returning `false` from [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.ValidateAuthenticationStateAsync%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.ValidateAuthenticationStateAsync%252A) doesn't affect the underlying authentication cookie. The next full navigation that occurs before the cookie expires or is invalidated recreates the principal from the cookie. When that happens, the cookie indicates a signed-in user to the [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider), so the user appears signed in until the next [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%252A) tick fires.
+
+> **Note:**
+> Each browser tab requires a separate circuit, so additional tabs opened by a user don't observe an authentication state change until their circuits revalidate. However, the approach in this section sets the revalidation interval for all of the tabs opened by a user.
+
+To control the revalidation interval in apps that adopt ASP.NET Core Identity with cookie authentication, see the following [Sign out for ASP.NET Core Identity](#sign-out-for-aspnet-core-identity) subsection for details. For apps that adopt cookie-based authentication without Identity, see the following [Sign out for cookie-based authentication](#sign-out-for-cookie-based-authentication) subsection.
+
+
+#### Sign out for ASP.NET Core Identity
+
+To force a complete sign-out within less than the default 30-minute revalidation interval in apps that adopt ASP.NET Core Identity, use the guidance in this section.
+
+For Blazor apps that target .NET 8 or later, reduce the default 30-minute [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%252A) in the `IdentityRevalidatingAuthenticationStateProvider` class (`Components/Account/IdentityRevalidatingAuthenticationStateProvider.cs`). If the app targets .NET earlier than .NET 8, reduce the interval in `RevalidatingIdentityAuthenticationStateProvider`.
+
+Whether or not the authentication cookie remains valid is checked by the *security stamp validator* ([Microsoft.AspNetCore.Identity.SecurityStampValidator](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Identity.SecurityStampValidator)), which hooks into the [Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents.OnValidatePrincipal](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents.OnValidatePrincipal) event of an authentication cookie and queries the user datastore to determine if the user is still signed in. The security stamp validator's interval is governed by [Microsoft.AspNetCore.Identity.SecurityStampValidatorOptions.ValidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Identity.SecurityStampValidatorOptions.ValidationInterval%252A), which defaults to 30 minutes because validating users on every request triggers a database query on every request for every user.
+
+The following example shortens the default 30-minute interval to four minutes:
+
+```csharp
+builder.Services.Configure<SecurityStampValidatorOptions>(
+    o => o.ValidationInterval = TimeSpan.FromMinutes(4));
+```
+
+The call interval is a tradeoff between hitting the user datastore too frequently and not often enough. Checking with a short interval can result in high demand on the user datastore and reduced app performance but with the benefit of more timely sign-outs. Checking with a long interval results in stale claims, which can make it appear that a user is still signed in if a full navigation recreates the principal from the authentication cookie before it naturally expires.
+
+To catch the next interval tick of the [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider), set the [Microsoft.AspNetCore.Identity.SecurityStampValidatorOptions.ValidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Identity.SecurityStampValidatorOptions.ValidationInterval%252A) to a period just inside the value set for [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%252A).
+
+Custom C# code that's required to force a sign out on a user can call [Microsoft.AspNetCore.Identity.UserManager%601.UpdateSecurityStampAsync%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Identity.UserManager%25601.UpdateSecurityStampAsync%252A), which immediately invalidates existing cookies the next time they're checked.
+
+For more information, see [security/authentication/identity-configuration#isecuritystampvalidator-and-signout-everywhere](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fidentity-configuration%23isecuritystampvalidator-and-signout-everywhere).
+
+#### Sign out for cookie-based authentication
+
+To proactively, completely sign a user off within less than the default 30-minute revalidation interval in apps that adopt cookie-based authentication without ASP.NET Core Identity, use the guidance in this section.
+
+There are two approaches that you can take. The first approach is to wait for a revalidation check to occur and ensure cookie invalidation when the check is made. To adopt this approach, pair an implementation of [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider) with a shorter [Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider.RevalidationInterval%252A) (default: 30 minutes) and a sign-out trigger. Implement the sign-out trigger using ***either*** of the following approaches.
+
+* Sign out on GET in the app's login page. This approach is only valid for static SSR because [Microsoft.AspNetCore.Http.HttpContext](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Http.HttpContext) is `null` during interactive rendering:
+
+  ```csharp
+  [CascadingParameter]
+  private HttpContext HttpContext { get; set; } = default!;
+
+  protected override async Task OnInitializedAsync()
+  {
+      ...
+
+      if (HttpMethods.IsGet(HttpContext.Request.Method))
+      {
+          await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
+      }
+  }
+  ```
+
+* Call `NavigationManager.NavigateTo("/Account/Logout", forceLoad: true)` where you sign out users. Create an endpoint for `/Account/Logout` with a call to [Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGet%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGet%252A) in the app's `Program` file, which in turn calls [Microsoft.AspNetCore.Authentication.AuthenticationService.SignOutAsync%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.AuthenticationService.SignOutAsync%252A):
+
+  ```csharp
+  app.MapGet("/Account/Logout", async (HttpContext context) =>
+  {
+      await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+      return TypedResults.LocalRedirect("/");
+  })
+  .RequireAuthorization();
+  ```
+
+The alternative second approach is aimed at first-request freshness without waiting for the next revalidation check. To adopt this approach, perform a user datastore authentication check in [Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents.OnValidatePrincipal](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents.OnValidatePrincipal) and call [Microsoft.AspNetCore.Authentication.Cookies.CookieValidatePrincipalContext.RejectPrincipal%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.Cookies.CookieValidatePrincipalContext.RejectPrincipal%252A) with [Microsoft.AspNetCore.Authentication.AuthenticationService.SignOutAsync%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.AuthenticationService.SignOutAsync%252A).
+
+For more information, see the following sections of the *Use cookie authentication without ASP.NET Core Identity* article:
+
+* [Sign out](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fcookie%23sign-out)
+* [React to back-end changes](https://learn.microsoft.com/search/?terms=security%2Fauthentication%2Fcookie%23react-to-back-end-changes)
+
+**Applies to: \>= aspnetcore-8.0**
+
+### Temporary redirection URL validity duration
+
+*This section applies to Blazor Web Apps.*
+
+Use the [Microsoft.AspNetCore.Components.Endpoints.RazorComponentsServiceOptions.TemporaryRedirectionUrlValidityDuration%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Endpoints.RazorComponentsServiceOptions.TemporaryRedirectionUrlValidityDuration%252A) option to get or set the lifetime of ASP.NET Core Data Protection validity for temporary redirection URLs emitted by Blazor server-side rendering. These are only used transiently, so the lifetime only needs to be long enough for a client to receive the URL and begin navigation to it. However, it should also be long enough to allow for clock skew across servers. The default value is five minutes.
+
+In the following example the value is extended to seven minutes:
+
+```csharp
+builder.Services.AddRazorComponents(options => 
+    options.TemporaryRedirectionUrlValidityDuration = 
+        TimeSpan.FromMinutes(7));
+```
+
+
+
+## Client-side Blazor authentication
+
+In client-side Blazor apps, client-side authentication checks can be bypassed because all client-side code can be modified by users. The same is true for all client-side app technologies, including JavaScript SPA frameworks and native apps for any operating system.
+
+Add the following:
+
+* A package reference for the [`Microsoft.AspNetCore.Components.Authorization`](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.Authorization) NuGet package.
+
+  > **Note:**
+> For guidance on adding packages to .NET apps, see the articles under *Install and manage packages* at [Package consumption workflow (NuGet documentation)](https://learn.microsoft.com/nuget/consume-packages/overview-and-workflow). Confirm correct package versions at [NuGet.org](https://www.nuget.org).
+
+
+* The [Microsoft.AspNetCore.Components.Authorization](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization) namespace to the app's imports file (`_Imports.razor`).
+
+To handle authentication, use the built-in or custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) service.
+
+For more information on client-side authentication, see [blazor/security/webassembly/index](webassembly/index.md).
+
+**Applies to: \>= aspnetcore-8.0**
+
+## Secure data in Blazor Web Apps with Interactive Auto rendering
+
+When a Blazor Web App adopts server-side rendering (SSR) and client-side rendering (CSR) for components or an entire app that specifies the [Interactive Auto render mode](https://learn.microsoft.com/search/?terms=blazor%2Fcomponents%2Frender-modes%23automatic-auto-rendering), authorization to access components and data is applied in *two places*. The component restricts access to itself (and any data that it obtains) when rendered on the server by virtue of an authorization attribute in the component's definition file (`@attribute [Authorize]`). When the component is rendered on the client, access to data is restricted via the server web API endpoints that are called from the client. Care must be taken when securing data access in both locations to prevent improper data access.
+
+Consider the following scenario where secure weather data is displayed by a component. Demonstrations of some of the following approaches can be evaluated and tested using the `BlazorWebAppEntra`/`BlazorWebAppEntraBff` samples (.NET 9 or later) or the `BlazorWebAppOidc`/`BlazorWebAppOidcBff` samples (.NET 8 or later) in the [Blazor samples GitHub repository (`dotnet/blazor-samples`)](https://github.com/dotnet/blazor-samples) ([how to download](https://learn.microsoft.com/search/?terms=blazor%2Ffundamentals%2Findex%23sample-apps)).
+
+The client project maintains a `WeatherForecast` class to hold weather data:
+
+```csharp
+public sealed class WeatherForecast(DateOnly date, int temperatureC, string summary)
+{
+    public DateOnly Date { get; set; } = date;
+    public int TemperatureC { get; set; } = temperatureC;
+    public string? Summary { get; set; } = summary;
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+```
+
+The client project's `IWeatherForecaster` interface defines a `GetWeatherForecastAsync` method for obtaining weather data:
+
+```csharp
+public interface IWeatherForecaster
+{
+    Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync();
+}
+```
+
+The client project's `ClientWeatherForecaster` service implements `IWeatherForecaster`. The `GetWeatherForecastAsync` method calls a web API in the server project at the `/weather-forecast` endpoint for weather data:
+
+```csharp
+internal sealed class ClientWeatherForecaster(HttpClient httpClient) 
+    : IWeatherForecaster
+{
+    public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync() =>
+        await httpClient.GetFromJsonAsync<WeatherForecast[]>("/weather-forecast") ??
+            throw new IOException("No weather forecast!");
+}
+```
+
+The client project maintains a `Weather` component that:
+
+* Enforces authorization with an [`[Authorize]` attribute](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute).
+* Uses the [Persistent Component State service](../state-management/prerendered-state-persistence.md) ([Microsoft.AspNetCore.Components.PersistentComponentState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.PersistentComponentState)) to persist weather forecast data when the component transitions from static to interactive SSR on the server. For more information, see [blazor/state-management/prerendered-state-persistence](../state-management/prerendered-state-persistence.md).
+
+
+
+**Applies to: \>= aspnetcore-10.0**
+
+```razor
+@page "/weather"
+@using Microsoft.AspNetCore.Authorization
+@using BlazorWebAppEntra.Client.Weather
+@attribute [Authorize]
+@inject IWeatherForecaster WeatherForecaster
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (Forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th aria-label="Temperature in Celsius">Temp. (C)</th>
+                <th aria-label="Temperature in Fahrenheit">Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in Forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [PersistentState]
+    public IEnumerable<WeatherForecast>? Forecasts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Forecasts ??= await WeatherForecaster.GetWeatherForecastAsync();
+    }
+}
+```
+
+
+
+**Applies to: \>= aspnetcore-8.0 < aspnetcore-10.0**
+
+```razor
+@page "/weather"
+@using Microsoft.AspNetCore.Authorization
+@using BlazorWebAppEntra.Client.Weather
+@attribute [Authorize]
+@implements IDisposable
+@inject PersistentComponentState ApplicationState
+@inject IWeatherForecaster WeatherForecaster
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th aria-label="Temperature in Celsius">Temp. (C)</th>
+                <th aria-label="Temperature in Fahrenheit">Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<WeatherForecast>? forecasts;
+    private PersistingComponentStateSubscription persistingSubscription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!ApplicationState.TryTakeFromJson<IEnumerable<WeatherForecast>>(
+            nameof(forecasts), out var restoredData))
+        {
+            forecasts = await WeatherForecaster.GetWeatherForecastAsync();
+        }
+        else
+        {
+            forecasts = restoredData!;
+        }
+
+        // Call at the end to avoid a potential race condition at app shutdown
+        persistingSubscription = ApplicationState.RegisterOnPersisting(PersistData);
+    }
+
+    private Task PersistData()
+    {
+        ApplicationState.PersistAsJson(nameof(forecasts), forecasts);
+
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
+}
+```
+
+
+
+**Applies to: \>= aspnetcore-8.0**
+
+The server project implements `IWeatherForecaster` as `ServerWeatherForecaster`, which generates and returns weather data via its `GetWeatherForecastAsync` method:
+
+```csharp
+internal sealed class ServerWeatherForecaster() : IWeatherForecaster
+{
+    public readonly string[] summaries =
+    [
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", 
+        "Sweltering", "Scorching"
+    ];
+
+    public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync()
+    {
+        // Simulate asynchronous loading to demonstrate streaming rendering
+        await Task.Delay(500);
+
+        return Enumerable.Range(1, 5).Select(index =>
+            new WeatherForecast
+            (
+                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                Random.Shared.Next(-20, 55),
+                summaries[Random.Shared.Next(summaries.Length)]
+            ))
+        .ToArray();
+    }
+}
+```
+
+If the app must call an external web API to obtain the weather data, you can inject an HTTP client (`HttpClient`) to request the data:
+
+```csharp
+internal sealed class ServerWeatherForecaster(HttpClient httpClient, 
+    IHttpContextAccessor httpContextAccessor) : IWeatherForecaster
+{
+    public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync()
+    {
+        var httpContext = httpContextAccessor.HttpContext ??
+            throw new InvalidOperationException("No HttpContext!");
+        var accessToken = await httpContext.GetTokenAsync("access_token") ??
+            throw new InvalidOperationException("No access_token was saved");
+        using var request = 
+            new HttpRequestMessage(HttpMethod.Get, "/weather-forecast");
+        request.Headers.Authorization = new("Bearer", accessToken);
+        using var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<WeatherForecast[]>() ??
+            throw new IOException("No weather forecast!");
+    }
+}
+```
+
+In yet another approach, you can inject an HTTP client factory (`IHttpClientFactory`) into the `ServerWeatherForecaster` and call an external web API using a named HTTP Client with a token handler. For more information, see [blazor/call-web-api#use-a-token-handler-for-web-API-calls](https://learn.microsoft.com/search/?terms=blazor%2Fcall-web-api%23use-a-token-handler-for-web-API-calls).
+
+If the app uses [Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/) with [Microsoft Identity Web packages](https://learn.microsoft.com/entra/msal/dotnet/microsoft-identity-web/) for [Microsoft Entra ID](https://www.microsoft.com/security/business/microsoft-entra) (see [blazor/call-web-api#microsoft-identity-platform-for-web-api-calls](https://learn.microsoft.com/search/?terms=blazor%2Fcall-web-api%23microsoft-identity-platform-for-web-api-calls)), the following `ServerWeatherForecaster` demonstrates making an external web API call. The access token is automatically attached to the request.
+
+```csharp
+internal sealed class ServerWeatherForecaster(IDownstreamApi downstreamApi) : IWeatherForecaster
+{
+    public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync()
+    {
+        using var response = await downstreamApi.CallApiForUserAsync("DownstreamApi",
+            options =>
+            {
+                options.RelativePath = "/weather-forecast";
+            });
+
+        return await response.Content.ReadFromJsonAsync<WeatherForecast[]>() ??
+            throw new IOException("No weather forecast!");
+    }
+}
+```
+
+Regardless of the approach taken by the `ServerWeatherForecaster` to obtain the data, the server project maintains a secure web API endpoint for client weather data calls. This endpoint results in a `ServerWeatherForecaster.GetWeatherForecastAsync` call on the server:
+
+```csharp
+app.MapGet("/weather-forecast", (
+    [FromServices] IWeatherForecaster WeatherForecaster) =>
+{
+    return WeatherForecaster.GetWeatherForecastAsync();
+}).RequireAuthorization();
+```
+
+Using the preceding approach, there are two systems in place to supply secure weather data to the user:
+
+* When the `Weather` component is rendered *on the server*, the `ServerWeatherForecaster` service's `GetWeatherForecastAsync` method is used directly to obtain the weather data. The security of the data is enforced by the component's [`[Authorize]` attribute](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute). In summary, the security of the weather data is enforced by the component.
+* When the `Weather` component is rendered *on the client*, the `ClientWeatherForecaster` service is used to make a web API call to the secure `/weather-forecast` endpoint that applies the [Microsoft.AspNetCore.Builder.AuthorizationEndpointConventionBuilderExtensions.RequireAuthorization%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Builder.AuthorizationEndpointConventionBuilderExtensions.RequireAuthorization%252A) extension method. If the user has the authority to access weather data, the endpoint uses the `ServerWeatherForecaster` service to call `GetWeatherForecastAsync`. The data is returned to the client. In summary, the security of the weather data is enforced by the server app's web API endpoint.
+
+The preceding approach works well when the security requirements of the web API match the security requirements of the component. For example, the same authorization policy can be applied to both the web API endpoint and the component.
+
+Complex scenarios require additional planning and implementation. For example, a server web API that has multiple callers with different access permissions either requires a more sophisticated authorization policy, one or more additional policies, or additional endpoints with different access requirements.
+
+As you build security into apps that adopt Interactive Auto rendering, be mindful that the security implemented for the server's web API endpoints doesn't secure the server's service implementation that's used when a component is rendered on the server and accesses data through the service. Carefully weigh the difference between accessing data on the server during SSR versus accessing the data on a client web API request during CSR. Strategically apply security to avoid improper access to data.
+
+Examples in the [Blazor samples GitHub repository (`dotnet/blazor-samples`)](https://github.com/dotnet/blazor-samples/) ([how to download](https://learn.microsoft.com/search/?terms=blazor%2Ffundamentals%2Findex%23sample-apps)) that demonstrate the approach described in this section:
+
+* `BlazorWebAppOidc`
+* `BlazorWebAppOidcBff`
+* `BlazorWebAppEntra`
+* `BlazorWebAppEntraBff`
+
+
+
+## `AuthenticationStateProvider` service
+
+**Applies to: \>= aspnetcore-8.0**
+
+[Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) is the underlying service used by the [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component and cascading authentication services to obtain the authentication state for a user.
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+[Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) is the underlying service used by the [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component and [Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState) component to obtain the authentication state for a user.
+
+
+
+You don't typically use [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) directly. Use the [`AuthorizeView` component](#authorizeview-component) or [`Task<AuthenticationState>`](#expose-the-authentication-state-as-a-cascading-parameter) approaches described later in this article. The main drawback to using [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) directly is that the component isn't notified automatically if the underlying authentication state data changes.
+
+To implement a custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider), see [blazor/security/authentication-state](authentication-state.md), which includes guidance on implementing user authentication state change notifications.
+
+## Obtain a user's claims principal data
+
+The [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) service can provide the current user's [System.Security.Claims.ClaimsPrincipal](https://learn.microsoft.com/search/?terms=System.Security.Claims.ClaimsPrincipal) data, as shown in the following example.
+
+`ClaimsPrincipalData.razor`:
+
+**Applies to: \>= aspnetcore-8.0**
+
+```razor
+@page "/claims-principal-data"
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h1>ClaimsPrincipal Data</h1>
+
+<button @onclick="GetClaimsPrincipalData">Get ClaimsPrincipal Data</button>
+
+<p>@authMessage</p>
+
+@if (claims.Any())
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+<p>@surname</p>
+
+@code {
+    private string? authMessage;
+    private string? surname;
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider
+            .GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            authMessage = $"{user.Identity.Name} is authenticated.";
+            claims = user.Claims;
+            surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
+        }
+        else
+        {
+            authMessage = "The user is NOT authenticated.";
+        }
+    }
+}
+```
+
+In the preceding example:
+
+* [System.Security.Claims.ClaimsPrincipal.Claims%2A](https://learn.microsoft.com/search/?terms=System.Security.Claims.ClaimsPrincipal.Claims%252A) returns the user's claims (`claims`) for display in the UI.
+* The line that obtains the user's surname (`surname`) calls [System.Security.Claims.ClaimsPrincipal.FindAll%2A](https://learn.microsoft.com/search/?terms=System.Security.Claims.ClaimsPrincipal.FindAll%252A) with a predicate to filter the user's claims.
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+```razor
+@page "/claims-principal-data"
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h1>ClaimsPrincipal Data</h1>
+
+<button @onclick="GetClaimsPrincipalData">Get ClaimsPrincipal Data</button>
+
+<p>@authMessage</p>
+
+@if (claims.Any())
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+<p>@surname</p>
+
+@code {
+    private string? authMessage;
+    private string? surname;
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider
+            .GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            authMessage = $"{user.Identity.Name} is authenticated.";
+            claims = user.Claims;
+            surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
+        }
+        else
+        {
+            authMessage = "The user is NOT authenticated.";
+        }
+    }
+}
+```
+
+
+
+If `user.Identity.IsAuthenticated` is `true` and because the user is a [System.Security.Claims.ClaimsPrincipal](https://learn.microsoft.com/search/?terms=System.Security.Claims.ClaimsPrincipal), claims can be enumerated and membership in roles evaluated.
+
+For more information on dependency injection (DI) and services, see [blazor/fundamentals/dependency-injection](../fundamentals/dependency-injection.md) and [fundamentals/dependency-injection](../../fundamentals/dependency-injection.md). For information on how to implement a custom [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider), see [blazor/security/authentication-state#implement-a-custom-authenticationstateprovider](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fauthentication-state%23implement-a-custom-authenticationstateprovider).
+
+## Expose the authentication state as a cascading parameter
+
+If authentication state data is required for procedural logic, such as when performing an action triggered by the user, obtain the authentication state data by defining a [cascading parameter](../components/cascading-values-and-parameters.md) of type `Task<`[Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState)`>`, as the following example demonstrates.
+
+`CascadeAuthState.razor`:
+
+**Applies to: \>= aspnetcore-8.0**
+
+```razor
+@page "/cascade-auth-state"
+
+<h1>Cascade Auth State</h1>
+
+<p>@authMessage</p>
+
+@code {
+    private string authMessage = "The user is NOT authenticated.";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                authMessage = $"{user.Identity.Name} is authenticated.";
+            }
+        }
+    }
+}
+```
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+```razor
+@page "/cascade-auth-state"
+
+<h1>Cascade Auth State</h1>
+
+<p>@authMessage</p>
+
+@code {
+    private string authMessage = "The user is NOT authenticated.";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                authMessage = $"{user.Identity.Name} is authenticated.";
+            }
+        }
+    }
+}
+```
+
+
+
+If `user.Identity.IsAuthenticated` is `true`, claims can be enumerated and membership in roles evaluated.
+
+**Applies to: \>= aspnetcore-8.0**
+
+Set up the `Task<`[Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState)`>` [cascading parameter](../components/cascading-values-and-parameters.md) using the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) and cascading authentication state services.
+
+When you create a Blazor app from one of the Blazor project templates with authentication enabled, the app includes the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) and the call to [Microsoft.Extensions.DependencyInjection.CascadingAuthenticationStateServiceCollectionExtensions.AddCascadingAuthenticationState%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.CascadingAuthenticationStateServiceCollectionExtensions.AddCascadingAuthenticationState%252A) shown in the following example. A client-side Blazor app includes the required service registrations as well. Additional information is presented in the [Customize unauthorized content with the `Router` component](#customize-unauthorized-content-with-the-router-component) section.
+
+```razor
+<Router ...>
+    <Found ...>
+        <AuthorizeRouteView RouteData="routeData" 
+            DefaultLayout="typeof(Layout.MainLayout)" />
+        ...
+    </Found>
+</Router>
+```
+
+In the `Program` file, register cascading authentication state services:
+
+```csharp
+builder.Services.AddCascadingAuthenticationState();
+```
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+Set up the `Task<`[Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState)`>` [cascading parameter](../components/cascading-values-and-parameters.md) using the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) and [Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState) components.
+
+When you create a Blazor app from one of the Blazor project templates with authentication enabled, the app includes the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) and [Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState) components shown in the following example. A client-side Blazor app includes the required service registrations as well. Additional information is presented in the [Customize unauthorized content with the `Router` component](#customize-unauthorized-content-with-the-router-component) section.
+
+```razor
+<CascadingAuthenticationState>
+    <Router ...>
+        <Found ...>
+            <AuthorizeRouteView RouteData="routeData" 
+                DefaultLayout="typeof(MainLayout)" />
+            ...
+        </Found>
+    </Router>
+</CascadingAuthenticationState>
+```
+
+
+
+**Applies to: \= aspnetcore-5.0**
+
+> **Note:**
+> With the release of .NET 5.0.1 and for any additional 5.x releases, the `Router` component includes the `PreferExactMatches` parameter set to `@true`. For more information, see [migration/31-to-50#changes-to-blazor-app-routing-logic-in-501-and-further-5x-releases-up-to-60](https://learn.microsoft.com/search/?terms=migration%2F31-to-50%23changes-to-blazor-app-routing-logic-in-501-and-further-5x-releases-up-to-60).
+
+
+
+
+**Applies to: \>= aspnetcore-5.0**
+
+In a client-side Blazor app, add authorization services to the `Program` file:
+
+```csharp
+builder.Services.AddAuthorizationCore();
+```
+
+
+
+**Applies to: < aspnetcore-5.0**
+
+In a client-side Blazor app, add options and authorization services to the `Program` file:
+
+```csharp
+builder.Services.AddOptions();
+builder.Services.AddAuthorizationCore();
+```
+
+
+
+In a server-side Blazor app, services for options and authorization are already present, so no further steps are required.
+
+## Authorization
+
+After a user is authenticated, *authorization* rules are applied to control what the user can do.
+
+Access is typically granted or denied based on whether:
+
+* A user is authenticated (signed in).
+* A user is in a *role*.
+* A user has a *claim*.
+* A *policy* is satisfied.
+
+Each of these concepts is the same as in an ASP.NET Core MVC or Razor Pages app. For more information on ASP.NET Core security, see the articles under [ASP.NET Core Security and Identity](../../security/index.md).
+
+## `AuthorizeView` component
+
+The [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component selectively displays UI content depending on whether the user is authorized. This approach is useful when you only need to *display* data for the user and don't need to use the user's identity in procedural logic.
+
+The component exposes a `context` variable of type [Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState) (`@context` in Razor syntax), which you can use to access information about the signed-in user:
+
+```razor
+<AuthorizeView>
+    <p>Hello, @context.User.Identity?.Name!</p>
+</AuthorizeView>
+```
+
+You can also supply different content for display if the user isn't authorized with a combination of the [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%252A) and [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%252A) parameters:
+
+```razor
+<AuthorizeView>
+    <Authorized>
+        <p>Hello, @context.User.Identity?.Name!</p>
+        <p><button @onclick="HandleClick">Authorized Only Button</button></p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You're not authorized.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private void HandleClick() { ... }
+}
+```
+
+Although the [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component controls the visibility of elements based on the user's authorization status, it doesn't enforce security on the event handler itself. In the preceding example, the `HandleClick` method is only associated with a button visible to authorized users, but nothing prevents invoking this method from other places. To ensure method-level security, implement additional authorization logic within the handler itself or in the relevant API.
+
+**Applies to: \>= aspnetcore-8.0**
+
+Razor components of Blazor Web Apps never display `<NotAuthorized>` content when authorization fails server-side during static server-side rendering (static SSR). The server-side ASP.NET Core pipeline processes authorization on the server. Use server-side techniques, such as configuring [Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions.LoginPath%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions.LoginPath%252A) to handle unauthorized requests. For more information, see [blazor/components/render-modes#static-server-side-rendering-static-ssr](https://learn.microsoft.com/search/?terms=blazor%2Fcomponents%2Frender-modes%23static-server-side-rendering-static-ssr).
+
+
+
+> **Warning:**
+> Client-side markup and methods associated with an [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) are only protected from view and execution in the ***rendered UI*** in client-side Blazor apps. In order to protect authorized content and secure methods in client-side Blazor, the content is usually supplied by a secure, authorized web API call to a server API and never stored in the app. For more information, see [blazor/call-web-api](../call-web-api.md) and [blazor/security/webassembly/additional-scenarios](webassembly/additional-scenarios.md).
+
+The content of [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%252A) and [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%252A) can include arbitrary items, such as other interactive components.
+
+Authorization conditions, such as roles or policies that control UI options or access, are covered in the [Authorization](#authorization) section.
+
+If authorization conditions aren't specified, [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) uses a default policy:
+
+* Authenticated (signed-in) users are authorized.
+* Unauthenticated (signed-out) users are unauthorized.
+
+The [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component can be used in the `NavMenu` component (`Shared/NavMenu.razor`) to display a [`NavLink` component](https://learn.microsoft.com/search/?terms=blazor%2Ffundamentals%2Fnavigation%23navlink-component) ([Microsoft.AspNetCore.Components.Routing.NavLink](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Routing.NavLink)), but note that this approach only removes the list item from the rendered output. It doesn't prevent the user from navigating to the component. Implement authorization separately in the destination component.
+
+### Role-based and policy-based authorization
+
+The [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component supports *role-based* or *policy-based* authorization.
+
+For role-based authorization, use the [Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Roles](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Roles) parameter. In the following example, the user must have a role claim for either the `Admin` or `Superuser` roles:
+
+```razor
+<AuthorizeView Roles="Admin, Superuser">
+    <p>You have an 'Admin' or 'Superuser' role claim.</p>
+</AuthorizeView>
+```
+
+To require both `Admin` and `Superuser` role claims, nest [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) components:
+
+```razor
+<AuthorizeView Roles="Admin">
+    <p>User: @context.User</p>
+    <p>You have the 'Admin' role claim.</p>
+    <AuthorizeView Roles="Superuser" Context="innerContext">
+        <p>User: @innerContext.User</p>
+        <p>You have both 'Admin' and 'Superuser' role claims.</p>
+    </AuthorizeView>
+</AuthorizeView>
+```
+
+The preceding code establishes a `Context` for the inner [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component to prevent an [Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState) context collision. The [Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState) context is accessed in the outer [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) with the standard approach for accessing the context (`@context.User`). The context is accessed in the inner [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) with the named `innerContext` context (`@innerContext.User`).
+
+For more information, including configuration guidance, see [security/authorization/roles](../../security/authorization/roles.md).
+
+For policy-based authorization, use the [Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Policy](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Policy) parameter with a single policy name:
+
+```razor
+<AuthorizeView Policy="Over21">
+    <p>You satisfy the 'Over21' policy.</p>
+</AuthorizeView>
+```
+
+To handle the case where the user should satisfy one of several policies, create a policy that confirms that the user satisfies other policies.
+
+To handle the case where the user must satisfy several policies simultaneously, take *either* of the following approaches:
+
+* Create a policy for [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) that confirms that the user satisfies several other policies.
+* Nest the policies in multiple [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) components:
+
+  ```razor
+  <AuthorizeView Policy="Over21">
+      <AuthorizeView Policy="LivesInCalifornia">
+          <p>You satisfy the 'Over21' and 'LivesInCalifornia' policies.</p>
+      </AuthorizeView>
+  </AuthorizeView>
+  ```
+
+Claim-based authorization is a special case of policy-based authorization. For example, you can define a policy that requires users to have a certain claim. For more information, see [security/authorization/policies](../../security/authorization/policies.md).
+
+If both [Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Roles](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Roles) and [Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Policy](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Policy) are set, authorization succeeds only when both conditions are satisfied. That is, the user must belong to at least one of the specified roles *and* meet the requirements defined by the policy.
+
+If neither [Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Roles](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Roles) nor [Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Policy](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Policy) is specified, [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) uses the default policy:
+
+* Authenticated (signed-in) users are authorized.
+* Unauthenticated (signed-out) users are unauthorized.
+
+Role matching is typically case-sensitive because role names are stored and compared using .NET string comparisons. For example, `Admin` (uppercase `A`) isn't treated as the same role as `admin` (lowercase `a`). For more information, see [security/authorization/claims#claim-case-sensitivity](https://learn.microsoft.com/search/?terms=security%2Fauthorization%2Fclaims%23claim-case-sensitivity). By contrast, ASP.NET Core policy name lookup is typically case-insensitive, so `RequireAdministratorRole` and `requireadministratorrole` refer to the same policy.
+
+### Content displayed during asynchronous authentication
+
+Blazor allows for authentication state to be determined *asynchronously*. The primary scenario for this approach is in client-side Blazor apps that make a request to an external endpoint for authentication.
+
+While authentication is in progress, [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) displays no content. To display content while authentication occurs, assign content to the [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorizing%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorizing%252A) parameter:
+
+```razor
+<AuthorizeView>
+    <Authorized>
+        <p>Hello, @context.User.Identity?.Name!</p>
+    </Authorized>
+    <Authorizing>
+        <p>You can only see this content while authentication is in progress.</p>
+    </Authorizing>
+</AuthorizeView>
+```
+
+This approach isn't normally applicable to server-side Blazor apps. Server-side Blazor apps know the authentication state as soon as the state is established. [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorizing](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorizing) content can be provided in an app's [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) component, but the content is never displayed.
+
+## `[Authorize]` attribute
+
+The [`[Authorize]` attribute](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute) is available in Razor components:
+
+```razor
+@page "/"
+@attribute [Authorize]
+
+You can only see this if you're signed in.
+```
+
+> **Important:**
+> Only use [`[Authorize]`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute) on `@page` components reached via the Blazor router. Authorization is only performed as an aspect of routing and *not* for child components rendered within a page. To authorize the display of specific parts within a page, use [Microsoft.AspNetCore.Components.Authorization.AuthorizeView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeView) instead.
+
+The [`[Authorize]` attribute](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute) also supports role-based or policy-based authorization. For role-based authorization, use the [Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Roles](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Roles) parameter:
+
+```razor
+@page "/"
+@attribute [Authorize(Roles = "Admin, Superuser")]
+
+<p>You can only see this if you're in the 'Admin' or 'Superuser' role.</p>
+```
+
+For policy-based authorization, use the [Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Policy](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Policy) parameter:
+
+```razor
+@page "/"
+@attribute [Authorize(Policy = "Over21")]
+
+<p>You can only see this if you satisfy the 'Over21' policy.</p>
+```
+
+If neither [Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Roles](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Roles) nor [Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Policy](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute.Policy) is specified, [`[Authorize]`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute) uses the default policy:
+
+* Authenticated (signed-in) users are authorized.
+* Unauthenticated (signed-out) users are unauthorized.
+
+When the user isn't authorized and if the app doesn't [customize unauthorized content with the `Router` component](#customize-unauthorized-content-with-the-router-component), the framework automatically displays the following fallback message:
+
+```html
+Not authorized.
+```
+
+**Applies to: \>= aspnetcore-5.0**
+
+## Resource authorization
+
+To authorize users for resources, pass the request's route data to the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView.Resource](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView.Resource) parameter of [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView).
+
+In the [Microsoft.AspNetCore.Components.Routing.Router.Found](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Routing.Router.Found) content for a requested route:
+
+```razor
+<AuthorizeRouteView Resource="routeData" RouteData="routeData" 
+    DefaultLayout="typeof(MainLayout)" />
+```
+
+For more information on how authorization state data is passed and used in procedural logic, see the [Expose the authentication state as a cascading parameter](#expose-the-authentication-state-as-a-cascading-parameter) section.
+
+When the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) receives the route data for the resource, authorization policies have access to [Microsoft.AspNetCore.Components.RouteData.PageType](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.RouteData.PageType) and [Microsoft.AspNetCore.Components.RouteData.RouteValues](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.RouteData.RouteValues) that permit custom logic to make authorization decisions.
+
+In the following example, an `EditUser` policy is created in [Microsoft.AspNetCore.Authorization.AuthorizationOptions](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizationOptions) for the app's authorization service configuration ([Microsoft.Extensions.DependencyInjection.AuthorizationServiceCollectionExtensions.AddAuthorizationCore%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.AuthorizationServiceCollectionExtensions.AddAuthorizationCore%252A)) with the following logic:
+
+* Determine if a route value exists with a key of `id`. If the key exists, the route value is stored in `value`.
+* In a variable named `id`, store `value` as a string or set an empty string value (`string.Empty`).
+* If `id` isn't an empty string, assert that the policy is satisfied (return `true`) if the string's value starts with `EMP`. Otherwise, assert that the policy fails (return `false`).
+
+In the `Program` file:
+
+* Add namespaces for [Microsoft.AspNetCore.Components](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components) and [System.Linq](https://learn.microsoft.com/search/?terms=System.Linq):
+
+  ```csharp
+  using Microsoft.AspNetCore.Components;
+  using System.Linq;
+  ```
+
+* Add the policy:
+
+  ```csharp
+  options.AddPolicy("EditUser", policy =>
+      policy.RequireAssertion(context =>
+      {
+          if (context.Resource is RouteData rd)
+          {
+              var routeValue = rd.RouteValues.TryGetValue("id", out var value);
+              var id = Convert.ToString(value, 
+                  System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+
+              if (!string.IsNullOrEmpty(id))
+              {
+                  return id.StartsWith("EMP", StringComparison.InvariantCulture);
+              }
+          }
+
+          return false;
+      })
+  );
+  ```
+
+The preceding example is an oversimplified authorization policy, merely used to demonstrate the concept with a working example. For more information on creating and configuring authorization policies, see [security/authorization/policies](../../security/authorization/policies.md).
+
+In the following `EditUser` component, the resource at `/users/{id}/edit` has a route parameter for the user's identifier (`{id}`). The component uses the preceding `EditUser` authorization policy to determine if the route value for `id` starts with `EMP`. If `id` starts with `EMP`, the policy succeeds and access to the component is authorized. If `id` starts with a value other than `EMP` or if `id` is an empty string, the policy fails, and the component doesn't load.
+
+`EditUser.razor`:
+
+
+
+**Applies to: \>= aspnetcore-8.0**
+
+```razor
+@page "/users/{id}/edit"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "EditUser")]
+
+<h1>Edit User</h1>
+
+<p>The "EditUser" policy is satisfied! <code>Id</code> starts with 'EMP'.</p>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+}
+```
+
+
+
+**Applies to: \>= aspnetcore-5.0 < aspnetcore-8.0**
+
+```razor
+@page "/users/{id}/edit"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "EditUser")]
+
+<h1>Edit User</h1>
+
+<p>The "EditUser" policy is satisfied! <code>Id</code> starts with 'EMP'.</p>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+}
+```
+
+
+
+## Customize unauthorized content with the `Router` component
+
+The [Microsoft.AspNetCore.Components.Routing.Router](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Routing.Router) component, in conjunction with the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) component, allows the app to specify custom content if:
+
+* The user fails an [`[Authorize]`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute) condition applied to the component. The markup of the [`<NotAuthorized>`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView.NotAuthorized) element is displayed. The [`[Authorize]`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization.AuthorizeAttribute) attribute is covered in the [`[Authorize]` attribute](#authorize-attribute) section.
+* Asynchronous authorization is in progress, which usually means that the process of authenticating the user is in progress. The markup of the [`<Authorizing>`](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView.Authorizing) element is displayed.
+
+**Applies to: \>= aspnetcore-8.0**
+
+> **Important:**
+> Blazor router features that display `<NotAuthorized>` and `<NotFound>` content aren't operational during static server-side rendering (static SSR) because request processing is entirely handled by ASP.NET Core middleware pipeline request processing and Razor components aren't rendered at all for unauthorized or bad requests. Use server-side techniques to handle unauthorized and bad requests during static SSR. For more information, see [blazor/components/render-modes#static-server-side-rendering-static-ssr](https://learn.microsoft.com/search/?terms=blazor%2Fcomponents%2Frender-modes%23static-server-side-rendering-static-ssr).
+
+```razor
+<Router ...>
+    <Found ...>
+        <AuthorizeRouteView ...>
+            <NotAuthorized>
+                ...
+            </NotAuthorized>
+            <Authorizing>
+                ...
+            </Authorizing>
+        </AuthorizeRouteView>
+    </Found>
+</Router>
+```
+
+The content of [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%252A) and [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%252A) can include arbitrary items, such as other interactive components.
+
+> **Note:**
+> The preceding requires cascading authentication state services registration in the app's `Program` file:
+>
+> ```csharp
+> builder.Services.AddCascadingAuthenticationState();
+> ```
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+```razor
+<CascadingAuthenticationState>
+    <Router ...>
+        <Found ...>
+            <AuthorizeRouteView ...>
+                <NotAuthorized>
+                    ...
+                </NotAuthorized>
+                <Authorizing>
+                    ...
+                </Authorizing>
+            </AuthorizeRouteView>
+        </Found>
+    </Router>
+</CascadingAuthenticationState>
+```
+
+The content of [Microsoft.AspNetCore.Components.Routing.Router.NotFound%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Routing.Router.NotFound%252A), [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.Authorized%252A), and [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%252A) can include arbitrary items, such as other interactive components.
+
+
+
+If [Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%2A](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeViewCore.NotAuthorized%252A) content isn't specified, the [Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView) uses the following fallback message:
+
+```html
+Not authorized.
+```
+
+An app created from the Blazor WebAssembly project template with authentication enabled includes a `RedirectToLogin` component, which is positioned in the `<NotAuthorized>` content of the [Microsoft.AspNetCore.Components.Routing.Router](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Routing.Router) component. When a user isn't authenticated (`context.User.Identity?.IsAuthenticated != true`), the `RedirectToLogin` component redirects the browser to the `authentication/login` endpoint for authentication. The user is returned to the requested URL after authenticating with the identity provider.
+
+## Procedural logic
+
+If the app is required to check authorization rules as part of procedural logic, use a cascaded parameter of type `Task<`[Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState)`>` to obtain the user's [System.Security.Claims.ClaimsPrincipal](https://learn.microsoft.com/search/?terms=System.Security.Claims.ClaimsPrincipal). `Task<`[Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState)`>` can be combined with other services, such as `IAuthorizationService`, to evaluate policies.
+
+In the following example:
+
+* The `user.Identity.IsAuthenticated` executes code for authenticated (signed-in) users.
+* The `user.IsInRole("admin")` executes code for users in the 'Admin' role.
+* The `(await AuthorizationService.AuthorizeAsync(user, "content-editor")).Succeeded` executes code for users satisfying the 'content-editor' policy.
+
+A server-side Blazor app includes the appropriate namespaces when created from the project template. In a client-side Blazor app, confirm the presence of the [Microsoft.AspNetCore.Authorization](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Authorization) and [Microsoft.AspNetCore.Components.Authorization](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization) namespaces either in the component or in the app's imports file (`_Imports.razor`):
+
+```razor
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+```
+
+`ProceduralLogic.razor`:
+
+**Applies to: \>= aspnetcore-8.0**
+
+```razor
+@page "/procedural-logic"
+@inject IAuthorizationService AuthorizationService
+
+<h1>Procedural Logic Example</h1>
+
+<button @onclick="@DoSomething">Do something important</button>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private async Task DoSomething()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    // ...
+                }
+
+                if (user.IsInRole("Admin"))
+                {
+                    // ...
+                }
+
+                if ((await AuthorizationService.AuthorizeAsync(user, "content-editor"))
+                    .Succeeded)
+                {
+                    // ...
+                }
+            }
+        }
+    }
+}
+```
+
+
+
+**Applies to: < aspnetcore-8.0**
+
+```razor
+@page "/procedural-logic"
+@inject IAuthorizationService AuthorizationService
+
+<h1>Procedural Logic Example</h1>
+
+<button @onclick="@DoSomething">Do something important</button>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private async Task DoSomething()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    // ...
+                }
+
+                if (user.IsInRole("Admin"))
+                {
+                    // ...
+                }
+
+                if ((await AuthorizationService.AuthorizeAsync(user, "content-editor"))
+                    .Succeeded)
+                {
+                    // ...
+                }
+            }
+        }
+    }
+}
+```
+
+
+
+## Troubleshoot errors
+
+Common errors:
+
+* **Authorization requires a cascading parameter of type `Task<AuthenticationState>`. Consider using `CascadingAuthenticationState` to supply this.**
+
+* **`null` value is received for `authenticationStateTask`**
+
+It's likely that the project wasn't created using a server-side Blazor template with authentication enabled.
+
+In .NET 7 or earlier, wrap a `<CascadingAuthenticationState>` around some part of the UI tree, for example around the Blazor router:
+
+```razor
+<CascadingAuthenticationState>
+    <Router ...>
+        ...
+    </Router>
+</CascadingAuthenticationState>
+```
+
+In .NET 8 or later, don't use the [Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState) component:
+
+```diff
+- <CascadingAuthenticationState>
+      <Router ...>
+          ...
+      </Router>
+- </CascadingAuthenticationState>
+```
+
+Instead, add cascading authentication state services to the service collection in the `Program` file:
+
+```csharp
+builder.Services.AddCascadingAuthenticationState();
+```
+
+The [Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState) component (.NET 7 or earlier) or services provided by [Microsoft.Extensions.DependencyInjection.CascadingAuthenticationStateServiceCollectionExtensions.AddCascadingAuthenticationState%2A](https://learn.microsoft.com/search/?terms=Microsoft.Extensions.DependencyInjection.CascadingAuthenticationStateServiceCollectionExtensions.AddCascadingAuthenticationState%252A) (.NET 8 or later) supplies the `Task<`[Microsoft.AspNetCore.Components.Authorization.AuthenticationState](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationState)`>` cascading parameter, which in turn it receives from the underlying [Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider](https://learn.microsoft.com/search/?terms=Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider) dependency injection service.
+
+## Personally Identifiable Information (PII)
+
+Microsoft uses the [GDPR definition for 'personal data' (GDPR 4.1)](https://gdpr-text.com/read/article-4/) when documentation discusses Personally Identifiable Information (PII).
+
+PII refers any information relating to an identified or identifiable natural person. An identifiable natural person is one who can be identified, directly or indirectly, with any of the following:
+
+* Name
+* Identification number
+* Location coordinates
+* Online identifier
+* Other specific factors
+  * Physical
+  * Physiological
+  * Genetic
+  * Mental (psychological)
+  * Economic
+  * Cultural
+  * Social identity
+
+## Additional resources
+
+**Applies to: \>= aspnetcore-6.0**
+
+* Server-side and Blazor Web App resources
+  * [Authorization patterns](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fadditional-scenarios%23server-side-blazor-app-authorization-patterns)
+  * [Quickstart: Add sign-in with Microsoft to an ASP.NET Core web app](https://learn.microsoft.com/entra/identity-platform/quickstart-v2-aspnet-core-webapp)
+  * [Quickstart: Protect an ASP.NET Core web API with Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/quickstart-v2-aspnet-core-web-api)
+  * [host-and-deploy/proxy-load-balancer](../../host-and-deploy/proxy-load-balancer.md): Includes guidance on:
+    * Using forwarded headers middleware to preserve HTTPS scheme information across proxy servers and internal networks.
+    * Additional scenarios and use cases, including manual scheme configuration, request path changes for correct request routing, and forwarding the request scheme for Linux and non-IIS reverse proxies.
+* Microsoft identity platform documentation
+  * [Overview](https://learn.microsoft.com/entra/identity-platform/)
+  * [OAuth 2.0 and OpenID Connect protocols on the Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/v2-protocols)
+  * [Microsoft identity platform and OAuth 2.0 authorization code flow](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)
+  * [Microsoft identity platform ID tokens](https://learn.microsoft.com/entra/identity-platform/id-tokens)
+  * [Microsoft identity platform access tokens](https://learn.microsoft.com/entra/identity-platform/access-tokens)
+* [security/index](../../security/index.md)
+* [security/authentication/windowsauth](../../security/authentication/windowsauth.md)
+* [blazor/components/httpcontext](../components/httpcontext.md)
+* [Build a custom version of the Authentication.MSAL JavaScript library](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fwebassembly%2Fadditional-scenarios%23build-a-custom-version-of-the-authenticationmsal-javascript-library)
+* [Awesome Blazor: Authentication](https://github.com/AdrienTorris/awesome-blazor#authentication) community sample links
+* [blazor/hybrid/security/index](../hybrid/security/index.md)
+* [Opaque (reference) access token support](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fadditional-scenarios%23opaque-reference-access-token-support)
+* [Blazor WebAssembly authorization patterns](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fwebassembly%2Findex%23blazor-webassembly-authorization-patterns)
+
+
+
+**Applies to: < aspnetcore-6.0**
+
+* Server-side Blazor resources
+  * [Authorization patterns](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fadditional-scenarios%23server-side-blazor-app-authorization-patterns)
+  * [Quickstart: Add sign-in with Microsoft to an ASP.NET Core web app](https://learn.microsoft.com/entra/identity-platform/quickstart-v2-aspnet-core-webapp)
+  * [Quickstart: Protect an ASP.NET Core web API with Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/quickstart-v2-aspnet-core-web-api)
+  * [host-and-deploy/proxy-load-balancer](../../host-and-deploy/proxy-load-balancer.md): Includes guidance on:
+    * Using forwarded headers middleware to preserve HTTPS scheme information across proxy servers and internal networks.
+    * Additional scenarios and use cases, including manual scheme configuration, request path changes for correct request routing, and forwarding the request scheme for Linux and non-IIS reverse proxies.
+* Microsoft identity platform documentation
+  * [Overview](https://learn.microsoft.com/entra/identity-platform/)
+  * [OAuth 2.0 and OpenID Connect protocols on the Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/v2-protocols)
+  * [Microsoft identity platform and OAuth 2.0 authorization code flow](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)
+  * [Microsoft identity platform ID tokens](https://learn.microsoft.com/entra/identity-platform/id-tokens)
+  * [Microsoft identity platform access tokens](https://learn.microsoft.com/entra/identity-platform/access-tokens)
+* [security/index](../../security/index.md)
+* [blazor/components/httpcontext](../components/httpcontext.md)
+* [security/authentication/windowsauth](../../security/authentication/windowsauth.md)
+* [Build a custom version of the Authentication.MSAL JavaScript library](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fwebassembly%2Fadditional-scenarios%23build-a-custom-version-of-the-authenticationmsal-javascript-library)
+* [Awesome Blazor: Authentication](https://github.com/AdrienTorris/awesome-blazor#authentication) community sample links
+* [Opaque (reference) access token support](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fadditional-scenarios%23opaque-reference-access-token-support)
+* [Blazor WebAssembly authorization patterns](https://learn.microsoft.com/search/?terms=blazor%2Fsecurity%2Fwebassembly%2Findex%23blazor-webassembly-authorization-patterns)

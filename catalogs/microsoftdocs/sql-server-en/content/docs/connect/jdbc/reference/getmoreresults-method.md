@@ -1,0 +1,42 @@
+---
+title: "getMoreResults Method ()"
+description: "getMoreResults Method ()"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerStatement.getMoreResults ()"
+apitype: "Assembly"
+---
+# getMoreResults Method ()
+
+
+  Moves to the next result of this [SQLServerStatement](sqlserverstatement-class.md) object.  
+  
+## Syntax  
+  
+```  
+  
+public final boolean getMoreResults()  
+```  
+  
+## Return Value  
+ **true** if the returned result is a result set. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getMoreResults method is specified by the getMoreResults method in the java.sql.Statement interface.  
+  
+ Calling the getMoreResults method implicitly closes any currently open result set objects that are obtained with the [getResultSet](getresultset-method-sqlserverstatement.md) method.  
+  
+## Related content
+
+- [getMoreResults Method (SQLServerStatement)](getmoreresults-method-sqlserverstatement.md)
+- [SQLServerStatement Members](sqlserverstatement-members.md)
+- [SQLServerStatement Class](sqlserverstatement-class.md)

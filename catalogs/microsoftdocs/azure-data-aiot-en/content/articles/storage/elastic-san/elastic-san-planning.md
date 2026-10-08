@@ -1,0 +1,123 @@
+---
+title: Plan for an Azure Elastic SAN deployment
+description: Plan for an Azure Elastic SAN deployment. Learn about storage capacity, performance, redundancy, and encryption.
+author: roygara
+ms.service: azure-elastic-san
+ms.topic: concept-article
+ms.date: 01/08/2026
+ms.author: rogarana
+ms.custom:
+  - ignite-2023-elastic-SAN
+# Customer intent: As a cloud architect, I want to plan and deploy an Azure Elastic SAN, so that I can optimize storage capacity, performance, redundancy, and encryption to meet my organization's data management needs.
+---
+
+# Plan for deploying an Elastic SAN
+
+To plan for an Elastic SAN deployment, you need to understand its three main components: the SAN itself, volume groups, and volumes. When you deploy a SAN, you make selections while configuring the SAN, including the redundancy of the entire SAN, and how much performance and storage the SAN has. Then you create volume groups that you use to manage volumes at scale. Any settings you apply to a volume group are inherited by volumes inside that volume group. Finally, you partition the storage capacity that you allocated at the SAN-level into individual volumes.
+
+Before deploying an Elastic SAN, consider the following:
+
+- How much storage do you need?
+- What level of performance do you need?
+- What type of redundancy do you require?
+
+Answering those three questions can help you to successfully deploy a SAN that meets your needs.
+
+## Storage and performance
+
+There are two layers when it comes to performance and storage: the total storage and performance that an Elastic SAN has, and the performance and storage of individual volumes.
+
+### Elastic SAN
+
+You allocate storage for an Elastic SAN in two ways: You can either allocate base capacity or additional capacity. Each TiB of base capacity also increases your SAN's IOPS and throughput (MB/s) but costs more than each TiB of additional capacity. Increasing additional capacity doesn't increase your SAN's IOPS or throughput (MB/s).
+
+When you allocate storage for an Elastic SAN, consider how much storage you require and how much performance you require. Use a combination of base capacity and additional capacity to meet these requirements and optimize your costs. For example, if you needed 100 TiB of storage but only needed 250,000 IOPS and 4,000 MB/s, you could allocate 50 TiB in your base capacity and 50 TiB in your additional capacity.
+
+### Volumes
+
+You create volumes from the storage that you allocated to your Elastic SAN. When you create a volume, think of it like partitioning a section of the storage of your Elastic SAN. The maximum performance of an individual volume is determined by the amount of storage you allocate to it. Individual volumes can have fairly high IOPS and throughput, but the total IOPS and throughput of all your volumes can't exceed the total IOPS and throughput your SAN has. Elastic SAN supports extremely granular volume sizing - each volume can be as small as 1 GiB or as large as 64 TiB.
+
+Using the same example of a 100 TiB SAN that has 500,000 IOPS and 20,000 MB/s, say this SAN had 100 1 TiB volumes. You could potentially have six of these volumes operating at their maximum performance (80,000 IOPS, 1,280 MB/s) since this operation is below the SAN's limits. But if seven volumes all needed to operate at maximum at the same time, they couldn't. Instead the performance of the SAN is split evenly among them.
+
+### Autoscaling
+
+You can automatically scale up your SAN by specific increments until a specified maximum size by using an autoscale policy. An autoscale policy is helpful for environments where storage consumption continually increases, like environments using volume snapshots. Volume snapshots consume some of the total capacity of an elastic SAN, and having an autoscale policy helps ensure your SAN doesn't run out of space to store volume snapshots.
+
+When setting an autoscale policy, there's a minimum capacity increment of 1 TiB, and you can only automatically scale additional capacity, rather than base capacity. So when autoscaling, the IOPS and throughput of your SAN don't automatically scale up.
+
+Here's an example of how an autoscale policy works. Say you have an elastic SAN that has 100 TiB total storage capacity. This SAN has volume snapshots configured, so you want the capacity to automatically scale to accommodate your snapshots. You can set a policy so that whenever the unused capacity is less than or equal to 20 TiB, additional capacity on your SAN increases by 5 TiB, up to a maximum of 150 TiB total storage. So, if you use 80 TiB of space, it automatically provisions an additional 5 TiB, so your SAN now has a total storage capacity of 105 TiB.
+
+## Networking
+
+To configure networking access for an individual volume group, you must either [Configure private endpoints for Azure Elastic SAN](elastic-san-configure-private-endpoints.md) or [Configure service endpoints for Azure Elastic SAN](elastic-san-configure-service-endpoints.md). Once you configure network access for a volume group, all volumes in the group inherit the configuration. If you disable public access at the SAN level, access to the volume groups within that SAN is only available over private endpoints, regardless of individual configurations for the volume group.
+
+After you configure private endpoints or service endpoints for your volume groups, you can mount volumes from [AKS](elastic-san-connect-aks.md), [Linux](elastic-san-connect-linux.md), or [Windows](elastic-san-connect-windows.md) clients in the subnet by using the [internet Small Computer Systems Interface](https://en.wikipedia.org/wiki/ISCSI) (iSCSI) protocol.
+
+## Redundancy
+
+To protect the data in your Elastic SAN against data loss or corruption, all SANs store multiple copies of each file as they're written. Depending on the requirements of your workload, you can select additional degrees of redundancy. Two data redundancy options are currently supported.
+
+### Locally redundant storage
+
+With Locally redundant storage (LRS), every SAN is stored three times within an Azure storage cluster. This redundancy protects against loss of data due to hardware faults, such as a bad disk drive. However, if a disaster such as fire or flooding occurs within the data center, all replicas of an Elastic SAN using LRS could be lost or unrecoverable.
+
+### Zone-redundant storage
+
+With Zone-redundant storage (ZRS), three copies of each SAN are stored in three distinct and physically isolated storage clusters in different Azure *availability zones*. Availability zones are unique physical locations within an Azure region. Each zone is made up of one or more data centers equipped with independent power, cooling, and networking. A write request to storage that is using ZRS happens synchronously. The write operation only returns successfully after the data is written to all replicas across the three availability zones.
+
+## Encryption
+
+All data stored in an Elastic SAN is encrypted at rest using Azure storage service encryption (SSE). Storage service encryption works similarly to BitLocker on Windows: data is encrypted beneath the file system level. SSE protects your data and to help you to meet your organizational security and compliance commitments. Data stored in Elastic SAN is encrypted with Microsoft-managed keys. With Microsoft-managed keys, Microsoft holds the keys to encrypt/decrypt the data, and is responsible for rotating them regularly.
+
+Data in an Azure Elastic SAN is encrypted and decrypted transparently using 256-bit [AES encryption](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard), one of the strongest block ciphers available, and is FIPS 140-2 compliant. Encryption is enabled for all Elastic SANs and can't be disabled. Because your data is secured by default, you don't need to modify your code, or applications to take advantage of SSE. There's no extra cost for SSE.
+
+For more information about the cryptographic modules underlying SSE, see [Cryptography API: Next Generation](https://learn.microsoft.com/windows/desktop/seccng/cng-portal).
+
+## Migration
+
+Currently, you can migrate your data into Azure Elastic SAN by using two options. Both options require deploying and configuring an Azure Elastic SAN first, and then creating volumes through the migration process.
+
+- [Cirrus Data](https://www.cirrusdata.com/): Use this option to migrate from external locations such as an on-premises SAN.
+- [Managed disk snapshots (preview)](elastic-san-snapshots.md#create-a-volume-from-a-managed-disk-snapshot): Use this option to migrate from managed disks to Azure Elastic SAN volumes.
+
+## iSCSI support
+
+Elastic SAN supports the [internet Small Computer Systems Interface](https://en.wikipedia.org/wiki/ISCSI) (iSCSI) protocol. The following iSCSI commands are currently supported:
+
+- TEST UNIT READY
+- REQUEST SENSE
+- INQUIRY
+- REPORT LUNS
+- MODE SENSE
+- READ CAPACITY (10)
+- READ CAPACITY (16)
+- READ (6)
+- READ (10)
+- READ (16)
+- WRITE (6)
+- WRITE (10)
+- WRITE (16)
+- WRITE VERIFY (10)
+- WRITE VERIFY (16)
+- VERIFY (10)
+- VERIFY (16)
+- SYNCHRONIZE CACHE (10)
+- SYNCHRONIZE CACHE (16)
+- RESERVE
+- RELEASE
+- PERSISTENT RESERVE IN
+- PERSISTENT RESERVE OUT
+
+The following iSCSI features aren't currently supported:
+- CHAP authorization
+- Initiator registration
+- iSCSI Error Recovery Levels 1 and 2
+- ESXi iSCSI flow control
+- More than one LUN per iSCSI target
+
+## Next steps
+
+- [Networking options for Elastic SAN](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/elastic-san/elastic-san-networking-concepts.md)
+- [Deploy an Elastic SAN](elastic-san-create.md)
+
+For a video that covers general planning and deployment with a few example scenarios, see [Getting started with Azure Elastic SAN](https://learn.microsoft.com/shows/inside-azure-for-it/getting-started-with-azure-elastic-san).

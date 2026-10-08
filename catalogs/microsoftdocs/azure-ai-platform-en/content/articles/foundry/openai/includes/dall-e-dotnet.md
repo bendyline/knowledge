@@ -1,0 +1,166 @@
+---
+title: 'Quickstart: Use Azure OpenAI in Microsoft Foundry Models with the C# SDK to generate images'
+titleSuffix: Azure OpenAI
+description: Walkthrough on how to get started with Azure OpenAI and make your first image generation call with the C# SDK. 
+manager: mcleans
+ms.service: microsoft-foundry
+ms.subservice: foundry-openai
+ms.topic: include
+author: PatrickFarley
+ms.author: pafarley
+ms.date: 01/29/2026
+ai-usage: ai-assisted
+
+ms.custom: classic-and-new
+---
+
+Use this guide to get started generating images with the Azure OpenAI SDK for C#.
+
+[Library source code](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI) | [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.OpenAI/) | [Samples](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/tests/Samples)
+
+### Prerequisites
+
+- An Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+- The [.NET 7 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
+- An Azure OpenAI resource created in a supported region (see [Region availability](https://learn.microsoft.com/azure/ai-foundry/openai/concepts/models#model-summary-table-and-region-availability)). For more information, see [Create a resource and deploy a model with Azure OpenAI](../../../foundry-classic/openai/how-to/create-resource.md).
+
+#### Microsoft Entra ID prerequisites
+
+For the recommended keyless authentication with Microsoft Entra ID, you need to:
+- Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) used for keyless authentication with Microsoft Entra ID.
+- Assign the `Cognitive Services User` role to your user account. You can assign roles in the Azure portal under **Access control (IAM)** > **Add role assignment**.
+
+### Set up
+
+1. Create a new folder `image-quickstart` and go to the quickstart folder with the following command:
+
+    ```shell
+    mkdir image-quickstart && cd image-quickstart
+    ```
+
+1. Create a new console application with the following command:
+
+    ```shell
+    dotnet new console
+    ```
+
+1. Install the [OpenAI .NET client library](https://www.nuget.org/packages/Azure.AI.OpenAI/) with the [dotnet add package](https://learn.microsoft.com/dotnet/core/tools/dotnet-add-package) command:
+
+    ```console
+    dotnet add package Azure.AI.OpenAI --version 1.0.0-beta.6
+    ```
+
+1. For the **recommended** keyless authentication with Microsoft Entra ID, install the [Azure.Identity](https://www.nuget.org/packages/Azure.Identity) package with:
+
+    ```console
+    dotnet add package Azure.Identity
+    ```
+
+1. For the **recommended** keyless authentication with Microsoft Entra ID, sign in to Azure with the following command:
+
+    ```console
+    az login
+    ```
+
+### Retrieve resource information
+
+
+You need to retrieve the following information to authenticate your application with your Azure OpenAI resource:
+
+#### [Microsoft Entra ID](#tab/keyless)
+
+| Variable name | Value |
+| --- | --- |
+| `AZURE_OPENAI_ENDPOINT` | This value can be found in the **Keys and Endpoint** section when examining your resource from the Azure portal. |
+| `AZURE_OPENAI_DEPLOYMENT_NAME` | This value will correspond to the custom name you chose for your deployment when you deployed a model. This value can be found under **Resource Management** > **Model Deployments** in the Azure portal. |
+
+Learn more about [keyless authentication](https://learn.microsoft.com/azure/ai-services/authentication) and [setting environment variables](https://learn.microsoft.com/azure/ai-services/cognitive-services-environment-variables).
+
+#### [API key](#tab/api-key)
+
+| Variable name | Value |
+| --- | --- |
+| `AZURE_OPENAI_ENDPOINT` | This value can be found in the **Keys and Endpoint** section when examining your resource from the Azure portal. |
+| `AZURE_OPENAI_API_KEY` | This value can be found in the **Keys and Endpoint** section when examining your resource from the Azure portal. You can use either `KEY1` or `KEY2`. |
+| `AZURE_OPENAI_DEPLOYMENT_NAME` | This value will correspond to the custom name you chose for your deployment when you deployed a model. This value can be found under **Resource Management** > **Model Deployments** in the Azure portal. |
+
+Learn more about [finding API keys](https://learn.microsoft.com/azure/ai-services/cognitive-services-environment-variables) and [setting environment variables](https://learn.microsoft.com/azure/ai-services/cognitive-services-environment-variables).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/azure-key-vault.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/foundry/openai/includes/dall-e-dotnet.md)
+
+---
+
+
+
+
+
+### Run the quickstart
+
+The sample code in this quickstart uses Microsoft Entra ID for the recommended keyless authentication. If you prefer to use an API key, you can replace the `DefaultAzureCredential` object with an `AzureKeyCredential` object. 
+
+#### [Microsoft Entra ID](#tab/keyless)
+
+```csharp
+AzureOpenAIClient openAIClient = new AzureOpenAIClient(new Uri(endpoint), new DefaultAzureCredential()); 
+```
+
+#### [API key](#tab/api-key)
+
+```csharp
+AzureOpenAIClient openAIClient = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
+```
+---
+
+To run the quickstart, follow these steps:
+
+1. Replace the contents of `Program.cs` with the following code and update the placeholder values with your own.
+
+    ```csharp
+    using Azure;
+    using Azure.AI.OpenAI;
+    using OpenAI.Images;
+    using static System.Environment;
+    
+    string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? "https://<your-resource-name>.openai.azure.com/";
+    string key = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY") ?? "<your-key>";
+    
+    // Use the recommended keyless credential instead of the AzureKeyCredential credential.
+    AzureOpenAIClient openAIClient = new AzureOpenAIClient(new Uri(endpoint), new DefaultAzureCredential()); 
+    //AzureOpenAIClient openAIClient = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
+    
+    // This must match the custom deployment name you chose for your model
+    ImageClient chatClient = openAIClient.GetImageClient("gpt-image-1");
+    
+    var imageGeneration = await chatClient.GenerateImageAsync(
+            "a happy monkey sitting in a tree, in watercolor",
+            new ImageGenerationOptions()
+            {
+                Size = GeneratedImageSize.W1024xH1024
+            }
+        );
+    
+    Console.WriteLine(imageGeneration.Value.ImageUri);
+    ```
+
+1. Run the application using the `dotnet run` command or the run button at the top of Visual Studio:
+
+    ```dotnetcli
+    dotnet run
+    ```
+
+### Output
+
+The base64-encoded image data is printed to the console.
+
+> **Important:**
+> GPT-image-1 and GPT-image-2 also support additional parameters such as `quality` (`low`, `medium`, `high`), `output_format` (`png`, `jpeg`), `background` (`auto`, `transparent`), and `output_compression` (0-100, JPEG only). For details, see [API options](https://learn.microsoft.com/azure/ai-foundry/openai/how-to/dall-e#specify-api-options).
+
+> **Note:**
+> The Image APIs come with a content moderation filter. If the service recognizes your prompt as harmful content, it won't return a generated image. For more information, see the [content filter](../../../foundry-classic/foundry-models/concepts/content-filter.md) article.
+
+### Clean up resources
+
+If you want to clean up and remove an Azure OpenAI resource, you can delete the resource. Before deleting the resource, you must first delete any deployed models.
+
+- [Azure portal](../../../ai-services/multi-service-resource.md?pivots=azportal#clean-up-resources)
+- [Azure CLI](../../../ai-services/multi-service-resource.md?pivots=azcli#clean-up-resources)

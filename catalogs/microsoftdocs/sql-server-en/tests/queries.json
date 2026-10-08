@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Clustered Nonclustered Indexes",
+    "expectedDocumentIds": [
+      "docs/relational-databases/indexes/clustered-and-nonclustered-indexes-described"
+    ]
+  }
+]

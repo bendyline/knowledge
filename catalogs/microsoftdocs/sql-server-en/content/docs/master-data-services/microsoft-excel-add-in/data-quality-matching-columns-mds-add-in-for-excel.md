@@ -1,0 +1,50 @@
+---
+title: Data Quality Matching Columns
+description: Data Quality Matching Columns (MDS Add-in for Excel)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - microsoft-excel-add-in
+  - build-2025
+---
+# Data Quality Matching Columns (MDS Add-in for Excel)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In the  Master Data Services 
+  Add-in for Excel 
+, after you match data, in the **Data Quality** group on the ribbon, you can click **Show Details** to display columns that provide matching details.  
+  
+ The following table shows the columns that are displayed when matching data.  
+  
+| Name | Description |
+| --- | --- |
+| **CLUSTER_ID** | A unique identifier used to group similar records. All rows that are similar have the same **CLUSTER_ID**. If no **CLUSTER_ID** is displayed for a row, then no similar records were found. |
+| **RECORD_ID** | A unique identifier used to identify records. Similar to the Code value stored in the MDS repository, it is a value used to identify a record. It is generated automatically each time matching takes place. |
+| **PIVOT_MARK** | An arbitrary record that other records are compared to; it does not have a score value. |
+| **SCORE** | Represents how similar the records in the group are to the pivot record. This score is determined by DQS. If no score is displayed, either the record is the pivot for other records, or no matches were found. |
+  
+## Related content
+
+- [Data Quality Matching in the MDS Add-in for Excel](data-quality-matching-in-the-mds-add-in-for-excel.md)
+- [Match Similar Data (MDS Add-in for Excel)](match-similar-data-mds-add-in-for-excel.md)
+- [Data Matching](../../data-quality-services/data-matching.md)

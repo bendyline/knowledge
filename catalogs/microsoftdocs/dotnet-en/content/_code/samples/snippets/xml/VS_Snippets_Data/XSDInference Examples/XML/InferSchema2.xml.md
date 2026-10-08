@@ -1,0 +1,20 @@
+# Source code: samples/snippets/xml/VS_Snippets_Data/XSDInference Examples/XML/InferSchema2.xml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!--<snippet16>-->
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.contoso.com/items" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="item">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" />
+        <xs:element name="price" type="xs:decimal" />
+      </xs:sequence>
+      <xs:attribute name="productID" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+<!--</snippet16>-->
+```

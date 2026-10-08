@@ -1,0 +1,76 @@
+---
+title: Move resources from classic to modernized experience
+description: This article describes how to move from classic to modernized VMware disaster recovery.
+ms.author: v-gajeronika
+ms.reviewer: v-gajeronika
+author: Jeronika-MS
+ms.service: azure-site-recovery
+ms.topic: how-to
+ms.date: 09/21/2026
+ms.custom: engagement-fy23
+# Customer intent: "As a VMware administrator, I want to migrate replicated items from classic to modernized disaster recovery architecture, so that I can benefit from enhanced protection and efficiency without redoing the entire replication process."
+---
+
+# Move resources from classic to modernized experience  
+
+The classic protection experience retired on March 30, 2026. You can't enable new classic protection. This article is retained for eligible existing replications where the **Upgrade to modernized VMware replication** action remains available. If the action isn't available, contact Microsoft Support for recovery guidance instead of following these steps.
+
+For eligible items, this migration transfers protection to the [modernized](vmware-azure-architecture-modernized.md) architecture without repeating complete initial replication for noncritical items.
+
+> **Note:**
+> - Recovery plans aren't migrated and must be created again in the modernized Recovery Services vault.   
+
+## Prerequisites  
+
+- [Prepare the required infrastructure](move-from-classic-to-modernized-vmware-disaster-recovery.md#prepare-the-infrastructure).
+- [Prepare the classic Recovery Services vault](move-from-classic-to-modernized-vmware-disaster-recovery.md#prepare-classic-recovery-services-vault).
+- [Prepare the modernized Recovery Services vault](move-from-classic-to-modernized-vmware-disaster-recovery.md#prepare-modernized-recovery-services-vault).
+
+## Move replicated items  
+
+Follow these steps to move the replicated items from classic architecture to modernized architecture: 
+
+1. Go to the classic Recovery Services vault and open **Replicated items**.
+
+   Screenshot showing replicated items.
+
+1. Select **Upgrade to modernized VMware replication**. The portal displays the **Prerequisites** details. Make sure you read through the prerequisites and then select **Next** to proceed to configure the migration settings.
+
+    Screenshot showing prerequisites.
+
+1. Select the modernized vault you plan to move to, machines from the current vault, which is moved to the modernized vault, and an appliance for each of them.
+
+   Screenshot showing migration settings.
+
+1. Select **Next** to review and make sure to check **Maximum migration time**.
+
+1. Select **I understand the risk. Proceed to move selected replicated item(s)** check box.  
+
+   Screenshot showing review.
+  
+1. Select **Migrate**.
+
+1. You can monitor the migration jobs in the **Site Recovery jobs** section of the vault.  
+
+## Allowed actions during migration and post migration  
+
+### During the migration of machines   
+
+During the migration of a replicated item, continuous replication might stop temporarily. Replication resumes as soon as the migration finishes. During migration, you can initiate the **Failover** operation. You can select the last available recovery point for replication.   
+
+While the migration is in progress, you can only perform the **Failover** operation. After the migration finishes, data starts replicating by using the modernized architecture and the new vault. You can perform all operations from the new vault.   
+
+> **Note:**
+> If the migration fails, Site Recovery automatically rolls back the changes and ensures replication starts again from the classic vault.   
+
+### Post migration operations from classic vault  
+
+**Failover** and **Disable replication** operations continue to be available from the classic vault even after migration is performed successfully. The classic vault continues to exist until the retention period of last available recovery point has expired. Once the retention period is up, the vault is cleaned up automatically. During this time, recovery points from both the vaults can be used for failover. It depends on your failover needs to select a proper recovery point.    
+
+You can continue to get charged for the retention points until the deletion of classic vault, . Once the deletion is done, no charge is associated to the classic vault.  
+
+After migration, if you perform failover by using the classic vault, the replicated items in the modernized vault are automatically cleaned up. After this cleanup, you can perform all further operations, such as commit, reprotect, and failback, only through the classic vault.   
+
+## Next steps
+
+-  Learn how to [move from classic to modernized VMware disaster recovery](move-from-classic-to-modernized-vmware-disaster-recovery.md).

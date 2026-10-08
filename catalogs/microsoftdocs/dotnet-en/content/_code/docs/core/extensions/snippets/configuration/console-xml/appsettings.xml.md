@@ -1,0 +1,21 @@
+# Source code: docs/core/extensions/snippets/configuration/console-xml/appsettings.xml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <SecretKey>Secret key value</SecretKey>
+  <TransientFaultHandlingOptions>
+    <Enabled>true</Enabled>
+    <AutoRetryDelay>00:00:07</AutoRetryDelay>
+  </TransientFaultHandlingOptions>
+  <Logging>
+    <LogLevel>
+      <Default>Information</Default>
+      <Microsoft>Warning</Microsoft>
+    </LogLevel>
+  </Logging>
+</configuration>
+
+```

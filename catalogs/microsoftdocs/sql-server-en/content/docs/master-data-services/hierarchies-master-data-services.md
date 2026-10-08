@@ -1,0 +1,81 @@
+---
+title: Hierarchies
+description: A hierarchy is a tree structure that you can use to group similar members and consolidate/summarize members for reporting and analysis in Master Data Services.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "hierarchies [Master Data Services]"
+  - "hierarchies [Master Data Services], about hierarchies"
+---
+# Hierarchies (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, a hierarchy is a tree structure that you can use to:  
+  
+-   Group similar members for organizational purposes.  
+  
+-   Consolidate and summarize members for reporting and analysis.  
+  
+## What Hierarchies Contain  
+ Each hierarchy contains members from one or more entities. When a member is added, changed, or deleted, all hierarchies are updated. This ensures that the data is accurate in all hierarchies. Hierarchies also help ensure that each member is counted once and only once.  
+  
+ If you want to create a grouping of a subset of members, consider using a collection. For more information, see [Collections (Master Data Services)](collections-master-data-services.md).  
+  
+## Kinds of Hierarchies  
+ You can create multiple hierarchies to view and organize your members in different ways. You can create:  
+  
+-   Ragged hierarchies from a single entity, which are called explicit hierarchies. For more information, see [Explicit Hierarchies (Master Data Services)](explicit-hierarchies-master-data-services.md).  
+  
+-   Level-based hierarchies from multiple entities, based on the existing relationships between entities and their attributes, which are called derived hierarchies. For more information, see [Derived Hierarchies (Master Data Services)](derived-hierarchies-master-data-services.md).  
+  
+> **Note:**  
+>  All members in a hierarchy must be within the same model.  
+  
+## Hierarchies Are Not Taxonomies  
+ A hierarchy is different from a taxonomy. A taxonomy organizes members by multiple attributes at the same time, while a hierarchy organizes members by one attribute at a time. A taxonomy can include the same member multiple times, while a hierarchy includes a member only once.  
+  
+ For example, the same bike can be included in a taxonomy twice: once because it's red, and once because it's a size 38. In a hierarchy, the bike is included only once, so you must decide whether to show it in relation to its color or its size.  
+  
+## Hierarchy Example  
+ In the following example, product members are grouped by subcategory members.  
+  
+ Hierarchy Grouped by Subcategory Example  
+  
+## Related Tasks  
+  
+| Task Description | Topic |
+| --- | --- |
+| Create a explicit hierarchy. | [Create an Explicit Hierarchy (Master Data Services)](create-an-explicit-hierarchy-master-data-services.md) |
+| Create a derived hierarchy. | [Create a Derived Hierarchy (Master Data Services)](create-a-derived-hierarchy-master-data-services.md) |
+| Hide or delete levels in an existing derived hierarchy. | [Hide or Delete Levels in a Derived Hierarchy (Master Data Services)](hide-or-delete-levels-in-a-derived-hierarchy-master-data-services.md) |
+  
+## Related content
+
+- [Explicit Hierarchies (Master Data Services)](explicit-hierarchies-master-data-services.md)
+- [Derived Hierarchies (Master Data Services)](derived-hierarchies-master-data-services.md)
+- [Recursive Hierarchies (Master Data Services)](recursive-hierarchies-master-data-services.md)
+- [Derived Hierarchies with Explicit Caps (Master Data Services)](derived-hierarchies-with-explicit-caps-master-data-services.md)
+- [Collections (Master Data Services)](collections-master-data-services.md)

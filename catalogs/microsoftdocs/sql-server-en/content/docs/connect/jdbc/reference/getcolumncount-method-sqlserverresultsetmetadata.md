@@ -1,0 +1,40 @@
+---
+title: "getColumnCount Method (SQLServerResultSetMetaData)"
+description: "getColumnCount Method (SQLServerResultSetMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSetMetaData.getColumnCount"
+apitype: "Assembly"
+---
+# getColumnCount Method (SQLServerResultSetMetaData)
+
+
+  Returns the number of columns in the result set.  
+  
+## Syntax  
+  
+```  
+  
+public int getColumnCount()  
+```  
+  
+## Return Value  
+ An **int** that indicates the number of columns.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getColumnCount method is specified by the getColumnCount method in the java.sql.ResultSetMetaData interface.  
+  
+## Related content
+
+- [SQLServerResultSetMetaData Methods](sqlserverresultsetmetadata-methods.md)
+- [SQLServerResultSetMetaData Members](sqlserverresultsetmetadata-members.md)
+- [SQLServerResultSetMetaData Class](sqlserverresultsetmetadata-class.md)

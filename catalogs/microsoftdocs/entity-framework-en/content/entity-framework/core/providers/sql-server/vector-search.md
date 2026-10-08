@@ -1,0 +1,255 @@
+---
+title: Microsoft SQL Server Database Provider - Vector Search - EF Core
+description: Using vectors and embeddings to perform similarity search with the Entity Framework Core Microsoft SQL Server database provider
+author: SamMonoRT
+ms.date: 06/09/2026
+uid: core/providers/sql-server/vector-search
+---
+# Vector search in the SQL Server EF Core Provider
+
+> **Note:**
+> Vector support was introduced in EF Core 10.0, and is only supported with SQL Server 2025 and above.
+
+The SQL Server vector data type allows storing *embeddings*, which are representations of meaning that can be efficiently searched over for similarity, powering AI workloads such as semantic search and retrieval-augmented generation (RAG).
+
+## Setting up vector properties
+
+To use the `vector` data type, simply add a .NET property of type `SqlVector<float>` to your entity type, specifying the dimensions as follows:
+
+### [Data Annotations](#tab/data-annotations)
+
+```c#
+public class Blog
+{
+    // ...
+
+    [Column(TypeName = "vector(1536)")]
+    public SqlVector<float> Embedding { get; set; }
+}
+```
+
+### [Fluent API](#tab/fluent-api)
+
+```c#
+public class Blog
+{
+    // ...
+
+    public SqlVector<float> Embedding { get; set; }
+}
+
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Blog>()
+        .Property(b => b.Embedding)
+        .HasColumnType("vector(1536)");
+}
+```
+
+***
+
+Once your property is added and the corresponding column created in the database, you can start inserting embeddings. Embedding generation is done outside of the database, usually via a service, and the details for doing this are out of scope for this documentation. However, [the .NET Microsoft.Extensions.AI library](https://learn.microsoft.com/dotnet/ai/microsoft-extensions-ai) contains [`IEmbeddingGenerator`](https://learn.microsoft.com/dotnet/ai/microsoft-extensions-ai#create-embeddings), which is an abstraction over embedding generators that has implementations for the major providers.
+
+Once you've chosen your embedding generator and set it up, use it to generate embeddings and insert them as follows:
+
+```c#
+IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator = /* Set up your preferred embedding generator */;
+
+var embedding = await embeddingGenerator.GenerateVectorAsync("Some text to be vectorized");
+context.Blogs.Add(new Blog
+{
+    Name = "Some blog",
+    Embedding = new SqlVector<float>(embedding)
+});
+await context.SaveChangesAsync();
+```
+
+Once you have embeddings saved to your database, you're ready to perform vector similarity search over them.
+
+> **Note:**
+> Starting with EF Core 11, vector properties are not loaded by default when querying entities, since vectors are typically large and are rarely needed to be read back. Prior to EF Core 11, vector properties were always loaded like any other property.
+
+## Exact search with VECTOR_DISTANCE()
+
+The [`EF.Functions.VectorDistance()`](https://learn.microsoft.com/sql/t-sql/functions/vector-distance-transact-sql) function computes the *exact* distance between two vectors. Use it to perform similarity search for a given user query:
+
+```c#
+var sqlVector = new SqlVector<float>(await embeddingGenerator.GenerateVectorAsync("Some user query to be vectorized"));
+var topSimilarBlogs = await context.Blogs
+    .OrderBy(b => EF.Functions.VectorDistance("cosine", b.Embedding, sqlVector))
+    .Take(3)
+    .ToListAsync();
+```
+
+This function computes the distance between the query vector and every row in the table, then returns the closest matches. While this provides perfectly accurate results, it can be slow for large datasets because SQL Server must scan all rows and compute distances for each one.
+
+> **Note:**
+> The built-in support in EF 10 replaces the previous [EFCore.SqlServer.VectorSearch](https://github.com/efcore/EFCore.SqlServer.VectorSearch) extension, which allowed performing vector search before the `vector` data type was introduced. As part of upgrading to EF 10, remove the extension from your projects.
+
+## Searching with VECTOR_SEARCH()
+
+> **Warning:**
+> `VECTOR_SEARCH()` and vector indexes are currently experimental features in SQL Server and are subject to change. The APIs in EF Core for these features are also subject to change.
+
+SQL Server's `VECTOR_SEARCH()` table-valued function retrieves rows based on vector similarity. Unlike `VECTOR_DISTANCE()` — which computes the distance between two specific vectors — `VECTOR_SEARCH()` searches an entire table for the most similar vectors to a given query vector.
+
+Use the `VectorSearch()` extension method on your `DbSet`, and chain `OrderBy()`, `Take()`, and `WithApproximate()` to perform an approximate nearest neighbor (ANN) search that uses a [vector index](https://learn.microsoft.com/sql/t-sql/statements/create-vector-index-transact-sql):
+
+```csharp
+var results = await context.Blogs
+    .VectorSearch(b => b.Embedding, embedding, "cosine")
+    .OrderBy(r => r.Distance)
+    .Take(5)
+    .WithApproximate()
+    .ToListAsync();
+
+foreach (var result in results)
+{
+    Console.WriteLine($"Blog {result.Value.Id} with distance {result.Distance}");
+}
+```
+
+This translates to the following SQL:
+
+```sql
+SELECT TOP(@__p_1) WITH APPROXIMATE [b].[Id], [b].[Name], [v].[Distance]
+FROM VECTOR_SEARCH(
+    TABLE = [Blogs] AS [b],
+    COLUMN = [Embedding],
+    SIMILAR_TO = @__embedding_0,
+    METRIC = 'cosine'
+) AS [v]
+ORDER BY [v].[Distance]
+```
+
+`VectorSearch()` returns `VectorSearchResult<TEntity>`, which allows you to access both the entity and the computed distance:
+
+```csharp
+var searchResults = await context.Blogs
+    .VectorSearch(b => b.Embedding, embedding, "cosine")
+    .Where(r => r.Distance < 0.05)
+    .OrderBy(r => r.Distance)
+    .Select(r => new { Blog = r.Value, Distance = r.Distance })
+    .Take(3)
+    .WithApproximate()
+    .ToListAsync();
+```
+
+This allows you to filter on the similarity score, present it to users, etc.
+
+### WithApproximate()
+
+`WithApproximate()` instructs SQL Server to use the vector index for approximate nearest neighbor (ANN) search, which provides significantly better performance for large datasets. It causes `WITH APPROXIMATE` to be added to the SQL `TOP` clause. `WithApproximate()` must be called after `Take()`, which specifies the number of results to return.
+
+Without `WithApproximate()`, the query performs an exact k-nearest neighbor (kNN) search that scans all rows, without using the vector index:
+
+```csharp
+// Exact kNN search (no vector index used)
+var blogs = await context.Blogs
+    .VectorSearch(b => b.Embedding, embedding, "cosine")
+    .OrderBy(r => r.Distance)
+    .Take(5)
+    .ToListAsync();
+```
+
+### Vector indexes
+
+To use approximate search with `WithApproximate()`, you must create a vector index on your vector column. Use the `HasVectorIndex()` method in your model configuration:
+
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Blog>()
+        .HasVectorIndex(b => b.Embedding, "cosine");
+}
+```
+
+This will generate the following SQL migration:
+
+```sql
+CREATE VECTOR INDEX [IX_Blogs_Embedding]
+    ON [Blogs] ([Embedding])
+    WITH (METRIC = COSINE)
+```
+
+The following distance metrics are supported for vector indexes:
+
+| Metric | Description |
+| --- | --- |
+| `cosine` | Cosine similarity (angular distance) |
+| `euclidean` | Euclidean distance (L2 norm) |
+| `dot` | Dot product (negative inner product) |
+
+Choose the metric that best matches your embedding model and use case. Cosine similarity is commonly used for text embeddings, while euclidean distance is often used for image embeddings.
+
+## Hybrid search
+
+*Hybrid search* combines vector similarity search with traditional [full-text search](full-text-search.md) to deliver more relevant results. Vector search excels at finding semantically similar content, while full-text search is better at exact keyword matching. By combining both approaches and using Reciprocal Rank Fusion (RRF) to merge the results, you can build more intelligent search experiences.
+
+The following example shows how to implement hybrid search using EF Core, combining `FreeTextTable()` and `VectorSearch()` in a single query:
+
+```csharp
+var k = 20;
+string textualQuery = ...;
+SqlVector<float> queryEmbedding = ...;
+
+var results = await context.Articles
+    // Perform full-text search
+    .FreeTextTable<Article, int>(textualQuery, topN: k)
+    .Join(
+        context.Articles,
+        fts => fts.Key,
+        a => a.Id,
+        (fts, a) => new { Article = a, fts.Rank })
+    // Perform vector (semantic) search, joining the results of both searches together
+    .FullJoin(
+        context.Articles.VectorSearch(b => b.Embedding, queryEmbedding, "cosine")
+            .OrderBy(r => r.Distance)
+            .Take(k)
+            .WithApproximate(),
+        fts => fts.Article.Id,
+        vs => vs.Value.Id,
+        (fts, vs) => new
+        {
+            Article = fts != null ? fts.Article : vs.Value,
+            FullTextRank = fts == null ? null : (int?)fts.Rank,
+            VectorDistance = vs == null ? null : (double?)vs.Distance
+        })
+    // Apply Reciprocal Rank Fusion (RRF) to combine the results
+    .Select(x => new
+    {
+        x.Article,
+        RrfScore = (x.FullTextRank == null ? 0.0 : 1.0 / (k + x.FullTextRank.Value))
+            + (x.VectorDistance == null ? 0.0 : 1.0 / (k + x.VectorDistance.Value))
+    })
+    .OrderByDescending(x => x.RrfScore)
+    .Take(10)
+    .Select(x => x.Article)
+    .ToListAsync();
+```
+
+This query:
+
+1. Performs a full-text search on `Article`
+2. Performs a vector search on `Article` and combines the results with the full-text search results via a FULL JOIN
+3. Calculates the RRF score by combining both the full text and the semantic ranking
+4. Orders by RRF score, takes the desired number of results and projects out the original `Article` entities.
+
+The query produces the following SQL:
+
+```sql
+SELECT TOP(@__p_4) COALESCE([a].[Id], [t].[Id]) AS [Id], COALESCE([a].[Content], [t].[Content]) AS [Content], COALESCE([a].[Title], [t].[Title]) AS [Title]
+FROM FREETEXTTABLE([Articles], *, @__textualQuery_0, @__k_1) AS [f]
+INNER JOIN [Articles] AS [a] ON [f].[KEY] = [a].[Id]
+FULL JOIN (
+    SELECT TOP(@__k_1) WITH APPROXIMATE [a].[Id], [a].[Content], [a].[Title], [v].[Distance]
+    FROM VECTOR_SEARCH(
+        TABLE = [Articles] AS [a],
+        COLUMN = [Embedding],
+        SIMILAR_TO = @__queryEmbedding_2,
+        METRIC = 'cosine'
+    ) AS [v]
+    ORDER BY [v].[Distance]
+) AS [t] ON [a].[Id] = [t].[Id]
+ORDER BY ISNULL(1.0E0 / CAST(@__k_1 + [f].[RANK] AS float), 0.0E0) + ISNULL(1.0E0 / (CAST(@__k_1 AS float) + [t].[Distance]), 0.0E0) DESC
+```

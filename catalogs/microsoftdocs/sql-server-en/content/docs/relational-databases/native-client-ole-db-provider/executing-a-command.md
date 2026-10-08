@@ -1,0 +1,46 @@
+---
+title: "Executing a command (Native Client OLE DB provider)"
+description: "Executing a command (Native Client OLE DB provider)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/17/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "commands [SQL Server Native Client]"
+  - "OLE DB, executing commands"
+  - "sessions [SQL Server Native Client]"
+  - "OLE DB extensions for XML"
+  - "SQL Server Native Client OLE DB provider, command execution"
+---
+# Executing a SQL Server Native Client Command
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  After the connection to a data source is established, the consumer calls the **IDBCreateSession::CreateSession** method to create a session. The session acts as a command, rowset, or transaction factory.  
+  
+ To work directly with individual tables or indexes, the consumer requests the **IOpenRowset** interface. The **IOpenRowset::OpenRowset** method opens and returns a rowset that includes all rows from a single base table or index.  
+  
+ To execute a command (such as SELECT \* FROM Authors), the consumer requests the **IDBCreateCommand** interface. The consumer can execute the **IDBCreateCommand::CreateCommand** method to create a command object and request for the **ICommandText** interface. The **ICommandText::SetCommandText** method is used to specify the command that is to be executed.  
+  
+ The **Execute** command is used to execute the command. The command can be any SQL statement or procedure name. Not all commands produce a result set (rowset) object. Commands such as SELECT * FROM Authors produce a result set.  
+  
+## Related content
+
+- [Creating a SQL Server Native Client OLE DB Provider Application](creating-a-sql-server-native-client-ole-db-provider-application.md)

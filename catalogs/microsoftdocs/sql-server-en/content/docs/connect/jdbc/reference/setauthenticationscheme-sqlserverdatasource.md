@@ -1,0 +1,31 @@
+---
+title: "setAuthenticationScheme (SQLServerDataSource)"
+description: "setAuthenticationScheme (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# setAuthenticationScheme (SQLServerDataSource)
+
+
+  Indicates the kind of integrated security you want your application to use.  
+  
+## Syntax  
+  
+```vb  
+public void setAuthenticationScheme(String authenticationScheme);  
+```  
+  
+#### Parameters  
+ *authenticationScheme*  
+  
+ Values are **"JavaKerberos"** and the default **"NativeAuthentication"**. For more information, see [Using Kerberos Integrated Authentication to Connect to SQL Server](../using-kerberos-integrated-authentication-to-connect-to-sql-server.md).  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

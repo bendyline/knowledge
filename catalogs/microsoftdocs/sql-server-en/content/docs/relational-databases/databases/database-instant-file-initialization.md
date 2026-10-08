@@ -1,0 +1,189 @@
+---
+title: Database Instant File Initialization
+description: Learn about instant file initialization and how to enable it on your database. Instant file initialization (IFI) allows for faster file operations.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 07/16/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: concept-article
+helpviewer_keywords:
+  - "initializing files [SQL Server]"
+  - "instant file initialization [SQL Server]"
+  - "fast file initialization [SQL Server]"
+  - "file initialization [SQL Server]"
+  - "IFI [SQL Server]"
+  - "database instant file initialization [SQL Server]"
+---
+# Database instant file initialization
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+In this article, you learn about instant file initialization (IFI) and how to enable it to speed up the growth for your  SQL Server 
+ database files.
+
+By default, data and log files are initialized to overwrite any existing data left on the disk from previously deleted files. Data and log files are first initialized by zeroing the files (filling with zeros) when you perform the following operations:
+
+- Create a database.
+- Add data or log files, to an existing database.
+- Increase the size of an existing file (including autogrow operations).
+- Restore a database or filegroup.
+
+In  SQL Server 
+, instant file initialization allows for faster execution of the previously mentioned file operations, since it reclaims used disk space without filling that space with zeros. Instead, old disk content is overwritten as new data is written to the files.
+
+In  Azure SQL Database 
+ and Azure SQL Managed Instance, instant file initialization is available for transaction log files only.
+
+## Instant file initialization and the transaction log
+
+**Applies to:**  SQL Server 2022 (16.x) 
+ and later versions, and  Azure SQL Database 
+ and Azure SQL Managed Instance.
+
+Historically, transaction log files couldn't be initialized instantaneously. However, starting with  SQL Server 2022 (16.x) 
+ (all editions) and in  Azure SQL Database 
+ and Azure SQL Managed Instance, transaction log autogrowth events up to 64 MB can benefit from instant file initialization. The default auto growth size increment for new databases is 64 MB. Transaction log file autogrowth events larger than 64 MB can't benefit from instant file initialization.
+
+Unlike instant file initialization for data files, which is prevented if transparent data encryption (TDE) is enabled, instant file initialization is allowed for transaction log growth on databases that have TDE enabled, because of how the transaction log file grows, and the fact that the transaction log is written into in a serial fashion.
+
+- Instant file initialization is in use for General Purpose and Business Critical tiers of  Azure SQL Database 
+, and Azure SQL Managed Instance, only to benefit the growth of transaction log files.
+
+- Instant file initialization isn't configurable in  Azure SQL Database 
+ and Azure SQL Managed Instance.
+
+## Enable instant file initialization
+
+Instant file initialization of data files is only available if either the service account or the service SID of the  Database Engine 
+ service is granted the `SE_MANAGE_VOLUME_NAME` privilege. Members of the Windows Administrators group have this right and can grant it to other users by adding them to the **Perform volume maintenance tasks** security policy. The `SE_MANAGE_VOLUME_NAME` privilege isn't required for instant file initialization of growth events up to 64 MB in the transaction log, which was introduced with the release of  SQL Server 2022 (16.x) 
+.
+
+We recommend that you grant the `SE_MANAGE_VOLUME_NAME` privilege to the [service SID](../../database-engine/configure-windows/configure-windows-service-accounts-and-permissions.md#Serv_SID) of the  Database Engine 
+ service. This ensures that the grant remains even if you change the service account of the  Database Engine 
+ service. For more information, see [Using Service SIDs to grant permissions to services in SQL Server](../security/using-service-sids-to-grant-permissions-to-services-in-sql-server.md).
+
+> **Important:**  
+> Some feature usage, such as [Transparent data encryption (TDE)](../security/encryption/transparent-data-encryption.md), can prevent instant file initialization (IFI). In  SQL Server 2022 (16.x) 
+ and later versions, and on  Azure SQL Database 
+ and Azure SQL Managed Instance, IFI is allowed on the transaction log. For more information, see [Instant file initialization and the transaction log](#instant-file-initialization-and-the-transaction-log).
+
+In  SQL Server 2016 (13.x) 
+ and later versions, this permission can be granted to the  Database Engine 
+ service security identifier (SID) at install time, during setup.
+
+If you use the [command prompt install](../../database-engine/install-windows/install-sql-server-from-the-command-prompt.md), add the `/SQLSVCINSTANTFILEINIT` argument, or check the box *Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service* in the [installation wizard](../../database-engine/install-windows/install-sql-server-from-the-installation-wizard-setup.md).
+
+To grant an account or a service SID the `Perform volume maintenance tasks` security policy:
+
+1. On the computer where data files will be created, open the **Local Security Policy** application (`secpol.msc`).
+
+1. In the left pane, expand **Local Policies**, and then select **User Rights Assignment**.
+
+1. In the right pane, double-click **Perform volume maintenance tasks**.
+
+1. Select **Add User or Group** and add the  Database Engine 
+ service account or its service SID.
+
+1. Select **Apply**, and then close all **Local Security Policy** dialog boxes.
+
+1. Restart the  Database Engine 
+ service.
+
+1. Check the  Database Engine 
+ error log at startup.
+
+   **Applies to:**  SQL Server 
+ (Starting with  SQL Server 2012 (11.x) 
+ SP4,  SQL Server 2014 (12.x)
+ SP2, and  SQL Server 2016 (13.x) 
+ and later).
+
+   1. If the  Database Engine 
+ service account or its service SID is granted the `SE_MANAGE_VOLUME_NAME` privilege, an informational message that resembles the following example is logged:
+
+      ```output
+      Database Instant File Initialization: enabled. For security and performance considerations see the topic 'Database Instant File Initialization' in SQL Server Books Online. This is an informational message only. No user action is required.
+      ```
+
+   1. If the  Database Engine 
+ service account or its service SID was **not** granted the `SE_MANAGE_VOLUME_NAME` privilege, an informational message that resembles the following example is logged:
+
+      ```output
+      Database Instant File Initialization: disabled. For security and performance considerations see the topic 'Database Instant File Initialization' in SQL Server Books Online. This is an informational message only. No user action is required.
+      ```
+
+   > **Note:**  
+   > In  SQL Server 
+, use the value of `instant_file_initialization_enabled` in the [sys.dm_server_services](../system-dynamic-management-objects/sys-dm-server-services-transact-sql.md) dynamic management view to identify if instant file initialization is enabled for your instance.
+
+## Security considerations
+
+We recommend enabling instant file initialization as the benefits can outweigh the security risk.
+
+When you use instant file initialization, the deleted disk content is overwritten only as new data is written to the files. For this reason, the deleted content is potentially accessible by an unauthorized principal, until some other data writes on that specific area of the data file.
+
+While the database file is attached to the instance of  SQL Server 
+, this information disclosure risk is reduced by the discretionary access control list (DACL) on the file. The DACL allows file access only to the  SQL Server 
+ service account, its service SID, and the local administrator. However, when the file is detached, it's potentially accessible by a user or service that doesn't have the `SE_MANAGE_VOLUME_NAME` privilege.
+
+Similar considerations exist when:
+
+- *The database is backed up.* If the backup file isn't protected with an appropriate DACL, the deleted content can become available to an unauthorized user or service.
+
+- *A file is grown using IFI*. A  SQL Server 
+ administrator could potentially access the raw page contents and see the previously deleted content.
+
+- *The database files are hosted on a storage area network*. It's also possible that the storage area network always presents new pages as preinitialized, and having the operating system reinitialize the pages might be unnecessary overhead.
+
+If the potential for disclosing deleted content is a concern, you should take one or both of the following actions:
+
+- Always make sure that any detached data files and backup files have restrictive DACLs.
+
+- Disable instant file initialization for the instance of  SQL Server 
+. To do so, revoke `SE_MANAGE_VOLUME_NAME` from the  Database Engine 
+ service account and its service SID.
+
+  > **Note:**  
+  > Disabling IFI increases growth time for data files, and only affects files that are created or increased in size after the privilege is revoked.
+
+### SE_MANAGE_VOLUME_NAME privilege
+
+The `SE_MANAGE_VOLUME_NAME` privilege can be assigned in **Windows Administrative Tools**, **Local Security Policy** applet. Under **Local Policies** select **User Right Assignment** and modify the **Perform volume maintenance tasks** property.
+
+## Performance considerations
+
+The database file initialization process writes zeros to the new regions of the file under initialization. The duration of this process depends on size of file portion that is initialized and on the response time and capacity of the storage system. If the initialization takes a long time, you might see the following messages recorded in the  SQL Server 
+ error log and the Application Log.
+
+```output
+Msg 5144
+Autogrow of file '%.*ls' in database '%.*ls' was cancelled by user or timed out after %d milliseconds. Use ALTER DATABASE to set a smaller FILEGROWTH value for this file or to explicitly set a new file size.
+```
+
+```output
+Msg 5145
+Autogrow of file '%.*ls' in database '%.*ls' took %d milliseconds. Consider using ALTER DATABASE to set a smaller FILEGROWTH for this file.
+```
+
+A long autogrow of a database and/or transaction log file can cause query performance problems. An operation that requires the autogrowth of a file holds on to resources such as locks or latches during the duration of the file grow operation. You might see long waits on latches for allocation pages. The operation that requires the long autogrow shows a wait type of `PREEMPTIVE_OS_WRITEFILEGATHER`.
+
+## Related content
+
+- [CREATE DATABASE](../../t-sql/statements/create-database-transact-sql.md)
+- [Manage the size of the transaction log file](../logs/manage-the-size-of-the-transaction-log-file.md)
+- [SQL Server Instant File Initialization: SetFileValidData (Windows) vs fallocate (Linux)](https://learn.microsoft.com/archive/blogs/bobsql/sql-server-instant-file-initialization-setfilevaliddata-windows-vs-fallocate-linux)

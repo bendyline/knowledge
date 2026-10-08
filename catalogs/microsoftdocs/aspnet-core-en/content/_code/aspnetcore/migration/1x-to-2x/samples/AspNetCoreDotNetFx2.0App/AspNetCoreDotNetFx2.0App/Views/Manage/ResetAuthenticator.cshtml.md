@@ -1,0 +1,27 @@
+# Source code: aspnetcore/migration/1x-to-2x/samples/AspNetCoreDotNetFx2.0App/AspNetCoreDotNetFx2.0App/Views/Manage/ResetAuthenticator.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    ViewData["Title"] = "Reset authenticator key";
+    ViewData.AddActivePage(ManageNavPages.TwoFactorAuthentication);
+}
+
+<h4>@ViewData["Title"]</h4>
+<div class="alert alert-warning" role="alert">
+    <p>
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
+    </p>
+    <p>
+        This process disables 2FA until you verify your authenticator app and will also reset your 2FA recovery codes.
+        If you do not complete your authenticator app configuration you may lose access to your account.
+    </p>
+</div>
+<div>
+    <form asp-action="ResetAuthenticator" method="post" class="form-group">
+        <button class="btn btn-danger" type="submit">Reset authenticator key</button>
+    </form>
+</div>
+```

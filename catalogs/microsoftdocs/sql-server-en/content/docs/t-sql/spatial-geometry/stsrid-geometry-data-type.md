@@ -1,0 +1,76 @@
+---
+title: "STSrid (geometry Data Type)"
+description: "STSrid (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STSrid (geometry Data Type)"
+  - "STSrid_TSQL"
+helpviewer_keywords:
+  - "STSrid (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STSrid (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  **STSrid** is an integer representing the spatial reference identifier of the instance.  
+  
+This property can be modified.
+  
+## Syntax  
+  
+```  
+  
+STSrid  
+```  
+  
+## Return Types
+  SQL Server 
+ type: **int**  
+  
+ CLR type: **SqlInt32**  
+  
+## Examples  
+ The first example creates a **geometry** instance with the SRID value 13 and uses `STSrid` to confirm the SRID.  
+  
+```sql
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('POLYGON((0 0, 3 0, 3 3, 0 3, 0 0))', 13);  
+SELECT @g.STSrid;  
+```  
+  
+ The second example uses `STSrid` to change the SRID value of the instance to 23 and then confirms the modified SRID value.  
+  
+```sql
+SET @g.STSrid = 23;  
+SELECT @g.STSrid;  
+```  
+  
+## Related content
+
+- [STX (geometry Data Type)](stx-geometry-data-type.md)
+- [STY (geometry Data Type)](sty-geometry-data-type.md)
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

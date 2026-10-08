@@ -1,0 +1,42 @@
+# Source code: aspnetcore/security/authentication/identity-configuration/sample/Areas/Identity/Pages/Account/Manage/SetPassword.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model SetPasswordModel
+@{
+    ViewData["Title"] = "Set password";
+    ViewData["ActivePage"] = ManageNavPages.ChangePassword;
+}
+
+<h4>Set your password</h4>
+@Html.Partial("_StatusMessage", Model.StatusMessage)
+<p class="text-info">
+    You do not have a local username/password for this site. Add a local
+    account so you can log in without an external login.
+</p>
+<div class="row">
+    <div class="col-md-6">
+        <form id="set-password-form" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.NewPassword"></label>
+                <input asp-for="Input.NewPassword" class="form-control" />
+                <span asp-validation-for="Input.NewPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.ConfirmPassword"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-default">Set password</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+```

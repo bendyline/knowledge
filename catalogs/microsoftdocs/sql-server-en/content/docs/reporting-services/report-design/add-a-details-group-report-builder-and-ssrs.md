@@ -1,0 +1,45 @@
+---
+title: "Add a details group to a paginated report"
+description: Find out about adding a details group to an existing tablix data region. Also how to display the detail data for a matrix in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Add a details group to a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+In a paginated report, the detail data from a report dataset is specified as a group with no group expression. Add a detail group to an existing tablix data region when you want to display the detail data for a matrix. You can also add back detail data that you deleted from a table or list, or to add more detail groups. For more information about groups, see [Understand groups (Report Builder)](understanding-groups-report-builder-and-ssrs.md).  
+  
+> **Note:**  
+>   You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Add a details group to a tablix data region  
+  
+1.  On the design surface, select a tablix data region. The **Grouping** pane displays the row and column groups for the selected data region.  
+  
+1.  In the **Grouping** pane, right-click a group that is an innermost child group. Select **Add Group**, and then choose **Child Group**. The **Tablix Group** dialog opens.  
+  
+1.  In **Group expression**, leave the expression blank. A details group has no expression.  
+  
+1.  Select **Show detail data**.  
+  
+1.  Select **OK**.
+  
+     A new details group is added as a child group in the Grouping pane, and the row handle for the group you selected in step 1 displays the details group icon. For more information about handles, see [Tablix data region cells, rows, and columns (Report Builder)](tablix-data-region-cells-rows-and-columns-report-builder-and-ssrs.md).  
+  
+## Related content
+
+- [Add or delete a group in a data region in a paginated report (Report Builder)](add-or-delete-a-group-in-a-data-region-report-builder-and-ssrs.md)
+- [Groups in a Report Builder paginated report](understanding-groups-report-builder-and-ssrs.md)
+- [Tablix data region in a paginated report (Report Builder)](tablix-data-region-report-builder-and-ssrs.md)
+- [Tables in paginated reports (Report Builder)](tables-report-builder-and-ssrs.md)
+- [Create a matrix in a paginated report (Report Builder)](create-a-matrix-report-builder-and-ssrs.md)
+- [Create invoices and forms with lists in a paginated report (Report Builder)](create-invoices-and-forms-with-lists-report-builder-and-ssrs.md)
+- [Tables, matrices, and lists in Report Builder paginated reports](tables-matrices-and-lists-report-builder-and-ssrs.md)

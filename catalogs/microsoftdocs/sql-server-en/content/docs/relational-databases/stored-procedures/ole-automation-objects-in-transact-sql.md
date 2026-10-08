@@ -1,0 +1,68 @@
+---
+title: "OLE Automation Objects in Transact-SQL"
+description: Learn how OLE Automation objects that are executed through stored procedures run in the address space of an instance of the SQL Server Database Engine.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/10/2022"
+ms.service: sql
+ms.subservice: stored-procedures
+ms.topic: concept-article
+helpviewer_keywords:
+  - "triggers [SQL Server], OLE Automation"
+  - "batches [SQL Server], OLE Automation"
+  - "OLE Automation [SQL Server]"
+  - "OLE Automation [SQL Server], about OLE Automation"
+monikerRange: ">=sql-server-2017"
+---
+# OLE Automation Objects in Transact-SQL
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+   Transact-SQL  includes several system stored procedures that allow OLE Automation objects to be referenced in  Transact-SQL  batches, stored procedures, and triggers. These system stored procedures run as extended stored procedures, and the OLE Automation objects that are executed through the stored procedures run in the address space of an instance of the  SQL Server Database Engine 
+ in the same way that an extended stored procedure runs.  
+  
+ The OLE Automation stored procedures enable  Transact-SQL  batches to reference SQL-DMO objects and custom OLE Automation objects, such as objects that expose the **IDispatch** interface. A custom in-process OLE server that is created by using  Microsoft 
+  Visual Basic  must have an error handler (specified with the **On Error GoTo** statement) for the **Class_Initialize** and **Class_Terminate** subroutines. Unhandled errors in the **Class_Initialize** and **Class_Terminate** subroutines can cause unpredictable errors, such as an access violation in an instance of the  Database Engine 
+. Error handlers for other subroutines are also recommended.  
+  
+ The first step when using an OLE Automation object in  Transact-SQL  is to call the `sp_OACreate` system stored procedure to create an instance of the object in the address space of the instance of the  Database Engine 
+.  
+  
+ After an instance of the object has been created, call the following stored procedures to work with the properties, methods, and error information related to the object:  
+  
+-   `sp_OAGetProperty` obtains the value of a property.  
+  
+-   `sp_OASetProperty` sets the value of a property.  
+  
+-   `sp_OAMethod` calls a method.  
+  
+-   `sp_OAGetErrorInfo` obtains the most recent error information.  
+  
+ When there is no more need for the object, call `sp_OADestroy` to deallocate the instance of the object created by using `sp_OACreate`.  
+  
+ OLE Automation objects return data through property values and methods. The `sp_OAGetProperty` and `sp_OAMethod` procedures return these data values in the form of a result set.  
+  
+ The scope of an OLE Automation object is a batch. All references to the object must be contained in a single batch, stored procedure, or trigger.  
+  
+ When it references objects, the  SQL Server 
+ OLE Automation objects support traversing the referenced object to other objects that it contains. For example, when using the SQL-DMO **SQLServer** object, references can be made to databases and tables contained on that server.  
+
+## Supported platforms
+
+OLE Automation objects aren't available in Azure SQL Database, Azure SQL Managed Instance, SQL database in Fabric, or Fabric Data Warehouse.
+
+## Related content
+
+- [Object hierarchy syntax (Transact-SQL)](../system-stored-procedures/object-hierarchy-syntax-transact-sql.md)
+- [Surface area configuration](../security/surface-area-configuration.md)
+- [sp_OACreate (Transact-SQL)](../system-stored-procedures/sp-oacreate-transact-sql.md)
+- [sp_OAGetProperty (Transact-SQL)](../system-stored-procedures/sp-oagetproperty-transact-sql.md)
+- [sp_OASetProperty (Transact-SQL)](../system-stored-procedures/sp-oasetproperty-transact-sql.md)
+- [sp_OAMethod (Transact-SQL)](../system-stored-procedures/sp-oamethod-transact-sql.md)
+- [sp_OAGetErrorInfo (Transact-SQL)](../system-stored-procedures/sp-oageterrorinfo-transact-sql.md)
+- [sp_OADestroy (Transact-SQL)](../system-stored-procedures/sp-oadestroy-transact-sql.md)
+- [Server configuration: Ole Automation Procedures](../../database-engine/configure-windows/ole-automation-procedures-server-configuration-option.md)

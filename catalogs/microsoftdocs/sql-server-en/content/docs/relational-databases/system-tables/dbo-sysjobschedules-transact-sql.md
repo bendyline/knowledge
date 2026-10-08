@@ -1,0 +1,43 @@
+---
+title: "dbo.sysjobschedules (Transact-SQL)"
+description: dbo.sysjobschedules (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "08/09/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sysjobschedules"
+  - "dbo.sysjobschedules"
+  - "dbo.sysjobschedules_TSQL"
+  - "sysjobschedules_TSQL"
+helpviewer_keywords:
+  - "sysjobschedules system table"
+dev_langs:
+  - "TSQL"
+---
+# dbo.sysjobschedules (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains schedule information for jobs to be executed by  SQL Server 
+ Agent. This table is stored in the **msdb** database.  
+  
+> **Note:**  
+> The **sysjobschedules** table refreshes every 20 minutes, which may affect the values returned by the **sp_help_jobschedule** stored procedure.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **schedule_id** | **int** | ID of the schedule. |
+| **job_id** | **uniqueidentifier** | ID of the job. |
+| **next_run_date** | **int** | Next date on which the job is scheduled to run. The date is formatted YYYYMMDD. |
+| **next_run_time** | **int** | Time at which the job is scheduled to run. The time is formatted HHMMSS, and uses a 24-hour clock. |
+  
+## Related content
+
+- [dbo.sysschedules (Transact-SQL)](dbo-sysschedules-transact-sql.md)

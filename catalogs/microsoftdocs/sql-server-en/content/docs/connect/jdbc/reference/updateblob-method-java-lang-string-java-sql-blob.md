@@ -1,0 +1,47 @@
+---
+title: "updateBlob Method (java.lang.String, java.sql.Blob)"
+description: "updateBlob Method (java.lang.String, java.sql.Blob)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.updateBlob (java.lang.String, java.sql.Blob)"
+apitype: "Assembly"
+---
+# updateBlob Method (java.lang.String, java.sql.Blob)
+
+
+  Updates the designated column with a java.sql.Blob value.  
+  
+## Syntax  
+  
+```  
+  
+public void updateBlob(java.lang.String columnName,  
+                       java.sql.Blob x)  
+```  
+  
+#### Parameters  
+ *columnName*  
+  
+ A **String** that contains the column name.  
+  
+ *x*  
+  
+ A Blob object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This updateBlob method is specified by the updateBlob method in the java.sql.ResultSet interface.  
+  
+## Related content
+
+- [updateBlob Method (SQLServerResultSet)](updateblob-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

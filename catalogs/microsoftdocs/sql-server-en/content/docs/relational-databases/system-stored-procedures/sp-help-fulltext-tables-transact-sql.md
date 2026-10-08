@@ -1,0 +1,98 @@
+---
+title: "sys.sp_help_fulltext_tables (Transact-SQL)"
+description: sp_help_fulltext_tables returns a list of tables that are registered for full-text indexing.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_help_fulltext_tables"
+  - "sp_help_fulltext_tables_TSQL"
+helpviewer_keywords:
+  - "sp_help_fulltext_tables"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_help_fulltext_tables (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Returns a list of tables that are registered for full-text indexing.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use `sys.fulltext_indexes` catalog view instead. For more information, see [sys.fulltext_indexes](../system-catalog-views/sys-fulltext-indexes-transact-sql.md).
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_help_fulltext_tables
+    [ [ @fulltext_catalog_name = ] N'fulltext_catalog_name' ]
+    [ , [ @table_name = ] N'table_name' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @fulltext_catalog_name = ] N'*fulltext_catalog_name*'
+
+The name of the full-text catalog. *@fulltext_catalog_name* is **sysname**, with a default of `NULL`.
+
+- If *@fulltext_catalog_name* is omitted or is `NULL`, all full-text indexed tables associated with the database are returned.
+
+- If *@fulltext_catalog_name* is specified, but *@table_name* is omitted or is `NULL`, the full-text index information is retrieved for every full-text indexed table associated with this catalog.
+
+- If both *@fulltext_catalog_name* and *@table_name* are specified, a row is returned if *@table_name* is associated with *@fulltext_catalog_name*; otherwise, an error is raised.
+
+#### [ @table_name = ] N'*table_name*'
+
+The one-part or two-part table name for which the full-text metadata is requested. *@table_name* is **nvarchar(517)**, with a default of `NULL`. If only *@table_name* is specified, only the row relevant to *@table_name* is returned.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Result set
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `TABLE_OWNER` | **sysname** | Table owner. This is the name of the database user that created the table. |
+| `TABLE_NAME` | **sysname** | Table name. |
+| `FULLTEXT_KEY_INDEX_NAME` | **sysname** | Index imposing the UNIQUE constraint on the column designated as the unique key column. |
+| `FULLTEXT_KEY_COLID` | **int** | Column ID of the unique index identified by `FULLTEXT_KEY_INDEX_NAME`. |
+| `FULLTEXT_INDEX_ACTIVE` | **int** | Specifies whether columns marked for full-text indexing in this table are eligible for queries:<br /><br />`0` = Inactive<br />`1` = Active |
+| `FULLTEXT_CATALOG_NAME` | **sysname** | Full-text catalog in which the full-text index data resides. |
+
+## Permissions
+
+Execute permissions default to members of the **public** role.
+
+## Examples
+
+The following example returns the names of the full-text indexed tables associated with the `Cat_Desc` full-text catalog.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_help_fulltext_tables 'Cat_Desc';
+GO
+```
+
+## Related content
+
+- [INDEXPROPERTY (Transact-SQL)](../../t-sql/functions/indexproperty-transact-sql.md)
+- [OBJECTPROPERTY (Transact-SQL)](../../t-sql/functions/objectproperty-transact-sql.md)
+- [sys.sp_fulltext_table (Transact-SQL)](sp-fulltext-table-transact-sql.md)
+- [sys.sp_help_fulltext_tables_cursor (Transact-SQL)](sp-help-fulltext-tables-cursor-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

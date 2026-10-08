@@ -1,0 +1,63 @@
+---
+title: "PredictSupport (DMX)"
+description: "PredictSupport (DMX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: dmx
+---
+# PredictSupport (DMX)
+
+**Applies to:**
+ 
+
+  Analysis Services 
+
+
+
+  Returns the support value for a specified state.  
+  
+## Syntax  
+  
+```  
+  
+PredictSupport(<scalar column reference>, [<predicted state>])  
+```  
+  
+## Applies To  
+ A scalar column.  
+  
+## Return Type  
+ A scalar value of the type that is specified by *\<*scalar column reference*>*.  
+  
+## Remarks  
+ If the predicted state is omitted, the state that has the highest predictable probability is used, excluding the missing states bucket. To include the missing states bucket, set the \<predicted state> to **INCLUDE_NULL**.  
+  
+ To return the support for the missing states, set the \<predicted state> to NULL.  
+  
+> **Note:**  
+>  The support values are calculated differently or might have a different interpretation depending on the model type that you are querying. For more information about how support is calculated for any particular model type, see the individual algorithm type in [Mining Model Content (Analysis Services - Data Mining)](https://learn.microsoft.com/analysis-services/data-mining/mining-model-content-analysis-services-data-mining).  
+  
+## Examples  
+ The following example uses a singleton query to predict whether an individual will be a bike buyer, and also determines the support for the prediction based on the TM Decision Tree mining model.  
+  
+```  
+SELECT  
+  [Bike Buyer],  
+  PredictSupport([Bike Buyer]) AS [Support],  
+From  
+  [TM Decision Tree]  
+NATURAL PREDICTION JOIN  
+(SELECT 28 AS [Age],  
+  '2-5 Miles' AS [Commute Distance],  
+  'Graduate Degree' AS [Education],  
+  0 AS [Number Cars Owned],  
+  0 AS [Number Children At Home]) AS t  
+```  
+  
+## Related content
+
+- [Data Mining Extensions (DMX) Function Reference](data-mining-extensions-dmx-function-reference.md)
+- [Functions (DMX)](functions-dmx.md)
+- [General Prediction Functions (DMX)](general-prediction-functions-dmx.md)

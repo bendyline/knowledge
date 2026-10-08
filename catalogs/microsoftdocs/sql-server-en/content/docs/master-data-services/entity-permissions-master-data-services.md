@@ -1,0 +1,62 @@
+---
+title: Entity Permissions
+description: Entity Permissions (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "entities [Master Data Services], permissions"
+  - "permissions [Master Data Services], entities"
+---
+# Entity Permissions (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  Entity permissions apply to:  
+  
+-   All of the entity's attributes, including **Name** and **Code**, for both leaf and consolidated members.  
+  
+-   All of the entity's collections.  
+  
+-   Explicit hierarchy memberships and relationships.  
+  
+ When you have permission to an entity, you can add and remove members from the entity, its explicit hierarchies, and its collections.  
+  
+> **Note:**  
+>  These permissions apply to the **Explorer** functional area of the user interface only.  
+  
+| Permission | Description |
+| --- | --- |
+| **Read** | User can read members, attributes, hierarchy memberships, or collection memberships. |
+| **Create** | User can create members, and assign attribute values during create. |
+| **Update** | User can update members, attributes, hierarchy memberships, or collection memberships. |
+| **Delete** | User can delete members. |
+| **Deny** | Deny all access to the entity. |
+  
+ The Read, Create, Update, and Delete permissions can be combined with each other. When Create, Update and Delete permissions are assigned, the read permission will be assigned automatically.  
+  
+## Related content
+
+- [Assign Model Object Permissions (Master Data Services)](assign-model-object-permissions-master-data-services.md)
+- [Model Object Permissions (Master Data Services)](model-object-permissions-master-data-services.md)
+- [Entities (Master Data Services)](entities-master-data-services.md)

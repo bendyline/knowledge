@@ -1,0 +1,247 @@
+---
+title: "= (Equals) (Transact-SQL)"
+description: "= (Equals) (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "12/06/2016"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "="
+  - "= (Equals)"
+  - "Equals"
+  - "=_TSQL"
+helpviewer_keywords:
+  - "equals operator (=)"
+  - "= (equals operator)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# = (Equals) (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Compares the equality of two expressions (a comparison operator) in  SQL Server 
+.  
+  
+
+  
+## Syntax  
+  
+```syntaxsql  
+expression = expression  
+```  
+  
+## Arguments
+ *expression*  
+ Is any valid [expression](expressions-transact-sql.md). If the expressions are not of the same data type, the data type for one expression must be implicitly convertible to the data type of the other. The conversion is based on the rules of [data type precedence](../data-types/data-type-precedence-transact-sql.md).  
+  
+## Result Types  
+ Boolean  
+  
+## Remarks  
+ When you compare using a NULL expression, the result depends on the `ANSI_NULLS` setting:  
+  
+-   If `ANSI_NULLS` is set to ON, the result of any comparison with NULL is UNKNOWN, following the ANSI convention that NULL is an unknown value and cannot be compared with any other value, including other NULLs.  
+  
+-   If `ANSI_NULLS` is set to OFF, the result of comparing NULL to NULL is TRUE, and the result of comparing NULL to any other value is FALSE.  
+
+For more information, see [SET ANSI_NULLS (Transact-SQL)](../statements/set-ansi-nulls-transact-sql.md).
+  
+ A boolean expression resulting in UNKNOWN behaves similarly to FALSE in most, but not all cases. See [NULL and UNKNOWN (Transact-SQL)](null-and-unknown-transact-sql.md) and [NOT (Transact-SQL)](not-transact-sql.md) for more information.  
+  
+  
+## Examples  
+  
+### A. Using = in a simple query  
+ The following example uses the Equals operator to return all rows in the `HumanResources.Department` table in which the value in the `GroupName` column is equal to the word 'Manufacturing'.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT DepartmentID, Name  
+FROM HumanResources.Department  
+WHERE GroupName = 'Manufacturing';  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+  
+DepartmentID Name  
+------------ --------------------------------------------------  
+7            Production  
+8            Production Control  
+  
+(2 row(s) affected)  
+  
+```  
+  
+### B. Comparing NULL and non-NULL values  
+ The following example uses the Equals (`=`) and Not Equal To (`<>`) comparison operators to make comparisons with `NULL` and nonnull values in a table. The example also shows that `IS NULL` is not affected by the `SET ANSI_NULLS` setting.  
+  
+```sql  
+-- Create table t1 and insert 3 rows.  
+CREATE TABLE dbo.t1 (a INT NULL);  
+INSERT INTO dbo.t1 VALUES (NULL),(0),(1);  
+GO  
+  
+-- Print message and perform SELECT statements.  
+PRINT 'Testing default setting';  
+DECLARE @varname int;   
+SET @varname = NULL;  
+  
+SELECT a  
+FROM t1   
+WHERE a = @varname;  
+  
+SELECT a   
+FROM t1   
+WHERE a <> @varname;  
+  
+SELECT a   
+FROM t1   
+WHERE a IS NULL;  
+GO  
+  
+-- SET ANSI_NULLS to ON and test.  
+PRINT 'Testing ANSI_NULLS ON';  
+SET ANSI_NULLS ON;  
+GO  
+DECLARE @varname int;  
+SET @varname = NULL  
+  
+SELECT a   
+FROM t1   
+WHERE a = @varname;  
+  
+SELECT a   
+FROM t1   
+WHERE a <> @varname;  
+  
+SELECT a   
+FROM t1   
+WHERE a IS NULL;  
+GO  
+  
+-- SET ANSI_NULLS to OFF and test.  
+PRINT 'Testing SET ANSI_NULLS OFF';  
+SET ANSI_NULLS OFF;  
+GO  
+DECLARE @varname int;  
+SET @varname = NULL;  
+SELECT a   
+FROM t1   
+WHERE a = @varname;  
+  
+SELECT a   
+FROM t1   
+WHERE a <> @varname;  
+  
+SELECT a   
+FROM t1   
+WHERE a IS NULL;  
+GO  
+  
+-- Drop table t1.  
+DROP TABLE dbo.t1;  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+Testing default setting  
+a  
+-----------  
+NULL  
+  
+(1 row(s) affected)  
+  
+a  
+-----------  
+0  
+1  
+  
+(2 row(s) affected)  
+  
+a  
+-----------  
+NULL  
+  
+(1 row(s) affected)  
+  
+Testing ANSI_NULLS ON  
+a  
+-----------  
+  
+(0 row(s) affected)  
+  
+a  
+-----------  
+  
+(0 row(s) affected)  
+  
+a  
+-----------  
+NULL  
+  
+(1 row(s) affected)  
+  
+Testing SET ANSI_NULLS OFF  
+a  
+-----------  
+NULL  
+  
+(1 row(s) affected)  
+  
+a  
+-----------  
+0  
+1  
+  
+(2 row(s) affected)  
+  
+a  
+-----------  
+NULL  
+  
+(1 row(s) affected)  
+  
+```  
+  
+## Related content
+
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)
+- [Expressions (Transact-SQL)](expressions-transact-sql.md)
+- [Operators (Transact-SQL)](operators-transact-sql.md)

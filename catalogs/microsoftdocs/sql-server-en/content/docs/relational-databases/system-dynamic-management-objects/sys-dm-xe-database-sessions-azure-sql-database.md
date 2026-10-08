@@ -1,0 +1,68 @@
+---
+title: "sys.dm_xe_database_sessions"
+description: The sys.dm_xe_database_sessions dynamic management view (DMV) returns information about active database-scoped extended events sessions.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/29/2025
+ms.service: azure-sql-database
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.dm_xe_database_sessions 
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+The `sys.dm_xe_database_sessions` dynamic management view (DMV) returns information about *active* database-scoped extended events sessions. A session is a collection of events, actions, and targets. For information on all event sessions in the database, see [sys.database_event_sessions](../system-catalog-views/sys-database-event-sessions-azure-sql-database.md).
+
+- Azure SQL Database and SQL database in Fabric support only [database-scoped sessions](https://learn.microsoft.com/azure/azure-sql/database/xevent-db-diff-from-svr). 
+- Azure SQL Managed Instance supports both database-scoped sessions and [server-scoped sessions](../extended-events/extended-events.md). Server-scoped sessions are recommended for SQL managed instances. For more information, see [CREATE EVENT SESSION code examples](../../t-sql/statements/create-event-session-transact-sql.md#code-examples-can-differ-for-azure-sql-database-and-sql-managed-instance).
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `address` | **varbinary(8)** | The memory address of the session. `address` is unique across the local system. Not nullable. |
+| `name` | **nvarchar(256)** | The name of the session. `name` is unique across the local system. Not nullable. |
+| `pending_buffers` | **int** | The number of full buffers that are pending processing. Not nullable. |
+| `total_regular_buffers` | **int** | The total number of regular buffers that are associated with the session. Not nullable.<br /><br />**Note:** Regular buffers are used most of the time. These buffers are of sufficient size to hold many events. Typically, there are three or more buffers per session. The number of regular buffers is automatically determined by the server, based on the memory partitioning that is set through the MEMORY_PARTITION_MODE option. The size of the regular buffers is equal to the value of the MAX_MEMORY option (default of 4 MB), divided by the number of buffers. For more information about the MEMORY_PARTITION_MODE and the MAX_MEMORY options, see [CREATE EVENT SESSION (Transact-SQL)](../../t-sql/statements/create-event-session-transact-sql.md). |
+| `regular_buffer_size` | **bigint** | The regular buffer size, in bytes. Not nullable. |
+| `total_large_buffers` | **int** | The total number of large buffers. Not nullable.<br /><br />**Note:** Large buffers are used when an event is larger than a regular buffer. They are set aside explicitly for this purpose. Large buffers are allocated when the event session starts, and are sized according to the MAX_EVENT_SIZE option. For more information about the MAX_EVENT_SIZE option, see [CREATE EVENT SESSION (Transact-SQL)](../../t-sql/statements/create-event-session-transact-sql.md). |
+| `large_buffer_size` | **bigint** | The large buffer size, in bytes. Not nullable. |
+| `total_buffer_size` | **bigint** | The total size of the memory buffer that is used to store events for the session, in bytes. Not nullable. |
+| `buffer_policy_flags` | **int** | A bitmap that indicates how session event buffers behave when all the buffers are full and a new event is fired. Not nullable. |
+| `buffer_policy_desc` | **nvarchar(256)** | A description that indicates how session event buffers behave when all the buffers are full and a new event is fired. Not nullable. `buffer_policy_desc` can be one of the following values:<br /><br />- Drop event<br />- Don't drop events<br />- Drop full buffer<br />- Allocate new buffer |
+| `flags` | **int** | A bitmap that indicates the flags that have been set on the session. Not nullable. |
+| `flag_desc` | **nvarchar(256)** | A description of the flags set on the session. Not nullable. `flag_desc` can be any combination of the following values:<br /><br />- Flush buffers on close<br />- Dedicated dispatcher<br />- Allow recursive events |
+| `dropped_event_count` | **int** | The number of events that were dropped when the buffers were full. This value is `0` if `buffer_policy_desc` is "Drop full buffer" or "Don't drop events". Not nullable. |
+| `dropped_buffer_count` | **int** | The number of buffers that were dropped when the buffers were full. This value is `0` if `buffer_policy_desc` is set to "Drop event" or "Don't drop events". Not nullable. Even if a buffer isn't dropped at the session level, individual targets may still fail to process a buffer for target specific reasons. See `failed_buffer_count` in [sys.dm_xe_database_session_targets](sys-dm-xe-database-session-targets-azure-sql-database.md). |
+| `blocked_event_fire_time` | **int** | The length of time that event firings were blocked when buffers were full. This value is `0` if `buffer_policy_desc` is "Drop full buffer" or "Drop event". Not nullable. |
+| `create_time` | **datetime** | The time that the session was created (started). Not nullable. |
+| `largest_event_dropped_size` | **int** | The size of the largest event that didn't fit into the session buffer. Not nullable. |
+| `session_source` | **nvarchar(256)** | The *database_name* that is the scope of the session. |
+| `buffer_processed_count` | **bigint** | The total number of buffers processed by the session and accumulates from start of session. Not nullable. |
+| `buffer_full_count` | **bigint** | The number of buffers that were full when they were processed and accumulates from start of session. Not nullable. |
+| `total_bytes_generated` | **bigint** | The number of actual bytes that the extended events session has generated. This information is collected when the session is processing buffers and applies to the file target only. No tracking for other targets. |
+| `total_target_memory` | **bigint** | The total target memory in bytes for a session storing information in a ring buffer target. Not nullable. |
+
+## Permissions
+
+Requires the VIEW DATABASE STATE permission.
+
+## Related content
+
+- [Extended Events in Azure SQL](https://learn.microsoft.com/azure/azure-sql/database/xevent-db-diff-from-svr)
+- [Create an event session with an event_file target in Azure Storage](https://learn.microsoft.com/azure/azure-sql/database/xevent-code-event-file)
+- [sys.dm_xe_database_session_targets](sys-dm-xe-database-session-targets-azure-sql-database.md)
+- [Monitor performance using dynamic management views](https://learn.microsoft.com/azure/azure-sql/database/monitoring-with-dmvs)

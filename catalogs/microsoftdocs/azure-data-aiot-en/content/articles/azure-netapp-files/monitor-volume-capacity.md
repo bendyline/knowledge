@@ -1,0 +1,69 @@
+---
+title: Monitor the capacity of an Azure NetApp Files volume 
+description: Describes ways to monitor the capacity utilization of an Azure NetApp Files volume.
+services: azure-netapp-files
+author: b-hchen
+ms.service: azure-netapp-files
+ms.topic: how-to
+ms.date: 09/04/2024
+ms.author: anfdocs
+ms.custom:
+  - devx-track-azurecli
+  - linux-related-content
+  - sfi-image-nochange
+# Customer intent: As a system administrator, I want to monitor the capacity utilization of Azure NetApp Files volumes, so that I can ensure efficient storage management and prevent capacity issues.
+---
+# Monitor the capacity of a volume  
+
+This article describes ways to monitor the capacity utilization of an Azure NetApp Files volume.  
+
+## Using Windows or Linux clients
+
+This section shows how to use a Windows or Linux client to monitor the volume capacity. The scenarios described in this section assume a volume configured at 1 TiB size (quota) on a 4 TiB Ultra service-level capacity pool. 
+
+### Windows (SMB) clients
+
+You can use Windows clients to check the used and available capacity of a volume through the network mapped drive properties. Use one of the following two methods: 
+
+* Go to File Explorer, right-click the mapped drive, and then select **Properties** to display capacity.  
+
+    [ Screenshot that shows Explorer drive properties and volume properties. ](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-netapp-files/media/monitor-volume-capacity/monitor-explorer-drive-properties.png#lightbox)
+
+* Use the `dir` command at the command prompt: 
+
+    Screenshot that shows using the dir command to display capacity. 
+
+The *available space* is accurate when you use File Explorer or the `dir` command. However, the *consumed or used space* is an estimate when snapshots exist on the volume. The consumed snapshot capacity counts towards the total consumed space on the volume. To get the absolute volume consumption, including the capacity used by snapshots, use the [Azure NetApp Metrics](azure-netapp-files-metrics.md#volumes) in the Azure portal.
+
+### Linux (NFS) clients 
+
+Linux clients can check the used and available capacity of a volume by using the [`df -h`](https://linux.die.net/man/1/df) command. The `h` option displays the size, including used and available space, in a human-readable format (using M, G, and T unit sizes).
+
+The following snapshot shows volume capacity reporting in Linux:
+
+Screenshot that shows volume capacity reporting in Linux. 
+
+The `df` command provides an accurate *available space*. However, the *consumed or used space* is an estimate when snapshots are generated on the volume. The consumed snapshot capacity counts towards the total consumed space on the volume. To get the absolute volume consumption, including the capacity used by snapshots, use the [Azure NetApp Metrics](azure-netapp-files-metrics.md#volumes) in the Azure portal.
+
+> **Note:**
+> The `du` command doesn't account for the space used by snapshots generated in the volume. As such, don't use it for determining the available capacity in a volume.
+
+## Using Azure portal
+Azure NetApp Files leverages the standard [Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/overview) functionality. As such, you can use Azure Monitor to monitor Azure NetApp Files volumes.  
+
+## Using Azure CLI  
+
+You can use the [`az netappfiles volume`](https://learn.microsoft.com/cli/azure/netappfiles/volume) commands of the [Azure command line (CLI) tools](azure-netapp-files-sdk-cli.md) to monitor a volume.
+ 
+## Using REST API  
+
+See [REST API for Azure NetApp Files](azure-netapp-files-develop-with-rest-api.md) and [REST API using PowerShell for Azure NetApp Files](develop-rest-api-powershell.md). 
+
+The REST API specification and example code for Azure NetApp Files are available through the [resource-manager GitHub directory](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/netapp/resource-manager/Microsoft.NetApp/NetApp/stable). 
+
+## Next steps
+
+* [Understand volume quota](volume-quota-introduction.md)
+* [Cost model for Azure NetApp Files](azure-netapp-files-cost-model.md)
+* [Resize the capacity pool or a volume](azure-netapp-files-resize-capacity-pools-or-volumes.md)
+* [Capacity management FAQs](faq-capacity-management.md)

@@ -1,0 +1,50 @@
+---
+title: "sys.pdw_loader_backup_runs (Transact-SQL)"
+description: sys.pdw_loader_backup_runs (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 04/15/2024
+ms.service: sql
+ms.subservice: data-warehouse
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sys.pdw_loader_backup_runs (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+ 
+
+
+  Contains information about ongoing and completed backup and restore operations in  Azure Synapse Analytics , and about ongoing and completed backup, restore. The information persists across system restarts.  
+  
+| Column Name | Data Type | Description | Range |
+| --- | --- | --- | --- |
+| `run_id` | **int** | Unique identifier for a specific backup, restore, or load run.<br /><br /> Key for this view. |  |
+| `name` | **nvarchar(255)** | Null for load. Optional name for backup or restore. |  |
+| `submit_time` | **datetime** | Time the request was submitted. |  |
+| `start_time` | **datetime** | Time the operation started. |  |
+| `end_time` | **datetime** | Time the operation completed, failed, or was canceled. |  |
+| `total_elapsed_time` | **int** | Total time elapsed between `start_time` and current time, or between `start_time` and `end_time` for completed, canceled, or failed runs. | If total_elapsed_time exceeds the maximum value for an integer (24.8 days in milliseconds), it will cause materialization failure due to overflow.<br /><br /> The maximum value in milliseconds is equivalent to 24.8 days. |
+| `operation_type` | **nvarchar(16)** | The load type. | 'BACKUP', 'LOAD', 'RESTORE' |
+| `mode` | **nvarchar(16)** | The mode within the run type. | For `operation_type` = `BACKUP`:<br />`DIFFERENTIAL`<br />`FULL`<br /><br /> For `operation_type` = `LOAD`:<br />`APPEND`<br />`RELOAD`<br />`UPSERT`<br /><br /> For `operation_type` = `RESTORE`:<br />`DATABASE`<br />`HEADER_ONLY` |
+| `database_name` | **nvarchar(255)** | Name of the database that is the context of this operation |  |
+| `table_name` | **nvarchar(255)** | Information not available. |
+|  |
+| `Principal_id` | **int** | ID of the user requesting the operation. |  |
+| `session_id` | **nvarchar(32)** | ID of the session performing the operation. | See `session_id` in [sys.dm_pdw_exec_sessions](../system-dynamic-management-objects/sys-dm-pdw-exec-sessions-transact-sql.md). |
+| `request_id` | **nvarchar(32)** | ID of the request performing the operation. For loads, this is the current or last request associated with this load. | See `request_id` in [sys.dm_pdw_exec_requests](../system-dynamic-management-objects/sys-dm-pdw-exec-requests-transact-sql.md). |
+| `status` | **nvarchar(16)** | Status of the run. | `CANCELLED`,`COMPLETED`,`FAILED`,`QUEUED`,`RUNNING` |
+| `progress` | **int** | Percentage completed. | 0 to 100 |
+| `command` | **nvarchar(4000)** | Full text of the command submitted by the user. | Will be truncated if longer than 4000 characters (counting spaces). |
+| `rows_processed` | **bigint** | Number of rows processed as part of this operation. |  |
+| `rows_rejected` | **bigint** | Number of rows rejected as part of this operation. |  |
+| `rows_inserted` | **bigint** | Number of rows inserted into the database table(s) as part of this operation. |  |
+  
+## Related content
+
+- [Azure Synapse Analytics catalog views](azure-synapse-analytics-catalog-views.md)

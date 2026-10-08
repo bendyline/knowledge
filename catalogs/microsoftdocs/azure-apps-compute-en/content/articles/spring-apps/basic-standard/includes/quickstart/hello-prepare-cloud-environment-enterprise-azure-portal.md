@@ -1,0 +1,43 @@
+---
+author: KarlErickson
+ms.author: v-shilichen
+ms.service: azure-spring-apps
+ms.topic: include
+ms.date: 08/19/2025
+ms.update-cycle: 1095-days
+---
+
+<!--
+For clarity of structure, a separate markdown file is used to describe how to prepare cloud env (enterprise plan) using Azure portal.
+
+[!INCLUDE [hello-prepare-cloud-environment-enterprise-azure-portal](includes/quickstart/hello-prepare-cloud-environment-enterprise-azure-portal.md)]
+
+-->
+
+This section uses a **Deploy to Azure** button to launch a deployment experience in the Azure portal. This experience uses an [ARM template](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/templates/overview.md) to create Azure resources.
+
+### 3.1. Sign in to the Azure portal
+
+Go to the [Azure portal](https://portal.azure.com/) and enter your credentials to sign in to the portal. The default view is your service dashboard.
+
+### 3.2. Create Azure resources
+
+Use the following steps to create all the Azure resources that the app depends on:
+
+1. Select the following **Deploy to Azure** button to launch the deployment experience in the Azure portal:
+
+   Button to deploy the Resource Manager template to Azure.
+
+1. Fill out the form on the **Basics** tab. Use the following table as a guide for completing the form:
+
+   | Setting | Suggested value | Description |
+   | --- | --- | --- |
+   | **Subscription** | Your subscription name. | The Azure subscription that you want to use for your server. If you have multiple subscriptions, choose the subscription in which you'd like to be billed for the resource. |
+   | **Resource group** | **myresourcegroup** | A new resource group name or an existing one from your subscription. |
+   | **Region** | The region closest to your users. | The region is used to create the resource group. |
+
+1. Select **Review and Create** to review your selections. Then, select **Create** to deploy the app to Azure Spring Apps.
+
+1. On the toolbar, select the **Notifications** icon (a bell) to monitor the deployment process. After the deployment finishes, you can select **Pin to dashboard**, which creates a tile for this service on your Azure portal dashboard as a shortcut to the service's **Overview** page. Select **Go to resource** to open the service's **Overview** page.
+
+   Screenshot of the Azure portal that shows the Overview page with the custom deployment notifications pane open.

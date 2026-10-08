@@ -1,0 +1,63 @@
+---
+title: "GETUTCDATE (SSIS Expression)"
+description: "GETUTCDATE (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "dates [Integration Services], GETUTCDATE"
+  - "current date"
+  - "UTC time"
+  - "GETUTCDATE function"
+---
+# GETUTCDATE (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns the current date of the system in UTC time (Universal Time Coordinate or Greenwich Mean Time) using a DT_DBTIMESTAMP format. The GETUTCDATE function takes no arguments.  
+  
+## Syntax  
+  
+```  
+  
+GETUTCDATE()  
+```  
+  
+## Arguments  
+ None  
+  
+## Result Types  
+ DT_DBTIMESTAMP  
+  
+## Expression Examples  
+ This example returns the year of the current date in UTC time.  
+  
+```  
+DATEPART("year",GETUTCDATE())  
+```  
+  
+ This example returns the number of days between a date in the **ModifiedDate** column and the current UTC date.  
+  
+```  
+DATEDIFF("dd",ModifiedDate,GETUTCDATE())  
+```  
+  
+ This example adds three months to the current UTC date.  
+  
+```  
+DATEADD("Month",3,GETUTCDATE())  
+```  
+  
+## Related content
+
+- [GETDATE (SSIS Expression)](getdate-ssis-expression.md)
+- [Functions (SSIS Expression)](functions-ssis-expression.md)

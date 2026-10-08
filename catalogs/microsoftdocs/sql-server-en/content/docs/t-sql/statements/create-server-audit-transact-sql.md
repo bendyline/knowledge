@@ -1,0 +1,358 @@
+---
+title: CREATE SERVER AUDIT (Transact-SQL)
+description: CREATE SERVER AUDIT creates a server audit object using SQL Server Audit.
+author: sravanisaluru
+ms.author: srsaluru
+ms.reviewer: randolphwest
+ms.date: 08/10/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "CREATE_SERVER_AUDIT_TSQL"
+  - "SERVER AUDIT"
+  - "SERVER_AUDIT_TSQL"
+  - "CREATE SERVER AUDIT"
+helpviewer_keywords:
+  - "server audit [SQL Server]"
+  - "CREATE SERVER AUDIT statement"
+  - "audits [SQL Server], creating"
+dev_langs:
+  - TSQL
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017 || >=sql-server-linux-2017 || =fabric"
+---
+
+# CREATE SERVER AUDIT (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Creates a server audit object by using  SQL Server 
+ Audit. For more information, see [SQL Server Audit (Database Engine)](../../relational-databases/security/auditing/sql-server-audit-database-engine.md).
+
+Microsoft Fabric Data Warehouse
+ supports predicate functionality as part of [SQL Audit Logs](https://learn.microsoft.com/fabric/data-warehouse/sql-audit-logs).
+
+
+
+## Syntax
+
+```syntaxsql
+CREATE SERVER AUDIT audit_name
+{
+    TO {
+        [ FILE ( <file_options> [ ,... n ] ) ]
+        | APPLICATION_LOG
+        | SECURITY_LOG
+        | URL
+        | EXTERNAL_MONITOR
+    }
+    [ WITH ( <audit_options> [ ,... n ] ) ]
+    [ WHERE <predicate_expression> ]
+}
+[ ; ]
+
+<file_options> ::=
+{
+    FILEPATH = 'os_file_path'
+    [ , MAXSIZE = { max_size { MB | GB | TB } | UNLIMITED } ]
+    [ , { MAX_ROLLOVER_FILES = { integer | UNLIMITED } } | { MAX_FILES = integer } ]
+    [ , RESERVE_DISK_SPACE = { ON | OFF } ]
+}
+
+<audit_options> ::=
+{
+    [ QUEUE_DELAY = integer ]
+    [ , ON_FAILURE = { CONTINUE | SHUTDOWN | FAIL_OPERATION } ]
+    [ , AUDIT_GUID = uniqueidentifier ]
+    [ , OPERATOR_AUDIT = { ON | OFF } ]
+    [ , RETENTION_DAYS = integer ]
+}
+
+<predicate_expression> ::=
+    { [ NOT ] <predicate_factor>
+    [ { AND | OR } [ NOT ] { <predicate_factor> } ] [ ,... n ] }
+
+<predicate_factor> ::=
+    event_field_name { = | < > | != | > | >= | < | <= | LIKE }
+    { number | 'string' }
+```
+
+## Arguments
+
+#### *audit_name*
+
+The name of the audit.  SQL Server 2019 (15.x) 
+ and earlier versions can't contain spaces in the audit name.
+
+#### TO { FILE | APPLICATION_LOG | SECURITY_LOG | URL | EXTERNAL_MONITOR }
+
+Determines the location of the audit target. The options are a binary file, the Windows Application log, or the Windows Security log.  SQL Server 
+ can't write to the Windows Security log without configuring extra settings in Windows. For more information, see [Write SQL Server Audit events to the Security log](../../relational-databases/security/auditing/write-sql-server-audit-events-to-the-security-log.md).
+
+The `URL` target isn't supported for  SQL Server 
+.
+
+> **Important:**  
+> In Azure SQL Managed Instance, SQL Audit works at the server level. Locations can only be `URL` or `EXTERNAL_MONITOR`.
+
+#### FILEPATH = '*os_file_path*'
+
+The path of the audit log. The file name is generated based on the audit name and audit GUID. If this path is invalid, the audit isn't created.
+
+`FILEPATH` target isn't supported for Azure SQL Managed Instance. You need to use `PATH` instead.
+
+#### MAXSIZE = *max_size*
+
+Specifies the maximum size to which the audit file can grow. The *max_size* value must be an integer followed by MB, GB, TB, or `UNLIMITED`. The minimum size that you can specify for *max_size* is 2 MB and the maximum is 2,147,483,647 TB. When you specify `UNLIMITED`, the file grows until the disk is full. (`0` also indicates `UNLIMITED`.) Specifying a value lower than 2 MB raises the error `MSG_MAXSIZE_TOO_SMALL`. The default value is `UNLIMITED`.
+
+`MAXSIZE` target isn't supported for Azure SQL Managed Instance.
+
+#### MAX_ROLLOVER_FILES = { *integer* | UNLIMITED }
+
+Specifies the maximum number of files to retain in the file system in addition to the current file. The `MAX_ROLLOVER_FILES` value must be an integer or `UNLIMITED`. The default value is `UNLIMITED`. This parameter is evaluated whenever the audit restarts (which can happen when the instance of the  Database Engine 
+ restarts or when the audit is turned off and then on again) or when a new file is needed because the `MAXSIZE` is reached. When `MAX_ROLLOVER_FILES` is evaluated, if the number of files exceeds the `MAX_ROLLOVER_FILES` setting, the oldest file is deleted. As a result, when the setting of `MAX_ROLLOVER_FILES` is 0 a new file is created each time the `MAX_ROLLOVER_FILES` setting is evaluated. Only one file is automatically deleted when `MAX_ROLLOVER_FILES` setting is evaluated, so when the value of `MAX_ROLLOVER_FILES` is decreased, the number of files doesn't shrink unless old files are manually deleted. The maximum number of files that you can specify is 2,147,483,647.
+
+`MAX_ROLLOVER_FILES` isn't supported for Azure SQL Managed Instance.
+
+#### MAX_FILES = *integer*
+
+Specifies the maximum number of audit files that can be created. The audit doesn't roll over to the first file when the limit is reached. When the `MAX_FILES` limit is reached, any action that causes more audit events to be generated fails with an error.
+
+#### RESERVE_DISK_SPACE = { ON | OFF }
+
+This option preallocates the file on the disk to the `MAXSIZE` value. It applies only if `MAXSIZE` isn't equal to `UNLIMITED`. The default value is `OFF`.
+
+`RESERVE_DISK_SPACE` target isn't supported for Azure SQL Managed Instance.
+
+#### QUEUE_DELAY = *integer*
+
+Determines the time, in milliseconds, that can elapse before audit actions are forced to be processed. A value of 0 indicates synchronous delivery. The minimum settable query delay value is `1000` (1 second), which is the default. The maximum is `2147483647` (2,147,483.647 seconds or 24 days, 20 hours, 31 minutes, 23.647 seconds). Specifying an invalid number raises the `MSG_INVALID_QUEUE_DELAY` error.
+
+#### ON_FAILURE = { CONTINUE | SHUTDOWN | FAIL_OPERATION }
+
+Indicates whether the instance writing to the target should fail, continue, or stop  SQL Server 
+ if the target can't write to the audit log. The default value is `CONTINUE`.
+
+#### CONTINUE
+
+ SQL Server 
+ operations continue. Audit records aren't retained. The audit continues to attempt to log events and resumes if the failure condition is resolved. Selecting the continue option can allow unaudited activity, which could violate your security policies. Use this option, when continuing operation of the  Database Engine 
+ is more important than maintaining a complete audit.
+
+#### SHUTDOWN
+
+Forces the instance of  SQL Server 
+ to shut down, if  SQL Server 
+ fails to write data to the audit target for any reason. The login executing the `CREATE SERVER AUDIT` statement must have the `SHUTDOWN` permission within  SQL Server 
+. The shutdown behavior persists even if the `SHUTDOWN` permission is later revoked from the executing login. If the user doesn't have this permission, then the statement fails and the audit isn't created. Use the option when an audit failure could compromise the security or integrity of the system. For more information, see [SHUTDOWN](../language-elements/shutdown-transact-sql.md).
+
+#### FAIL_OPERATION
+
+Database actions fail if they cause audited events. Actions that don't cause audited events can continue, but no audited events can occur. The audit continues to attempt to log events and resumes if the failure condition is resolved. Use this option when maintaining a complete audit is more important than full access to the  Database Engine 
+.
+
+#### AUDIT_GUID = *uniqueidentifier*
+
+To support scenarios such as database mirroring or databases participating in an Always On availability group, an audit needs a specific GUID that matches the GUID found in the mirrored database. You can't modify the GUID after creating the audit.
+
+#### OPERATOR_AUDIT
+
+**Applies to**: Azure SQL Managed Instance only.
+
+Indicates whether auditing captures Microsoft support engineer operations when they need to access your server during a support request.
+
+#### RETENTION_DAYS = *integer*
+
+**Applies to**: Azure SQL Managed Instance and  Azure SQL Database 
+ only.
+
+Indicates the number of days to store the audit log file.
+
+#### *predicate_expression*
+
+Specifies the predicate expression used to determine if an event should be processed or not. Predicate expressions are limited to a length of 3,000 characters, which limits string arguments.
+
+For predicate examples in Microsoft Fabric Data Warehouse
+ [SQL Audit Logs](https://learn.microsoft.com/fabric/data-warehouse/sql-audit-logs), see [Configure SQL Audit Logs in Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse/configure-sql-audit-logs).
+
+#### *event_field_name*
+
+The name of the event field that identifies the predicate source. Audit fields are described in [sys.fn_get_audit_file](../../relational-databases/system-functions/sys-fn-get-audit-file-transact-sql.md). You can filter all fields except `file_name`, `audit_file_offset`, and `event_time`.
+
+While the `action_id` and `class_type` fields are of type **varchar** in `sys.fn_get_audit_file`, you can only use them with numbers when they're a predicate source for filtering. To get the list of values to use with `class_type`, run the following query:
+
+```sql
+SELECT spt.[name], spt.[number]
+FROM [master].[dbo].[spt_values] spt
+WHERE spt.[type] = N'EOD'
+ORDER BY spt.[name];
+```
+
+#### *number*
+
+Any numeric type, including **decimal**. Limitations are the lack of available physical memory or a number that is too large to be represented as a 64-bit integer.
+
+#### '*string*'
+
+Either an ANSI or Unicode string as required by the predicate compare. The predicate compare functions perform no implicit string type conversion. Passing the wrong type results in an error.
+
+## Remarks
+
+You create a server audit in a disabled state.
+
+The `CREATE SERVER AUDIT` statement is part of a transaction. If you roll back the transaction, the statement is also rolled back.
+
+## Permissions
+
+To create, alter, or drop a server audit, principals need the `ALTER ANY SERVER AUDIT` or the `CONTROL SERVER` permission.
+
+When you save audit information to a file, restrict access to the file location to help prevent tampering.
+
+## Examples
+
+### A. Create a server audit with a file target
+
+The following example creates a server audit named `HIPAA_Audit` with a binary file as the target and no options.
+
+```sql
+CREATE SERVER AUDIT HIPAA_Audit
+TO FILE (FILEPATH = '\\SQLPROD_1\Audit\');
+```
+
+### B. Create a server audit with a Windows Application log target with options
+
+The following example creates a server audit named `HIPAA_Audit` with the target set for the Windows Application log. The queue is written every second and shuts down the  SQL Server 
+ engine on failure.
+
+```sql
+CREATE SERVER AUDIT HIPAA_Audit
+TO APPLICATION_LOG
+WITH (
+    QUEUE_DELAY = 1000,
+    ON_FAILURE = SHUTDOWN
+);
+```
+
+<a id="ExampleWhere"></a>
+
+### C. Create a server audit containing a WHERE clause
+
+The following example creates a database, schema, and two tables for the example. The table named `DataSchema.SensitiveData` contains confidential data and access to the table must be recorded in the audit.
+
+The table named `DataSchema.GeneralData` doesn't contain confidential data. The database audit specification audits access to all objects in the `DataSchema` schema.
+
+The server audit is created with a `WHERE` clause that limits the server audit to only the `SensitiveData` table. The server audit presumes an audit folder exists at `C:\SQLAudit`.
+
+```sql
+CREATE DATABASE TestDB;
+GO
+
+USE TestDB;
+GO
+
+CREATE SCHEMA DataSchema;
+GO
+
+CREATE TABLE DataSchema.GeneralData
+(
+    ID INT PRIMARY KEY,
+    DataField VARCHAR (50) NOT NULL
+);
+GO
+
+CREATE TABLE DataSchema.SensitiveData
+(
+    ID INT PRIMARY KEY,
+    DataField VARCHAR (50) NOT NULL
+);
+GO
+```
+
+Create the server audit in the `master` database:
+
+```sql
+USE master;
+GO
+
+CREATE SERVER AUDIT AuditDataAccess TO FILE (FILEPATH = 'C:\SQLAudit\')
+    WHERE object_name = 'SensitiveData';
+GO
+
+ALTER SERVER AUDIT AuditDataAccess WITH (STATE = ON);
+GO
+```
+
+Create the database audit specification in the `TestDB` database:
+
+```sql
+USE TestDB;
+GO
+
+CREATE DATABASE AUDIT SPECIFICATION [FilterForSensitiveData]
+    FOR SERVER AUDIT [AuditDataAccess]
+    ADD (SELECT ON SCHEMA::[DataSchema] BY [public])
+    WITH(STATE = ON);
+GO
+```
+
+Trigger the audit event by selecting from tables:
+
+```sql
+SELECT ID,
+       DataField
+FROM DataSchema.GeneralData;
+
+SELECT ID,
+       DataField
+FROM DataSchema.SensitiveData;
+GO
+```
+
+Check the audit for the filtered content:
+
+```sql
+SELECT *
+FROM fn_get_audit_file('C:\SQLAudit\AuditDataAccess_*.sqlaudit', DEFAULT, DEFAULT);
+GO
+```
+
+## Transact-SQL reference
+
+- [ALTER SERVER AUDIT](alter-server-audit-transact-sql.md)
+- [DROP SERVER AUDIT](drop-server-audit-transact-sql.md)
+- [CREATE SERVER AUDIT SPECIFICATION](create-server-audit-specification-transact-sql.md)
+- [ALTER SERVER AUDIT SPECIFICATION](alter-server-audit-specification-transact-sql.md)
+- [DROP SERVER AUDIT SPECIFICATION](drop-server-audit-specification-transact-sql.md)
+- [CREATE DATABASE AUDIT SPECIFICATION](create-database-audit-specification-transact-sql.md)
+- [ALTER DATABASE AUDIT SPECIFICATION](alter-database-audit-specification-transact-sql.md)
+- [DROP DATABASE AUDIT SPECIFICATION](drop-database-audit-specification-transact-sql.md)
+- [ALTER AUTHORIZATION](alter-authorization-transact-sql.md)
+
+## Related content
+
+- [sys.fn_get_audit_file (Transact-SQL)](../../relational-databases/system-functions/sys-fn-get-audit-file-transact-sql.md)
+- [sys.server_audits (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-audits-transact-sql.md)
+- [sys.server_file_audits (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-file-audits-transact-sql.md)
+- [sys.server_audit_specifications (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-audit-specifications-transact-sql.md)
+- [sys.server_audit_specification_details (Transact-SQL)](../../relational-databases/system-catalog-views/sys-server-audit-specification-details-transact-sql.md)
+- [sys.database_audit_specifications (Transact-SQL)](../../relational-databases/system-catalog-views/sys-database-audit-specifications-transact-sql.md)
+- [sys.database_audit_specification_details (Transact-SQL)](../../relational-databases/system-catalog-views/sys-database-audit-specification-details-transact-sql.md)
+- [sys.dm_server_audit_status (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-server-audit-status-transact-sql.md)
+- [sys.dm_audit_actions (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-audit-actions-transact-sql.md)
+- [sys.dm_audit_class_type_map (Transact-SQL)](../../relational-databases/system-dynamic-management-objects/sys-dm-audit-class-type-map-transact-sql.md)
+- [Create a Server Audit and Server Audit Specification](../../relational-databases/security/auditing/create-a-server-audit-and-server-audit-specification.md)

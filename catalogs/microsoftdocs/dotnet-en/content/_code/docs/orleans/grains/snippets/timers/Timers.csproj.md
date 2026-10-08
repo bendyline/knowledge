@@ -1,0 +1,23 @@
+# Source code: docs/orleans/grains/snippets/timers/Timers.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Sdk" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Reminders" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Reminders.Redis" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Reminders.Cosmos" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Reminders.AdoNet" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>
+
+```

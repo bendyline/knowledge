@@ -1,0 +1,1323 @@
+---
+title: "Manage hosted agents"
+description: "View, monitor, and manage hosted agents in Foundry Agent Service by using the REST API, Python SDK, JavaScript/TypeScript SDK, or Azure Developer CLI."
+author: aahill
+ms.author: aahi
+ms.date: 09/16/2026
+ms.manager: mcleans
+ms.topic: how-to
+ms.service: microsoft-foundry
+ms.subservice: foundry-agent-service
+ai-usage: ai-assisted
+ms.custom: doc-kit-assisted, dev-focus
+zone_pivot_groups: hosted-agent-manage-method
+---
+
+# Manage hosted agents
+
+This article shows you how to manage Hosted agents in Foundry Agent Service. After you [deploy a Hosted agent](deploy-hosted-agent.md), you can view its status, create new versions, select the version served by the agent endpoint, monitor logs, and delete agents when they're no longer needed.
+
+The platform automatically manages the container lifecycle. It provisions compute when a request arrives and deprovisions it after the configured idle timeout. Set the timeout from 2 through 60 minutes when you create an agent version. The default is 15 minutes. This automatic compute scaling is separate from the agent's endpoint state. You don't start or stop the compute manually, but you can [disable an agent's endpoint](#disable-or-enable-an-agent) to take it offline and enable it again later.
+
+If you use a coding agent like GitHub Copilot, the [Microsoft Foundry Skill](../../how-to/develop/use-microsoft-foundry-skill.md) can help you manage versions, endpoints, logs, and lifecycle operations from your project context.
+
+## Prerequisites
+
+- A [deployed Hosted agent](deploy-hosted-agent.md).
+
+**Applies to: rest**
+
+
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) version 2.80 or later, authenticated with `az login`.
+
+
+
+**Applies to: python**
+
+
+- Python SDK: `azure-ai-projects>=2.3.0` and `azure-identity`.
+
+
+
+**Applies to: csharp**
+
+
+- .NET SDK: `Azure.AI.Projects.Agents` (prerelease) and `Azure.Identity`. Install with `dotnet add package Azure.AI.Projects.Agents --prerelease`.
+
+
+
+**Applies to: javascript**
+
+
+- JavaScript/TypeScript SDK: `@azure/ai-projects` and `@azure/identity` (`npm install @azure/ai-projects @azure/identity`).
+
+
+
+**Applies to: azd**
+
+
+- [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) version 1.23.0 or later.
+- The Foundry agents extension:
+
+    ```bash
+    azd ext install azure.ai.agents
+    ```
+
+
+
+**Applies to: rest**
+
+
+## Set up variables
+
+The REST API examples in this article use `az rest` to call the Foundry Agent Service endpoints directly. Set the following variables before running the commands:
+
+```bash
+ACCOUNT_NAME="<your-foundry-account-name>"
+PROJECT_NAME="<your-project-name>"
+AGENT_NAME="<your-agent-name>"
+BASE_URL="https://${ACCOUNT_NAME}.services.ai.azure.com/api/projects/${PROJECT_NAME}"
+API_VERSION="v1"
+RESOURCE="https://ai.azure.com"
+```
+
+> **Important:**
+> The `--resource` parameter is required for all `az rest` calls to Foundry Agent Service data-plane endpoints. Without it, `az rest` can't derive the correct Azure AD audience from the URL and authentication fails.
+
+
+
+## View agents and versions
+
+Use the following commands to list agents and inspect version details.
+
+### List all agents in a project
+
+**Applies to: rest**
+
+
+```bash
+az rest --method GET \
+    --url "${BASE_URL}/agents?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+
+project_client = AIProjectClient(
+    endpoint=PROJECT_ENDPOINT,
+    credential=DefaultAzureCredential(),
+)
+
+for agent in project_client.agents.list():
+    print(agent.name)
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+using System;
+using Azure.AI.Projects.Agents;
+using Azure.Identity;
+
+var projectEndpoint = "https://{account}.services.ai.azure.com/api/projects/{project}";
+AgentAdministrationClient agentsClient = new(
+    endpoint: new Uri(projectEndpoint),
+    tokenProvider: new DefaultAzureCredential());
+
+foreach (ProjectsAgentRecord agent in agentsClient.GetAgents())
+{
+    Console.WriteLine(agent.Name);
+}
+```
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+import { AIProjectClient } from "@azure/ai-projects";
+import { DefaultAzureCredential } from "@azure/identity";
+
+const project = new AIProjectClient(
+  PROJECT_ENDPOINT,
+  new DefaultAzureCredential(),
+);
+
+for await (const agent of project.agents.list()) {
+  console.log(agent.name);
+}
+```
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+**Applies to: azd**
+
+
+```bash
+azd ai agent show
+```
+
+> **Note:**
+> `azd ai agent show` reads the agent name and version from the `azd` service entry in your project configuration.
+
+
+
+### Get agent details
+
+**Applies to: rest**
+
+
+```bash
+az rest --method GET \
+    --url "${BASE_URL}/agents/${AGENT_NAME}?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+The response includes the agent's latest version, status, and definition.
+
+
+
+**Applies to: python**
+
+
+```python
+agent = project_client.agents.get(agent_name="my-agent")
+print(f"Name: {agent.name}")
+print(f"Status: {agent.versions['latest']['status']}")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+ProjectsAgentRecord agent = agentsClient.GetAgent("my-agent");
+Console.WriteLine($"Name: {agent.Name}");
+Console.WriteLine($"State: {agent.State}");
+```
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+const agent = await project.agents.get("my-agent");
+console.log(`Name: ${agent.name}`);
+console.log(`Status: ${agent.versions.latest.status}`);
+```
+
+
+
+**Applies to: azd**
+
+
+```bash
+azd ai agent show
+```
+
+
+
+### Get a specific version
+
+**Applies to: rest**
+
+
+```bash
+az rest --method GET \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions/1?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+agent_version = project_client.agents.get_version(
+    agent_name="my-agent", agent_version="1"
+)
+print(f"Version: {agent_version.version}")
+print(f"Status: {agent_version['status']}")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+ProjectsAgentVersion agentVersion = agentsClient.GetAgentVersion(
+    agentName: "my-agent", agentVersion: "1");
+Console.WriteLine($"Version: {agentVersion.Version}");
+Console.WriteLine($"Status: {agentVersion.Status}");
+```
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+const agentVersion = await project.agents.getVersion("my-agent", "1");
+console.log(`Version: ${agentVersion.version}`);
+console.log(`Status: ${agentVersion.status}`);
+```
+
+
+
+**Applies to: azd**
+
+
+Version information is included in the output of `azd ai agent show`.
+
+
+
+### List all versions of an agent
+
+**Applies to: rest**
+
+
+```bash
+az rest --method GET \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+By default, the list excludes [draft versions (preview)](#create-a-draft-version-preview). To include them, add the `include_drafts=true` query parameter:
+
+```bash
+az rest --method GET \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions?api-version=${API_VERSION}&include_drafts=true" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+for version in project_client.agents.list_versions(agent_name="my-agent"):
+    print(f"Version: {version.version}, Status: {version['status']}")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+foreach (ProjectsAgentVersion version in agentsClient.GetAgentVersions("my-agent"))
+{
+    Console.WriteLine($"Version: {version.Version}, Status: {version.Status}");
+}
+```
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+for await (const version of project.agents.listVersions("my-agent")) {
+  console.log(`Version: ${version.version}, Status: ${version.status}`);
+}
+```
+
+
+
+**Applies to: azd**
+
+
+Version information is included in the output of `azd ai agent show`.
+
+
+
+### Create a new version
+
+Create a new agent version when you need to update the container image, change resource allocation, or modify environment variables.
+
+**Applies to: rest**
+
+
+```bash
+az rest --method POST \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --body '{
+        "definition": {
+            "kind": "hosted",
+            "container_configuration": {
+                "image": "myregistry.azurecr.io/my-agent:v2"
+            },
+            "cpu": "1",
+            "memory": "2Gi",
+            "protocol_versions": [
+                {"protocol": "responses", "version": "2.0.0"}
+            ]
+        }
+    }'
+```
+
+Replace `responses` with `invocations` if your agent uses the Invocations protocol, or include both to expose both protocols. For details on protocol selection, see [Deploy a Hosted agent](deploy-hosted-agent.md#container-requirements).
+
+
+
+**Applies to: python**
+
+
+```python
+from azure.ai.projects.models import ContainerConfiguration, HostedAgentDefinition, ProtocolVersionRecord
+
+agent = project_client.agents.create_version(
+    agent_name="my-agent",
+    definition=HostedAgentDefinition(
+        cpu="1",
+        memory="2Gi",
+        container_configuration=ContainerConfiguration(
+            image="myregistry.azurecr.io/my-agent:v2"
+        ),
+        protocol_versions=[
+            ProtocolVersionRecord(protocol="responses", version="2.0.0"),
+        ],
+    ),
+)
+print(f"Created version: {agent.version}")
+```
+
+Replace `responses` with `invocations` if your agent uses the Invocations protocol, or pass both to expose both protocols.
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+var definition = new HostedAgentDefinition(
+    versions: new[] { new ProtocolVersionRecord(ProjectsAgentProtocol.Responses, "2.0.0") },
+    cpu: "1",
+    memory: "2Gi")
+{
+    ContainerConfiguration = new ContainerConfiguration("myregistry.azurecr.io/my-agent:v2"),
+};
+ProjectsAgentVersion created = agentsClient.CreateAgentVersion(
+    agentName: "my-agent",
+    options: new ProjectsAgentVersionCreationOptions(definition));
+Console.WriteLine($"Created version: {created.Version}");
+```
+
+Replace `ProjectsAgentProtocol.Responses` with `ProjectsAgentProtocol.Invocations` if your agent uses the Invocations protocol, or pass both to expose both protocols.
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+const agent = await project.agents.createVersion("my-agent", {
+  kind: "hosted",
+  cpu: "1",
+  memory: "2Gi",
+  container_configuration: {
+    image: "myregistry.azurecr.io/my-agent:v2",
+  },
+  protocol_versions: [{ protocol: "responses", version: "2.0.0" }],
+});
+console.log(`Created version: ${agent.version}`);
+```
+
+Replace `responses` with `invocations` if your agent uses the Invocations protocol, or pass both to expose both protocols.
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+**Applies to: azd**
+
+
+New versions are created automatically when you run `azd deploy` with updated code or configuration.
+
+
+
+### Create a draft version (preview)
+
+> **Note:**
+> Draft versions are in preview. Preview features are provided without a service-level agreement and aren't recommended for production workloads. Behavior can change. Draft creation must be enabled for your subscription; until it's enabled, a request with `draft` set to `true` creates a normal release version instead.
+
+A *draft version* is an experimental version that you can create and test without affecting how your agent serves production traffic. Drafts let you iterate on a new image, resource allocation, or configuration before you promote the change to a regular release version.
+
+Draft versions differ from regular release versions in the following ways:
+
+- **Separate version identifier**: A draft is assigned a `draft-{timestamp}` version string (for example, `draft-1719600000000`) instead of an auto-incremented integer, so it never advances your release version numbering.
+- **Excluded from default listings**: Drafts don't appear when you [list versions](#list-all-versions-of-an-agent) unless you pass `include_drafts=true`.
+- **Excluded from implicit routing**: A draft is never resolved as the agent's latest version, so it doesn't receive traffic automatically.
+- **Can't be a traffic-routing target**: You can't pin a traffic-routing rule to a draft version. Requests to route traffic to a draft are rejected.
+
+To create a draft version, set `draft` to `true` in the request body:
+
+**Applies to: rest**
+
+
+```bash
+az rest --method POST \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --body '{
+        "draft": true,
+        "definition": {
+            "kind": "hosted",
+            "container_configuration": {
+                "image": "myregistry.azurecr.io/my-agent:experimental"
+            },
+            "cpu": "1",
+            "memory": "2Gi",
+            "protocol_versions": [
+                {"protocol": "responses", "version": "2.0.0"}
+            ]
+        }
+    }'
+```
+
+The response `version` field contains the assigned `draft-{timestamp}` identifier. Use that identifier to [get](#get-a-specific-version) or [delete](#delete-a-specific-version) the draft, or to test it directly. When you're satisfied with the change, promote it by creating a new version with the same image and configuration but with `draft` omitted (or set to `false`). The new version receives a regular auto-incremented version number and becomes eligible for traffic routing.
+
+
+
+**Applies to: python**
+
+
+```python
+from azure.ai.projects.models import (
+    ContainerConfiguration,
+    HostedAgentDefinition,
+    ProtocolVersionRecord,
+)
+
+draft = project_client.agents.create_version(
+    agent_name="my-agent",
+    definition=HostedAgentDefinition(
+        cpu="1",
+        memory="2Gi",
+        container_configuration=ContainerConfiguration(
+            image="myregistry.azurecr.io/my-agent:experimental"
+        ),
+        protocol_versions=[
+            ProtocolVersionRecord(protocol="responses", version="2.0.0"),
+        ],
+    ),
+    draft=True,
+)
+print(f"Created draft version: {draft.version}")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+var definition = new HostedAgentDefinition(
+    versions: new[] { new ProtocolVersionRecord(ProjectsAgentProtocol.Responses, "2.0.0") },
+    cpu: "1",
+    memory: "2Gi")
+{
+    ContainerConfiguration = new ContainerConfiguration("myregistry.azurecr.io/my-agent:experimental"),
+};
+ProjectsAgentVersion draft = agentsClient.CreateAgentVersion(
+    agentName: "my-agent",
+    options: new ProjectsAgentVersionCreationOptions(definition) { Draft = true });
+Console.WriteLine($"Created draft version: {draft.Version}");
+```
+
+
+
+**Applies to: javascript**
+
+
+Draft versions are currently available through the REST API and Python SDK only. Switch to the **REST API** tab for an example.
+
+
+
+**Applies to: azd**
+
+
+Draft versions are currently available through the REST API only. Switch to the **REST** tab for an example.
+
+
+
+### Version status values
+
+After you create or update an agent version, poll the version endpoint until the status reaches `active`:
+
+| Status | Description |
+| --- | --- |
+| `creating` | Infrastructure is being provisioned (typically 2-5 minutes). |
+| `active` | Agent is ready to serve requests. |
+| `failed` | Provisioning failed. Check the `error` field in the response for details. |
+| `deleting` | Version is being cleaned up. |
+| `deleted` | Version has been fully removed. |
+
+**Applies to: python**
+
+
+Poll the version status after creation:
+
+```python
+import time
+
+def wait_for_version_active(project_client, agent_name, agent_version, max_attempts=60):
+    for attempt in range(max_attempts):
+        time.sleep(10)
+        version = project_client.agents.get_version(
+            agent_name=agent_name, agent_version=agent_version
+        )
+        status = version["status"]
+        print(f"Version status: {status} (attempt {attempt + 1})")
+        if status == "active":
+            return
+        if status == "failed":
+            raise RuntimeError(f"Version provisioning failed: {dict(version)}")
+    raise RuntimeError("Timed out waiting for version to become active")
+```
+
+
+
+**Applies to: csharp**
+
+
+Poll the version status after creation:
+
+```csharp
+using System.Threading;
+
+static void WaitForVersionActive(
+    AgentAdministrationClient agentsClient, string agentName, string agentVersion, int maxAttempts = 60)
+{
+    for (int attempt = 0; attempt < maxAttempts; attempt++)
+    {
+        Thread.Sleep(TimeSpan.FromSeconds(10));
+        ProjectsAgentVersion version = agentsClient.GetAgentVersion(agentName, agentVersion);
+        Console.WriteLine($"Version status: {version.Status} (attempt {attempt + 1})");
+        if (version.Status == AgentVersionStatus.Active)
+            return;
+        if (version.Status == AgentVersionStatus.Failed)
+            throw new InvalidOperationException($"Version provisioning failed: {version.Status}");
+    }
+    throw new InvalidOperationException("Timed out waiting for version to become active");
+}
+```
+
+
+
+**Applies to: javascript**
+
+
+Poll the version status after creation:
+
+```typescript
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForVersionActive(
+  project: AIProjectClient,
+  agentName: string,
+  agentVersion: string,
+  maxAttempts = 60,
+) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    await sleep(10_000);
+    const version = await project.agents.getVersion(
+      agentName,
+      agentVersion,
+    );
+    console.log(`Version status: ${version.status} (attempt ${attempt + 1})`);
+    if (version.status === "active") {
+      return;
+    }
+    if (version.status === "failed") {
+      throw new Error(`Version provisioning failed: ${JSON.stringify(version)}`);
+    }
+  }
+  throw new Error("Timed out waiting for version to become active");
+}
+```
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+## Disable or enable an agent
+
+Disable an agent to take its endpoint offline without deleting the agent or any of its versions. While disabled, the agent rejects requests, but its configuration and versions remain intact. Enable the agent again whenever you're ready to resume serving requests. Disabling is reversible, which makes it the preferred way to take an agent out of service temporarily.
+
+### Disable an agent
+
+**Applies to: rest**
+
+
+```bash
+az rest --method POST \
+    --url "${BASE_URL}/agents/${AGENT_NAME}:disable?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+project_client.agents.disable(agent_name="my-agent")
+print("Disabled agent: my-agent")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+agentsClient.DisableAgent("my-agent");
+Console.WriteLine("Disabled agent: my-agent");
+```
+
+
+
+**Applies to: javascript**
+
+
+Not yet available through the JavaScript/TypeScript SDK. Use the REST API.
+
+
+
+**Applies to: azd**
+
+
+Not supported as a standalone command. Use the REST API.
+
+
+
+### Enable an agent
+
+**Applies to: rest**
+
+
+```bash
+az rest --method POST \
+    --url "${BASE_URL}/agents/${AGENT_NAME}:enable?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+project_client.agents.enable(agent_name="my-agent")
+print("Enabled agent: my-agent")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+agentsClient.EnableAgent("my-agent");
+Console.WriteLine("Enabled agent: my-agent");
+```
+
+
+
+**Applies to: javascript**
+
+
+Not yet available through the JavaScript/TypeScript SDK. Use the REST API.
+
+
+
+**Applies to: azd**
+
+
+Not supported as a standalone command. Use the REST API.
+
+
+
+## Delete an agent
+
+You can delete a specific version or an entire agent with all its versions.
+
+### Delete a specific version
+
+**Applies to: rest**
+
+
+```bash
+az rest --method DELETE \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions/1?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+project_client.agents.delete_version(agent_name="my-agent", agent_version="1")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+agentsClient.DeleteAgentVersion(agentName: "my-agent", agentVersion: "1");
+```
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+await project.agents.deleteVersion("my-agent", "1");
+```
+
+
+
+**Applies to: azd**
+
+
+Not currently supported as a standalone command. Use the REST API or SDK.
+
+
+
+### Delete an agent and all versions
+
+> **Warning:**
+> This action permanently deletes the agent and all its versions. Active sessions are terminated. This operation can't be undone.
+
+**Applies to: rest**
+
+
+```bash
+az rest --method DELETE \
+    --url "${BASE_URL}/agents/${AGENT_NAME}?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+project_client.agents.delete(agent_name="my-agent")
+```
+
+
+
+**Applies to: csharp**
+
+
+```csharp
+agentsClient.DeleteAgent(agentName: "my-agent");
+```
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+await project.agents.delete("my-agent");
+```
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+**Applies to: azd**
+
+
+Not currently supported as a standalone command. Use the REST API or SDK.
+
+
+
+## View logs and monitor
+
+Access container logs for debugging provisioning and runtime issues.
+
+**Applies to: rest**
+
+
+Stream logs from a specific agent session:
+
+```bash
+AGENT_VERSION="<version>"
+SESSION_ID="<session-id>"
+
+az rest --method GET \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/versions/${AGENT_VERSION}/sessions/${SESSION_ID}:logstream?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --headers "Accept=text/event-stream"
+```
+
+The logstream endpoint returns Server-Sent Events (SSE) with `event: log` frames. Each frame contains a JSON payload with `timestamp`, `stream` (`stdout`, `stderr`, or `status`), and `message` fields.
+
+Timeouts:
+
+- Maximum connection duration: 30 minutes
+- Idle timeout: 2 minutes
+
+
+
+**Applies to: python**
+
+
+Stream logs from a specific agent session:
+
+```python
+def iter_sse_frames(stream):
+    buffer = ""
+    for chunk in stream:
+        buffer += chunk.decode("utf-8", errors="replace")
+        while "\n\n" in buffer:
+            frame, buffer = buffer.split("\n\n", 1)
+            event_name = None
+            data_lines = []
+            for line in frame.splitlines():
+                if line.startswith("event: "):
+                    event_name = line[7:]
+                elif line.startswith("data: "):
+                    data_lines.append(line[6:])
+            if event_name or data_lines:
+                yield event_name, "\n".join(data_lines)
+
+
+raw_stream = project_client.agents.get_session_log_stream(
+    agent_name="my-agent",
+    agent_version="1",
+    session_id="<session-id>",
+)
+for event_name, data in iter_sse_frames(raw_stream):
+    print(f"SSE event: {event_name}\nSSE data: {data}\n")
+```
+
+
+
+**Applies to: csharp**
+
+
+Streaming session logs as Server-Sent Events is available through the REST API. Switch to the **REST** tab for an example.
+
+
+
+**Applies to: javascript**
+
+
+Stream logs from a specific agent session:
+
+```typescript
+async function* iterSseFrames(stream: NodeJS.ReadableStream) {
+  let buffer = "";
+  for await (const chunk of stream) {
+    buffer += chunk.toString("utf-8");
+    while (buffer.includes("\n\n")) {
+      const idx = buffer.indexOf("\n\n");
+      const frame = buffer.slice(0, idx);
+      buffer = buffer.slice(idx + 2);
+
+      let eventName;
+      const dataLines: string[] = [];
+      for (const line of frame.split("\n")) {
+        if (line.startsWith("event: ")) {
+          eventName = line.slice(7);
+        } else if (line.startsWith("data: ")) {
+          dataLines.push(line.slice(6));
+        }
+      }
+      if (dataLines.length > 0 || eventName) {
+        yield { event: eventName, data: dataLines.join("\n") };
+      }
+    }
+  }
+}
+
+const logStream = await project.agents.getSessionLogStream(
+  "my-agent",
+  "1",
+  "<session-id>",
+);
+
+if (logStream.readableStreamBody) {
+  for await (const frame of iterSseFrames(logStream.readableStreamBody)) {
+    console.log(`SSE event: ${frame.event}`);
+    console.log(`SSE data: ${frame.data}\n`);
+  }
+}
+```
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+**Applies to: azd**
+
+
+Monitor a running agent with real-time status and log information:
+
+```bash
+azd ai agent monitor
+```
+
+This command reads the agent name and version from the `azd` service entry in your project configuration.
+
+
+
+### Example log output
+
+```text
+2026-04-09T08:43:48.72656  Connecting to the container 'agent-container'...
+2026-04-09T08:43:48.75451  Successfully connected to container: 'agent-container'
+2026-04-09T08:43:59.0671054Z stdout F INFO: 127.0.0.1:42588 - "GET /readiness HTTP/1.1" 200 OK
+```
+
+## Configure agent endpoint routing
+
+An agent endpoint routes 100% of its traffic to one agent version. Use the version selector to choose the version that the endpoint serves.
+
+> **Important:**
+> Traffic splitting between agent versions isn't supported. Configure one `FixedRatio` rule with `traffic_percentage` set to `100`, even though `version_selection_rules` is an array.
+
+**Applies to: rest**
+
+
+Endpoint routing is configured by patching the agent object. Use `PATCH /agents/{agent_name}` with `Content-Type: application/merge-patch+json`:
+
+```bash
+az rest --method PATCH \
+    --url "${BASE_URL}/agents/${AGENT_NAME}?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --headers "Content-Type=application/merge-patch+json" \
+    --body '{
+        "agent_endpoint": {
+            "version_selector": {
+                "version_selection_rules": [
+                    {"agent_version": "1", "traffic_percentage": 100, "type": "FixedRatio"}
+                ]
+            },
+            "protocol_configuration": {
+                "responses": {}
+            }
+        }
+    }'
+```
+
+Set `protocol_configuration` to `{"invocations": {}}` or `{"responses": {}, "invocations": {}}` to match the protocols your agent exposes.
+
+
+
+**Applies to: python**
+
+
+```python
+from azure.ai.projects.models import (
+    AgentEndpointConfig,
+    FixedRatioVersionSelectionRule,
+    ProtocolConfiguration,
+    ResponsesProtocolConfiguration,
+    VersionSelector,
+)
+
+endpoint_config = AgentEndpointConfig(
+    version_selector=VersionSelector(
+        version_selection_rules=[
+            FixedRatioVersionSelectionRule(
+                agent_version="1", traffic_percentage=100
+            ),
+        ]
+    ),
+    protocol_configuration=ProtocolConfiguration(
+        responses=ResponsesProtocolConfiguration()
+    ),
+)
+
+project_client.agents.update_details(
+    agent_name="my-agent",
+    agent_endpoint=endpoint_config,
+)
+```
+
+
+
+**Applies to: csharp**
+
+
+Configure endpoint routing with the REST API. Switch to the **REST API** tab for an example.
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+const endpointConfig = {
+  version_selector: {
+    version_selection_rules: [
+      { type: "FixedRatio", agent_version: "1", traffic_percentage: 100 },
+    ],
+  },
+  protocol_configuration: { responses: {} },
+};
+
+await project.agents.updateAgent("my-agent", {
+  agentEndpoint: endpointConfig,
+});
+```
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+**Applies to: azd**
+
+
+During `azd deploy`, the tool applies endpoint settings configured for the agent. If you pin production to a version, ensure those settings don't overwrite the pin. To select a specific version, use the REST API or SDK.
+
+
+
+## Release a version without changing production
+
+Pin your production endpoint before deploying a candidate version. The default routing policy follows the latest version, so creating a version without first pinning production can change what consumers receive.
+
+This workflow separates deployment from promotion. Use it with [azd CI/CD](set-up-ci-cd-cli.md#validate-a-candidate-before-production-promotion) or [standalone Terraform deployment](deploy-hosted-agent-terraform.md).
+
+<!-- [TO VERIFY] Exercise the complete deploy, candidate-session test, promotion, and rollback sequence for each documented deployment tool before publication. -->
+
+1. **Record and pin production.** Read the agent's current endpoint configuration and record the version that production serves. [Select that concrete version](configure-agent.md#select-the-active-agent-version) with one `FixedRatio` rule at 100%. Keep its identifier and container image available for rollback.
+
+1. **Create the candidate.** Deploy the new image or configuration without changing the production selector. Capture the candidate's concrete version identifier from your deployment tool. Don't resolve `latest` again after testing or while waiting for approval.
+
+   For azd, review configured endpoint settings and deployment hooks before `azd deploy`. For Terraform, coordinate all writers to the named agent: Terraform's state lock doesn't prevent a separate API client from creating a version.
+
+1. **Verify readiness and identity.** [Get the candidate version](#get-a-specific-version) and wait for its status to become `active`. Confirm that its image and configuration match the artifact you intend to release. A failed deployment, timeout, or unexpected candidate must stop the release without changing production.
+
+1. **Test a candidate-specific session.** [Create a fresh session pinned to the candidate](manage-hosted-sessions.md#create-a-session-explicitly-advanced) by using a `version_indicator` with `type` set to `version_ref`. Pass the captured version as `agent_version`.
+
+   Invoke using the returned session ID. For Responses, put `agent_session_id` in the request body. For Invocations, use the `agent_session_id` query parameter. Check successful protocol completion and expected response content; nonempty logs or an HTTP connection alone aren't a passing test.
+
+1. **Approve and promote.** Before promotion, confirm that the candidate is still active and production still points to the recorded version. If another release changed the selector, stop and reconcile the change. After approval, update the endpoint selector to the tested candidate at 100%, preserving unrelated protocol and authorization settings.
+
+1. **Verify production and retain rollback.** Create a new session without a version override and verify that it uses the selected version. If the release fails its production checks, restore the previous concrete selector and verify new-session behavior again.
+
+An existing session is bound to its version when it's created. Changing the endpoint selector doesn't migrate those sessions. Retain previous versions and images while sessions or rollback requirements still depend on them. Deleting the agent or a version isn't a rollback operation.
+
+## Retrieve the agent identity for role assignments
+
+Each Hosted agent has an *instance identity* — a Microsoft Entra ID service principal that the agent uses at runtime to authenticate to downstream resources. To grant the agent access to services such as Azure Storage or Azure Cosmos DB, you need the identity's principal ID so you can create RBAC role assignments.
+
+For more information on how agent identities work, see [Agent identity concepts](../concepts/agent-identity.md).
+
+### Extract the agent identity principal ID
+
+**Applies to: rest**
+
+
+Use the `--query` parameter to extract the `instance_identity.principal_id` directly from the agent details:
+
+```bash
+AGENT_IDENTITY=$(az rest --method GET \
+    --url "${BASE_URL}/agents/${AGENT_NAME}?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --query "instance_identity.principal_id" \
+    --output tsv)
+
+echo "Agent identity principal ID: ${AGENT_IDENTITY}"
+```
+
+
+
+**Applies to: python**
+
+
+```python
+agent = project_client.agents.get(agent_name="my-agent")
+agent_identity = agent.instance_identity["principal_id"]
+print(f"Agent identity principal ID: {agent_identity}")
+```
+
+
+
+**Applies to: csharp**
+
+
+Retrieve the agent identity principal ID with the REST API. Switch to the **REST API** tab for an example.
+
+
+
+**Applies to: javascript**
+
+
+```typescript
+const agent = await project.agents.get("my-agent");
+if (!agent.instance_identity) {
+  throw new Error("Agent does not have an instance identity yet.");
+}
+const agentIdentity = agent.instance_identity.principal_id;
+console.log(`Agent identity principal ID: ${agentIdentity}`);
+```
+
+Reference: [AIProjectClient](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme)
+
+
+
+**Applies to: azd**
+
+
+Use the REST API or Python SDK to retrieve the agent identity principal ID.
+
+
+
+### Assign roles to the agent identity
+
+After you have the principal ID, assign RBAC roles to the agent identity at the appropriate resource scope. Use `--assignee-object-id` with `--assignee-principal-type ServicePrincipal` to avoid Microsoft Graph lookup issues with agent identity service principals.
+
+The agent identity works with any Azure resource that supports RBAC. The following examples show two common scenarios: granting access to the Foundry project and granting access to a storage account.
+
+**Applies to: rest**
+
+
+Assign a role on the Foundry project (for example, to allow the agent to use project resources):
+
+```bash
+az role assignment create \
+    --assignee-object-id "$AGENT_IDENTITY" \
+    --assignee-principal-type ServicePrincipal \
+    --role "Azure AI Developer" \
+    --scope "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.CognitiveServices/accounts/<account-name>/projects/<project-name>"
+```
+
+Assign a role on a storage account (for example, to allow the agent to read and write blobs):
+
+```bash
+az role assignment create \
+    --assignee-object-id "$AGENT_IDENTITY" \
+    --assignee-principal-type ServicePrincipal \
+    --role "Storage Blob Data Contributor" \
+    --scope "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Storage/storageAccounts/<storage-account>"
+```
+
+
+
+**Applies to: python**
+
+
+Role assignments are an Azure Resource Manager operation. Use the Azure CLI commands shown in the REST tab with the `agent_identity` value from the previous step, or use the [Azure Authorization Management](https://learn.microsoft.com/python/api/azure-mgmt-authorization) SDK to create role assignments programmatically.
+
+
+
+**Applies to: csharp**
+
+
+Role assignments are an Azure Resource Manager operation. Use the Azure CLI commands shown in the REST tab with the agent identity value from the previous step, or use the [Azure Authorization management library for .NET](https://learn.microsoft.com/dotnet/api/overview/azure/resourcemanager.authorization-readme) to create role assignments programmatically.
+
+
+
+**Applies to: javascript**
+
+
+Role assignments are an Azure Resource Manager operation. Use the Azure CLI commands shown in the REST tab with the agent identity value from the previous step, or use the [Azure SDK for JavaScript management libraries](https://learn.microsoft.com/javascript/api/overview/azure/) to create role assignments programmatically.
+
+
+
+**Applies to: azd**
+
+
+Use the Azure CLI directly to create role assignments. Retrieve the agent identity principal ID by using the REST API or Python SDK, then run `az role assignment create` as shown in the REST tab.
+
+
+
+### Verify role assignments
+
+**Applies to: rest**
+
+
+List the roles assigned to the agent identity on the Foundry project:
+
+```bash
+az role assignment list \
+    --assignee "$AGENT_IDENTITY" \
+    --scope "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.CognitiveServices/accounts/<account-name>/projects/<project-name>" \
+    --output table
+```
+
+List the roles assigned to the agent identity on a storage account:
+
+```bash
+az role assignment list \
+    --assignee "$AGENT_IDENTITY" \
+    --scope "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Storage/storageAccounts/<storage-account>" \
+    --output table
+```
+
+
+
+**Applies to: python**
+
+
+Use the Azure CLI commands shown in the REST tab to verify role assignments.
+
+
+
+**Applies to: csharp**
+
+
+Use the Azure CLI commands shown in the REST tab to verify role assignments.
+
+
+
+**Applies to: javascript**
+
+
+Use the Azure CLI commands shown in the REST tab to verify role assignments.
+
+
+
+**Applies to: azd**
+
+
+Use the Azure CLI directly to verify role assignments as shown in the REST tab.
+
+
+
+## Next steps
+
+> 
+> [Agent applications](agent-applications.md)
+
+## Related content
+
+- [What are Hosted agents?](../concepts/hosted-agents.md)
+- [Deploy a Hosted agent](deploy-hosted-agent.md)
+- [Agent identity concepts](../concepts/agent-identity.md)
+- [Evaluate your AI agents](../../observability/concepts/trace-agent-concept.md)

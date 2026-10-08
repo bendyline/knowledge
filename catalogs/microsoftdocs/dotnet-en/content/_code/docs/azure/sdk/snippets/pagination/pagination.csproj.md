@@ -1,0 +1,25 @@
+# Source code: docs/azure/sdk/snippets/pagination/pagination.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Azure.PaginationExample</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.11.1" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="System.Linq.Async" Version="7.0.1" />
+  </ItemGroup>
+
+</Project>
+
+```

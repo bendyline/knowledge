@@ -1,0 +1,39 @@
+---
+title: "removeConnectionEventListener Method (SQLServerPooledConnection)"
+description: "removeConnectionEventListener Method (SQLServerPooledConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPooledConnection.removeConnectionEventListener"
+apitype: "Assembly"
+---
+# removeConnectionEventListener Method (SQLServerPooledConnection)
+
+
+  Removes the given event listener.  
+  
+## Syntax  
+  
+```  
+  
+public void removeConnectionEventListener(javax.sql.ConnectionEventListener listener)  
+```  
+  
+#### Parameters  
+ *listener*  
+  
+ A ConnectionEventListener object.  
+  
+## Remarks  
+ This removeConnectionEventListener method is specified by the removeConnectionEventListener method in the javax.sql.PooledConnection interface.  
+  
+## Related content
+
+- [SQLServerPooledConnection Methods](sqlserverpooledconnection-methods.md)
+- [SQLServerPooledConnection Members](sqlserverpooledconnection-members.md)
+- [SQLServerPooledConnection Class](sqlserverpooledconnection-class.md)

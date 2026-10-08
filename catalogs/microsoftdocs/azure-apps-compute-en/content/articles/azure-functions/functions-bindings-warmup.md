@@ -1,0 +1,338 @@
+---
+title: Azure Functions warmup trigger
+description: Understand how to use the warmup trigger in Azure Functions.
+keywords: azure functions, functions, event processing, warmup, cold start, premium, dynamic compute, serverless architecture
+ms.service: azure-functions
+ms.topic: reference
+# ms.devlang: csharp, java, javascript, python
+ms.custom: devx-track-csharp, devx-track-extended-java, devx-track-js, devx-track-python, devx-track-ts
+ms.date: 09/15/2026
+zone_pivot_groups: programming-languages-set-functions
+---
+
+# Azure Functions warmup trigger
+
+This article explains how to work with the warmup trigger in Azure Functions. A warmup trigger is invoked when an instance is added to scale a running function app. The warmup trigger lets you define a function that runs when a new instance of your function app is started. You can use a warmup trigger to preload custom dependencies so your functions are ready to start processing requests immediately. Some actions for a warmup trigger might include opening connections, loading dependencies, or running any other custom logic before your app begins receiving traffic.
+
+The following considerations apply when using a warmup trigger:
+
+* There can be only one warmup trigger function per function app, and it can't be invoked after the instance is already running.
+* The name of the function that is the warmup trigger for your app should be `warmup` (case-insensitive). 
+* The warmup trigger isn't available to apps running on the [Consumption plan](consumption-plan.md).
+* Support for the warmup trigger is provided by default in all development environments. You don't have to manually install the package or register the extension.
+* The warmup trigger is only called during scale-out operations, not during restarts or other nonscaling startups. Make sure your logic can load all required dependencies without relying on the warmup trigger. Lazy loading is a good pattern to achieve this goal.
+* Dependencies created by warmup trigger should be shared with other functions in your app. To learn more, see [Static clients](manage-connections.md#reuse-client-instances).
+* If the [built-in authentication](../app-service/overview-authentication-authorization.md) (also known as Easy Auth) is used, [HTTPS Only](../app-service/configure-ssl-bindings.md#enforce-https) should be enabled for the warmup trigger to get invoked.
+
+**Applies to: programming-language-csharp**
+
+## Install extension
+
+You must install this [NuGet package](https://www.nuget.org/packages/Microsoft.Azure.Functions.Worker.Extensions.Warmup) when your C# class library function app runs in the [isolated worker process](dotnet-isolated-process-guide.md). When your C# app [runs in-process with the host](functions-dotnet-class-library.md), you don't need to install an extra package. 
+
+
+> **Important:**
+> [Support will end for the in-process model on November 10, 2026](https://aka.ms/azure-functions-retirements/in-process-model). We highly recommend that you [migrate your apps to the isolated worker model](https://learn.microsoft.com/azure/azure-functions/migrate-dotnet-to-isolated-model?tabs=net8) for full support.  
+
+
+## Example
+
+**Applies to: programming-language-go**
+
+Go support isn't currently available for this binding.
+
+
+**Applies to: programming-language-csharp**
+
+
+<!--Optional intro text goes here, followed by the C# modes include.-->
+
+
+You can create a C# function by using one of the following C# modes:
+
+* [Isolated worker model](dotnet-isolated-process-guide.md): Compiled C# function that runs in a worker process that's isolated from the runtime. An isolated worker process is required to support C# functions running on long-term support (LTS) and non-LTS versions for .NET and the .NET Framework.
+* [In-process model](functions-dotnet-class-library.md): Compiled C# function that runs in the same process as the Azure Functions runtime.
+* [C# script](functions-reference-csharp.md): Used primarily when you create C# functions in the Azure portal.
+
+
+
+> **Important:**
+> [Support will end for the in-process model on November 10, 2026](https://aka.ms/azure-functions-retirements/in-process-model). We highly recommend that you [migrate your apps to the isolated worker model](https://learn.microsoft.com/azure/azure-functions/migrate-dotnet-to-isolated-model?tabs=net8) for full support.
+
+# [Isolated worker model](#tab/isolated-process)
+
+The following example shows a [C# function](dotnet-isolated-process-guide.md) that runs on each new instance when added to your app. 
+
+[Code reference unavailable in this source snapshot: ~/azure-functions-dotnet-worker/samples/Extensions/Warmup/Warmup.cs](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-bindings-warmup.md)
+
+# [In-process model](#tab/in-process)
+
+The following example shows a [C# function](functions-dotnet-class-library.md) that runs on each new instance when added to your app. 
+
+```cs
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Logging;
+ 
+namespace WarmupSample
+{
+
+    //Declare shared dependencies here
+
+    public static class Warmup
+    {
+        [FunctionName("Warmup")]
+        public static void Run([WarmupTrigger()] WarmupContext context,
+            ILogger log)
+        {
+            //Initialize shared dependencies here
+            
+            log.LogInformation("Function App instance is warm.");
+        }
+    }
+}
+```
+
+---
+
+
+**Applies to: programming-language-java**
+
+
+The following example shows a warmup trigger that runs when each new instance is added to your app.
+
+```java
+@FunctionName("Warmup")
+public void warmup( @WarmupTrigger Object warmupContext, ExecutionContext context) {
+    context.getLogger().info("Function App instance is warm.");
+}
+```
+
+
+**Applies to: programming-language-javascript**
+
+
+# [Model v4](#tab/nodejs-v4)
+
+The following example shows a [JavaScript function](functions-reference-node.md) with a warmup trigger that runs on each new instance when added to your app:
+
+[Code reference unavailable in this source snapshot: ~/azure-functions-nodejs-v4/js/src/functions/warmupTrigger.js](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-bindings-warmup.md)
+
+# [Model v3](#tab/nodejs-v3)
+
+The following example shows a warmup trigger in a *function.json* file and a [JavaScript function](functions-reference-node.md) that runs on each new instance when added to your app.
+
+Here's the *function.json* file:
+
+```json
+{
+    "bindings": [
+        {
+            "type": "warmupTrigger",
+            "direction": "in",
+            "name": "warmupContext"
+        }
+    ]
+}
+```
+
+The [configuration](#configuration) section explains these properties.
+
+Here's the JavaScript code:
+
+```JavaScript
+module.exports = async function (context, warmupContext) {
+    context.log('Function App instance is warm.');
+};
+```
+
+---
+
+
+**Applies to: programming-language-typescript**
+
+# [Model v4](#tab/nodejs-v4)
+
+The following example shows a [TypeScript function](functions-reference-node.md) with a warmup trigger that runs on each new instance when added to your app:
+
+[Code reference unavailable in this source snapshot: ~/azure-functions-nodejs-v4/ts/src/functions/warmupTrigger1.ts](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-functions/functions-bindings-warmup.md)
+
+# [Model v3](#tab/nodejs-v3)
+TypeScript samples aren't documented for model v3.
+
+---
+
+
+**Applies to: programming-language-powershell**
+
+Here's the *function.json* file:
+
+```json
+{
+    "bindings": [
+        {
+            "type": "warmupTrigger",
+            "direction": "in",
+            "name": "warmupContext"
+        }
+    ]
+}
+```
+PowerShell example code pending.
+
+<!--Content and samples from the PowerShell tab in ##Examples go here.-->
+
+
+**Applies to: programming-language-python**
+
+
+The following example shows a warmup trigger in a *function.json* file and a [Python function](functions-reference-python.md) that runs on each new instance when it'is added to your app.
+
+Your function must be named `warmup` (case-insensitive) and there can only be one warmup function per app.
+# [v2](#tab/python-v2)
+
+```python
+import logging
+import azure.functions as func
+
+app = func.FunctionApp()
+
+
+@app.warm_up_trigger('warmup')
+def warmup(warmup) -> None:
+    logging.info('Function App instance is warm')
+```
+
+For more information, see [Configuration](#configuration).
+
+# [v1](#tab/python-v1)
+Here's the *function.json* file:
+
+```json
+{
+    "bindings": [
+        {
+            "type": "warmupTrigger",
+            "direction": "in",
+            "name": "warmupContext"
+        }
+    ]
+}
+```
+
+For more information, see [Configuration](#configuration).
+
+Here's the Python code:
+
+```python
+import logging
+import azure.functions as func
+
+
+def main(warmupContext: func.Context) -> None:
+    logging.info('Function App instance is warm.')
+```
+
+
+**Applies to: programming-language-csharp**
+
+## Attributes
+
+Both [in-process](functions-dotnet-class-library.md) and [isolated worker process](dotnet-isolated-process-guide.md) C# libraries use the `WarmupTrigger` attribute to define the function. C# script instead uses a [function.json configuration file](#configuration).
+
+# [Isolated worker model](#tab/isolated-process)
+
+Use the `WarmupTrigger` attribute to define the function. This attribute has no parameters.
+
+# [In-process model](#tab/in-process)
+
+Use the `WarmupTrigger` attribute to define the function. This attribute has no parameters.   
+
+---
+
+
+**Applies to: programming-language-java**
+
+## Annotations
+
+Warmup triggers don't require annotations. Just use a name of `warmup` (case-insensitive) for the `FunctionName` annotation.
+
+
+**Applies to: programming-language-javascript,programming-language-typescript**
+
+## Configuration
+
+# [Model v4](#tab/nodejs-v4)
+
+- Your function-trigger must be named `warmupTrigger` (case-insensitive).
+- There are no properties that need to be set on the `options` object passed to the `app.warmup()` method.
+
+# [Model v3](#tab/nodejs-v3)
+
+The following table explains the binding configuration properties that you set in the *function.json* file. 
+
+| function.json property | Description |
+| --- | --- |
+| **type** | Required - must be set to `warmupTrigger`. |
+| **direction** | Required - must be set to `in`. |
+| **name** | Required - the variable name used in function code. A `name` of `warmupContext` is recommended for the binding parameter. |
+
+
+**Applies to: programming-language-powershell,programming-language-python**
+
+## Configuration
+
+The following table explains the binding configuration properties that you set in the *function.json* file. 
+
+| function.json property | Description |
+| --- | --- |
+| **type** | Required - must be set to `warmupTrigger`. |
+| **direction** | Required - must be set to `in`. |
+| **name** | Required - the variable name used in function code. A `name` of `warmupContext` is recommended for the binding parameter. |
+
+
+
+See the [Example section](#example) for complete examples.
+
+## Usage
+
+**Applies to: programming-language-csharp**
+
+The following considerations apply to using a warmup function in C#:
+
+# [Isolated worker model](#tab/isolated-process)
+
+- Your function must be named `warmup` (case-insensitive) using the `Function` attribute.
+- A return value attribute isn't required.
+- Use the `Microsoft.Azure.Functions.Worker.Extensions.Warmup` package
+- You can pass an object instance to the function.
+
+# [In-process model](#tab/in-process)
+
+- Your function must be named `warmup` (case-insensitive) using the `FunctionName` attribute.
+- A return value attribute isn't required.
+- You must be using version `3.0.5` of the `Microsoft.Azure.WebJobs.Extensions` package, or a later version. 
+- You can pass a `WarmupContext` instance to the function.
+
+---
+
+
+**Applies to: programming-language-java**
+
+Your function must be named `warmup` (case-insensitive) using the `FunctionName` annotation. 
+
+**Applies to: programming-language-javascript,programming-language-typescript**
+
+# [Model v4](#tab/nodejs-v4)
+See the list of considerations at the top of the page for general usage advice.
+# [Model v3](#tab/nodejs-v3)
+The function type in _function.json_ must be set to `warmupTrigger`.
+
+**Applies to: programming-language-powershell,programming-language-python**
+
+The function type in function.json must be set to `warmupTrigger`.
+
+
+## Next steps
+
++ [Learn more about Azure functions triggers and bindings](functions-triggers-bindings.md)
++ [Learn more about Premium plan](functions-premium-plan.md)

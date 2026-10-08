@@ -1,0 +1,76 @@
+---
+title: "STGeomFromWKB (geometry Data Type)"
+description: "STGeomFromWKB (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STGeomFromWKB (geometry Data Type)"
+  - "STGeomFromWKB_TSQL"
+helpviewer_keywords:
+  - "STGeomFromWKB (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# STGeomFromWKB (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **geometry** instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.
+  
+## Syntax  
+  
+```  
+  
+STGeomFromWKB ( 'WKB_geometry' , SRID )  
+```  
+  
+## Arguments
+ *WKB_geometry*  
+ Is the WKB representation of the **geometry** instance you wish to return. *WKB_geometry* is a **varbinary(max)** expression.  
+  
+ *SRID*  
+ Is an **int** expression representing the spatial reference ID (SRID) of the **geometry** instance you wish to return.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+## Remarks  
+ The OGC type of the **geometry** instance returned by `STGeomFromText()` is set to the corresponding WKB input.  
+  
+ This method will throw a **FormatException** if the input is not well-formatted.  
+  
+## Examples  
+ The following example uses `STGeomFromWKB()` to create a **geometry** instance.  
+  
+```sql
+DECLARE @g geometry;   
+SET @g = geometry::STGeomFromWKB(0x010200000003000000000000000000594000000000000059400000000000003440000000000080664000000000008066400000000000806640, 0);  
+SELECT @g.STAsText();  
+```  
+  
+## Related content
+
+- [OGC Static Geometry Methods](ogc-static-geometry-methods.md)

@@ -1,0 +1,113 @@
+---
+title: Service Configuration in the Azure portal
+description: Manage your new Azure AI Search service in the Azure portal. This article provides a day-one checklist for configuring RBAC, managed identities, network security, and more.
+author: mattwojo
+ms.author: mattwoj
+ms.service: azure-ai-search
+ms.topic: how-to
+ms.date: 04/24/2026
+ms.update-cycle: 365-days
+ms.custom: sfi-image-nochange
+---
+
+# Configure your Azure AI Search service in the Azure portal
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+Configuring your new Azure AI Search service involves several tasks to optimize security, access, and performance. This article provides a day-one checklist to help you set up your service in the [Azure portal](https://portal.azure.com).
+
+After you create a search service, we recommend that you:
+
+> 
+>
+> + [Configure role-based access](#configure-role-based-access)
+> + [Configure a managed identity](#configure-a-managed-identity)
+> + [Configure network security](#configure-network-security)
+> + [Check capacity and understand billing](#check-capacity-and-understand-billing)
+> + [Enable diagnostic logging](#enable-diagnostic-logging)
+> + [Provide connection information to developers](#provide-connection-information-to-developers)
+
+## Configure role-based access
+
+Portal access is based on [role assignments](search-security-rbac.md). By default, new search services have at least one service administrator or owner. Service administrators, co-administrators, and owners have permission to create more administrators and assign other roles. They also have access to all portal pages and operations on default search services.
+
+> **Tip:**
+> By default, any administrator or owner can create or delete services. To prevent accidental deletions, consider [locking your resources](https://learn.microsoft.com/azure/azure-resource-manager/management/lock-resources).
+
+Each search service comes with [API keys](search-security-api-keys.md) and uses key-based authentication by default. However, we recommend using Microsoft Entra ID and role-based access control (RBAC) for improved security. RBAC eliminates the need to store and pass API keys in plain text.
+
+When you switch from key-based authentication to keyless authentication, service administrators must assign themselves data plane roles for full access to objects and data. These roles include Search Service Contributor, Search Index Data Contributor, and Search Index Data Reader.
+
+To configure role-based access:
+
+1. [Enable roles](search-security-enable-roles.md) on your search service. We recommend using both API keys and roles.
+
+1. [Assign data plane roles](search-security-rbac.md) to replace the functionality lost when you disable API keys. An owner only needs Search Index Data Reader, but developers need [more roles](search-security-rbac.md#assign-built-in-roles).
+
+   Role assignments can take several minutes to take effect. Until then, portal pages used for data plane operations display the following message:
+
+   Screenshot of the portal message indicating insufficient permissions.
+
+1. [Assign more roles](search-security-rbac.md) for solution developers and apps.
+
+## Configure a managed identity
+
+If you plan to use indexers for automated indexing, applied AI, or integrated vectorization, you should [configure your search service to use a managed identity](search-how-to-managed-identities.md). You can then assign roles on other Azure services that authorize your search service to access data and operations.
+
+For integrated vectorization, your search service identity needs the following roles:
+
++ Storage Blob Data Reader on Azure Storage
++ Cognitive Services Data User on a Microsoft Foundry resource
+
+Role assignments can take several minutes to take effect.
+
+Before you move on to network security, consider testing all points of connection to validate role assignments. Run an [import wizard](search-get-started-portal.md) to test permissions.
+
+## Configure network security
+
+By default, a search service accepts authenticated and authorized requests over public internet connections. You have two options for enhancing network security:
+
++ [Configure firewall rules](service-configure-firewall.md) to restrict network access by IP address.
++ [Configure a private endpoint](service-create-private-endpoint.md) to only allow traffic from Azure virtual networks. Note that when you turn off the public endpoint, the **Import data** wizard won't run.
+
+To learn about inbound and outbound calls in Azure AI Search, see [Understand network traffic patterns](search-security-best-practices.md#understand-network-traffic-patterns).
+
+## Check capacity and understand billing
+
+By default, a search service is created with one replica and one partition. You can [add capacity](search-capacity-planning.md) by adding replicas and partitions, but we recommend waiting until volumes require it. Many customers run production workloads on the minimum configuration.
+
+Semantic ranker and agentic retrieval are premium features that default to the free plan. If you need paid usage beyond the free allowance, see [Enable or disable semantic ranker billing](semantic-how-to-enable-disable.md) and [Enable or disable agentic retrieval billing](agentic-retrieval-how-to-enable-disable.md).
+
+To learn about other features that affect billing, see [Plan and manage costs of an Azure AI Search service](search-sku-manage-costs.md).
+
+## Enable diagnostic logging
+
+[Enable diagnostic logging](search-monitor-enable-logging.md) to track user activity. If you skip this step, you still get [activity logs](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log) and [platform metrics](https://learn.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics#types-of-metrics) automatically. However, if you want index and query usage information, you should enable diagnostic logging and choose a destination for logged operations. We recommend Log Analytics Workspace for durable storage so that you can run system queries in the Azure portal.
+
+Internally, Microsoft collects telemetry data about your service and the platform. To learn more about data retention, see [Retention of metrics](https://learn.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics#retention-of-metrics).
+
+To learn more about data location and privacy, see [Data residency](search-security-built-in.md#data-residency).
+
+## Provide connection information to developers
+
+To connect to Azure AI Search, developers need:
+
++ An endpoint or URL from the **Overview** page.
++ An API key from the **Keys** page or a role assignment. We recommend Search Service Contributor, Search Index Data Contributor, and Search Index Data Reader.
+
+We recommend portal access for the [**Import data** wizard](search-get-started-portal.md) and [Search explorer](search-explorer.md). You must be a Contributor or higher to run the wizard.
+
+## Related content
+
+For programmatic support for service administration, see the following APIs and modules:
+
++ [Management REST API reference](https://learn.microsoft.com/rest/api/searchmanagement/)
++ [Az.Search PowerShell module](search-manage-powershell.md)
++ [az search Azure CLI module](search-manage-azure-cli.md)
+
+You can also use the management client libraries in the Azure SDKs for .NET, Python, Java, and JavaScript.
+
+There's feature parity across all modalities and languages, except for preview management features. As a general rule, preview management features are released through the Management REST API first.

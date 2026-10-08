@@ -1,0 +1,41 @@
+---
+title: "InstanceName property (WMI MSReportServer_Instance)"
+description: "InstanceName property (WMI MSReportServer_Instance)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "InstanceName property"
+apilocation: "reportingservices.mof"
+apiname: "InstanceName Property (WMI MSReportServer_Instance)"
+apitype: MOFDef
+---
+# MSReportServer_Instance properties - InstanceName
+  Returns the name of a report server instance on a specific computer. Read-only.  
+  
+## Syntax  
+  
+```vb  
+Public Dim InstanceName As String  
+```  
+  
+```csharp  
+public string InstanceName;  
+```  
+  
+## Property value  
+ A **String** object that represents the name of the report server instance.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**  **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13** 
+  
+  
+## Related content
+
+- [MSReportServer_Instance members](msreportserver-instance-members.md)

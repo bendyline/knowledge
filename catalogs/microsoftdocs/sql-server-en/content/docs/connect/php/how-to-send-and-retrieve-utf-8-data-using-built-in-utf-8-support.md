@@ -1,0 +1,222 @@
+---
+title: "How to: Send and Retrieve UTF-8 Data Using Built-In UTF-8 Support"
+description: "Learn how to send and retrieve UTF-8 encoded data using UTF-8 support built in to the drivers for PHP."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: how-to
+helpviewer_keywords:
+  - "retrieving data, UTF-8 encoded data"
+  - "converting data types"
+  - "updating data"
+---
+# How to: Send and Retrieve UTF-8 Data Using Built-In UTF-8 Support
+
+
+
+If you are using the PDO_SQLSRV driver, you can specify the encoding with the PDO::SQLSRV_ATTR_ENCODING attribute. For more information, see [Constants (Microsoft Drivers for PHP for SQL Server)](constants-microsoft-drivers-for-php-for-sql-server.md).  
+  
+The remainder of this topic discusses encoding with the SQLSRV driver.  
+  
+To send or retrieve UTF-8 encoded data to the server:  
+  
+1.  Make sure that the source or destination column is of type **nchar** or **nvarchar**.  
+  
+2.  Specify the PHP type as `SQLSRV_PHPTYPE_STRING('UTF-8')` in the parameters array. Or, specify `"CharacterSet" => "UTF-8"` as a connection option.  
+  
+    When you specify a character set as part of the connection options, the driver assumes that the other connection option strings use that same character set. The server name and query strings are also assumed to use the same character set.  
+  
+You can pass UTF-8 or SQLSRV_ENC_CHAR to **CharacterSet**, but you cannot pass SQLSRV_ENC_BINARY. The default encoding is SQLSRV_ENC_CHAR.  
+  
+## Connection example  
+The following example demonstrates how to send and retrieve UTF-8 encoded data by specifying the UTF-8 character set when making the connection. The example updates the Comments column of the Production.ProductReview table for a specified review ID. The example also retrieves the newly updated data and displays it. Note that the Comments column is of type **nvarchar(3850).** Also note that before data is sent to the server it is converted to UTF-8 encoding using the PHP **utf8_encode** function. This is done for demonstration purposes only. In a real application scenario, you would begin with UTF-8 encoded data.  
+  
+The example assumes that  SQL Server 
+ and the [AdventureWorks](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works) database are installed on the local computer. All output is written to the browser when the example is run from the browser.  
+  
+```php  
+<?php  
+  
+// Connect to the local server using Windows Authentication and  
+// specify the AdventureWorks database as the database in use.   
+//   
+$serverName = "<server>";  
+$connectionInfo = array( "Database"=>"AdventureWorks", "CharacterSet" => "UTF-8");  
+$conn = sqlsrv_connect( $serverName, $connectionInfo);  
+  
+if ( $conn === false ) {  
+   echo "Could not connect.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+  
+// Set up the Transact-SQL query.  
+//   
+$tsql1 = "UPDATE Production.ProductReview  
+          SET Comments = ?  
+          WHERE ProductReviewID = ?";  
+  
+// Set the parameter values and put them in an array. Note that  
+// $comments is converted to UTF-8 encoding with the PHP function  
+// utf8_encode to simulate an application that uses UTF-8 encoded data.   
+//   
+$reviewID = 3;  
+$comments = utf8_encode("testing 1, 2, 3, 4.  Testing.");  
+$params1 = array(  
+                  array( $comments, null ),  
+                  array( $reviewID, null )  
+                );  
+  
+// Execute the query.  
+//   
+$stmt1 = sqlsrv_query($conn, $tsql1, $params1);  
+  
+if ( $stmt1 === false ) {  
+   echo "Error in statement execution.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+else {  
+   echo "The update was successfully executed.<br>";  
+}  
+  
+// Retrieve the newly updated data.  
+//   
+$tsql2 = "SELECT Comments   
+          FROM Production.ProductReview   
+          WHERE ProductReviewID = ?";  
+  
+// Set up the parameter array.  
+//   
+$params2 = array($reviewID);  
+  
+// Execute the query.  
+//   
+$stmt2 = sqlsrv_query($conn, $tsql2, $params2);  
+if ( $stmt2 === false ) {  
+   echo "Error in statement execution.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+  
+// Retrieve and display the data.   
+//   
+if ( sqlsrv_fetch($stmt2) ) {  
+   echo "Comments: ";  
+   $data = sqlsrv_get_field( $stmt2, 0 );  
+   echo $data."<br>";  
+}  
+else {  
+   echo "Error in fetching data.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+  
+// Free statement and connection resources.  
+//   
+sqlsrv_free_stmt( $stmt1 );  
+sqlsrv_free_stmt( $stmt2 );  
+sqlsrv_close( $conn);  
+?>  
+```  
+  
+For information about storing Unicode data, see [Working with Unicode Data](https://learn.microsoft.com/previous-versions/sql/sql-server-2008-r2/ms175180\(v=sql.105\)).  
+  
+## Column example  
+The following example is similar to the first sample but instead of specifying the UTF-8 character set on the connection, this sample shows how to specify the UTF-8 character set on the column.  
+  
+```php  
+<?php  
+  
+// Connect to the local server using Windows Authentication and  
+// specify the AdventureWorks database as the database in use.   
+//   
+$serverName = "<server>";  
+$connectionInfo = array( "Database"=>"AdventureWorks");  
+$conn = sqlsrv_connect( $serverName, $connectionInfo);  
+  
+if ( $conn === false ) {  
+   echo "Could not connect.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+  
+// Set up the Transact-SQL query.  
+//   
+$tsql1 = "UPDATE Production.ProductReview  
+          SET Comments = ?  
+          WHERE ProductReviewID = ?";  
+  
+// Set the parameter values and put them in an array. Note that  
+// $comments is converted to UTF-8 encoding with the PHP function  
+// utf8_encode to simulate an application that uses UTF-8 encoded data.   
+//   
+$reviewID = 3;  
+$comments = utf8_encode("testing");  
+$params1 = array(  
+                  array($comments,  
+                        SQLSRV_PARAM_IN,  
+                        SQLSRV_PHPTYPE_STRING('UTF-8')  
+                  ),  
+                  array($reviewID)  
+                );  
+  
+// Execute the query.  
+//   
+$stmt1 = sqlsrv_query($conn, $tsql1, $params1);  
+  
+if ( $stmt1 === false ) {  
+   echo "Error in statement execution.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+else {  
+   echo "The update was successfully executed.<br>";  
+}  
+  
+// Retrieve the newly updated data.  
+//   
+$tsql2 = "SELECT Comments   
+          FROM Production.ProductReview   
+          WHERE ProductReviewID = ?";  
+  
+// Set up the parameter array.  
+//   
+$params2 = array($reviewID);  
+  
+// Execute the query.  
+//   
+$stmt2 = sqlsrv_query($conn, $tsql2, $params2);  
+if ( $stmt2 === false ) {  
+   echo "Error in statement execution.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+  
+// Retrieve and display the data.   
+//   
+if ( sqlsrv_fetch($stmt2) ) {  
+   echo "Comments: ";  
+   $data = sqlsrv_get_field($stmt2,   
+                            0,   
+                            SQLSRV_PHPTYPE_STRING('UTF-8')  
+                           );  
+   echo $data."<br>";  
+}  
+else {  
+   echo "Error in fetching data.<br>";  
+   die( print_r( sqlsrv_errors(), true));  
+}  
+  
+// Free statement and connection resources.  
+//   
+sqlsrv_free_stmt( $stmt1 );  
+sqlsrv_free_stmt( $stmt2 );  
+sqlsrv_close( $conn);  
+?>  
+```  
+  
+## Related content
+
+- [Retrieving Data](retrieving-data.md)
+- [How to: Send and Retrieve ASCII Data in Linux and macOS](how-to-send-and-retrieve-ascii-data-in-linux-mac.md)
+- [Updating data (Microsoft Drivers for PHP for SQL Server)](updating-data-microsoft-drivers-for-php-for-sql-server.md)
+- [SQLSRV Driver API Reference](sqlsrv-driver-api-reference.md)
+- [Constants (Microsoft Drivers for PHP for SQL Server)](constants-microsoft-drivers-for-php-for-sql-server.md)
+- [Example Application (SQLSRV Driver)](example-application-sqlsrv-driver.md)

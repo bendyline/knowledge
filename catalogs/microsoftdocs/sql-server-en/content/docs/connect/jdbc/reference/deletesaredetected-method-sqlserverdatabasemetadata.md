@@ -1,0 +1,71 @@
+---
+title: "deletesAreDetected Method (SQLServerDatabaseMetaData)"
+description: "deletesAreDetected Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/20/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.deletesAreDetected"
+apitype: "Assembly"
+---
+# deletesAreDetected Method (SQLServerDatabaseMetaData)
+
+
+
+  Retrieves whether or not a visible row delete can be detected by calling the [rowDeleted](rowdeleted-method-sqlserverresultset.md) method of the [SQLServerResultSet](sqlserverresultset-class.md) class.  
+  
+## Syntax  
+  
+```cpp
+public boolean deletesAreDetected(int type)  
+```  
+  
+#### Parameters  
+ *type*  
+  
+ An **int** that indicates the result set type, which can be one of the following values as defined in java.sql.ResultSet or SQLServerResultSet:  
+  
+## java.sql.ResultSet Types  
+ TYPE_FORWARD_ONLY  
+  
+ TYPE_SCROLL_SENSITIVE  
+  
+ TYPE_SCROLL_INSENSITIVE  
+  
+## SQLServerResultSet Types  
+ TYPE_SS_SCROLL_STATIC  
+  
+ TYPE_SS_SCROLL_KEYSET  
+  
+ TYPE_SS_DIRECT_FORWARD_ONLY  
+  
+ TYPE_SS_SERVER_CURSOR_FORWARD_ONLY  
+  
+ TYPE_SS_SCROLL_DYNAMIC  
+  
+## Return Value  
+ **true** if a gap replaces the deleted row. **false** if the deleted row is removed.  
+  
+ When using the  Microsoft JDBC Driver for SQL Server 
+ with a  SQL Server 
+ database, this method returns **true** for TYPE_SS_SCROLL_KEYSET cursors and **false** for all other result set types.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This deletesAreDetected method is specified by the deletesAreDetected method in the java.sql.DatabaseMetaData interface.  
+  
+> **Note:**  
+>   SQL Server 
+ detects deleted rows for all updatable cursor types, although the detection is transient for forward and dynamic cursors.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

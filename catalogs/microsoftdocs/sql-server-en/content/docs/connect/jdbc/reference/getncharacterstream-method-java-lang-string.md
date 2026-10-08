@@ -1,0 +1,43 @@
+---
+title: "getNCharacterStream Method (java.lang.String)"
+description: "getNCharacterStream Method (java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# getNCharacterStream Method (java.lang.String)
+
+
+  Retrieves the value of the designated parameter as a Reader object given the parameter name.  
+  
+## Syntax  
+  
+```  
+  
+public final java.io.Reader getNCharacterStream(java.lang.String columnLabel)  
+```  
+  
+#### Parameters  
+ *columnLabel*  
+  
+ A **String** that contains the column label.  
+  
+## Return Value  
+ AReaderobject.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This method should be used when accessing **NCHAR**, **NVARCHAR** and **LONGNVARCHAR** parameters.  
+  
+ This getNCharacterStream method is specified by the getNCharacterStream method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [getNCharacterStream Method (SQLServerCallableStatement)](getncharacterstream-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)

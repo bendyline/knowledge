@@ -1,0 +1,43 @@
+---
+title: "setBinaryStream Method to input stream)"
+description: "setBinaryStream Method (java.lang.String, java.io.InputStream)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# setBinaryStream Method (java.lang.String, java.io.InputStream)
+
+
+  Sets the designated parameter to the specified input stream.  
+  
+## Syntax  
+  
+```  
+  
+public void setBinaryStream(java.lang.String parameterName,  
+                            java.io.InputStream x)  
+```  
+  
+#### Parameters  
+ *parameterName*  
+  
+ A **String** that contains the name of the parameter.  
+  
+ *x*  
+  
+ An InputStream object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setBinaryStream method is specified by the setBinaryStream method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [setBinaryStream (SQLServerCallableStatement)](setbinarystream-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)

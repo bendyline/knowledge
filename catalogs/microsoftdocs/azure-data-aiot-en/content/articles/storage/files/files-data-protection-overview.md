@@ -1,0 +1,158 @@
+---
+title: Data Protection Overview for Azure Files
+description: Learn how to protect your data in Azure Files. Understand the concepts and processes involved with backup and recovery of Azure file shares.
+author: khdownie
+ms.service: azure-file-storage
+ms.topic: overview
+ms.date: 07/25/2025
+ms.author: kendownie
+# Customer intent: "As a systems administrator, I want to implement data protection for Azure file shares, so that I can ensure recovery from accidental loss, protect against ransomware, and maintain business continuity."
+---
+
+# Azure Files data protection overview
+
+Azure Files gives you many tools to protect your data, including soft delete, share snapshots, Azure Backup, and Azure File Sync. This article describes how to protect your data in Azure Files, and the concepts and processes involved with backup and recovery of Azure file shares.
+
+
+
+> [!VIDEO https://www.youtube.com/embed/TOHaNJpAOfc]
+
+
+Watch this video to learn how Azure Files advanced data protection helps enterprises stay protected against ransomware and accidental data loss while delivering greater business continuity.
+
+
+
+## Why you should protect your data
+
+For Azure Files, data protection refers to protecting the storage account, file shares, and data within them from being deleted or modified, and for restoring data after it's been deleted or modified.
+
+There are several reasons why you should protect your file share data.
+
+- **Recovery from accidental data loss:** Recover data that's accidentally deleted or corrupted.
+- **Upgrade scenarios:** Restore to a known good state after a failed upgrade attempt.
+- **Ransomware protection:** Recover data without paying ransom to cybercriminals.
+- **Long-term retention:** Comply with data retention requirements.
+- **Business continuity:** Prepare your infrastructure to be highly available for critical workloads.
+
+## Back up and restore Azure file shares
+You can configure [Azure Backup](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/azure-file-share-backup-overview.md?toc=/azure/storage/files/toc.json) to back up SMB Azure file shares by using the Azure portal, Azure PowerShell, Azure CLI, or REST API. You can also [use Azure File Sync](#use-azure-file-sync-for-hybrid-cloud-backups) to back up on-premises file server data on an SMB Azure file share.
+
+# [Azure portal](#tab/portal)
+
+To learn how to back up and restore Azure file shares using the Azure portal, see the following articles:
+
+- [Back up Azure file shares](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-afs.md?toc=/azure/storage/files/toc.json)
+- [Restore Azure file shares](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/restore-afs.md?toc=/azure/storage/files/toc.json)
+- [Manage Azure file share backups](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/manage-afs-backup.md?toc=/azure/storage/files/toc.json)
+
+# [Azure PowerShell](#tab/powershell)
+
+To learn how to back up and restore Azure file shares using Azure PowerShell, see the following articles:
+
+- [Back up Azure file shares with PowerShell](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-azure-afs-automation.md?toc=/azure/storage/files/toc.json)
+- [Restore Azure file shares with PowerShell](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/restore-afs-powershell.md?toc=/azure/storage/files/toc.json)
+- [Manage Azure file share backups with PowerShell](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/manage-afs-powershell.md?toc=/azure/storage/files/toc.json)
+
+# [Azure CLI](#tab/cli)
+
+To learn how to back up and restore Azure file shares using Azure CLI, see the following articles:
+
+- [Back up Azure file shares with Azure CLI](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-afs-cli.md?toc=/azure/storage/files/toc.json)
+- [Restore Azure file shares with Azure CLI](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/restore-afs-cli.md?toc=/azure/storage/files/toc.json)
+- [Manage Azure file share backups with Azure CLI](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/manage-afs-backup-cli.md?toc=/azure/storage/files/toc.json)
+
+# [REST API](#tab/rest)
+
+To learn how to back up and restore Azure file shares using the REST API, see the following articles:
+
+- [Back up Azure file shares with REST API](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-azure-file-share-rest-api.md?toc=/azure/storage/files/toc.json)
+- [Restore Azure file shares with REST API](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/restore-azure-file-share-rest-api.md?toc=/azure/storage/files/toc.json)
+- [Manage Azure file share backups with REST API](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/manage-azure-file-share-rest-api.md?toc=/azure/storage/files/toc.json)
+---
+
+## Data redundancy
+
+Azure Files offers multiple redundancy options, including geo-redundancy, to help protect your data from service outages due to hardware problems or natural disasters. To find out which option is best for your use case, see [Azure Files data redundancy](files-redundancy.md).
+
+> **Important:**
+> Azure Files only supports geo-redundancy (GRS or GZRS) for HDD file shares. SSD file shares must use locally redundant storage (LRS) or zone redundant storage (ZRS).
+
+## Disaster recovery and failover
+In the case of a disaster or unplanned outage, restoring access to file share data is critical to keeping the business operational. Depending on the criticality of the data hosted in your file shares, you might need a disaster recovery strategy that includes failing your Azure file shares over to a secondary region.
+
+Azure Files offers customer-managed unplanned failover for HDD file shares if the data center in the primary region becomes unavailable. Customer-managed planned failover can also be used in multiple scenarios, including planned disaster recovery testing, a proactive approach to large-scale disasters, or to recover from non-storage related outages.
+
+
+<!-- User feedback is being incorporated into customer-managed planned failover (preview) and the feature is temporarily unavailable in all regions. After completion, updated documentation will be released to reflect the regions in which the feature is available.-->
+
+> **Important:**
+> Customer-managed Planned Failover  is available in all public regions that support GRS/GZRS with the following exceptions:
+> - West India
+> - Switzerland West
+>
+> To determine if a region supports GZRS, see the [Azure regions list](https://learn.microsoft.com/azure/reliability/regions-list#azure-regions-list-1). To support GZRS, a region must support availability zones and have a paired region.
+
+
+> **Important:**
+> After a planned failover, a storage account's Last Sync Time (LST) value might appear stale or be reported as NULL when Azure Files data is present.
+>
+> System snapshots are periodically created in a storage account's secondary region to maintain consistent recovery points used during failover and failback. Initiating customer-managed planned failover causes the original primary region to become the new secondary. In some cases, there are no system snapshots available on the new secondary after the planned failover completes, causing the account's overall LST value to appear stale or be displayed as `Null`.
+>
+> Because user activities such as creating, modifying, or deleting objects can trigger snapshot creation, any account on which these activities occur after planned failover will not require additional attention. However, accounts having no snapshots or user activity may continue to display a `Null` LST value until system snapshot creation is triggered.
+>
+> If necessary, perform one of the following activities **for each share within a storage account** to trigger snapshot creation. Upon completion, your account should display a valid LST value within 30 minutes' time.
+>
+>   - Mount the share, then open any file for reading.
+>   - Upload a test or sample file to the share.
+
+See [Disaster recovery and failover for Azure Files](files-disaster-recovery.md).
+
+## Prevent accidental deletion of storage accounts and file shares
+
+Data loss doesn't always occur because of a disaster. More often, it's the result of human error. Azure gives you tools to prevent accidental deletion of storage accounts and file shares.
+
+### Storage account locks
+
+Storage account locks enable admins to lock the storage account to prevent users from accidentally deleting the storage account. There are two types of storage account locks:
+
+- **CannotDelete** lock prevents users from deleting a storage account, but permits modifying its configuration.
+- **ReadOnly** lock prevents users from deleting a storage account or modifying its configuration.
+
+For more information, see [Apply an Azure Resource Manager lock to a storage account](../common/lock-account-resource.md).
+
+### Storage account recovery
+
+You can recover an accidentally deleted storage account if the following criteria are met:
+- The storage account was deleted within the past 14 days.
+- The storage account was created with the Azure Resource Manager deployment model.
+- A new storage account with the same name hasn't been created since the original account was deleted.
+- The user who is recovering the storage account must be assigned an Azure RBAC role that provides the Microsoft.Storage/storageAccounts/write permission. 
+
+Storage account recovery is a built-in capability that you can't disable. For more information and step-by-step instructions, see [Recover a deleted storage account](../common/storage-account-recover.md).
+
+### Soft delete
+
+Soft delete works on a file share level to protect Azure file shares against accidental deletion. If a share with soft delete enabled is deleted, it moves to a soft deleted state internally and can be retrieved until the retention period expires. Azure file shares are still billed on the used capacity when they're soft deleted.
+
+For more information, see [Enable soft delete on Azure file shares](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/files/storage-files-enable-soft-delete.md) and [Prevent accidental deletion of Azure file shares](storage-files-prevent-file-share-deletion.md).
+
+## Azure Files share snapshots
+
+File share snapshots are point-in-time copies of your Azure file share that you can take manually or automatically via Azure Backup. You can then restore individual files from these snapshots. You can take up to 200 snapshots per file share.
+
+Snapshots are incremental in nature, capturing only the changes since the last snapshot. That means they're space and cost efficient. You're billed on the differential storage utilization of each snapshot, making it practical to have multiple recovery points to cater low RPO requirements.
+
+For more information, see [Overview of share snapshots for Azure Files](storage-snapshots-files.md).
+
+## Use Azure File Sync for hybrid cloud backups
+
+Using Azure File Sync with Azure Backup is an easy solution for hybrid cloud backups from on-premises to cloud. Azure File Sync keeps the files in sync and centralized.
+
+Architecture diagram for using Azure File Sync along with Azure Backup to back up multiple file servers.
+
+This method simplifies disaster recovery and gives you multiple options. You can recover single files or directories, or perform a rapid restore of your entire file share. Just bring up a new server on the primary and point it to the centralized Azure file share where it can access the data. Over time, files are locally cached or tiered to the cloud based on Azure File Sync settings.
+
+## See also
+
+- [Azure Files redundancy](files-redundancy.md)
+- [Azure Files disaster recovery and failover](files-disaster-recovery.md)

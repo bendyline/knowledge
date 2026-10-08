@@ -1,0 +1,49 @@
+---
+title: "Tail (MDX)"
+description: "Tail (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# Tail (MDX)
+
+
+  Returns a subset from the end of a set.  
+  
+## Syntax  
+  
+```  
+  
+Tail(Set_Expression [ ,Count ] )  
+```  
+  
+## Arguments  
+ *Set_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a set.  
+  
+ *Count*  
+ A valid numeric expression that specifies the number of tuples to be returned.  
+  
+## Remarks  
+ The **Tail** function returns the specified number of tuples from the end of the specified set. The order of elements is preserved. The default value of *Count* is 1. If the specified number of tuples is less than 1, the function returns the empty set. If the specified number of tuples exceeds the number of tuples in the set, the function returns the original set.  
+  
+## Example  
+ The following example returns the Reseller Sales Measure for the top five selling subcategories of products, irrespective of hierarchy, based on Reseller Gross Profit. The **Tail** function is used to return only the last five sets in the result after the result is reverse-ordered using the **Order** function.  
+  
+```  
+SELECT Tail  
+   (Order   
+      ([Product].[Product Categories].[SubCategory].members  
+         ,[Measures].[Reseller Gross Profit]  
+         ,BASC  
+      )  
+   ,5  
+   ) ON 0  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

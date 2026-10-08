@@ -1,0 +1,44 @@
+---
+title: "Configure Security Wizard: Choose Servers"
+description: "Describes the properties found on the 'Choose Servers' page of the 'Configure Database Mirroring Security Wizard'."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: database-mirroring
+ms.topic: how-to
+f1_keywords:
+  - "sql13.swb.configdbmsecurwiz.choosesrvrs.f1"
+---
+# Configure Database Mirroring Wizard: Choose Servers to Configure 
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Use this page to specify which server instances you want to configure now. You must select at least one server instance before continuing the wizard.  
+  
+ If you clear the check box for a server instance, the wizard will not make any changes to it. The wizard, however, will ask you to enter information about that instance and save this information as part of the configuration of the other server instances. For example, if you clear the check box for the witness server instance, the wizard will ask you to enter the  SQL Server 
+ service account of the witness because a login for that account must be created as part of the security configuration saved at the principal and mirror server instances.  
+  
+ **To configure database mirroring by using SQL Server Management Studio**  
+  
+-   [Establish a Database Mirroring Session Using Windows Authentication (SQL Server Management Studio)](establish-database-mirroring-session-windows-authentication.md)  
+  
+-   [Start the Configuring Database Mirroring Security Wizard (SQL Server Management Studio)](start-the-configuring-database-mirroring-security-wizard.md)  
+  
+## Options  
+ **Principal server instance**  
+ Select to configure security for the principal server.  
+  
+ **Mirror server instance**  
+ Select to configure security for the mirror server.  
+  
+ **Witness server instance**  
+ Select to configure security for the witness server (if present).  
+  
+## Related content
+
+- [Database Properties (Mirroring Page)](../../relational-databases/databases/database-properties-mirroring-page.md)
+- [Database Mirroring (SQL Server)](database-mirroring-sql-server.md)

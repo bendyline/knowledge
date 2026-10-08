@@ -1,0 +1,48 @@
+---
+title: "getLong Method (int) (SQLServerResultSet)"
+description: "getLong Method (int) (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.getLong (int)"
+apitype: "Assembly"
+---
+# getLong Method (int) (SQLServerResultSet)
+
+
+  Retrieves the value of the designated column index in the current row of this [SQLServerResultSet](sqlserverresultset-class.md) object as a **long** in the Java programming language.  
+  
+## Syntax  
+  
+```  
+  
+public long getLong(int columnIndex)  
+```  
+  
+#### Parameters  
+ *columnIndex*  
+  
+ An **int** that indicates the column index.  
+  
+## Return Value  
+ A **long** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getLong method is specified by the getLong method in the java.sql.ResultSet interface.  
+  
+ This method is supported only on  SQL Server 
+ data types that can safely return an integer value such as bigint, int, smallint, tinyint, and bit. Using this method on any other data types will cause an exception to be thrown.  
+  
+## Related content
+
+- [getLong Method (SQLServerResultSet)](getlong-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

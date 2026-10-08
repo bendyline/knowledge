@@ -1,0 +1,24 @@
+# Source code: uwp/audio-video-camera/code/LowLightFusionSample/cs/project.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "dependencies": {
+  },
+
+  "frameworks": {
+    "uap10.0": { }
+  },
+
+  "runtimes": {
+    "win10-arm": { },
+    "win10-arm-aot": { },
+    "win10-x86": { },
+    "win10-x86-aot": { },
+    "win10-x64": { },
+    "win10-x64-aot": { }
+  }
+}
+
+```

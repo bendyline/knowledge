@@ -1,0 +1,15 @@
+---
+title: Include file
+description: Include file
+ms.service: azure-backup
+ms.topic: include
+ms.date: 02/28/2025
+author: AbhishekMallick-MS
+ms.author: v-mallicka
+---
+
+- [Review the supported scenarios and known limitations](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-azure-database-postgresql-flex-support-matrix.md) of Azure Database for PostgreSQL Flexible server backup.
+- Identify or [create a Backup vault](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/create-manage-backup-vault.md#create-a-backup-vault) in the same region where you want to back up the Azure Database for PostgreSQL Server instance.
+- Check that Azure Database for PostgreSQL Server is named in accordance with naming guidelines for Azure Backup. Learn about the [naming conventions](https://learn.microsoft.com/previous-versions/azure/postgresql/single-server/tutorial-design-database-using-azure-portal#create-an-azure-database-for-postgresql).
+- Allow access permissions for PostgreSQL - Flexible Server. Learn about the [access permissions](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/backup-azure-database-postgresql-flex-overview.md#azure-backup-authentication-with-the-postgresql-server).
+- [Create a back up policy](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/backup/quick-backup-postgresql-flexible-server-portal.md).

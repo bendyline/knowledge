@@ -1,0 +1,34 @@
+# Source code: uwp/monetize/code/InAppPurchasesAndLicenses_RS1/json/StoreAppLicense.ExtendedJsonDataExample.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "productAddOns": [
+    {
+      "inAppOfferToken": "Durable test add-on",
+      "productId": "9NBLGGH4TNMP",
+      "productType": "Durable",
+      "skuId": "0010",
+      "skuType": "Full",
+      "expiration": "9999-12-31 00:00:00",
+      "isActive": true
+    },
+    {
+      "inAppOfferToken": "Consumable test add-on",
+      "productId": "9NBLGGH4TNMN",
+      "productType": "Consumable",
+      "skuId": "0020",
+      "skuType": "Full",
+      "expiration": "9999-12-31 00:00:00",
+      "isActive": true
+    }
+  ],
+  "productId": "9NBLGGH4R315",
+  "skuId": "0010",
+  "isActive": true,
+  "isTrial": false,
+  "isTrialOwnedByThisUser": false,
+  "expiration": "9999-12-31 00:00:00"
+}
+```

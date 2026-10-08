@@ -1,0 +1,59 @@
+---
+title: "getSuperTables Method (SQLServerDatabaseMetaData)"
+description: "getSuperTables Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.getSuperTables"
+apitype: "Assembly"
+---
+# getSuperTables Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves a description of the table hierarchies that are defined in a particular schema in this database.  
+  
+> **Note:**  
+>  This method is not currently supported with the  Microsoft JDBC Driver for SQL Server 
+. When used, this method will always return an empty result set.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.ResultSet getSuperTables(java.lang.String catalog,  
+                                         java.lang.String schemaPattern,  
+                                         java.lang.String tableNamePattern)  
+```  
+  
+#### Parameters  
+ *catalog*  
+  
+ A **String** that contains the catalog name.  
+  
+ *schemaPattern*  
+  
+ A **String** that contains the schema name pattern.  
+  
+ *tableNamePattern*  
+  
+ A **String** that contains the table name pattern.  
+  
+## Return Value  
+ A [SQLServerResultSet](sqlserverresultset-class.md) object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getSuperTables method is specified by the getSuperTables method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

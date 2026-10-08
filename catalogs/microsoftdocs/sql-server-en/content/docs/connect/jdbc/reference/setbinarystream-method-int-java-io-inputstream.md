@@ -1,0 +1,43 @@
+---
+title: "setBinaryStream Method (int, java.io.InputStream)"
+description: "setBinaryStream Method (int, java.io.InputStream)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# setBinaryStream Method (int, java.io.InputStream)
+
+
+  Sets the designated parameter to the specified input stream.  
+  
+## Syntax  
+  
+```  
+  
+public final void setAsciiStream(int parameterIndex,  
+                                 java.io.InputStream x)  
+```  
+  
+#### Parameters  
+ *parameterIndex*  
+  
+ An **int** that indicates the parameter number.  
+  
+ *x*  
+  
+ A java.io.InputStream object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setBinaryStream method is specified by the setBinaryStream method in the java.sql.PreparedStatement interface.  
+  
+## Related content
+
+- [setBinaryStream Method (SQLServerPreparedStatement)](setbinarystream-method-sqlserverpreparedstatement.md)
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)

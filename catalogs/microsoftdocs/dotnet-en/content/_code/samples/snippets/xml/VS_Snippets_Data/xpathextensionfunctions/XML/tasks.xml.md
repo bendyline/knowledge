@@ -1,0 +1,27 @@
+# Source code: samples/snippets/xml/VS_Snippets_Data/xpathextensionfunctions/XML/tasks.xml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!--<snippet5>-->
+<?xml version="1.0" encoding="utf-8" ?>
+<Tasks>
+    <Name>Reserve orders by customer</Name>
+    <Name>Reserve orders by region</Name>
+    <Name>Reserve orders by phone number</Name>
+    <Name>Reserve orders by priority</Name>
+    <Name>Total orders by customer</Name>
+    <Name>Total orders by region</Name>
+    <Name>Total orders by phone number</Name>
+    <Name>Total orders by priority</Name>
+    <Name>Schedule delivery by customer</Name>
+    <Name>Schedule delivery by region</Name>
+    <Name>Schedule delivery by phone number</Name>
+    <Name>Schedule delivery by priority</Name>
+    <Name>Follow up delivery by customer</Name>
+    <Name>Follow up delivery by region</Name>
+    <Name>Follow up delivery by phone number</Name>
+    <Name>Follow up delivery by priority</Name>
+</Tasks>
+<!--</snippet5>-->
+```

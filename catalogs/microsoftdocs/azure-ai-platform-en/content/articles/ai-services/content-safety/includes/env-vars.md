@@ -1,0 +1,49 @@
+---
+title: "Create environment variables"
+description: Create environment variables for Azure AI Content Safety
+author: ssalgadodev
+manager: mcleans
+ms.service: azure-ai-content-safety
+ms.custom: build-2023
+ms.topic: include
+ms.date: 05/03/2023
+ms.author: ssalgado
+ai-usage: ai-assisted
+---
+
+## Create environment variables 
+
+In this example, you'll write your credentials to environment variables on the local machine running the application.
+
+To set the environment variable for your key and endpoint, open a console window and follow the instructions for your operating system and development environment.
+
+- To set the `CONTENT_SAFETY_KEY` environment variable, replace `YOUR_CONTENT_SAFETY_KEY` with one of the keys for your resource.
+- To set the `CONTENT_SAFETY_ENDPOINT` environment variable, replace `YOUR_CONTENT_SAFETY_ENDPOINT` with the endpoint for your resource.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/azure-key-vault.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/content-safety/includes/env-vars.md)
+
+#### [Windows](#tab/windows)
+
+```console
+setx CONTENT_SAFETY_KEY 'YOUR_CONTENT_SAFETY_KEY'
+```
+
+```console
+setx CONTENT_SAFETY_ENDPOINT 'YOUR_CONTENT_SAFETY_ENDPOINT'
+```
+
+After you add the environment variables, you might need to restart any running programs that will read the environment variables, including the console window.
+
+#### [Linux](#tab/linux)
+
+```bash
+export CONTENT_SAFETY_KEY='YOUR_CONTENT_SAFETY_KEY'
+```
+
+```bash
+export CONTENT_SAFETY_ENDPOINT='YOUR_CONTENT_SAFETY_ENDPOINT'
+```
+
+After you add the environment variables, run `source ~/.bashrc` from your console window to make the changes effective.
+
+---

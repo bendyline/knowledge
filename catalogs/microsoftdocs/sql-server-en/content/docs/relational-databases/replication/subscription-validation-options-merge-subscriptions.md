@@ -1,0 +1,43 @@
+---
+title: "Subscription Validation Options (Merge)"
+description: Describes the 'Subscription Validation Options' dialog box within SQL Server Management Studio (SSMS).
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.validate.mergeoptions.f1"
+helpviewer_keywords:
+  - "Subscription Validation Options dialog box"
+monikerRange: "=azuresqldb-current || >=sql-server-2017"
+---
+# Subscription Validation Options (Merge Subscriptions)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Use the **Subscription Validation Options** dialog box to specify whether validation should use a row count only or a row count and a binary checksum.  
+  
+## Options  
+ **Verify the row counts only**  
+ Select to validate whether the table at the Subscriber has the same number of rows as the table at the Publisher. This method does not validate that the content of the rows matches. Row count validation provides a lightweight approach to validation that can make you aware of issues with your data.  
+  
+ **Verify the row counts and compare checksums to verify the row data**  
+ In addition to taking a count of rows at the Publisher and Subscriber, a checksum of all the data is calculated using the binary checksum algorithm. If the row count fails, the checksum is not performed. This option is not valid for  Microsoft 
+  SQL Server Compact 
+.  
+  
+## Related content
+
+- [Validate Replicated Data](validate-data-at-the-subscriber.md)

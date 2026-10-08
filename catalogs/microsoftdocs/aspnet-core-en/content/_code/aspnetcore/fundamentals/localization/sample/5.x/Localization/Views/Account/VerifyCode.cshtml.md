@@ -1,0 +1,45 @@
+# Source code: aspnetcore/fundamentals/localization/sample/5.x/Localization/Views/Account/VerifyCode.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@model VerifyCodeViewModel
+@{
+    ViewData["Title"] = "Verify";
+}
+
+<h2>@ViewData["Title"].</h2>
+
+<form asp-controller="Account" asp-action="VerifyCode" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input asp-for="Provider" type="hidden">
+    <input asp-for="RememberMe" type="hidden">
+    <h4>@ViewData["Status"]</h4>
+    <hr>
+    <div class="form-group">
+        <label asp-for="Code" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Code" class="form-control">
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox">
+                <input asp-for="RememberBrowser">
+                <label asp-for="RememberBrowser"></label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+```

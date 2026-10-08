@@ -1,0 +1,101 @@
+---
+title: "Tutorial: Create an FAQ bot for multiple categories with Azure AI Bot Service"
+description: In this tutorial, create a no code FAQ Bot for production use cases with custom question answering and Azure AI Bot Service.
+ms.service: azure-language-foundry-tools
+ms.topic: tutorial
+author: laujan
+ms.author: lajanuar
+ms.date: 06/30/2026
+ms.custom: language-service-question-answering, cogserv-non-critical-language
+---
+# Add multiple categories to your FAQ bot
+
+In this tutorial, you learn how to:
+
+> 
+> * Create a project and tag question answer pairs into distinct categories with metadata
+> * Create a separate project for each domain
+> * Create a separate language resource for each domain
+
+When building an FAQ bot, you may encounter use cases that require you to address queries across multiple domains. Let's say the marketing team at Microsoft wants to build a customer support bot that answers common user queries on multiple Surface Products. For the sake of simplicity here, we use two FAQ URLs, [Surface Pen](https://support.microsoft.com/surface/how-to-use-your-surface-pen-8a403519-cd1f-15b2-c9df-faa5aa924e98), and [Surface Earbuds](https://support.microsoft.com/surface/use-surface-earbuds-aea108c3-9344-0f11-e5f5-6fc9f57b21f9) to create the project.
+
+## Create project with domain specific metadata
+
+The content authors can use documents to extract question answer pairs or add custom question answer pairs to the project. In order to group the question and answers into specific domains or categories, you can add metadata.
+
+For the bot on Surface products, you can take the following steps to create a bot that answers queries for both product types:
+
+1. Add the following FAQ URLs as sources by selecting **Add source** > **URLs** > and then **Add all** once you add each of the URLs:
+   
+   [Surface Pen FAQ](https://support.microsoft.com/surface/how-to-use-your-surface-pen-8a403519-cd1f-15b2-c9df-faa5aa924e98)<br>[Surface Earbuds FAQ](https://support.microsoft.com/surface/use-surface-earbuds-aea108c3-9344-0f11-e5f5-6fc9f57b21f9)
+
+    >
+    >[Screenshot of add URL UI.](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/multiple-domains/add-url.png#lightbox)
+
+1. In this project, we have sets of question-and-answer pairs for two different products. Our goal is to clearly differentiate between these products so that users can search for relevant responses within the question and answer sets for a specific product.
+
+  In the example, we added a metadata with **product** as key and **surface_pen** or **surface_earbuds** as values wherever applicable. You can extend this example to extract data on multiple products and add a different value for each product.
+
+   >
+   >[Screenshot of metadata example.](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/multiple-domains/product-metadata.png#lightbox)
+
+1. Now, in order to restrict the system to search for the response across a particular product you would need to pass that product as a filter in the custom question answering REST API.
+
+    The REST API prediction URL can be retrieved from the Deploy project pane:
+
+   >
+   >[Screenshot of the Deploy project page with the prediction URL displayed.](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/question-answering/media/multiple-domains/prediction-url.png#lightbox)
+
+    In the JSON body for the API call, we passed *surface_pen* as value for the metadata *product*. So, the system only looks for the response among the QnA pairs with the same metadata.
+
+    ```json
+        {
+          "question": "What is the price?",
+          "top": 3
+        },
+        "answerSpanRequest": {
+          "enable": true,
+          "confidenceScoreThreshold": 0.3,
+          "topAnswersWithSpan": 1
+        },
+        "filters": {
+          "metadataFilter": {
+            "metadata": [
+              {
+                "key": "product",
+                "value": "surface_pen"
+              }
+            ]
+          }
+        }
+    ```
+
+    You can obtain metadata value based on user input in the following ways: 
+
+    * Explicitly take the domain as input from the user through the bot client. For instance, you can take the product category as input from the user when the conversation is initiated.
+
+      Take metadata input
+
+    * Implicitly identify domain based on bot context. For instance, in case the previous question was on a particular Surface product, it can be saved as context by the client. If the user doesn't specify the product in the next query, you could pass on the bot context as metadata to the Generate Answer API.
+
+      Pass context
+
+    * Extract entity from user query to identify domain to be used for metadata filter. You can use other Foundry Tools such as [Named Entity Recognition (NER)](../../named-entity-recognition/overview.md) and [conversational language understanding](../../conversational-language-understanding/overview.md) for entity extraction.
+
+      Extract metadata from query
+
+### How large can our projects be?
+
+You can add up to 50000 question answer pairs to a single project. If your data exceeds 50,000 question answer pairs, you should consider splitting the project.
+
+## Create a separate project for each domain
+
+You can also create a separate project for each domain and maintain the projects separately. All APIs require for the user to pass on the project name to make any update to the project or fetch an answer to the user's question.  
+
+When the service receives the user question, you need to pass on the `projectName` in the REST API endpoint shown to fetch a response from the relevant project. You can locate the URL in the **Deploy project** page under **Get prediction URL**:
+
+`https://southcentralus.cognitiveservices.azure.com/language/:query-knowledgebases?projectName=Test-Project-English&api-version=2021-10-01&deploymentName=production`
+
+## Create a separate language resource for each domain
+
+Let's say the marketing team at Microsoft wants to build a customer support bot that answers user queries on Surface and Xbox products. They plan to assign distinct teams to access projects on Surface and Xbox. In this case, you should create two custom question answering resources—one for Surface and another for Xbox. You can define distinct roles for users accessing the same resource.

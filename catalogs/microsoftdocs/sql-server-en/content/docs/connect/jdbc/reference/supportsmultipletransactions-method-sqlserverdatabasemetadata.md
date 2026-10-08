@@ -1,0 +1,40 @@
+---
+title: "supportsMultipleTransactions Method (SQLServerDatabaseMetaData)"
+description: "supportsMultipleTransactions Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.supportsMultipleTransactions"
+apitype: "Assembly"
+---
+# supportsMultipleTransactions Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether this database allows having multiple transactions open at once on different connections.  
+  
+## Syntax  
+  
+```  
+  
+public boolean supportsMultipleTransactions()  
+```  
+  
+## Return Value  
+ **true** if supported. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This supportsMultipleTransactions method is specified by the supportsMultipleTransactions method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

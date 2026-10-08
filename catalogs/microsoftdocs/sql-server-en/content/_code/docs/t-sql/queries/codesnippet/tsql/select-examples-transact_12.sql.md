@@ -1,0 +1,29 @@
+# Source code: docs/t-sql/queries/codesnippet/tsql/select-examples-transact_12.sql
+
+Complete source file; linked examples may select a region or line range.
+
+```
+USE AdventureWorks2025;
+GO
+
+SELECT DISTINCT pp.LastName,
+    pp.FirstName
+FROM Person.Person pp
+INNER JOIN HumanResources.Employee e
+    ON e.BusinessEntityID = pp.BusinessEntityID
+WHERE pp.BusinessEntityID IN (
+    SELECT SalesPersonID
+    FROM Sales.SalesOrderHeader
+    WHERE SalesOrderID IN (
+        SELECT SalesOrderID
+        FROM Sales.SalesOrderDetail
+        WHERE ProductID IN (
+            SELECT ProductID
+            FROM Production.Product p
+            WHERE ProductNumber = 'BK-M68B-42'
+        )
+    )
+);
+GO
+
+```

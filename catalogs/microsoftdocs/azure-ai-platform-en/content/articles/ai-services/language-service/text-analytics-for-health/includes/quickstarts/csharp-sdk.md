@@ -1,0 +1,253 @@
+---
+author: laujan
+ms.author: lajanuar
+manager: mcleans
+ms.date: 04/25/2026
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.custom:
+  - ignite-2024
+  - build-2025
+---
+[Reference documentation](https://learn.microsoft.com/dotnet/api/azure.ai.textanalytics?preserve-view=true\&view=azure-dotnet) | [More samples](https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/textanalytics/Azure.AI.TextAnalytics/samples) | [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.TextAnalytics/5.2.0) | [Library source code](https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/textanalytics/Azure.AI.TextAnalytics)
+
+Use this quickstart to create a Text Analytics for health application with the client library for .NET. In the following example, you create a C# application that can identify medical [entities](../../concepts/health-entity-categories.md), [relations](../../concepts/relation-extraction.md), and [assertions](../../concepts/assertion-detection.md) that appear in text.
+
+
+
+
+## Prerequisites
+
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+* The [Visual Studio IDE](https://visualstudio.microsoft.com/vs/)
+* Once you have your Azure subscription, [create a Foundry resource](../../../../multi-service-resource.md?pivots=azportal).
+    * You need the key and endpoint from the resource you create to connect your application to the API. You paste your key and endpoint into the code later in the quickstart.
+    * You can use the free pricing tier (`Free F0`) to try the service (providing 5,000 text records - 1,000 characters each) and upgrade later to the `Standard S` pricing tier for production. You can also start with the `Standard S` pricing tier, receiving the same initial quota for free (5000 text records) before getting charged. For more information on pricing, visit [Language Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/language-service/).
+
+
+
+## Setting up
+
+### Create environment variables 
+
+Your application must be authenticated to send API requests. For production, use a secure way of storing and accessing your credentials. In this example, you will write your credentials to environment variables on the local machine running the application.
+
+To set the environment variable for your Language resource key, open a console window, and follow the instructions for your operating system and development environment. 
+
+- To set the `LANGUAGE_KEY` environment variable, replace `your-key` with one of the keys for your resource.
+- To set the `LANGUAGE_ENDPOINT` environment variable, replace `your-endpoint` with the endpoint for your resource.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/microsoft-entra-id-akv-expanded.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/text-analytics-for-health/includes/quickstarts/csharp-sdk.md)
+
+#### [Windows](#tab/windows)
+
+```console
+setx LANGUAGE_KEY your-key
+```
+
+```console
+setx LANGUAGE_ENDPOINT your-endpoint
+```
+
+> **Note:**
+> If you only need to access the environment variables in the current running console, you can set the environment variable with `set` instead of `setx`.
+
+After you add the environment variables, you might need to restart any running programs that will need to read the environment variables, including the console window. For example, if you're using Visual Studio as your editor, restart Visual Studio before running the example.
+
+#### [Linux](#tab/linux)
+
+```bash
+export LANGUAGE_KEY=your-key
+```
+
+```bash
+export LANGUAGE_ENDPOINT=your-endpoint
+```
+
+After you add the environment variables, run `source ~/.bashrc` from your console window to make the changes effective.
+
+#### [macOS](#tab/macos)
+
+##### Bash
+
+```bash
+export LANGUAGE_KEY=your-key
+```
+
+```bash
+export LANGUAGE_ENDPOINT=your-endpoint
+```
+
+After you add the environment variables, run `source ~/.bash_profile` from your console window to make the changes effective.
+
+##### Xcode
+
+For iOS and macOS development, you set the environment variables in Xcode. For example, follow these steps to set the environment variable in Xcode 13.4.1.
+
+1. Select **Product** > **Scheme** > **Edit scheme**
+1. Select **Arguments** on the **Run** (Debug Run) page
+1. Under **Environment Variables** select the plus (+) sign to add a new environment variable. 
+1. Enter `LANGUAGE_KEY` for the **Name** and enter your Language resource key for the **Value**.
+1. Perform these steps for your resource endpoint. Name the new environment variable `LANGUAGE_ENDPOINT`.
+
+For more configuration options, see the [Xcode documentation](https://help.apple.com/xcode/#/dev745c5c974).
+
+---
+
+
+### Create a new .NET Core application
+
+Using the Visual Studio IDE, create a new .NET Core console app. This action creates a "Hello World" project with a single C# source file: *program.cs*.
+
+Install the client library by right-clicking the solution in the **Solution Explorer** and selecting **Manage NuGet Packages**. In the package manager that opens select **Browse** and search for `Azure.AI.TextAnalytics`. Select version `5.2.0`, and then **Install**. You can also use the [Package Manager Console](https://learn.microsoft.com/nuget/consume-packages/install-use-packages-powershell#find-and-install-a-package).
+
+
+
+## Code example
+
+Copy the following code into your *program.cs* file. Then run the code.
+
+> **Important:**
+> Go to the Azure portal. If Azure Language resource you created in the **Prerequisites** section deployed successfully, click the **Go to Resource** button under **Next Steps**. You can find your key and endpoint by navigating to your resource's **Keys and Endpoint** page, under **Resource Management**. 
+
+> **Important:**
+> Remember to remove the key from your code when you're done, and never post it publicly. For production, use a secure way of storing and accessing your credentials like [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview). See the Foundry Tools [security](../../../../security-features.md) article for more information.
+
+
+```csharp
+using Azure;
+using System;
+using Azure.AI.TextAnalytics;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Example
+{
+    class Program
+    {
+        // This example requires environment variables named "LANGUAGE_KEY" and "LANGUAGE_ENDPOINT"
+        private static readonly AzureKeyCredential credentials = new (Environment.GetEnvironmentVariable("LANGUAGE_KEY"));
+        private static readonly Uri endpoint = new (Environment.GetEnvironmentVariable("LANGUAGE_ENDPOINT"));
+        
+        // Example method for extracting information from healthcare-related text 
+        static async Task healthExample(TextAnalyticsClient client)
+        {
+            string document = "Prescribed 100mg ibuprofen, taken twice daily.";
+
+            List<string> batchInput = new List<string>()
+            {
+                document
+            };
+            AnalyzeHealthcareEntitiesOperation healthOperation = await client.StartAnalyzeHealthcareEntitiesAsync(batchInput);
+            await healthOperation.WaitForCompletionAsync();
+
+            await foreach (AnalyzeHealthcareEntitiesResultCollection documentsInPage in healthOperation.Value)
+            {
+                Console.WriteLine($"Results of Azure Text Analytics for health async model, version: \"{documentsInPage.ModelVersion}\"");
+                Console.WriteLine("");
+
+                foreach (AnalyzeHealthcareEntitiesResult entitiesInDoc in documentsInPage)
+                {
+                    if (!entitiesInDoc.HasError)
+                    {
+                        foreach (var entity in entitiesInDoc.Entities)
+                        {
+                            // view recognized healthcare entities
+                            Console.WriteLine($"  Entity: {entity.Text}");
+                            Console.WriteLine($"  Category: {entity.Category}");
+                            Console.WriteLine($"  Offset: {entity.Offset}");
+                            Console.WriteLine($"  Length: {entity.Length}");
+                            Console.WriteLine($"  NormalizedText: {entity.NormalizedText}");
+                        }
+                        Console.WriteLine($"  Found {entitiesInDoc.EntityRelations.Count} relations in the current document:");
+                        Console.WriteLine("");
+
+                        // view recognized healthcare relations
+                        foreach (HealthcareEntityRelation relations in entitiesInDoc.EntityRelations)
+                        {
+                            Console.WriteLine($"    Relation: {relations.RelationType}");
+                            Console.WriteLine($"    For this relation there are {relations.Roles.Count} roles");
+
+                            // view relation roles
+                            foreach (HealthcareEntityRelationRole role in relations.Roles)
+                            {
+                                Console.WriteLine($"      Role Name: {role.Name}");
+
+                                Console.WriteLine($"      Associated Entity Text: {role.Entity.Text}");
+                                Console.WriteLine($"      Associated Entity Category: {role.Entity.Category}");
+                                Console.WriteLine("");
+                            }
+                            Console.WriteLine("");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("  Error!");
+                        Console.WriteLine($"  Document error code: {entitiesInDoc.Error.ErrorCode}.");
+                        Console.WriteLine($"  Message: {entitiesInDoc.Error.Message}");
+                    }
+                    Console.WriteLine("");
+                }
+            }
+        }
+
+        static async Task Main(string[] args)
+        {
+            var client = new TextAnalyticsClient(endpoint, credentials);
+            await healthExample(client);
+        }
+
+    }
+}
+
+```
+
+
+
+
+### Output
+
+```console
+Results of Azure Text Analytics for health async model, version: "2022-03-01"
+
+  Entity: 100mg
+  Category: Dosage
+  Offset: 11
+  Length: 5
+  NormalizedText:
+  Entity: ibuprofen
+  Category: MedicationName
+  Offset: 17
+  Length: 9
+  NormalizedText: ibuprofen
+  Entity: twice daily
+  Category: Frequency
+  Offset: 34
+  Length: 11
+  NormalizedText:
+  Found 2 relations in the current document:
+
+    Relation: DosageOfMedication
+    For this relation there are 2 roles
+      Role Name: Dosage
+      Associated Entity Text: 100mg
+      Associated Entity Category: Dosage
+
+      Role Name: Medication
+      Associated Entity Text: ibuprofen
+      Associated Entity Category: MedicationName
+
+
+    Relation: FrequencyOfMedication
+    For this relation there are 2 roles
+      Role Name: Medication
+      Associated Entity Text: ibuprofen
+      Associated Entity Category: MedicationName
+
+      Role Name: Frequency
+      Associated Entity Text: twice daily
+      Associated Entity Category: Frequency
+```
+
+> **Tip:**
+> Fast Healthcare Interoperability Resources (FHIR) structuring is available using Azure Language REST API. The client libraries are not currently supported. [Learn more](../../how-to/call-api.md) on how to use FHIR structuring in your API call.

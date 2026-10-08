@@ -1,0 +1,63 @@
+---
+title: "SSIS Toolbox"
+description: "SSIS Toolbox"
+ms.date: "11/16/2016"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.toolboxfavorites.F1"
+  - "sql13.dts.designer.toolbox.F1"
+  - "sql13.dts.designer.toolboxcommon.F1"
+---
+# SSIS Toolbox
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  All components installed on the local machine automatically appear in the **SSIS Toolbox**. When you install additional components, right-click inside the toolbox and then click **Refresh Toolbox** to add the components.  
+ 
+ When you create a new SSIS project or open an existing project, the **SSIS Toolbox** displays automatically. You can also open the toolbox by clicking the toolbox button that is located in the top-right corner of the package design surface, or by clicking VIEW -> Other Windows -> SSIS Toolbox.
+ 
+ > **Note:**
+> If you can't see the toolbox, go to VIEW -> Other Windows -> SSIS Toolbox.
+ 
+Get more information about a component in the toolbox by clicking the component to view its description at the bottom of the toolbox. For some components you can also access samples that demonstrate how to configure and use the components. The samples are available on [MSDN](https://learn.microsoft.com/samples/browse/). To access the samples from the **SSIS Toolbox**, click the **Find Samples** link that appears below the description.  
+  
+> **Note:**
+> You can't *remove* installed components from the toolbox.  
+
+## Toolbox categories
+ In the **SSIS Toolbox**, control flow and data flow components are organized into categories.  You can expand and collapse categories, and rearrange components.  Restore the default organization by right-clicking inside the toolbox and then click **Restore Toolbox Defaults**.  
+  
+ The **Favorites** and **Common** categories appear in the toolbox when you select the **Control Flow**, **Data Flow**, and **Event Handlers** tabs. The **Other Tasks** category appears in the toolbox when you select the **Control Flow** tab or the **Event Handlers** tab. The **Other Transforms**, **Other Sources**, and **Other Destinations** categories appear in the toolbox when you select the **Data Flow** tab.  
+
+ ## Add Azure components to the Toolbox  
+ The Azure Feature Pack for Integration Services contains connection managers to connect to Azure data sources and tasks to do common Azure operations. Install the Feature Pack to add these items to the Toolbox. For more info, see [Azure Feature Pack for Integration Services (SSIS)](azure-feature-pack-for-integration-services-ssis.md).  
+
+## Move a Toolbox item to another category  
+  
+1.  Right-click an item in the SSIS Toolbox, and then click one of the following:  
+  
+    -   **Move to Favorites**  
+  
+    -   **Move to Common**  
+  
+    -   **Move to Other Sources**  
+  
+    -   **Move to Other Destinations**  
+  
+    -   **Move to Other Transforms**  
+  
+    -   **Move to Other Tasks**  
+  
+## Refresh the SSIS Toolbox  
+  
+1.  Right-click in the SSIS Toolbox, and then click **Refresh Toolbox**.

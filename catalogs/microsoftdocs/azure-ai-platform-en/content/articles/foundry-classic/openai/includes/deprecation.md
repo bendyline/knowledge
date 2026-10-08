@@ -1,0 +1,13 @@
+---
+title: Python 0.28.1 deprecated
+titleSuffix: Azure OpenAI in Microsoft Foundry Models
+description: Python library deprecation 
+manager: mcleans
+ms.service: microsoft-foundry
+ms.subservice: foundry-openai
+ms.topic: include
+ms.date: 03/13/2024
+---
+
+> **Note:**
+> The OpenAI Python library version `0.28.1` is deprecated. We recommend using `1.x`. Consult our [migration guide](../how-to/migration.md) for information on moving from `0.28.1` to `1.x`.

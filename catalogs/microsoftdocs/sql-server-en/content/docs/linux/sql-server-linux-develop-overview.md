@@ -1,0 +1,74 @@
+---
+title: Develop Applications for SQL Server on Linux
+description: You can create applications that connect to and use SQL Server on Linux from various programming languages and popular web frameworks.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 09/21/2026
+ms.service: sql
+ms.subservice: linux
+ms.topic: get-started
+ms.custom:
+  - linux-related-content
+ai-usage: ai-assisted
+---
+# How to get started developing applications for SQL Server on Linux
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Linux
+
+
+You can create applications that connect to and use  SQL Server 
+ on Linux from C#, C++, Go, Java, Node.js, PHP, Python, Ruby, and other languages. You can also use web frameworks, object-relational mappers (ORMs), and other data access libraries.
+
+> **Tip:**  
+> These development options can also target  SQL Server 
+ on Windows or in containers. Many drivers also support Azure SQL and SQL database in Microsoft Fabric. Review the driver documentation for product and platform support.
+
+## Try a quickstart
+
+- Browse to [SQL connectivity and drivers](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/connect/index.yml).
+- Select your language and development platform.
+- Open the get-started guide or code samples.
+
+## Create new applications
+
+If you're creating a new application, see [Microsoft SQL drivers and frameworks](../connect/sql-connection-libraries.md) to choose a driver and, when applicable, a framework or data access library.
+
+## Use existing applications
+
+If you have an existing database application, you can change its connection string to target  SQL Server 
+ on Linux. For more information, see [SQL Server on Linux: Known issues](sql-server-linux-known-issues.md).
+
+## Use existing SQL tools on Windows with SQL Server on Linux
+
+Windows tools such as SQL Server Management Studio (SSMS), SQL Server Data Tools (SSDT), and PowerShell also work with remote  SQL Server 
+ instances on Linux.
+
+See the following articles for more information:
+
+- [Use SQL Server Management Studio on Windows to manage SQL Server on Linux](sql-server-linux-manage-ssms.md)
+- [Use Visual Studio to create databases for SQL Server on Linux](sql-server-linux-develop-use-ssdt.md)
+- [Use PowerShell on Windows to manage SQL Server on Linux](sql-server-linux-manage-powershell.md)
+
+> **Note:**  
+> Make sure that you're using the latest versions of these tools for the best experience.
+
+## Use SQL tools on Linux
+
+You can use the [MSSQL extension for Visual Studio Code](../tools/visual-studio-code-extensions/mssql/mssql-extension-visual-studio-code.md) on Linux, macOS, and Windows. For a step-by-step walkthrough, see [Quickstart: Run your first query with the MSSQL extension for Visual Studio Code](../tools/visual-studio-code-extensions/mssql/mssql-run-first-query.md).
+
+You can also use command-line tools that are native to Linux. These tools include the following:
+
+- [sqlcmd](../tools/sqlcmd/sqlcmd-utility.md)
+- [bcp](migrate/bulk-copy.md)
+- [mssql-conf](configure/mssql-conf.md)
+
+## Related content
+
+- [Quickstart: Install SQL Server and create a database on Red Hat Enterprise Linux](install-upgrade/quickstart-install-red-hat.md)
+- [Quickstart: Install SQL Server and create a database on SUSE Linux Enterprise Server](install-upgrade/quickstart-install-suse.md)
+- [Quickstart: Install SQL Server and create a database on Ubuntu](install-upgrade/quickstart-install-ubuntu.md)

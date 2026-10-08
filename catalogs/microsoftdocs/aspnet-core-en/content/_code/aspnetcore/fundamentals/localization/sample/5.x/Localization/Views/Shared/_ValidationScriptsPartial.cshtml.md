@@ -1,0 +1,15 @@
+# Source code: aspnetcore/fundamentals/localization/sample/5.x/Localization/Views/Shared/_ValidationScriptsPartial.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<environment include="Development">
+    <script src="~/js/jquery.validate-1.16.0.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive-3.2.6.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.js" asp-fallback-src="~/js/jquery.validate-1.16.0.js" asp-fallback-test="window.jQuery && window.jQuery.validator"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.6/jquery.validate.unobtrusive.js" asp-fallback-src="~/js/jquery.validate.unobtrusive-3.2.6.js" asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive"></script>
+</environment>
+
+```

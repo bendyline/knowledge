@@ -1,0 +1,60 @@
+---
+title: "sys.numbered_procedure_parameters (Transact-SQL)"
+description: sys.numbered_procedure_parameters (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "numbered_procedure_parameters_TSQL"
+  - "sys.numbered_procedure_parameters_TSQL"
+  - "numbered_procedure_parameters"
+  - "sys.numbered_procedure_parameters"
+helpviewer_keywords:
+  - "sys.numbered_procedure_parameters catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.numbered_procedure_parameters (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Contains one row for each parameter of a numbered procedure. When you create a numbered stored procedure, the base procedure is number 1. All subsequent procedures have numbers 2, 3, and so forth. **sys.numbered_procedure_parameters** contains the parameter definitions for all subsequent procedures, numbered 2 and greater. This view does not show parameters for the base stored procedure (number = 1). The base stored procedure is similar to a nonnumbered stored procedure. Therefore, its parameters are represented in [sys.parameters (Transact-SQL)](sys-parameters-transact-sql.md).  
+  
+> **Important:**  
+>  Numbered procedures are deprecated. Use of numbered procedures is discouraged. A DEPRECATION_ANNOUNCEMENT event is fired when a query that uses this catalog view is compiled.  
+  
+> **Note:**  
+>  XML and CLR parameters are not supported for numbered procedures.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **object_id** | **int** | ID of the object to which this parameter belongs. |
+| **procedure_number** | **smallint** | Number of this procedure within the object, 2 or greater. |
+| **name** | **sysname** | Name of the parameter. Is unique within **procedure_number**. |
+| **parameter_id** | **int** | ID of the parameter. Is unique within the **procedure_number**. |
+| **system_type_id** | **tinyint** | ID of the system type of the parameter |
+| **user_type_id** | **int** | ID of the type, as defined by user, of the parameter. |
+| **max_length** | **smallint** | Maximum length of the parameter in bytes.<br /><br /> -1 = Column data type is varchar(max), nvarchar(max), or varbinary(max). |
+| **precision** | **tinyint** | Precision of the parameter if numeric-based; otherwise, 0. |
+| **scale** | **tinyint** | Scale of the parameter if numeric-based; otherwise, 0. |
+| **is_output** | **bit** | 1 = Parameter is output or return; otherwise, 0 |
+| **is_cursor_ref** | **bit** | 1 = Parameter is a cursor-reference parameter. |
+  
+> **Note:**  
+>  XML and CLR parameters are not supported for numbered procedures.  
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

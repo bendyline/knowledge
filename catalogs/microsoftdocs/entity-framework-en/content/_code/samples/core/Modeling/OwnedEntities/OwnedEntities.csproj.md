@@ -1,0 +1,25 @@
+# Source code: samples/core/Modeling/OwnedEntities/OwnedEntities.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <RootNamespace>EFModeling.OwnedEntities</RootNamespace>
+    <AssemblyName>EFModeling.OwnedEntities</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.7.26381.103">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
+  </ItemGroup>
+
+</Project>
+
+```

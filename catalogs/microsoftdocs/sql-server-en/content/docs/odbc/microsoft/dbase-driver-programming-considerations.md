@@ -1,0 +1,29 @@
+---
+title: "dBASE Driver Programming Considerations"
+description: "dBASE Driver Programming Considerations"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "Jet-based ODBC drivers [ODBC], DBasedriver"
+  - "desktop database drivers [ODBC], DBasedriver"
+  - "DBase driver [ODBC]"
+  - "ODBC desktop database drivers [ODBC], DBasedriver"
+---
+# dBASE Driver Programming Considerations
+This section contains the following topics.  
+  
+-   [Setting Options Programmatically for the dBASE Driver](setting-options-programmatically-for-the-dbase-driver.md)  
+  
+-   [dBASE Data Types](dbase-data-types.md)  
+  
+-   [SQLGetInfo Returned Values for dBASE](sqlgetinfo-returned-values-for-dbase.md)  
+  
+-   [Other dBASE Driver Programming Details](other-dbase-driver-programming-details.md)  
+  
+> **Note:**  
+>  Accessing dBASE ISAM files through the ODBC Desktop Database Drivers requires installation of the Borland database engine.

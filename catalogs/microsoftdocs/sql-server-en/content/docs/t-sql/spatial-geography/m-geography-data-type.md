@@ -1,0 +1,73 @@
+---
+title: "M (geography Data Type)"
+description: "M (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "M (geography Data Type)"
+  - "M_TSQL"
+helpviewer_keywords:
+  - "M method"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# M (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  The **M** (measure) value of the **geography** instance. The semantics of the measure value are user-defined but generally describe the distance along a linestring. For example, the measure value could be used to keep track of mileposts along a road.  
+  
+## Syntax  
+  
+```  
+  
+.M  
+```  
+
+## Return Types
+  SQL Server 
+ type: **float**  
+  
+ CLR type: **SqlDouble**  
+  
+## Remarks  
+ The value of this property is null if the **geography** instance is not a **Point**, as well as for any **Point** instance for which it is not set.  
+  
+ This property is read-only.  
+  
+ M values are not used in any calculations made by the library and will not be carried through any library calculations.  
+  
+## Examples  
+ The following example creates a `Point` instance with Z (elevation) and M (measure) values and uses `M` to fetch the `M` value of the instance.  
+  
+```  
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('POINT(-122.34900 47.65100 10.3 12)', 4326);  
+SELECT @g.M;  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)
+- [Z (geography Data Type)](z-geography-data-type.md)

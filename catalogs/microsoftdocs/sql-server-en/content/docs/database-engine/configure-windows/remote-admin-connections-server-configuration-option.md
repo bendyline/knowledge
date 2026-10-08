@@ -1,0 +1,58 @@
+---
+title: "Server Configuration: remote admin connections"
+description: "Learn how applications on remote computers can use the DAC. See how to use the remote admin connections option with sp_configure to turn on this capability."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/26/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+helpviewer_keywords:
+  - "administrator connections [SQL Server]"
+  - "DAC"
+  - "connections [SQL Server], dedicated administrator"
+  - "remote admin connections option"
+  - "dedicated administrator connections [SQL Server]"
+---
+# Server configuration: remote admin connections
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+ SQL Server 
+ provides a dedicated administrator connection (DAC). You can use the DAC to execute diagnostic functions or  Transact-SQL  statements, or to troubleshoot problems on the server, even when the server is locked or running in an abnormal state and not responding to a  SQL Server Database Engine 
+ connection.
+
+By default, the DAC is only available from a client application directly on the server. To enable client applications on remote computers to use the DAC, use the `remote admin connections` option of `sp_configure`.
+
+By default, the DAC only listens on the loop-back IP address (127.0.0.1), port 1434. If TCP port 1434 isn't available, a TCP port is dynamically assigned when the  Database Engine 
+ starts up. When more than one instance of  SQL Server 
+ is installed on a computer, check the error log for the TCP port number.
+
+The following table lists the possible values for the remote admin connections option.
+
+| Value | Description |
+| --- | --- |
+| 0 | Only local connections are allowed by using the DAC. |
+| 1 | Remote connections are allowed by using the DAC. |
+
+## Examples
+
+The following example enables the DAC from a remote computer:
+
+```sql
+EXECUTE sp_configure 'remote admin connections', 1;
+GO
+
+RECONFIGURE;
+GO
+```
+
+## Related content
+
+- [Diagnostic connection for database administrators](diagnostic-connection-for-database-administrators.md)
+- [Connect to SQL Server when system administrators are locked out](connect-to-sql-server-when-system-administrators-are-locked-out.md)

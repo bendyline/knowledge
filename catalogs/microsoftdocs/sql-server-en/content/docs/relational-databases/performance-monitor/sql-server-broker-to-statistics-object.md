@@ -1,0 +1,59 @@
+---
+title: "SQL Server, Broker TO Statistics object"
+description: "Learn about the SQLServer:Broker TO Statistics performance object, which reports information about Service Broker request transmission objects."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 12/04/2023
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "Broker Transmission Object object"
+  - "SQL Server: Broker Transmission Object"
+  - "SQL Server:Broker TO Statistics"
+  - "Broker TO Statistics"
+---
+# SQL Server, Broker TO Statistics object
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  The SQLServer:Broker TO Statistics performance object reports information about how many times  Service Broker 
+ dialogs request transmission objects, and how often transmission objects are written to `tempdb`.  
+  
+ Transmission objects record the state of message transmissions for a  Service Broker 
+ dialog. They are stored in memory. To free memory,  Service Broker 
+ periodically writes batches of inactive transmission objects to work tables in `tempdb`.  
+  
+ The following table lists the counters that this object contains.  
+  
+| **SQL Server Broker TO Statistics** counters | Description |
+| --- | --- |
+| **Avg. Length of Batched Writes** | The average number of transmission objects saved in a batch. |
+| **Avg. Time To Write Batch (ms)** | The average number of milliseconds required to save a batch of transmission objects. |
+| **Avg. Time to Write Batch Base** | For internal use only. |
+| **Avg. Time Between Batches (ms)** | The average number of milliseconds between writes of transmission object batches. |
+| **Avg. Time Between Batches Base** | For internal use only. |
+| **Transmission Obj Gets/Sec** | The number of times per second that dialogs requested transmission objects. |
+| **Transmission Obj Set Dirty/Sec** | The number of times per second that transmission objects were marked as dirty. Transmission objects are marked as dirty by the first modification that causes the in-memory copy to differ from the copy stored in `tempdb`. Transmission objects are modified when  Service Broker |
+ | has to record a change in the state of message transmissions for the dialog. |
+| **Transmission Obj Writes/Sec** | The number of times per second that a batch of transmission objects were written to `tempdb` work tables. Large numbers of writes could indicate that  SQL Server |
+ | memory is being stressed. |
+
+## Example
+
+You begin to explore the query performance counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT * FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%Broker TO Statistics%';
+```  
+  
+## Related content
+
+- [SQL Server, Access Methods object](sql-server-access-methods-object.md)
+- [SQL Server, Memory Manager object](sql-server-memory-manager-object.md)
+- [Monitor Resource Usage (Performance Monitor)](monitor-resource-usage-system-monitor.md)

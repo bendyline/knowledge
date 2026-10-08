@@ -1,0 +1,17 @@
+---
+title: "Parameter Markers in Procedure Calls"
+description: "Parameter Markers in Procedure Calls"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "SQL statements [ODBC], interoperability"
+  - "parameter markers [ODBC]"
+  - "interoperability of SQL statements [ODBC], parameter markers"
+---
+# Parameter Markers in Procedure Calls
+When calling procedures that accept parameters, interoperable applications should use parameter markers instead of literal parameter values. Some data sources do not support the use of literal parameter values in procedure calls. For more information about parameters, see [Statement Parameters](statement-parameters.md). For more information about calling procedures, see [Procedure Calls](procedure-calls.md), later in this section.

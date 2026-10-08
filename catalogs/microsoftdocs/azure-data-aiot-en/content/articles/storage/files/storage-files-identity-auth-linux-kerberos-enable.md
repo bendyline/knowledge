@@ -1,0 +1,524 @@
+---
+title: Configure Linux clients for Azure Files with AD DS
+description: Learn how to configure Linux clients to use Kerberos authentication for Azure Files with on-premises Active Directory Domain Services (AD DS).
+author: khdownie
+ms.service: azure-file-storage
+ms.custom: linux-related-content
+ms.topic: how-to
+ms.date: 08/31/2026
+ms.author: kendownie
+# Customer intent: "As a Linux administrator, I want to configure Linux clients to use on-premises AD DS authentication for Azure file shares, so that users can access shares with their domain credentials."
+---
+
+# Configure Linux clients for Azure Files with on-premises AD DS
+
+**Applies to:** :heavy_check_mark: SMB file shares
+
+[Azure Files](storage-files-introduction.md) supports identity-based authentication over Server Message Block (SMB) for Linux virtual machines (VMs) by using the Kerberos authentication protocol with on-premises Active Directory Domain Services (AD DS). To use this procedure, you must sync your AD DS environment to Microsoft Entra ID by using [Microsoft Entra Connect Sync](https://learn.microsoft.com/entra/identity/hybrid/connect/how-to-connect-sync-whatis).
+
+For more information on supported options and considerations, see [Overview of Azure Files identity-based authentication options for SMB access](storage-files-active-directory-overview.md).
+
+> **Note:**
+> This article uses Ubuntu for the example steps. Similar configurations work for RHEL and SLES clients, allowing you to mount Azure file shares by using on-premises AD DS.
+
+## Linux SMB client limitations
+
+You can't use identity-based authentication to mount Azure file shares on Linux clients at boot time by using `fstab` entries. This limitation exists because the client can't get the Kerberos ticket early enough to mount at boot time. You can use an `fstab` entry and specify the `noauto` option to enable a user to mount the file share after sign in by using a simple mount command without all the parameters. You can also use [`autofs`](storage-how-to-use-files-linux.md?tabs=smb311#dynamically-mount-with-autofs) to mount the share upon access.
+
+## Prerequisites
+
+Before you configure a Linux client to use on-premises AD DS authentication over SMB for Azure file shares, complete the following prerequisites:
+
+- A Linux VM running Ubuntu 18.04+, or an equivalent RHEL or SLES VM. The VM must have network connectivity to your on-premises AD DS domain controllers and use DNS servers that can resolve the AD DS domain.
+- An on-premises AD DS environment synchronized to Microsoft Entra ID by using [Microsoft Entra Connect Sync](https://learn.microsoft.com/entra/identity/hybrid/connect/how-to-connect-sync-whatis).
+- An SMB Azure file share in a storage account configured for [on-premises AD DS authentication](storage-files-identity-ad-ds-enable.md).
+- Root user or user credentials to a local user account that has full sudo rights (for this guide, localadmin).
+- The Linux VM isn't already joined to another AD DS domain. If it is, leave that domain before you join the VM to this domain.
+- An AD DS domain user account with permission to join computers to the domain.
+
+Installing the samba package isn't strictly necessary, but it gives you some useful tools and brings in other packages automatically, such as `samba-common` and `smbclient`. Run the following commands to install it. If you're asked for any input values during installation, leave them blank.
+
+```bash
+sudo apt update -y
+sudo apt install samba winbind libpam-winbind libnss-winbind krb5-config krb5-user keyutils cifs-utils
+```
+
+The `wbinfo` tool is part of the samba suite and is useful for authentication and debugging purposes, such as checking if the domain controller is reachable, checking what domain a machine is joined to, and finding information about users.
+
+Make sure that the Linux host keeps the time synchronized with the AD DS domain controllers. See the documentation for your Linux distribution. For some distributions, you can do this [using systemd-timesyncd](https://www.freedesktop.org/software/systemd/man/timesyncd.conf.html). Edit `/etc/systemd/timesyncd.conf` to include the following configuration. Replace `ntp.server` with the same Network Time Protocol (NTP) server hostname or IP address that your AD DS environment uses.
+
+```plaintext
+[Time]
+NTP=ntp.server
+FallbackNTP=ntp.ubuntu.com
+```
+
+Then restart the service:
+
+```bash
+sudo systemctl restart systemd-timesyncd.service
+```
+
+## Enable AD DS Kerberos authentication
+
+Follow these steps to enable Kerberos authentication with on-premises AD DS. For more information about configuring Samba, see [Setting up Samba as a Domain Member](https://wiki.samba.org/index.php/Setting_up_Samba_as_a_Domain_Member).
+
+### Make sure the AD DS domain controllers are reachable and discoverable
+
+1. Ensure that the configured DNS servers can resolve your AD DS domain and domain controllers.
+
+   ```bash
+   systemd-resolve --status
+   ```
+   
+   ```output
+   Global 
+             DNSSEC NTA: 10.in-addr.arpa
+                         16.172.in-addr.arpa
+                         168.192.in-addr.arpa
+                         17.172.in-addr.arpa
+                         18.172.in-addr.arpa
+                         19.172.in-addr.arpa
+                         20.172.in-addr.arpa
+                         21.172.in-addr.arpa
+                         22.172.in-addr.arpa
+                         23.172.in-addr.arpa
+                         24.172.in-addr.arpa
+                         25.172.in-addr.arpa
+                         26.172.in-addr.arpa
+                         27.172.in-addr.arpa
+                         28.172.in-addr.arpa
+                         29.172.in-addr.arpa
+                         30.172.in-addr.arpa
+                         31.172.in-addr.arpa
+                         corp
+                         d.f.ip6.arpa
+                         home
+                         internal
+                         intranet
+                         lan
+                         local
+                         private
+                         test 
+   
+   Link 2 (eth0) 
+         Current Scopes: DNS
+          LLMNR setting: yes
+   MulticastDNS setting: no
+         DNSSEC setting: no
+       DNSSEC supported: no
+            DNS Servers: 10.0.2.5
+                         10.0.2.4
+                         10.0.0.41
+             DNS Domain: domain1.contoso.com
+   ```
+
+1. If the DNS servers contain the domain controller IP addresses, proceed to [Set up hostname and FQDN](#set-up-hostname-and-fully-qualified-domain-name-fqdn). If the command doesn't produce the expected output, see [Troubleshoot AD DS domain controller discovery](#troubleshoot-ad-ds-domain-controller-discovery).
+
+#### Troubleshoot AD DS domain controller discovery
+
+1. Ensure that you can ping the AD DS domain controller IP addresses.
+
+   ```bash
+   ping 10.0.2.5
+   ```
+   
+   ```output
+   PING 10.0.2.5 (10.0.2.5) 56(84) bytes of data.
+   64 bytes from 10.0.2.5: icmp_seq=1 ttl=128 time=0.898 ms
+   64 bytes from 10.0.2.5: icmp_seq=2 ttl=128 time=0.946 ms
+   
+   ^C 
+   
+   --- 10.0.2.5 ping statistics --- 
+   2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+   rtt min/avg/max/mdev = 0.898/0.922/0.946/0.024 ms
+   ```
+
+1. If the ping doesn't work, review the [prerequisites](#prerequisites), and ensure that your VM has network connectivity to the AD DS domain controllers.
+
+1. If the IP addresses respond to ping but the DNS servers aren't automatically discovered, you can add the DNS servers manually. Edit `/etc/netplan/50-cloud-init.yaml` by using your favorite text editor.
+
+   ```plaintext
+   # This file is generated from information provided by the datasource.  Changes
+   # to it will not persist across an instance reboot.  To disable cloud-init's
+   # network configuration capabilities, write a file
+   # /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+   # network: {config: disabled}
+   network:
+       ethernets:
+           eth0:
+               dhcp4: true
+               dhcp4-overrides:
+                   route-metric: 100
+               dhcp6: false
+               match:
+                   macaddress: 00:22:48:03:6b:c5
+               set-name: eth0
+               nameservers:
+                   addresses: [10.0.2.5, 10.0.2.4]
+       version: 2
+   ```
+
+   Then apply the changes:
+
+   ```bash
+   sudo netplan --debug apply 
+   ```
+
+1. Winbind assumes that the DHCP server keeps the domain DNS records up-to-date. However, this assumption isn't true for Azure DHCP. To set up the client to make DDNS updates, use [this guide](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/virtual-network/virtual-networks-name-resolution-ddns.md#linux-clients) to create a network script. Here's a sample script that resides at `/etc/dhcp/dhclient-exit-hooks.d/ddns-update`.
+
+   ```plaintext
+   #!/bin/sh 
+   
+   # only execute on the primary nic
+   if [ "$interface" != "eth0" ]
+   then
+       return
+   fi 
+   
+   # When you have a new IP, perform nsupdate
+   if [ "$reason" = BOUND ] || [ "$reason" = RENEW ] ||
+      [ "$reason" = REBIND ] || [ "$reason" = REBOOT ]
+   then
+      host=`hostname -f`
+      nsupdatecmds=/var/tmp/nsupdatecmds
+        echo "update delete $host a" > $nsupdatecmds
+        echo "update add $host 3600 a $new_ip_address" >> $nsupdatecmds
+        echo "send" >> $nsupdatecmds
+   
+        nsupdate $nsupdatecmds
+   fi 
+   ```
+
+After resolving the issue, proceed to [set up a hostname and fully qualified domain name](#set-up-hostname-and-fully-qualified-domain-name-fqdn).
+
+### Set up hostname and fully qualified domain name (FQDN)
+
+Using your text editor, update the `/etc/hosts` file with the final FQDN (after joining the domain) and the alias for the host. The IP address doesn't matter for now because this line is mainly used to translate short hostname to FQDN. For more information, see [Setting up Samba as a Domain Member](https://wiki.samba.org/index.php/Setting_up_Samba_as_a_Domain_Member).
+
+```plaintext
+127.0.0.1       contosovm.contosodomain.contoso.com contosovm
+#cmd=sudo vim /etc/hosts   
+#then enter this value instead of localhost "ubuntuvm.contosodomain.contoso.com UbuntuVM" 
+```
+
+Now, verify that your hostname resolves correctly by running the following three commands.
+
+Use `getent hosts` to confirm the short hostname resolves to the FQDN. You can ignore the IP address that's returned.
+
+```bash
+getent hosts contosovm
+```
+
+```output
+127.0.0.1       contosovm.contosodomain.contoso.com contosovm
+```
+
+Use `dnsdomainname` to confirm the domain name is configured correctly.
+
+```bash
+dnsdomainname
+```
+
+```output
+contosodomain.contoso.com
+```
+
+Use `hostname -f` to confirm the full FQDN is resolved.
+
+```bash
+hostname -f
+```
+
+```output
+contosovm.contosodomain.contoso.com 
+```
+
+> **Note:**
+> Some Linux distros require you to run the `hostnamectl` command for `hostname -f` to be updated:
+> 
+> `hostnamectl set-hostname contosovm.contosodomain.contoso.com`
+
+### Set up krb5.conf
+
+Configure `/etc/krb5.conf` so that the Kerberos key distribution center (KDC) on an AD DS domain controller can be contacted for authentication. For more information, see [MIT Kerberos Documentation](https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html). Here's a sample `/etc/krb5.conf` file.
+
+```plaintext
+[libdefaults]
+        default_realm = CONTOSODOMAIN.CONTOSO.COM
+        dns_lookup_realm = false
+        dns_lookup_kdc = true
+```
+
+### Set up smb.conf
+
+Identify the path to `smb.conf`.
+
+```bash
+sudo smbd -b | grep "CONFIGFILE"
+```
+
+```output
+   CONFIGFILE: /etc/samba/smb.conf
+```
+
+Change the SMB configuration to act as an AD DS domain member. The following example uses the `rid` idmap backend. Review [Choosing an idmap backend](https://wiki.samba.org/index.php/Setting_up_Samba_as_a_Domain_Member#Choosing_an_idmap_backend) and select the backend that meets the requirements of your AD DS environment.
+
+```plaintext
+[global]
+   workgroup = CONTOSODOMAIN
+   security = ADS
+   realm = CONTOSODOMAIN.CONTOSO.COM
+
+   winbind refresh tickets = Yes
+   vfs objects = acl_xattr
+   map acl inherit = Yes
+   store dos attributes = Yes
+
+   dedicated keytab file = /etc/krb5.keytab
+   kerberos method = secrets and keytab
+
+   winbind use default domain = Yes 
+
+   load printers = No
+   printing = bsd
+   printcap name = /dev/null
+   disable spoolss = Yes
+
+   log file = /var/log/samba/log.%m
+   log level = 1
+
+   idmap config * : backend = tdb
+   idmap config * : range = 3000-7999
+
+   idmap config CONTOSODOMAIN : backend = rid
+   idmap config CONTOSODOMAIN : range = 10000-999999
+
+   template shell = /bin/bash
+   template homedir = /home/%U 
+```
+
+Force winbind to reload the changed config file.
+
+```bash
+sudo smbcontrol all reload-config
+```
+
+### Join the AD DS domain
+
+Use the `net ads join` command to join the host to the domain. If the command returns an error, see [Troubleshooting samba domain members](https://wiki.samba.org/index.php/Troubleshooting_Samba_Domain_Members) to resolve the problem.
+
+```bash
+sudo net ads join -U contososmbadmin
+
+Enter contososmbadmin's password:
+```
+
+```output
+Using short domain name -- CONTOSODOMAIN
+Joined 'CONTOSOVM' to dns domain 'contosodomain.contoso.com' 
+```
+
+Ensure that the DNS record exists for this host in AD DS DNS.
+
+```bash
+nslookup contosovm.contosodomain.contoso.com 10.0.2.5
+```
+
+```output
+Server:         10.0.2.5
+Address:        10.0.2.5#53
+
+Name:   contosovm.contosodomain.contoso.com
+Address: 10.0.0.8
+```
+
+### Set up nsswitch.conf
+
+If you plan for users to actively sign in to client machines and access the Azure file shares, you need to set up nsswitch.conf. If planned access is limited to applications represented by a user account or computer account that need Kerberos authentication to access the file share, you can skip this step.
+
+After you join the host to the domain, add the winbind libraries to the user and group lookup paths. Use your text editor to edit `/etc/nsswitch.conf` and add the following entries:
+
+```plaintext
+passwd:         compat systemd winbind
+group:          compat systemd winbind
+```
+
+Enable the winbind service to start automatically on reboot.
+
+```bash
+sudo systemctl enable winbind
+```
+
+```output
+Synchronizing state of winbind.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable winbind
+```
+
+Restart the service.
+
+```bash
+sudo systemctl restart winbind
+sudo systemctl status winbind
+```
+
+```output
+winbind.service - Samba Winbind Daemon
+   Loaded: loaded (/lib/systemd/system/winbind.service; enabled; vendor preset: enabled)
+   Active: active (running) since Fri 2020-04-24 09:34:31 UTC; 10s ago
+     Docs: man:winbindd(8)
+           man:samba(7)
+           man:smb.conf(5)
+ Main PID: 27349 (winbindd)
+   Status: "winbindd: ready to serve connections..."
+    Tasks: 2 (limit: 4915)
+   CGroup: /system.slice/winbind.service
+           ├─27349 /usr/sbin/winbindd --foreground --no-process-group
+           └─27351 /usr/sbin/winbindd --foreground --no-process-group
+
+Apr 24 09:34:31 contosovm systemd[1]: Starting Samba Winbind Daemon...
+Apr 24 09:34:31 contosovm winbindd[27349]: [2020/04/24 09:34:31.724211,  0] ../source3/winbindd/winbindd_cache.c:3170(initialize_winbindd_cache)
+Apr 24 09:34:31 contosovm winbindd[27349]:   initialize_winbindd_cache: clearing cache and re-creating with version number 2
+Apr 24 09:34:31 contosovm winbindd[27349]: [2020/04/24 09:34:31.725486,  0] ../lib/util/become_daemon.c:124(daemon_ready)
+Apr 24 09:34:31 contosovm systemd[1]: Started Samba Winbind Daemon.
+Apr 24 09:34:31 contosovm winbindd[27349]:   STATUS=daemon 'winbindd' finished starting up and ready to serve connections 
+```
+
+Make sure that the domain users and groups are discovered.
+
+```bash
+getent passwd contososmbadmin
+```
+
+```output
+contososmbadmin:*:12604:10513::/home/contososmbadmin:/bin/bash
+```
+
+```bash
+getent group 'domain users'
+```
+
+```output
+domain users:x:10513: 
+```
+
+If the preceding steps don't work, check whether an AD DS domain controller is reachable by using the `wbinfo` tool:
+
+```bash
+wbinfo --ping-dc
+```
+
+### Configure PAM for winbind
+
+If you plan for users to actively sign in to client machines and access the Azure file shares, you need to configure PAM for winbind. If planned access is limited to applications represented by a user account or computer account that need Kerberos authentication to access the file share, you can skip this step.
+
+Place winbind in the authentication stack so that domain users authenticate through winbind by configuring PAM (Pluggable Authentication Module) for winbind. The second command ensures that the system creates the home directory for a domain user upon first login.
+
+```bash
+sudo pam-auth-update --enable winbind
+sudo pam-auth-update --enable mkhomedir 
+```
+
+Verify that the PAM authentication config has the correct `pam_winbind.so` arguments in `/etc/pam.d/common-auth`:
+
+```bash
+grep pam_winbind.so /etc/pam.d/common-auth
+```
+
+```output
+auth    [success=1 default=ignore]      pam_winbind.so krb5_auth krb5_ccache_type=FILE cached_login try_first_pass 
+```
+
+If the command returns no output, re-run `sudo pam-auth-update --enable winbind` to ensure winbind is added to the PAM authentication stack.
+
+You can now sign in to this system as the domain user, either through ssh, su, or any other means of authentication.
+
+```bash
+su - contososmbadmin
+Password:
+```
+
+```output
+Creating directory '/home/contososmbadmin'.
+contososmbadmin@contosovm:~$ pwd
+/home/contososmbadmin
+contososmbadmin@contosovm:~$ id
+uid=12604(contososmbadmin) gid=10513(domain users) groups=10513(domain users),10520(group policy creator owners),10572(denied rodc password replication group),11102(dnsadmins),11104(aad dc administrators),11164(group-readwrite),11165(fileshareallaccess),12604(contososmbadmin) 
+```
+
+## Verify AD DS authentication on Linux
+
+To verify that the client machine is joined to the AD DS domain, look up the FQDN of the client by using an AD DS DNS server and confirm that the DNS entry exists for the client. In many cases, `<dnsserver>` is the same as the AD DS domain name that the client is joined to.
+
+```bash
+nslookup <clientname> <dnsserver>
+```
+
+Next, run `klist` to view the tickets in the Kerberos cache:
+
+```bash
+klist
+```
+
+The output should include an entry beginning with `krbtgt` that looks similar to:
+
+```plaintext
+krbtgt/CONTOSODOMAIN.CONTOSO.COM@CONTOSODOMAIN.CONTOSO.COM
+```
+
+If you didn't [configure PAM for winbind](#configure-pam-for-winbind), `klist` might not show the ticket entry. In this case, you can manually authenticate the user to get the tickets:
+
+```bash
+wbinfo -K contososmbadmin
+```
+
+You can also run the command as a part of a script:
+
+```bash
+wbinfo -K 'contososmbadmin%SUPERSECRETPASSWORD'
+```
+
+## Mount the file share
+
+After you enable Kerberos authentication and domain-join your Linux VM, you can mount the file share.
+
+Use the following mount option with all access control models to enable Kerberos security: `sec=krb5`. Omit the username and password when you use `sec=krb5`. For example:
+
+```bash
+sudo mount -t cifs $SMB_PATH $MNT_PATH -o sec=krb5,cruid=$UID,serverino,nosharesock,actimeo=30,mfsymlinks
+```
+
+> **Note:**
+> This feature only supports a server-enforced access control model that uses NT ACLs without mode bits. Linux tools that update NT ACLs are minimal, so update ACLs through Windows. Client-enforced access control (`modefromsid,idsfromsid`) and client-translated access control (`cifsacl`) models aren't currently supported.
+
+### Additional Azure Files SMB mount options for Linux
+
+#### Single-user versus multi-user mount
+
+In a single-user mount use case, a single user in the AD DS domain accesses the mount point and doesn't share it with other users in the domain. Each file access happens in the context of the user whose krb5 credentials are used to mount the file share. Any user on the local system who accesses the mount point impersonates that user.
+
+In a multi-user mount use case, there's still a single mount point, but multiple AD DS users can access that same mount point. In scenarios where multiple users on the same client access the same share, and the system is configured for Kerberos and mounted with `sec=krb5`, consider using the `multiuser` mount option.
+
+#### File permissions
+
+File permissions matter, especially if both Linux and Windows clients access the file share. To convert file permissions to DACLs on files, use a default mount option such as **file_mode=<>,dir_mode=<>**. The client only enforces file permissions specified as **file_mode** and **dir_mode**. The server enforces access control based on the file's or directory's security descriptor.
+
+#### File ownership
+
+File ownership matters, especially if both Linux and Windows clients access the file share. Choose one of the following mount options to convert file ownership UID/GID to owner/group SID on file DACL:
+
+- Use a default such as **uid=<>,gid=<>**
+- Configure UID/GID mapping through RFC2307 and AD DS by using **nss_winbind** or **nss_sssd**.
+
+#### File attribute cache coherency
+
+Performance is important, even if file attributes aren't always accurate. The default value for **actimeo** is 1 (second), which means that the file attributes are fetched again from the server if the cached attributes are more than 1 second old. Increasing the value to 60 means that attributes are cached for at least one minute. For most use cases, use a value of 30 for this option (**actimeo=30**).
+
+For newer kernels, consider setting the **actimeo** features more granularly. You can use **acdirmax** for directory entry revalidation caching and **acregmax** for caching file metadata, for example **acdirmax=60,acregmax=5**.
+
+## Next step
+
+To learn how to mount an SMB file share on Linux, see:
+
+- [Mount SMB Azure file share on Linux](storage-how-to-use-files-linux.md)

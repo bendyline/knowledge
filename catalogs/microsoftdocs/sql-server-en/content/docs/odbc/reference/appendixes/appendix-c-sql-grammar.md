@@ -1,0 +1,23 @@
+---
+title: "Appendix C: SQL Grammar"
+description: "Appendix C: SQL Grammar"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "SQL grammar [ODBC], about SQL grammar"
+---
+# Appendix C: SQL Grammar
+This appendix contains the following topics.  
+  
+-   [SQL Minimum Grammar](sql-minimum-grammar.md)  
+  
+-   [ODBC Escape Sequences](odbc-escape-sequences.md)  
+  
+-   [Literals in ODBC](literals-in-odbc.md)  
+  
+-   [Reserved Keywords](reserved-keywords.md)

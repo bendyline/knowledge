@@ -1,0 +1,23 @@
+---
+author: PatrickFarley
+ms.service: azure-speech-foundry-tools
+ms.topic: include
+ms.date: 11/29/2022
+ms.author: pafarley
+---
+
+With the [Speech CLI](../../../spx-overview.md) and [Speech to text REST API](../../../rest-speech-to-text.md), unlike the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs) and [Speech Studio](https://speech.microsoft.com), you don't choose whether a dataset is for testing or training at the time of upload. You specify how a dataset is used when you [train a model](../../../how-to-custom-speech-train-model.md) or [run a test](../../../how-to-custom-speech-evaluate-data.md). 
+
+Although you don't indicate whether the dataset is for testing or training, you must specify the dataset kind. The dataset kind is used to determine which type of dataset is created. In some cases, a dataset kind is only used for testing or training, but you shouldn't take a dependency on that. The Speech CLI and REST API `kind` values correspond to the options in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs) and [Speech Studio](https://speech.microsoft.com) as described in the following table:
+
+| CLI and API kind | Portal options |
+| --- | --- |
+| Acoustic | Training data: Audio + human-labeled transcript<br/>Testing data: Transcript (automatic audio synthesis)<br/>Testing data: Audio + human-labeled transcript |
+| AudioFiles | Testing data: Audio |
+| Language | Training data: Plain text |
+| LanguageMarkdown | Training data: Structured text in markdown format |
+| Pronunciation | Training data: Pronunciation |
+| OutputFormatting | Training data: Output format |
+
+> **Important:**
+> You don't use the Speech CLI or REST API to upload data files directly. First you store the training or testing dataset files at a URL that the Speech CLI or REST API can access. After you upload the data files, you can use the Speech CLI or REST API to create a dataset for custom speech testing or training.

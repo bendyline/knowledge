@@ -1,0 +1,128 @@
+---
+title: Configure Azure Synapse Link for SQL Server 2022 with network security
+description: Learn how to configure Azure Synapse Link for SQL Server 2022 with network security.
+author: im-microsoft
+ms.author: imotiwala
+ms.reviewer: wiassaf, yexu
+ms.topic: how-to
+ms.subservice: synapse-link
+ms.date: 03/15/2023
+ms.update-cycle: 1825-days
+ms.custom: sfi-image-nochange
+---
+
+# Configure Azure Synapse Link for SQL Server 2022 with network security
+
+This article is a guide for configuring Azure Synapse Link for SQL Server 2022 with network security. Before you begin this process, you should know how to create and start Azure Synapse Link for SQL Server 2022. For information, see [Get started with Azure Synapse Link for SQL Server 2022](connect-synapse-link-sql-server-2022.md). 
+
+> **Important:**
+> **Mirroring to Microsoft Fabric is now available.** Mirroring to Fabric provides all the capabilities of Azure Synapse Link with better analytical performance, the ability to unify your data estate with OneLake in Fabric, and open access to your data in Delta Parquet format. Instead of Azure Synapse Link, use Fabric Mirroring. 
+>
+> With Mirroring to Microsoft Fabric, you can continuously replicate your existing data estate directly into OneLake in Fabric, including data from SQL Server 2016+, Azure SQL Database, Azure SQL Managed Instance, Cosmos DB, Oracle, Snowflake, and more. 
+> 
+> For more information, see [Microsoft Fabric mirrored databases](https://learn.microsoft.com/fabric/database/mirrored-database/overview).
+
+## Create a managed workspace virtual network without data exfiltration
+
+In this section, you create an Azure Synapse workspace with a managed virtual network enabled. You'll enable **managed virtual network**, and then select **No** to allow outbound traffic from the workspace to any target. For an overview, see [Azure Synapse Analytics managed virtual network](../security/synapse-workspace-managed-vnet.md).
+
+   Screenshot that shows how to create an Azure Synapse workspace that allows outbound traffic.
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+
+1. Open Synapse Studio, go to **Manage**, select **Integration runtimes**, and then select **AutoResolvingIntegrationRuntime**. 
+
+1. In the pop-up window, select the **Virtual network** tab, and then enable **Interactive authoring**. 
+
+   Screenshot that shows how to enable interactive authoring.
+
+1. On the **Integrate** pane, create a link connection to replicate data from your SQL Server 2022 instance to the Azure Synapse SQL pool.
+
+   Screenshot that shows how to create a link to an Azure Synapse SQL pool.
+
+   Screenshot that shows how to create a link connection from an Azure SQL Server 2022 instance.
+
+1. Start your link connection.
+
+   Screenshot of starting a link connection.
+
+
+## Create a managed workspace virtual network with data exfiltration
+
+In this section, you create an Azure Synapse workspace with managed virtual network enabled. You'll enable **managed virtual network** and select **Yes** to limit outbound traffic from the managed workspace virtual network to targets through managed private endpoints. For an overview, see [Azure Synapse Analytics managed virtual network](../security/synapse-workspace-managed-vnet.md).
+
+   Screenshot that shows how to create an Azure Synapse workspace that disallows outbound traffic.
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+
+1. Open Synapse Studio, go to **Manage**, select **Integration runtimes**, and then select **AutoResolvingIntegrationRuntime**. 
+
+1. In the pop-up window, select the **Virtual network** tab, and then enable **Interactive authoring**. 
+
+   Screenshot that shows how to enable interactive authoring.
+
+1. Create a linked service that connects to your SQL Server 2022 instance. 
+
+   To learn how, see the "Create a linked service for your source SQL Server 2022 database" section of [Get started with Azure Synapse Link for SQL Server 2022](connect-synapse-link-sql-server-2022.md#create-a-linked-service-for-your-source-sql-server-2022-database).
+
+1. Add a role assignment to ensure that you've granted your Azure Synapse workspace managed identity permissions to your Azure Data Lake Storage Gen2 storage account that's used as the landing zone. 
+
+   To learn how, see the "Create a linked service to connect to your landing zone on Azure Data Lake Storage Gen2" section of [Get started with Azure Synapse Link for SQL Server 2022](connect-synapse-link-sql-server-2022.md#create-a-linked-service-to-connect-to-your-landing-zone-on-azure-data-lake-storage-gen2).
+
+1. Create a linked service that connects to your Azure Data Lake Storage Gen2 storage (landing zone) with managed private endpoint enabled.
+
+   a. Create a managed private endpoint in the linked service for Azure Data Lake Storage Gen2 storage.
+   
+     Screenshot of a new Azure SQL Server 2022 database linked service private endpoint 1.
+
+   b. Complete the managed private endpoint creation in the linked service for Azure Data Lake Storage Gen2 storage.
+   
+     Screenshot of a new Azure SQL Server 2022 database linked service private endpoint 2.
+
+   c. Go to the Azure portal for your Azure Data Lake Storage Gen2 storage as a landing zone, and then approve the private endpoint connections.
+   
+     Screenshot of a new Azure SQL Server 2022 database linked service private endpoint 3.
+
+   d. Complete the creation of the linked service for Azure Data Lake Storage Gen2 storage.
+   
+     Screenshot of new sql db linked service pe4.
+
+1. Create a blob type managed private endpoint to landing zone.
+
+    a. Navigate to **Managed private endpoints** page, and then select **+New**.
+    
+     Screenshot of managed private endpoints pane.
+
+     b. Enter **blob** in the search box on **New managed private endpoint** pane, and then select **Azure Blob Storage**.
+
+     Screenshot of Azure blob storage.
+
+    c. Complete the managed private endpoint creation for Azure Blob Storage.
+         
+      Screenshot of new managed private endpoint.
+
+    d. After creating an Azure Blob Storage private endpoint, go to your Azure Data Lake Storage Gen2 networking page and approve it. 
+    
+      Screenshot of create blob private endpoint.
+
+    In case your SQL Server 2022 instance is installed on a virtual machine (VM) and your Azure Storage account is disabled from public network access, you can create a private endpoint of storage sub resource type **blob** to ensure secure communications between your VM, SQL Server and Azure Storage. For more information, refer to [Tutorial: Connect to a storage account using an Azure Private Endpoint](https://learn.microsoft.com/azure/private-link/tutorial-private-endpoint-storage-portal).
+
+1. Now you can create a link connection from the **Integrate** pane to replicate data from your SQL Server 2022 instance to an Azure Synapse SQL pool.
+
+   Screenshot that shows how to create a link.
+
+   Screenshot that shows how to create a link from the SQL Server 2022 instance.
+
+1. Start your link connection.
+
+   Screenshot that shows how to start the link connection.
+ 
+
+
+## Next steps
+
+If you're using a database other than a SQL Server 2022 instance, see:
+
+* [Configure Azure Synapse Link for Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/configure-synapse-link?context=/azure/synapse-analytics/context/context)
+* [Configure Azure Synapse Link for Dataverse](https://learn.microsoft.com/powerapps/maker/data-platform/azure-synapse-link-synapse?context=/azure/synapse-analytics/context/context)
+* [Get started with Azure Synapse Link for SQL Server 2022](connect-synapse-link-sql-server-2022.md)

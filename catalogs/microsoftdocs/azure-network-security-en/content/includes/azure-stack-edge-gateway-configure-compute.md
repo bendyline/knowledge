@@ -1,0 +1,23 @@
+---
+author: alkohli
+ms.service: azure-data-box
+ms.topic: include
+ms.date: 04/01/2024
+ms.author: alkohli
+---
+
+To configure compute on your Azure Stack Edge Pro, you create an IoT Hub resource via Azure portal.
+
+1. In the Azure portal of your Azure Stack Edge resource, go to **Overview**, and select **Kubernetes for Azure Stack Edge**.
+
+   Get started with compute
+
+2. In **Get started with Kubernetes service**, select **Add**.
+
+   Configure compute
+
+3. After the resource is created, the **Overview** indicates that the Kubernetes service is online.
+
+   Get started with compute 3
+
+It can take 20-30 minutes to configure compute because, behind the scenes, virtual machines, and a Kubernetes cluster are being created.

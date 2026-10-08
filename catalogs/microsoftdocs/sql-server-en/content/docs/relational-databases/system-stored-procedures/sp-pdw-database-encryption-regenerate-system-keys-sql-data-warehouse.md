@@ -1,0 +1,65 @@
+---
+title: "sp_pdw_database_encryption_regenerate_system_keys (Azure Synapse Analytics)"
+description: Use sp_pdw_database_encryption_regenerate_system_keys to rotate the certificate and database encryption key for internal databases that are encrypted when TDE is enabled on the appliance.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest"
+---
+# sp_pdw_database_encryption_regenerate_system_keys (Azure Synapse Analytics)
+
+
+**Applies to:**
+ 
+
+
+ 
+
+
+Use `sp_pdw_database_encryption_regenerate_system_keys` to rotate the certificate and database encryption key for internal databases that are encrypted when TDE is enabled on the appliance. This includes `tempdb`. This will succeed only if TDE is enabled.
+
+## Syntax
+
+Syntax for Azure Synapse Analytics.
+
+```syntaxsql
+sp_pdw_database_encryption_regenerate_system_keys
+[ ; ]
+```
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+The procedure has no parameters.
+
+This procedure should be used when the traffic in the appliance is low.
+
+## Permissions
+
+Requires membership in the **sysadmin** fixed database role, or CONTROL SERVER permission.
+
+## Examples
+
+The following example regenerates the database encryption keys.
+
+```sql
+EXECUTE sys.sp_pdw_database_encryption_regenerate_system_keys;
+```
+
+## Related content
+
+- [sp_pdw_database_encryption (Azure Synapse Analytics)](sp-pdw-database-encryption-sql-data-warehouse.md)
+- [sp_pdw_log_user_data_mask (Azure Synapse Analytics)](sp-pdw-log-user-data-masking-sql-data-warehouse.md)

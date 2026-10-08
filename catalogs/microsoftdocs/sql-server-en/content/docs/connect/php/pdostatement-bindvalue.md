@@ -1,0 +1,96 @@
+---
+title: "PDOStatement::bindValue"
+description: "API reference for the PDOStatement::bindValue function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDOStatement::bindValue
+
+
+
+Binds a value to a named or question mark placeholder in the SQL statement.  
+  
+## Syntax  
+  
+```php  
+  
+bool PDOStatement::bindValue($parameter, $value[, $data_type]);  
+```  
+  
+#### Parameters  
+$*parameter*: A (mixed) parameter identifier. For a statement using named placeholders, use a parameter name (:name). For a prepared statement using the question mark syntax, it is the 1-based index of the parameter.
+  
+$*value*: The (mixed) value to bind to the parameter.  
+  
+$*data_type*: The optional (integer) data type represented by a PDO::PARAM_* constant. The default is PDO::PARAM_STR.  
+  
+## Return Value  
+TRUE on success, otherwise FALSE.  
+  
+## Remarks  
+  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Parameter example  
+This example shows that after the value of $contact is bound, changing the value does not change the value passed in the query.  
+  
+```php  
+<?php  
+$database = "AdventureWorks";  
+$server = "(local)";  
+$conn = new PDO("sqlsrv:server=$server ; Database = $database", "", "");  
+  
+$contact = "Sales Agent";  
+$stmt = $conn->prepare("select * from Person.ContactType where name = ?");  
+$stmt->bindValue(1, $contact);  
+$contact = "Owner";  
+$stmt->execute();  
+  
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {  
+   print "$row[Name]\n\n";  
+}  
+  
+$stmt = null;  
+$contact = "Sales Agent";  
+$stmt = $conn->prepare("select * from Person.ContactType where name = :contact");  
+$stmt->bindValue(':contact', $contact);  
+$contact = "Owner";  
+$stmt->execute();  
+  
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {  
+   print "$row[Name]\n\n";  
+}  
+?>  
+```
+
+> **Note:**
+> It is recommended to use strings as inputs when binding values to a [decimal or numeric column](../../t-sql/data-types/decimal-and-numeric-transact-sql.md) to ensure precision and accuracy as PHP has limited precision for [floating point numbers](https://php.net/manual/en/language.types.float.php). The same applies to bigint columns, especially when the values are outside the range of an [integer](../../t-sql/data-types/int-bigint-smallint-and-tinyint-transact-sql.md).
+
+## Decimal input example  
+This code sample shows how to bind a decimal value as an input parameter.  
+
+```php
+<?php  
+$database = "Test";  
+$server = "(local)";  
+$conn = new PDO("sqlsrv:server=$server ; Database = $database", "", "");  
+
+// Assume TestTable exists with a decimal field 
+$input = 9223372036854.80000;
+$stmt = $conn->prepare("INSERT INTO TestTable (DecimalCol) VALUES (?)");
+// by default it is PDO::PARAM_STR, rounding of a large input value may
+// occur if PDO::PARAM_INT is specified
+$stmt->bindValue(1, $input, PDO::PARAM_STR);
+$stmt->execute();
+```
+  
+## Related content
+
+- [PDOStatement Class](pdostatement-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

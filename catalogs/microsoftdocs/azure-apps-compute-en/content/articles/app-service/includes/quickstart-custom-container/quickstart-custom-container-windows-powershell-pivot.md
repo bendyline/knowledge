@@ -1,0 +1,95 @@
+---
+author: msangapu-msft
+ms.service: azure-app-service
+ms.devlang: powershell
+ms.topic: quickstart
+ms.date: 04/20/2026
+ms.author: msangapu
+---
+
+In this quickstart, you learn how to deploy an ASP.NET app in a Windows image from [Microsoft Artifact Registry](https://mcr.microsoft.com) to Azure App Service.
+
+[Azure App Service](../../overview.md) provides predefined application stacks on Windows that run on Internet Information Services (IIS). The preconfigured application stacks [lock down the operating system and prevent low-level access](../../operating-system-functionality.md). 
+
+Custom Windows containers don't have these restrictions. Developers can use custom containers to give containerized applications full access to Windows functionality.
+
+## Prerequisites
+
+- An Azure account with an active subscription. [Create an account for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- [Azure PowerShell](https://learn.microsoft.com/powershell/azure/install-az-ps).
+
+## Connect to Azure
+
+Sign in to your Azure account by using the [`Connect-AzAccount`](https://learn.microsoft.com/powershell/module/az.accounts/connect-azaccount) command and following the prompt:
+
+```azurepowershell-interactive
+Connect-AzAccount
+```
+
+## Create a resource group
+
+Create a resource group with the [`New-AzResourceGroup`](https://learn.microsoft.com/powershell/module/az.resources/new-azresourcegroup) command. An Azure resource group is a logical container into which Azure resources are deployed and managed.
+
+The following example creates a resource group named `myResourceGroup` in the `eastus` location. To see all supported locations for App Service, run the [`Get-AzLocation`](https://learn.microsoft.com/powershell/module/az.resources/get-azlocation) command.
+
+```azurepowershell-interactive
+New-AzResourceGroup -Name myResourceGroup -Location eastus
+```
+
+The command returns `Login Succeeded`.
+
+## Create your App Service plan
+
+Create a new App Service plan by using the [`New-AzAppServicePlan`](https://learn.microsoft.com/powershell/module/az.websites/new-azappserviceplan) command.
+
+The following example creates an App Service plan named `myAppServicePlan` in the **PremiumV3** pricing tier (`-Tier PremiumV3`). The `-HyperV` parameter specifies a Windows container.
+
+```azurepowershell-interactive
+New-AzAppServicePlan -Name myAppServicePlan -Location eastus -ResourceGroupName myResourceGroup -Tier PremiumV3 -HyperV
+```
+
+## Create your web app
+
+Create a new app by using the [`New-AzWebApp`](https://learn.microsoft.com/powershell/module/az.websites/new-azwebapp) command. Replace `<your-container-app>` with a unique app name (valid characters are `a-z`, `0-9`, and `-`).
+
+```azurepowershell-interactive
+New-AzWebApp -Name <your-container-app> -AppServicePlan myAppServicePlan -Location eastus -ResourceGroupName myResourceGroup -ContainerImageName mcr.microsoft.com/azure-app-service/windows/parkingpage:latest
+```
+
+- The `Name` parameter specifies the web app name.
+- The `AppServicePlan` parameter specifies the name of the App Service plan.
+- The `Location` parameter specifies the location.
+- The `ResourceGroupName` parameter specifies the name of the resource group.
+- The `ContainerImageName` parameter specifies a container image name and optional tag.
+
+The command might take a few minutes to finish.
+
+## Browse to the app
+
+Browse to the deployed application in your web browser at the URL `http://<app-name>.azurewebsites.net`.
+
+Screenshot that shows Windows App Service.
+
+The App Service app pulls from the container registry each time it starts. If you rebuild your image, push it to your container registry. The app pulls in the updated image when it restarts. To tell your app to pull in the updated image immediately, restart it.
+
+## Clean up resources
+
+Remove the resource group by using the [`Remove-AzResourceGroup`](https://learn.microsoft.com/powershell/module/az.resources/remove-azresourcegroup) command:
+
+```azurepowershell-interactive
+Remove-AzResourceGroup myResourceGroup
+```
+
+## Related content
+
+- [Configure a custom container](../../configure-custom-container.md)
+- [How to use managed identities for App Service and Azure Functions](../../overview-managed-identity.md)
+- [Monitor Azure App Service](../../monitor-app-service.md)
+- [Azure Monitor overview](https://learn.microsoft.com/azure/azure-monitor/fundamentals/overview)
+- [Secure with a custom domain and certificate](../../tutorial-secure-domain-certificate.md)
+- [Integrate your app with an Azure virtual network](../../overview-vnet-integration.md)
+- [Use private endpoints for App Service apps](../../overview-private-endpoint.md)
+- [Use Azure Container Registry with Azure Private Link](https://learn.microsoft.com/azure/container-registry/container-registry-private-link)
+- [Migrate to a Windows container in Azure](../../tutorial-custom-container.md)
+- [Deploy a container with Azure Pipelines](../../deploy-container-azure-pipelines.md)
+- [Deploy a container with GitHub Actions](../../deploy-container-github-action.md)

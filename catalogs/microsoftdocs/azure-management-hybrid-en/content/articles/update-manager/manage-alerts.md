@@ -1,0 +1,98 @@
+---
+title: Create Alerts in Azure Update Manager
+description: This article describes on how to enable alerts (preview) with Azure Update Manager to address events as captured in updates data. 
+ms.service: azure-update-manager
+author: Jeronika-MS
+ms.author: v-gajeronika
+ms.date: 08/21/2025
+ms.topic: how-to
+ms.custom: sfi-image-nochange
+ms.update-cycle: 1095-days
+# Customer intent: "As a system administrator managing virtual machines, I want to enable alerts using Update Manager, so that I can efficiently monitor and respond to update-related events across my hybrid cloud environment."
+---
+
+# Create alerts (preview)
+
+**Applies to:** :heavy_check_mark: Windows VMs :heavy_check_mark: Linux VMs :heavy_check_mark: On-premises environment :heavy_check_mark: Azure Arc-enabled servers.
+
+This article provides steps to enable Alerts (preview) with [Azure Update Manager](overview.md) to address events as captured in updates data.
+
+Azure Update Manager is a unified service that allows you to manage and govern updates for all your Windows and Linux virtual machines across your deployments in Azure, on-premises, and on the other cloud platforms from a single dashboard. It's designed as a standalone Azure service to provide SaaS experience to manage hybrid environments in Azure.
+
+Logs created from patching operations such as update assessments and installations are stored by Azure Update Manager in Azure Resource Graph (ARG). You can view up to last seven days of assessment data, and up to last 30 days of updated installation results.
+
+> **Note:**
+> This feature isn't available in Azure US Government and Azure operated by 21 Vianet.
+
+## Prerequisite
+
+Alert rule based on ARG query requires a managed identity with reader role assigned for the targeted resources.
+
+## Enable alerts (Preview) with Azure Update Manager
+
+To enable alerts (Preview) with Azure Update Manager through Azure portal, follow these steps:
+
+1. Sign in to the [Azure portal](https://portal.azure.com) and go to **Azure Update Manager**.
+1. Under **Monitoring**, select **New alerts rule (Preview)** to create a new alert rule.
+   
+   Screenshot that shows how to create new alerts rule.
+ 
+    1. From the dropdown list, select the **Subscription** that defines the scope of the alert rule.
+    1. Select a **Resource Group** from the dropdown. Alert will be created in this resource group.
+    1. Select a **Location** from the dropdown. Alert will be created at this location. 
+    1. In the **Azure Resource Group** query dropdown, select one of the predefined alerting query options.
+    1. You can select **Custom query** option to edit or write a custom query and then select **Skip to custom alert rules**.
+    
+       Screenshot that shows how to create alert custom rules.
+    
+    1. Select **Preview or edit query in Logs** to run a selected alerting query option or to edit a query.
+    
+       Screenshot that shows how to edit query in logs.
+
+    1. Select **Run** to run the query and to enable **Continue Editing Alert**.
+   
+         Screenshot that shows how to run the query.
+
+    1. Select the **Scope and filters** you want to apply.
+    1. Select **Identify, Threshold, and Frequency** of evaluation as per your requirement.
+    1. Enter your preferences in the **Notify me** section.
+    1. Select **Quick create a new rule**.     
+
+## Edits alerts 
+
+To edit the alerts, follow these steps:
+
+1. To edit or write a custom query, select the **Custom query** option.
+1. Select **Skip to custom alert rules** to go directly to the alert rule creation flow, where you can configure advanced alert rule settings.
+      
+   Screenshot that shows how to configure advanced alert rule.
+   
+1. Select **Review + create** to create alert. For more information, see [Create Azure Monitor alert rules](https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-create-log-alert-rule#configure-alert-rule-conditions).
+    
+    - To identify alerts & alert rules created for Azure Update Manager, provide unique **Alert rule name** in the **Details** tab.
+        Screenshot that shows how to create unique alert name.
+
+## View alerts
+
+To view the alerts, follow these steps:
+
+1. Sign in to the [Azure portal](https://portal.azure.com) and go to **Azure Update Manager**.
+1. Under **Monitoring**, select **New alerts rule (Preview)**.
+1. Select **Go to alerts**.
+
+   Screenshot that shows how to view alerts.
+    
+1. In the **Monitor | Alerts** page, you can view all the alerts. For more information, see [Configure alert rule conditions](https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-create-log-alert-rule#configure-alert-rule-conditions).
+
+   Screenshot that displays the list of alerts.
+
+
+> **Note:**
+> - Azure Resource Graph query used for alerts can return to a maximum of 1000 rows.
+> - By default, Azure Resource Graph query will return response as per the access provided via the users managed identity and user need to filter out by subscriptions, resource groups, and other criteria as per the requirement.
+## Next steps
+
+* [An overview on Azure Update Manager](overview.md)
+* [Check update compliance](view-updates.md)
+* [Deploy updates now (on-demand) for single machine](deploy-updates.md)
+* [Schedule recurring updates](scheduled-patching.md)

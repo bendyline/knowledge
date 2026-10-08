@@ -1,0 +1,64 @@
+---
+title: "dbo.sysjobactivity (Transact-SQL)"
+description: dbo.sysjobactivity (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "08/05/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "dbo.sysjobactivity_TSQL"
+  - "dbo.sysjobactivity"
+  - "sysjobactivity"
+  - "sysjobactivity_TSQL"
+helpviewer_keywords:
+  - "sysjobactivity system table"
+dev_langs:
+  - "TSQL"
+---
+# dbo.sysjobactivity (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Records current  SQL Server 
+ Agent job activity and status.  This table is stored in the **msdb** database.
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **session_id** | **int** | ID of the session stored in the **syssessions** table in the **msdb** database. |
+| **job_id** | **uniqueidentifier** | ID of the job. |
+| **run_requested_date** | **datetime** | Date and time that the job was requested to run. |
+| **run_requested_source** | **sysname(nvarchar(128))** | Who requested the job to run.<br /><br /> **1** = SOURCE_SCHEDULER<br /><br /> **2** = SOURCE_ALERTER<br /><br /> **3** = SOURCE_BOOT<br /><br /> **4** = SOURCE_USER<br /><br /> **6** = SOURCE_ON_IDLE_SCHEDULE |
+| **queued_date** | **datetime** | Date and time this job was queued. If the job is run directly, this column is NULL. |
+| **start_execution_date** | **datetime** | Date and time job has been scheduled to run. |
+| **last_executed_step_id** | **int** | ID of the last job step that ran. |
+| **last_executed_step_**<br /><br /> **date** | **datetime** | Date and time that the last job step began to run. |
+| **stop_execution_date** | **datetime** | Date and time that the job finished running. |
+| **job_history_id** | **int** | Used to identify a row in the **sysjobhistory** table. |
+| **next_scheduled_run_date** | **datetime** | Next date and time that the job is scheduled to run. |
+
+## Example
+This example will return the run-time status for all SQL Server Agent jobs.  Execute the following  Transact-SQL  in  SQL Server Management Studio 
+.
+```sql
+SELECT sj.Name, 
+	CASE
+		WHEN sja.start_execution_date IS NULL THEN 'Not running'
+		WHEN sja.start_execution_date IS NOT NULL AND sja.stop_execution_date IS NULL THEN 'Running'
+		WHEN sja.start_execution_date IS NOT NULL AND sja.stop_execution_date IS NOT NULL THEN 'Not running'
+	END AS 'RunStatus'
+FROM msdb.dbo.sysjobs sj
+JOIN msdb.dbo.sysjobactivity sja
+ON sj.job_id = sja.job_id
+WHERE session_id = (
+	SELECT MAX(session_id) FROM msdb.dbo.sysjobactivity); 
+```
+  
+## Related content
+
+- [dbo.sysjobhistory (Transact-SQL)](dbo-sysjobhistory-transact-sql.md)

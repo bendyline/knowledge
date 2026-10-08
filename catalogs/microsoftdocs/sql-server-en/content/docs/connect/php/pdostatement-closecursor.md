@@ -1,0 +1,64 @@
+---
+title: "PDOStatement::closeCursor"
+description: "API reference for the PDOStatement::closeCursor function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDOStatement::closeCursor
+
+
+
+Closes the cursor, enabling the statement to be executed again.  
+  
+## Syntax  
+  
+```php  
+  
+bool PDOStatement::closeCursor();  
+```  
+  
+## Return Value  
+true on success, otherwise false.  
+  
+## Remarks  
+closeCursor has an effect when the MultipleActiveResultSets connection option is set to false.  For more information about the MultipleActiveResultSets connection option, see [How to: Disable Multiple Active Resultsets (MARS)](how-to-disable-multiple-active-resultsets-mars.md).  
+  
+Instead of calling closeCursor, you can also just set the statement handle to null.  
+  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+  
+```php  
+<?php  
+$database = "AdventureWorks";  
+$server = "(local)";  
+$conn = new PDO( "sqlsrv:server=$server ; Database = $database", "", "", array('MultipleActiveResultSets' => false ) );  
+  
+$stmt = $conn->prepare('SELECT * FROM Person.ContactType');  
+  
+$stmt2 = $conn->prepare('SELECT * FROM HumanResources.Department');  
+  
+$stmt->execute();  
+  
+$result = $stmt->fetch();  
+print_r($result);  
+  
+$stmt->closeCursor();  
+  
+$stmt2->execute();  
+$result = $stmt2->fetch();  
+print_r($result);  
+?>  
+```  
+  
+## Related content
+
+- [PDOStatement Class](pdostatement-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

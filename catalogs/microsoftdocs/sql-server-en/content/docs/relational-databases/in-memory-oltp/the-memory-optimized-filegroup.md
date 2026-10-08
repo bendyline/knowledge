@@ -1,0 +1,71 @@
+---
+title: "The Memory Optimized Filegroup"
+description: Learn how to create a memory-optimized file group, which has containers for data files and delta files, before you create memory-optimized tables.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 04/16/2025
+ms.service: sql
+ms.subservice: in-memory-oltp
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+---
+
+# The memory-optimized filegroup
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  To create memory-optimized tables, you must first create a memory-optimized filegroup. The memory-optimized filegroup holds one or more containers. Each container contains data files or delta files or both.  
+  
+ Even though data rows from `SCHEMA_ONLY` tables are not persisted and the metadata for memory-optimized tables and natively compiled stored procedures is stored in the traditional catalogs, the  In-Memory OLTP 
+ engine still requires a memory-optimized filegroup for `SCHEMA_ONLY` memory-optimized tables to provide a uniform experience for databases with memory-optimized tables.  
+  
+ The memory-optimized filegroup is based on filestream filegroup, with the following differences:  
+  
+-   You can only create one memory-optimized filegroup per database. You need to explicitly mark the filegroup as containing memory_optimized_data. You can create the filegroup when you create the database or you can add it later:  
+  
+    ```sql  
+    ALTER DATABASE imoltp ADD FILEGROUP imoltp_mod CONTAINS MEMORY_OPTIMIZED_DATA  
+    ```  
+  
+-   You need to add one or more containers to the `MEMORY_OPTIMIZED_DATA` filegroup. For example:  
+  
+    ```sql  
+    ALTER DATABASE imoltp ADD FILE (name='imoltp_mod1', filename='c:\data\imoltp_mod1') TO FILEGROUP imoltp_mod  
+    ```  
+  
+-   You do not need to enable filestream ([Enable and Configure FILESTREAM](../blob/enable-and-configure-filestream.md)) to create a memory-optimized filegroup. The mapping to filestream is done by the  In-Memory OLTP 
+ engine.  
+  
+-   You can add new containers to a memory-optimized filegroup. You may need a new container to expand the storage needed for durable memory-optimized table and also to distribute IO across multiple containers.  
+  
+-   Data movement with a memory-optimized filegroup is optimized in an Always On Availability Group configuration. Unlike filestream files that are sent to secondary replicas, the checkpoint files (both data and delta) within the memory-optimized filegroup are not sent to secondary replicas. The data and delta files are constructed using the transaction log on the secondary replica.  
+
+> **Note:**
+> In  SQL Server 2022 (16.x) 
+ and older versions, once you use a memory-optimized filegroup, **you can only remove it by dropping the database**. You can't drop a non-empty container, or drop the last remaining container even if it's empty. You also can't move data and delta file pairs to another container in the memory-optimized filegroup.
+> 
+> Starting from  SQL Server 2025 (17.x) 
+, you can remove the last remaining container and remove the memory-optimized filegroup. For more information, see [Memory-optimized container and filegroup removal](memory-optimized-container-filegroup-removal.md).
+
+## Configuring a Memory-Optimized Filegroup  
+Consider creating multiple containers in the memory-optimized filegroup and distribute them on different drives to achieve more bandwidth to stream the data into memory. 
+ 
+In a multiple container, multiple drive scenario, data and delta files are allocated in a round-robin fashion into containers. The first data file is allocated from the first container and the delta file is allocated from the next container and this allocation pattern repeats. This allocation scheme distributes data and delta files evenly across containers if you have an odd number of drives, each mapped to one container. However, if you have an even number of drives, each mapped to a container, it can result in imbalanced storage with data files mapped to odd drives and delta files mapped to even drives. To obtain a balanced stream of I/O on recovery, consider placing pairs of data and delta files on the same spindles/storage.
+  
+When configuring storage, you must provide free disk space that is four times the size of durable memory-optimized tables. Also ensure that your I/O subsystem supports the required IOPS for your workload. If data and delta file pairs are populated at a given IOPS, you need three times that IOPS to account for storing and merge operations. You can add storage capacity and IOPS by adding one or more containers to the memory-optimized filegroup.  
+ 
+> **Caution:**
+> If a `MAXSIZE` value is set for the memory-optimized filegroup, and checkpoint files exceed the max size of the container, then the database will become SUSPECT.   
+> In this case do not attempt to set the database OFFLINE and ONLINE, causing the database to stay in RECOVERY_PENDING state.
+  
+## Related content
+
+- [Create and manage storage for memory-optimized objects](creating-and-managing-storage-for-memory-optimized-objects.md)
+- [Database files and filegroups](../databases/database-files-and-filegroups.md)
+- [ALTER DATABASE (Transact-SQL) File and Filegroup Options](../../t-sql/statements/alter-database-transact-sql-file-and-filegroup-options.md)

@@ -1,0 +1,8 @@
+---
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: 01/05/2022
+ms.topic: include
+---
+
+Use the following command to remove the resource group and all resources associated with it using the [az group delete](https://learn.microsoft.com/cli/azure/vm/extension#az-vm-extension-set) command - unless you have an ongoing need for these resources. Some of these resources may take a while to create, as well as to delete.

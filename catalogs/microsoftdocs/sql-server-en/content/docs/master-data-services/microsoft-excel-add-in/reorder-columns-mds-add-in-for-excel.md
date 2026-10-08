@@ -1,0 +1,68 @@
+---
+title: Reorder Columns
+description: Reorder Columns (MDS Add-in for Excel)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - microsoft-excel-add-in
+  - build-2025
+---
+# Reorder Columns (MDS Add-in for Excel)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In the  Master Data Services 
+  Add-in for Excel 
+, you can reorder columns by filtering the list before loading.  
+  
+ When you reorder attributes in the **Filter** dialog box, the data is loaded into Excel with the new order. However, the next time that you filter the attribute data, the order will revert to the order in the original design. To change the order permanently, an administrator should change the order in the **System Administration** area of Master Data Manager. For more information, see [Change the Order of Attributes](../change-the-order-of-attributes.md).  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **Explorer** functional area.  
+  
+### To reorder MDS-managed columns  
+  
+1.  Open Excel and on the **Master Data** tab, connect to an MDS repository. For more information, see [Connect to an MDS Repository (MDS Add-in for Excel)](connect-to-an-mds-repository-mds-add-in-for-excel.md).  
+  
+2.  In the **Master Data Explorer** pane, select a model and version. The list of entities is populated.  
+  
+    -   If the **Master Data Explorer** pane is not visible, in the **Connect and Load** group, click **Show Explorer**.  
+  
+    -   If the **Master Data Explorer** pane is disabled, it is because the existing sheet already contains MDS-managed data. To enable the pane, open a new worksheet.  
+  
+3.  In the **Master Data Explorer** pane, click an entity.  
+  
+4.  In the **Connect and Load** group, click **Filter**.  
+  
+5.  In the **Filter** dialog box, in the **Columns** section, in the list of attributes, click the attribute you want to move.  
+  
+6.  To the right of the list, click the **Up** or **Down** arrow to move the attribute left and right in the worksheet.  
+  
+7.  Repeat step 7 for each attribute until the top-to-bottom order represents the left-to-right order you want in the worksheet.  
+  
+8.  Click **Load Data**. The sheet is populated with MDS-managed data and the columns are displayed in the order you specified.  
+  
+## Related content
+
+- [Overview: Exporting Data to Excel (MDS Add-in for Excel)](overview-exporting-data-to-excel-mds-add-in-for-excel.md)

@@ -1,0 +1,93 @@
+---
+title: FILESTREAM support in OLE DB Driver for SQL Server
+description: SQL Server supports the enhanced FILESTREAM feature, which lets you store and access large binary values, either through SQL Server or the file system.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: 10/02/2023
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+helpviewer_keywords:
+  - "FILESTREAM [SQL Server], OLE DB Driver for SQL Server"
+  - "OLE DB Driver for SQL Server [FILESTREAM support]"
+---
+# FILESTREAM support in OLE DB Driver for SQL Server
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows
+
+
+
+
+
+Beginning with  SQL Server 2008 (10.0.x) 
+, OLE DB Driver for SQL Server supports the enhanced FILESTREAM feature. For samples, see [FILESTREAM and OLE DB](../ole-db-how-to/filestream/filestream-and-ole-db.md).
+
+FILESTREAM provides a way to store and access large binary values, either through  SQL Server 
+ or by direct access to the Windows file system. A large binary value is a value larger than 2 gigabytes (GB). For more information about enhanced FILESTREAM support, see [FILESTREAM (SQL Server)](../../../relational-databases/blob/filestream-sql-server.md).
+
+When a database connection is opened, `@@TEXTSIZE` is set to `-1` (*unlimited*), by default.
+
+It is also possible to access and update FILESTREAM columns using Windows file system APIs.
+
+For more information, see [Access FILESTREAM Data with OpenSqlFilestream](../../../relational-databases/blob/access-filestream-data-with-opensqlfilestream.md).
+
+## Query for FILESTREAM Columns
+
+Schema rowsets in OLE DB don't report whether a column is a FILESTREAM column. `ITableDefinition` in OLE DB can't be used to create a FILESTREAM column.
+
+To create FILESTREAM columns or to detect which existing columns are FILESTREAM columns, you can use the `is_filestream` column of the [sys.columns](../../../relational-databases/system-catalog-views/sys-columns-transact-sql.md) catalog view.
+
+The following script is an example:
+
+```sql
+-- Create a table with a FILESTREAM column.
+CREATE TABLE Bob_01 (
+    GuidCol1 UNIQUEIDENTIFIER ROWGUIDCOL NOT NULL UNIQUE DEFAULT NEWID(),
+    IntCol2 INT,
+    varbinaryCol3 VARBINARY(MAX) FILESTREAM
+);
+
+-- Find FILESTREAM columns.
+SELECT name
+FROM sys.columns
+WHERE is_filestream = 1;
+
+-- Determine whether a column is a FILESTREAM column.
+SELECT is_filestream
+FROM sys.columns
+WHERE name = 'varbinaryCol3'
+    AND object_id IN (
+        SELECT object_id
+        FROM sys.tables
+        WHERE name = 'Bob_01'
+    );
+```
+
+## Down-Level Compatibility
+
+If your client was compiled using OLE DB Driver for SQL Server, and the application connects to  SQL Server 2012 (11.x) 
+ and later versions, then **varbinary(max)** behavior is compatible with the behavior introduced by  SQL Server 
+ Native Client in  SQL Server 2005 (9.x) 
+. That is, the maximum size of returned data is limited to 2 GB. For result values larger that 2 GB, truncation occurs and a "string data right truncation" warning is returned.
+
+When data-type compatibility is set to 80, client behavior is consistent with down-level client behavior.
+
+For clients that use SQLOLEDB or other providers that were released before the  SQL Server 2005 (9.x) 
+, **varbinary(max)** is mapped to **image**.
+
+## Comments
+
+- To send and receive **varbinary(max)** values greater than 2 GB, an application uses `DBTYPE_IUNKNOWN` in parameter and result bindings. For parameters the provider must call IUnknown::QueryInterface for ISequentialStream and for results that return ISequentialStream.
+
+- For OLE DB, checking related to ISequentialStream values are relaxed. When *wType* is `DBTYPE_IUNKNOWN` in the `DBBINDING` struct, length checking can be disabled either by omitting `DBPART_LENGTH` from *dwPart*, or by setting the length of the data (at offset *obLength* in the data buffer) to `~0`. In this case, the provider doesn't check the length of the value, and requests and returns all of the data available through the stream. This change is applied to all large object (LOB) types and XML, but only when connected to  SQL Server 2005 (9.x) 
+ (or later) servers. This provides greater flexibility for developers, while maintaining consistency and backward compatibility for existing applications and downlevel servers. This change affects all interfaces that transfer data, principally `IRowset::GetData`, `ICommand::Execute`, and `IRowsetFastLoad::InsertRow`.
+
+## Related content
+
+- [OLE DB Driver for SQL Server Features](oledb-driver-for-sql-server-features.md)

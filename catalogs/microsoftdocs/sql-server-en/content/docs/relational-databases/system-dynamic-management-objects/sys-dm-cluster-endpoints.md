@@ -1,0 +1,49 @@
+---
+title: "sys.dm_cluster_endpoints (Transact-SQL)"
+description: sys.dm_cluster_endpoints (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "02/24/2023"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.dm_cluster_endpoints"
+  - "dm_cluster_endpoints_TSQL"
+  - "dm_cluster_endpoints"
+helpviewer_keywords:
+  - "sys.dm_cluster_endpoints dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-ver15||>=sql-server-linux-2017"
+---
+# sys.dm_cluster_endpoints (Transact-SQL)
+
+**Applies to:**
+ 
+
+
+
+
+
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| name | `sysname` | Name of the service exposed externally in a SQL big data cluster. Unique identifier for the endpoint. Key for this view. Is not nullable. |
+| description | `nvarchar(4000)` | Description of the service. Is not nullable. |
+| endpoint | `sysname` | Endpoint url or connection attribute. Is not nullable. |
+| protocol_desc | `sysname` | Description of the endpoint protocol |
+
+## Permissions
+
+On  SQL Server 
+, requires `VIEW SERVER STATE` permission.
+
+### Permissions for SQL Server 2022 and later
+
+Requires VIEW SERVER SECURITY STATE permission on the server.
+
+## Related content
+
+- [What are SQL Server Big Data Clusters
+](https://learn.microsoft.com/previous-versions/sql/big-data-cluster/big-data-cluster-overview)

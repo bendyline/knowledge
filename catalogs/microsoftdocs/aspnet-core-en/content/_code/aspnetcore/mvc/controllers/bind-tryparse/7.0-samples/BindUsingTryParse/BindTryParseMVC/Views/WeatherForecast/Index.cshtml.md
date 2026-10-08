@@ -1,0 +1,50 @@
+# Source code: aspnetcore/mvc/controllers/bind-tryparse/7.0-samples/BindUsingTryParse/BindTryParseMVC/Views/WeatherForecast/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@model IEnumerable<BindTryParseMVC.Models.WeatherForecastViewModel>
+@{
+    ViewData["Title"] = "Weather Forecasts";
+}
+
+<h2>Weather Forecasts</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TemperatureC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TemperatureF)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Summary)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TemperatureC)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TemperatureF)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Summary)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+```

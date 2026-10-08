@@ -1,0 +1,100 @@
+---
+author: msangapu-msft
+ms.service: azure-app-service
+ms.devlang: azurecli
+ms.topic: quickstart
+ms.date: 04/20/2026
+ms.author: msangapu
+---
+
+In this quickstart, you learn how to deploy an ASP.NET app in a Windows image from [Microsoft Artifact Registry](https://mcr.microsoft.com) to Azure App Service.
+
+[Azure App Service](../../overview.md) provides predefined application stacks on Windows that run on Internet Information Services (IIS). These preconfigured application stacks [lock down the operating system and prevent low-level access](../../operating-system-functionality.md).
+
+Custom Windows containers don't have these restrictions. Developers can use custom containers to give containerized applications full access to Windows functionality.
+
+## Prerequisites
+
+- An Azure account with an active subscription. [Create an account for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- The [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli).
+
+## Connect to Azure
+
+Sign in to your Azure account. Use the [`az login`](https://learn.microsoft.com/cli/azure/authenticate-azure-cli) command and follow the prompt:
+
+```bash
+az login
+```
+
+## Create a resource group
+
+Create a resource group by using the [`az group create`](https://learn.microsoft.com/cli/azure/group#az-group-create) command. An Azure resource group is a logical container into which Azure resources are deployed and managed.
+
+The following example creates a resource group named `myResourceGroup` in the `eastus` location. To see all supported locations for App Service, run the [`az appservice list-locations`](https://learn.microsoft.com/cli/azure/appservice#az-appservice-list-locations) command.
+
+```azurecli-interactive
+az group create --name myResourceGroup --location eastus
+```
+
+## Create your App Service plan
+
+Create an App Service plan in the resource group with the [`az appservice plan create`](https://learn.microsoft.com/cli/azure/appservice/plan#az-appservice-plan-create) command.
+
+The following example creates an App Service plan named `myAppServicePlan` in the **P1V3** pricing tier (`--sku P1V3`).
+
+```azurecli-interactive
+az appservice plan create --resource-group myResourceGroup --location eastus --name myAppServicePlan --hyper-v --sku p1v3
+```
+
+## Create your web app
+
+Create a custom container [web app](../../overview.md) in the `myAppServicePlan` App Service plan with the [`az webapp create`](https://learn.microsoft.com/cli/azure/webapp#az-webapp-create) command. Replace `<your-container-app>` with a unique app name (valid characters are `a-z`, `0-9`, and `-`).
+
+```azurecli-interactive
+az webapp create --name <your-container-app> --plan myAppServicePlan --resource-group myResourceGroup --deployment-container-image-name mcr.microsoft.com/azure-app-service/windows/parkingpage:latest
+```
+
+- The `Name` parameter specifies the web app name.
+- The `AppServicePlan` parameter specifies the name of the App Service plan.
+- The `Location` parameter specifies the location.
+- The `ResourceGroupName` parameter specifies the name of the resource group.
+- The `deployment-container-image-name` parameter specifies a container image name and optional tag.
+
+## Browse to the app
+
+Browse to the deployed application in your web browser at the URL `http://<app-name>.azurewebsites.net`.
+
+Screenshot that shows Windows App Service.
+
+The App Service app pulls from the container registry each time it starts. If you rebuild your image, push it to your container registry. The app pulls in the updated image when it restarts. To tell your app to pull in the updated image immediately, restart it.
+
+## Clean up resources
+
+Remove the resource group by using the [`az group delete`](https://learn.microsoft.com/cli/azure/group#az-group-delete) command:
+
+```azurecli-interactive
+az group delete --no-wait --name myResourceGroup
+```
+
+## Related content
+
+- [Configure a custom container](../../configure-custom-container.md)
+- [How to use managed identities for App Service and Azure Functions](../../overview-managed-identity.md)
+- [Monitor Azure App Service](../../monitor-app-service.md)
+- [Azure Monitor overview](https://learn.microsoft.com/azure/azure-monitor/fundamentals/overview)
+- [Secure with a custom domain and certificate](../../tutorial-secure-domain-certificate.md)
+- [Integrate your app with an Azure virtual network](../../overview-vnet-integration.md)
+- [Use private endpoints for App Service apps](../../overview-private-endpoint.md)
+- [Use Azure Container Registry with Azure Private Link](https://learn.microsoft.com/azure/container-registry/container-registry-private-link)
+- [Migrate to a Windows container in Azure](../../tutorial-custom-container.md)
+- [Deploy a container with Azure Pipelines](../../deploy-container-azure-pipelines.md)
+- [Deploy a container with GitHub Actions](../../deploy-container-github-action.md)
+
+<!-- LINKS - internal -->
+[az-acr-create]: https://learn.microsoft.com/cli/azure/acr#az_acr_create
+[az-acr-login]: https://learn.microsoft.com/cli/azure/acr#az_acr_login
+[az-group-create]: https://learn.microsoft.com/cli/azure/group#az_group_create
+[az-group-delete]: https://learn.microsoft.com/cli/azure/group#az_group_delete
+[azure-cli]: https://learn.microsoft.com/cli/azure/install-azure-cli
+[container-registry-tutorial-quick-task]: https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/app-service/includes/quickstart-custom-container/container-registry-tutorial-quick-task.md
+[container-registry-skus]: https://learn.microsoft.com/container-registry/container-registry-skus.md

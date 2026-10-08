@@ -1,0 +1,73 @@
+---
+title: "Date and Time Improvements"
+description: Learn about the OLE DB Driver for SQL Server support for the date and time data types that were added in SQL Server 2008.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: "06/12/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+---
+# Date and Time Improvements
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  This topic describes the OLE DB Driver for SQL Server support for the date and time data types that were added in  SQL Server 2008 (10.0.x) 
+.
+  
+ For more information about date/time improvements, see [Date and Time Improvements (OLE DB)](../ole-db-date-time/date-and-time-improvements-ole-db.md).
+
+
+## Usage  
+ The following sections describe various ways of using the new date and time types.  
+  
+### Use Date as a Distinct Data Type  
+ Beginning with  SQL Server 2008 (10.0.x) 
+, enhanced support for date/time types makes it more efficient to use the DBTYPE_DBDATE OLE DB type.  
+  
+### Use Time as a Distinct Data Type  
+ OLE DB already has a data type that just contains the time, DBTYPE_DBTIME, which has a precision of 1 second.
+  
+ The new  SQL Server 
+ time data type has fractional seconds accurate to 100 nanoseconds. This requires a new type in OLE DB Driver for SQL Server: DBTYPE_DBTIME2. Existing applications written to use times with no fractional seconds can use time(0) columns. The existing OLE DB DBTYPE_TIME type and its corresponding structs should work correctly, unless the applications rely on the type returned in metadata.  
+  
+### Use Time as a Distinct Data Type with Extended Fractional Seconds Precision  
+ Some applications, such as process control and manufacturing applications, require the ability to handle time data with a precision of up to 100 nanoseconds. New type for this purpose in OLE DB is DBTYPE_DBTIME2.  
+  
+### Use Datetime with Extended Fractional Seconds Precision  
+ OLE DB already defines a type with a precision of up to 1 nanosecond. However, this type is already used by existing  SQL Server 
+ applications and such applications have an expectation of only 1/300 of a second precision. The new **datetime2(3)** type is not directly compatible with the existing datetime type. If there is a risk that this will affect application behavior, applications must use a new DBCOLUMN flag to determine the actual server type.    
+  
+### Use Datetime with Extended Fractional Seconds Precision and Timezone  
+ Some applications require datetime values with timezone information. This is supported by the new DBTYPE_DBTIMESTAMPOFFSET type.
+  
+### Use Date/Time/Datetime/Datetimeoffset Data with Client-Side Conversions Consistent with Existing Conversions  
+ The conversions are extended in a consistent manner to include conversions between all date and time types introduced in  SQL Server 2008 (10.0.x) 
+.  
+  
+## Related content
+
+- [OLE DB Driver for SQL Server Features](oledb-driver-for-sql-server-features.md)

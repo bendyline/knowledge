@@ -1,0 +1,45 @@
+---
+title: "getBoolean Method (java.lang.String)"
+description: "getBoolean Method (java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.getBoolean (java.lang.String)"
+apitype: "Assembly"
+---
+# getBoolean Method (java.lang.String)
+
+
+  Retrieves the value of the designated parameter as a **boolean** value given the parameter name.  
+  
+## Syntax  
+  
+```  
+  
+public boolean getBoolean(java.lang.String sCol)  
+```  
+  
+#### Parameters  
+ *sCol*  
+  
+ A **String** that contains the parameter name.  
+  
+## Return Value  
+ A **boolean** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getBoolean method is specified by the getBoolean method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [getBoolean Method (SQLServerCallableStatement)](getboolean-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

@@ -1,0 +1,1508 @@
+---
+title: Use the LLM Speech API - Speech Service
+titleSuffix: Foundry Tools
+description: Learn how to use Azure Speech with the latest LLM-powered speech model for transcription and translation.
+manager: mcleans
+author: PatrickFarley
+ms.author: pafarley
+ms.service: azure-speech-foundry-tools
+ms.topic: how-to
+ms.date: 10/15/2025
+zone_pivot_groups: llm-speech-quickstart
+# Customer intent: As a user who implements audio transcription, I want create transcriptions as quickly as possible.
+---
+
+# LLM Speech for speech transcription and translation
+
+
+LLM Speech is an API in Microsoft Foundry. A large language model (LLM) enhances a speech model, delivering improved quality, deep contextual understanding, multilingual support, and prompt-tuning capabilities. It uses GPU acceleration for ultra-fast inference, making it ideal for a wide range of scenarios. For example, use LLM Speech to generate captions and subtitles from audio files, summarize meeting notes, assist call center agents, and transcribe voicemails.
+
+
+## Feature availability
+
+This table shows transcription features that the fast transcription API supports, with and without LLM Speech, and with MAI-Transcribe-2:
+
+The MAI-Transcribe-2 column shows only MAI-Transcribe-2 capabilities. For supported model versions and model-specific configuration options, see [MAI-Transcribe in Azure Speech](mai-transcribe.md).
+
+| Feature | Fast transcription (default) | LLM Speech (enhanced) | MAI-Transcribe-2 |
+| --- | --- | --- | --- |
+| Transcription | ✅ (transcription Speech models) | ✅ (multimodal model) | ✅ (speech-to-text model) |
+| Translation | ❌ | ✅ (multimodal model) | ❌ |
+| Diarization | ✅ | ✅ | ✅ |
+| Channel (stereo) | ✅ | ✅ | ❌ |
+| Profanity filtering | ✅ | ✅ | ✅ |
+| Specify locale | ✅ | ✅ | ✅ |
+| Custom prompting | ❌ | ✅ | ❌ |
+| Phrase list | ✅ | ✅ | ✅ |
+| Segment-level timestamps | ✅ | ✅ | ✅ |
+| Word-level timestamps | ✅ | ✅ | ✅ |
+
+
+
+
+## Supported languages
+
+The following input languages are supported for both transcribe and translate tasks: ``Arabic``, ``Chinese``, ``Czech``, ``Danish``, ``Dutch``, ``English``, ``Finnish``, ``French``, ``German``, ``Greek``, ``Hebrew``, ``Hindi``, ``Hungarian``, ``Indonesian``, ``Italian``, ``Japanese``, ``Korean``, ``Norwegian Bokmål``, ``Polish``, ``Portuguese``, ``Russian``, ``Spanish``, ``Swedish``, ``Thai``, ``Turkish``. 
+
+The service operates in multi-lingual mode by default, so you don't need to specify the input language locale. Optionally, to guide recognition toward a specific language locale, you can set the `locales` parameter using a supported locale code (for example, ``en-us``). For more information about the supported language locales, see [supported languages](language-support.md?tabs=stt).
+
+
+**Applies to: ai-foundry**
+
+
+
+
+You can try LLM Speech in [Microsoft Foundry](https://ai.azure.com/?cid=learnDocs) without writing any code.
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+- A Foundry project. If you need to create a project, see [Create a Microsoft Foundry project](../../foundry/how-to/create-projects.md).
+
+## Try LLM Speech
+
+### [Foundry (new) portal](#tab/new-foundry)
+
+1. Go to the [Speech to text feature page](https://aka.ms/foundry-speech-to-text) and select **Open in playground**.
+1. In the top dropdown, select **LLM speech**.
+1. Optionally use the **Parameters** section to change the language, profanity policy, and other settings. You can also add special instructions for the LLM.
+
+1. Use the **Upload files** section to select your audio file. Then select **Start**.
+
+1. View the transcription output in the **Transcript** tab. Optionally view the raw API response output in the **JSON** tab.
+
+1. Switch to the **Code** tab to get sample code for using LLM speech in your application.
+
+### [Foundry (classic) portal](#tab/classic-foundry)
+
+LLM Speech isn't available in the Foundry (classic) portal. Use the Foundry (new) portal instead.
+
+---
+
+
+
+
+**Applies to: programming-language-rest**
+
+
+
+## Prerequisites
+
+- An Azure Speech in Foundry Tools resource in one of the regions where the LLM Speech API is available. For the current list of supported regions, see [Speech service regions](regions.md?tabs=llmspeech).
+  
+- An audio file less than five hours long and less than 500 MB in size. The audio file must be in one of the formats and codecs supported by the batch transcription API: WAV, MP3, OPUS/OGG, FLAC, WMA, AAC, ALAW in WAV container, MULAW in WAV container, AMR, WebM, or SPEEX. For more information about supported audio formats, see [supported audio formats](batch-transcription-audio-data.md#supported-input-formats-and-codecs).
+  
+## Use the LLM Speech API
+
+The next several sections provide details about how to use this API.
+
+
+### Upload audio
+
+You can provide audio data in the following ways:
+
+- Pass inline audio data.
+
+  ```
+    --form 'audio=@"YourAudioFile"'
+  ```
+
+- Upload an audio file from a public `audioUrl`.
+
+  ```
+    --form 'definition": "{\"audioUrl\": \"https://crbn.us/hello.wav"}"'
+  ```
+
+> **Tip:**
+> For long audio files, we recommend that you upload from a public URL.
+
+In this article, we use inline audio upload as an example.
+
+### Call the LLM Speech API
+
+In your POST request to the `transcriptions` endpoint, use the multipart/form-data content type with the audio file and the request body properties.
+
+The following example shows how to transcribe an audio file with a specified locale. If you know the locale of the audio file, you can specify it to improve transcription accuracy and minimize the latency.
+
+- Replace `YourSpeechResoureKey` with your Speech resource key.
+- replace `YourResourceName` with your Speech resource name.
+- Replace `YourAudioFile` with the path to your audio file.
+
+> **Important:**
+> For the recommended keyless authentication with Microsoft Entra ID, replace `--header 'Ocp-Apim-Subscription-Key: YourSpeechResoureKey'` with `--header "Authorization: Bearer YourAccessToken"`. For more information about keyless authentication, see the [role-based access control](role-based-access-control.md#authentication-with-keys-and-tokens) guide.
+
+#### Use LLM Speech to transcribe an audio file
+
+You can transcribe audio in the input language without specifying a locale code. The model automatically detects and selects the appropriate language based on the audio content.
+
+```azurecli-interactive
+curl --location 'https://YourResourceName.cognitiveservices.azure.com/speechtotext/transcriptions:transcribe?api-version=2025-10-15' \
+--header 'Content-Type: multipart/form-data' \
+--header 'Ocp-Apim-Subscription-Key: <YourSpeechResourceKey>' \
+--form 'audio=@"YourAudioFile.wav"' \
+--form 'definition={
+  "enhancedMode": {
+    "enabled": true,
+    "task": "transcribe"
+  }
+}'
+```
+
+#### Use LLM Speech to translate an audio file
+
+You can translate audio into a specified target language. To enable translation, you must provide the target language code in the request.
+
+```azurecli-interactive
+curl --location 'https://YourResourceName.cognitiveservices.azure.com/speechtotext/transcriptions:transcribe?api-version=2025-10-15' \
+--header 'Content-Type: multipart/form-data' \
+--header 'Ocp-Apim-Subscription-Key: <YourSpeechResourceKey>' \
+--form 'audio=@"YourAudioFile.wav"' \
+--form 'definition={
+  "enhancedMode": {
+    "enabled": true,
+    "task": "translate",
+    "targetLanguage": "ko"
+  }
+}'
+```
+
+The following target languages are supported in `targetLanguage` by specifying the corresponding language code:
+
+| Language code | Language |
+| --- | --- |
+| `de` | German |
+| `en` | English |
+| `es` | Spanish |
+| `fr` | French |
+| `it` | Italian |
+| `ko` | Korean |
+| `ja` | Japanese |
+| `pt` | Portuguese |
+| `zh` | Chinese |
+
+#### Use prompt-tuning to alter performance
+
+You can provide an optional text to guide the output style for the `transcribe` or `translate` task.
+
+```azurecli-interactive
+curl --location 'https://YourResourceName.cognitiveservices.azure.com/speechtotext/transcriptions:transcribe?api-version=2025-10-15' \
+--header 'Content-Type: multipart/form-data' \
+--header 'Ocp-Apim-Subscription-Key: <YourSpeechResourceKey>' \
+--form 'audio=@"YourAudioFile.wav"' \
+--form 'definition={
+  "enhancedMode": {
+    "enabled": true,
+    "task": "transcribe",
+    "prompt": ["Output must be in lexical format."]
+  }
+}'
+```
+
+Here are some best practices for prompts:
+
+- Prompts have a maximum length of 20,000 characters.
+
+- Prompts should preferably be written in English.
+
+- Prompts can guide output formatting. By default, responses use a display format optimized for readability. To enforce lexical formatting, include: `Output must be in lexical format.`
+
+- Prompts that aren't related to speech tasks (for example, `Tell me a story.`) are typically disregarded.
+
+#### More configuration options
+
+You can combine extra configuration options with [fast transcription](fast-transcription-create.md) to enable enhanced features, such as `diarization`, `phraseList`, `locales`, `profanityFilterMode`, and `channels`.
+
+```azurecli-interactive
+curl --location 'https://YourResourceName.cognitiveservices.azure.com/speechtotext/transcriptions:transcribe?api-version=2025-10-15' \
+--header 'Content-Type: multipart/form-data' \
+--header 'Ocp-Apim-Subscription-Key: <YourSpeechResourceKey>' \
+--form 'audio=@"YourAudioFile.wav"' \
+--form 'definition={
+  "enhancedMode": {
+    "enabled": true,
+    "task": "transcribe",
+    "prompt": ["Output must be in lexical format."]
+  },
+  "diarization": {
+    "maxSpeakers": 2,
+    "enabled": true
+  },
+  "phraseList":{
+    "phrases":["Kenichi Kumatani","John McDonough"]
+  },
+  "locales":[],
+  "profanityFilterMode": "Masked"
+}'
+```
+
+#### Sample response
+
+In the JSON response, the `combinedPhrases` property contains the full transcribed or translated text, and the `phrases` property contains segment-level and word-level details.
+
+```json
+{
+    "durationMilliseconds": 57187,
+    "combinedPhrases": [
+        {
+            "text": "With custom speech,you can evaluate and improve the microsoft speech to text accuracy for your applications and products 现成的语音转文本,利用通用语言模型作为一个基本模型,使用microsoft自有数据进行训练,并反映常用的口语。此基础模型使用那些代表各常见领域的方言和发音进行了预先训练。 Quand vous effectuez une demande de reconnaissance vocale, le modèle de base le plus récent pour chaque langue prise en charge est utilisé par défaut. Le modèle de base fonctionne très bien dans la plupart des scénarios de reconnaissance vocale. A custom model can be used to augment the base model to improve recognition of domain specific vocabulary specified to the application by providing text data to train the model. It can also be used to improve recognition based for the specific audio conditions of the application by providing audio data with reference transcriptions."
+        }
+    ],
+    "phrases": [
+        {
+            "offsetMilliseconds": 80,
+            "durationMilliseconds": 6960,
+            "text": "With custom speech,you can evaluate and improve the microsoft speech to text accuracy for your applications and products.",
+            "words": [
+                {
+                    "text": "with",
+                    "offsetMilliseconds": 80,
+                    "durationMilliseconds": 160
+                },
+                {
+                    "text": "custom",
+                    "offsetMilliseconds": 240,
+                    "durationMilliseconds": 480
+                },
+
+                {
+                    "text": "speech",
+                    "offsetMilliseconds": 720,
+                    "durationMilliseconds": 360
+                },,
+        // More transcription results...
+        // Redacted for brevity
+            ],
+            "locale": "en-us",
+            "confidence": 0
+        },
+        {
+            "offsetMilliseconds": 8000,
+            "durationMilliseconds": 8600,
+            "text": "现成的语音转文本,利用通用语言模型作为一个基本模型,使用microsoft自有数据进行训练,并反映常用的口语。此基础模型使用那些代表各常见领域的方言和发音进行了预先训练。",
+            "words": [
+                {
+                    "text": "现",
+                    "offsetMilliseconds": 8000,
+                    "durationMilliseconds": 40
+                },
+                {
+                    "text": "成",
+                    "offsetMilliseconds": 8040,
+                    "durationMilliseconds": 40
+                },
+        // More transcription results...
+        // Redacted for brevity
+                {
+                    "text": "训",
+                    "offsetMilliseconds": 16400,
+                    "durationMilliseconds": 40
+                },
+                {
+                    "text": "练",
+                    "offsetMilliseconds": 16560,
+                    "durationMilliseconds": 40
+                },
+            ],
+            "locale": "zh-cn",
+            "confidence": 0
+        // More transcription results...
+        // Redacted for brevity
+                {
+                    "text": "with",
+                    "offsetMilliseconds": 54720,
+                    "durationMilliseconds": 200
+                },
+                {
+                    "text": "reference",
+                    "offsetMilliseconds": 54920,
+                    "durationMilliseconds": 360
+                },
+                {
+                    "text": "transcriptions.",
+                    "offsetMilliseconds": 55280,
+                    "durationMilliseconds": 1200
+                }
+            ],
+            "locale": "en-us",
+            "confidence": 0
+        }
+    ]
+}
+```
+
+The response format is consistent with other existing speech-to-text outputs, such as fast transcription and batch transcription. Be aware of the following differences:
+
+- Word-level `durationMilliseconds` and `offsetMilliseconds` aren't supported for the `translate` task.
+
+- Diarization isn't supported for the `translate` task. Only the `speaker1` label is returned.
+
+- `confidence` isn't available and is always `0`.
+
+
+
+
+**Applies to: programming-language-python**
+
+
+
+
+[Reference documentation](https://learn.microsoft.com/python/api/overview/azure/ai-transcription-readme) | [Package (PyPi)](https://pypi.org/project/azure-ai-transcription/) | [GitHub samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/transcription/azure-ai-transcription/samples)
+
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+- <a href="https://www.python.org/" target="_blank">Python 3.9 or later version</a>. If you don't have a suitable version of Python installed, you can follow the instructions in the [Visual Studio Code Python tutorial](https://code.visualstudio.com/docs/python/python-tutorial#_install-a-python-interpreter). This tutorial shows you the easiest way of installing Python on your operating system.
+
+- A [Microsoft Foundry resource](https://learn.microsoft.com/azure/ai-services/multi-service-resource) created in one of the supported regions. For more information about region availability, see [Region support](https://learn.microsoft.com/azure/ai-services/speech-service/regions?tabs=stt).
+
+- A sample `.wav` audio file to transcribe.
+
+### Microsoft Entra ID prerequisites
+
+For the recommended keyless authentication with Microsoft Entra ID, you need to:
+
+- Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) used for keyless authentication with Microsoft Entra ID.
+
+- Assign the Cognitive Services User role to your user account. You can assign roles in the Azure portal under **Access control (IAM)** > **Add role assignment**.
+
+## Set up the environment
+
+1. Create a new folder named `llm-speech-quickstart` and then go to the folder with the following command:
+
+    ```shell
+    mkdir llm-speech-quickstart && cd llm-speech-quickstart
+    ```
+
+1. To install the packages that you need for this article, create and activate a virtual Python environment. We recommend that you always use a virtual or conda environment when you install Python packages. Otherwise, you can break your global installation of Python. If you already have Python 3.9 or later installed, create a virtual environment by using the following commands:
+
+   # [Windows](#tab/windows)
+
+    ```powershell
+    py -3 -m venv .venv
+    .venv\Scripts\Activate.ps1
+    ```
+
+   # [Linux](#tab/linux)
+
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+
+   # [macOS](#tab/macos)
+
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+
+    ---
+
+    When you activate the Python environment, running `python` or `pip` from the command line uses the Python interpreter in the `.venv` folder of your application. Use the `deactivate` command to exit the Python virtual environment. You can reactivate it later when needed.
+
+1. Create a file named **requirements.txt**. Add the following packages to the file:
+
+    ```txt
+    azure-ai-transcription
+    azure-identity
+    ```
+
+1. Install the packages:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Set environment variables
+
+You need to retrieve your resource endpoint and API key for authentication.
+
+1. Sign in to [Foundry portal (classic)](https://ai.azure.com).
+
+1. Select **Management center** from the left menu.
+
+1. Select **Connected resources**, and find your Microsoft Foundry resource (or add a connection if it isn't there). Then copy the **API Key** and **Target** (endpoint) values. Use these values to set environment variables.
+
+1. Set the following environment variables:
+
+   # [Windows](#tab/windows)
+
+    ```powershell
+    $env:AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+    $env:AZURE_SPEECH_API_KEY="<your-api-key>"
+    ```
+
+   # [Linux](#tab/linux)
+
+    ```bash
+    export AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+    export AZURE_SPEECH_API_KEY="<your-api-key>"
+    ```
+
+   # [macOS](#tab/macos)
+
+    ```bash
+    export AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+    export AZURE_SPEECH_API_KEY="<your-api-key>"
+    ```
+
+    ---
+
+> **Note:**
+> For Microsoft Entra ID authentication (recommended for production), install `azure-identity`. Configure authentication as described in the [Microsoft Entra ID prerequisites](#microsoft-entra-id-prerequisites) section.
+
+## Transcribe audio with LLM Speech
+
+LLM Speech uses the `EnhancedModeProperties` class to enable transcription that's enhanced by a large language model. The model automatically detects the language in your audio.
+
+1. Create a file named `llm_speech_transcribe.py` with the following code:
+
+    ```python
+    import os
+    from dotenv import load_dotenv
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.transcription import TranscriptionClient
+    
+    load_dotenv()
+    from azure.ai.transcription.models import (
+        TranscriptionContent,
+        TranscriptionOptions,
+        EnhancedModeProperties,
+    )
+    
+    # Get configuration from environment variables
+    endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
+    
+    # Optional: we recommend using role based access control (RBAC) for production scenarios
+    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+    
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+        credential = DefaultAzureCredential()   
+    
+    # Create the transcription client
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
+
+    # Path to your audio file (replace with your own file path)
+    audio_file_path = "<path-to-your-audio-file.wav>"
+
+    # Open and read the audio file
+    with open(audio_file_path, "rb") as audio_file:
+        # Create enhanced mode properties for LLM Speech transcription
+        enhanced_mode = EnhancedModeProperties(
+            task="transcribe",
+            prompt=[],
+        )
+    
+        # Create transcription options with enhanced mode
+        options = TranscriptionOptions(enhanced_mode=enhanced_mode)
+        
+        # Create the request content
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
+    
+        # Transcribe the audio
+        result = client.transcribe(request_content)
+    
+        # Print the transcription result
+        print(f"Transcription: {result.combined_phrases[0].text}")
+    
+        # Print detailed phrase information
+        if result.phrases:
+            print("\nDetailed phrases:")
+            for phrase in result.phrases:
+                print(f"  [{phrase.offset_milliseconds}ms]: {phrase.text}")
+    ```
+
+    For more information, see the following references: [TranscriptionClient](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.transcriptionclient), [TranscriptionContent](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.models.transcriptioncontent), [TranscriptionOptions](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.models.transcriptionoptions), and [EnhancedModeProperties](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.models.enhancedmodeproperties).
+
+1. Replace `<path-to-your-audio-file.wav>` with the path to your audio file. The service supports WAV, MP3, FLAC, OGG, and other common audio formats.
+
+1. Run the Python script.
+
+    ```bash
+    python llm_speech_transcribe.py
+    ```
+
+### Transcription output
+
+The script prints the transcription result to the console:
+
+```console
+Transcription: Hi there. This is a sample voice recording created for speech synthesis testing. The quick brown fox jumps over the lazy dog. Just a fun way to include every letter of the alphabet. Numbers, like one, two, three, are spoken clearly. Let's see how well this voice captures tone, timing, and natural rhythm. This audio is provided by samplefiles.com.
+
+Detailed phrases:
+  [40ms]: Hi there.
+  [800ms]: This is a sample voice recording created for speech synthesis testing.
+  [5440ms]: The quick brown fox jumps over the lazy dog.
+  [9040ms]: Just a fun way to include every letter of the alphabet.
+  [12720ms]: Numbers, like one, two, three, are spoken clearly.
+  [17200ms]: Let's see how well this voice captures tone, timing, and natural rhythm.
+  [22480ms]: This audio is provided by samplefiles.com.
+```
+
+## Translate audio with LLM Speech
+
+You can also use LLM Speech to translate audio into a target language. Set the `task` to `translate`, and specify the `target_language`.
+
+1. Use the code above, but specify the `task` as `translate` and add the `target_language` in the `EnhancedModeProperties`:
+
+    ```python
+    
+    # Open and read the audio file
+    with open(audio_file_path, "rb") as audio_file:
+        # Create enhanced mode properties for LLM Speech translation
+        # Translate to another language
+        enhanced_mode = EnhancedModeProperties(
+            task="translate",
+            target_language="de",
+            prompt=[
+                "Translate the following audio to German.",
+                "Convert number words to numbers."
+            ],  # Optional prompts to guide the enhanced mode
+        )
+    
+        # Create transcription options with enhanced mode
+        options = TranscriptionOptions(locales=["en-US"], enhanced_mode=enhanced_mode)
+    ```
+
+    For more information, see the following references: [TranscriptionClient](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.transcriptionclient) and [EnhancedModeProperties](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.models.enhancedmodeproperties).
+
+1. Replace `<path-to-your-audio-file.wav>` with the path to your audio file.
+
+1. Run the Python script.
+
+    ```bash
+    python llm_speech_translate.py
+    ```
+
+## Use prompt-tuning
+
+You can provide an optional prompt to guide the output style for transcription or translation tasks. Replace the `prompt` value in the `EnhancedModeProperties` object.
+
+```python
+# Open and read the audio file
+with open(audio_file_path, "rb") as audio_file:
+    # Create enhanced mode properties for LLM Speech transcription
+    enhanced_mode = EnhancedModeProperties(
+        task="transcribe",
+        prompt=[
+            "Create lexical output only,",
+            "Convert number words to numbers."
+        ],  # Optional prompts to guide the enhanced mode, prompt="Create lexical transcription.")
+    )
+
+
+```
+
+### Best practices for prompts
+
+- Prompts have a maximum length of 4,096 characters.
+
+- Prompts should preferably be written in English.
+
+- Use `Output must be in lexical format.` to enforce lexical formatting instead of the default display format.
+
+- Use `Pay attention to *phrase1*, *phrase2*, …` to improve recognition of specific phrases or acronyms.
+
+For more information, see the following reference: [EnhancedModeProperties](https://learn.microsoft.com/python/api/azure-ai-transcription/azure.ai.transcription.models.enhancedmodeproperties).
+
+### Output
+
+The script prints the transcription result to the console:
+
+```output
+Transcription: Hello, this is a test of the LLM Speech transcription service.
+
+Detailed phrases:
+  [0ms]: Hello, this is a test
+  [1500ms]: of the LLM Speech transcription service.
+```
+
+
+
+
+**Applies to: programming-language-csharp**
+
+
+
+
+[Reference documentation](https://learn.microsoft.com/dotnet/api/overview/azure/ai.speech.transcription-readme) | [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.Speech.Transcription) | [GitHub samples](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/transcription/Azure.AI.Speech.Transcription/samples)
+
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download) or later.
+
+- A [Microsoft Foundry resource](https://learn.microsoft.com/azure/ai-services/multi-service-resource) created in one of the supported regions. For more information about region availability, see [Region support](https://learn.microsoft.com/azure/ai-services/speech-service/regions?tabs=stt).
+
+- A sample `.wav` audio file to transcribe.
+
+### Microsoft Entra ID prerequisites
+
+For the recommended keyless authentication with Microsoft Entra ID, you need to:
+
+- Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) used for keyless authentication with Microsoft Entra ID.
+
+- Sign in with the Azure CLI by running `az login`.
+
+- Assign the Cognitive Services User role to your user account. You can assign roles in the Azure portal under **Access control (IAM)** > **Add role assignment**.
+
+## Set up the project
+
+1. Create a new console application with the .NET CLI:
+
+    ```dotnetcli
+    dotnet new console -n llm-speech-quickstart
+    cd llm-speech-quickstart
+    ```
+
+1. Install the required packages:
+
+    ```dotnetcli
+    dotnet add package Azure.AI.Speech.Transcription
+    dotnet add package Azure.Identity
+    ```
+
+## Retrieve resource information
+
+You need to retrieve your resource endpoint for authentication.
+
+1. Sign in to the [Foundry portal](https://ai.azure.com).
+
+1. Select **Management center** from the left menu. Under **Connected resources**, select your Speech or multiservice resource.
+
+1. Select **Keys and Endpoint**.
+
+1. Copy the **Endpoint** value and set it as an environment variable:
+
+    ```powershell
+    $env:AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+    ```
+
+## Transcribe audio with LLM speech
+
+LLM Speech uses the `EnhancedModeProperties` class to enable transcription that's enhanced by a large language model. When you create an `EnhancedModeProperties` instance, you automatically enable enhanced mode. The model automatically detects the language in your audio.
+
+Replace the contents of `Program.cs` with the following code:
+
+```csharp
+using System;
+using System.ClientModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Azure.AI.Speech.Transcription;
+using Azure.Identity;
+
+Uri endpoint = new Uri(Environment.GetEnvironmentVariable("AZURE_SPEECH_ENDPOINT")
+    ?? throw new InvalidOperationException("Set the AZURE_SPEECH_ENDPOINT environment variable."));
+
+// Use DefaultAzureCredential for keyless authentication (recommended).
+// To use an API key instead, replace with:
+// ApiKeyCredential credential = new ApiKeyCredential("<your-api-key>");
+var credential = new DefaultAzureCredential();
+TranscriptionClient client = new TranscriptionClient(endpoint, credential);
+
+string audioFilePath = "<path-to-your-audio-file.wav>";
+using FileStream audioStream = File.OpenRead(audioFilePath);
+
+// Create enhanced mode properties for LLM Speech transcription
+TranscriptionOptions options = new TranscriptionOptions(audioStream)
+{
+    EnhancedMode = new EnhancedModeProperties
+    {
+        Task = "transcribe"
+    }
+};
+
+ClientResult<TranscriptionResult> response = await client.TranscribeAsync(options);
+
+// Print combined transcription
+foreach (var combinedPhrase in response.Value.CombinedPhrases)
+{
+    Console.WriteLine($"Transcription: {combinedPhrase.Text}");
+}
+
+// Print detailed phrase information
+Console.WriteLine("\nDetailed phrases:");
+foreach (var phrase in response.Value.Phrases)
+{
+    Console.WriteLine($"  [{phrase.Offset}] ({phrase.Locale}): {phrase.Text}");
+}
+```
+
+Replace `<path-to-your-audio-file.wav>` with the path to your audio file. The service supports WAV, MP3, FLAC, OGG, and other common audio formats.
+
+Run the application:
+
+```dotnetcli
+dotnet run
+```
+
+For more information, see the following references: [`TranscriptionClient`](https://learn.microsoft.com/dotnet/api/azure.ai.speech.transcription.transcriptionclient) and [`EnhancedModeProperties`](https://learn.microsoft.com/dotnet/api/azure.ai.speech.transcription.enhancedmodeproperties).
+
+## Translate audio with LLM Speech
+
+You can also use LLM Speech to translate audio into a target language. Set the `Task` to `translate`, and specify the `TargetLanguage`:
+
+```csharp
+using System;
+using System.ClientModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Azure.AI.Speech.Transcription;
+using Azure.Identity;
+
+Uri endpoint = new Uri(Environment.GetEnvironmentVariable("AZURE_SPEECH_ENDPOINT")
+    ?? throw new InvalidOperationException("Set the AZURE_SPEECH_ENDPOINT environment variable."));
+
+var credential = new DefaultAzureCredential();
+TranscriptionClient client = new TranscriptionClient(endpoint, credential);
+
+string audioFilePath = "<path-to-your-audio-file.wav>";
+using FileStream audioStream = File.OpenRead(audioFilePath);
+
+// Create enhanced mode properties for LLM Speech translation
+TranscriptionOptions options = new TranscriptionOptions(audioStream)
+{
+    EnhancedMode = new EnhancedModeProperties
+    {
+        Task = "translate",
+        TargetLanguage = "de"
+    }
+};
+
+ClientResult<TranscriptionResult> response = await client.TranscribeAsync(options);
+
+// Print translation result
+foreach (var combinedPhrase in response.Value.CombinedPhrases)
+{
+    Console.WriteLine($"Translation: {combinedPhrase.Text}");
+}
+```
+
+Replace `<path-to-your-audio-file.wav>` with the path to your audio file.
+
+For more information, see the following reference: [`EnhancedModeProperties`](https://learn.microsoft.com/dotnet/api/azure.ai.speech.transcription.enhancedmodeproperties).
+
+## Use prompt-tuning
+
+You can provide an optional prompt to guide the output style for transcription or translation tasks:
+
+```csharp
+TranscriptionOptions options = new TranscriptionOptions(audioStream)
+{
+    EnhancedMode = new EnhancedModeProperties
+    {
+        Task = "transcribe",
+        Prompt = { "Output must be in lexical format." }
+    }
+};
+
+ClientResult<TranscriptionResult> response = await client.TranscribeAsync(options);
+
+foreach (var combinedPhrase in response.Value.CombinedPhrases)
+{
+    Console.WriteLine($"Transcription: {combinedPhrase.Text}");
+}
+```
+
+### Best practices for prompts
+
+- Prompts have a maximum length of 4,096 characters.
+
+- Prompts should preferably be written in English.
+
+- Use `Output must be in lexical format.` to enforce lexical formatting instead of the default display format.
+
+- Use `Pay attention to *phrase1*, *phrase2*, …` to improve recognition of specific phrases or acronyms.
+
+For more information, see the following reference: [`EnhancedModeProperties`](https://learn.microsoft.com/dotnet/api/azure.ai.speech.transcription.enhancedmodeproperties).
+
+## Clean up resources
+
+When you finish the quickstart, delete the project folder:
+
+```powershell
+Remove-Item -Recurse -Force llm-speech-quickstart
+```
+
+
+
+
+**Applies to: programming-language-javascript**
+
+
+
+
+[Reference documentation](https://learn.microsoft.com/javascript/api/overview/azure/ai-speech-transcription-readme) | [Package (npm)](https://www.npmjs.com/package/@azure/ai-speech-transcription) | [GitHub samples](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/transcription/ai-speech-transcription/samples-dev)
+
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+- [Node.js LTS](https://nodejs.org/) installed.
+
+- A [Microsoft Foundry resource](https://learn.microsoft.com/azure/ai-services/multi-service-resource) created in a region that supports LLM Speech. For more information about region availability, see [Region support](https://learn.microsoft.com/azure/ai-services/speech-service/regions?tabs=llmspeech).
+
+- A sample `.wav` audio file to transcribe.
+
+### Microsoft Entra ID prerequisites
+
+For the recommended keyless authentication with Microsoft Entra ID, you need to:
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) used for keyless authentication with Microsoft Entra ID.
+
+1. Sign in with the Azure CLI by running `az login`.
+
+1. Assign the Cognitive Services User role to your user account. You can assign roles in the Azure portal under **Access control (IAM)** > **Add role assignment**.
+
+## Set up the project
+
+1. Create a new folder named `llm-speech-quickstart`, and then go to the folder:
+
+    ```shell
+    mkdir llm-speech-quickstart && cd llm-speech-quickstart
+    ```
+
+1. Initialize a Node.js project and install the required packages:
+
+    ```shell
+    npm init -y
+    npm install @azure/ai-speech-transcription @azure/identity
+    ```
+
+## Retrieve resource information
+
+You need to retrieve your resource endpoint for authentication.
+
+1. Sign in to [Foundry portal](https://ai.azure.com).
+
+1. Select **Management center** from the left menu. Under **Connected resources**, select your Speech or multiservice resource.
+
+1. Select **Keys and Endpoint**.
+
+1. Copy the **Endpoint** value and set it as an environment variable:
+
+   # [Windows](#tab/windows)
+
+    ```powershell
+    $env:AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+    ```
+
+   # [Linux/macOS](#tab/linux-macos)
+
+    ```bash
+    export AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+    ```
+
+    ---
+
+## Transcribe audio with LLM Speech
+
+LLM Speech uses the `enhancedMode` option to enable transcription that's enhanced by a large language model. The model automatically detects the language in your audio.
+
+Create a file named `index.js` with the following code:
+
+```javascript
+const {
+  TranscriptionClient,
+} = require("@azure/ai-speech-transcription");
+const { DefaultAzureCredential } = require("@azure/identity");
+const fs = require("fs");
+
+async function main() {
+  const endpoint = process.env.AZURE_SPEECH_ENDPOINT;
+  if (!endpoint) {
+    throw new Error(
+      "Set the AZURE_SPEECH_ENDPOINT environment variable."
+    );
+  }
+
+  // Use DefaultAzureCredential for keyless authentication
+  // (recommended). To use an API key instead, replace with:
+  // const { AzureKeyCredential } = require("@azure/core-auth");
+  // const credential = new AzureKeyCredential("<your-api-key>");
+  const credential = new DefaultAzureCredential();
+  const client = new TranscriptionClient(endpoint, credential);
+
+  const audioFilePath = "<path-to-your-audio-file.wav>";
+  const audioFile = fs.readFileSync(audioFilePath);
+
+  // Use enhancedMode for LLM speech transcription
+  const result = await client.transcribe(audioFile, {
+    enhancedMode: {
+      task: "transcribe",
+    },
+  });
+
+  // Print the combined transcription text
+  console.log("Transcription:", result.combinedPhrases[0]?.text);
+
+  // Print detailed phrase information
+  for (const phrase of result.phrases) {
+    console.log(
+      `  [${phrase.offsetMilliseconds}ms]`
+        + ` (${phrase.locale}): ${phrase.text}`
+    );
+  }
+}
+
+main().catch((err) => {
+  console.error("The sample encountered an error:", err);
+  process.exit(1);
+});
+```
+
+Replace `<path-to-your-audio-file.wav>` with the path to your audio file. The service supports WAV, MP3, FLAC, OGG, and other common audio formats.
+
+Run the application:
+
+```shell
+node index.js
+```
+
+> **Tip:**
+> If you get the result `Enhanced mode is currently not supported yet`, verify that your endpoint is in a region that supports LLM Speech.
+
+For more information, see the following reference: [`TranscriptionClient`](https://learn.microsoft.com/javascript/api/@azure/ai-speech-transcription/transcriptionclient).
+
+### Transcription output
+
+The application prints the transcription result to the console:
+
+```console
+Transcription: Hi there. This is a sample voice recording created for speech synthesis testing. The quick brown fox jumps over the lazy dog. Just a fun way to include every letter of the alphabet. Numbers, like one, two, three, are spoken clearly. Let's see how well this voice captures tone, timing, and natural rhythm. This audio is provided by samplefiles.com.
+  [40ms] (en-US): Hi there.
+  [800ms] (en-US): This is a sample voice recording created for speech synthesis testing.
+  [5440ms] (en-US): The quick brown fox jumps over the lazy dog.
+  [9040ms] (en-US): Just a fun way to include every letter of the alphabet.
+  [12720ms] (en-US): Numbers, like one, two, three, are spoken clearly.
+  [17200ms] (en-US): Let's see how well this voice captures tone, timing, and natural rhythm.
+  [22480ms] (en-US): This audio is provided by samplefiles.com.
+```
+
+## Translate audio with LLM Speech
+
+You can also use LLM Speech to translate audio to a target language. Set `task` to `translate`, and then specify the `targetLanguage`:
+
+```javascript
+const {
+  TranscriptionClient,
+} = require("@azure/ai-speech-transcription");
+const { DefaultAzureCredential } = require("@azure/identity");
+const fs = require("fs");
+
+async function main() {
+  const endpoint = process.env.AZURE_SPEECH_ENDPOINT;
+  if (!endpoint) {
+    throw new Error(
+      "Set the AZURE_SPEECH_ENDPOINT environment variable."
+    );
+  }
+
+  const credential = new DefaultAzureCredential();
+  const client = new TranscriptionClient(endpoint, credential);
+
+  const audioFilePath = "<path-to-your-audio-file.wav>";
+  const audioFile = fs.readFileSync(audioFilePath);
+
+  // Translate audio using enhanced mode
+  const result = await client.transcribe(audioFile, {
+    enhancedMode: {
+      task: "translate",
+      targetLanguage: "de", // Translate to German
+    },
+  });
+
+  console.log("Translation:", result.combinedPhrases[0]?.text);
+}
+
+main().catch((err) => {
+  console.error("The sample encountered an error:", err);
+  process.exit(1);
+});
+```
+
+Replace `<path-to-your-audio-file.wav>` with the path to your audio file.
+
+For more information, see the following reference: [`TranscriptionClient`](https://learn.microsoft.com/javascript/api/@azure/ai-speech-transcription/transcriptionclient).
+
+## Use prompt-tuning
+
+You can provide an optional prompt to guide the output style for transcription or translation tasks:
+
+```javascript
+const result = await client.transcribe(audioFile, {
+  enhancedMode: {
+    task: "transcribe",
+    prompt: ["Output must be in lexical format."],
+  },
+});
+
+console.log("Transcription:", result.combinedPhrases[0]?.text);
+```
+
+### Best practices for prompts
+
+- Prompts have a maximum length of 4,096 characters.
+
+- Prompts should preferably be written in English.
+
+- Use `Output must be in lexical format.` to enforce lexical formatting instead of the default display format.
+
+- Use `Pay attention to *phrase1*, *phrase2*, …` to improve recognition of specific phrases or acronyms.
+
+### Output
+
+The application prints the transcription result to the console:
+
+```console
+Transcription: Hello this is a test of the LLM speech transcription service.
+```
+
+For more information, see the following reference: [`TranscriptionClient`](https://learn.microsoft.com/javascript/api/@azure/ai-speech-transcription/transcriptionclient).
+
+
+
+
+**Applies to: programming-language-java**
+
+
+
+
+[Reference documentation](https://learn.microsoft.com/java/api/overview/azure/ai-speech-transcription-readme) | [Package (Maven)](https://central.sonatype.com/artifact/com.azure/azure-ai-speech-transcription) | [GitHub samples](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/transcription/azure-ai-speech-transcription/src/samples/java/com/azure/ai/speech/transcription/README.md)
+
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+- <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank">Java Development Kit (JDK) 8 or later</a>.
+
+- <a href="https://maven.apache.org/download.cgi" target="_blank">Apache Maven</a> for dependency management and building the project.
+
+- A [Speech resource](../multi-service-resource.md) in one of the supported regions. For more information about region availability, see [Speech service supported regions](regions.md).
+
+- A sample `.wav` audio file to transcribe.
+
+## Set up the environment
+
+1. Create a new folder named `llm-speech-quickstart`, and then go to it:
+
+    ```shell
+    mkdir llm-speech-quickstart && cd llm-speech-quickstart
+    ```
+
+1. Create a `pom.xml` file in the root of your project directory with the following content:
+
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project xmlns="http://maven.apache.org/POM/4.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+    
+        <groupId>com.example</groupId>
+        <artifactId>transcription-quickstart</artifactId>
+        <version>1.0.0</version>
+        <packaging>jar</packaging>
+    
+        <name>Speech Transcription Quickstart</name>
+        <description>Quickstart sample for Azure Speech Transcription client library.</description>
+        <url>https://github.com/Azure/azure-sdk-for-java</url>
+    
+        <properties>
+            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        </properties>
+    
+        <dependencies>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-ai-speech-transcription</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-identity</artifactId>
+                <version>1.18.1</version>
+            </dependency>
+        </dependencies>
+    
+        <build>
+            <sourceDirectory>.</sourceDirectory>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <mainClass>TranscriptionQuickstart</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </project>
+    ```
+
+    > **Note:**
+    > The `<sourceDirectory>.</sourceDirectory>` configuration tells Maven to look for Java source files in the current directory instead of the default `src/main/java` structure. This configuration change allows for a simpler, flatter project structure.
+
+1. Install the dependencies:
+
+    ```shell
+    mvn clean install
+    ```
+
+## Set environment variables
+
+Your application must be authenticated to access Azure Speech. The SDK supports both API key and Microsoft Entra ID authentication. It automatically detects which method to use based on the environment variables you set.
+
+First, set the endpoint for your Speech resource. Replace `<your-speech-endpoint>` with your actual resource name.
+
+# [Windows](#tab/windows)
+
+```powershell
+$env:AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+```
+
+# [Linux](#tab/linux)
+
+```bash
+export AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+```
+
+# [macOS](#tab/macos)
+
+```bash
+export AZURE_SPEECH_ENDPOINT="<your-speech-endpoint>"
+```
+
+---
+
+Then, choose one of the following authentication methods.
+
+### API key authentication (recommended for getting started)
+
+Set the API key environment variable:
+
+# [Windows](#tab/windows)
+
+```shell
+setx AZURE_SPEECH_API_KEY <your-speech-key>
+```
+
+# [Linux](#tab/linux)
+
+```bash
+export AZURE_SPEECH_API_KEY=<your-speech-key>
+```
+
+# [macOS](#tab/macos)
+
+```bash
+export AZURE_SPEECH_API_KEY=<your-speech-key>
+```
+
+---
+
+### Microsoft Entra ID authentication (recommended for production)
+
+Instead of setting `AZURE_SPEECH_API_KEY`, configure one of the following credential sources:
+
+- **Azure CLI**: Run `az login` on your development machine.
+
+- **Managed identity**: For apps running in Azure (Azure App Service, Azure Functions, virtual machines).
+
+- **Environment variables**: Set `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`.
+
+- **Visual Studio Code or IntelliJ**: Sign in through your IDE.
+
+You also need to assign the Cognitive Services User role to your identity:
+
+```azurecli
+az role assignment create --assignee <your-identity> \
+    --role "Cognitive Services User" \
+    --scope /subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.CognitiveServices/accounts/<speech-resource-name>
+```
+
+> **Note:**
+> After you set environment variables on Windows, restart any running programs that need to read them, including the console window. On Linux or macOS, run `source ~/.bashrc` (or your equivalent shell configuration file) to make the changes effective.
+
+## Transcribe audio with LLM Speech
+
+LLM Speech uses the `EnhancedModeOptions` class to enable transcription that's enhanced by a large language model. When you create an `EnhancedModeOptions` instance, you automatically enable enhanced mode. The model automatically detects the language in your audio.
+
+Create a file named `LlmSpeechQuickstart.java` in your project directory with the following code:
+
+```java
+import com.azure.ai.speech.transcription.TranscriptionClient;
+import com.azure.ai.speech.transcription.TranscriptionClientBuilder;
+import com.azure.ai.speech.transcription.models.AudioFileDetails;
+import com.azure.ai.speech.transcription.models.EnhancedModeOptions;
+import com.azure.ai.speech.transcription.models.TranscriptionOptions;
+import com.azure.ai.speech.transcription.models.TranscriptionResult;
+import com.azure.core.credential.KeyCredential;
+import com.azure.core.util.BinaryData;
+import com.azure.identity.DefaultAzureCredentialBuilder;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class LlmSpeechQuickstart {
+    public static void main(String[] args) {
+        try {
+            // Get credentials from environment variables
+            String endpoint = System.getenv("AZURE_SPEECH_ENDPOINT");
+            String apiKey = System.getenv("AZURE_SPEECH_API_KEY");
+
+            // Create client with API key or Entra ID authentication
+            TranscriptionClientBuilder builder = new TranscriptionClientBuilder()
+                .endpoint(endpoint);
+
+            TranscriptionClient client;
+            if (apiKey != null && !apiKey.isEmpty()) {
+                // Use API key authentication
+                client = builder.credential(new KeyCredential(apiKey)).buildClient();
+            } else {
+                // Use Entra ID authentication
+                client = builder.credential(new DefaultAzureCredentialBuilder().build()).buildClient();
+            }
+
+            // Load audio file
+            String audioFilePath = "<path-to-your-audio-file.wav>";
+            byte[] audioData = Files.readAllBytes(Paths.get(audioFilePath));
+
+            // Create audio file details
+            AudioFileDetails audioFileDetails = new AudioFileDetails(BinaryData.fromBytes(audioData));
+
+            // Create enhanced mode options for LLM speech transcription
+            // Enhanced mode is automatically enabled when you create EnhancedModeOptions
+            EnhancedModeOptions enhancedModeOptions = new EnhancedModeOptions()
+                .setTask("transcribe");
+
+            // Create transcription options with enhanced mode
+            TranscriptionOptions options = new TranscriptionOptions(audioFileDetails)
+                .setEnhancedModeOptions(enhancedModeOptions);
+
+            // Transcribe the audio
+            TranscriptionResult result = client.transcribe(options);
+
+            // Print result
+            System.out.println("Transcription:");
+            result.getCombinedPhrases().forEach(phrase ->
+                System.out.println(phrase.getText())
+            );
+
+            // Print detailed phrase information
+            if (result.getPhrases() != null) {
+                System.out.println("\nDetailed phrases:");
+                result.getPhrases().forEach(phrase ->
+                    System.out.println(String.format("  [%dms] (%s): %s",
+                        phrase.getOffset(),
+                        phrase.getLocale(),
+                        phrase.getText()))
+                );
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+Replace `<path-to-your-audio-file.wav>` with the path to your audio file. The service supports WAV, MP3, FLAC, OGG, and other common audio formats.
+
+## Run the application
+
+Run the application by using Maven:
+
+```shell
+mvn compile exec:java
+```
+
+## Translate audio by using LLM Speech
+
+You can also use LLM Speech to translate audio into a target language. Modify the `EnhancedModeOptions` configuration to set the task to `translate`, and then specify the target language.
+
+Create a file named `LlmSpeechTranslate.java` with the following code:
+
+```java
+import com.azure.ai.speech.transcription.TranscriptionClient;
+import com.azure.ai.speech.transcription.TranscriptionClientBuilder;
+import com.azure.ai.speech.transcription.models.AudioFileDetails;
+import com.azure.ai.speech.transcription.models.EnhancedModeOptions;
+import com.azure.ai.speech.transcription.models.TranscriptionOptions;
+import com.azure.ai.speech.transcription.models.TranscriptionResult;
+import com.azure.core.credential.KeyCredential;
+import com.azure.core.util.BinaryData;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class LlmSpeechTranslate {
+    public static void main(String[] args) {
+        try {
+            // Get credentials from environment variables
+            String endpoint = System.getenv("AZURE_SPEECH_ENDPOINT");
+            String apiKey = System.getenv("AZURE_SPEECH_API_KEY");
+
+            // Create client
+            TranscriptionClient client = new TranscriptionClientBuilder()
+                .endpoint(endpoint)
+                .credential(new KeyCredential(apiKey))
+                .buildClient();
+
+            // Load audio file
+            String audioFilePath = "<path-to-your-audio-file.wav>";
+            byte[] audioData = Files.readAllBytes(Paths.get(audioFilePath));
+
+            // Create audio file details
+            AudioFileDetails audioFileDetails = new AudioFileDetails(BinaryData.fromBytes(audioData));
+
+            // Create enhanced mode options for LLM speech translation
+            // Translate to Korean (supported languages: en, zh, de, fr, it, ja, es, pt, ko)
+            EnhancedModeOptions enhancedModeOptions = new EnhancedModeOptions()
+                .setTask("translate")
+                .setTargetLanguage("ko");
+
+            // Create transcription options with enhanced mode
+            TranscriptionOptions options = new TranscriptionOptions(audioFileDetails)
+                .setEnhancedModeOptions(enhancedModeOptions);
+
+            // Translate the audio
+            TranscriptionResult result = client.transcribe(options);
+
+            // Print translation result
+            System.out.println("Translation:");
+            result.getCombinedPhrases().forEach(phrase ->
+                System.out.println(phrase.getText())
+            );
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+Replace `<path-to-your-audio-file.wav>` with the path to your audio file.
+
+To run the translation example, update the `pom.xml` main class configuration, or run:
+
+```shell
+mvn exec:java -Dexec.mainClass="LlmSpeechTranslate"
+```
+
+## Use prompt-tuning
+
+You can provide an optional prompt to guide the output style for transcription or translation tasks.
+
+```java
+import java.util.Arrays;
+
+// Create enhanced mode options with prompt-tuning
+EnhancedModeOptions enhancedModeOptions = new EnhancedModeOptions()
+    .setTask("transcribe")
+    .setPrompts(Arrays.asList("Output must be in lexical format."));
+
+// Create transcription options with enhanced mode
+TranscriptionOptions options = new TranscriptionOptions(audioFileDetails)
+    .setEnhancedModeOptions(enhancedModeOptions);
+```
+
+### Best practices for prompts
+
+- Prompts have a maximum length of 4,096 characters.
+
+- Prompts should preferably be written in English.
+
+- Use `Output must be in lexical format.` to enforce lexical formatting instead of the default display format.
+
+- Use `Pay attention to *phrase1*, *phrase2*, …` to improve recognition of specific phrases or acronyms.
+
+## Clean up resources
+
+When you finish the quickstart, delete the project folder:
+
+```shell
+rm -rf llm-speech-quickstart
+```
+
+
+
+
+
+## Transcription error handling
+
+When you call the fast transcription API, implement retry logic to handle transient errors and rate limiting. The API enforces rate limits, which can result in an error during high-concurrency operations.
+
+### Recommended retry configuration
+
+- Retry up to five times on transient errors.
+
+- Use exponential backoff: 2 seconds, 4 sec, 8 sec, 16 sec, 32 sec.
+
+- Total backoff time: 62 sec.
+
+This configuration provides sufficient time for the API to recover during rate-limiting windows, especially when you run batch operations with multiple concurrent workers.
+
+### When to use retry logic
+
+Implement retry logic for the following error categories:
+
+- **HTTP errors** - Retry on:
+  - HTTP 429 (rate limit)
+  - HTTP 500, 502, 503, 504 (server errors)
+  - `status_code=None` (incomplete response downloads)
+
+- **Azure SDK network errors** - Retry on:
+  - `ServiceRequestError`
+  - `ServiceResponseError`
+  
+  These errors wrap low-level network exceptions like `urllib3.exceptions.ReadTimeoutError`, connection resets, and TLS failures.
+
+- **Python network exceptions** - Retry on:
+  - `ConnectionError`
+  - `TimeoutError`
+  - `OSError`
+
+Don't retry on the following errors, because they indicate client-side issues that require correction:
+
+- HTTP 400 (bad request)
+- HTTP 401 (unauthorized)
+- HTTP 422 (unprocessable entity)
+- Other client errors (4xx status codes)
+
+### Implementation notes
+
+- Reset the audio file stream (`seek(0)`) before each retry attempt.
+
+- When you use concurrent workers, the default HTTP read timeout (300 seconds) might be exceeded under heavy rate limiting.
+
+- The API might accept a request but time out while generating the response. This condition can appear as an SDK-wrapped network error rather than a standard HTTP error.
+
+
+## Related content
+
+- [LLM Speech REST API reference](https://learn.microsoft.com/rest/api/speechtotext/transcriptions/transcribe)
+- [Fast transcription](fast-transcription-create.md)

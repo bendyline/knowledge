@@ -1,0 +1,36 @@
+# Source code: aspnetcore/tutorials/first-mvc-app/start-mvc/sample/2.2-completed/Controllers/HomeController.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using MvcMovie.Models;
+
+namespace MvcMovie.Controllers
+{
+    public class HomeController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+    }
+}
+
+```

@@ -1,0 +1,47 @@
+---
+title: "DataMember (MDX)"
+description: "DataMember (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# DataMember (MDX)
+
+
+  Returns the system-generated data member that is associated with a nonleaf member of a dimension.  
+  
+## Syntax  
+  
+```  
+  
+Member_Expression.DataMember  
+```  
+  
+## Arguments  
+ *Member_Expression*  
+ A valid Multidimensional Expressions (MDX) expression that returns a member.  
+  
+## Remarks  
+ This function operates on nonleaf members in any hierarchy and can be used by the [UPDATE CUBE Statement (MDX)](mdx-data-manipulation-update-cube.md) command to writeback data to a nonleaf member directly, rather than to the leaf member's descendants.  
+  
+> **Note:**  
+>  Returns the specified member if the specified member is a leaf member, or if the nonleaf member does not have an associated data member.  
+  
+## Example  
+ The following example uses the **DataMember** function in a calculated measure to show the sales quota for each individual employee:  
+  
+```  
+WITH MEMBER measures.IndividualQuota AS   
+([Employee].[Employees].currentmember.datamember, [Measures].[Sales Amount Quota])  
+,FORMAT_STRING='Currency'  
+SELECT {[Measures].[Sales Amount Quota],[Measures].IndividualQuota} ON COLUMNS,  
+[Employee].[Employees].MEMBERS ON ROWS  
+FROM [Adventure Works]  
+```  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)
+- [Key Concepts in MDX (Analysis Services)](https://learn.microsoft.com/analysis-services/multidimensional-models/mdx/key-concepts-in-mdx-analysis-services)

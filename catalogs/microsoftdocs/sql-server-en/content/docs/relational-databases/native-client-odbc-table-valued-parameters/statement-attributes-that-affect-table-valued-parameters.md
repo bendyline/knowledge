@@ -1,0 +1,42 @@
+---
+title: "Attributes that affect Table-Valued Parameters"
+description: "Statement Attributes that Affect Table-Valued Parameters"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "table-valued parameters (ODBC), descriptor header field"
+  - "table-valued parameters (ODBC), statement attribute"
+---
+# Statement Attributes that Affect Table-Valued Parameters
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The following table describes the attributes in a descriptor field.  
+  
+| Attribute name | Type | Description |
+| --- | --- | --- |
+| SQL_SOPT_SS_PARAM_FOCUS | SQLUINTEGER | For more information about SQL_SS_PARAM_FOCUS, see [SQLSetStmtAttr](../native-client-odbc-api/sqlsetstmtattr.md). |
+| SQL_SOPT_SS_NAME_SCOPE | SQLUINTEGER | For more information about SQL_SS_NAME_SCOPE, see [SQLSetStmtAttr](../native-client-odbc-api/sqlsetstmtattr.md). |
+
+## Related content
+
+- [Table-Valued Parameters (ODBC)](table-valued-parameters-odbc.md)

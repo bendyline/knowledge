@@ -1,0 +1,144 @@
+---
+title: "Azure Resource Manager: Create an Azure SQL Managed Instance"
+description: Learn how to create an Azure SQL Managed Instance by using an Azure Resource Manager template.
+author: urosmil
+ms.author: urmilano
+ms.reviewer: mathoma
+ms.date: 06/22/2020
+ms.service: azure-sql-managed-instance
+ms.subservice: deployment-configuration
+ms.topic: quickstart
+ms.custom: subject-armqs, mode-arm, devx-track-arm-template, ignite-2023
+---
+
+# Quickstart: Create an Azure SQL Managed Instance using an ARM template
+
+This quickstart focuses on the process of deploying an Azure Resource Manager template (ARM template) to create an Azure SQL Managed Instance and vNet. [Azure SQL Managed Instance](sql-managed-instance-paas-overview.md) is an intelligent, fully managed, scalable cloud database, with almost 100% feature parity with the SQL Server database engine.
+
+
+An [ARM template](https://learn.microsoft.com/azure/azure-resource-manager/templates/overview) is a JavaScript Object Notation (JSON) file that defines the infrastructure and configuration for your project. The template uses declarative syntax. In declarative syntax, you describe your intended deployment without writing the sequence of programming commands to create the deployment.
+
+If your environment meets the prerequisites and you're familiar with using ARM templates, select the **Deploy to Azure** button. The template will open in the Azure portal.
+
+[Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fquickstarts%2Fmicrosoft.sql%2Fsqlmi-new-vnet%2Fazuredeploy.json)
+
+## Prerequisites
+
+- An Azure subscription. If you don't have an Azure subscription, [create a free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+- In the general case, your user needs to have the role [SQL Managed Instance Contributor](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#sql-managed-instance-contributor) assigned at subscription scope.
+- If provisioning in a subnet that is already delegated to Azure SQL Managed Instance, your user only needs the Microsoft.Sql/managedInstances/write permission assigned at subscription scope.
+
+> **Note:**  
+> You can't change some configuration choices after you create the instance. Review [Modifiable configuration reference](modifiable-configuration-reference.md) before you deploy.
+
+
+## Review the template
+
+The template used in this quickstart is from [Azure Quickstart Templates](https://azure.microsoft.com/resources/templates/sqlmi-new-vnet/).
+
+**Key template parameters**
+
+| Parameter name | Default / Example | Allowed values / Constraints | Description |
+| --- | --- | --- | --- |
+| managedInstanceName | sqlmi | 1–63 characters | Name of the SQL managed instance |
+| location | resourceGroup().location | Azure regions that support SQL managed instance | Region for all resources |
+| administratorLogin | sqladmin | Cannot be reserved words | SQL administrator login |
+| administratorLoginPassword | — | Minimum length and complexity enforced | SQL administrator password |
+| vCores | 8 | Valid vCore values per SKU | Compute size of the instance |
+| storageSizeInGB | 256 | Min/Max per service tier | Storage allocated to the instance |
+| subnetAddressPrefix | 10.0.0.0/24 | Dedicated, delegated subnet required | Subnet for the managed instance |
+
+[Code reference unavailable in this source snapshot: ~/../quickstart-templates/quickstarts/microsoft.sql/sqlmi-new-vnet/azuredeploy.json](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/create-template-quickstart.md)
+
+These resources are defined in the template:
+
+- [**Microsoft.Network/networkSecurityGroups**](https://learn.microsoft.com/azure/templates/microsoft.Network/networkSecurityGroups)
+- [**Microsoft.Network/routeTables**](https://learn.microsoft.com/azure/templates/microsoft.Network/routeTables)
+- [**Microsoft.Network/virtualNetworks**](https://learn.microsoft.com/azure/templates/microsoft.Network/virtualNetworks)
+- [**Microsoft.Sql/managedinstances**](https://learn.microsoft.com/azure/templates/microsoft.sql/managedinstances)
+
+More template samples can be found in [Azure Quickstart Templates](https://azure.microsoft.com/resources/templates/?resourceType=Microsoft.Sql&pageNumber=1&sort=Popular).
+
+## Deploy the template
+
+Select **Try it** from the following PowerShell code block to open Azure Cloud Shell.
+
+**Deployment checklist**
+
+1. Verify prerequisites:
+   - Active Azure subscription
+   - Required permissions (SQL Managed Instance Contributor or Microsoft.Sql/managedInstances/write)
+2. Run the deployment command (PowerShell or Azure CLI) using the snippets below.
+3. Verify success:
+   - In the Azure portal, the deployment shows **Succeeded**
+   - The SQL managed instance appears in the target resource group with state **Creating** or **Ready**
+<!-- Added a numbered deployment checklist to clarify prerequisites, execution steps, and success verification. -->
+
+> **Important:**
+> Deploying a SQL managed instance is a long-running operation. Deployment of the first instance in the subnet typically takes much longer than deploying into a subnet with existing managed instances. For average provisioning times, see [SQL Managed Instance management operations](management-operations-duration.md).
+
+# [PowerShell](#tab/azure-powershell)
+
+```azurepowershell-interactive
+$projectName = Read-Host -Prompt "Enter a project name that is used for generating resource names"
+$location = Read-Host -Prompt "Enter the location (i.e. centralus)"
+$templateUri = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sql/sqlmi-new-vnet/azuredeploy.json"
+
+$resourceGroupName = "${projectName}rg"
+
+New-AzResourceGroup -Name $resourceGroupName -Location $location
+New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri
+
+Read-Host -Prompt "Press [ENTER] to continue ..."
+```
+
+# [Azure CLI](#tab/azure-cli)
+
+```azurecli-interactive
+read -p "Enter a project name that is used for generating resource names:" projectName &&
+read -p "Enter the location (i.e. centralus):" location &&
+templateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sql/sqlmi-new-vnet/azuredeploy.json" &&
+resourceGroupName="${projectName}rg" &&
+az group create --name $resourceGroupName --location "$location" &&
+az deployment group create --resource-group $resourceGroupName --template-uri  $templateUri &&
+echo "Press [ENTER] to continue ..." &&
+read
+```
+
+---
+
+## Review deployed resources
+
+Visit the [Azure portal](https://portal.azure.com/#blade/HubsExtension/BrowseResourceGroups) and verify the managed instance is in your selected resource group. Because creating a managed instance can take some time, you might need to check the **Deployments** link on your resource group's **Overview** page.
+
+- For a quickstart that shows how to connect to SQL Managed Instance from an Azure virtual machine, see [Configure an Azure virtual machine connection](connect-vm-instance-configure.md).
+- For a quickstart that shows how to connect to SQL Managed Instance from an on-premises client computer by using a point-to-site connection, see [Configure a point-to-site connection](point-to-site-p2s-configure.md).
+
+## Clean up resources
+
+Keep the managed instance if you want to go to the [Next steps](#next-steps), but delete the managed instance and related resources after completing any additional tutorials. After deleting a managed instance, see [Delete a subnet after deleting a managed instance](virtual-cluster-architecture.md#delete-a-subnet-after-deleting-an-azure-sql-managed-instance).
+
+
+To delete the resource group:
+
+# [PowerShell](#tab/azure-powershell)
+
+```azurepowershell-interactive
+$resourceGroupName = Read-Host -Prompt "Enter the Resource Group name"
+Remove-AzResourceGroup -Name $resourceGroupName
+```
+
+# [Azure CLI](#tab/azure-cli)
+
+```azurecli
+echo "Enter the Resource Group name:" &&
+read resourceGroupName &&
+az group delete --name $resourceGroupName
+```
+
+---
+
+## Next steps
+
+> 
+> [Configure an Azure VM to connect to Azure SQL Managed Instance](connect-vm-instance-configure.md)

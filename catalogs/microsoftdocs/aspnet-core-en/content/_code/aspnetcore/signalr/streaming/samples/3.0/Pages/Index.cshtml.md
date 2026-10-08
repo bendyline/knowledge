@@ -1,0 +1,31 @@
+# Source code: aspnetcore/signalr/streaming/samples/3.0/Pages/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+<div class="container">
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">&nbsp;</div>
+        <div class="col-6">
+            <input type="button" id="streamButton" value="Start Streaming" />
+            <input type="button" id="uploadButton" value="Start Upload" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">&nbsp;</div>
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+</div>
+<script src="~/lib/signalr/signalr.js"></script>    
+<script src="~/js/stream.js"></script>
+
+```

@@ -1,0 +1,92 @@
+---
+title: Speech translation overview - Speech service
+titleSuffix: Foundry Tools
+description: With speech translation, you can add end-to-end, real-time, multi-language translation of speech to your applications, tools, and devices.
+author: PatrickFarley
+manager: mcleans
+ms.service: azure-speech-foundry-tools
+ms.topic: overview
+ms.date: 02/25/2026
+ms.author: pafarley
+ms.custom: devx-track-csharp
+ai-usage: ai-assisted
+#Customer intent: As a developer, I want to learn about the benefits and capabilities of speech translation with Azure Speech in Foundry Tools.
+---
+
+# What is speech translation?
+
+In this article, you learn about the benefits and capabilities of translation with Azure Speech in Foundry Tools. The Speech service supports real-time, multi-language speech to speech and speech to text translation of audio streams. 
+
+By using the Speech SDK or Speech CLI, you can give your applications, tools, and devices access to source transcriptions and translation outputs for the provided audio. Interim transcription and translation results are returned as speech is detected, and the final results can be converted into synthesized speech.
+
+For a list of languages supported for speech translation, see [Language and voice support](language-support.md?tabs=speech-translation).
+
+> **Tip:**
+> Go to the [Speech Studio](https://aka.ms/speechstudio/speechtranslation) to quickly test and translate speech into other languages of your choice with low latency.
+
+## Core features
+
+The core features of speech translation include:
+
+- [Real-time speech translation](#real-time-speech-translation-standard)
+- [Live Interpreter](#live-interpreter)
+- [Multiple target languages translation](#multiple-target-languages-translation)
+
+## Real-time speech translation (standard)
+
+Speech translation uses one standard API for real-time translation with text output, audio output, or both.
+
+Use the standard speech translation API when you want to send an input audio stream in a specified source language and return translated text, synthesized speech, or both in your specified target language.
+
+## Live interpreter
+
+Live Interpreter is part of real-time speech translation and provides a more full-featured experience than the standard API for conversational scenarios. It continuously identifies the language being spoken without requiring you to set an input language and delivers low latency speech-to-speech translation in a natural voice that preserves the speaker's style and tone. 
+
+Live Interpreter includes advanced capabilities such as:
+
+- Unspecified input language. Receive audio in a wide range of languages without setting expected input language.
+- Language switching. Handle multiple spoken languages in the same session without restarting.
+- Bring your own voice (BYO voice). Use personal voice with Live Interpreter for real-time speech-to-speech translation.
+- Transcription in the target language. Source language transcription isn't available yet.
+
+Some use cases for Live Interpreter include:
+
+- Travel interpreter. Build solutions that let customers translate input audio to and from local languages while traveling.
+- Business meetings. Help participants who speak different languages communicate naturally in one session.
+
+For a list of supported input (source) languages, see [speech to text languages](language-support.md?tabs=stt). For supported output (target) languages, see the *Translate to text language* table in [speech translation languages](language-support.md?tabs=speech-translation).
+
+For more information, see [the speech translation how-to guide](how-to-translate-speech.md#multi-lingual-speech-translation-without-source-language-candidates), [Live Interpreter sample code](how-to-translate-speech.md#using-live-interpreter-for-real-time-speech-to-speech-translation-with-personal-voice), and [speech translation samples on GitHub](https://github.com/Azure-Samples/cognitive-services-speech-sdk/blob/master/samples/csharp/sharedcontent/console/translation_samples.cs#L472).
+
+### Multiple target languages translation
+
+In scenarios where you want output in multiple languages, the Speech service directly offers the ability for you to translate the input language into two target languages. This enables you to receive two outputs and share these translations to a wider audience in a single API call. If more output languages are required, you can create a multi-service resource or use separate translation services. 
+
+If you need translation into more than two target languages, you need to either [Create a Foundry resource](../multi-service-resource.md) or utilize separate translation services for more languages beyond the second. If you choose to call the speech translation service with a multi-service resource, note that translation fees apply for each language beyond the second, based on the character count of the translation. 
+
+To calculate the applied translation fee, see [Azure Translator in Foundry Tools pricing](https://azure.microsoft.com/products/ai-services/ai-translator#Pricing). 
+
+### Multiple target languages translation pricing
+
+It's important to note that the speech translation service operates in real-time, and the intermediate speech results are translated to generate intermediate translation results. Therefore, the actual translation amount is greater than the input audio's tokens. You're charged for the speech to text transcription and the text translation for each target language.
+
+For example, let's say that you want text translations from a one-hour audio file to three target languages. If the initial speech to text transcription contains 10,000 characters, you might be charged $2.80. 
+
+> **Warning:**
+> The prices in this example are for illustrative purposes only. See the [Azure Speech pricing](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/) and [Translator pricing](https://azure.microsoft.com/pricing/details/cognitive-services/translator/) for the most up-to-date pricing information.
+
+The previous example price of $2.80 was calculated by combining the speech to text transcription and the text translation costs. Here's how the calculation was done: 
+- The speech translation list price is $2.50 per hour, covering up to 2 target languages. The price is used as an example of how to calculate costs. See **Standard** > **Speech translation** > **Standard** in the [Azure Speech pricing table](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/) for the most up-to-date pricing information.
+- The cost for the third language translation is 30 cents in this example. The translation list price is $10 per million characters. Since the audio file contains 10,000 characters, the translation cost is $10 * 10,000 / 1,000,000 * 3 = $0.3. The number "3" in this equation represents a weighting coefficient of intermediate traffic, which might vary depending on the languages involved. The price is used as an example of how to calculate costs. See **Standard** > **Standard translation** > **Text translation** in the [Translator pricing table](https://azure.microsoft.com/pricing/details/cognitive-services/translator/) for the most up-to-date pricing information.
+
+## Get started
+
+As your first step, try the [speech translation quickstart](get-started-speech-translation.md). The speech translation service is available via the [Speech SDK](speech-sdk.md) and the [Speech CLI](spx-overview.md).
+
+You find [Speech SDK speech to text and translation samples](https://github.com/Azure-Samples/cognitive-services-speech-sdk) on GitHub. These samples cover common scenarios, such as reading audio from a file or stream, continuous and single-shot recognition and translation, and working with custom models.
+
+## Next steps
+
+* Try the [speech translation quickstart](get-started-speech-translation.md)
+* Install the [Speech SDK](speech-sdk.md)
+* Install the [Speech CLI](spx-overview.md)

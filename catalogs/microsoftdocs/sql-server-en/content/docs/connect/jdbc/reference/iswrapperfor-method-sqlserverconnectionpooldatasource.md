@@ -1,0 +1,47 @@
+---
+title: "isWrapperFor Method (SQLServerConnectionPoolDataSource)"
+description: "isWrapperFor Method (SQLServerConnectionPoolDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# isWrapperFor Method (SQLServerConnectionPoolDataSource)
+
+
+  Indicates whether this object is a wrapper for the specified interface.  
+  
+## Syntax  
+  
+```  
+  
+public boolean isWrapperFor(Class iface)  
+```  
+  
+#### Parameters  
+ *iface*  
+  
+ A **class** defining an interface.  
+  
+## Return Value  
+ **true** if this object implements the interface or wraps an object that implements the interface. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ The [isWrapperFor](iswrapperfor-method-sqlserverxadatasource.md) method and the [unwrap](unwrap-method-sqlserverconnectionpooldatasource.md) method are defined by the java.sql.Wrapper interface, which is introduced in the JDBC 4.0 Spec.  
+  
+ If this method returns true, calling [unwrap](unwrap-method-sqlserverconnectionpooldatasource.md) with the same argument will succeed.  
+  
+ For more information, see [Wrappers and Interfaces](../wrappers-and-interfaces.md).  
+  
+## Related content
+
+- [unwrap Method (SQLServerConnectionPoolDataSource)](unwrap-method-sqlserverconnectionpooldatasource.md)
+- [SQLServerConnectionPoolDataSource Methods](sqlserverconnectionpooldatasource-methods.md)
+- [SQLServerConnectionPoolDataSource Members](sqlserverconnectionpooldatasource-members.md)
+- [SQLServerConnectionPoolDataSource Class](sqlserverconnectionpooldatasource-class.md)

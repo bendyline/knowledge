@@ -1,0 +1,81 @@
+---
+title: Troubleshoot the Salesforce and Salesforce Service Cloud connectors
+titleSuffix: Azure Data Factory & Azure Synapse
+description: Learn how to troubleshoot issues with the Salesforce and Salesforce Service Cloud connectors in Azure Data Factory and Azure Synapse Analytics. 
+author: simplywilson
+ms.subservice: data-movement
+ms.topic: troubleshooting
+ms.date: 03/04/2024
+ms.author: tinglee
+ms.custom:
+  - has-adal-ref
+  - synapse
+  - sfi-image-nochange
+---
+
+# Troubleshoot the Salesforce and Salesforce Service Cloud connectors in Azure Data Factory and Azure Synapse
+
+**APPLIES TO:** Azure Data Factory Azure Synapse Analytics
+
+
+
+> **Tip:**
+> [Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory) is the next generation of Azure Data Factory, with a simpler architecture, built-in AI, and new features. If you're new to data integration, start with Fabric Data Factory. Existing ADF workloads can upgrade to Fabric to access new capabilities across data science, real-time analytics, and reporting.
+>
+> - [Start a Fabric free trial](https://learn.microsoft.com/fabric/get-started/fabric-trial).
+> - [Upgrade from Azure Data Factory to Data Factory in Microsoft Fabric](https://learn.microsoft.com/fabric/data-factory/migrate-planning-azure-data-factory).
+
+
+This article provides suggestions to troubleshoot common problems with the Salesforce and Salesforce Service Cloud connectors in Azure Data Factory and Azure Synapse.
+
+## Error code: SalesforceOauth2ClientCredentialFailure
+
+- **Cause**: You encounter this error code as you don't complete the Salesforce Connected App configuration.
+
+- **Recommendation**: <br/>To configure your Salesforce Connected App, follow these steps:
+    1. Create your connected app, and complete its [basic information](https://help.salesforce.com/s/articleView?id=sf.connected_app_create_basics.htm&type=5) and [OAuth settings](https://help.salesforce.com/s/articleView?id=sf.connected_app_create_api_integration.htm&type=5) for the connected app.
+        1. Configure the **Connected App Name**, **API Name** and **Contact Email**.
+        1. Select **Enable OAuth Settings**.
+        1. Callback url can be random as Client Credential Flow don't need callback, for example: `https://login.salesforce.com/services/oauth2/callback` 
+        1. Setup OAuth access token scope, it's better to set up "**Full access**" for Azure Data Factory in case of permission issue.
+        <br/>If you want to keep the mini scope, at least the "**Manage user data via APIs (api)**" should be added.
+        <br/>If you don't set proper scope, you may get following similar message like: **Unauthorized, This session is not valid for use with the REST API**
+        1. Select **Enable Client Credentials Flow**.
+    
+        Screenshot of configuring basic information for the Salesforce connector app.
+
+    1. Get Client ID and Secret through **Manage Consumer Details**.
+
+        Screenshot of the manage consumer details.
+
+    1. Copy the client ID and secret to a txt file for Azure Data Factory linked service.
+
+        Screenshot of the Client ID and Secret.
+
+    1. Create a user who has the API Only User permission.
+
+        1. Set up a permission set which only has API only permission.
+        Screenshot of setting system permissions.
+        1. Specify the **API Enabled** and **Api Only User**.
+        Screenshot of the system permissions.
+    
+    1. Create a new user and link the permission set in the user detail page: **Permission Set Assignments**.
+        Screenshot of the permission set assignments.
+
+    1. From the connected app detail page, click Manage, click **Edit Policies**. For **Run As**, select an execution user who has the API Only User permission. For **Timeout Value**, you can select a proper value or remain default None.
+    
+        Screenshot of the connected app detail.
+        
+        Screenshot of the edit policies.
+
+## Related content
+
+For more troubleshooting help, try these resources:
+
+- [Connector troubleshooting guide](connector-troubleshoot-guide.md)
+- [Data Factory blog](https://techcommunity.microsoft.com/t5/azure-data-factory-blog/bg-p/AzureDataFactoryBlog)
+- [Data Factory feature requests](https://learn.microsoft.com/answers/topics/azure-data-factory.html)
+- [Azure videos](https://learn.microsoft.com/shows/data-exposed/?products=azure\&terms=data-factory)
+- [Microsoft Q\&A page](https://learn.microsoft.com/answers/topics/azure-data-factory.html)
+- [Stack Overflow forum for Data Factory](https://stackoverflow.com/questions/tagged/azure-data-factory)
+- [X information about Data Factory](https://x.com/hashtag/DataFactory)

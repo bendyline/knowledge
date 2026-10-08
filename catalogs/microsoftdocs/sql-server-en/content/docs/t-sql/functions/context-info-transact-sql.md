@@ -1,0 +1,85 @@
+---
+title: CONTEXT_INFO (Transact-SQL)
+description: "CONTEXT_INFO (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "CONTEXT_INFO_TSQL"
+  - "CONTEXT_INFO"
+helpviewer_keywords:
+  - "CONTEXT_INFO function"
+  - "Multiple Active Result Sets"
+  - "context information [SQL Server]"
+  - "MARS [SQL Server]"
+  - "session context information [SQL Server]"
+dev_langs:
+  - "TSQL"
+---
+# CONTEXT_INFO (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+This function returns the **context_info** value either set for the current session or batch, or derived through use of the [SET CONTEXT_INFO](../statements/set-context-info-transact-sql.md) statement.
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+CONTEXT_INFO()  
+```  
+
+## Return value
+The **context_info** value.
+  
+If **context_info** was not set:
+-    SQL Server 
+ returns NULL.  
+-    SQL Database
+ returns a unique session-specific GUID.  
+  
+## Remarks  
+The Multiple Active Result Sets (MARS) feature enables applications to run multiple batches, or requests, at the same time, on the same connection. When one of the MARS connection batches runs SET CONTEXT_INFO, the `CONTEXT_INFO` function returns the new context value, when the `CONTEXT_INFO` function runs in the same batch as the SET statement. If the `CONTEXT_INFO` function runs in one or more of the other connection batches, the `CONTEXT_INFO` function does not return the new value unless those batches started after completion of the batch that ran the SET statement.
+  
+## Permissions  
+Requires no special permissions. The following system views store the context information, but querying these views directly requires SELECT and VIEW SERVER STATE permissions:
+- **sys.dm_exec_requests**
+- **sys.dm_exec_sessions**
+- **sys.sysprocesses**
+  
+## Examples  
+This simple example sets the **context_info** value to `0x1256698456`, and then uses the `CONTEXT_INFO` function to retrieve the value.
+  
+```sql
+SET CONTEXT_INFO 0x1256698456;  
+GO  
+SELECT CONTEXT_INFO();  
+GO  
+```  
+  
+## Related content
+
+- [SET CONTEXT_INFO (Transact-SQL)](../statements/set-context-info-transact-sql.md)
+- [SESSION_CONTEXT (Transact-SQL)](session-context-transact-sql.md)
+- [sp_set_session_context (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-set-session-context-transact-sql.md)

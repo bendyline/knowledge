@@ -1,0 +1,85 @@
+---
+title: "sys.fn_trace_getinfo (Transact-SQL)"
+description: "sys.fn_trace_getinfo (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "08/09/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "fn_trace_getinfo"
+  - "fn_trace_getinfo_TSQL"
+helpviewer_keywords:
+  - "traces [SQL Server], status information"
+  - "status information [SQL Server], traces"
+  - "sys.fn_trace_getinfo function"
+  - "fn_trace_getinfo function"
+dev_langs:
+  - "TSQL"
+---
+# sys.fn_trace_getinfo (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns information about a specified trace or all existing traces.  
+  
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use Extended Events instead.    
+  
+ 
+  
+## Syntax  
+  
+```  
+  
+sys.fn_trace_getinfo ( { trace_id | NULL | 0 | DEFAULT } )  
+```  
+  
+## Arguments  
+ *trace_id*  
+ Is the ID of the trace. *trace_id* is **int**.  Valid inputs are the ID number of a trace, NULL, 0, or DEFAULT. NULL, 0, and DEFAULT are equivalent values in this context. Specify NULL, 0, or DEFAULT to return information for all traces in the instance of  SQL Server 
+.  
+  
+## Tables Returned  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| traceid | **int** | ID of the trace. |
+| property | **int** | Property of the trace:<br /><br /> 1= Trace options. For more information, see @options in [sp_trace_create (Transact-SQL)](../system-stored-procedures/sp-trace-create-transact-sql.md).<br /><br /> 2 = File name<br /><br /> 3 = Max size<br /><br /> 4 = Stop time<br /><br /> 5 = Current trace status. 0 = stopped. 1 = running. |
+| value | **sql_variant** | Information about the property of the trace specified. |
+  
+## Remarks  
+ When passed the ID of a specific trace, fn_trace_getinfo returns information about that trace. When passed an invalid ID, this function returns an empty rowset.  
+  
+ fn_trace_getinfo appends a .trc extension to the name of any trace file included in its result set. For information on defining a trace, see [sp_trace_create (Transact-SQL)](../system-stored-procedures/sp-trace-create-transact-sql.md). For similar information about trace filters, see [sys.fn_trace_getfilterinfo (Transact-SQL)](sys-fn-trace-getfilterinfo-transact-sql.md).  
+  
+ For a complete example of using trace stored procedures, see [Create a Trace (Transact-SQL)](../sql-trace/create-a-trace-transact-sql.md).  
+  
+## Permissions  
+ Requires ALTER TRACE permission on the server.  
+  
+## Examples  
+ The following example returns information about all active traces.  
+  
+```  
+SELECT * FROM sys.fn_trace_getinfo(0) ;  
+GO  
+```  
+  
+## Related content
+
+- [Create a Trace (Transact-SQL)](../sql-trace/create-a-trace-transact-sql.md)
+- [sp_trace_create (Transact-SQL)](../system-stored-procedures/sp-trace-create-transact-sql.md)
+- [sp_trace_generateevent (Transact-SQL)](../system-stored-procedures/sp-trace-generateevent-transact-sql.md)
+- [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md)
+- [sp_trace_setfilter (Transact-SQL)](../system-stored-procedures/sp-trace-setfilter-transact-sql.md)
+- [sp_trace_setstatus (Transact-SQL)](../system-stored-procedures/sp-trace-setstatus-transact-sql.md)
+- [sys.fn_trace_getfilterinfo (Transact-SQL)](sys-fn-trace-getfilterinfo-transact-sql.md)
+- [sys.fn_trace_geteventinfo (Transact-SQL)](sys-fn-trace-geteventinfo-transact-sql.md)
+- [sys.fn_trace_gettable (Transact-SQL)](sys-fn-trace-gettable-transact-sql.md)

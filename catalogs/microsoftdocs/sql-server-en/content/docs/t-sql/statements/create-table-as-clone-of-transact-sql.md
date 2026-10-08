@@ -1,0 +1,118 @@
+---
+title: CREATE TABLE AS CLONE OF
+description: "CREATE TABLE AS CLONE OF creates a new table as a clone of another table in Fabric Data Warehouse."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: ajagadish
+ms.date: 11/03/2023
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+dev_langs:
+  - "TSQL"
+ms.custom: ignite-2023
+monikerRange: "=fabric"
+---
+# CREATE TABLE AS CLONE OF
+
+**Applies to:**
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+Creates a new table as a [zero-copy clone of another table](https://learn.microsoft.com/fabric/data-warehouse/clone-table) in Warehouse
+ in Microsoft Fabric
+. Only the metadata of the table is copied. The underlying data of the table, stored as parquet files, is not copied.
+
+For more information on cloning a table in Microsoft Fabric, see [Clone table with T-SQL in Microsoft Fabric](https://learn.microsoft.com/fabric/data-warehouse/tutorial-clone-table). You can also clone tables in Microsoft Fabric via the Fabric portal, for examples see [Clone tables in the Fabric portal](https://learn.microsoft.com/fabric/data-warehouse/tutorial-clone-table-portal).
+
+ 
+
+## Syntax
+  
+```syntaxsql
+CREATE TABLE 
+    { database_name.schema_name.table_name | schema_name.table_name | table_name } 
+AS CLONE OF 
+    { database_name.schema_name.table_name | schema_name.table_name | table_name } [AT {point_in_time}]
+```  
+
+## Arguments
+
+#### *database_name*
+
+ The name of the database that will contain the new cloned table. The default is the current database.  
+  
+#### *schema_name*
+
+The schema of the table where the table clone is located. Specifying *schema* is optional when table is cloned within the same schema. If blank, the default schema is used.
+
+Providing the schema name is required when a table is cloned across schemas.
+  
+#### *table_name*
+
+The name of the cloned table. Table names must follow the [rules for identifiers](../../relational-databases/databases/database-identifiers.md?view=fabric&preserve-view=true). *table_name* can be a maximum of 128 characters.
+
+#### *point_in_time*
+
+At the date and time provided, the table clone accurately mirrors the data as it was at that particular date and time in UTC. The format of the datetime data type value must be 'YYYY-MM-DDThh:mm:ss', where 'T' indicates the start of time.
+
+Specifying the *point_in_time* is not required for creating table clones as of current point in time.
+
+Warehouse
+ in Microsoft Fabric
+ automatically preserves and maintains the data history for seven calendar days. For more information, visit [Clone table](https://learn.microsoft.com/fabric/data-warehouse/clone-table).
+
+## Permissions
+
+Requires:
+
+ - SELECT permission on the entire source table
+ - CREATE TABLE permissions on the schema in which the clone of the table will be created
+  
+## Constraints
+
+Primary and unique key constraints defined in the source table are replicated when creating a clone.
+ 
+## Limitations
+
+For limitations, see [Clone table limitations](https://learn.microsoft.com/fabric/data-warehouse/clone-table#limitations).
+
+## Examples
+
+### A. Create a table clone within the same schema
+
+```sql
+--Clone creation within the same schema
+CREATE TABLE dbo.Employee AS CLONE OF dbo.EmployeeUSA;
+```  
+
+### B. Create a table clone across schemas within the same data warehouse
+
+```sql
+--Clone creation across schemas
+CREATE TABLE dbo.Employee AS CLONE OF dbo1.EmployeeUSA;
+```  
+
+### C. Create a table clone within the same schema at a point in time
+
+```sql
+--Clone creation within the same schema
+CREATE TABLE dbo.Employee AS CLONE OF dbo.EmployeeUSA AT '2023-05-23T14:24:10.325';
+```
+
+### D. Create a table clone across schema at a point in time
+
+```sql
+--Clone creation within the same schema
+CREATE TABLE dbo.Employee AS CLONE OF dbo1.EmployeeUSA AT '2023-05-23T14:24:10';
+```
+
+## Related content
+
+- [Clone table in Microsoft Fabric](https://learn.microsoft.com/fabric/data-warehouse/clone-table)
+- [Create tables in the Warehouse in Microsoft Fabric](https://learn.microsoft.com/fabric/data-warehouse/create-table)
+- [What is data warehousing in Microsoft Fabric?](https://learn.microsoft.com/fabric/data-warehouse/data-warehousing)
+- [Clone a table with T-SQL in a Warehouse](https://learn.microsoft.com/fabric/data-warehouse/tutorial-clone-table)
+- [Clone tables in the Fabric portal](https://learn.microsoft.com/fabric/data-warehouse/tutorial-clone-table-portal)

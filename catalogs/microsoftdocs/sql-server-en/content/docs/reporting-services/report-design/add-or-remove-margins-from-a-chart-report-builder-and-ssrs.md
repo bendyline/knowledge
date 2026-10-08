@@ -1,0 +1,43 @@
+---
+title: "Add or remove margins from a paginated report chart"
+description: Add or remove margins from a column or scatter chart in Report Builder. Improve readability or appearance of paginated reports.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Add or remove margins from a paginated report chart (Report Builder)
+
+  **Applies to:**
+ 
+
+
+For Column and Scatter chart types in paginated reports, the chart automatically adds side margins on the ends of the x-axis. In Bar chart types, the chart automatically adds side margins on the ends of the y-axis. In all other chart types, the chart doesn't add side margins. You can't change the size of the margin.  
+  
+ This article doesn't apply to pie, donut, funnel, or pyramid chart types.  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Enable or disable side margins  
+  
+1.  Right-click the axis and select **Axis Properties**. The **Vertical** or **HorizontalAxis Properties** dialog appears.  
+  
+1.  On the **Axis Options** page, set the **Side margins** property:  
+  
+    -   **Auto**: The chart determines whether to add a side margin based on the chart type.  
+  
+    -   **Disabled**: Bar, column, and scatter charts have no side margins.  
+  
+1.  Select **OK**.
+  
+## Related content
+
+- [Formatting axis labels on a paginated report chart (Report Builder)](formatting-axis-labels-on-a-chart-report-builder-and-ssrs.md)
+- [Axis Properties dialog, axis options (Report Builder)](https://learn.microsoft.com/previous-versions/sql/)
+- [Specify an axis interval in a paginated report (Report Builder)](specify-an-axis-interval-report-builder-and-ssrs.md)
+- [Format axis labels as dates or currencies in a paginated report (Report Builder)](format-axis-labels-as-dates-or-currencies-report-builder-and-ssrs.md)
+- [Charts in a paginated report (Report Builder)](charts-report-builder-and-ssrs.md)

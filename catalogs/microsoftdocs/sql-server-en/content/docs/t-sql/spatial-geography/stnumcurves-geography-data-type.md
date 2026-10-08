@@ -1,0 +1,83 @@
+---
+title: "STNumCurves (geography Data Type)"
+description: "STNumCurves (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STNumCurves"
+  - "STNumCurves_TSQL"
+helpviewer_keywords:
+  - "STNumCurves method (geography)"
+dev_langs:
+  - "TSQL"
+---
+# STNumCurves (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the number of curves in a one-dimensional **geography** instance.  
+  
+## Syntax  
+  
+```  
+  
+.STNumCurves()  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **geography**  
+  
+ CLR return type: **SqlGeography**  
+  
+## Remarks  
+ One-dimensional spatial data types include **LineString**, **CircularString**, and **CompoundCurve**. An empty one-dimensional **geography** instance returns 0.  
+  
+ `STNumCurves`() works only on simple types; it does not work with **geography** collections like **MultiLineString**. **NULL** is returned when the **geography** instance is not a one-dimensional data type.  
+  
+ **Null** is returned for uninitialized **geography** instances.  
+  
+## Examples  
+  
+### A. Using STNumCurves() on a CircularString instance  
+ The following example shows how to get the number of curves in a `CircularString` instance:  
+  
+```sql
+ DECLARE @g geography; 
+ SET @g = geography::Parse('CIRCULARSTRING(-122.358 47.653, -122.348 47.649, -122.348 47.658, -122.358 47.658, -122.358 47.653)');  
+ SELECT @g.STNumCurves();
+```  
+  
+### B. Using STNumCurves() on a CompoundCurve instance  
+ The following example uses `STNumCurves()` to return the number of curves in a `CompoundCurve` instance.  
+  
+```sql
+ DECLARE @g geography;  
+ SET @g = geography::Parse('COMPOUNDCURVE(CIRCULARSTRING(-122.358 47.653, -122.348 47.649, -122.348 47.658, -122.358 47.658, -122.358 47.653))');  
+ SELECT @g.STNumCurves();
+```  
+  
+## Related content
+
+- [Spatial Data Types Overview](../../relational-databases/spatial/spatial-data-types-overview.md)
+- [OGC methods on geography instances](ogc-methods-on-geography-instances.md)

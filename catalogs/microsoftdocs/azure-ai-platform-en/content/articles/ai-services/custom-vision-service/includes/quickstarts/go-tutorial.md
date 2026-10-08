@@ -1,0 +1,299 @@
+---
+author: areddish
+ms.author: areddish
+ms.service: azure-ai-custom-vision
+ms.date: 11/11/2024
+ms.topic: include
+---
+
+This guide provides instructions and sample code to help you get started using the Custom Vision client library for Go to build an image classification model. You'll create a project, add tags, train the project, and use the project's prediction endpoint URL to programmatically test it. Use this example as a template for building your own image recognition app.
+
+> **Note:**
+> If you want to build and train a classification model _without_ writing code, see the [browser-based guidance](../../getting-started-build-a-classifier.md).
+
+Use the Custom Vision client library for Go to:
+
+* Create a new Custom Vision project
+* Add tags to the project
+* Upload and tag images
+* Train the project
+* Publish the current iteration
+* Test the prediction endpoint
+
+Reference documentation for [(training)](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/services/cognitiveservices/v2.1/customvision/training) and [(prediction)](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/services/cognitiveservices/v1.1/customvision/prediction)
+
+## Prerequisites
+
+* An Azure subscription. You can [create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+* [Go 1.8 or later](https://go.dev/doc/install).
+* Once you have your Azure subscription, create a [Custom Vision resource](https://portal.azure.com/?microsoft_azure_marketplace_ItemHideKey=microsoft_azure_cognitiveservices_customvision#create/Microsoft.CognitiveServicesCustomVision) in the Azure portal to create a training and prediction resource.
+    * You can use the free pricing tier (`F0`) to try the service, and upgrade later to a paid tier for production.
+
+
+## Create environment variables 
+
+In this example, you'll write your credentials to environment variables on the local machine running the application.
+
+
+Go to the Azure portal. If the Custom Vision resources you created in the **Prerequisites** section deployed successfully, select the **Go to Resource** button under **Next steps**. You can find your keys and endpoints in the resources' **Keys and Endpoint** pages, under **Resource Management**. You'll need to get the keys for both your training resource and prediction resource, along with the API endpoints.
+
+You can find the prediction resource ID on the prediction resource's **Properties** tab in the Azure portal, listed as **Resource ID**.
+
+> **Tip:**
+> You also use https://www.customvision.ai to get these values. After you sign in, select the **Settings** icon at the top right. On the **Setting** pages, you can view all the keys, resource ID, and endpoints.
+
+
+To set the environment variables, open a console window and follow the instructions for your operating system and development environment. 
+
+- To set the `VISION_TRAINING KEY` environment variable, replace `<your-training-key>` with one of the keys for your training resource.
+- To set the `VISION_TRAINING_ENDPOINT` environment variable, replace `<your-training-endpoint>` with the endpoint for your training resource.
+- To set the `VISION_PREDICTION_KEY` environment variable, replace `<your-prediction-key>` with one of the keys for your prediction resource.
+- To set the `VISION_PREDICTION_ENDPOINT` environment variable, replace `<your-prediction-endpoint>` with the endpoint for your prediction resource.
+- To set the `VISION_PREDICTION_RESOURCE_ID` environment variable, replace `<your-resource-id>` with the resource ID for your prediction resource.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/microsoft-entra-id-akv-expanded.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/custom-vision-service/includes/quickstarts/go-tutorial.md)
+
+#### [Windows](#tab/windows)
+
+```console
+setx VISION_TRAINING_KEY <your-training-key>
+```
+
+```console
+setx VISION_TRAINING_ENDPOINT <your-training-endpoint>
+```
+
+```console
+setx VISION_PREDICTION_KEY <your-prediction-key>
+```
+
+```console
+setx VISION_PREDICTION_ENDPOINT <your-prediction-endpoint>
+```
+
+```console
+setx VISION_PREDICTION_RESOURCE_ID <your-resource-id>
+```
+
+After you add the environment variables, you might need to restart any running programs that read the environment variables, including the console window.
+
+#### [Linux](#tab/linux)
+
+```bash
+export VISION_TRAINING_KEY=<your-training-key>
+```
+
+```bash
+export VISION_TRAINING_ENDPOINT=<your-training-endpoint>
+```
+
+```bash
+export VISION_PREDICTION_KEY=<your-prediction-key>
+```
+
+```bash
+export VISION_PREDICTION_ENDPOINT=<your-prediction-endpoint>
+```
+
+```bash
+export VISION_PREDICTION_RESOURCE_ID=<your-resource-id>
+```
+
+After you add the environment variables, run `source ~/.bashrc` from your console window to make the changes effective.
+
+---
+
+
+## Setting up
+
+### Install the Custom Vision client library
+
+To write an image analysis app with Custom Vision for Go, you need the Custom Vision service client library. Run the following command in PowerShell:
+
+```shell
+go get -u github.com/Azure/azure-sdk-for-go/...
+```
+
+Or if you use `dep`, within your repo run:
+```shell
+dep ensure -add github.com/Azure/azure-sdk-for-go
+```
+
+
+## Get the sample images
+
+This example uses the images from the [Foundry Tools Python SDK Samples](https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/tree/master/samples/vision/images) repository on GitHub. Clone or download this repository to your development environment. Remember its folder location for a later step.
+
+
+
+## Create the Custom Vision project
+
+Create a new file called *sample.go* in your preferred project directory, and open it in your preferred code editor.
+
+Add the following code to your script to create a new Custom Vision service project.
+
+See the [CreateProject](https://learn.microsoft.com/java/api/com.microsoft.azure.cognitiveservices.vision.customvision.training.trainings.createproject#com_microsoft_azure_cognitiveservices_vision_customvision_training_Trainings_createProject_String_CreateProjectOptionalParameter_) method to specify other options when you create your project (explained in the [Build a classifier](../../getting-started-build-a-classifier.md) web portal guide).
+
+```go
+import(
+    "context"
+    "bytes"
+    "fmt"
+    "io/ioutil"
+    "path"
+    "log"
+    "time"
+    "github.com/Azure/azure-sdk-for-go/services/cognitiveservices/v3.0/customvision/training"
+    "github.com/Azure/azure-sdk-for-go/services/cognitiveservices/v3.0/customvision/prediction"
+)
+
+var (
+    training_key string = os.Getenv("VISION_TRAINING_KEY")
+    prediction_key string = os.Getenv("VISION_PREDICTION_KEY")
+    prediction_resource_id = os.Getenv("VISION_PREDICTION_RESOURCE_ID")
+    endpoint string = os.Getenv("VISION_ENDPOINT")    
+
+    project_name string = "Go Sample Project"
+    iteration_publish_name = "classifyModel"
+    sampleDataDirectory = "<path to sample images>"
+)
+
+func main() {
+    fmt.Println("Creating project...")
+
+    ctx = context.Background()
+
+    trainer := training.New(training_key, endpoint)
+
+    project, err := trainer.CreateProject(ctx, project_name, "sample project", nil, string(training.Multilabel))
+    if (err != nil) {
+        log.Fatal(err)
+    }
+```
+
+## Create tags in the project
+
+To create classification tags to your project, add the following code to the end of *sample.go*:
+
+```go
+// Make two tags in the new project
+hemlockTag, _ := trainer.CreateTag(ctx, *project.ID, "Hemlock", "Hemlock tree tag", string(training.Regular))
+cherryTag, _ := trainer.CreateTag(ctx, *project.ID, "Japanese Cherry", "Japanese cherry tree tag", string(training.Regular))
+```
+
+## Upload and tag images
+
+To add the sample images to the project, insert the following code after the tag creation. This code uploads each image with its corresponding tag. You can upload up to 64 images in a single batch.
+
+> **Note:**
+> You'll need to change the path to the images based on where you downloaded the Foundry Tools Go SDK Samples project earlier.
+
+```go
+fmt.Println("Adding images...")
+japaneseCherryImages, err := ioutil.ReadDir(path.Join(sampleDataDirectory, "Japanese Cherry"))
+if err != nil {
+    fmt.Println("Error finding Sample images")
+}
+
+hemLockImages, err := ioutil.ReadDir(path.Join(sampleDataDirectory, "Hemlock"))
+if err != nil {
+    fmt.Println("Error finding Sample images")
+}
+
+for _, file := range hemLockImages {
+    imageFile, _ := ioutil.ReadFile(path.Join(sampleDataDirectory, "Hemlock", file.Name()))
+    imageData := ioutil.NopCloser(bytes.NewReader(imageFile))
+
+    trainer.CreateImagesFromData(ctx, *project.ID, imageData, []string{ hemlockTag.ID.String() })
+}
+
+for _, file := range japaneseCherryImages {
+    imageFile, _ := ioutil.ReadFile(path.Join(sampleDataDirectory, "Japanese Cherry", file.Name()))
+    imageData := ioutil.NopCloser(bytes.NewReader(imageFile))
+    trainer.CreateImagesFromData(ctx, *project.ID, imageData, []string{ cherryTag.ID.String() })
+}
+```
+
+## Train and publish the project
+
+This code creates the first iteration of the prediction model and then publishes that iteration to the prediction endpoint. The name given to the published iteration can be used to send prediction requests. An iteration isn't available in the prediction endpoint until it's published.
+
+```go
+fmt.Println("Training...")
+iteration, _ := trainer.TrainProject(ctx, *project.ID)
+for {
+    if *iteration.Status != "Training" {
+        break
+    }
+    fmt.Println("Training status: " + *iteration.Status)
+    time.Sleep(1 * time.Second)
+    iteration, _ = trainer.GetIteration(ctx, *project.ID, *iteration.ID)
+}
+fmt.Println("Training status: " + *iteration.Status)
+
+trainer.PublishIteration(ctx, *project.ID, *iteration.ID, iteration_publish_name, prediction_resource_id))
+```
+
+## Use the prediction endpoint
+
+To send an image to the prediction endpoint and retrieve the prediction, add the following code to the end of the file:
+
+```go
+    fmt.Println("Predicting...")
+    predictor := prediction.New(prediction_key, endpoint)
+
+    testImageData, _ := ioutil.ReadFile(path.Join(sampleDataDirectory, "Test", "test_image.jpg"))
+    results, _ := predictor.ClassifyImage(ctx, *project.ID, iteration_publish_name, ioutil.NopCloser(bytes.NewReader(testImageData)), "")
+
+    for _, prediction := range *results.Predictions    {
+        fmt.Printf("\t%s: %.2f%%", *prediction.TagName, *prediction.Probability * 100)
+        fmt.Println("")
+    }
+}
+```
+
+## Run the application
+
+Run the application by using the following command:
+
+```shell
+go run sample.go
+```
+
+The output of the application should be similar to the following text:
+
+```console
+Creating project...
+Adding images...
+Training...
+Training status: Training
+Training status: Training
+Training status: Training
+Training status: Completed
+Done!
+        Hemlock: 93.53%
+        Japanese Cherry: 0.01%
+```
+
+You can then verify that the test image (found in *<base_image_url>/Images/Test/*) is tagged appropriately. You can also go back to the [Custom Vision website](https://customvision.ai) and see the current state of your newly created project.
+
+## Clean up resources
+
+
+If you wish to implement your own image classification project (or try an [object detection](../../quickstarts/object-detection.md) project instead), you might want to delete the tree identification project from this example. A free subscription allows for two Custom Vision projects.
+
+On the [Custom Vision website](https://customvision.ai), navigate to **Projects** and select the trash can under My New Project.
+
+Screenshot of a panel labeled My New Project with a trash can icon.
+
+
+## Related content
+
+Now you've seen how every step of the object detection process can be done in code. This sample executes a single training iteration, but often you'll need to train and test your model multiple times in order to make it more accurate.
+
+> 
+> [Test and retrain a model](../../test-your-model.md)
+
+* [What is Custom Vision?](../../overview.md)
+* [SDK reference documentation (training)](https://godoc.org/github.com/Azure/azure-sdk-for-go/services/cognitiveservices/v2.1/customvision/training)
+* [SDK reference documentation (prediction)](https://godoc.org/github.com/Azure/azure-sdk-for-go/services/cognitiveservices/v1.1/customvision/prediction)

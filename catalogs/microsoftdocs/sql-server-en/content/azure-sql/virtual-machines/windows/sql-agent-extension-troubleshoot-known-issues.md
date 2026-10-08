@@ -1,0 +1,256 @@
+---
+title: Known Issues and Troubleshooting the SQL Server IaaS Agent Extension
+description: Learn about the known issues and how to troubleshoot errors with the SQL Server Iaas Agent extension.
+author: dplessMSFT
+ms.author: dpless
+ms.reviewer: mathoma, randolphwest
+ms.date: 05/06/2026
+ms.service: azure-vm-sql-server
+ms.subservice: management
+ms.topic: how-to
+---
+# Known issues and troubleshooting the SQL Server IaaS Agent extension
+
+
+
+  **Applies to:**    [SQL Server on Azure VM](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This article helps you resolve known issues and troubleshoot errors when using the [SQL Server IaaS Agent extension](sql-server-iaas-agent-extension-automate-management.md).
+
+For answers to frequently asked questions about the extension, check out the [FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/virtual-machines/windows/frequently-asked-questions-faq.yml#sql-server-iaas-agent-extension).
+
+## Check prerequisites
+
+To avoid errors due to unsupported options or limitations, verify the [prerequisites](sql-agent-extension-manually-register-single-vm.md#prerequisites) for the extension.
+
+If you repair or reinstall the SQL IaaS Agent extension, your settings aren't preserved, other than licensing changes. If you repair or reinstall the extension, you have to reconfigure automated backup, automated patching, and any other services that you configured prior to the repair or reinstall.
+
+## Check extension health
+
+You can check the health of your extension on the **Overview** page of your [SQL virtual machines](manage-sql-vm-portal.md#overview-page) resource in the Azure portal, under **Extension health status**.
+
+Screenshot of the Azure portal, the overview pane of the SQL virtual machines resource.
+
+> **Note:**  
+> You can also use a PowerShell script to check the extension health status on your virtual machines. You can find the full script on [GitHub](https://github.com/Azure/azure-docs-powershell-samples/blob/master/sql-virtual-machine/get-sqliaasextension-healthstatus/GetSqlVirtualMachinesExtensionHealthStatus.psm1).
+
+The status of the SQL IaaS Agent extension can be:
+
+- **Healthy**: Everything is working as expected.
+- **Failed**: The main SQL IaaS Agent service isn't running on the SQL Server virtual machine (VM).
+- **Unhealthy**: One or more subservices has a problem.
+
+If the state of the SQL IaaS Agent extension is either **Unhealthy** or **Failed**, check **Notifications** on the **Overview** page to find out more details.
+
+## Repair extension
+
+It's possible for your SQL IaaS Agent extension to be in a failed state. Use the Azure portal to repair the SQL IaaS Agent extension.
+
+To repair the extension with the Azure portal:
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+1. Go to your [SQL Server virtual machines](manage-sql-vm-portal.md) resource.
+1. Select your SQL Server VM from the list. If your SQL Server VM isn't listed here, it likely hasn't been registered with the SQL IaaS Agent extension.
+1. Select **SQL IaaS Agent Extension Settings** under **Help**.
+1. If your provisioning state shows as **Failed**, choose **Repair** to repair the extension. If your state is **Succeeded**, you can check the box next to **Force repair** to repair the extension regardless of state.
+
+   Screenshot of the SQL IaaS Agent extension settings page of the SQL virtual machines extension in the Azure portal. The options for repairing the extension are shown.
+
+## Main extension service isn't running
+
+The main service for the SQL IaaS Agent extension (**Microsoft SQL Server IaaS agent**) is in a stopped state. The SQL IaaS Agent extension status is *failed* due to this error.
+
+To resolve this error condition, [repair](#repair-extension) the extension.
+
+## The extension query service isn't running
+
+The SQL IaaS Agent extension uses the query service (**Microsoft SQL Server IaaS Query Service**) to communicate with SQL Server. If the query service is in a stopped state, features that rely on communication with SQL Server won't work. The SQL IaaS Agent extension status is *unhealthy* due to this error.
+
+To resolve this error condition, [repair](#repair-extension) the extension.
+
+## SQL Server isn't running
+
+The SQL Server service is stopped. The SQL IaaS Agent extension status is *unhealthy* due to this error.
+
+Investigate further, and [restart the service](https://learn.microsoft.com/sql/database-engine/configure-windows/start-stop-pause-resume-restart-sql-server-services).
+
+## The extension doesn't have correct permissions
+
+The SQL IaaS Agent extension query service (**Microsoft SQL Server IaaS Query Service**) uses the `NT Service\SQLIaaSExtensionQuery` account to query the SQL Server instance. If this login is removed from SQL Server, or if a user or domain policy changes permissions for the login, you'll see the error that the extension doesn't have correct permissions. The SQL IaaS Agent extension status is *unhealthy* due to this error.
+
+For SQL Server VMs that use the least privilege permissions model, check to make sure the `NT Service\SQLIaaSExtensionQuery` account has the proper [permissions](sql-server-iaas-agent-extension-automate-management.md#permission-models) associated with each enabled feature. If no features are enabled, then you'll see the error if the `NT Service\SQLIaaSExtensionQuery` login doesn't exist within SQL Server or if **Microsoft SQL Server IaaS Query Service** is running under a different username than `NT Service\SQLIaaSExtensionQuery`.
+
+Some SQL Server VMs deployed before October 2022 might still use the [older sysadmin permissions model](sql-server-iaas-agent-extension-automate-management.md#permission-models). For these older VMs, you'll see the permissions error if the `NT Service\SQLIaaSExtensionQuery` doesn't exist, or doesn't have **sysadmin** rights within SQL Server, or if **Microsoft SQL Server IaaS Query Service** is running under a different username than `NT Service\SQLIaaSExtensionQuery`.
+
+To resolve this error condition, confirm the login exists in SQL Server, and that it has the correct [permissions](sql-server-iaas-agent-extension-automate-management.md#permission-models) based on the features you've enabled. You might need to recreate the login, and/or assign correct permissions. Additionally, validate **Microsoft SQL Server IaaS Query Service** is running under the username `NT Service\SQLIaaSExtensionQuery`.
+
+## Error "image is not supported"
+
+The SQL IaaS Agent extension registration is blocked on the following unsupported Azure Marketplace images:
+
+- Power BI virtual machine
+- SQL Server Analysis Services
+
+## Not valid state for management
+
+[Repair the extension](#repair-extension) if you see the following error message:
+
+`The SQL virtual machines resource is not in a valid state for management`
+
+## Underlying virtual machine is invalid
+
+If you see the following error message:
+
+`SQL management operations are disabled because the state of underlying virtual machine is invalid`
+
+Consider the following:
+
+- The SQL VM might be stopped, deallocated, in a failed state, or not found. Validate the underlying virtual machine is running.
+- Your SQL IaaS Agent extension might be in a failed state. [Repair the extension](#repair-extension).
+
+[Delete the extension from your SQL Server VM](sql-agent-extension-manually-register-single-vm.md#delete-the-extension) and then register the SQL VM with the extension again if you did any of the following:
+
+- Migrated your VM from one subscription to the other.
+- Changed the locale or collation of SQL Server.
+- Changed the version of your SQL Server instance.
+- Changed the edition of your SQL Server instance.
+
+## Provisioning failed 
+
+[Repair the extension](#repair-extension) if the SQL IaaS Agent extension status shows as **Provisioning failed** in the Azure portal.
+
+The SQL IaaS Agent extension can fail to install if TCP/IP is disabled in SQL Server Configuration Manager, or at the virtual machine level.
+
+## SQL VM resource unavailable in portal
+
+If the SQL IaaS Agent extension is installed, and the VM is online, but the SQL VM resource is unavailable in the Azure portal, verify that your SQL Server and SQL Browser service are started within the VM. If this doesn't resolve the issue, [repair the extension](#repair-extension).
+
+## Features are grayed out
+
+If you navigate to your [SQL Server VM resource](manage-sql-vm-portal.md) in the Azure portal, and there are features that are grayed out, verify that the SQL Server VM is running, and that you have the latest version of the SQL IaaS Agent extension.
+
+## Changed service account
+
+Changing the service accounts for either of the two services associated with the extension can cause the extension to fail or behave unpredictably.
+
+The two services should run under the following accounts:
+
+- **Microsoft SQL Server IaaS agent** is the main service for the SQL IaaS Agent extension and should run under the **Local System** account.
+- **Microsoft SQL Server IaaS Query Service** is a helper service that helps the extension run queries within SQL Server and should run under the **NT Service** account `NT Service\SqlIaaSExtensionQuery`.
+
+## Automatic registration failed
+
+If you have a few SQL Server VMs that failed to [register automatically](sql-agent-extension-automatic-registration-all-vms.md), check the version of SQL Server on the VMs that failed to register. By default, Azure VMs with SQL Server 2016 or later are automatically registered with the SQL IaaS Agent extension when detected by the [CEIP service](https://learn.microsoft.com/sql/sql-server/usage-and-diagnostic-data-configuration-for-sql-server). SQL Server VMs that have versions earlier than 2016 have to be manually registered [individually](sql-agent-extension-manually-register-single-vm.md) or [in bulk](sql-agent-extension-manually-register-vms-bulk.md).
+
+## High resource consumption
+
+If you notice that the SQL IaaS Agent extension is consuming unexpectedly high CPU or memory, verify the extension is on the latest version. If so, restart **Microsoft SQL Server IaaS Agent** from `services.msc`.
+
+## Can't extend disks
+
+Extending your disks from the **Storage Configuration** page of the [SQL Server VM resource](manage-sql-vm-portal.md) is unavailable under the following conditions:
+
+- If you uninstall and reinstall the SQL IaaS Agent extension.
+- If you uninstall and reinstall your instance of SQL Server.
+- If you used custom naming conventions for the disk/storage pool name when deploying your SQL Server image from the Azure Marketplace.
+- If you deployed your SQL Server VM with Premium SSD v2.
+- If TCP/IP is disabled in SQL Server Configuration Manager, or at the virtual machine level.
+
+## Disk configuration grayed out during deployment
+
+If you create your SQL Server VM by using an unmanaged disk, disk configuration is grayed out by design.
+
+## Automated backup disabled
+
+If your [SQL Server VM resource](manage-sql-vm-portal.md) displays **Automated backup is currently disabled**, check to see if your SQL Server instance has [managed backups](https://learn.microsoft.com/sql/relational-databases/backup-restore/enable-sql-server-managed-backup-to-microsoft-azure) enabled. To use Automated backups from the Azure portal, disable managed backups in SQL Server.
+
+## Extension stuck in transition
+
+Your SQL IaaS Agent extension might get stuck in a transitioning state in the following scenarios:
+
+- You've removed the `NT service\SQLIaaSExtension` service from the SQL Server logins and/or the local administrator's group.
+- Either of these two services are stopped in services.msc
+  - Microsoft SQL Server IaaS Agent
+  - Microsoft SQL Server IaaS Query Service
+
+## Fails to install on domain controller
+
+Registering your SQL Server instance installed to your domain controller with the SQL IaaS Agent extension isn't supported. Registering with the extension creates the user `NT Service\SQLIaaSExtension` and since this user can't be created on the domain controller, registering this VM with the SQL IaaS Agent isn't supported.
+
+## TCP/IP is disabled
+
+The SQL IaaS Agent extension requires TCP/IP to be enabled both in SQL Server Configuration Manager, and at the virtual machine level. Disabling TCP/IP can result in unpredictable behavior, such as failing to install, or some features failing to work as expected.
+
+## Unable to find SQL instance to target
+
+Error: `Unable to find SQL instance to target. Skipping 'NT Service\\SQLIaaSExtensionQuery' removal from SQL logins` is a warning message that can be safely ignored.
+
+You might see this message in the Windows event viewer if your subscription has [Automatic registration](sql-agent-extension-automatic-registration-all-vms.md) but your Azure virtual machine doesn't have SQL Server installed, in which case, this message is safe to ignore.
+
+## Service MSSQLSERVER wasn't found on computer
+
+Error: `SQL Server IaaS Agent: PreReq failure: ErrorCode: NotRetryableUnexpectedError, Message: Service MSSQLSERVER was not found on computer '.'.;The specified service does not exist as an installed service`
+
+The SQL IaaS Agent extension only works with either one default instance or one named instance. For more information, review [multiple instances support](sql-server-iaas-agent-extension-automate-management.md#limitations).
+
+## Service with name 'MSSQLSERVER' isn't running
+
+Error: `Service with name 'MSSQLSERVER' is not running. Please make sure service 'MSSQLSERVER' is running and retry this operation`
+
+Check that the SQL Server service for the default instance is running inside the VM or else [repair the IaaS extension](#repair-extension). If you have multiple SQL Server instances, then the SQL IaaS Agent extension won't work as multiple instances aren't currently supported. For more information, review [multiple instances support](sql-server-iaas-agent-extension-automate-management.md#limitations).
+
+## Extension stuck in transitioning or provisioning failed state
+
+[Repair](#repair-extension) the SQL IaaS Agent extension. Make sure you only have one default or one named instance. For more information, review [multiple instances support](sql-server-iaas-agent-extension-automate-management.md#limitations).
+
+## Denied access to ExtensionLog_0.log
+
+Error: `EventID:56067 denied access to 'C:\WindowsAzure\Logs\Plugins\Microsoft.SqlServer.Management.SqlIaaSAgent\2.0.x.x\ExtensionLog_0.log'`
+
+Add permissions for the `[NT Service\SQLIaaSExtensionQuery]` to the path listed in the error.
+
+## SQL VM resource failed to create
+
+The SQL virtual machines resource won't be created in the following scenarios:
+
+- Cloning a virtual machine
+- Using Azure Site Recovery
+- Migrating from one subscription, resource group, or region to another
+
+[Reinstall the SQL IaaS Agent extension](sql-agent-extension-manually-register-single-vm.md#register-with-extension) to resolve this error.
+
+## Failed due to Guest Agent/ VM Agent status "Not Ready"
+
+[Install the VM Agent extension](https://learn.microsoft.com/azure/virtual-machines/extensions/agent-windows#manual-installation) to resolve the error.
+
+## Extension doesn't work with multiple instances
+
+This is expected. For more information, review [multiple instances support](sql-server-iaas-agent-extension-automate-management.md#limitations).
+
+## Extension service consuming more memory/CPU
+
+If you see this, [remove and reinstall the extension](sql-agent-extension-manually-register-single-vm.md#register-with-extension) to make sure the SQL IaaS Agent extension is on the latest version or restart the SQL IaaS Agent extension service from services.msc.
+
+## Extension features don't work with SQL FCI
+
+This is expected. At this time, SQL Server failover cluster instances on Azure virtual machines registered with the SQL IaaS Agent extension only support a [limited number](failover-cluster-instance-overview.md#limitations) of features available through basic registration.
+
+## Databases or availability groups with trailing spaces in names
+
+The SQL IaaS Agent extension handles database and availability group (AG) names that contain trailing whitespace based on the server collation:
+
+- **Non-binary collations** *(default)*: Trailing whitespace is automatically trimmed. The trimmed name is functionally equivalent under SQL Server's pad-space comparison semantics, so all extension operations continue normally.
+- **Binary collations** (`BIN`/`BIN2`): Databases and AGs with trailing whitespace in their names are excluded from extension management. A warning is logged, identifying each skipped object and the number of trailing whitespace characters. To include these objects, rename, or drop and recreate them without trailing spaces at the SQL Server level.
+- This behavior applies to all extension features including backup, patching, inventory upload, and migration assessment.
+
+## Related content
+
+- [Automate management with the Windows SQL Server IaaS Agent extension](sql-server-iaas-agent-extension-automate-management.md)
+- [Register Windows SQL Server VM with SQL IaaS Agent extension](sql-agent-extension-manually-register-single-vm.md)
+- [Automatic registration with SQL IaaS Agent extension](sql-agent-extension-automatic-registration-all-vms.md)
+- [SQL IaaS Agent extension privacy statements](sql-server-iaas-agent-extension-automate-management.md#in-region-data-residency)
+- [Checklist: Best practices for SQL Server on Azure VMs](performance-guidelines-best-practices-checklist.md)
+- [What is SQL Server on Azure Windows Virtual Machines?](sql-server-on-azure-vm-iaas-what-is-overview.md)
+- [FAQ for SQL Server on Windows VMs](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/virtual-machines/windows/frequently-asked-questions-faq.yml)
+- [Pricing guidance for SQL Server on Azure VMs](pricing-guidance.md)
+- [What's new with SQL Server on Azure Virtual Machines?](doc-changes-updates-release-notes-whats-new.md)

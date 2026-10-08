@@ -1,0 +1,44 @@
+---
+title: "sys.xml_schema_wildcards (Transact-SQL)"
+description: sys.xml_schema_wildcards (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.xml_schema_wildcards"
+  - "sys.xml_schema_wildcards_TSQL"
+  - "xml_schema_wildcards"
+  - "xml_schema_wildcards_TSQL"
+helpviewer_keywords:
+  - "sys.xml_schema_wildcards catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.xml_schema_wildcards (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row per XML schema component that is an Attribute-Wildcard (**kind** of **V**) or Element-Wildcard (**kind** of **W**), both with **symbol_space** of **N**.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **\<inherited columns>** |  | Inherits columns from [sys.xml_schema_components](sys-xml-schema-components-transact-sql.md). |
+| **process_content** | **char(1)** | Indicates how contents are processed.<br /><br /> S = Strict validation (must validate)<br /><br /> L = Lax validation (validate if possible)<br /><br /> P = Skip validation |
+| **process_content_desc** | **nvarchar(60)** | Description of how contents are processed:<br /><br /> **STRICT_VALIDATION**<br /><br /> **LAX_VALIDATION**<br /><br /> **SKIP_VALIDATION** |
+| **disallow_namespaces** | **bit** | 0 = Namespaces enumerated in [sys.xml_schema_wildcard_namespaces](sys-xml-schema-wildcard-namespaces-transact-sql.md) are the only ones allowed.<br /><br /> 1 = Namespaces are the only ones disallowed. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [XML Schemas (XML Type System) Catalog Views (Transact-SQL)](xml-schemas-xml-type-system-catalog-views-transact-sql.md)

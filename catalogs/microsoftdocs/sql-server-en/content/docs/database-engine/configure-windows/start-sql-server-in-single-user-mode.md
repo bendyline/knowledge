@@ -1,0 +1,136 @@
+---
+title: "Start SQL Server in Single-User Mode"
+description: "Learn about single-user mode in SQL Server. See when it is useful and how to use the startup option -m to start an instance of SQL Server in this mode."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 07/15/2025
+ms.service: sql
+ms.subservice: configuration
+ms.topic: how-to
+helpviewer_keywords:
+  - "starting SQL Server, single-user mode"
+  - "single-user mode [SQL Server]"
+---
+# Single-user mode for SQL Server
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This article provides information and steps to start your  SQL Server 
+ instance in single-user mode, which allows only one user connection to the instance.
+
+## Start instance in single-user mode
+
+Starting  SQL Server 
+ in single-user mode enables any member of the computer's local Administrators group to connect to the instance of  SQL Server 
+ as a member of the **sysadmin** fixed server role. For more information, see [Connect to SQL Server when system administrators are locked out](connect-to-sql-server-when-system-administrators-are-locked-out.md).
+
+Under certain circumstances, you might have to start an instance of  SQL Server 
+ in single-user mode by using the **startup option** `-m`. For example, you might want to change server configuration options or recover a damaged `master` database or other system database. Both actions require starting an instance of  SQL Server 
+ in single-user mode.
+
+The following example starts the  SQL Server 
+ instance in single-user mode via command line and only allows connection through the SQL Server Management Studio Query Editor.
+
+```console
+net start "SQL Server (MSSQLSERVER)" /m"Microsoft SQL Server Management Studio - Query"
+```
+
+To restore the `master` database in  SQL Server 
+ on Linux in single-user mode, see [Restore the master database on Linux in single-user mode](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/linux/sql-server-linux-restore-master-database-in-single-user-mode.md).
+
+## General considerations
+
+When you start an instance of  SQL Server 
+ in single-user mode, note that:
+
+- Only one user can connect to the server.
+
+- The `CHECKPOINT` process isn't executed. By default, it's executed automatically at startup.
+
+> **Note:**  
+> Stop the  SQL Server 
+ Agent service before connecting to an instance of  SQL Server 
+ in single-user mode; otherwise, the  SQL Server 
+ Agent service uses the connection, thereby blocking it.
+
+When you start an instance of  SQL Server 
+ in single-user mode,  SQL Server Management Studio 
+ can connect to  SQL Server 
+. Connecting Object Explorer in  Management Studio
+ might fail because it requires more than one connection for some operations. To manage  SQL Server 
+ in single-user mode, execute  Transact-SQL  statements by connecting through the Query Editor in  Management Studio
+, or use the [sqlcmd utility](../../tools/sqlcmd/sqlcmd-utility.md).
+
+When you use the `-m` option, you can append a specific application name to restrict connections to only those with the same application name specified in the connection string. For example, the `sqlcmd` utility uses `SQLCMD` as the application name in its connection string. If you specify `-mSQLCMD` as a startup parameter,  SQL Server 
+ instance is started in single-user mode and connections from applications other than `sqlcmd` are rejected. Use this option when you're starting  SQL Server 
+ in single-user mode and an unknown client application is taking the only available connection.
+
+To connect through the Query Editor in  Management Studio
+, you can use `-mSSMSQueryEditor` and enter `App=SSMSQueryEditor` on the **Additional Connection Parameters** tab in the **Connect to Database Engine** dialog.
+
+> **Note:**  
+> The application name specified with the `-m` startup option might be case-sensitive.
+
+> **Important:**  
+> Don't use this option as a security feature. The client application provides the client application name, and can provide a false name as part of the connection string.
+
+## Always On considerations
+
+There are additional considerations when using single-server mode for  SQL Server 
+ instances that are configured as an Always On failover cluster instance (FCI), or your databases are part of an Always On availability group (AG).
+
+### Availability groups
+
+Startup of the Always On availability group and databases in the group is skipped when  SQL Server 
+ is started in single-user mode. If you need to troubleshoot issues with a database that requires starting  SQL Server 
+ in single-user mode, and the database is also part of an availability group, you must remove the database from the availability group before starting  SQL Server 
+ in single-user mode so the database comes online.
+
+### Failover cluster instances
+
+For  SQL Server 
+ installation in a clustered environment, when  SQL Server 
+ is started in single user mode, the cluster resource DLL uses up the available connection, thus blocking any other connections to the server. When  SQL Server 
+ is in this state, if you try to bring the  SQL Server 
+ Agent resource online, it might fail over the SQL resource to a different node if the resource is configured to affect the group.
+
+To get around the problem use the following procedure:
+
+1. Remove the `-m` startup parameter from the  SQL Server 
+ Advanced Properties.
+
+1. Take the  SQL Server 
+ resource offline.
+
+1. From the current owner node of this group, issue the following command from the command prompt:
+
+   ```console
+   net start MSSQLSERVER /m
+   ```
+
+1. Verify from the cluster administrator or failover cluster management console that the  SQL Server 
+ resource is still offline.
+
+1. Connect to the  SQL Server 
+ using the following command and do the necessary operation:
+
+   ```console
+   sqlcmd -E -S\<servername>
+   ```
+
+1. Once the operation is complete, close the command prompt and bring back the SQL and other resources online through cluster administrator.
+
+## Related content
+
+- [Restore the master database on Linux in single-user mode](../../linux/business-continuity/backup-restore/restore-master-database-single-user-mode.md)
+- [Start, Stop, or Pause the SQL Server Agent Service](https://learn.microsoft.com/ssms/agent/start-stop-or-pause-the-sql-server-agent-service)
+- [Diagnostic connection for database administrators](diagnostic-connection-for-database-administrators.md)
+- [sqlcmd utility](../../tools/sqlcmd/sqlcmd-utility.md)
+- [CHECKPOINT (Transact-SQL)](../../t-sql/language-elements/checkpoint-transact-sql.md)
+- [sys.sp_configure (Transact-SQL)](../../relational-databases/system-stored-procedures/sp-configure-transact-sql.md)
+- [Database Engine Service startup options](database-engine-service-startup-options.md)

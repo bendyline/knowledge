@@ -1,0 +1,76 @@
+---
+title: Exporting Data
+description: "Overview: Exporting Data (Master Data Services)"
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "exporting data [Master Data Services]"
+  - "subscription views [Master Data Services]"
+  - "subscription views [Master Data Services], about subscription views"
+---
+# Overview: Exporting Data (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  This article introduces the types of subscription view formats and how to determine when views need to be edited due to changes to model objects.  
+  
+ You create a subscription view to export  Master Data Services 
+ data to a subscribing system such as  SQL Server 
+. You  use the subscribing system to view the data in the  Master Data Services 
+ database.  For information on how to create the subscription view, see [Create a Subscription View to Export Data (Master Data Services)](create-a-subscription-view-to-export-data-master-data-services.md)  
+  
+ For more information about views, see [Views](../relational-databases/views/views.md).  
+  
+## Subscription View Formats  
+ When you create a view in  Master Data Manager 
+, you choose from a set of standard view formats that  Master Data Services 
+ provides. You can use these formats to create views that show:  
+  
+-   All leaf members and their attributes.  
+  
+-   All consolidated members and their attributes.  
+  
+-   All collections and their attributes.  
+  
+-   The members explicitly added to a collection.  
+  
+-   The members in a derived hierarchy, in either a parent child or level format.  
+  
+-   The members in all explicit hierarchies for an entity, in either a parent child or level format.  
+  
+## Subscription Views Can Become Out-of-Date  
+ After you create a subscription view for an entity or hierarchy, changes to the associated model objects are not automatically reflected in the view. You might need to regenerate a subscription view in  Master Data Manager 
+ to reflect changes to model objects. The **Changed** column on the **Export** page is updated to **True** when model objects change. **True** indicates that you should edit the subscription view and save it, which regenerates the view.  
+  
+## Related Tasks  
+  
+| Task Description | Topic |
+| --- | --- |
+| Create a subscription view of your master data. | [Create a Subscription View to Export Data (Master Data Services)](create-a-subscription-view-to-export-data-master-data-services.md) |
+| Delete an existing subscription view. | [Delete a Subscription View (Master Data Services)](delete-a-subscription-view-master-data-services.md) |
+  
+## Related content
+
+- [Subscription View Formats (Master Data Services)](subscription-view-formats-master-data-services.md)
+- [Views](../relational-databases/views/views.md)

@@ -1,0 +1,55 @@
+---
+title: "IServerVirtualDeviceSet2::AllocateBuffer"
+titleSuffix: SQL Server VDI reference
+description: "This article provides reference for the IServerVirtualDeviceSet2::AllocateBuffer command."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 08/30/2019
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: reference
+---
+
+# IServerVirtualDeviceSet2::AllocateBuffer (VDI)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **AllocateBuffer** function obtains a shared memory buffer from the virtual device set.
+
+## Syntax
+
+```c
+HRESULT IServerVirtualDeviceSet2::AllocateBuffer (
+   LPVOID*      ppBuffer,
+   UINT32      dwSize,
+   UINT32      dwAlignment
+);
+```
+
+## Parameters
+
+*ppBuffer*
+This returns a pointer to the start of the buffer.
+
+*dwSize*
+This is the size of the buffer in bytes. This does not include any prefix zone requested by the client. Any such zone is hidden from the server and there will be space available prior to when the buffer address is returned.
+
+*dwAlignment*
+This specifies the alignment boundary for the buffer. For example, a value of 4096 would ensure that the buffer is aligned on a 4096-byte boundary. This means that the address returned would have the low order 12 bits set to zero. This parameter must be a power of 2.
+
+## Return Value
+
+| Return Value | Explanation |
+| --- | --- |
+| NOERROR | The buffer is returned. |
+| VD_E_MEMORY | An out of memory condition has occurred. |
+| VD_E_INVALID | A parameter was invalid. |
+
+## Related content
+
+- [Virtual device interface (VDI) reference](reference-virtual-device-interface.md)

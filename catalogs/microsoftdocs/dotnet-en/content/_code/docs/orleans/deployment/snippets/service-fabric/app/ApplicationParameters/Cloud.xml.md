@@ -1,0 +1,12 @@
+# Source code: docs/orleans/deployment/snippets/service-fabric/app/ApplicationParameters/Cloud.xml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/Application1" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="Stateless1_InstanceCount" Value="-1" />
+  </Parameters>
+</Application>
+```

@@ -1,0 +1,57 @@
+---
+title: "sys.spatial_reference_systems (Transact-SQL)"
+description: sys.spatial_reference_systems (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "spatial_reference_systems_TSQL"
+  - "sys.spatial_reference_systems_TSQL"
+  - "sys.spatial_reference_systems"
+  - "spatial_reference_systems"
+helpviewer_keywords:
+  - "sys.spatial_reference_systems catalog view"
+  - "spatial_reference_systems"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.spatial_reference_systems (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Lists the spatial reference systems (SRIDs) supported by  SQL Server 
+.  
+
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| spatial_reference_id | **int** | The SRID supported by  SQL Server |
+| . |
+| authority_name | **nvarchar(128)** | The authority of the SRID. |
+| authorized_spatial_reference_id | **int** | The SRID given by the authority named in **authority_name**. |
+| well_known_text | **nvarchar(4000)** | The WKT representation of the SRID. |
+| unit_of_measure | **nvarchar(128)** | The name of the unit of measure. |
+| unit_conversion_factor | **float** | The length of the unit of measure in meters. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.

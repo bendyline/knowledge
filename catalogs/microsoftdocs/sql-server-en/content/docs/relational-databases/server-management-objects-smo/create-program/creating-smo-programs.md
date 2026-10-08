@@ -1,0 +1,60 @@
+---
+title: "Creating SMO Programs"
+description: "Creating SMO Programs"
+author: "markingmyname"
+ms.author: "maghan"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "Visual Basic [SMO]"
+  - "Visual C# [SMO]"
+  - "programming [SMO]"
+  - "SQL Server Management Objects, programming"
+  - "SMO [SQL Server], programming"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Creating SMO Programs
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  General programming of  SQL Server 
+ Management Objects (SMO) objects includes the common areas that all objects share, such as running methods, setting properties, and manipulating collections.  
+  
+| Topic | Description |
+| --- | --- |
+| [Connecting to an Instance of SQL Server](connecting-to-an-instance-of-sql-server.md) | The most basic SMO program that establishes a connection to an instance of  SQL Server |
+| . Demonstrates the Windows Authentication and  SQL Server |
+ | Authentication. Also includes samples that show connecting to a local and a remote instance of  SQL Server |
+| . |
+| [Disconnecting from an Instance of SQL Server](disconnecting-from-an-instance-of-sql-server.md) | A program that demonstrates how to disconnect from the instance of  SQL Server |
+| . |
+| [Calling Methods](calling-methods.md) | This section describes the general approach to calling methods. Shows the use of parameters, and how to handle tables of data returned in a [System.Data.DataTable](https://learn.microsoft.com/search/?terms=System.Data.DataTable) object. Also includes example of how to call an object constructor and how to call the **Clone** method. |
+| [Setting Properties - SMO](setting-properties-smo.md) | This section describes how to set different types of properties. Show how to set and get object properties. Also includes examples that set object properties when the object is created, and how to iterate through all the properties of an object. |
+| [Using Collections](using-collections.md) | Various programs that discuss the techniques that are used with object collections. Shows how to reference an object using collections. Also includes an example of how to iterate through the members of a collection. |
+| [Handling SMO Events](handling-smo-events.md) | This section describes how to set up and handle events in SMO. Includes an example of how to set up an event handler and how to set up event subscription. |
+| [Handling SMO Exceptions](handling-smo-exceptions.md) | This section describes how to trap exceptions in SMO. Includes examples of how to catch an exception and how to display an inner exception. |
+| [Working with Data Types](working-with-data-types.md) | This section describes how to work with the different  SQL Server |
+ | data types. Describes how to construct a datatype with the specification in the object constructor. Also includes example of how to create a datatype by using the default constructor. |
+| [Using Transactions](using-transactions.md) | This section describes how to implement transaction processing in an SMO program. Includes example of how to use transactions in an SMO program. |
+| [Using Capture Mode](using-capture-mode.md) | This section describes how to record the output of the SMO program. The example records the SMO program as  Transact-SQL  statements sent to the instance of  SQL Server |
+ | for later execution. |

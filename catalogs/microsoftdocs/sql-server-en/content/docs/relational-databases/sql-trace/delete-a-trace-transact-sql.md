@@ -1,0 +1,38 @@
+---
+title: "Delete a Trace (Transact-SQL)"
+description: "Delete a Trace (Transact-SQL)"
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: "03/06/2017"
+ms.service: sql
+ms.topic: language-reference
+helpviewer_keywords:
+  - "traces [SQL Server], deleting"
+  - "removing traces"
+  - "deleting traces"
+---
+# Delete a Trace (Transact-SQL)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to use stored procedures to delete a trace.  
+  
+ For an example of using trace stored procedures, see [Create a Trace (Transact-SQL)](create-a-trace-transact-sql.md).  
+  
+### To delete a trace  
+  
+1.  Execute **sp_trace_setstatus** by specifying `@status = 0` to stop the trace.  
+  
+2.  Execute **sp_trace_setstatus** by specifying `@status = 2` to close the trace and delete its information from the server.  
+  
+> **Note:**  
+>  A trace must be stopped first before it can be closed.  
+  
+## Related content
+
+- [sp_trace_setstatus (Transact-SQL)](../system-stored-procedures/sp-trace-setstatus-transact-sql.md)
+- [System stored procedures (Transact-SQL)](../system-stored-procedures/system-stored-procedures-transact-sql.md)
+- [SQL Server Profiler stored procedures (Transact-SQL)](../system-stored-procedures/sql-server-profiler-stored-procedures-transact-sql.md)

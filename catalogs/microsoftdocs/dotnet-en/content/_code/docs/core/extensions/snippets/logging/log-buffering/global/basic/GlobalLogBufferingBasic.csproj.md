@@ -1,0 +1,24 @@
+# Source code: docs/core/extensions/snippets/logging/log-buffering/global/basic/GlobalLogBufferingBasic.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Demonstrates how to use log buffering feature.</Description>
+    <OutputType>Exe</OutputType>
+    <NoWarn>$(NoWarn);EXTEXP0003</NoWarn>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <RootNamespace>GlobalLogBufferingBasic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry" Version="10.10.0" />
+  </ItemGroup>
+
+</Project>
+
+```

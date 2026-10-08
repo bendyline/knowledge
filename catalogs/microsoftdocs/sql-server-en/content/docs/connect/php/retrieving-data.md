@@ -1,0 +1,82 @@
+---
+title: "Retrieving Data"
+description: "Retrieving Data"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: "03/26/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Retrieving Data
+
+
+
+This topic and the topics in this section discuss how to retrieve data.  
+  
+## SQLSRV Driver  
+The SQLSRV driver of the Microsoft Drivers for PHP for SQL Server
+ provides the following options for retrieving data from a result set:  
+  
+-   [sqlsrv_fetch_array](sqlsrv-fetch-array.md)  
+  
+-   [sqlsrv_fetch_object](sqlsrv-fetch-object.md)  
+  
+-   [sqlsrv_fetch](sqlsrv-fetch.md)/[sqlsrv_get_field](sqlsrv-get-field.md)  
+  
+> **Note:**  
+> When you use any of the functions mentioned above, avoid null comparisons as the criterion for exiting loops. Because **sqlsrv** functions return false when an error occurs, the following code could result in an infinite loop upon an error in [sqlsrv_fetch_array](sqlsrv-fetch-array.md):  
+>   
+> `/*``This code could result in an infinite loop. It is recommended that`  
+>   
+> `you do NOT use null comparisons as the criterion for exiting loops,`  
+>   
+> `as is done here. */`  
+>   
+> `do{`  
+>   
+> `$result = sqlsrv_fetch_array($stmt);`  
+>   
+> `} while( !is_null($result));`  
+  
+If your query retrieves more than one result set, you can move to the next result set with [sqlsrv_next_result](sqlsrv-next-result.md).  
+  
+Beginning in version 1.1 of the Microsoft Drivers for PHP for SQL Server
+, you can use [sqlsrv_has_rows](sqlsrv-has-rows.md) to see if a result set has rows.  
+  
+## PDO_SQLSRV Driver  
+The PDO_SQLSRV driver of the Microsoft Drivers for PHP for SQL Server
+ provides the following options for retrieving data from a result set:  
+  
+-   [PDOStatement::fetch](pdostatement-fetch.md)  
+  
+-   [PDOStatement::fetchAll](pdostatement-fetchall.md)  
+  
+-   [PDOStatement::fetchColumn](pdostatement-fetchcolumn.md)  
+  
+-   [PDOStatement::fetchObject](pdostatement-fetchobject.md)  
+  
+If your query retrieves more than one result set, you can move to the next result set with [PDOStatement::nextRowset](pdostatement-nextrowset.md).  
+  
+You can see how many rows are in a result set if you specify a scrollable cursor, and then call [PDOStatement::rowCount](pdostatement-rowcount.md).  
+  
+[PDO::prepare](pdo-prepare.md) lets you specify a cursor type. Then, with [PDOStatement::fetch](pdostatement-fetch.md) you can select a row. See [PDO::prepare](pdo-prepare.md) for a sample and more information.  
+  
+## In This Section  
+  
+| Topic | Description |
+| --- | --- |
+| [Retrieving Data as a Stream](retrieving-data-as-a-stream-using-the-sqlsrv-driver.md) | Provides an overview of how to stream data from the server, and provides links to specific use cases. |
+| [Using Directional Parameters](using-directional-parameters.md) | Describes how to use directional parameters when calling a stored procedure. |
+| [Specifying a Cursor Type and Selecting Rows](specifying-a-cursor-type-and-selecting-rows.md) | Demonstrates how to create a result set with rows that you can access in any order. |
+| [How to: Retrieve Date and Time Types as Strings Using the SQLSRV Driver](how-to-retrieve-date-and-time-type-as-strings-using-the-sqlsrv-driver.md) | Describes how to retrieve date and time types as strings using the SQLSRV driver. |
+| [How to: Retrieve Date and Time Types as PHP Datetime Objects Using the PDO_SQLSRV Driver](how-to-retrieve-datetime-objects-using-pdo-sqlsrv-driver.md) | Describes how to retrieve date and time types as objects using the PDO_SQLSRV driver. |
+| [Formatting decimal strings with SQLSRV Driver](formatting-decimals-sqlsrv-driver.md) | Demonstrates how to format decimal or money values using the SQLSRV driver. |
+| [Formatting decimal strings with PDO_SQLSRV Driver](formatting-decimals-pdo-sqlsrv-driver.md) | Demonstrates how to format decimal or money values using the PDO_SQLSRV driver. |
+  
+## Related content
+
+- [How to: Specify PHP Data Types](how-to-specify-php-data-types.md)
+- [Programming Guide for the Microsoft Drivers for PHP for SQL Server](programming-guide-for-php-sql-driver.md)
+- [Retrieving Data](#retrieving-data)

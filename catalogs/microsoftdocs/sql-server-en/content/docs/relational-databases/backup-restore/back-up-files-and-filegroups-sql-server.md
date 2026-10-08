@@ -1,0 +1,234 @@
+---
+title: "Back Up Files and Filegroups"
+description: This article describes how to back up files and filegroups in SQL Server by using SQL Server Management Studio, Transact-SQL, or PowerShell.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "08/03/2016"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "backing up filegroups [SQL Server]"
+  - "file backups [SQL Server], how-to topics"
+  - "backing up files [SQL Server]"
+  - "backups [SQL Server], creating"
+  - "filegroups [SQL Server], backing up"
+---
+# Back Up Files and Filegroups
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic describes how to back up files and filegroups in  SQL Server 
+ by using  SQL Server Management Studio 
+,  Transact-SQL , or PowerShell. When the database size and performance requirements make a full database backup impractical, you can create a file backup instead. A *file backup* contains all the data in one or more files (or filegroups).
+  
+For more information about file backups, see [Full File Backups (SQL Server)](full-file-backups-sql-server.md) and [Differential Backups (SQL Server)](differential-backups-sql-server.md).  
+
+<a id="BeforeYouBegin"></a>
+
+##  <a name="Restrictions"></a> Limitations and Restrictions
+  
+- The BACKUP statement is not allowed in an explicit or implicit transaction.  
+  
+- Under the simple recovery model, read/write files must all be backed up together. This helps make sure that the database can be restored to a consistent point in time. Instead of individually specifying each read/write file or filegroup, use the READ_WRITE_FILEGROUPS option. This option backs up all the read/write filegroups in the database. A backup that is created by specifying READ_WRITE_FILEGROUPS is known as a *partial backup*, see [Partial Backups (SQL Server)](partial-backups-sql-server.md).  
+  
+For more information about limitations and restrictions, see [Backup Overview (SQL Server)](backup-overview-sql-server.md).  
+  
+##  <a name="Recommendations"></a> Recommendations
+  
+By default, every successful backup operation adds an entry in the  SQL Server 
+ error log and in the system event log. If you back up the log very frequently, these success messages accumulate quickly, resulting in huge error logs that can make finding other messages difficult. In such cases you can suppress these log entries by using trace flag 3226 if none of your scripts depend on those entries, see [Set trace flags with DBCC TRACEON](../../t-sql/database-console-commands/dbcc-traceon-trace-flags-transact-sql.md).  
+
+<a id="Permissions"></a>
+
+## Permissions
+
+`BACKUP DATABASE` and `BACKUP LOG` permissions default to members of the **sysadmin** fixed server role and the **db_owner** and **db_backupoperator** fixed database roles.  
+  
+ Ownership and permission problems on the backup device's physical file can interfere with a backup operation.  SQL Server 
+ must be able to read and write to the device; the account under which the  SQL Server 
+ service runs must have write permissions. However, [sp_addumpdevice](../system-stored-procedures/sp-addumpdevice-transact-sql.md), which adds an entry for a backup device in the system tables, does not check file access permissions. Such problems on the backup device's physical file may not appear until the physical resource is accessed when the backup or restore is attempted.
+
+## Using SQL Server Management Studio   
+  
+1. After connecting to the appropriate instance of the  SQL Server Database Engine 
+, in Object Explorer, click the server name to expand the server tree.  
+  
+1. Expand **Databases**, and, depending on the database, either select a user database or expand **System Databases** and select a system database.  
+  
+1. Right-click the database, point to **Tasks**, and then click **Back Up**. The **Back Up Database** dialog box appears.  
+  
+1. In the **Database** list, verify the database name. You can optionally select a different database from the list.  
+  
+1. In the **Backup type** list, select **Full** or **Differential**.  
+  
+1. For the **Backup component** option, click **File and Filegroups**.  
+  
+1. In the **Select Files and Filegroups** dialog box, select the files and filegroups you want to back up. You can select one or more individual files or check the box for a filegroup to automatically select all the files in that filegroup.  
+  
+1. Either accept the default backup set name suggested in the **Name** text box, or enter a different name for the backup set.  
+  
+1. (optional) In the **Description** text box, enter a description of the backup set.  
+  
+1. Specify when the backup set will expire:  
+  
+    - To have the backup set expire after a specific number of days, click **After** (the default option) and enter the number of days after set creation that the set will expire. This value can be from 0 to 99999 days; a value of 0 days means that the backup set will never expire.  
+  
+         The default value is set in the **Default backup media retention (in days)** option of the **Server Properties** dialog box (**Database Settings** page). To access this option, right-click the server name in Object Explorer and select properties; then select the **Database Settings** page.  
+  
+    - To have the backup set expire on a specific date, click **On**, and enter the date on which the set will expire.  
+  
+1. Choose the type of backup destination by clicking **Disk** or **Tape**. To select the paths of up to 64 disk or tape drives that contain a single media set, click **Add**. The selected paths are displayed in the **Backup to** list.  
+  
+    > **Note:**
+    > To remove a backup destination, select it and click **Remove**. To view the contents of a backup destination, select it and click **Contents**.  
+  
+1. To view or select the advanced options, click **Options** in the **Select a page** pane.  
+  
+1. Select an **Overwrite Media** option, by clicking one of the following:  
+  
+    - **Back up to the existing media set**  
+  
+         For this option, click either **Append to the existing backup set** or **Overwrite all existing backup sets**. 
+         
+         For information about backing up to an existing media set, see [Media Sets, Media Families, and Backup Sets (SQL Server)](media-sets-media-families-and-backup-sets-sql-server.md).  
+  
+         - (optional) Select **Check media set name and backup set expiration** to cause the backup operation to verify the date and time at which the media set and backup set expire.  
+  
+         - (optional) Enter a name in the **Media set name** text box. If no name is specified, a media set with a blank name is created. If you specify a media set name, the media (tape or disk) is checked to see whether the actual name matches the name that you enter here.  
+  
+         If you leave the media name blank and check the box to check it against the media, success will equal the media name on the media also being blank.  
+  
+    - **Back up to a new media set, and erase all existing backup sets**  
+  
+         For this option, enter a name in the **New media set name** text box, and, optionally, describe the media set in the **New media set description** text box.
+         
+         For more information about creating a new media set, see [Media Sets, Media Families, and Backup Sets (SQL Server)](media-sets-media-families-and-backup-sets-sql-server.md).  
+  
+1. (optional) In the **Reliability** section, check:  
+  
+    - **Verify backup when finished**.  
+  
+    - **Perform checksum before writing to media**, and (optional) **Continue on checksum error**.
+    
+         For more information about checksums, see [Possible Media Errors During Backup and Restore (SQL Server)](possible-media-errors-during-backup-and-restore-sql-server.md).  
+  
+1. If you are backing up to a tape drive (as specified in the **Destination** section of the **General** page), the **Unload the tape after backup** option is active. Clicking this option enables the **Rewind the tape before unloading** option.  
+  
+    > **Note:**
+    > The options in the **Transaction log** section are inactive unless you are backing up a transaction log (as specified in the **Backup type** section of the **General** page).  
+  
+1.  SQL Server 2008 (10.0.x) Enterprise 
+ and later versions support [backup compression](backup-compression-sql-server.md). By default, whether a backup is compressed depends on the value of the **backup-compression default** server configuration option. However, regardless of the current server-level default, you can compress a backup by checking **Compress backup**, and you can prevent compression by checking **Do not compress backup**.  
+  
+     To view the current backup compression default, see [View or Configure the backup compression default Server Configuration Option](../../database-engine/configure-windows/view-or-configure-the-backup-compression-default-server-configuration-option.md)  
+
+## Using Transact-SQL
+  
+To create a file or filegroup backup, use a [BACKUP DATABASE <file_or_filegroup>](../../t-sql/statements/backup-transact-sql.md) statement. Minimally, this statement must specify the following:  
+  
+  - The database name.  
+  
+  - A FILE or FILEGROUP clause for each file or filegroup, respectively.  
+  
+  - The backup device on which the full backup will be written.  
+  
+The basic  Transact-SQL  syntax for a file backup is:  
+  
+  BACKUP DATABASE *database*  
+  
+  { FILE _=_*logical_file_name* | FILEGROUP _=_*logical_filegroup_name* } [ **,**...*f* ]  
+  
+  TO *backup_device* [ **,**...*n* ]  
+  
+  [ WITH *with_options* [ **,**...*o* ] ] ;  
+  
+| Option | Description |
+| --- | --- |
+| *database* | Is the database from which the transaction log, partial database, or complete database is backed up. |
+| FILE _=_*logical_file_name* | Specifies the logical name of a file to include in the file backup. |
+| FILEGROUP _=_*logical_filegroup_name* | Specifies the logical name of a filegroup to include in the file backup. Under the simple recovery model, a filegroup backup is allowed only for a read-only filegroup. |
+| [ **,**...*f* ] | Is a placeholder that indicates that multiple files and filegroups may be specified. The number of files or filegroups is unlimited. |
+| *backup_device* [ **,**...*n* ] | Specifies a list of from 1 to 64 backup devices to use for the backup operation. You can specify a physical backup device, or you can specify a corresponding logical backup device, if already defined. To specify a physical backup device, use the DISK or TAPE option:<br /><br /> { DISK &#124; TAPE } _=_*physical_backup_device_name*<br /><br /> For more information, see [Backup Devices (SQL Server)](backup-devices-sql-server.md). |
+| WITH *with_options* [ **,**...*o* ] | Optionally, specifies one or more additional options, such as DIFFERENTIAL. A differential file backup requires a full file backup as a base. <br /><br />For more information, see [Create a Differential Database Backup (SQL Server)](create-a-differential-database-backup-sql-server.md). |
+  
+Under the full recovery model, you must also back up the transaction log. To use a complete set of full file backups to restore a database, you must also have enough log backups to span all the file backups, from the start of the first file backup.
+
+For more information, see [Back Up a Transaction Log (SQL Server)](back-up-a-transaction-log-sql-server.md).  
+  
+###  <a name="TsqlExample"></a> Examples
+The following examples back up one or more files of the secondary filegroups of the `Sales` database. This database uses the full recovery model and contains the following secondary filegroups:  
+  
+- A filegroup named `SalesGroup1` that has the files `SGrp1Fi1` and `SGrp1Fi2`.  
+  
+- A filegroup named `SalesGroup2` that has the files `SGrp2Fi1` and `SGrp2Fi2`.  
+  
+#### A. Create a file backup of two files  
+The following example creates a differential file backup of only the `SGrp1Fi2` file of the `SalesGroup1` and the `SGrp2Fi2` file of the `SalesGroup2` filegroup.  
+  
+```sql  
+--Backup the files in the SalesGroup1 secondary filegroup.  
+BACKUP DATABASE Sales  
+   FILE = 'SGrp1Fi2',   
+   FILE = 'SGrp2Fi2'   
+   TO DISK = 'G:\SQL Server Backups\Sales\SalesGroup1.bck';  
+GO  
+```  
+  
+#### B. Create a full file backup of the secondary filegroups  
+The following example creates a full file backup of every file in both of the secondary filegroups.  
+  
+```sql  
+--Back up the files in SalesGroup1.  
+BACKUP DATABASE Sales  
+   FILEGROUP = 'SalesGroup1',  
+   FILEGROUP = 'SalesGroup2'  
+   TO DISK = 'C:\MySQLServer\Backups\Sales\SalesFiles.bck';  
+GO  
+```  
+  
+#### C. Create a differential file backup of the secondary filegroups  
+The following example creates a differential file backup of every file in both of the secondary filegroups.  
+  
+```sql  
+--Back up the files in SalesGroup1.  
+BACKUP DATABASE Sales  
+   FILEGROUP = 'SalesGroup1',  
+   FILEGROUP = 'SalesGroup2'  
+   TO DISK = 'C:\MySQLServer\Backups\Sales\SalesFiles.bck'  
+   WITH   
+      DIFFERENTIAL;  
+GO  
+```  
+  
+## <a name="PowerShellProcedure"></a> Using PowerShell
+
+Set up and use the [SQL Server PowerShell Provider](https://learn.microsoft.com/powershell/sql-server/sql-server-powershell-provider).
+  
+Use the **Backup-SqlDatabase** cmdlet and specify **Files** for the value of the **-BackupAction** parameter. Also, specify one of the following parameters:  
+  
+- To back up a specific file, specify the _-DatabaseFile_*String* parameter, where *String* is one or more database files to be backed up.  
+  
+- To back up all the files in a given filegroup, specify the _-DatabaseFileGroup_*String* parameter, where *String* is one or more database filegroups to be backed up.  
+  
+The following example creates a full file backup of every file in the secondary filegroups 'FileGroup1' and 'FileGroup2' in the `<myDatabase>` database. The backups are created on the default backup location of the server instance `Computer\Instance`.  
+
+```powershell
+Backup-SqlDatabase -ServerInstance Computer\Instance -Database <myDatabase> -BackupAction Files -DatabaseFileGroup "FileGroup1","FileGroup2" 
+```
+  
+## Related content
+
+- [Backup overview (SQL Server)](backup-overview-sql-server.md)
+- [BACKUP (Transact-SQL)](../../t-sql/statements/backup-transact-sql.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)
+- [Backup History and Header Information (SQL Server)](backup-history-and-header-information-sql-server.md)
+- [Back Up Database (General Page)](back-up-database-general-page.md)
+- [Back Up Database (Backup Options Page)](back-up-database-backup-options-page.md)
+- [Full File Backups (SQL Server)](full-file-backups-sql-server.md)
+- [Differential backups (SQL Server)](differential-backups-sql-server.md)
+- [File Restores (Full Recovery Model)](file-restores-full-recovery-model.md)
+- [File Restores (Simple Recovery Model)](file-restores-simple-recovery-model.md)

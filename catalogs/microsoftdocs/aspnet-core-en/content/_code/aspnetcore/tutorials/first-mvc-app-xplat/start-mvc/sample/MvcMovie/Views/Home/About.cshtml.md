@@ -1,0 +1,14 @@
+# Source code: aspnetcore/tutorials/first-mvc-app-xplat/start-mvc/sample/MvcMovie/Views/Home/About.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    ViewData["Title"] = "About";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<p>Use this area to provide additional information.</p>
+
+```

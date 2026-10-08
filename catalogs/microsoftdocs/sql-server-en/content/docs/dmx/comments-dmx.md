@@ -1,0 +1,55 @@
+---
+title: "Comments (DMX)"
+description: "Comments (DMX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: dmx
+---
+# Comments (DMX)
+
+**Applies to:**
+ 
+
+  Analysis Services 
+
+
+
+  Comments in Data Mining Extensions (DMX) are text strings in program code that  Microsoft 
+  SQL Server 
+  Analysis Services 
+ does not execute. Comments are also known as remarks. You can use comments to document code or to temporarily disable parts of a DMX statement or script when you are diagnosing the code.  
+  
+ Using comments to document your program code makes it easier to maintain the code in the future. You can use comments to record details such as the name of the program, the name of the developer who wrote the code, and the dates of major code changes. You can also use comments to describe complex calculations or to a programming method.  
+  
+ Following are basic guidelines for writing comments:  
+  
+-   You can use any alphanumeric characters or symbols within a comment.  Analysis Services 
+ ignores all characters that are within a comment.  
+  
+-   There is no maximum length for a comment within a statement or script. A comment can be made up of one or more lines.  
+  
+  Analysis Services 
+ supports the following types of comment characters:  
+  
+-   **// (double forward slashes).** Use these comment characters to write a comment on the same line as code that is to be executed, or to write a comment on a line by itself.  Analysis Services 
+ evaluates everything from the double forward slashes to the end of the line as part of the comment. To create a multiple-line comment, use the double forward slashes at the start of each line of comment. For more information about this comment character, see [Double Slash (Comment) (DMX)](double-slash-comment-dmx.md).  
+  
+-   **-- (double hyphens).** Use these comment characters to write a comment on the same line as code that is to be executed, or to write a comment on a line by itself.  Analysis Services 
+ evaluates everything from the double hyphens to the end of the line as part of the comment. To create a multiple-line comment, use the double hyphens at the start of each line of comment. For more information about this comment character, see [-- (Comment) (DMX) Summary](comment-dmx-summary.md).  
+  
+-   **/\* ... \*/ (forward slash-asterisk character pairs).** Use these comment characters to write a comment on the same line as the code that is to be executed, to write a comment on a line by itself, or even to write comments within executable code.  Analysis Services 
+ evaluates everything from the open comment pair (/*) to the close comment pair (\*/) as part of the comment. To create a multiple-line comment, start the comment with the open-comment character pair (/\*), and end the comment with the close-comment character pair (\*/). No other comment characters should be included on any lines of the comment. For more information about this comment character, see [Slash Star (Comment) (DMX)](slash-star-comment-dmx.md).  
+  
+## Related content
+
+- [Data Mining Extensions (DMX) Reference](data-mining-extensions-dmx-reference.md)
+- [Data Mining Extensions (DMX) Function Reference](data-mining-extensions-dmx-function-reference.md)
+- [Data Mining Extensions (DMX) Operator Reference](data-mining-extensions-dmx-operator-reference.md)
+- [Data Mining Extensions (DMX) Statements](data-mining-extensions-dmx-statements.md)
+- [Data Mining Extensions (DMX) Syntax Conventions](data-mining-extensions-dmx-syntax-conventions.md)
+- [Data Mining Extensions (DMX) Syntax Elements](data-mining-extensions-dmx-syntax-elements.md)
+- [General Prediction Functions (DMX)](general-prediction-functions-dmx.md)
+- [Structure and Usage of DMX Prediction Queries](structure-and-usage-of-dmx-prediction-queries.md)
+- [Understanding the DMX Select Statement](understanding-the-dmx-select-statement.md)

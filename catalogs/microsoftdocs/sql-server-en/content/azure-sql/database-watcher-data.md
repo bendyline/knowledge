@@ -1,0 +1,323 @@
+---
+title: Database watcher data collection and datasets
+titleSuffix: Azure SQL Database & SQL Managed Instance
+description: A detailed description of SQL monitoring data collected by database watcher
+author: lcwright
+ms.author: lancewright
+ms.reviewer: dfurman
+ms.date: 07/29/2026
+ms.service: azure-sql
+ms.subservice: monitoring
+ms.topic: concept-article
+ms.custom:
+  - subject-monitoring
+monikerRange: "=azuresql||=azuresql-db||=azuresql-mi"
+---
+
+# Database watcher data collection and datasets (preview)
+
+
+
+  **Applies to:**    [Azure SQL Database](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)  [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+Database watcher collects monitoring data from SQL system views and ingests it into the data store in the form of **datasets**. Each dataset is formed using the data from one or more SQL system views. For each dataset, there is a separate table in the data store.
+
+## Data collection
+
+Database watcher collects monitoring data at periodic intervals using T-SQL queries. Data collected in each execution of a query is called a **sample**. Sample collection frequency varies by dataset. For example, frequently changing data such as SQL performance counters might be collected every 10 seconds, while mostly static data such as database configuration might be collected every five minutes. For more information, see [Datasets](#datasets).
+
+Database watcher takes advantage of [streaming ingestion](https://learn.microsoft.com/azure/data-explorer/ingest-data-streaming) in [Azure Data Explorer](https://learn.microsoft.com/azure/data-explorer/data-explorer-overview) and [Real-Time Analytics in Microsoft Fabric](https://learn.microsoft.com/fabric/real-time-analytics/overview) to provide near real time monitoring. Typically, collected SQL monitoring data becomes available for reporting and analysis in less than 10 seconds. You can monitor data ingestion latency on the database watcher [dashboards](database-watcher-overview.md#dashboards), using the **Ingestion statistics** link.
+
+### Interaction between database watcher and application workloads
+
+Enabling database watcher is not likely to have an observable impact on the application workload performance. More frequent monitoring queries typically execute in the sub-second range, whereas queries that might require more time, for example to return large datasets, run at infrequent intervals.
+
+# [SQL database](#tab/sqldb)
+
+To further reduce the risk of impact to application workloads, all database watcher queries in Azure SQL Database are resource-governed as an [internal workload](database/resource-limits-logical-server.md#resource-consumption-by-user-workloads-and-internal-processes). When resource contention is present, resource consumption by the monitoring queries is limited to a small fraction of total resources available to the database. This prioritizes application workloads over monitoring queries.
+
+# [SQL elastic pool](#tab/sqlep)
+
+To further reduce the risk of impact to application workloads, all database watcher queries in Azure SQL Database are resource-governed as an [internal workload](database/resource-limits-logical-server.md#resource-consumption-by-user-workloads-and-internal-processes). When resource contention is present, resource consumption by the monitoring queries is limited to a small fraction of total resources available to the elastic pool. This prioritizes application workloads over monitoring queries.
+
+For more information about database watcher impact to application workloads when there are many databases in an elastic pool, see [Monitor dense elastic pools](#monitor-dense-elastic-pools).
+
+# [SQL managed instance](#tab/sqlmi)
+
+If there is resource contention between your application workloads and database watcher monitoring queries in Azure SQL Managed Instance, you can enable [resource governor](https://learn.microsoft.com/sql/relational-databases/resource-governor/resource-governor) to limit resource consumption by the monitoring queries.
+
+The following example configures resource governor on a SQL managed instance. It limits CPU consumption by database watcher queries to 30% when there is no CPU contention. When there is CPU contention, this configuration reserves 5% of CPU for the monitoring queries and limits their CPU usage to 10%. It also limits the memory grant size for each monitoring query to 10% of the available memory.
+
+> **Note:**
+>
+> If you make resource governor configuration too restrictive, for example by using low `MAX_CPU_PERCENT` or `CAP_CPU_PERCENT` values, database watcher might not be able to collect data reliably or at all because of insufficient compute resources.
+
+```sql
+USE master;
+GO
+
+CREATE OR ALTER FUNCTION dbo.dbw_classifier()
+RETURNS sysname
+WITH SCHEMABINDING
+AS
+BEGIN
+
+DECLARE @WorkloadGroupName sysname = 'default';
+
+IF APP_NAME() IN (N'SQLExternalMonitoring',N'x_ms_reserved_sql_external_monitoring')
+    SET @WorkloadGroupName = N'database_watcher_workload_group'
+
+RETURN @WorkloadGroupName;
+
+END;
+GO
+
+BEGIN TRY
+
+IF EXISTS (
+          SELECT 1
+          FROM sys.resource_governor_configuration
+          WHERE classifier_function_id <> 0 OR is_enabled <> 0
+          )
+    THROW 50001, 'A resource governor configuration is already present. No changes were made.', 1;
+
+CREATE RESOURCE POOL database_watcher_resource_pool
+WITH (MIN_CPU_PERCENT = 5, MAX_CPU_PERCENT = 10, CAP_CPU_PERCENT = 30);
+
+CREATE WORKLOAD GROUP database_watcher_workload_group
+WITH (REQUEST_MAX_MEMORY_GRANT_PERCENT = 10)
+USING database_watcher_resource_pool;
+
+ALTER RESOURCE GOVERNOR WITH (CLASSIFIER_FUNCTION = dbo.dbw_classifier);
+
+ALTER RESOURCE GOVERNOR RECONFIGURE;
+
+END TRY
+BEGIN CATCH
+    THROW;
+END CATCH;
+```
+
+> **Tip:**
+> To make a new resource governor configuration effective on a high availability secondary replica of a SQL managed instance immediately, [connect](database/read-scale-out.md#connect-to-a-read-only-replica) to the `master` database on the replica and execute `ALTER RESOURCE GOVERNOR RECONFIGURE;`.
+
+---
+
+To avoid concurrency conflicts such as blocking and deadlocks between data collection and database workloads running on your Azure SQL resources, the monitoring queries use short [lock timeouts](https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide#customizing-the-lock-time-out) and low [deadlock priority](https://learn.microsoft.com/sql/t-sql/statements/set-deadlock-priority-transact-sql). If there is a concurrency conflict, priority is given to the application workload queries.
+
+You might observe gaps in the collected data in the following scenarios:
+
+- If the overall resource utilization is high, or if concurrency conflicts between monitoring queries and application workloads occur. In these cases, monitoring queries are deprioritized in favor of application workloads.
+- If you have automation that terminates long-running sessions. To avoid gaps in collected data, exclude any session where the `program_name` column in the [sys.dm_exec_sessions](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-sessions-transact-sql) system view is `SQLExternalMonitoring` or `x_ms_reserved_sql_external_monitoring`.
+
+### Data collection in elastic pools
+
+To monitor an elastic pool, you must designate one database in the pool as the **anchor database**. A watcher connects to the anchor database. Because the watcher [holds](database-watcher-overview.md#watcher-authorization) the `VIEW SERVER PERFORMANCE STATE` permission, system views in the anchor database provide monitoring data for the pool as a whole.
+
+> **Tip:**
+> You can add an empty database to each elastic pool you want to monitor, and designate it as the anchor database. This way, you can move other databases in and out of the pool, or between pools, without interrupting elastic pool monitoring.
+
+Data collected from the anchor database contains pool-level metrics, and certain database-level performance metrics for every database in the pool, such as resource utilization and request rate metrics for each database. For some scenarios, adding an elastic pool SQL target to monitor an elastic pool as a whole can make it unnecessary to monitor each individual database in the pool.
+
+Certain monitoring data such as pool-level CPU, memory, storage utilization, and wait statistics is only collected at the elastic pool level because it cannot be attributed to an individual database in a pool. Conversely, certain other data such as query runtime statistics, database properties, table and index metadata is only available if you add individual databases as SQL targets.
+
+If you add individual databases from an elastic pool as SQL targets, you should add the elastic pool as a SQL target as well. This way, you get a more complete view of the database and pool performance.
+
+#### Monitor dense elastic pools
+
+A [dense elastic pool](database/elastic-pool-resource-management.md) contains a large number of databases, but has a relatively small compute size. This configuration lets customers achieve substantial cost savings by keeping the compute resource allocation to a minimum.
+
+Importantly, this approach assumes that only a small number of databases in the pool have queries running at the same time.
+
+> **Warning:**
+> Because monitoring queries must execute continuously in every monitored database, it is not recommended to monitor more than a few individual databases in a dense elastic pool.
+>
+> If you add many databases from a dense elastic pool as SQL targets, the cumulative resource utilization by the monitoring queries running in each database might affect application workloads because of insufficient resources in the pool.
+>
+> For the same reason, you might see gaps in the collected data or larger than expected intervals between data samples.
+
+To monitor a dense elastic pool, enable monitoring at the pool level by adding the elastic pool itself as a SQL target. By reducing the total number of monitoring queries in the elastic pool you avoid the risk of affecting application workloads, while still collecting actionable pool-level data in the **SQL elastic pool** [datasets](#datasets).
+
+## Data collection in serverless databases
+
+If a [serverless](database/serverless-tier-overview.md) database has auto-pause disabled, database watcher monitors it just like a provisioned database.
+
+If you enable auto-pause on a serverless database, database watcher data collection stops when the database pauses. Database watcher monitoring queries don't prevent a serverless database from pausing if it's [eligible to be paused](database/serverless-tier-auto-pause-resume.md#auto-pause).
+
+Shortly after a serverless database transitions to a **Paused** state, its status on the watcher summary dashboard changes to **Not collecting**. The previously collected data for the database remains in the watcher data store, and is accessible via dashboards and queries.
+
+Data collection resumes within minutes after the database transitions from the **Paused** to the **Online** state.
+
+## Data residency
+
+Customers can choose to store collected SQL monitoring data in one of three data store types:
+
+- A database on an [Azure Data Explorer](https://learn.microsoft.com/azure/data-explorer/data-explorer-overview) cluster. By default, a new Azure Data Explorer cluster is created for each new watcher and is located in the same Azure region as the watcher.
+
+  Customers can choose the specific Azure region in an Azure geography as the location of their Azure Data Explorer cluster and the database. For more information about data replication capabilities in Azure Data Explorer, see [Business continuity and disaster recovery overview](https://learn.microsoft.com/azure/data-explorer/business-continuity-overview).
+
+- A database on a [free Azure Data Explorer cluster](https://learn.microsoft.com/azure/data-explorer/start-for-free).
+
+  Customers can choose the specific Azure geography, but not the specific Azure region as the location of their free Azure Data Explorer cluster and the database. Data replication to a different region or geography is not supported.
+
+- A database in [Real-Time Analytics in Microsoft Fabric](https://learn.microsoft.com/fabric/real-time-analytics/overview).
+
+  Customers cannot choose the geographical location of the database.
+
+To fully control data residency for collected SQL monitoring data, customers must choose a database on an Azure Data Explorer cluster as the data store.
+
+Customers can align the geography and region of their Azure Data Explorer cluster to the geography and region of the Azure SQL resources being monitored. When the Azure SQL resources are located in multiple regions, customers might need to create multiple watchers and multiple Azure Data Explorer clusters to satisfy their data residency requirements.
+
+## Datasets
+
+This section describes the datasets available for each SQL target type, including collection frequencies and table names in the data store.
+
+> **Note:**
+> During preview, datasets might be added and removed. Dataset properties such as name, description, collection frequency, and available columns are subject to change.
+
+# [SQL database](#tab/sqldb)
+
+| Dataset name | Table name | Collection frequency (hh:mm:ss) | Description |
+| :--- | :--- | ---: | :--- |
+| Active sessions | `sqldb_database_active_sessions` | `00:00:30` | Each row represents a session that is running a request, is a blocker, or has an open transaction. |
+| Backup history | `sqldb_database_sql_backup_history` | `00:05:00` | Each row represents a successfully completed database backup. |
+| Change processing | `sqldb_database_change_processing` | `00:01:00` | Each row represents a snapshot of aggregate log scan statistics for a change processing feature such as Change Data Capture or Change Feed (Azure Synapse Link). |
+| Change processing errors | `sqldb_database_change_processing_errors` | `00:01:00` | Each row represents an error that occurred during change processing, when using a change processing feature such as Change Data Capture or Change Feed (Azure Synapse Link). |
+| Connectivity | `sqldb_database_connectivity` | `00:00:30` | Each row represents a connectivity probe (a login and a query) for a database. |
+| Geo-replicas | `sqldb_database_geo_replicas` | `00:00:30` | Each row represents a primary or a secondary geo-replica, including geo-replication metadata and statistics. |
+| Index metadata | `sqldb_database_index_metadata` | `00:30:00` | Each row represents an index partition and includes index definition, properties, and operational statistics. |
+| Memory utilization | `sqldb_database_memory_utilization` | `00:00:30` | Each row represents a memory clerk and includes memory consumption by the clerk on the database engine instance. |
+| Missing indexes | `sqldb_database_missing_indexes` | `00:15:00` | Each row represents an index that might improve query performance if created. |
+| Out-of-memory events | `sqldb_database_oom_events` | `00:01:00` | Each row represents an out-of-memory event in the database engine. |
+| Performance counters (common) | `sqldb_database_performance_counters_common` | `00:00:10` | Each row represents a performance counter of the database engine instance. This dataset includes commonly used counters. |
+| Performance counters (detailed) | `sqldb_database_performance_counters_detailed` | `00:01:00` | Each row represents a performance counter of the database engine instance. This dataset includes counters that might be needed for detailed monitoring and troubleshooting. |
+| Properties | `sqldb_database_properties` | `00:05:00` | Each row represents a database and includes database options, resource governance limits, and other database metadata. |
+| Query runtime statistics | `sqldb_database_query_runtime_stats` | `00:15:00` | Each row represents a Query Store runtime interval and includes query execution statistics. |
+| Query wait statistics | `sqldb_database_query_wait_stats` | `00:15:00` | Each row represents a Query Store runtime interval and includes wait category statistics. |
+| Replicas | `sqldb_database_replicas` | `00:00:30` | Each row represents a database replica, including replication metadata and statistics. Includes the primary replica and geo-replicas when collected on the primary, and secondary replicas when collected on a secondary. |
+| Resource utilization | `sqldb_database_resource_utilization` | `00:00:15` | Each row represents CPU, Data IO, Log IO, and other resource consumption statistics for a database in a time interval. |
+| Session statistics | `sqldb_database_session_stats` | `00:01:00` | Each row represents a summary of session statistics for a database, aggregated by non-additive session attributes such as login name, host name, application name, etc. |
+| SOS schedulers | `sqldb_database_sos_schedulers` | `00:01:00` | Each row represents a SOS scheduler and includes statistics for the scheduler, CPU node, and memory node. |
+| Storage IO | `sqldb_database_storage_io` | `00:00:10` | Each row represents a database file and includes cumulative IOPS, throughput, and latency statistics for the file. |
+| Storage utilization | `sqldb_database_storage_utilization` | `00:01:00` | Each row represents a database and includes its storage usage, including `tempdb`, Query Store, and Persistent Version Store. |
+| Table metadata | `sqldb_database_table_metadata` | `00:30:00` | Each row represents a table or an indexed view, and includes metadata such as row count, space usage, data compression, columns, and constraints. Collected when the number of tables and indexed views in the database is 100 or less. |
+| Wait statistics | `sqldb_database_wait_stats` | `00:00:10` | Each row represents a wait type and includes cumulative wait statistics of the database engine instance. For databases in an elastic pool, only database-scoped wait statistics are collected. |
+
+> **Note:**
+> For databases in an elastic pool, the **SQL database** datasets containing pool-level data are not collected. This includes the **Memory utilization**, **Out-of-memory events**, **Performance counters (common)**, and **Performance counters (detailed)** datasets. The **Wait statistics** dataset is collected but contains only database-scoped waits. This avoids collection of the same data from every database in the pool.
+>
+> Pool-level data is collected in the **SQL elastic pool** datasets. For a given elastic pool, the **Performance counters (common)** and **Performance counters (detailed)** datasets contain pool-level metrics and certain database-level metrics such as **CPU**, **Data IO**, **Log write**, **Requests**, **Transactions**, etc.
+
+# [SQL elastic pool](#tab/sqlep)
+
+| Dataset name | Table name | Collection frequency (hh:mm:ss) | Description |
+| :--- | :--- | ---: | :--- |
+| Memory utilization | `sqldb_elastic_pool_memory_utilization` | `00:00:30` | Each row represents a memory clerk and includes memory consumption by the clerk on the database engine instance. |
+| Out-of-memory events | `sqldb_elastic_pool_oom_events` | `00:01:00` | Each row represents an out-of-memory event in the database engine. |
+| Performance counters (common) | `sqldb_elastic_pool_performance_counters_common` | `00:00:10` | Each row represents a performance counter of the database engine instance. This dataset includes commonly used counters, including workload group resource usage statistics for each database in the elastic pool. |
+| Performance counters (detailed) | `sqldb_elastic_pool_performance_counters_detailed` | `00:01:00` | Each row represents a performance counter of the database engine instance. This dataset includes counters that might be needed for detailed monitoring and troubleshooting. |
+| Properties | `sqldb_elastic_pool_properties` | `00:05:00` | Each row represents an elastic pool, and includes resource governance limits and other metadata for the elastic pool. |
+| Resource utilization | `sqldb_elastic_pool_resource_utilization` | `00:00:20` | Each row represents CPU, Data IO, Log IO, and other resource consumption statistics for an elastic pool in a time interval. |
+| SOS schedulers | `sqldb_elastic_pool_sos_schedulers` | `00:01:00` | Each row represents a SOS scheduler and includes statistics for the scheduler, CPU node, and memory node. |
+| Storage IO | `sqldb_elastic_pool_storage_io` | `00:00:10` | Each row represents a database file and includes cumulative IOPS, throughput, and latency statistics for the file. Files for all databases in the elastic pool are included. |
+| Storage utilization | `sqldb_elastic_pool_storage_utilization` | `00:01:00` | Each row represents an elastic pool and includes its storage usage statistics, including `tempdb`. |
+| Wait statistics | `sqldb_elastic_pool_wait_stats` | `00:00:10` | Each row represents a wait type and includes wait statistics of the database engine instance. |
+
+# [SQL managed instance](#tab/sqlmi)
+
+| Dataset name | Table name | Collection frequency (hh:mm:ss) | Description |
+| :--- | :--- | ---: | :--- |
+| Active sessions | `sqlmi_active_sessions` | `00:00:30` | Each row represents a session that is running a request, is a blocker, or has an open transaction. |
+| Backup history | `sqlmi_sql_backup_history` | `00:05:00` | Each row represents a successfully completed database backup. |
+| Change processing | `sqlmi_change_processing` | `00:01:00` | Each row represents a snapshot of aggregate log scan statistics for a change processing feature such as Change Data Capture. |
+| Change processing errors | `sqlmi_change_processing_errors` | `00:01:00` | Each row represents an error that occurred during change processing, when using a change processing feature such as Change Data Capture. |
+| Connectivity | `sqlmi_connectivity` | `00:00:30` | Each row represents a connectivity probe (a login and a query) for a SQL managed instance. |
+| Database geo-replicas | `sqlmi_database_geo_replicas` | `00:05:00` | Each row represents a primary or a secondary database geo-replica, including geo-replication metadata and statistics. |
+| Database properties | `sqlmi_database_properties` | `00:05:00` | Each row represents a database and includes database options and other database metadata. |
+| Database replicas | `sqlmi_database_replicas` | `00:05:00` | Each row represents a database replica, including replication metadata and statistics. Includes the primary replica and geo-replicas when collected on the primary, and secondary replicas when collected on a secondary. |
+| Database storage utilization | `sqlmi_database_storage_utilization` | `00:05:00` | Each row represents a database and includes its storage usage, including Query Store and Persistent Version Store. |
+| Index metadata | `sqlmi_index_metadata` | `00:30:00` | Each row represents an index partition and includes index definition, properties, and operational statistics. |
+| Instance properties | `sqlmi_instance_properties` | `00:05:00` | Each row represents a SQL managed instance and includes its properties and other instance metadata. |
+| Memory utilization | `sqlmi_memory_utilization` | `00:00:30` | Each row represents a memory clerk and includes memory consumption by the clerk. |
+| Missing indexes | `sqlmi_missing_indexes` | `00:15:00` | Each row represents an index that might improve query performance if created. |
+| Out-of-memory events | `sqlmi_oom_events` | `00:01:00` | Each row represents an out-of-memory event in the database engine. |
+| Performance counters (common) | `sqlmi_performance_counters_common` | `00:00:10` | Each row represents a performance counter. This dataset includes commonly used counters. |
+| Performance counters (detailed) | `sqlmi_performance_counters_detailed` | `00:01:00` | Each row represents a performance counter. This dataset includes counters that might be needed for detailed monitoring and troubleshooting. |
+| Query runtime statistics | `sqlmi_query_runtime_stats` | `00:15:00` | Each row represents a Query Store runtime interval and includes query execution statistics for a database. |
+| Query wait statistics | `sqlmi_query_wait_stats` | `00:15:00` | Each row represents a Query Store runtime interval and includes wait category statistics for a database. |
+| Resource utilization | `sqlmi_resource_utilization` | `00:00:20` | Each row represents CPU, Data IO, Log IO and other resource consumption statistics in a time interval. |
+| Session statistics | `sqlmi_session_stats` | `00:01:00` | Each row represents a summary of session statistics for a managed instance, aggregated by non-additive session attributes such as login name, host name, application name, etc. |
+| SOS schedulers | `sqlmi_sos_schedulers` | `00:01:00` | Each row represents a SOS scheduler and includes statistics for the scheduler, CPU node, and memory node. |
+| SQL Agent job history | `sqlmi_sqlagent_job_history` | `00:01:00` | Each row represents a SQL Agent job history entry. |
+| SQL Agent job state | `sqlmi_sqlagent_job_state` | `00:00:20` | Each row represents the state of a SQL Agent job at a point in time. |
+| Storage IO | `sqlmi_storage_io` | `00:00:10` | Each row represents a database file and includes cumulative IOPS, throughput, and latency statistics for the file. |
+| Table metadata | `sqlmi_table_metadata` | `01:00:00` | Each row represents a table or an indexed view, and includes metadata such as row count, space usage, data compression, columns, and constraints. Collected for up to 20 databases on the instance, and when the number of tables and indexed views in the database is 100 or less. |
+| Wait statistics | `sqlmi_wait_stats` | `00:00:10` | Each row represents a wait type and includes cumulative wait statistics of the database engine instance. |
+
+---
+
+### Common columns
+
+For each SQL target type, datasets have common columns, as described in the following tables.
+
+# [SQL database](#tab/sqldb)
+
+| Column name | Description |
+| :--- | :--- |
+| `subscription_id` | The Azure subscription ID of the SQL database. |
+| `resource_group_name` | The resource group name of the SQL database. |
+| `resource_id` | The Azure resource ID of the SQL database. |
+| `sample_time_utc` | The time when the values in the row were observed, in UTC. |
+| `collection_time_utc` | The time when the row was collected by the watcher, in UTC. This column is present in datasets where collection time might be different from sample time. |
+| `replica_type` | One of: **Primary**, **HA secondary**, **Geo-replication forwarder**, **Named secondary**. |
+| `logical_server_name` | The name of the [logical server](database/logical-servers.md) in Azure SQL Database containing the monitored database or elastic pool. |
+| `database_name` | The name of the monitored database. |
+| `database_id` | Database ID of the monitored database, unique within the logical server. |
+| `logical_database_id` | A unique database identifier that remains unchanged over the lifetime of the user database. Renaming the database or changing its service objective does not change this value. |
+| `physical_database_id` | A unique database identifier for the current physical database corresponding to the user database. Changing database service objective causes this value to change. |
+| `replica_id` | A unique identifier for a Hyperscale [compute replica](database/hyperscale-architecture.md). |
+
+# [SQL elastic pool](#tab/sqlep)
+
+| Column name | Description |
+| :--- | :--- |
+| `subscription_id` | The Azure subscription ID of the SQL elastic pool. |
+| `resource_group_name` | The resource group name of the SQL elastic pool. |
+| `resource_id` | The Azure resource ID of the SQL elastic pool. |
+| `sample_time_utc` | The time when the values in the row were observed, in UTC. |
+| `collection_time_utc` | The time when the row was collected by the watcher, in UTC. This column is present in datasets where collection time might be different from sample time. |
+| `replica_type` | One of: **Primary**, **HA secondary**. |
+| `logical_server_name` | The name of the [logical server](database/logical-servers.md) in Azure SQL Database containing the monitored database or elastic pool. |
+| `elastic_pool_name` | The name of the monitored elastic pool. |
+| `anchor_database_name` | The name of the anchor database for an elastic pool. |
+| `anchor_database_id` | Database ID of the anchor database for an elastic pool, unique within the logical server. |
+| `anchor_logical_database_id` | A unique database identifier that remains unchanged over the lifetime of the anchor database. |
+| `anchor_physical_database_id` | A unique database identifier for the current physical database corresponding to the anchor database. |
+| `anchor_replica_id` | A unique identifier for a Hyperscale compute replica of the anchor database. |
+
+# [SQL managed instance](#tab/sqlmi)
+
+| Column name | Description |
+| :--- | :--- |
+| `subscription_id` | The Azure subscription ID of the SQL managed instance. |
+| `resource_group_name` | The resource group name of the SQL managed instance. |
+| `resource_id` | The Azure resource ID of the SQL managed instance. |
+| `sample_time_utc` | The time when the values in the row were observed, in UTC. |
+| `collection_time_utc` | The time when the row was collected by the watcher, in UTC. This column is present in datasets where collection time might be different from sample time. |
+| `replica_type` | One of: **Primary**, **HA secondary**, **Geo-replication forwarder**. |
+| `managed_instance_name` | The name of the monitored SQL managed instance. |
+
+---
+
+A dataset has both `sample_time_utc` and `collection_time_utc` columns if it contains samples observed before the row was collected by database watcher. Otherwise, the observation time and collection time are the same, and the dataset contains only the `sample_time_utc` column.
+
+For example, the `sqldb_database_resource_utilization` dataset is derived from the [sys.dm_db_resource_stats](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-resource-stats-azure-sql-database) dynamic management view (DMV). The DMV contains the `end_time` column, which is the observation time for each row reporting aggregate resource statistics for a 15-second interval. This time is reported in the `sample_time_utc` column. When a watcher queries this DMV, the result set might contain multiple rows, each with a different `end_time`. All of these rows have the same `collection_time_utc` value.
+
+## Related content
+
+- [Monitor Azure SQL workloads with database watcher (preview)](database-watcher-overview.md)
+- [Quickstart: Create a watcher to monitor Azure SQL (preview)](database-watcher-quickstart.md)
+- [Create and configure a watcher (preview)](database-watcher-manage.md)
+- [Analyze database watcher monitoring data (preview)](database-watcher-analyze.md)
+- [Database watcher alerts (preview)](database-watcher-alerts.md)
+- [Database watcher FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/database-watcher-faq.yml)

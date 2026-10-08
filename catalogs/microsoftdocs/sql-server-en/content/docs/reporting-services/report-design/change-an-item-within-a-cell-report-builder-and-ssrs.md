@@ -1,0 +1,37 @@
+---
+title: "Change an item within a cell in a paginated report"
+description: Replace a noncontainer item, such as a text box, line, or image, in paginated reports with a new report item in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+---
+# Change an item within a cell in a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+In paginated reports, you can replace only a noncontainer item, such as a text box, line, or image, with a new report item. For example, you can drag a table into a text box to replace the text box with a table.  
+  
+ If the cell contains a container item such as a rectangle, list, table, or matrix, the new item is added to the containing item instead of replacing it. To replace a container item with a new item, delete the container. Deleting the container item replaces it with a text box, which you can then replace with another item.  
+  
+ By default, all cells in a table, matrix, or list data region contain a text box.  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Change an item within a cell  
+  
+-   On the **Insert** tab, in the **Data Regions** or **Report Items** group, select the item that you want to add to the report, and then choose the report. The item is added to the report.  
+  
+> **Note:**  
+>  The **Image Properties** dialog opens when you drag an image report item to a cell, where you can set properties such as the source of the image before the image is added to the cell.  
+  
+## Related content
+
+- [Images, text boxes, rectangles, and lines in a paginated report (Report Builder)](images-text-boxes-rectangles-and-lines-report-builder-and-ssrs.md)
+- [Tables, matrices, and lists in Report Builder paginated reports](tables-matrices-and-lists-report-builder-and-ssrs.md)

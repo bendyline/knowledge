@@ -1,0 +1,47 @@
+---
+title: "setTimestamp Method to timestamp value"
+description: "setTimestamp Method (java.lang.String, java.sql.Timestamp)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.setTimestamp (java.lang.String, java.sql.Timestamp)"
+apitype: "Assembly"
+---
+# setTimestamp Method (java.lang.String, java.sql.Timestamp)
+
+
+  Sets the designated parameter to the given timestamp value.  
+  
+## Syntax  
+  
+```  
+  
+public void setTimestamp(java.lang.String sCol,  
+                         java.sql.Timestamp t)  
+```  
+  
+#### Parameters  
+ *sCol*  
+  
+ A **String** that contains the parameter name.  
+  
+ *t*  
+  
+ A Timestamp object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setTimestamp method is specified by the setTimestamp method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [setTimestamp Method (SQLServerCallableStatement)](settimestamp-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

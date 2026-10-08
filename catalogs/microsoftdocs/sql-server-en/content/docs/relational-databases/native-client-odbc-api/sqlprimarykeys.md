@@ -1,0 +1,50 @@
+---
+title: "SQLPrimaryKeys"
+description: "SQLPrimaryKeys"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQLPrimaryKeys function"
+apitype: "DLLExport"
+---
+# SQLPrimaryKeys
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  A table might have a column or columns that can serve as unique row identifiers, and tables created without a PRIMARY KEY constraint return an empty result set to SQLPrimaryKeys. The ODBC function [SQLSpecialColumns](sqlspecialcolumns.md) reports row identifier candidates for tables without primary keys.  
+  
+ SQLPrimaryKeys returns SQL_SUCCESS whether or not values exist for *CatalogName*, *SchemaName*, or *TableName* parameters. SQLFetch returns SQL_NO_DATA when invalid values are used in these parameters.  
+  
+ SQLPrimaryKeys can be executed on a static server cursor. An attempt to execute SQLPrimaryKeys on an updatable (dynamic or keyset) cursor will return SQL_SUCCESS_WITH_INFO indicating that the cursor type has been changed.  
+  
+ The  SQL Server 
+ Native Client ODBC driver supports reporting information for tables on linked servers by accepting a two-part name for the *CatalogName* parameter: *Linked_Server_Name.Catalog_Name*.  
+  
+## SQLPrimaryKeys and Table-Valued Parameters  
+ If the statement attribute SQL_SOPT_SS_NAME_SCOPE has the value SQL_SS_NAME_SCOPE_TABLE_TYPE, rather than its default value of SQL_SS_NAME_SCOPE_TABLE, SQLPrimaryKeys will return information about primary key columns of table types. For more information on SQL_SOPT_SS_NAME_SCOPE, see [SQLSetStmtAttr](sqlsetstmtattr.md).  
+  
+ For more information about table-valued parameters, see [Table-Valued Parameters (ODBC)](../native-client-odbc-table-valued-parameters/table-valued-parameters-odbc.md).  
+  
+## Related content
+
+- [SQLPrimaryKeys Function](../../odbc/reference/syntax/sqlprimarykeys-function.md)
+- [ODBC API implementation details](odbc-api-implementation-details.md)

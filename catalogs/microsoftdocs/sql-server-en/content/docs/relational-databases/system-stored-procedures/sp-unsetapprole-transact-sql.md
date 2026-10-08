@@ -1,0 +1,96 @@
+---
+title: "sys.sp_unsetapprole (Transact-SQL)"
+description: Deactivates an application role and reverts to the previous security context.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_unsetapprole_TSQL"
+  - "sp_unsetapprole"
+helpviewer_keywords:
+  - "sp_unsetapprole"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_unsetapprole (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Deactivates an application role and reverts to the previous security context.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_unsetapprole [ @cookie = ] cookie
+[ ; ]
+```
+
+## Arguments
+
+#### [ @cookie = ] *cookie*
+
+Specifies the cookie that was created when the application role was activated. *@cookie* is **varbinary(8000)**, with no default. The cookie is created by [sp_setapprole](sp-setapprole-transact-sql.md).
+
+> **Note:**  
+> The cookie `OUTPUT` parameter for `sp_setapprole` is currently documented as **varbinary(8000)** which is the correct maximum length. However the current implementation returns **varbinary(50)**. Applications should continue to reserve **varbinary(8000)** so that the application continues to operate correctly if the cookie return size increases in a future release.
+
+## Return code values
+
+0 (success) and 1 (failure)
+
+## Remarks
+
+After an application role is activated by using `sp_setapprole`, the role remains active until the user either disconnects from the server or executes `sp_unsetapprole`.
+
+For an overview of application roles, see [Application Roles](../security/authentication-access/application-roles.md).
+
+## Permissions
+
+Requires membership in **public** and knowledge of the cookie saved when the application role was activated.
+
+## Examples
+
+### Activate an application role with a cookie, then reverting to the previous context
+
+The following example activates the `Sales11` application role, and creates a cookie. The example returns the name of the current user, and then reverts to the original context by executing `sp_unsetapprole`. Replace `<password>` with a strong password.
+
+```sql
+DECLARE @cookie AS VARBINARY (8000);
+
+EXECUTE sp_setapprole 'Sales11',
+    '<password>',
+    @fCreateCookie = true,
+    @cookie = @cookie OUTPUT;
+
+-- The application role is now active.
+SELECT USER_NAME();
+
+-- Return the name of the application role, Sales11.
+EXECUTE sp_unsetapprole @cookie;
+    -- The application role is no longer active.
+    -- The original context has now been restored.
+GO
+
+-- Return the name of the original user.
+SELECT USER_NAME();
+GO
+```
+
+## Related content
+
+- [sys.sp_setapprole (Transact-SQL)](sp-setapprole-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [CREATE APPLICATION ROLE (Transact-SQL)](../../t-sql/statements/create-application-role-transact-sql.md)
+- [DROP APPLICATION ROLE (Transact-SQL)](../../t-sql/statements/drop-application-role-transact-sql.md)

@@ -1,0 +1,33 @@
+---
+title: "Installation Components"
+description: "Installation Components"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: install-set-up-deploy
+ms.custom: intro-installation
+helpviewer_keywords:
+  - "installing ODBC components [ODBC], setup program"
+  - "ODBC [ODBC], component installation"
+---
+# Installation Components
+> **Note:**  
+>  Starting with Windows XP and Windows Server 2003, ODBC is included in the Windows operation system. You should only explicitly install ODBC on earlier versions of Windows.  
+  
+ The installation process starts when the user runs the setup program. The setup program works in conjunction with the *installer DLL* and a *driver setup DLL* for each driver. Both the setup program and the installer DLL use the arguments in the **SQLInstallDriverEx** and **SQLInstallTranslatorEx** functions to determine which files to copy or delete for each component. The following illustration shows the relationship between these installation components.  
+  
+ Relationship between installation components  
+  
+> **Important:**
+>  The Odbc.inf file that was used in ODBC *2.x* to describe the files required by each ODBC component is not used in ODBC *3.x*. Drivers that ship ODBC *3.x* components do not need to create an Odbc.inf file. The removal of **SQLInstallDriver** and **SQLInstallODBC**, and the deprecation of **SQLInstallTranslator**, have rendered Odbc.inf unnecessary. The driver information that used to be in the Driver Keyword sections of Odbc.inf is now provided in the *lpszDriver* argument in **SQLInstallDriverEx**. The translator information that used to be in the [ODBC Translator] and Translator Specification sections of Odbc.inf is now provided in the *lpszTranslator* argument of **SQLInstallTranslatorEx**. These changes allow the ODBC Installer to be more portable across platforms.  
+  
+ For more information about these components, see the following topics at the end of this section.  
+  
+-   [Setup Program](setup-program.md)  
+  
+-   [Installer DLL](installer-dll.md)  
+  
+-   [Driver Setup DLL](driver-setup-dll.md)

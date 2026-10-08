@@ -1,0 +1,35 @@
+---
+title: "Cursor Type and Concurrency Combinations"
+description: "Cursor Type and Concurrency Combinations"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "ODBC driver for Oracle [ODBC], concurrency options"
+  - "cursors [ODBC], ODBC driver for Oracle"
+  - "concurrency options [ODBC]"
+  - "ODBC driver for Oracle [ODBC], cursor options"
+---
+# Cursor Type and Concurrency Combinations
+> **Important:**  
+>  This feature will be removed in a future version of Windows. Avoid using this feature in new development work, and plan to modify applications that currently use this feature. Instead, use the ODBC driver provided by Oracle.  
+  
+ Cursor types control the functionality of the cursor provided to the user. Concurrency options control the updatability and locking behavior of a result set.  
+  
+| Cursor type | Concurrency (allowed values) |
+| --- | --- |
+| SQL_CURSOR_FORWARD_ONLY | SQL_CONCUR_READ_ONLY |
+| SQL_CURSOR_STATIC | SQL_CONCUR_READ_ONLY |
+| SQL_CURSOR_KEYSET_DRIVEN<sup>[1]</sup> | SQL_CONCUR_READ_ONLY SQL_CONCUR_LOCK<sup>[2]</sup> SQL_CONCUR_VALUES |
+  
+ <sup>[1]</sup> See [Limitations of Using Keyset-Driven Cursors](limitations-of-using-keyset-driven-cursors.md).  
+  
+ <sup>[2]</sup> SQL_CONCUR_LOCK is supported only when the SQL_AUTOCOMMIT connection option is set to SQL_AUTOCOMMIT_OFF.  
+  
+## Related content
+
+- [Connect Options](connect-options.md)

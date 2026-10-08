@@ -1,0 +1,64 @@
+---
+title: "sys.event_notifications (Transact-SQL)"
+description: sys.event_notifications (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "event_notifications_TSQL"
+  - "event_notifications"
+  - "sys.event_notifications_TSQL"
+  - "sys.event_notifications"
+helpviewer_keywords:
+  - "sys.event_notifications catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.event_notifications (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns a row for each object that is an event notification, with **sys.objects.type** = EN.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **name** | **sysname** | Event notification name. |
+| **object_id** | **int** | Object identification number. Is unique within a database. |
+| **parent_class** | **tinyint** | Class of parent.<br /><br /> 0 = Database<br /><br /> 1 = Object or Column |
+| **parent_class_desc** | **nvarchar(60)** | DATABASE<br /><br /> OBJECT_OR_COLUMN |
+| **parent_id** | **int** | Non-zero ID of the parent object.<br /><br /> 0 = The parent class is the database. |
+| **create_date** | **datetime** | Date created. |
+| **modify_date** | **datetime** | Always equals **create_date**. |
+| **service_name** | **nvarchar(256)** | Name of the target service to which the notification is sent. |
+| **broker_instance** | **nvarchar(128)** | Broker instance to which the notification is sent. |
+| **principal_id** | **int** | ID of the database principal that owns this event notification. |
+| **creator_sid** | **varbinary(85)** | SID of the login who created the event notification.<br /><br /> Is NULL if the FAN_IN option is not specified. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

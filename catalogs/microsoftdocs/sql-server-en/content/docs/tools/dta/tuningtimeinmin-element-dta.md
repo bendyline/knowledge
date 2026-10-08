@@ -1,0 +1,73 @@
+---
+title: "TuningTimeInMin Element (DTA)"
+description: In the dta utility, the TuningTimeInMin element specifies the maximum length of a tuning session in minutes.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 03/01/2017
+ms.service: sql
+ms.subservice: tools-other
+ms.topic: reference
+ms.collection:
+  - data-tools
+helpviewer_keywords:
+  - "TuningTimeInMin element"
+dev_langs:
+  - "XML"
+---
+
+# TuningTimeInMin Element (DTA)
+
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Specifies the maximum length of a tuning session in minutes.  
+  
+## Syntax  
+  
+```  
+  
+<DTAInput>  
+...code removed...  
+    <TuningOptions>  
+      <TuningTimeInMin>...</TuningTimeInMin>  
+```  
+  
+## Element Characteristics  
+  
+| Characteristic | Description |
+| --- | --- |
+| **Data type and length** | **unsignedInt**, unlimited length. |
+| **Default value** | 480 minutes (8 hours). |
+| **Occurrence** | Required unless a value has been specified for the **NumberOfEvents** element. |
+  
+## Element Relationships  
+  
+| Relationship | Elements |
+| --- | --- |
+| **Parent element** | [TuningOptions Element (DTA)](tuningoptions-element-dta.md) |
+| **Child elements** | None |
+  
+## Example  
+  
+## Description  
+ The following code example shows how to set 12 hours as the maximum tuning time:  
+  
+## Code  
+  
+```  
+<DTAInput>  
+  <Server>...</Server>  
+  <Workload>...</Workload>  
+  <TuningOptions>  
+    <TuningTimeInMin>720</TuningTimeInMin>  
+...code removed here...  
+</DTAInput>  
+```  
+  
+## Related content
+
+- [XML Input File Reference (Database Engine Tuning Advisor)](xml-input-file-reference-database-engine-tuning-advisor.md)

@@ -1,0 +1,47 @@
+# Source code: aspnetcore/fundamentals/app-state/3.0samples/RazorPagesContacts/Pages/Customers/IndexKeep.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model IndexModel
+
+<h1>Contacts Keep</h1>
+
+@{
+    if (TempData["Message"] != null)
+    {
+        <h3>Message: @TempData["Message"]</h3>
+    }
+    TempData.Keep("Message");
+}
+
+@*Content removed for brevity.*@
+
+@{
+    ViewData["Title"] = "Keep";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contact in Model.Customer)
+        {
+            <tr>
+                <td> @contact.Id  </td>
+                <td>@contact.Name</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@contact.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-page="Create">Create New</a>
+
+```

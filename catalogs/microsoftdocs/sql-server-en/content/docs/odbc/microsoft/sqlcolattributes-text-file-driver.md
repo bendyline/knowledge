@@ -1,0 +1,24 @@
+---
+title: "SQLColAttributes (Text File Driver)"
+description: "SQLColAttributes (Text File Driver)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "text file driver [ODBC], SQLColAttributes"
+  - "SQLColAttribute function [ODBC], Text File Driver"
+---
+# SQLColAttributes (Text File Driver)
+> **Note:**  
+>  This topic provides Text File Driver-specific information. For general information about this function, see the appropriate topic under [ODBC API Reference](../reference/syntax/odbc-api-reference.md).  
+  
+| Attribute | Comments |
+| --- | --- |
+| SQL_COLUMN_DISPLAY_SIZE | For LONGVARBINARY data, SQL_COLUMN_DISPLAY_SIZE is the maximum length of the column, not the maximum length of the column times 2. |
+| SQL_OWNER_NAME | An empty string ("") is returned in this column because owner name is not supported. |
+| SQL_QUALIFIER_NAME | The path to a directory is returned. |
+| SQL_COLUMN_SEARCHABLE | LONGVARBINARY and LONGVARCHAR columns are reported as SQL_UNSEARCHABLE.<br /><br /> Fixed-length and variable-length binary and character data types are searchable, even though LONGVARBINARY and LONGVARCHAR are not. |

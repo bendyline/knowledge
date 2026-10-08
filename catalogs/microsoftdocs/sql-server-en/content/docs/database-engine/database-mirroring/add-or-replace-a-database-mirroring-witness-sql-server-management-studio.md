@@ -1,0 +1,88 @@
+---
+title: "Add or replace a mirror witness (SSMS)"
+description: Learn how to add or replace a database mirroring witness using SQL Server Management Studio when the database mirroring endpoints use Windows Authentication.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/07/2017"
+ms.service: sql
+ms.subservice: database-mirroring
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "witness [SQL Server], establishing"
+  - "database mirroring [SQL Server], witness"
+---
+# Add or Replace a Database Mirroring Witness (SQL Server Management Studio)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+> **Caution:**
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  For high availability, use  Always On availability groups 
+ instead.  
+
+> **Important:**
+> Database Mirroring in SQL Server is a distinct technology from [Microsoft Fabric Database Mirroring](https://learn.microsoft.com/fabric/database/mirrored-database/overview). Mirroring to Fabric provides better analytical performance, the ability to unify your data estate with OneLake in Fabric, and open access to your data in Delta Parquet format.
+>
+> With Mirroring to Microsoft Fabric, you can continuously replicate your existing data estate directly into OneLake in Fabric, including data from SQL Server 2016+, Azure SQL Database, Azure SQL Managed Instance, Cosmos DB, Oracle, Snowflake, and more.
+
+  If the database mirroring endpoints use Windows Authentication, you can use  SQL Server Management Studio 
+ to add or replace a witness. Adding a witness in  Management Studio
+ also changes the operating mode to high-safety mode with automatic failover.  
+  
+> **Note:**  
+>  We strongly recommend that the witness reside on a separate computer from either of the partners. The service account used by the witness must be in the same domain as the service accounts used by the principal and mirror server instances, or it must be in a trusted domain.  
+  
+### To Add or Replace a Witness  
+  
+1.  After connecting to the principal server instance, in Object Explorer, click the server name to expand the server tree.  
+  
+2.  Expand **Databases**, and select the principal database of the session to which you are adding or replacing a witness.  
+  
+3.  Right-click the database, select **Tasks**, and then click **Mirror**. This opens the **Mirroring** page of the **Database Properties** dialog box.  
+  
+4.  Click **Configure Security**.  
+  
+5.  If the **Configure Database Mirroring Security Wizard** welcome screen appears, click **Next**.  
+  
+6.  In the **Include Witness Server** dialog box, click **Yes**, and then click **Next**.  
+  
+7.  In the **Choose Servers to Configure** dialog box, the **Witness server instance** check box is automatically checked. Click **Next**.  
+  
+8.  On the **Principal Server Instance** dialog box, keep the existing port and endpoint. Click **Next**.  
+  
+9. On the **Witness Server Instance** dialog box, click **Connect**.  
+  
+10. In the **Connect to Server** dialog box, specify the witness server instance in the **Server name** field, and use Windows Authentication (the default). Click **Connect**.  
+  
+11. Once a connection is established, the listener port and database mirroring endpoint of the witness server instance are displayed on the **Witness Server Instance** dialog box. Click **Next**.  
+  
+12. The **Service Accounts** dialog box contains fields for the domain service accounts of the principal, mirror, and witness server instances.  
+  
+    -   If the server instances all use the same service account, leave the fields blank.  
+  
+    -   If the witness server instance uses a different service account from either of the partners, fill in the **Principal**, **Mirror**, and **Witness** fields with the account name:  
+  
+         *DOMAINNAME* **\\** *username*  
+  
+         The domain name must be in upper case.  
+  
+     Click **Next**.  
+  
+13. On the **Complete the Wizard** summary screen, optionally, verify the witness configuration, and then click **Finish**.  
+  
+14. On finishing, the wizard returns you to the **Database Properties** dialog box where the server network address of the witness now appears in **Witness** field. Also, **High-safety mode with automatic failover (synchronous)**, which is required with a witness, is automatically selected.  
+  
+     To enable the witness and change the session to high-safety mode with automatic failover, Click **OK**.  
+  
+## Related content
+
+- [Database Mirroring Witness](database-mirroring-witness.md)
+- [Database Mirroring (SQL Server)](database-mirroring-sql-server.md)
+- [Database Properties (Mirroring Page)](../../relational-databases/databases/database-properties-mirroring-page.md)
+- [Establish Database Mirroring Session - Windows Authentication](establish-database-mirroring-session-windows-authentication.md)

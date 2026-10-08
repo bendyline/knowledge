@@ -1,0 +1,69 @@
+---
+title: "Long (geography Data Type)"
+description: "Long (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "06/02/2016"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "Long_TSQL"
+  - "Long"
+helpviewer_keywords:
+  - "Long method"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+
+# Long (geography Data Type)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  The longitude property of the **geography** instance.  
+  
+## Syntax  
+  
+```syntaxsql
+.Long  
+```  
+
+## Return Value  
+  SQL Server 
+ type: **float**  
+  
+ CLR type: **SqlDouble**  
+  
+## Remarks  
+ In the OpenGIS model, Long is defined only on **geography** instances composed of a single point. This property will return NULL if **geography** instances contain more than a single point. This property is precise and read-only.  
+  
+## Examples  
+ This example creates a **Point** instance and retrieves the longitude of the point.  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('POINT(-122.34900 47.65100)', 4326);  
+SELECT @g.Long;  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)

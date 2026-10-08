@@ -1,0 +1,86 @@
+---
+title: "STDifference (geometry Data Type)"
+description: "STDifference (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STDifference_TSQL"
+  - "STDifference (geometry Data Type)"
+helpviewer_keywords:
+  - "STDifference (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STDifference (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns an object that represents the point set from one **geometry** instance that does not lie within another **geometry** instance.
+  
+## Syntax  
+  
+```  
+  
+.STDifference ( other_geometry )  
+```  
+  
+## Arguments
+ *other_geometry*  
+ Is another **geometry** instance indicating which points to remove from the instance on which `STDifference()` is being invoked.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+## Remarks  
+ This method always returns null if the spatial reference IDs (SRIDs) of the **geometry** instances do not match.   The result may contain circular arc segments only if the input instances contain circular arc segments.  
+  
+## Examples  
+  
+### A. Computing the difference between two Polygon instances  
+ The following example uses `STDifference()` to compute the difference between two polygons.  
+  
+```sql
+DECLARE @g geometry;  
+DECLARE @h geometry;  
+SET @g = geometry::STGeomFromText('POLYGON((0 0, 0 2, 2 2, 2 0, 0 0))', 0);  
+SET @h = geometry::STGeomFromText('POLYGON((1 1, 3 1, 3 3, 1 3, 1 1))', 0);  
+SELECT @g.STDifference(@h).ToString();  
+```  
+  
+### B. Invoking STDifference() on a CurvePolygon instance  
+ The following example uses STDifference() on a CurvePolygon instance.  
+  
+```sql
+ DECLARE @g geometry = 'CURVEPOLYGON (CIRCULARSTRING (0 -4, 4 0, 0 4, -4 0, 0 -4))';  
+ DECLARE @h geometry = 'POLYGON ((1 -1, 5 -1, 5 3, 1 3, 1 -1))';  
+ -- Note the different results returned by the two SELECT statements  
+ SELECT @h.STDifference(@g).ToString(), @g.STDifference(@h).ToString();
+ ```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

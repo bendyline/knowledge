@@ -1,0 +1,38 @@
+---
+title: "createBlob Method (SQLServerConnection)"
+description: "createBlob Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# createBlob Method (SQLServerConnection)
+
+
+  Creates a Blob object without any data.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.Blob createBlob()  
+```  
+  
+## Return Value  
+ A Blob object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This createBlob method is specified by the createBlob method in the java.sql.Connection interface.  
+  
+ This method replaces the need for [SQLServerBlob Constructor (SQLServerConnection, byte)](sqlserverblob-constructor-sqlserverconnection-byte.md).  
+  
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

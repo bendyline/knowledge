@@ -1,0 +1,89 @@
+---
+title: "Specify disk or tape backup destination"
+description: This article shows you how to specify a disk or tape as a backup destination in SQL Server by using SQL Server Management Studio or Transact-SQL.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "backup devices [SQL Server], tapes"
+  - "backing up databases [SQL Server], tapes"
+  - "database backups [SQL Server], tapes"
+  - "backup devices [SQL Server], disks"
+  - "disk backup devices [SQL Server]"
+  - "database backups [SQL Server], disks"
+  - "backing up databases [SQL Server], disks"
+  - "backups [SQL Server], creating"
+  - "tape backup devices, backing up"
+---
+# Specify a disk or tape backup destination (SQL Server)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This topic describes how to specify a disk or tape as a backup destination in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL .  
+  
+> **Note:**  
+>  Support for tape backup devices will be removed in a future version of SQL Server. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  
+
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+BACKUP DATABASE and BACKUP LOG permissions default to members of the **sysadmin** fixed server role and the **db_owner** and **db_backupoperator** fixed database roles.  
+  
+ Ownership and permission problems on the backup device's physical file can interfere with a backup operation.  SQL Server 
+ must be able to read and write to the device; the account under which the  SQL Server 
+ service runs must have write permissions. However, [sp_addumpdevice](../system-stored-procedures/sp-addumpdevice-transact-sql.md), which adds an entry for a backup device in the system tables, does not check file access permissions. Such problems on the backup device's physical file may not appear until the physical resource is accessed when the backup or restore is attempted.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To specify a disk or tape as a backup destination  
+  
+1.  After connecting to the appropriate instance of the  Microsoft 
+  SQL Server Database Engine 
+, in Object Explorer, click the server name to expand the server tree.  
+  
+2.  Expand **Databases**, and, depending on the database, either select a user database or expand **System Databases** and select a system database.  
+  
+3.  Right-click the database, point to **Tasks**, and then click **Back Up**. The **Back Up Database** dialog box appears.  
+  
+4.  In the **Destination** section of the **General** page, click **Disk** or **Tape**. To select the paths of up to 64 disk or tape drives containing a single media set, click **Add**.  
+
+   To remove a backup destination, select it and click **Remove**. To view the contents of a backup destination, select it and click **Contents**.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To specify a disk or tape as a backup destination  
+  
+1.  Connect to the  Database Engine 
+.  
+  
+2.  From the Standard bar, click **New Query**.  
+  
+3.  In the [BACKUP](../../t-sql/statements/backup-transact-sql.md) statement, specify the file or device and its physical name. This example backs up the  `AdventureWorks2025`  database to the disk file `Z:\SQLServerBackups\AdventureWorks2022.bak`.  
+  
+```sql
+USE AdventureWorks2022;  
+GO  
+BACKUP DATABASE AdventureWorks2022  
+TO DISK = 'Z:\SQLServerBackups\AdventureWorks2022.bak'  
+GO  
+```  
+  
+## Related content
+
+- [Back up a transaction log](back-up-a-transaction-log-sql-server.md)
+- [Back Up Files and Filegroups](back-up-files-and-filegroups-sql-server.md)
+- [Define a Logical Backup Device for a Disk File (SQL Server)](define-a-logical-backup-device-for-a-disk-file-sql-server.md)
+- [Create a Differential Database Backup (SQL Server)](create-a-differential-database-backup-sql-server.md)
+- [Define a Logical Backup Device for a Tape Drive (SQL Server)](define-a-logical-backup-device-for-a-tape-drive-sql-server.md)

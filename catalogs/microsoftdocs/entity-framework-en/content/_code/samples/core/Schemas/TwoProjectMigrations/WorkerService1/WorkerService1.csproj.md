@@ -1,0 +1,25 @@
+# Source code: samples/core/Schemas/TwoProjectMigrations/WorkerService1/WorkerService1.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <UserSecretsId>dotnet-WorkerService1-F7BD8083-51FA-4910-9F6D-FCDE8274AF8B</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.7.26381.103">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>
+
+```

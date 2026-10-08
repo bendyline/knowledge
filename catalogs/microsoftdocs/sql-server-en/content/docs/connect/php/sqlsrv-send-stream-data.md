@@ -1,0 +1,92 @@
+---
+title: "sqlsrv_send_stream_data"
+description: "sqlsrv_send_stream_data"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+helpviewer_keywords:
+  - "sqlsrv_send_stream_data"
+  - "API Reference, sqlsrv_send_stream_data"
+  - "streaming data"
+apiname: "sqlsrv_send_stream_data"
+apitype: "NA"
+---
+# sqlsrv_send_stream_data
+
+
+
+Sends data from parameter streams to the server. Up to eight kilobytes (8K) of data is sent with each call to **sqlsrv_send_stream_data**.  
+  
+> **Note:**  
+> By default, all stream data is sent to the server when a query is executed. If this default behavior is not changed, you do not have to use **sqlsrv_send_stream_data** to send stream data to the server. For information about changing the default behavior, see the Parameters section of [sqlsrv_query](sqlsrv-query.md) or [sqlsrv_prepare](sqlsrv-prepare.md).  
+  
+## Syntax  
+  
+```php  
+  
+sqlsrv_send_stream_data( resource $stmt)  
+```  
+  
+#### Parameters  
+*$stmt*: A statement resource corresponding to an executed statement.  
+  
+## Return Value  
+Boolean : **true** if there is more data to be sent. Otherwise, **false**.  
+  
+## Example  
+The following example opens a product review as a stream and sends it to the server. The default behavior of sending the all stream data at the time of execution is disabled. The example assumes that SQL Server and the [AdventureWorks](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works) database are installed on the local computer. All output is written to the console when the example is run from the command line.  
+  
+```php  
+<?php  
+/* Connect to the local server using Windows Authentication and  
+specify the AdventureWorks database as the database in use. */  
+$serverName = "(local)";  
+$connectionInfo = array( "Database"=>"AdventureWorks");  
+$conn = sqlsrv_connect( $serverName, $connectionInfo);  
+if ($conn === false) {
+     echo "Could not connect.\n";  
+     die( print_r( sqlsrv_errors(), true));  
+}  
+  
+/* Define the query. */  
+$tsql = "UPDATE Production.ProductReview   
+         SET Comments = (?)   
+         WHERE ProductReviewID = 3";  
+  
+/* Open parameter data as a stream and put it in the $params array. */
+$data = 'Insert any lengthy comment here.';
+$comment = fopen('data:text/plain,'.urlencode($data), 'r');
+$params = array(&$comment);
+  
+/* Prepare the statement. Use the $options array to turn off the  
+default behavior, which is to send all stream data at the time of query  
+execution. */  
+$options = array("SendStreamParamsAtExec"=>0);  
+$stmt = sqlsrv_prepare($conn, $tsql, $params, $options);
+  
+/* Execute the statement. */  
+sqlsrv_execute( $stmt);  
+  
+/* Send up to 8K of parameter data to the server with each call to  
+sqlsrv_send_stream_data. Count the calls. */  
+$i = 1;  
+while (sqlsrv_send_stream_data($stmt)) {
+      echo "$i call(s) made.\n";  
+      $i++;  
+}  
+  
+/* Free statement and connection resources. */  
+sqlsrv_free_stmt( $stmt);  
+sqlsrv_close( $conn);  
+?>  
+```  
+  
+## Related content
+
+- [SQLSRV Driver API Reference](sqlsrv-driver-api-reference.md)
+- [Updating data (Microsoft Drivers for PHP for SQL Server)](updating-data-microsoft-drivers-for-php-for-sql-server.md)
+- [About Code Examples in the Documentation](about-code-examples-in-the-documentation.md)

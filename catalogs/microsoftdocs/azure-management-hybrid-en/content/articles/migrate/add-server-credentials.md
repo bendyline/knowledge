@@ -1,0 +1,89 @@
+---
+title: Provide Server Credentials to Discover Software Inventory, Dependencies, Web apps, and SQL Server Instances and Databases
+description: Learn how to provide server credentials on appliance configuration manager.
+author: vikram1988
+ms.author: vibansa
+ms.manager: abhemraj
+ms.service: azure-migrate
+ms.topic: how-to
+ms.date: 07/10/2026
+ms.reviewer: v-gajeronika
+ms.custom: engagement-fy25
+ms.update-cycle: 1095-days
+# Customer intent: As a cloud migration consultant, I want to provide server credentials in the configuration manager, so that I can accurately discover software inventory, web apps, and SQL Server instances to facilitate a smooth migration process.
+---
+
+# Provide server credentials to discover software inventory, dependencies, web apps, and SQL Server instances and databases
+
+Follow this article to learn how to add multiple server credentials on the appliance configuration manager to perform software inventory (discover installed applications), agentless dependency analysis, and discover web apps, SQL Server instances, and databases.
+
+The [Azure Migrate appliance](migrate-appliance.md) is a lightweight appliance used by Azure Migrate: Discovery and assessment to discover on-premises servers and send server configuration and performance metadata to Azure. The appliance can also be used to perform software inventory, agentless dependency analysis and discover of web app, and SQL Server instances and databases.
+
+**Applies to: migrate**
+> **Note:**
+> Currently, the discovery of ASP.NET web apps is only available in the appliance used for discovery and assessment of servers running in a VMware environment.
+
+
+If you want to use these features, you can provide server credentials by performing the following steps. For servers running on vCenter Server(s) and Hyper-V host(s)/cluster(s), the appliance will attempt to automatically map the credentials to the servers to perform the discovery features.
+
+## Add server credentials
+
+### Types of server credentials supported
+
+You can add multiple server credentials on the appliance configuration manager, which can be domain, nondomain (Windows or Linux) or SQL Server authentication credentials.
+
+The types of server credentials supported are listed in the table below:
+
+| Type of credentials | Description |
+| --- | --- |
+| **Domain credentials** | You can add **Domain credentials** by selecting the option from the drop-down in the **Add credentials** modal. <br/><br/> To provide domain credentials, you need to specify the **Domain name** which must be provided in the Fully Qualified Domain Name (FQDN) format (for example, prod.corp.contoso.com). <br/><br/> To provide domain credentials, specify the domain name in Fully Qualified Domain Name (FQDN) format (for example, prod.corp.contoso.com). <br/> <br/> You also need to provide a friendly name, username, and password for the credentials. In the guest discovery section of all three appliance stacks (VMware, Hyper‑V, and physical), domain credentials must be provided in UPN format (username@domain.com). <br/> <br/> In the physical appliance, to discover server metadata and enable SI and dependency analysis, provide domain credentials in down‑level format (domain\username). The UPN format (username@domain.com) isn’t supported for this scenario. <br/><br/> The domain credentials added will be automatically validated for authenticity against the Active Directory of the domain. This validation is to prevent any account lockouts when the appliance attempts to map the domain credentials against discovered servers. <br/><br/> To validate the domain credentials with the domain controller, the appliance should be able to resolve the domain name. Ensure that you've provided the correct domain name while adding the credentials else the validation will fail.<br/><br/> The appliance won't attempt to map the domain credentials that have failed validation. You need to have at least one successfully validated domain credential or at least one nondomain credential to start the discovery.<br/><br/>The domain credentials mapped automatically against the Windows servers will be used to perform software inventory and can also be used to discover web apps, and SQL Server instances and databases _(if you've configured Windows authentication mode on your SQL Servers)_.<br/> [Learn more](https://learn.microsoft.com/dotnet/framework/data/adonet/sql/authentication-in-sql-server) about the types of authentication modes supported on SQL Servers. |
+| **Non-domain credentials (Windows/Linux)** | You can add **Windows (Non-domain)** or **Linux (Non-domain)** by selecting the required option from the drop-down in the **Add credentials** modal. <br/><br/> You need to specify a friendly name for credentials, username, and password. |
+| **SQL Server Authentication credentials** | You can add **SQL Server Authentication** credentials by selecting the option from the drop-down in the **Add credentials** modal. <br/><br/> You need to specify a friendly name for credentials, username, and password. <br/><br/> You can add this type of credentials to discover SQL Server instances and databases running in your VMware environment, if you've configured SQL Server authentication mode on your SQL Servers.<br/> [Learn more](https://learn.microsoft.com/dotnet/framework/data/adonet/sql/authentication-in-sql-server) about the types of authentication modes supported on SQL Servers.<br/><br/> You need to provide at least one successfully validated domain credential or at least one Windows (Nondomain) credential so that the appliance can complete the software inventory to discover SQL installed on the servers before it uses the SQL Server authentication credentials to discover the SQL Server instances and databases. |
+| **PostgreSQL Authentication credentials** | You can add PostgreSQL authentication by selecting the appropriate option from the drop-down in the **Add credentials** dialog. <br/><br/> You need to specify a friendly name, username, and password. These credentials are used to discover PostgreSQL instances and databases in your environment, provided your PostgreSQL servers are configured for password-based authentication (such as md5, scram-sha-256, or password). <br/><br/> You must provide at least one successfully validated domain credential or at least one Windows/Linux (non-domain) credential so the appliance can complete the software inventory and discover PostgreSQL installations. After this step, the appliance uses the PostgreSQL authentication credentials to identify PostgreSQL instances and databases. |
+
+Check the permissions required on the Windows/Linux credentials to perform the software inventory, agentless dependency analysis and discover web apps, and SQL Server instances and databases.
+
+### Required permissions
+
+The table below lists the permissions required on the server credentials provided on the appliance to perform the respective features:
+
+| Feature | Windows credentials | Linux credentials |
+| --- | --- | --- |
+| **Software inventory** | Guest user account | Regular/normal user account (nonsudo access permissions) |
+| **Discovery of SQL Server instances and databases** | To discover SQL Server instances and databases, the Windows/ Domain account, or SQL Server account [requires these low privilege read permissions](migrate-support-matrix-vmware.md) for each SQL Server instance. You can use the [low-privilege account provisioning utility](least-privilege-credentials.md) to create custom accounts or use any existing account that is a member of the sysadmin server role for simplicity. | _Not supported currently_ |
+| **Discovery of ASP.NET web apps** | Domain or nondomain (local) account with administrative permissions | _Not supported currently_ |
+| **Agentless dependency analysis (quick discovery)** | Guest user account | Regular/normal user account (nonsudo access permissions) |
+| **Agentless dependency analysis (in-depth discovery)** | Domain or nondomain (local) account with administrative permissions | The following Sudo permissions are required to identify server dependencies: `/usr/bin/netstat` and `/usr/bin/ls`. <br /><br /> If `netstat` is not available, Sudo permissions on `ss` are required. <br /><br /> When providing a sudo user account, ensure that you have enabled **NOPASSWD** for the account to run the required commands without prompting for a password every time the sudo command is invoked. |
+| **Discovery of PostgreSQL instances and databases** | Use a PostgreSQL user account with either superuser privileges or the following [minimum user privilege](postgresql-least-privilege-configuration.md) on each PostgreSQL instance: CONNECT on the database, `pg_read_all_settings`, and USAGE on relevant schemas. | Use a PostgreSQL user account with either superuser privileges or the following [minimum user privileges](postgresql-least-privilege-configuration.md) on each PostgreSQL instance: CONNECT on the database, `pg_read_all_settings`, USAGE on relevant schemas. |
+
+> **Note:**
+> You can use a Windows guest or a Linux non-Sudo user account to get dependency data. But with least privileged accounts, you might not collect process information (like process name or app name) for some processes that run with higher privileges. These processes appear as **Unknown** under the machine in the single-server view.
+
+### Recommended practices to provide credentials
+
+- We recommend you to create a dedicated domain user account with the [required permissions](add-server-credentials.md#required-permissions), which is scoped to perform software inventory, agentless dependency analysis and discovery of web app, and SQL Server instances and databases on the desired servers.
+- We recommend you provide at least one successfully validated domain credential or at least one nondomain credential to initiate software inventory.
+- To discover SQL Server instances and databases, you can provide domain credentials, if you've configured Windows authentication mode on your SQL Servers.
+- You can also provide SQL Server authentication credentials if you've configured SQL Server authentication mode on your SQL Servers, but it's recommended to provide at least one successfully validated domain credential or at least one Windows (Nondomain) credential so that the appliance can first complete the software inventory.
+
+## Credentials handling on appliance
+
+- All the credentials provided on the appliance configuration manager are stored locally on the appliance server and not sent to Azure.
+- The credentials stored on the appliance server are encrypted using Data Protection API (DPAPI).
+- After you've added credentials, appliance attempts to automatically map the credentials to perform discovery on the respective servers.
+- The appliance uses the credentials automatically mapped on a server for all the subsequent discovery cycles until the credentials are able to fetch the required discovery data. If the credentials stop working, appliance again attempts to map from the list of added credentials and continues the ongoing discovery on the server.
+- The domain credentials added will be automatically validated for authenticity against the Active Directory of the domain. This is to prevent any account lockouts when the appliance attempts to map the domain credentials against discovered servers. The appliance won't attempt to map the domain credentials that have failed validation.
+- If the appliance can't map any domain or nondomain credentials against a server, you'll see "Credentials not available" status against the server in your project.
+
+## Credentials for VMware networking discovery
+
+To discover networking resources from VMware environments, provide vCenter Server credentials in the appliance configuration manager. 
+
+The appliance uses NSX credentials to discover networking inventory and configuration metadata from the VMware NSX environment. These credentials are different from guest credentials, which you use to access individual Windows or Linux servers for features such as software inventory and agentless dependency analysis. Provide NSX credentials at the environment level. Use these credentials to discover networking resources and relationships. 
+
+
+## Next steps
+
+- [Steps to add credentials in VMware appliance](tutorial-discover-vmware.md#provide-server-credentials).
+- [Steps to add credentials in Hyper-V appliance](tutorial-discover-hyper-v.md#provide-server-credentials).
+- [Steps to add credentials in physical appliance](tutorial-discover-physical.md#start-discovery).

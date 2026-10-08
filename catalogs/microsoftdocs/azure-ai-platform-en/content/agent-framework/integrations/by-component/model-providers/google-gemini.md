@@ -1,0 +1,156 @@
+---
+title: Google Gemini
+description: Use Google Gemini Developer API or Gemini Enterprise Agent Platform models with Agent Framework agents.
+zone_pivot_groups: programming-languages
+author: eavanvalkenburg
+ms.topic: article
+ms.author: edvan
+ms.date: 09/30/2026
+ms.service: agent-framework
+ai-usage: ai-assisted
+ms.custom: update-code1
+---
+
+<!--
+  Language parity table - keep in sync when adding/removing sections.
+
+  | Section              | C# | Python | Go | Notes                       |
+  |----------------------|:--:|:------:|:--:|-----------------------------|
+  | Gemini client setup  | ✅ |   ✅   | ✅ |                             |
+  | Function tools       | ✅ |   ✅   | ✅ |                             |
+  | Streaming            | ✅ |   ✅   | ✅ |                             |
+  | Embeddings           | ❌ |   ✅   | ❌ | Gemini Embedding 2          |
+  | Request failures     | ❌ |   ✅   | ❌ | Python SDK exception mapping |
+  | Gemini hosted tools  | ❌ |   ✅   | ❌ | Python factories documented |
+-->
+
+# Google Gemini
+
+Google Gemini can back an Agent Framework agent through the Gemini Developer API or Gemini Enterprise Agent Platform (formerly Vertex AI). The provider-specific client handles authentication and Gemini request options while Agent Framework owns the agent definition and orchestration.
+
+> **Important:**
+> Google Gemini and Vertex AI are third-party systems. Review service terms, data handling, regional boundaries, model access, and usage costs before sending application data.
+
+**Applies to: programming-language-csharp**
+
+
+## Install a Gemini `IChatClient`
+
+The .NET sample demonstrates the official Google GenAI client and the community `Mscc.GenerativeAI.Microsoft` implementation.
+
+```bash
+dotnet add package Google.GenAI
+dotnet add package Mscc.GenerativeAI.Microsoft
+dotnet add package Microsoft.Agents.AI --prerelease
+```
+
+## Configuration
+
+```bash
+GOOGLE_GENAI_API_KEY="<google-ai-studio-api-key>"
+GOOGLE_GENAI_MODEL="gemini-2.5-flash"
+```
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/dotnet/samples/02-agents/AgentProviders/google-gemini/Agent_With_GoogleGemini/Program.cs](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/integrations/by-component/model-providers/google-gemini.md)
+
+Choose one `IChatClient` implementation and configure its Gemini Developer API or Vertex AI authentication.
+
+
+
+**Applies to: programming-language-python**
+
+
+## Install the package
+
+```bash
+pip install agent-framework-gemini --pre
+```
+
+## Configuration
+
+Use either the Gemini Developer API:
+
+```bash
+GOOGLE_API_KEY="<api-key>"
+GOOGLE_MODEL="gemini-2.5-flash"
+```
+
+Or configure Gemini Enterprise Agent Platform:
+
+```bash
+GOOGLE_GENAI_USE_ENTERPRISE="true"
+GOOGLE_CLOUD_PROJECT="<project-id>"
+GOOGLE_CLOUD_LOCATION="global"
+GOOGLE_MODEL="gemini-2.5-flash"
+```
+
+The older `GOOGLE_GENAI_USE_VERTEXAI=true` setting remains supported. The connector no longer reads `GEMINI_API_KEY`, `GEMINI_MODEL`, or `GEMINI_EMBEDDING_MODEL`; use the corresponding `GOOGLE_*` variables or pass values explicitly.
+
+`GeminiChatClient` supports streaming, function tools, structured output, extended thinking, and provider-hosted tools.
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/02-agents/providers/gemini/gemini_basic.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/integrations/by-component/model-providers/google-gemini.md)
+
+### Handle request failures
+
+For streaming and non-streaming runs, Gemini SDK request failures are exposed through Agent Framework exceptions. HTTP 401 and 403 failures raise `ChatClientInvalidAuthException`, other HTTP 4xx failures raise `ChatClientInvalidRequestException`, and all other provider failures raise `ChatClientException`.
+
+Catch `ChatClientException` when the same error handling should apply across chat providers.
+
+### Include thought summaries
+
+The [extended thinking sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/02-agents/providers/gemini/gemini_advanced.py) shows how to configure `ThinkingConfig`. To receive Gemini thought summaries, set `include_thoughts=True` in the thinking configuration:
+
+```python
+options: GeminiChatOptions = {
+    "thinking_config": ThinkingConfig(include_thoughts=True, thinking_budget=2048),
+}
+```
+
+When Gemini returns a thought summary, `GeminiChatClient` adds it to the response as `Content` with `type == "text_reasoning"`. Read the summary from `content.text`.
+
+For a run without streaming, filter the `contents` of each item in `result.messages`. For a streaming run, filter each `chunk.contents`. Text accessors such as `result.text` and `chunk.text` include only `text` content, so inspect the content collections when your app needs reasoning summaries.
+
+### Generate embeddings
+
+`GeminiEmbeddingClient` uses `gemini-embedding-2` by default. Override it with `GOOGLE_EMBEDDING_MODEL` or the `model` constructor parameter. Text inputs require a task type on each call; use `RETRIEVAL_DOCUMENT` when indexing and `RETRIEVAL_QUERY` when searching the same vector space.
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/02-agents/providers/gemini/gemini_embeddings.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/integrations/by-component/model-providers/google-gemini.md)
+
+Use the same model and dimensions for document and query embeddings. The client also accepts Google SDK media `Part` and `Content` values for image, audio, video, PDF, or combined text-and-media embeddings. Media inputs don't use a text task prefix.
+
+When a vector collection generates embeddings, pass the document task through `upsert(..., embeddings_options=...)` and the query task through `search(..., embeddings_options=...)` or `create_vector_search_tool(..., embeddings_options=...)`. For multiple vector fields, use `embeddings_options_by_field`. Agent Framework supplies the selected field's dimensions and rejects conflicting values.
+
+The package includes factories for Google Search grounding, Google Maps grounding, code execution, file search, and MCP.
+
+### Google Search grounding
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/02-agents/providers/gemini/gemini_with_google_search.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/integrations/by-component/model-providers/google-gemini.md)
+
+
+
+**Applies to: programming-language-go**
+
+
+The Go SDK provides `geminiprovider` for Gemini inference. Create a standard `*agent.Agent` through the provider-specific constructor.
+
+See the [Gemini provider package](https://github.com/microsoft/agent-framework-go/tree/main/provider/geminiprovider) and [examples](https://github.com/microsoft/agent-framework-go/tree/main/examples/02-agents/providers/gemini).
+
+
+
+## Tools
+
+| Tool | C# | Python | Go | Notes |
+| --- | :---: | :---: | :---: | --- |
+| [Function Tools](../../../agents/tools/function-tools.md) | ✅ | ✅ | ✅ | Standard model function calling. |
+| [Tool Approval](../../../agents/tools/tool-approval.md) | ✅ | ✅ | ✅ | Applied by the framework tool loop. |
+| [Code Interpreter](../../../agents/tools/code-interpreter.md) | ❌ | ✅ | ❌ | `GeminiChatClient.get_code_interpreter_tool()`. |
+| [File Search](../../../agents/tools/file-search.md) | ❌ | ✅ | ❌ | `GeminiChatClient.get_file_search_tool()`. |
+| [Web Search](../../../agents/tools/web-search.md) | ❌ | ✅ | ❌ | Google Search grounding through `get_web_search_tool()`. |
+| Google Maps grounding | ❌ | ✅ | ❌ | `GeminiChatClient.get_maps_grounding_tool()`. |
+| [Hosted MCP Tools](../../../agents/tools/hosted-mcp-tools.md) | ❌ | ✅ | ❌ | `GeminiChatClient.get_mcp_tool()`. |
+| [Local MCP Tools](../../../agents/tools/local-mcp-tools.md) | ✅ | ✅ | ✅ | Runs in the application process. |
+
+## Next steps
+
+> 
+> [ONNX](onnx.md)

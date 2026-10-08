@@ -1,0 +1,21 @@
+# Source code: aspnetcore/fundamentals/host/hosted-services/samples/6.0/BackgroundTasksSample/BackgroundTasksSample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<UserSecretsId>dotnet-BackgroundTasksSample-E6370564-EEA4-467C-AC17-5BDD716D3C4B</UserSecretsId>
+		<RootNamespace>BackgroundTasksSample</RootNamespace>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.7.21377.19" />
+	</ItemGroup>
+
+</Project>
+
+```

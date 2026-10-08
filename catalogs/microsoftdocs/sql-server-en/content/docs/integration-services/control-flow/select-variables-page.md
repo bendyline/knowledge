@@ -1,0 +1,42 @@
+---
+title: "Select Variables Page"
+description: "Select Variables Page"
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.vstahostingui.variablepickermodaldialog.f1"
+helpviewer_keywords:
+  - "Select variables"
+  - "Variable selection"
+---
+# Select Variables Page
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Use the **Select variables** dialog box to select one or more variables for the **ReadOnlyVariables** and **ReadWriteVariables** properties when you configure a Script task or a Script component.  
+  
+ To open the **Select Variables** dialog box, on the **Script** page of the **Script Transformation Editor** dialog box, under **Custom Properties**, locate either the **ReadOnlyVariables** or **ReadWriteVariables** property, and then click the ellipsis (...) button associated with that property.  
+  
+## Options  
+ Select box  
+ Selects a specific variable, selects all the variables, or clears the selection of all variables.  
+  
+ **Name**  
+ Specifies the name of a variable.  
+  
+ **Type**  
+ Specifies the data type of a variable.  
+  
+## Related content
+
+- [Script Task](script-task.md)

@@ -1,0 +1,49 @@
+---
+title: "Property Expressions Editor"
+description: "Property Expressions Editor"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.propertyexpressionseditor.f1"
+helpviewer_keywords:
+  - "Property Expressions Editor dialog box"
+---
+# Property Expressions Editor
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Use the **Property Expressions Editor** dialog box to create, edit, or delete the property expressions that update property values.  
+  
+## Options  
+ **Property**  
+ Select an object property from the list.  
+  
+ **Expression**  
+ Type a literal or an expression to update the value of the property.  
+  
+> **Note:**  
+>  The names of user-defined and system variables are case-sensitive.  
+  
+ **Expression (...)**  
+ Click the ellipsis to open the **Expression Builder** dialog box. For more information, see [Expression Builder](expression-builder.md).  
+  
+ **Delete**  
+ Select a property, and then click **Delete**.  
+  
+## Related content
+
+- [Expressions Page](expressions-page.md)
+- [Integration Services (SSIS) Variables](../integration-services-ssis-variables.md)
+- [System Variables](../system-variables.md)
+- [Integration Services (SSIS) Expressions](integration-services-ssis-expressions.md)
+- [Use Property Expressions in Packages](use-property-expressions-in-packages.md)

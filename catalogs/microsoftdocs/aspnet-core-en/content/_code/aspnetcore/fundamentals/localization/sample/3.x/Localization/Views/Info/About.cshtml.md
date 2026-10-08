@@ -1,0 +1,19 @@
+# Source code: aspnetcore/fundamentals/localization/sample/3.x/Localization/Views/Info/About.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["About"];
+}
+<h2>@ViewData["Title"].</h2>
+
+@ViewData["Message"]
+
+<p>@Localizer["Use this area to provide additional information."]</p>
+
+```

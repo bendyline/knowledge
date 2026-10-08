@@ -1,0 +1,88 @@
+---
+title: "sys.fn_trace_gettable (Transact-SQL)"
+description: "sys.fn_trace_gettable (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "fn_trace_gettable"
+  - "fn_trace_gettable_TSQL"
+helpviewer_keywords:
+  - "fn_trace_gettable function"
+  - "sys.fn_trace_gettable function"
+dev_langs:
+  - "TSQL"
+---
+# sys.fn_trace_gettable (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns the content of one or more trace files in tabular form.  
+  
+> **Important:**  
+>  This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use Extended Events instead.  
+   
+ 
+  
+## Syntax  
+  
+```  
+  
+fn_trace_gettable ( 'filename' , number_files )  
+```  
+  
+## Arguments  
+ '*filename*'  
+ Specifies the initial trace file to be read. *filename* is **nvarchar(256)**, with no default.  
+  
+ *number_files*  
+ Specifies the number of rollover files to be read. This number includes the initial file specified in *filename*. *number_files* is an **int**.  
+  
+## Remarks  
+ If *number_files* is specified as **default**, **fn_trace_gettable** reads all rollover files until it reaches the end of the trace. **fn_trace_gettable** returns a table with all the columns valid for the specified trace. For more information, see [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md).  
+  
+ Be aware that the fn_trace_gettable function will not load rollover files (when this option is specified by using the *number_files* argument) where the original trace file name ends with an underscore and a numeric value. (This does not apply to the underscore and number that are automatically appended when a file rolls over.) As a workaround, you can rename the trace files to remove the underscores in the original file name. For example, if the original file is named **Trace_Oct_5.trc** and the rollover file is named **Trace_Oct_5_1.trc**, you can rename the files to **TraceOct5.trc** and **TraceOct5_1.trc**.  
+  
+ This function can read a trace that is still active on the instance on which it is executed.  
+  
+## Permissions  
+ Requires ALTER TRACE permission on the server.  
+  
+## Examples  
+  
+### A. Using fn_trace_gettable to import rows from a trace file  
+ The following example calls `fn_trace_gettable` inside the `FROM` clause of a `SELECT...INTO` statement.  
+  
+```  
+USE AdventureWorks2022;  
+GO  
+SELECT * INTO temp_trc  
+FROM fn_trace_gettable('c:\temp\mytrace.trc', default);  
+GO  
+```  
+  
+### B. Using fn_trace_gettable to return a table with an IDENTITY column that can be loaded into a SQL Server table  
+ The following example calls the function as part of a `SELECT...INTO` statement and returns a table with an `IDENTITY` column that can be loaded into the table `temp_trc`.  
+  
+```  
+USE AdventureWorks2022;  
+GO  
+SELECT IDENTITY(int, 1, 1) AS RowNumber, * INTO temp_trc  
+FROM fn_trace_gettable('c:\temp\mytrace.trc', default);  
+GO  
+```  
+  
+## Related content
+
+- [sp_trace_generateevent (Transact-SQL)](../system-stored-procedures/sp-trace-generateevent-transact-sql.md)
+- [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md)
+- [sp_trace_setfilter (Transact-SQL)](../system-stored-procedures/sp-trace-setfilter-transact-sql.md)
+- [sp_trace_setstatus (Transact-SQL)](../system-stored-procedures/sp-trace-setstatus-transact-sql.md)

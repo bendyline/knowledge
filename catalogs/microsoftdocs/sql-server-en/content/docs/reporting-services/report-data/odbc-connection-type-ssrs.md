@@ -1,0 +1,71 @@
+---
+title: "ODBC Connection Type"
+description: Use the information in this article about the ODBC connection type to learn how to build a data source.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+  - sfi-ropc-nochange
+---
+# ODBC Connection Type (SSRS)
+  To include data from an ODBC data provider, you must have a dataset that is based on a report data source of type ODBC. This built-in data source type is based on the  Microsoft 
+  SQL Server 
+  Reporting Services 
+ ODBC data processing extension.  
+  
+ Use the information in this topic to build a data source. For step-by-step instructions, see [Add and Verify a Data Connection (Report Builder and SSRS)](add-and-verify-a-data-connection-report-builder-and-ssrs.md).  
+  
+##  <a name="Connection"></a> Connection String  
+ The connection string for the ODBC data processing extension depends on the ODBC driver that you want. A typical connection string contains name/value pairs that are supported by the driver. For example, the following connection string specifies the ODBC driver for  SQL Server 
+ Native Client and the AdventureWorks database:  
+  
+```  
+Driver={SQL Server Native Client 10.0};Server=server;Database=AdventureWorks;Trusted_Connection=yes;  
+```  
+  
+  
+##  <a name="Credentials"></a> Credentials  
+ Credentials are required to run queries, to preview the report locally, and to preview the report from the report server.  
+  
+ After you publish your report, you may need to change the credentials for the data source so that when the report runs on the report server, the permissions to retrieve the data are valid.  
+  
+ If you configure your ODBC data source to prompt for a password or to include the password in the connection string, and a user enters the password with special characters such as punctuation marks, some underlying data source drivers cannot validate the special characters. When you process the report, the message "Not a valid password" might indicate this problem. If changing the password is impractical, you can work with your database administrator to store the appropriate credentials on the report server as part of a system ODBC data source name (DSN). For more information, see "OdbcConnection.ConnectionString" in the  .NET Framework 
+ SDK documentation.  
+  
+> **Note:**  
+>  It is recommended that you do not add login information such as passwords to the connection string. Report Builder provides a separate tab on the **Data Source** dialog box that you can use to enter credentials.  
+  
+ For more information, see [Create data connection strings - Report Builder & SSRS](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md) or [Specify Credential and Connection Information for Report Data Sources](specify-credential-and-connection-information-for-report-data-sources.md).  
+  
+  
+##  <a name="Remarks"></a> Remarks  
+ ODBC is an early data access technology that preceded OLEDB. ODBC supports only relational data sources. ODBC data providers are called *drivers*. ODBC drivers are provided by Microsoft and third party vendors. For example, Microsoft Office installs ODBC drivers that connect to Office file formats.  
+  
+ Before you can build an ODBC connection string, you must have ODBC drivers installed and build a machine or system DSN. To successfully retrieve the data that you want, you must provide query syntax that is supported by the driver. Parameter support varies by driver. For more information, see topics that are specific to the driver that you select, for example, [SQL Server Native Client &#40;ODBC&#41;](../../relational-databases/native-client/odbc/sql-server-native-client-odbc.md).  
+  
+###### Platform and Version Information  
+ For more information about specific ODBC data providers, see [Data Sources Supported by Reporting Services (SSRS)](data-sources-supported-by-reporting-services-ssrs.md).
+  
+  
+##  <a name="HowTo"></a> How-To Topics  
+ This section contains step-by-step instructions for working with data connections, data sources, and datasets.  
+  
+ [Add and Verify a Data Connection (Report Builder and SSRS)](add-and-verify-a-data-connection-report-builder-and-ssrs.md)  
+  
+ [Create a Shared Dataset or Embedded Dataset (Report Builder and SSRS)](create-a-shared-dataset-or-embedded-dataset-report-builder-and-ssrs.md)  
+  
+ [Add a Filter to a Dataset (Report Builder and SSRS)](add-a-filter-to-a-dataset-report-builder-and-ssrs.md)  
+  
+  
+## Related content
+
+- [Report Datasets (SSRS)](report-datasets-ssrs.md)
+- [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)
+- [Report Embedded Datasets and Shared Datasets (Report Builder and SSRS)](report-embedded-datasets-and-shared-datasets-report-builder-and-ssrs.md)
+- [Dataset Fields Collection (Report Builder and SSRS)](dataset-fields-collection-report-builder-and-ssrs.md)
+- [Data Sources Supported by Reporting Services (SSRS)](data-sources-supported-by-reporting-services-ssrs.md)
+- [Paginated report parameters in Report Builder](../report-design/report-parameters-report-builder-and-report-designer.md)
+- [Filter, group, and sort data in Report Builder paginated reports](../report-design/filter-group-and-sort-data-report-builder-and-ssrs.md)
+- [Expressions in a paginated report (Report Builder)](../report-design/expressions-report-builder-and-ssrs.md)

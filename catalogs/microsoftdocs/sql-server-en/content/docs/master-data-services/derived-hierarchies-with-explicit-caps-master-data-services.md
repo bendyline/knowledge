@@ -1,0 +1,72 @@
+---
+title: Derived Hierarchies with Explicit Caps
+description: Derived Hierarchies with Explicit Caps (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - build-2025
+helpviewer_keywords:
+  - "hierarchies [Master Data Services], derived hierarchies with explicit caps"
+  - "explicit hierarchies, derived hierarchies with explicit caps"
+  - "derived hierarchies, derived hierarchies with explicit caps"
+---
+# Derived Hierarchies with Explicit Caps (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In  Master Data Services 
+, when the levels from an explicit hierarchy are used as the top levels of a derived hierarchy, this is called a derived hierarchy with an explicit cap.  
+  
+ The explicit hierarchy must be based on the same entity as the entity at the top of the derived hierarchy.  
+  
+ In the  Master Data Manager 
+ user interface (UI), you create this type of hierarchy by dragging an explicit hierarchy to the top of a derived hierarchy.  
+  
+ mds_conc_explicit_cap_UI_structure  
+  
+## Derived Hierarchy with Explicit Cap Example  
+ In this example, the members in the explicit hierarchy are from the Subcategory entity. In the derived hierarchy, the top-level members are also from the Subcategory entity.  
+  
+ mds_conc_explicit_cap_UI_example  
+  
+ By using the explicit hierarchy at the top of a derived hierarchy, the derived hierarchy becomes ragged.  
+  
+## Rules  
+  
+-   You cannot have more than one explicit hierarchy in a derived hierarchy with explicit cap.  
+  
+-   You can use the same explicit hierarchy as a cap for multiple derived hierarchies.  
+  
+-   You cannot assign hierarchy member permissions to derived hierarchies with explicit caps. If you assign permissions to either the explicit hierarchy or the derived hierarchy individually, the permissions affect both hierarchies.  
+  
+## Related Tasks  
+  
+| Task Description | Topic |
+| --- | --- |
+| Create a derived hierarchy. | [Create a Derived Hierarchy (Master Data Services)](create-a-derived-hierarchy-master-data-services.md) |
+| Create an explicit hierarchy. | [Create an Explicit Hierarchy (Master Data Services)](create-an-explicit-hierarchy-master-data-services.md) |
+| Delete an existing derived hierarchy. | [Delete a Derived Hierarchy (Master Data Services)](delete-a-derived-hierarchy-master-data-services.md) |
+  
+## Related content
+
+- [Derived Hierarchies (Master Data Services)](derived-hierarchies-master-data-services.md)
+- [Explicit Hierarchies (Master Data Services)](explicit-hierarchies-master-data-services.md)

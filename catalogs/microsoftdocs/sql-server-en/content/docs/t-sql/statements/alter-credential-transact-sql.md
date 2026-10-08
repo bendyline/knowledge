@@ -1,0 +1,97 @@
+---
+title: "ALTER CREDENTIAL (Transact-SQL)"
+description: ALTER CREDENTIAL (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: 09/07/2018
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "ALTER CREDENTIAL"
+  - "ALTER_CREDENTIAL_TSQL"
+helpviewer_keywords:
+  - "passwords [SQL Server], credentials"
+  - "credentials [SQL Server], ALTER CREDENTIAL statement"
+  - "modifying credentials"
+  - "authentication [SQL Server], credentials"
+  - "ALTER CREDENTIAL statement"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017 || >=sql-server-linux-2017"
+---
+# ALTER CREDENTIAL (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Changes the properties of a credential.  
+
+> **Important:**
+> "Should do" info as best practice; "must do" to complete task  [Transact-SQL syntax conventions](../language-elements/transact-sql-syntax-conventions-transact-sql.md)  
+  
+## Syntax  
+  
+```syntaxsql 
+ALTER CREDENTIAL credential_name WITH IDENTITY = 'identity_name'  
+    [ , SECRET = 'secret' ]  
+```  
+  
+
+## Arguments
+ *credential_name*  
+ Specifies the name of the credential that is being altered.  
+  
+ IDENTITY **='***identity_name***'**  
+ Specifies the name of the account to be used when connecting outside the server.  
+  
+ SECRET **='***secret***'**  
+ Specifies the secret required for outgoing authentication. *secret* is optional.
+  
+> **Important:**
+> Azure SQL Database only supports Azure Key Vault and Shared Access Signature identities. Windows user identities are not supported.
+  
+## Remarks  
+ When a credential is changed, the values of both *identity_name* and *secret* are reset. If the optional SECRET argument is not specified, the value of the stored secret will be set to NULL.  
+  
+ The secret is encrypted by using the service master key. If the service master key is regenerated, the secret is reencrypted by using the new service master key.  
+  
+ Information about credentials is visible in the **sys.credentials** catalog view.  
+  
+## Permissions  
+ Requires ALTER ANY CREDENTIAL permission. If the credential is a system credential, requires CONTROL SERVER permission.  
+  
+## Examples  
+  
+### A. Changing the password of a credential  
+ The following example changes the secret stored in a credential called `Saddles`. The credential contains the Windows login `RettigB` and its password. The new password is added to the credential using the SECRET clause.  
+  
+```sql  
+ALTER CREDENTIAL Saddles WITH IDENTITY = 'RettigB',   
+    SECRET = 'sdrlk8$40-dksli87nNN8';  
+GO  
+```  
+  
+### B. Removing the password from a credential  
+ The following example removes the password from a credential named `Frames`. The credential contains Windows login `Aboulrus8` and a password. After the statement is executed, the credential will have a NULL password because the SECRET option is not specified.  
+  
+```sql  
+ALTER CREDENTIAL Frames WITH IDENTITY = 'Aboulrus8';  
+GO  
+```  
+  
+## Related content
+
+- [Credentials (Database Engine)](../../relational-databases/security/authentication-access/credentials-database-engine.md)
+- [CREATE CREDENTIAL (Transact-SQL)](create-credential-transact-sql.md)
+- [DROP CREDENTIAL (Transact-SQL)](drop-credential-transact-sql.md)
+- [ALTER DATABASE SCOPED CREDENTIAL (Transact-SQL)](alter-database-scoped-credential-transact-sql.md)
+- [CREATE LOGIN (Transact-SQL)](create-login-transact-sql.md)
+- [sys.credentials (Transact-SQL)](../../relational-databases/system-catalog-views/sys-credentials-transact-sql.md)

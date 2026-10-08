@@ -1,0 +1,57 @@
+---
+title: "sys.dm_os_loaded_modules (Transact-SQL)"
+description: sys.dm_os_loaded_modules (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "02/27/2023"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.dm_os_loaded_modules"
+  - "dm_os_loaded_modules"
+  - "sys.dm_os_loaded_modules_TSQL"
+  - "dm_os_loaded_modules_TSQL"
+helpviewer_keywords:
+  - "sys.dm_os_loaded_modules dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017"
+---
+# sys.dm_os_loaded_modules (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row for each module loaded into the server address space.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **base_address** | **varbinary(8)** | Address of the module in the process. |
+| **file_version** | **varchar(23)** | Version of the file. Appears in the following format:<br /><br /> x.x:x.x |
+| **product_version** | **varchar(23)** | Version of the product. Appears in the following format:<br /><br /> x.x:x.x |
+| **debug** | **bit** | 1 = Module is a debug version of the loaded module. |
+| **patched** | **bit** | 1 = Module has been patched. |
+| **prerelease** | **bit** | 1 = Module is a pre-release version of the loaded module. |
+| **private_build** | **bit** | 1 = Module is a private build of the loaded module. |
+| **special_build** | **bit** | 1 = Module is a special build of the loaded module. |
+| **language** | **int** | Language of version information of the module. |
+| **company** | **nvarchar(256)** | Name of company that created the module. |
+| **description** | **nvarchar(256)** | Description of the module. |
+| **name** | **nvarchar(255)** | Name of module. Includes the full path of the module. |
+| **pdw_node_id** | **int** | **Applies to**: Analytics Platform System (PDW)<br /><br /> The identifier for the node that this distribution is on. |
+  
+## Permissions  
+ Requires VIEW SERVER STATE permission on the server.  
+  
+### Permissions for SQL Server 2022 and later
+
+Requires VIEW SERVER PERFORMANCE STATE permission on the server.
+
+## Related content
+
+- [System dynamic management views and functions](system-dynamic-management-objects.md)
+- [SQL Server Operating System related dynamic management views (Transact-SQL)](sql-server-operating-system-related-dynamic-management-views-transact-sql.md)

@@ -1,0 +1,8 @@
+[
+  {
+    "query": "What is Azure Machine Learning",
+    "expectedDocumentIds": [
+      "articles/machine-learning/overview-what-is-azure-machine-learning"
+    ]
+  }
+]

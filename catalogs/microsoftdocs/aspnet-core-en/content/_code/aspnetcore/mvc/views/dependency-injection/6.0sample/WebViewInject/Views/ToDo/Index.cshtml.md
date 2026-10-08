@@ -1,0 +1,42 @@
+# Source code: aspnetcore/mvc/views/dependency-injection/6.0sample/WebViewInject/Views/ToDo/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using System.Threading.Tasks
+@using ViewInjectSample.Model
+@using ViewInjectSample.Model.Services
+@model IEnumerable<ToDoItem>
+@inject StatisticsService StatsService
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To Do Items</title>
+</head>
+<body>
+    <div>
+        <h1>To Do Items</h1>
+        <ul>
+            <li>Total Items: @StatsService.GetCount()</li>
+            <li>Completed: @StatsService.GetCompletedCount()</li>
+            <li>Avg. Priority: @StatsService.GetAveragePriority()</li>
+        </ul>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Priority</th>
+                <th>Is Done?</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Priority</td>
+                    <td>@item.IsDone</td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>
+</html>
+```

@@ -1,0 +1,53 @@
+# Source code: samples/snippets/csharp/VS_Snippets_CFX/c_howto_usereliablesession/common/web.config
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<!--This is the config for the topic: HowTo Use Reliable Session-->
+<!-- <snippet2111> -->
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <system.serviceModel>
+
+    <services>
+      <service name="Microsoft.ServiceModel.Samples.CalculatorService">
+
+        <!--
+             This endpoint is exposed at the base address provided by
+             host: http://localhost/servicemodelsamples/service.svc
+
+             Specify wsHttpBinding binding and a binding configuration
+             to use
+        -->
+        <endpoint address=""
+                  binding="wsHttpBinding"
+                  bindingConfiguration="Binding1"
+                  contract="Microsoft.ServiceModel.Samples.ICalculator" />
+
+        <!--
+          The mex endpoint is exposed at
+          http://localhost/servicemodelsamples/service.svc/mex
+        -->
+        <endpoint address="mex"
+                  binding="mexHttpBinding"
+                  contract="IMetadataExchange" />
+      </service>
+    </services>
+
+    <!--
+         Configures WSHttpBinding for reliable sessions with ordered
+         delivery.
+    -->
+    <bindings>
+      <wsHttpBinding>
+        <binding name="Binding1">
+          <reliableSession enabled="true" ordered="true" />
+        </binding>
+      </wsHttpBinding>
+    </bindings>
+
+  </system.serviceModel>
+</configuration>
+<!-- </snippet2111> -->
+
+```

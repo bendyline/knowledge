@@ -1,0 +1,72 @@
+---
+title: SQL Server Profiler Templates and Permissions
+titleSuffix: SQL Server Profiler
+description: Learn how SQL Server Profiler works, how to use it to trace events, and where to find more information on its features.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 06/05/2025
+ms.service: sql
+ms.subservice: profiler
+ms.topic: concept-article
+ms.collection:
+  - data-tools
+---
+
+# SQL Server Profiler templates and permissions
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+ SQL Server Profiler 
+ shows how  SQL Server 
+ resolves queries internally. This allows administrators to see exactly what  Transact-SQL  statements or Multi-Dimensional Expressions are submitted to the server and how the server accesses the database or cube to return result sets.
+
+Using  SQL Server Profiler 
+, you can do the following:
+
+- Create a trace that is based on a reusable template
+- Watch the trace results as the trace runs
+- Store the trace results in a table
+- Start, stop, pause, and modify the trace results as necessary
+- Replay the trace results
+
+Use  SQL Server Profiler 
+ to monitor only the events in which you're interested. If traces are becoming too large, you can filter them based on the information you want, so that only a subset of the event data is collected. Monitoring too many events adds overhead to the server and the monitoring process, and can cause the trace file or trace table to grow very large, especially when the monitoring process takes place over a long period of time.
+
+Trace column values greater than 1 GB return an error and are truncated in the trace output.
+
+## In this section
+
+| Article | Description |
+| --- | --- |
+| [SQL Server Profiler Templates](sql-server-profiler-templates.md) | Contains information about the predefined trace templates that ship with  SQL Server Profiler |
+| . |
+| [Permissions required to run SQL Server Profiler](permissions-required-to-run-sql-server-profiler.md) | Contains information about the permissions that are required to run  SQL Server Profiler |
+| . |
+| [Save traces and trace templates](save-traces-and-trace-templates.md) | Contains information about saving trace output and about saving trace definitions into a template. |
+| [Modify trace templates](modify-trace-templates.md) | Contains information about modifying trace templates by using  SQL Server Profiler |
+ | or by using  Transact-SQL . |
+| [Start a trace (SQL Server Profiler)](start-a-trace.md) | Contains information about what happens when you start, pause, or stop a trace. |
+| [Correlate a trace with Windows performance log data](correlate-a-trace-with-windows-performance-log-data.md) | Contains information about correlating Windows performance log data with a trace by using  SQL Server |
+ | Profiler. |
+| [View and analyze traces with SQL Server Profiler](view-and-analyze-traces-with-sql-server-profiler.md) | Contains information about using traces to troubleshoot data, displaying object names in a trace, and finding events in a trace. |
+| [Analyze deadlocks with SQL Server Profiler](analyze-deadlocks-with-sql-server-profiler.md) | Contains information about using  SQL Server Profiler |
+ | to identify the cause of a deadlock. |
+| [Analyze queries with SHOWPLAN results in SQL Server Profiler](analyze-queries-with-showplan-results-in-sql-server-profiler.md) | Contains information about using  SQL Server Profiler |
+ | to collect and display Showplan and Showplan Statistics results. |
+| [Filter traces with SQL Server Profiler](filter-traces-with-sql-server-profiler.md) | Contains information about setting filters on data columns to filter trace output by using  SQL Server Profiler |
+| . |
+| [Replay Traces](replay-traces.md) | Contains information that explains what replaying a trace means and what is required to replay a trace. |
+
+## Related content
+
+- [SQL Server Profiler](sql-server-profiler.md)
+- [Run SQL Server Profiler](start-sql-server-profiler.md)

@@ -1,0 +1,35 @@
+# Source code: aspnetcore/razor-pages/index/sample/RazorPagesContacts2/Pages/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model RazorPagesContacts.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h2>Contacts</h2>
+<form method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var contact in Model.Customers)
+            {
+                <tr>
+                    <td>@contact.Id</td>
+                    <td>@contact.Name</td>
+                    <td>
+                        <a asp-page="/Customers/Edit" asp-route-id="@contact.Id">edit</a>
+                        <button type="submit" asp-page-handler="delete" 
+                                asp-route-id="@contact.Id">delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+```

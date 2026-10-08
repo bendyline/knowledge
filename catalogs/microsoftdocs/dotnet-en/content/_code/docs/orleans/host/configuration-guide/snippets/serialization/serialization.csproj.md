@@ -1,0 +1,23 @@
+# Source code: docs/orleans/host/configuration-guide/snippets/serialization/serialization.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Additional nullable warnings specific to this project -->
+    <NoWarn>$(NoWarn);CS8602;CS8603</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Sdk" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Serialization.MessagePack" Version="10.3.1" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="MessagePack" Version="3.1.10" />
+  </ItemGroup>
+</Project>
+
+```

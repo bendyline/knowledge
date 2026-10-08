@@ -1,0 +1,188 @@
+---
+title: Custom Skill Interface
+description: Integrate a custom skill with an AI enrichment pipeline in Azure AI Search through a web interface that defines compatible inputs and outputs in a skillset.
+ms.reviewer: gimondra
+ms.service: azure-ai-search
+ms.custom:
+  - ignite-2023
+ai-usage: ai-assisted
+ms.topic: how-to
+ms.date: 07/28/2026
+ms.update-cycle: 365-days
+---
+
+# Add a custom skill to an Azure AI Search enrichment pipeline
+
+
+> **Note:**
+> Azure AI Search is available through the [Azure portal](https://portal.azure.com), [REST APIs](https://learn.microsoft.com/azure/search/search-api-versions#rest-apis), and [Azure SDKs](https://learn.microsoft.com/azure/search/search-api-versions#all-azure-sdks). It also underpins [Foundry IQ](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq), the managed knowledge layer that transforms enterprise content into reusable, permission-aware knowledge bases for agents in the [Microsoft Foundry portal](https://ai.azure.com/?cid=learnDocs).
+
+
+An [AI enrichment pipeline](cognitive-search-concept-intro.md) can include both [built-in skills](cognitive-search-predefined-skills.md) and [custom skills](cognitive-search-custom-skill-web-api.md) that you create and publish. Your custom code runs outside the search service (for example, as an Azure function), but it accepts inputs and sends outputs to the skillset just like any other skill. Your data is processed in the [geography](https://azure.microsoft.com/explore/global-infrastructure/data-residency/) where your model is deployed.
+
+Custom skills might sound complex, but they can be simple to implement. If you have existing packages that provide pattern matching or classification models, you can pass content extracted from blobs to those models for processing. Because AI enrichment is Azure-based, you should also host your model on Azure. Common hosting options include [Azure Functions](cognitive-search-create-custom-skill-example.md) or [containers](https://github.com/Microsoft/SkillsExtractorCognitiveSearch).
+
+If you're building a custom skill, this article describes the interface you use to integrate the skill into the pipeline. The primary requirement is the ability to accept inputs and emit outputs in ways that the [skillset](cognitive-search-defining-skillset.md) can consume as a whole. As such, the focus of this article is on the input and output formats that the enrichment pipeline requires.
+
+## Benefits of custom skills
+
+Building a custom skill gives you a way to insert transformations unique to your content. For example, you could build custom classification models to differentiate business and financial contracts and documents, or add a speech recognition skill to reach deeper into audio files for relevant content. For a step-by-step example, see [Example: Creating a custom skill for AI enrichment](cognitive-search-create-custom-skill-example.md).
+
+## Set the endpoint and timeout interval
+
+Specify the interface for a custom skill through the [Custom Web API skill](cognitive-search-custom-skill-web-api.md).
+
+```json
+"@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+"description": "This skill has a 230-second timeout",
+"uri": "https://[your custom skill uri goes here]",
+"authResourceId": "[for managed identity connections, your app's client ID goes here]",
+"timeout": "PT230S",
+```
+
+The URI is the HTTPS endpoint of your function or app. When setting the URI, make sure the URI is secure (HTTPS). If you host your code in an Azure function app, include an [API key in the header or as a URI parameter](https://learn.microsoft.com/azure/azure-functions/functions-bindings-http-webhook-trigger#api-key-authorization) in the URI to authorize the request. 
+
+If your function or app uses Azure managed identities and Azure roles for authentication and authorization, the custom skill can include an authentication token on the request. The following points describe the requirements for this approach:
+
++ The search service, which sends the request on the indexer's behalf, must be [configured to use a managed identity](search-how-to-managed-identities.md) (either system or user-assigned) so that Microsoft Entra ID can authenticate the caller.
+
++ You must [configure your function or app for Microsoft Entra ID](https://learn.microsoft.com/azure/app-service/configure-authentication-provider-aad).
+
++ Your [custom skill definition](cognitive-search-custom-skill-web-api.md) must include an `authResourceId` property. This property takes an application (client) ID, in a [supported format](https://learn.microsoft.com/azure/active-directory/develop/security-best-practices-for-app-registration#application-id-uri): `api://<appId>`.
+
+Ensure that `uri` points to the endpoint of the application identified by `authResourceId`. Mismatched values can cause authentication failures or requests being sent to an unintended endpoint. For security guidance, recommended practices, and steps to verify your configuration, see [Security considerations for managed identity authentication](cognitive-search-custom-skill-web-api.md#security-considerations-for-managed-identity-authentication).
+
+By default, the connection to the endpoint times out if a response isn't returned within a 30-second window (`PT30S`). The indexing pipeline is synchronous, and indexing produces a timeout error if a response isn't received in that time frame. You can increase the interval to a maximum value of 230 seconds by setting the `timeout` parameter (`PT230S`).
+
+If an endpoint protected by IP access restrictions doesn't respond, temporarily set `timeout` to a short value, such as `PT10S`, to surface the timeout error faster. For an Azure function app, manage inbound IP rules under **Settings** > **Networking** > **Access restrictions**. For the IP addresses to allow, see [Configure IP firewall rules to allow indexer connections](search-indexer-howto-access-ip-restricted.md).
+
+## Format web API inputs
+
+The web API must accept an array of records to process. Within each record, provide a property bag as input to your web API.
+
+Suppose you want to create a basic enricher that identifies the first date mentioned in contract text. In this example, the custom skill accepts a single input, `contractText`. The skill also has a single output, which is the contract date. To make the enricher more interesting, return `contractDate` in the shape of a multipart complex type.
+
+Your web API should be ready to receive a batch of input records. Each member of the `values` array represents the input for a particular record. Each record is required to have the following elements:
+
++ A `recordId` member that's the unique identifier for a particular record. When your enricher returns results, it must provide this `recordId` so that the caller can match record results to inputs.
+
++ A `data` member, which is a bag of input fields for each record.
+
+The resulting web API request might look like this:
+
+```json
+{
+    "values": [
+      {
+        "recordId": "a1",
+        "data":
+           {
+             "contractText": 
+                "This is a contract that was issued on November 3, 2023 and that involves... "
+           }
+      },
+      {
+        "recordId": "b5",
+        "data":
+           {
+             "contractText": 
+                "In the City of Seattle, WA on February 5, 2018 there was a decision made..."
+           }
+      },
+      {
+        "recordId": "c3",
+        "data":
+           {
+             "contractText": null
+           }
+      }
+    ]
+}
+```
+
+In practice, your code can be called with hundreds or thousands of records instead of only the three shown here.
+
+## Format web API outputs
+
+The output format is a set of records containing a `recordId` and a property bag. This particular example has only one output, but you can return more than one property. As a best practice, consider returning error and warning messages if a record couldn't be processed.
+
+```json
+{
+  "values": 
+  [
+      {
+        "recordId": "b5",
+        "data" : 
+        {
+            "contractDate":  { "day" : 5, "month": 2, "year" : 2018 }
+        }
+      },
+      {
+        "recordId": "a1",
+        "data" : {
+            "contractDate": { "day" : 3, "month": 11, "year" : 2023 }                    
+        }
+      },
+      {
+        "recordId": "c3",
+        "data" : 
+        {
+        },
+        "errors": [ { "message": "contractText field required "}   ],  
+        "warnings": [ {"message": "Date not found" }  ]
+      }
+    ]
+}
+```
+
+## Add a custom skill to a skillset
+
+When you create a web API enricher, you can define HTTP headers and parameters as part of the request. The following snippet shows how request parameters and optional HTTP headers can be included in the skillset definition. Setting an HTTP header is useful if you need to pass configuration settings to your code.
+
+```json
+{
+    "skills": [
+      {
+        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+        "name": "myCustomSkill",
+        "description": "This skill calls an Azure function, which in turn calls TA sentiment",
+        "uri": "https://indexer-e2e-webskill.azurewebsites.net/api/DateExtractor?language=en",
+        "context": "/document",
+        "httpHeaders": {
+            "DateExtractor-Api-Key": "foo"
+        },
+        "inputs": [
+          {
+            "name": "contractText",
+            "source": "/document/content"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "contractDate",
+            "targetName": "date"
+          }
+        ]
+      }
+  ]
+}
+```
+
+> **Note:**
+> When you retrieve the skillset with GET, the service returns `<redacted>` for all `httpHeaders` values to prevent exposure of credentials. To update the skill without changing stored header values, set each value to `<unchanged>`. For details and examples, see [Custom Web API skill — Skill parameters](cognitive-search-custom-skill-web-api.md#skill-parameters).
+
+## Watch this video
+
+For a video introduction and demo, watch the following demo.
+
+> [!VIDEO https://www.youtube.com/embed/fHLCE-NZeb4?version=3]
+
+## Next steps
+
+This article covered the interface requirements necessary for integrating a custom skill into a skillset. To learn more about custom skills and skillset composition, see the following resources:
+
++ [Power Skills: a repository of custom skills](https://github.com/Azure-Samples/azure-search-power-skills)
++ [Example: Creating a custom skill for AI enrichment](cognitive-search-create-custom-skill-example.md)
++ [How to define a skillset](cognitive-search-defining-skillset.md)
++ [Create Skillset (REST)](https://learn.microsoft.com/rest/api/searchservice/skillsets/create)
++ [How to map enriched fields](cognitive-search-output-field-mapping.md)

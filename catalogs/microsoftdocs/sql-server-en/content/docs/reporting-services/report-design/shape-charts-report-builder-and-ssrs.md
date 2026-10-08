@@ -1,0 +1,58 @@
+---
+title: "Shape charts in a paginated report"
+description: See how shape charts in a paginated report display value data as percentages of their whole in Report Builder. Shape charts are often used to show proportional comparisons between values in a set.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+# Shape charts in a paginated report (Report Builder)
+
+  **Applies to:**
+ 
+
+
+  A shape chart displays value data as percentages of a whole in a paginated report. Shape charts are typically used to show proportional comparisons between different values in a set. Categories are represented by individual segments of the shape. The size of the segment is determined by the value. Shape charts are similar in use to pie charts, except that they order categories from largest to smallest.  
+  
+ A funnel chart displays values as progressively decreasing proportions. The size of the area is determined by the series value as a percentage of the total of all values. For example, you might use a funnel chart to display Web site visitor trends. It is likely that the funnel chart will display a wide area at the top, indicating visitor page hits to the homepage, and the other areas will be proportionally smaller. For more information about how to add data to a funnel chart, see [Charts (Report Builder and SSRS)](charts-report-builder-and-ssrs.md).  
+  
+ The following illustration shows an example of a funnel chart.  
+  
+ Funnel chart  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Variations  
+  
+-   **Pyramid**. A pyramid chart displays proportional data so that the chart looks like a pyramid.  
+  
+## Data Considerations for Shape Charts  
+  
+-   Shape charts are popular in reports because of their visual impact. However, shape charts are a very simplified chart type that may not best represent your data. Consider using a shape chart only once the data has been aggregated to seven data points or less. In general, use the shape chart to display only one category per data region.  
+  
+-   Shape charts display each data group as a separate segment of the chart. You must add at least one data field and one category field. If more than one data field is added to a shape chart, the shape chart will display both data fields in the same chart.  
+  
+-   Shape charts are most effective for showing proportional percentages in sorted order. However, in order to maintain consistency, the chart does not sort the values in your dataset by default. Consider ordering your values from highest to lowest to most accurately represent your data as a funnel or a pyramid. For more information, see [Filter, Group, and Sort Data (Report Builder and SSRS)](filter-group-and-sort-data-report-builder-and-ssrs.md).  
+  
+-   Null, empty, negative and zero values have no effect when calculating ratios. For this reason, these values are not shown on a shape chart. If you want to visually indicate these types of values on your chart, change the chart type to be something other than a shape chart. For more information about how to add empty points to a non-shape chart, see [Add Empty Points to a Chart (Report Builder and SSRS)](add-empty-points-to-a-chart-report-builder-and-ssrs.md).  
+  
+-   If you are defining your own colors on a shape chart using a custom palette, be sure that you have enough colors in your palette to highlight each data point with its own unique color. For more information, see [Formatting Series Colors on a Chart (Report Builder and SSRS)](formatting-series-colors-on-a-chart-report-builder-and-ssrs.md).  
+  
+-   Unlike all other chart types, a shape chart will display individual data points, and not individual series, in its legend.  
+  
+-   Settings for the value and category axis are ignored for funnel charts. If you have multiple category or series groups, the group labels are displayed in the chart legend.  
+  
+-   Shape chart types cannot be combined with any other chart type in the same chart area. If you have to show comparisons between data displayed on a shape chart, and data displayed on another chart type, you will need to add a second chart area.  
+  
+-   You can apply additional drawing styles to pie and donut charts for increased visual impact. See [Formatting Series Colors on a Chart (Report Builder and SSRS)](formatting-series-colors-on-a-chart-report-builder-and-ssrs.md) for more information.  
+  
+## Related content
+
+- [Charts in a paginated report (Report Builder)](charts-report-builder-and-ssrs.md)
+- [Formatting a chart in a paginated report (Report Builder)](formatting-a-chart-report-builder-and-ssrs.md)
+- [Empty and null data points in paginated report charts (Report Builder)](empty-and-null-data-points-in-charts-report-builder-and-ssrs.md)
+- [Pie charts in a paginated report (Report Builder)](pie-charts-report-builder-and-ssrs.md)

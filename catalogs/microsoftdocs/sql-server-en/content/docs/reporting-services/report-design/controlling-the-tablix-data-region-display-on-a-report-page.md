@@ -1,0 +1,77 @@
+---
+title: "Control the tablix data region display on a paginated report page"
+description: Learn about the properties that enable you to change how a paginated report appears when you view a table, matrix, or list data region in Report Builder.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+---
+# Control the tablix data region display on a paginated report page (Report Builder)
+
+  **Applies to:**
+ 
+
+
+Read about properties you can set in a paginated report for a table, matrix, or list data region, to change how it appears when you view the report.  
+   
+## Control the appearance of data  
+Table, matrix, and list data regions are all examples of *tablix* data regions. The following features help control the appearance of a tablix data region:  
+  
+-   **Formatting data.** To format data in a table, matrix, or list, set the format properties of the text box in the cell. You can set properties for multiple cells at the same time. To format data in a chart, set formatting properties on the series. For more information, see [Formatting Report Items (Report Builder and SSRS)](formatting-report-items-report-builder-and-ssrs.md) and [Formatting a Chart (Report Builder and SSRS)](formatting-a-chart-report-builder-and-ssrs.md).  
+  
+-   **Writing expressions**. For more information, see [Expression Uses in Reports (Report Builder and SSRS)](expression-uses-in-reports-report-builder-and-ssrs.md), and [Expression Examples (Report Builder and SSRS)](expression-examples-report-builder-and-ssrs.md).  
+  
+-   **Controlling sort order**. To control the sort order, you define sort expressions on the data region. To control sort order for rows and columns associated with a group, you define sort expressions on the group, including the details groups. You can also add interactive sort buttons to enable the user to sort a tablix data region or its groups. For more information, see [Sort Data in a Data Region (Report Builder and SSRS)](sort-data-in-a-data-region-report-builder-and-ssrs.md).  
+  
+-   **Displaying a message when there is no data**. When no data exists for a report dataset at run time, you can write your own message to display in place of the data region. For more information, see [Set a No Data Message for a Data Region (Report Builder and SSRS)](../report-data/set-a-no-data-message-for-a-data-region-report-builder-and-ssrs.md).  
+  
+-   **Conditionally hiding data**. To conditionally control whether to show or hide a data region or parts of a data region, you can set the Hidden property to **True** or to an expression. Expressions can include references to report parameters. You can also specify a toggle item, so that user can decide to display detail data. For more information, see [Drilldown Action (Report Builder and SSRS)](drilldown-action-report-builder-and-ssrs.md).  
+  
+-   **Merging cells.** Multiple contiguous cells within a table can be combined into a single cell. This is known as a column span or a cell merge. Cells can only be combined horizontally or vertically. When you merge cells, only the data in the first cell is preserved. Data in other cells is removed. Merged cells can be split into their original columns. For more information, see [Merge Cells in a Data Region (Report Builder and SSRS)](merge-cells-in-a-data-region-report-builder-and-ssrs.md).  
+  
+## Control tablix data region position and expansion on a page  
+ The following features help control the way a tablix data region displays in a rendered report:  
+  
+-   **Controlling the position of a tablix data region in relation to other report items**. A tablix data region can be positioned above, next to, or below other report items on the report design surface. At run time, Report Builder expands the tablix data region as needed for the data retrieved for the linked dataset, moving peer report items aside as needed. To anchor a tablix next to another report item, make the report items peers and adjust their relative positions. For more information, see [Rendering Behaviors (Report Builder  and SSRS)](rendering-behaviors-report-builder-and-ssrs.md).  
+  
+-   **Changing the Expansion Direction**. To control whether a tablix data region expands across the page from left-to-right (LTR) or from right-to-left (RTL), use the Direction property, which can be accessed through the Properties window. For more information, see [Rendering Data Regions (Report Builder and SSRS)](rendering-data-regions-report-builder-and-ssrs.md).  
+  
+## Control how a tablix data region renders on a page  
+ The following list describes ways that you can help control how a tablix data region appears in a report:  
+  
+-   **Controlling paging**. To control the amount of data that displays on each report page, you can set page breaks on data regions. You can also set page breaks on groups. Page breaks can affect the on-demand rendering performance by reducing the amount of data that needs to be processed on each page. For more information, see [Pagination in Reporting Services (Report Builder  and SSRS)](pagination-in-reporting-services-report-builder-and-ssrs.md) and [Add a Page Break (Report Builder and SSRS)](add-a-page-break-report-builder-and-ssrs.md).  
+  
+-   **Displaying data on either side of row headers**. You are not limited to displaying row headers on the side of a tablix data region. You can move the row headers between columns, so that columns of data appear before the row headers. To do this, modify the GroupsBeforeRowHeaders property for the matrix. You can access this property through the Properties window. The value for this property is an integer; for example, a value of 2 will display two groups instances of data region column data before displaying the column containing the row headers.  
+  
+## Control how tablix row and column groups render  
+ To control how a tablix data region groups render depends on the group structure. A tablix data region can have four areas, as shown in the following figure:  
+
+Screenshot of a tablix data region that highlights the different areas and groups.
+  
+ The row group area and column group area contain group headers. When a tablix data region has group headers, you control how rows and columns repeat by setting properties on the **General** page of the **Tablix Properties** dialog Box.  
+  
+ If a tablix data region has only a tablix body area, there are no group headers. There are only static and dynamic tablix members. A static member displays once in relation to a tablix row or column group. A dynamic member repeats once for every unique group value. For example, in a tablix data region that displays a sales order, the column names in the sales order can be displayed on a static row member. Each line in the sales order is displayed on a dynamic row member.  
+  
+ You can help control how a tablix member renders by setting properties in the Properties pane. For more information, see "Advanced mode" in [Grouping Pane (Report Builder)](grouping-pane-report-builder.md).  
+  
+ The following list describes ways that you can help control how a tablix data region appears in a report:  
+  
+-   **Repeating row and column headers on multiple pages**.You can display row and column headers on each page that a tablix data region spans. For more information, see [Display Row and Column Headers on Multiple Pages (Report Builder and SSRS)](display-row-and-column-headers-on-multiple-pages-report-builder-and-ssrs.md).  
+  
+-   **Keeping row and column headers in view when scrolling**. You can control whether to keep the row and column headers in view when you scroll a report using a browser. For more information, see [Keep Headers Visible When Scrolling Through a Report (Report Builder and SSRS)](keep-headers-visible-when-scrolling-through-a-report-report-builder-and-ssrs.md).  
+  
+ For more information about how exporting a report to different formats affects the way a tablix data region renders on a page, see [Rendering Behaviors (Report Builder  and SSRS)](rendering-behaviors-report-builder-and-ssrs.md).  
+  
+## Related content
+
+- [Linking multiple data regions to the same dataset in a paginated report (Report Builder)](linking-multiple-data-regions-to-the-same-dataset-report-builder-and-ssrs.md)
+- [Nested data regions in a paginated report (Report Builder)](nested-data-regions-report-builder-and-ssrs.md)
+- [Expression scope for totals, aggregates, and built-in collections in a paginated report (Report Builder)](expression-scope-for-totals-aggregates-and-built-in-collections.md)
+- [Controlling page breaks, headings, columns, and rows in paginated reports (Report Builder)](controlling-page-breaks-headings-columns-and-rows-report-builder-and-ssrs.md)
+- [Tablix data region in a paginated report (Report Builder)](tablix-data-region-report-builder-and-ssrs.md)
+- [Tables in paginated reports (Report Builder)](tables-report-builder-and-ssrs.md)
+- [Create a matrix in a paginated report (Report Builder)](create-a-matrix-report-builder-and-ssrs.md)
+- [Create invoices and forms with lists in a paginated report (Report Builder)](create-invoices-and-forms-with-lists-report-builder-and-ssrs.md)
+- [Tables, matrices, and lists in Report Builder paginated reports](tables-matrices-and-lists-report-builder-and-ssrs.md)

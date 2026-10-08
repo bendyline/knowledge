@@ -1,0 +1,76 @@
+---
+title: "Backward Compatibility in SMO"
+description: "Backward Compatibility in SMO"
+author: "markingmyname"
+ms.author: "maghan"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Backward Compatibility in SMO
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  SMO applications that were written using previous versions of  SQL Server 
+ can be recompiled by using SMO in newer versions.  
+  
+## Migrating SMO Applications  
+ References to SMO DLLs in older versions of  SQL Server 
+ must be removed, and references to the new SMO DLLs that are provided with newer versions of  SQL Server 
+ must be included.  
+  
+ Minimally, you would reference the following:  
+  
+-   Microsoft.SqlServer.ConnectionInfo  
+  
+-   Microsoft.SqlServer.Smo  
+  
+-   Microsoft.SqlServer.Management.Sdk.Sfc  
+  
+ These files are required for connection classes, SMO utility classes, and foundation classes.  
+  
+> **Note:**  
+>  SmoEnum.dll has been removed so references to it must be removed from the SMO project.  
+  
+ The namespaces have also changed, so you can use the following:  
+  
+##### For Visual C#  
+  
+```  
+using Microsoft.SqlServer.Management.Smo;  
+using Microsoft.SqlServer.Management.Common;  
+```  
+  
+##### For Visual Basic  
+  
+```  
+Imports Microsoft.SqlServer.Management.Smo  
+Imports Microsoft.SqlServer.Management.Common  
+```  
+  
+ If your code uses Urn functionality, such as **Server.GetSqlSmoObject(Urn)**, you must link to the Microsoft.SqlServer.Management.Sdk.Sfc namespace.  
+  
+ If your code uses the Transfer object directly, you will have to link to the Microsoft.SqlServer.Management.SmoExtended namespace.  
+  
+ When you migrate code, you might have to modify the code. This is because several features have been deprecated in newer versions of  SQL Server 
+. For more information about deprecated features, see [Deprecated Database Engine features in SQL Server 2025 (17.x)](../../database-engine/deprecated-database-engine-features-in-sql-server-2025.md).

@@ -1,0 +1,71 @@
+# Source code: aspnetcore/mvc/views/display-templates/sample/Pages/Adr/Delete.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model WebAddress.Pages.Adr.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Address</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.MiddleName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.MiddleName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.Street)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.Street)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.City)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.State)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.State)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address.Zipcode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address.Zipcode)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Address.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>
+
+```

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "repository": "MicrosoftDocs/PowerShell-Docs",
+  "revision": "a3de8f22552170e70852470d46cd52cd9ca471ec",
+  "documents": 3089,
+  "codeDocuments": 0,
+  "unresolved": [
+    {
+      "path": "reference/5.1/Microsoft.PowerShell.Core/ForEach-Object.md",
+      "kind": "Original metadata retained as code",
+      "target": "reference/5.1/Microsoft.PowerShell.Core/ForEach-Object.md: Plain value cannot start with directive indicator character % at line 8, column 5:\n\n  - %\n    ^\n"
+    },
+    {
+      "path": "reference/7.4/Microsoft.PowerShell.Core/ForEach-Object.md",
+      "kind": "Original metadata retained as code",
+      "target": "reference/7.4/Microsoft.PowerShell.Core/ForEach-Object.md: Plain value cannot start with directive indicator character % at line 8, column 5:\n\n  - %\n    ^\n"
+    },
+    {
+      "path": "reference/7.5/Microsoft.PowerShell.Core/ForEach-Object.md",
+      "kind": "Original metadata retained as code",
+      "target": "reference/7.5/Microsoft.PowerShell.Core/ForEach-Object.md: Plain value cannot start with directive indicator character % at line 8, column 5:\n\n  - %\n    ^\n"
+    },
+    {
+      "path": "reference/7.6/Microsoft.PowerShell.Core/ForEach-Object.md",
+      "kind": "Original metadata retained as code",
+      "target": "reference/7.6/Microsoft.PowerShell.Core/ForEach-Object.md: Plain value cannot start with directive indicator character % at line 8, column 5:\n\n  - %\n    ^\n"
+    },
+    {
+      "path": "reference/7.7/Microsoft.PowerShell.Core/ForEach-Object.md",
+      "kind": "Original metadata retained as code",
+      "target": "reference/7.7/Microsoft.PowerShell.Core/ForEach-Object.md: Plain value cannot start with directive indicator character % at line 8, column 5:\n\n  - %\n    ^\n"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/cmdlet/adding-parameter-sets-to-a-cmdlet.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/StopProcessSample04/StopProcessSample04.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/cmdlet/adding-parameters-that-process-pipeline-input.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/GetProcessSample03/GetProcessSample03.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/cmdlet/cmdlet-class-declaration.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/GetProcessSample01/GetProcessSample01.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/hosting/windows-powershell02-sample.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/PowerShell02/PowerShell02.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/provider/accessdbprovidersample01.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/AccessDBProviderSample01/AccessDBProviderSample01.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/provider/accessdbprovidersample02.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/AccessDBProviderSample02/AccessDBProviderSample02.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/provider/accessdbprovidersample03.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/AccessDBProviderSample03/AccessDBProviderSample03.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/provider/accessdbprovidersample04.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/AccessDBProviderSample04/AccessDBProviderSample04.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/provider/accessdbprovidersample05.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/AccessDBProviderSample05/AccessDBProviderSample05.cs"
+    },
+    {
+      "path": "reference/docs-conceptual/developer/provider/accessdbprovidersample06.md",
+      "kind": "Code reference",
+      "target": "~/../powershell-sdk-samples/SDK-2.0/csharp/AccessDBProviderSample06/AccessDBProviderSample06.cs"
+    }
+  ],
+  "note": "Unavailable source dependencies are visibly marked in their articles. Code transclusions link to complete preserved source files. External UID references use Microsoft Learn search."
+}

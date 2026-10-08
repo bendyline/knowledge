@@ -1,0 +1,45 @@
+---
+title: "getClob Method (java.lang.String)"
+description: "getClob Method (java.lang.String)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.getClob (java.lang.String)"
+apitype: "Assembly"
+---
+# getClob Method (java.lang.String)
+
+
+  Retrieves the value of the designated JDBC BLOB parameter as a Clob object in the Java programming language given the parameter name.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.Clob getClob(java.lang.String sCol)  
+```  
+  
+#### Parameters  
+ *sCol*  
+  
+ A **String** that contains the parameter name.  
+  
+## Return Value  
+ A Clob object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getClob method is specified by the getClob method in the java.sql.CallableStatement interface.  
+  
+## Related content
+
+- [getClob Method (SQLServerCallableStatement)](getclob-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

@@ -1,0 +1,14 @@
+# Source code: docs/standard/commandline/snippets/configuration/csharp/Properties/launchSettings.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "profiles": {
+    "scl": {
+      "commandName": "Project",
+      "commandLineArgs": "--file scl.runtimeconfig.json"
+    }
+  }
+}
+```

@@ -1,0 +1,38 @@
+---
+title: Text translation customization
+titleSuffix: Foundry Tools
+description: Use the Microsoft Translator Hub to build your own machine translation system using your preferred terminology and style.
+author: laujan
+manager: mcleans
+ms.service: azure-translator-foundry-tools
+ms.topic: concept-article
+ms.date: 06/02/2026
+ms.author: lajanuar
+---
+
+# Custom Translator text translations
+
+Azure Translator Custom Translator is a feature of the Azure Translator. Azure Translator Custom Translator allows users to customize Azure Translator's advanced neural machine translation when translating text using Translator (version 3 only).
+
+The feature can also be used to customize speech translation when used with [Azure Speech in Foundry Tools](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/index.yml).
+
+## Azure Translator in Foundry Tools Custom Translator
+
+With Custom Translator, you can build neural translation systems that understand the terminology used in your own business and industry. The customized translation system integrates into existing applications, workflows, and websites.
+
+### How does it work?
+
+Use your previously translated documents (leaflets, webpages, documentation, etc.) to build a translation system that reflects your domain-specific terminology and style, better than a standard translation system. Users can upload `TMX`,`XLIFF`,`TXT`, `DOCX`, and `XLSX` documents.  
+
+The system also accepts data that's parallel at the document level but isn't yet aligned at the sentence level. If users have access to versions of the same content in multiple languages but in separate documents, Custom Translator os able to automatically match sentences across documents. The system can also use monolingual data in either or both languages to complement the parallel training data to improve the translations.
+
+The customized system is then available through a regular call to Translator using the category parameter.
+
+Given the appropriate type and amount of training data it isn't uncommon to expect gains between 5 and 10, or even more `BLEU` points on translation quality by using Custom Translator.
+
+More details about the various levels of customization based on available data can be found in the [Custom Translator User Guide](../overview.md).
+
+## Next steps
+
+> 
+> [Set up a customized language system using Azure Translator Custom Translator](../overview.md)

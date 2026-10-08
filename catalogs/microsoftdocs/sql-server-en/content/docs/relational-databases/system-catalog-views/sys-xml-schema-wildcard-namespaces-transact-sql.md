@@ -1,0 +1,42 @@
+---
+title: "sys.xml_schema_wildcard_namespaces (Transact-SQL)"
+description: sys.xml_schema_wildcard_namespaces (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "xml_schema_wildcard_namespaces_TSQL"
+  - "xml_schema_wildcard_namespaces"
+  - "sys.xml_schema_wildcard_namespaces_TSQL"
+  - "sys.xml_schema_wildcard_namespaces"
+helpviewer_keywords:
+  - "sys.xml_schema_wildcard_namespaces catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.xml_schema_wildcard_namespaces (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row per enumerated namespace for an XML schema wildcard.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **xml_component_id** | **int** | ID of the XML schema component (wildcard) to which this applies. |
+| **namespace** | **nvarchar(4000)** | Name or URI of the namespace that is used by the XML wildcard. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [XML Schemas (XML Type System) Catalog Views (Transact-SQL)](xml-schemas-xml-type-system-catalog-views-transact-sql.md)

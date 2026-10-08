@@ -1,0 +1,76 @@
+---
+title: "STPolyFromWKB (geometry Data Type)"
+description: "STPolyFromWKB (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STPolyFromWKB_TSQL"
+  - "STPolyFromWKB (geometry Data Type)"
+helpviewer_keywords:
+  - "STPolyFromWKB (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+---
+# STPolyFromWKB (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **geometryPolygon** instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.
+  
+## Syntax  
+  
+```  
+  
+STPolyFromWKB ( 'WKB_polygon' , SRID )  
+```  
+  
+## Arguments
+ *WKB_polygon*  
+ Is the WKB representation of the **geometryPolygon** instance you wish to return. *WKB_polygon* is a **varbinary(max)** expression.  
+  
+ *SRID*  
+ Is an **int** expression representing the spatial reference ID (SRID) of the **geometryPolygon** instance you wish to return.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+ OGC type: **Polygon**  
+  
+## Remarks  
+ This method will throw a **FormatException** if the input is not well-formatted.  
+  
+## Examples  
+ The following example uses `STPolyFromWKB()` to create a `geometry` instance.  
+  
+```sql
+DECLARE @g geometry;   
+SET @g = geometry::STPolyFromWKB(0x0103000000010000000400000000000000000014400000000000001440000000000000244000000000000014400000000000002440000000000000244000000000000014400000000000001440, 0);  
+SELECT @g.STAsText();  
+```  
+  
+## Related content
+
+- [OGC Static Geometry Methods](ogc-static-geometry-methods.md)

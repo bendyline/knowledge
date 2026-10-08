@@ -1,0 +1,71 @@
+---
+title: "Group or Ungroup Components"
+description: "Group or Ungroup Components"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: how-to
+helpviewer_keywords:
+  - "grouping containers"
+  - "tasks [Integration Services], grouping"
+  - "containers [Integration Services], grouping"
+  - "grouping tasks"
+---
+# Group or Ungroup Components
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  The **Control Flow**, **Data Flow**, and **Event Handlers** tabs in  SSIS 
+ Designer supports collapsible grouping. If a package has many components, the tabs can become crowded, making it difficult to view all the components at one time and to locate the item with which you want to work. The collapsible grouping feature can conserve space on the work surface and make it easier to work with large packages.  
+  
+ You select the components that you want to group, group them, and then expand or collapse the groups to suit your work. Expanding a group provides access to the properties of the components in the group. The precedence constraints that connect tasks and containers are automatically included in the group.  
+  
+ The following are considerations for grouping components.  
+  
+-   To group components, the control flow, data flow, or event handler must contain more than one component.  
+  
+-   Groups can also be nested, making it possible to create groups within groups. The design surface can implement multiple un-nested groups, but a component can belong to only one group, unless the groups are nested.  
+  
+-   When a package is saved,  SSIS 
+ Designer saves the grouping, but the grouping has no effect on package execution. The ability to group components is a design-time feature; it does not affect the run-time behavior of the package.  
+  
+### To group components  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ project that contains the package you want.  
+  
+2.  In Solution Explorer, double-click the package to open it.  
+  
+3.  Click the **Control Flow**, **Data Flow**, or **Event Handlers** tab.  
+  
+4.  On the design surface of the tab, select the components you want to group, right-click a selected component, and then click **Group**.  
+  
+5.  To save the updated package, click **Save Selected Items** on the **File** menu.  
+  
+### To ungroup components  
+  
+1.  In  SQL Server Data Tools (SSDT) 
+, open the  Integration Services 
+ project that contains the package you want.  
+  
+2.  In Solution Explorer, double-click the package to open it.  
+  
+3.  Click the **Control Flow**, **Data Flow**, or **Event Handlers** tab.  
+  
+4.  On the design surface of the tab, select the group that contains the component you want to ungroup, right-click, and then click **Ungroup**.  
+  
+5.  To save the updated package, click **Save Selected Items** on the **File** menu.  
+  
+## Related content
+
+- [Add or Delete a Task or a Container in a Control Flow](control-flow/add-or-delete-a-task-or-a-container-in-a-control-flow.md)
+- [Precedence Constraints](control-flow/precedence-constraints.md)

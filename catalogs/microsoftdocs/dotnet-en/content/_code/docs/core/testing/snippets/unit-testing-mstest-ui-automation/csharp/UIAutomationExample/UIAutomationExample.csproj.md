@@ -1,0 +1,29 @@
+# Source code: docs/core/testing/snippets/unit-testing-mstest-ui-automation/csharp/UIAutomationExample/UIAutomationExample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UseMSTest45Preview)' == 'true'">
+    <PackageReference Include="MSTest.TestFramework" Version="4.5.0" />
+    <PackageReference Include="MSTest.Windows.UIAutomation" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseMSTest45Preview)' != 'true'">
+    <PackageReference Include="MSTest.TestFramework" Version="4.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="WindowTestStub.cs" />
+    <Compile Include="WindowTestStub.cs" Condition="'$(UseMSTest45Preview)' != 'true'" />
+  </ItemGroup>
+
+</Project>
+
+```

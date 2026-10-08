@@ -1,0 +1,198 @@
+---
+title: "sys.sp_addlinkedsrvlogin (Transact-SQL)"
+description: Creates or updates a mapping between a login on the local instance of SQL Server and a security account on a remote server.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_addlinkedsrvlogin_TSQL"
+  - "sp_addlinkedsrvlogin"
+helpviewer_keywords:
+  - "sp_addlinkedsrvlogin"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_addlinkedsrvlogin (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Creates or updates a mapping between a login on the local instance of  SQL Server 
+ and a security account on a remote server.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_addlinkedsrvlogin
+    [ @rmtsrvname = ] N'rmtsrvname'
+    [ , [ @useself = ] 'useself' ]
+    [ , [ @locallogin = ] N'locallogin' ]
+    [ , [ @rmtuser = ] N'rmtuser' ]
+    [ , [ @rmtpassword = ] N'rmtpassword' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @rmtsrvname = ] N'*rmtsrvname*'
+
+The name of a linked server that the login mapping applies to. *@rmtsrvname* is **sysname**, with no default.
+
+#### [ @useself = ] '*useself*'
+
+Determines whether to connect to *@rmtsrvname* by impersonating local logins or explicitly submitting a login and password. *@useself* is **varchar(8)**, with a default of `true`.
+
+- A value of `true` specifies that logins use their own credentials to connect to *@rmtsrvname*, with the *@rmtuser* and *@rmtpassword* arguments being ignored.
+- `false` specifies that the *@rmtuser* and *@rmtpassword* arguments are used to connect to *@rmtsrvname* for the specified *@locallogin*.
+
+If *@rmtuser* and *@rmtpassword* are set to `NULL`, no login or password is used to connect to the linked server.
+
+#### [ @locallogin = ] N'*locallogin*'
+
+A login on the local server. *@locallogin* is **sysname**, with a default of `NULL`. `NULL` specifies that this entry applies to all local logins that connect to *@rmtsrvname*. If not `NULL`, *@locallogin* can be a  SQL Server 
+ login or a Windows account. The Windows account must have access to  SQL Server 
+ directly, or through membership in a Windows group.
+
+#### [ @rmtuser = ] N'*rmtuser*'
+
+The remote login used to connect to *@rmtsrvname* when @useself is `false`. *@rmtuser* is **sysname**, with a default of `NULL`. When the remote server is an instance of  SQL Server 
+ that doesn't use Windows Authentication, *@rmtuser* is a  SQL Server 
+ login.
+
+#### [ @rmtpassword = ] N'*rmtpassword*'
+
+The password associated with *@rmtuser*. *@rmtpassword* is **sysname**, with a default of `NULL`.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+When a user logs on to the local server and executes a distributed query that accesses a table on the linked server, the local server must log on to the linked server on behalf of the user to access that table. Use `sp_addlinkedsrvlogin` to specify the credentials that the local server uses to sign into the linked server.
+
+> **Note:**  
+> To create the best query plans when you're using a table on a linked server, the query processor must have data distribution statistics from the linked server. Users that have limited permissions on any columns of the table might not have sufficient permissions to obtain all the useful statistics, and might receive a less efficient query plan and experience poor performance. If the linked server is an instance of  SQL Server 
+, to obtain all available statistics, the user must own the table or be a member of the **sysadmin** fixed server role, the **db_owner** fixed database role, or the **db_ddladmin** fixed database role on the linked server.  SQL Server 2012 SP1 (11.0.3x) 
+ modifies the permission restrictions for obtaining statistics and allows users with SELECT permission to access statistics available through DBCC SHOW_STATISTICS. For more information, see the Permissions section of [DBCC SHOW_STATISTICS](../../t-sql/database-console-commands/dbcc-show-statistics-transact-sql.md).
+
+A default mapping between all logins on the local server and remote logins on the linked server is automatically created by executing `sp_addlinkedserver`. The default mapping states that  SQL Server 
+ uses the user credentials of the local login when connecting to the linked server on behalf of the login. This is equivalent to executing `sp_addlinkedsrvlogin` with @useself set to `true` for the linked server, without specifying a local user name. Use `sp_addlinkedsrvlogin` only to change the default mapping or to add new mappings for specific local logins. To delete the default mapping or any other mapping, use `sp_droplinkedsrvlogin`.
+
+Instead of having to use `sp_addlinkedsrvlogin` to create a predetermined login mapping,  SQL Server 
+ can automatically use the Windows security credentials (Windows login name and password) of a user issuing the query to connect to a linked server when all the following conditions exist:
+
+- A user is connected to  SQL Server 
+ by using Windows Authentication Mode.
+
+- Security account delegation is available on the client and sending server.
+
+- The provider supports Windows Authentication Mode; for example,  SQL Server 
+ running on Windows.
+
+> **Note:**  
+> Delegation doesn't have to be enabled for single-hop scenarios, but it's required for multiple-hop scenarios.
+
+After the authentication has been performed by the linked server by using the mappings that are defined by executing `sp_addlinkedsrvlogin` on the local instance of  SQL Server 
+, the permissions on individual objects in the remote database are determined by the linked server, not the local server.
+
+`sp_addlinkedsrvlogin` can't be executed from within a user-defined transaction.
+
+## Permissions
+
+Requires ALTER ANY LOGIN permission on the server.
+
+## Examples
+
+### A. Connect all local logins to the linked server by using their own user credentials
+
+The following example creates a mapping to make sure that all logins to the local server connect through to the linked server `Accounts` by using their own user credentials.
+
+```sql
+EXECUTE sp_addlinkedsrvlogin 'Accounts';
+```
+
+Or
+
+```sql
+EXECUTE sp_addlinkedsrvlogin 'Accounts', 'true';
+```
+
+> **Note:**  
+> If there are explicit mappings created for individual logins, they take precedence over any global mappings that might exist for that linked server.
+
+### B. Connect a specific login to the linked server by using different user credentials
+
+The following example creates a mapping to make sure that the Windows user `Domain\Mary` connects through to the linked server `Accounts` by using the login `MaryP`. Replace `<password>` with a strong password.
+
+```sql
+EXECUTE sp_addlinkedsrvlogin 'Accounts', 'false', 'Domain\Mary', 'MaryP', '<password>';
+```
+
+> **Caution:**  
+> This example doesn't use Windows Authentication. Passwords will be transmitted unencrypted. Passwords might be visible in data source definitions and scripts that are saved to disk, in backups, and in log files. Never use an administrator password in this kind of connection. Consult your network administrator for security guidance specific to your environment.
+
+### C. Map specific local login to a remote server login
+
+In some cases, such as with [Azure SQL Managed Instance](https://learn.microsoft.com/azure/azure-sql/managed-instance/sql-managed-instance-paas-overview), to run a SQL Agent job that executes a Transact-SQL (T-SQL) query on a remote server through a linked server, you need to create a mapping between a login on the local server to a login on the remote server that has permission to execute the T-SQL query. When the SQL Agent job connects to the remote server through the linked server, it executes the T-SQL query in the context of the remote login, which must have the necessary permissions to execute the T-SQL query.
+
+If you're mapping logins for a SQL Agent job in **Azure SQL Managed Instance**, the local login that you map to the remote login *must* be the owner of the SQL Agent job, unless the SQL Agent job is **sysadmin**, in which case you should map [all the local logins](#d-map-all-local-logins-to-a-remote-server-login). For more information, review [SQL Agent jobs with Azure SQL Managed Instance](https://learn.microsoft.com/ssms/agent/implement-sql-server-agent-security#linked-servers).
+
+Run the following sample command on the local server to map the local login `local_login_name` to the remote server login `login_name` when connecting to the linked server `remote_server`:
+
+```sql
+EXECUTE master.dbo.sp_addlinkedsrvlogin
+    @rmtsrvname = N'<remote_server>',
+    @useself = N'False',
+    @locallogin = N'<local_login_name>',
+    @rmtuser = N'<login_name>',
+    @rmtpassword = '<login_password>';
+```
+
+### D. Map all local logins to a remote server login
+
+By setting `locallogin` to `NULL`, you can map *all* local logins to a login on the remote server.
+
+Mapping all local logins to a remote server login is required when executing an Azure SQL Managed Instance SQL Agent job owned by **sysadmin** that queries a remote server through a linked server. For more information, review [SQL Agent jobs with Azure SQL Managed Instance](https://learn.microsoft.com/ssms/agent/implement-sql-server-agent-security#linked-servers). When the SQL Agent job connects to the remote server through the linked server, it executes the T-SQL query in the context of the remote login, which must have the necessary permissions to execute the T-SQL query.
+
+Run the following sample command on the local server to map all local logins to the remote server login `login_name` when connecting to the linked server `remote_server`:
+
+```sql
+EXECUTE master.dbo.sp_addlinkedsrvlogin
+    @rmtsrvname = N'<remote_server>',
+    @useself = N'False',
+    @locallogin = NULL,
+    @rmtuser = N'<login_name>',
+    @rmtpassword = '<login_password>';
+```
+
+### E. Check linked logins
+
+The following example shows all logins that have been mapped for a linked server:
+
+```sql
+SELECT s.name AS server_name, ll.remote_name, sp.name AS principal_name
+FROM sys.servers s
+INNER JOIN sys.linked_logins ll
+    ON s.server_id = ll.server_id
+INNER JOIN sys server_principals sp
+    ON ll.local_principal_id = sp.principal_id
+WHERE s.is_linked = 1;
+```
+
+## Related content
+
+- [Linked Servers Catalog Views (Transact-SQL)](../system-catalog-views/linked-servers-catalog-views-transact-sql.md)
+- [sys.sp_addlinkedserver (Transact-SQL)](sp-addlinkedserver-transact-sql.md)
+- [sys.sp_droplinkedsrvlogin (Transact-SQL)](sp-droplinkedsrvlogin-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

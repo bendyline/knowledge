@@ -1,0 +1,24 @@
+# Source code: docs/csharp/fundamentals/null-safety/snippets/nullable-reference-types/nullable-reference-types.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!--
+      Suppressed so the project builds cleanly while snippets retain the
+      warning-generating lines that the article describes:
+        CS8602 - NullStateTracking demonstrates dereference of a maybe-null reference.
+        CS0649 - DefaultStructPitfall demonstrates uninitialized struct fields.
+    -->
+    <NoWarn>$(NoWarn);CS8602;CS0649</NoWarn>
+  </PropertyGroup>
+
+</Project>
+
+```

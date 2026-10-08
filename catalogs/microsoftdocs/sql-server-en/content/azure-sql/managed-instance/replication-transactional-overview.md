@@ -1,0 +1,376 @@
+---
+title: Transactional replication
+titleSuffix: Azure SQL Managed Instance
+description: Learn about using SQL Server transactional replication with Azure SQL Managed Instance.
+author: MladjoA
+ms.author: mlandzic
+ms.reviewer: mathoma, randolphwest
+ms.date: 09/28/2026
+ms.service: azure-sql-managed-instance
+ms.subservice: data-movement
+ms.topic: concept-article
+ms.custom: sqldbrb=1
+---
+# Transactional replication with Azure SQL Managed Instance
+
+
+
+  **Applies to:**    [Azure SQL Managed Instance](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+Transactional replication is a feature of Azure SQL Managed Instance and SQL Server that enables you to replicate data from a table in Azure SQL Managed Instance or a SQL Server instance, to tables placed on remote databases. This feature allows you to synchronize multiple tables in different databases.
+
+## Overview
+
+You can use transactional replication to push changes made in an Azure SQL managed instance to:
+
+- A SQL Server database (on-premises or on an Azure Virtual Machine)
+- A database in Azure SQL Database
+- A database in Azure SQL Managed Instance
+
+> **Note:**  
+> To use all the features of Azure SQL Managed Instance, you must use the latest versions of [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/sql-server-management-studio-ssms) and [SQL Server Data Tools (SSDT)](https://learn.microsoft.com/sql/ssdt/download-sql-server-data-tools-ssdt).
+
+### Components
+
+The key components in transactional replication are the **Publisher**, **Distributor**, and **Subscriber**, as shown in the following picture:
+
+Diagram of replication with Azure SQL.
+
+| Role | Azure SQL Database | Azure SQL Managed Instance |
+| :--- | :--- | :--- |
+| **Publisher** | No | Yes |
+| **Distributor** | No | Yes |
+| **Pull subscriber** | No | Yes |
+| **Push subscriber** | Yes | Yes |
+
+The **Publisher** publishes changes made on some tables (articles) by sending the updates to the Distributor. The publisher can be an Azure SQL managed instance or a SQL Server instance.
+
+The **Distributor** collects changes in the articles from a Publisher and distributes them to the Subscribers. The Distributor can be either an Azure SQL managed instance or a SQL Server instance (any version as long it's equal to or higher than the Publisher version).
+
+The **Subscriber** receives changes made on the Publisher. A SQL Server instance and Azure SQL managed instance can both be push and pull subscribers, though a pull subscription isn't supported when the distributor is an Azure SQL managed instance and the subscriber isn't. A database in Azure SQL Database can only be a push subscriber.
+
+Azure SQL Managed Instance can support being a Subscriber from the following versions of SQL Server:
+
+- SQL Server 2016 and later versions
+
+> **Note:**  
+> For other versions of SQL Server that do not support publishing to objects in Azure, you can use the [republishing data](https://learn.microsoft.com/sql/relational-databases/replication/republish-data) method to move data to newer versions of SQL Server.
+>
+> Attempting to configure replication using an older version can result in error `MSSQL_REPL20084` (The process could not connect to Subscriber), and `MSSQL_REPL40532` (Cannot open server \<name> requested by the login. The login failed).
+
+### Types of replication
+
+There are different [types of replication](https://learn.microsoft.com/sql/relational-databases/replication/types-of-replication):
+
+| Replication | Azure SQL Database | Azure SQL Managed Instance |
+| :--- | :--- | :--- |
+| [**Standard transactional**](https://learn.microsoft.com/sql/relational-databases/replication/transactional/transactional-replication) | Yes (only as subscriber) | Yes |
+| [**Snapshot**](https://learn.microsoft.com/sql/relational-databases/replication/snapshot-replication) | Yes (only as subscriber) | Yes |
+| [**Merge replication**](https://learn.microsoft.com/sql/relational-databases/replication/merge/merge-replication) | No | No |
+| [**Peer-to-peer**](https://learn.microsoft.com/sql/relational-databases/replication/transactional/peer-to-peer-transactional-replication) | No | No |
+| [**Bidirectional**](https://learn.microsoft.com/sql/relational-databases/replication/transactional/bidirectional-transactional-replication) | No | Yes |
+| [**Updatable subscriptions**](https://learn.microsoft.com/sql/relational-databases/replication/transactional/updatable-subscriptions-for-transactional-replication) | No | No |
+
+### Supportability matrix
+
+The transactional and snapshot replication supportability matrix for Azure SQL Managed Instance is the same as the one for SQL Server: 
+
+
+| **Publisher** | **Distributor** | **Subscriber** |
+| :--- | :--- | :--- |
+| Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup> | Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup> | Azure SQL Database |
+ | <br /> Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+ |  |
+| Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup> | Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup> | Azure SQL Database |
+ | <br /> Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+|  |
+| Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup> | Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup> | Azure SQL Database |
+ | <br /> Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+ |  |
+| SQL Server 2025 (17.x) |
+ | SQL Server 2025 (17.x) |
+ | Azure SQL Database |
+ | <br />SQL database in Microsoft Fabric |
+| <sup>[1](#updatepolicy)</sup> <br /> Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+ |  |
+| SQL Server 2022 (16.x) |
+ | SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+ | Azure SQL Database |
+ | <br />SQL database in Microsoft Fabric |
+| <sup>[1](#updatepolicy)</sup> <br /> Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+ |  |
+| SQL Server 2019 (15.x) |
+ | SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+ | Azure SQL Database |
+| <br />  Azure SQL Managed Instance<sup>[AUTD](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2025](#updatepolicy)</sup><br />Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2025 (17.x) |
+| <br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+ |  |
+| SQL Server 2017 (14.x) |
+ | SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+ | Azure SQL Managed Instance<sup>[2022](#updatepolicy)</sup><br /> SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+ |  |
+| SQL Server 2016 (13.x) |
+ | SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+ | SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+| <br /> SQL Server 2012 (11.x) |
+ |  |
+| SQL Server 2014 (12.x) |
+ | SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+ | SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+| <br /> SQL Server 2012 (11.x) |
+| <br /> SQL Server 2008 R2 (10.50.x) |
+| <br /> SQL Server 2008 (10.0.x) |
+ |  |
+| SQL Server 2012 (11.x) |
+ | SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+| <br /> SQL Server 2012 (11.x) |
+ | SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+| <br /> SQL Server 2012 (11.x) |
+| <br /> SQL Server 2008 R2 (10.50.x) |
+| <br /> SQL Server 2008 (10.0.x) |
+ |  |
+| SQL Server 2008 R2 (10.50.x) |
+| <br /> SQL Server 2008 (10.0.x) |
+ | SQL Server 2022 (16.x) |
+| <br /> SQL Server 2019 (15.x) |
+| <br /> SQL Server 2017 (14.x) |
+| <br /> SQL Server 2016 (13.x) |
+| <br /> SQL Server 2014 (12.x) |
+| <br /> SQL Server 2012 (11.x) |
+| <br /> SQL Server 2008 R2 (10.50.x) |
+| <br /> SQL Server 2008 (10.0.x) |
+ | SQL Server 2014 (12.x) |
+| <br /> SQL Server 2012 (11.x) |
+| <br /> SQL Server 2008 R2 (10.50.x) |
+| <br /> SQL Server 2008 (10.0.x) |
+ |  |
+
+<a id="updatepolicy"></a>
+
+<sup>AUTD</sup> Applies to Azure SQL Managed Instance configured with the [Always-up-to-date update policy](https://learn.microsoft.com/azure/azure-sql/managed-instance/update-policy#always-up-to-date-update-policy).  
+<sup>2025</sup> Applies to Azure SQL Managed Instance configured with the [SQL Server 2025 update policy](https://learn.microsoft.com/azure/azure-sql/managed-instance/update-policy#sql-server-2025-update-policy).   
+<sup>2022</sup> Applies to Azure SQL Managed Instance configured with the [SQL Server 2022 update policy](https://learn.microsoft.com/azure/azure-sql/managed-instance/update-policy#sql-server-2022-update-policy).   
+<sup>1</sup> Applies based on the requirements of the supported configurations for [SQL database in Microsoft Fabric](https://learn.microsoft.com/azure/azure-sql/database/replication-to-sql-database).
+
+
+## When to use
+
+Transactional replication is useful in the following scenarios:
+
+- Publish changes made in one or more tables in a database and distribute them to one or many databases in a SQL Server instance or Azure SQL Database that subscribed for the changes.
+- Keep several distributed databases in synchronized state.
+- Migrate databases from one SQL Server instance or Azure SQL Managed Instance to another database by continuously publishing the changes.
+
+### Compare Data Sync with transactional replication
+
+| Category | Data Sync | Transactional replication |
+| --- | --- | --- |
+| Advantages | - Active-active support<br />- Bi-directional between on-premises and Azure SQL Database | - Lower latency<br />- Transactional consistency<br />- Reuse existing topology after migration |
+| Disadvantages | - No transactional consistency<br />- Higher performance impact | - Can't publish from Azure SQL Database<br />- High maintenance cost |
+
+## Common configurations
+
+In general, the publisher and the distributor must be either in the cloud or on-premises. The following configurations are supported:
+
+### Publisher with local Distributor on SQL Managed Instance
+
+Single instance as Publisher and Distributor.
+
+Publisher and distributor are configured within a single SQL managed instance and distributing changes to another SQL managed instance, SQL Database, or SQL Server instance.
+
+### Publisher with remote distributor on SQL Managed Instance
+
+In this configuration, one SQL managed instance publishes changes to a distributor placed on another SQL managed instance that can serve many source SQL managed instances and distribute changes to one or many targets on Azure SQL Database, Azure SQL Managed Instance, or SQL Server.
+
+Separate instances for Publisher and Distributor.
+
+Publisher and distributor are configured on two managed instances. There are some constraints with this configuration:
+
+- Both managed instances are on the same vNet.
+- Both managed instances are in the same location.
+
+### On-premises Publisher/Distributor with remote subscriber
+
+Azure SQL Database as subscriber.
+
+In this configuration, a database in Azure SQL Database or Azure SQL Managed Instance is a subscriber. This configuration supports migration from on-premises to Azure. If a subscriber is a database in Azure SQL Database, it must be in push mode.
+
+## Requirements
+
+- Use SQL Authentication for connectivity between replication participants.
+- Use an Azure Storage Account share for the working directory used by replication.
+- Open TCP outbound port 445 in the subnet security rules to access the Azure file share.
+- Open TCP outbound port 1433 when the SQL managed instance is the Publisher/Distributor, and the Subscriber isn't. You may also need to change the SQL managed instance NSG outbound security rule for `allow_linkedserver_outbound` for the port 1433 **Destination Service tag** from `virtualnetwork` to `internet`.
+- Place both the publisher and distributor in the cloud, or both on-premises.
+- Configure VPN peering between the virtual networks of replication participants if the virtual networks are different.
+
+> **Note:**  
+> You may encounter error 53 when connecting to an Azure Storage File if the outbound network security group (NSG) port 445 is blocked when the distributor is an Azure SQL Managed Instance database and the subscriber is on-premises. [Update the vNet NSG](https://learn.microsoft.com/azure/storage/files/storage-troubleshoot-windows-file-connection-problems) to resolve this issue.
+
+## Security 
+
+### TLS 1.3 support 
+
+Azure SQL Managed Instance supports TLS 1.3 for replication connections initialized by agents configured to run on a SQL managed instance. This applies to a replication topology between two SQL managed instances, and also to any version of SQL Server as a subscriber from a SQL managed instance publisher and distributor. 
+
+If you use TLS 1.3 to secure the connections between instances in a replication topology, specify a value of **3** or **4** for the **-EncryptionLevel** parameter of each replication agent: 
+
+- [Distribution agent](https://learn.microsoft.com/sql/relational-databases/replication/agents/replication-distribution-agent#encryption-level)
+- [Log reader agent](https://learn.microsoft.com/sql/relational-databases/replication/agents/replication-log-reader-agent#encryption-level)
+- [Snapshot agent](https://learn.microsoft.com/sql/relational-databases/replication/agents/replication-snapshot-agent#encryption-level)
+
+A value of `3` enforces TLS 1.3 connections to SQL managed instances, but has no effect on connections to SQL Server instances. A value of `4` enforces TLS 1.3 connections between SQL managed instances, and also connections from SQL managed instance to SQL Server, and requires that you install the certificate to the SQL Server host. 
+
+### Login `replAgentUser`
+
+Instances configured with a Distribution or Snapshot agent have the `replAgentUser` login created automatically. The Distribution and Snapshot agent use the `replAgentUser` login to connect to their respective database. For a push subscription, the login is created on the Distributor. For a pull or anonymous subscription, the login is created on the Subscriber. The login is a member of the fixed `db_owner` database role on the distribution or subscription database.
+
+The `replAgentUser` login is automatically created when the replication agent is started for the first time. The login is automatically dropped from Distributor when the [sp_dropdistributor](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-dropdistributor-transact-sql) stored procedure is executed. The login is automatically dropped from Subscriber when the last pull or anonymous subscription is deleted. 
+
+## Limitations
+
+Transactional replication has some limitations that are specific to Azure SQL Managed Instance. Learn more about these limitations in this section.
+
+### Snapshot files aren't deleted from Azure Storage Account
+
+Azure SQL Managed Instance is using user configured Azure Storage Account for snapshot files used for transactional replication. Unlike SQL Server in the on-premises environment, Azure SQL Managed Instance isn't deleting snapshot files from Azure Storage Account. **Once files are no longer needed, you should delete them.** This can be done via Azure Storage interface on Azure portal, [Microsoft Azure Storage Explorer](https://azure.microsoft.com/products/storage/storage-explorer/), or via command line clients (Azure PowerShell or CLI) or Azure Storage Management REST API.
+
+Here's an example of how you can delete file and how you can delete an empty folder.
+
+``` CLI
+az storage file delete-batch --source <file_path> --account-key <account_key> --account-name <account_name>
+az storage directory delete --name <directory_name> --share-name <share_name> --account-key <account_key> --account-name <account_name>
+```
+
+### Number of distribution agents running continuously
+
+Number of distribution agents configured to run continuously is limited to 30 on Azure SQL Managed Instance. To have more distribution agents they need to be running either on demand or with a defined schedule. Schedule can be defined with daily frequency and occurrence on every 10 seconds (or more), so even though it's not continuous, you still can have distributor that's introducing latency that's only several seconds. When large number of distributors is needed, it's recommended to use **scheduled** and not continuous configuration.
+
+## With failover groups
+
+Using transactional replication with instances that are in a failover group is supported. However, if you configure replication before adding your SQL managed instance into a failover group, replication pauses when you start to create your failover group, and replication monitor shows a status of `Replicated transactions are waiting for the next log backup or for mirroring partner to catch up`. Replication resumes once the failover group is created successfully.
+
+If a **publisher** or **distributor** SQL managed instance is in a [failover group](failover-group-sql-mi.md), the SQL managed instance administrator must clean up all publications on the old primary and reconfigure them on the new primary after a failover occurs. The following activities are needed in this scenario:
+
+1. Stop all replication jobs running on the database, if there are any.
+1. Drop subscription metadata from publisher by running the following script on publisher database. Replace the `<name of publication>` and `<name of subscriber>` values:
+
+   ```sql
+   EXEC sp_dropsubscription @publication = '<name of publication>',
+       @article = 'all',
+       @subscriber = '<name of subscriber>'
+   ```
+
+1. Drop subscription metadata from the subscriber. Run the following script on the subscription database on the subscriber SQL managed instance. Replace the `<full DNS of publisher>` value. For example, `example.ac2d23028af5.database.windows.net`:
+
+   ```sql
+   EXEC sp_subscription_cleanup
+      @publisher = N'<full DNS of publisher>',
+      @publisher_db = N'<publisher database>',
+      @publication = N'<name of publication>';
+   ```
+
+1. Forcefully drop all replication objects from publisher by running the following script in the published database:
+
+   ```sql
+   EXEC sp_removedbreplication;
+   ```
+
+1. Forcefully drop old distributor from the original primary SQL managed instance (if failing back over to an old primary that used to have a distributor). Run the following script on the `master` database in the old distributor SQL managed instance:
+
+   ```sql
+   EXEC sp_dropdistributor 1, 1;
+   ```
+
+If a **subscriber** SQL managed instance is in a failover group, the publication should be configured to connect to the failover group listener endpoint for the subscriber SQL managed instance. In the event of a failover, subsequent action by the SQL managed instance administrator depends on the type of failover that occurred:
+
+- For a failover with no data loss, replication will continue working after failover.
+- For a failover with data loss, replication works as well. It replicates the lost changes again.
+- For a failover with data loss, but the data loss is outside of the distribution database retention period, the SQL managed instance administrator needs to reinitialize the subscription database.
+
+## Troubleshoot common issues
+
+### Transaction log and Transactional Replication
+
+In usual circumstances, transaction log is used for recording changes of the data within a database. Changes are recorded in the transaction log, and that makes the log storage consumption to grow. There's also an automatic process that allows safe truncation of the transaction log, and this process reduces the used storage space for the log.
+When publishing for Transactional Replication is configured, transaction log truncation is prevented until changes in the log are processed by the log reader job. In some circumstances, processing of the transaction log is effectively blocked, and that state can lead to filling up entire storage reserved for transaction log. When there's no free space for transaction log, and there's no more space for transaction log to grow, we have full transaction log. In this state, the database can no longer process any write workload, and effectively becomes read-only database. 
+
+#### Disabled log reader agent
+
+Sometimes Transactional Replication publication is configured for a database, but log reader agent isn't configured to run. In that case, changes are accumulating in the transaction log, and they aren't being processed. This leads to constant growth of transactional log, and eventually to the full transaction log.
+User should make sure that log reader job exists and is active. Alternative would be to disable Transactional Replication, if it's not needed.
+
+#### Log reader agent query timeouts
+
+Sometimes, log reader job can't make effective progress due to repeated query timeouts. A way to fix query timeouts is to increase the query timeout setting for the log reader agent job.
+
+Increasing query timeout for log reader job can be done with SSMS. In the object explorer, under SQL Server Agent, find the job you'd like to modify. First stop it, and then open its properties. Find `step 2` and edit it. Append the command value with `-QueryTimeout <timeout_in_seconds>`. For the query timeout value try `21600` or higher. Finally, start the job again.
+
+#### Log storage size reached max limit of 2 TB
+
+When transaction log storage size reaches max limit, which is 2 TB, log physically can't grow more than that. In this case, the only available mitigation is marking all transactions that are to be replicated as processed, to allow transaction log to be truncated. This effectively means that remaining transactions in the log will not be replicated, and you need to reinitialize the replication.
+
+> **Note:**
+> After performing mitigation you will need to reinitialize the replication, which means replicating entire data set again. This is size of data operation, and might be long running, depending on the amount of data that should be replicated.
+
+To perform the mitigation, first you need to stop the log reader agent on the distributor. Then you should run the `sp_repldone` stored procedure with `reset` flag set to `1` on the publisher database, to allow transaction log truncation. This command should look like this `EXEC sp_repldone @xactid = NULL, @xact_seqno = NULL, @numtrans = 0,  @time = 0, @reset = 1`. After this, you'll need to reinitialize the replication.
+
+## Next steps
+
+For more information about configuring transactional replication, see the following tutorials:
+
+- [Configure replication between a SQL Managed Instance publisher and subscriber](replication-between-two-instances-configure-tutorial.md).
+- [Configure replication between a SQL Managed Instance publisher, SQL Managed Instance distributor, and SQL Server subscriber](replication-two-instances-and-sql-server-configure-tutorial.md).
+- [Create a publication](https://learn.microsoft.com/sql/relational-databases/replication/publish/create-a-publication).
+- [Create a push subscription](https://learn.microsoft.com/sql/relational-databases/replication/create-a-push-subscription) by using the server name as the subscriber (for example `<Azure SQL logical server name>.database.windows.net`), and the database in Azure SQL Database name as the destination database (for example, `AdventureWorks`).
+
+## Related content
+
+- [Replication with a SQL Managed Instance and a failover group](transact-sql-tsql-differences-sql-server.md#replication)
+- [Replication to SQL Database](../database/replication-to-sql-database.md)
+- [Replication to managed instance](replication-between-two-instances-configure-tutorial.md)
+- [Create a Publication](https://learn.microsoft.com/sql/relational-databases/replication/publish/create-a-publication)
+- [Create a Push Subscription](https://learn.microsoft.com/sql/relational-databases/replication/create-a-push-subscription/)
+- [Types of Replication](https://learn.microsoft.com/sql/relational-databases/replication/types-of-replication)
+- [Monitoring (Replication)](https://learn.microsoft.com/sql/relational-databases/replication/monitor/monitoring-replication)
+- [Initialize a Subscription](https://learn.microsoft.com/sql/relational-databases/replication/initialize-a-subscription)

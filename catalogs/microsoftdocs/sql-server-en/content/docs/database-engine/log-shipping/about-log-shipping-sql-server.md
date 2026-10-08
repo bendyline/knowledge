@@ -1,0 +1,183 @@
+---
+title: "About Log Shipping (SQL Server)"
+description: Learn about SQL Server log shipping, which sends transaction log backups from a primary database on a primary server instance to secondary databases.
+author: MashaMSFT
+ms.author: mathoma
+ms.reviewer: randolphwest
+ms.date: 02/23/2026
+ms.service: sql
+ms.subservice: log-shipping
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "secondary servers [SQL Server]"
+  - "log shipping [SQL Server], jobs"
+  - "copy jobs [SQL Server]"
+  - "primary databases [SQL Server]"
+  - "log shipping [SQL Server], monitoring"
+  - "log shipping [SQL Server], about log shipping"
+  - "alert jobs [SQL Server]"
+  - "availability [SQL Server]"
+  - "jobs [SQL Server], log shipping"
+  - "monitor servers [SQL Server]"
+  - "restore jobs [SQL Server]"
+  - "log shipping [SQL Server]"
+  - "backup jobs [SQL Server]"
+  - "primary servers [SQL Server]"
+monikerRange: ">=sql-server-2017"
+---
+# About log shipping (SQL Server)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+ SQL Server 
+ Log shipping allows you to automatically send transaction log backups from a *primary database* on a *primary server* instance to one or more *secondary databases* on separate *secondary server* instances. The transaction log backups are applied to each of the secondary databases individually. An optional third server instance, known as the *monitor server*, records the history and status of backup and restore operations and, optionally, raises alerts if these operations fail to occur as scheduled.
+
+<a id="ComponentsAndConcepts"></a>
+
+## Log shipping overview
+
+Log shipping consists of three operations:
+
+1. Back up the transaction log at the primary server instance.
+1. Copy the transaction log file to the secondary server instance.
+1. Restore the log backup on the secondary server instance.
+
+The log can be shipped to multiple secondary server instances. In such cases, operations 2 and 3 are duplicated for each secondary server instance.
+
+A log shipping configuration doesn't automatically fail over from the primary server to the secondary server. If the primary database becomes unavailable, any of the secondary databases can be brought online manually.
+
+You can use a secondary database for reporting purposes.
+
+In addition, you can configure alerts for your log shipping configuration.
+
+### A typical log shipping configuration
+
+The following figure shows a log shipping configuration with the primary server instance, three secondary server instances, and a monitor server instance. The figure illustrates the steps performed by backup, copy, and restore jobs, as follows:
+
+1. The primary server instance runs the backup job to back up the transaction log on the primary database. This server instance then places the log backup into a primary log-backup file, which it sends to the backup folder. In this figure, the backup folder is on a shared directory-the *backup share*.
+
+1. Each of the three secondary server instances runs its own copy job to copy the primary log-backup file to its own local destination folder.
+
+1. Each secondary server instance runs its own restore job to restore the log backup from the local destination folder onto the local secondary database.
+
+The primary and secondary server instances send their own history and status to the monitor server instance.
+
+Diagram of configuration showing backup, copy, and restore jobs.
+
+## Enforce TLS 1.3 encryption
+
+ SQL Server 2025 (17.x) 
+ introduces [TDS 8.0](../../relational-databases/security/networking/tds-8.md) support for log shipping. The TDS 8.0 protocol provides enhanced security and encryption for data transmitted between the primary and secondary servers of a log shipping topology. Choose between enforcing mandatory or strict encryption for communication between servers.
+
+In  SQL Server 2025 (17.x) 
+, log shipping uses [Microsoft OLE DB Driver for SQL Server](../../connect/oledb/oledb-driver-for-sql-server.md) as the default version for linked servers, which has a default `Encrypt` value of `Mandatory`.
+
+To use TLS 1.3 encryption in your existing log shipping configuration, drop and then recreate the topology using the new TLS 1.3 parameters in the [log shipping stored procedures](../../relational-databases/system-stored-procedures/log-shipping-stored-procedures-transact-sql.md).
+
+### Log shipping monitoring can break if the monitor is a remote SQL Server 2025 instance
+
+Log shipping monitoring can break if the monitor is a remote  SQL Server 2025 (17.x) 
+ instance, when other SQL Server instances in the log shipping topology use a previous version. You might get one of the following errors:
+
+```output
+OLE DB provider "MSOLEDBSQL19" for linked server "<server>" returned message "Client unable to establish connection. For solutions related to encryption errors, see https://go.microsoft.com/fwlink/?linkid=2227882.".
+```
+
+Or:
+
+```output
+Msg 32055, Level 16, State 2, Procedure master.dbo.sp_add_log_shipping_primary_database, Line 325 [Batch Start Line 10]
+There was an error configuring the remote monitor server.
+```
+
+To work around this issue, drop and recreate the log shipping configuration on both the primary and secondary replicas. An example script is available at [Use a remote monitor with connectivity options](../../relational-databases/system-stored-procedures/sp-add-log-shipping-primary-database-transact-sql.md#c-use-a-remote-monitor-with-connectivity-options).
+
+For more information, see [Encryption and certificate validation behavior](../../connect/oledb/features/encryption-and-certificate-validation.md#encryption-and-certificate-validation-behavior).
+
+## Benefits
+
+- Provides a disaster-recovery solution for a single primary database and one or more secondary databases, each on a separate instance of  SQL Server 
+.
+
+- Supports limited read-only access to secondary databases (during the interval between restore jobs).
+
+- Allows a user-specified delay between when the primary server backs up the log of the primary database and when the secondary servers must restore (apply) the log backup. A longer delay can be useful, for example, if data is accidentally changed on the primary database. If the accidental change is noticed quickly, a delay can let you retrieve still unchanged data from a secondary database before the change is reflected there.
+
+## Terms and definitions
+
+- **primary server**: The instance of  SQL Server 
+ that is your production server.
+
+- **primary database**: The database on the primary server that you want to back up to another server. All administration of the log shipping configuration through  SQL Server Management Studio 
+ is performed from the primary database.
+
+- **secondary server**: The instance of  SQL Server 
+ where you want to keep a warm standby copy of your primary database.
+
+- **secondary database**: The warm standby copy of the primary database. The secondary database might be in either the RECOVERING state or the `STANDBY` state, which leaves the database available for limited read-only access.
+
+- **monitor server**: An optional instance of  SQL Server 
+ that tracks all of the details of log shipping, including:
+
+  - When the transaction log on the primary database was last backed up.
+  - When the secondary servers last copied and restored the backup files.
+  - Information about any backup failure alerts.
+
+  > **Important:**  
+  > Once the monitor server has been configured, it can't be changed without removing log shipping first.
+
+- **backup job**: A  SQL Server 
+ Agent job that performs the backup operation, logs history to the local server and the monitor server, and deletes old backup files and history information. When log shipping is enabled, the job category "Log Shipping Backup" is created on the primary server instance.
+
+- **copy job**: A  SQL Server 
+ Agent job that copies the backup files from the primary server to a configurable destination on the secondary server and logs history on the secondary server and the monitor server. When log shipping is enabled on a database, the job category "Log Shipping Copy" is created on each secondary server in a log shipping configuration.
+
+- **restore job**: A  SQL Server 
+ Agent job that restores the copied backup files to the secondary databases. It logs history on the local server and the monitor server, and deletes old files and old history information. When log shipping is enabled on a database, the job category "Log Shipping Restore" is created on the secondary server instance.
+
+- **alert job**: A  SQL Server 
+ Agent job that raises alerts for primary and secondary databases when a backup or restore operation doesn't complete successfully within a specified threshold. When log shipping is enabled on a database, job category "Log Shipping Alert" is created on the monitor server instance.
+
+  > **Tip:**  
+  > For each alert, you need to specify an alert number. Also, be sure to configure the alert to notify an operator when an alert is raised.
+
+## Interoperability
+
+Log shipping can be used with the following features or components of  SQL Server 
+:
+
+- [Prerequisites to convert log shipping to Always On availability groups](../availability-groups/windows/prereqs-migrating-log-shipping-to-always-on-availability-groups.md)
+- [Database Mirroring and Log Shipping (SQL Server)](../database-mirroring/database-mirroring-and-log-shipping-sql-server.md)
+- [Log Shipping and Replication (SQL Server)](log-shipping-and-replication-sql-server.md)
+
+> **Note:**  
+>  Always On availability groups 
+ and database mirroring are mutually exclusive. A database that is configured for one of these features can't be configured for the other.
+
+> **Caution:**  
+> **Known issue**: For databases with memory-optimized tables, performing a transactional log backup with no recovery, and later executing a transaction log restore with recovery, could result in an unresponsive database restore process. This issue can also affect log shipping functionality. To work around this problem, the  SQL Server 
+ instance can be restarted before initiating the restore process.
+
+
+## Related tasks
+
+- [Upgrade SQL Server with log shipping (Transact-SQL)](upgrade-sql-server-log-shipping-transact-sql.md)
+- [Configure Log Shipping (SQL Server)](configure-log-shipping-sql-server.md)
+- [Add a Secondary Database to a Log Shipping Configuration (SQL Server)](add-a-secondary-database-to-a-log-shipping-configuration-sql-server.md)
+- [Remove a Secondary Database from a Log Shipping Configuration (SQL Server)](remove-a-secondary-database-from-a-log-shipping-configuration-sql-server.md)
+- [Remove Log Shipping (SQL Server)](remove-log-shipping-sql-server.md)
+- [View the Log Shipping Report (SQL Server Management Studio)](view-the-log-shipping-report-sql-server-management-studio.md)
+- [Monitor Log Shipping (Transact-SQL)](monitor-log-shipping-transact-sql.md)
+- [Fail Over to a Log Shipping Secondary (SQL Server)](fail-over-to-a-log-shipping-secondary-sql-server.md)
+- [Management of Logins and Jobs After Role Switching (SQL Server)](../../sql-server/failover-clusters/management-of-logins-and-jobs-after-role-switching-sql-server.md)
+
+## Related content
+
+- [What is an Always On availability group?](../availability-groups/windows/overview-of-always-on-availability-groups-sql-server.md)

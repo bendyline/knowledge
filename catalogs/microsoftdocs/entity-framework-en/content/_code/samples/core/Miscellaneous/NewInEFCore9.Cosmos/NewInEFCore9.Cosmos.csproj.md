@@ -1,0 +1,20 @@
+# Source code: samples/core/Miscellaneous/NewInEFCore9.Cosmos/NewInEFCore9.Cosmos.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <RootNamespace />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.11" />
+  </ItemGroup>
+
+</Project>
+
+```

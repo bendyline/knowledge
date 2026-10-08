@@ -1,0 +1,132 @@
+---
+title: "View Plan Guide Properties"
+description: Learn how to view the properties of plan guides in SQL Server by using SQL Server Management Studio or Transact-SQL.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: performance
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sql13.swb.planguideprop.general.f1"
+helpviewer_keywords:
+  - "plan guides [SQL Server], view plan guide properties"
+  - "viewing plan guide properties"
+---
+# View Plan Guide Properties
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  You can view the properties of plan guides in  SQL Server 
+ by using  SQL Server Management Studio 
+ or  Transact-SQL   
+
+<a id="BeforeYouBegin"></a>
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+The visibility of the metadata in catalog views is limited to securables that either a user owns or on which the user has been granted some permission.  
+  
+##  <a name="SSMSProcedure"></a> Using SQL Server Management Studio  
+  
+#### To view the properties of a plan guide  
+  
+1.  Click the plus sign to expand the database in which you want to view the properties of a plan guide, and then click the plus sign to expand the **Programmability** folder.  
+  
+2.  Click the plus sign to expand the **Plan Guides** folder.  
+  
+3.  Right-click the plan guide of which you want to view the properties and select **Properties**.  
+  
+     The following properties show in the **Plan Guide Properties** dialog box.  
+  
+     **Hints**  
+     Displays the query hints or query plan to be applied to the  Transact-SQL  statement. When a query plan is specified as a hint, the XML Showplan output for the plan is displayed.  
+  
+     **Is disabled**  
+     Displays the status of the plan guide. Possible values are **True** and **False**.  
+  
+     **Name**  
+     Displays the name of the plan guide.  
+  
+     **Parameters**  
+     When the scope type is SQL or TEMPLATE, displays the name and data type of all parameters that are embedded in the  Transact-SQL  statement.  
+  
+     **Scope batch**  
+     Displays the batch text in which the  Transact-SQL  statement appears.  
+  
+     **Scope object name**  
+     When the scope type is OBJECT, displays the name of the  Transact-SQL  stored procedure, user-defined scalar function, multistatement table-valued function, or DML trigger in which the  Transact-SQL  statement appears.  
+  
+     **Scope schema name**  
+     When the scope type is OBJECT, displays the name of the schema in which the object is contained.  
+  
+     **Scope type**  
+     Displays the type of entity in which the  Transact-SQL  statement appears. This specifies the context for matching the  Transact-SQL  statement to the plan guide. Possible values are **OBJECT**, **SQL**, and **TEMPLATE**.  
+  
+     **Statement**  
+     Displays the  Transact-SQL  statement against which the plan guide is applied.  
+  
+4.  Click **OK**.  
+  
+##  <a name="TsqlProcedure"></a> Using Transact-SQL  
+  
+#### To view the properties of a plan guide  
+  
+1.  In **Object Explorer**, connect to an instance of  Database Engine 
+.  
+  
+2.  On the Standard bar, click **New Query**.  
+  
+3.  Copy and paste the following example into the query window and click **Execute**.  
+  
+    ```  
+    -- If a plan guide named "Guide1" already exists in the AdventureWorks2022 database, delete it.  
+    USE AdventureWorks2022;  
+    GO  
+    IF OBJECT_ID(N'Guide1') IS NOT NULL  
+       EXEC sp_control_plan_guide N'DROP', N'Guide1';  
+    GO  
+    -- creates a plan guide named Guide1 based on a SQL statement  
+    EXEC sp_create_plan_guide   
+        @name = N'Guide1',   
+        @stmt = N'SELECT TOP 1 *   
+                  FROM Sales.SalesOrderHeader   
+                  ORDER BY OrderDate DESC',   
+        @type = N'SQL',  
+        @module_or_batch = NULL,   
+        @params = NULL,   
+        @hints = N'OPTION (MAXDOP 1)';  
+    GO  
+    -- Gets the name, created date, and all other relevant property information on the plan guide created above.   
+    SELECT name AS plan_guide_name,  
+       create_date,  
+       query_text,  
+       scope_type_desc,  
+       OBJECT_NAME(scope_object_id) AS scope_object_name,  
+       scope_batch,  
+       parameters,  
+       hints,  
+       is_disabled  
+    FROM sys.plan_guides  
+    WHERE name = N'Guide1';  
+    GO  
+    ```  
+  
+ For more information, see [sys.plan_guides (Transact-SQL)](../system-catalog-views/sys-plan-guides-transact-sql.md).

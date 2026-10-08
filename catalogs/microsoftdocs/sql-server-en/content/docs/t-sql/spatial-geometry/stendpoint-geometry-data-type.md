@@ -1,0 +1,72 @@
+---
+title: "STEndpoint (geometry Data Type)"
+description: "STEndpoint (geometry Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "08/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "STEndpoint (geometry Data Type)"
+  - "STEndpoint_TSQL"
+helpviewer_keywords:
+  - "STEndpoint (geometry Data Type)"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# STEndpoint (geometry Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns the endpoint of a **geometry** instance.
+  
+## Syntax  
+  
+```  
+  
+.STEndPoint ( )  
+```  
+  
+## Return Types
+  SQL Server 
+ return type: **geometry**  
+  
+ CLR return type: **SqlGeometry**  
+  
+ Open Geospatial Consortium (OGC) type: **Point**  
+  
+## Remarks  
+ `STEndPoint()` is the equivalent of [STPointN](stpointn-geometry-data-type.md) (x.NumPoints()).  
+  
+ This method returns null if called on an empty **geometry** instance.  
+  
+## Examples  
+ The following example creates a `LineString` instance with `STGeomFromText()` and uses `STEndpoint()` to retrieve the endpoint of the `LineString`.  
+  
+```  
+DECLARE @g geometry;  
+SET @g = geometry::STGeomFromText('LINESTRING(0 0, 2 2, 1 0)', 0);  
+SELECT @g.STEndPoint().ToString();  
+```  
+  
+## Related content
+
+- [OGC methods on geometry instances](ogc-methods-on-geometry-instances.md)

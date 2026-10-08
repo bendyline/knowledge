@@ -1,0 +1,157 @@
+---
+title: "sys.sp_change_users_login (Transact-SQL)"
+description: sp_change_users_login Maps an existing database user to a SQL Server login.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_change_users_login"
+  - "sp_change_users_login_TSQL"
+helpviewer_keywords:
+  - "sp_change_users_login"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_change_users_login (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Maps an existing database user to a  SQL Server 
+ login.
+
+> **Important:**  
+> This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use [ALTER USER](../../t-sql/statements/alter-user-transact-sql.md) instead.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_change_users_login
+    [ @Action = ] 'Action'
+    [ , [ @UserNamePattern = ] N'UserNamePattern' ]
+    [ , [ @LoginName = ] N'LoginName' ]
+    [ , [ @Password = ] N'Password' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @Action = ] '*Action*'
+
+Describes the action for the stored procedure to perform. *@Action* is **varchar(10)**, with no default, and can have one of the following values.
+
+| Value | Description |
+| --- | --- |
+| `Auto_Fix` | Links a user entry in the `sys.database_principals` system catalog view in the current database to a  SQL Server |
+ | login of the same name. If a login with the same name doesn't exist, one is created. Examine the result from the `Auto_Fix` statement, to confirm that the correct link is in fact made. Avoid using `Auto_Fix` in security-sensitive situations.<br /><br />When you use `Auto_Fix`, you must specify *@UserNamePattern* and *@Password* if the login doesn't already exist, otherwise you must specify *@UserNamePattern* but *@Password* is ignored. *@LoginName* must be `NULL`. *@UserNamePattern* must be a valid user in the current database. The login can't have another user mapped to it. |
+| `Report` | Lists the users and corresponding security identifiers (SID) in the current database that aren't linked to any login. *@UserNamePattern*, *@LoginName*, and *@Password* must be `NULL` or not specified.<br /><br />To replace the report option with a query using the system tables, compare the entries in `sys.server_principals` with the entries in `sys.database_principals`. |
+| `Update_One` | Links the specified *@UserNamePattern* in the current database to an existing  SQL Server |
+ | *@LoginName*. *@UserNamePattern* and *@LoginName* must be specified. *@Password* must be `NULL` or not specified. |
+
+#### [ @UserNamePattern = ] N'*UserNamePattern*'
+
+The name of a user in the current database. *@UserNamePattern* is **sysname**, with a default of `NULL`.
+
+#### [ @LoginName = ] N'*LoginName*'
+
+The name of a  SQL Server 
+ login. *@LoginName* is **sysname**, with a default of `NULL`.
+
+#### [ @Password = ] N'*Password*'
+
+The password assigned to a new  SQL Server 
+ login that is created by specifying `Auto_Fix`. *@Password* is **sysname**, and can't be `NULL`. If a matching login already exists, the user and login are mapped and *@Password* is ignored. If a matching login doesn't exist, `sp_change_users_login` creates a new  SQL Server 
+ login and assigns *@Password* as the password for the new login.
+
+> **Important:**  
+> Always use a [strong password](../security/strong-passwords.md).
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Result set
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `UserName` | **sysname** | Database user name. |
+| `UserSID` | **varbinary(85)** | User's security identifier. |
+
+## Remarks
+
+Use `sp_change_users_login` to link a database user in the current database with a  SQL Server 
+ login. If the login for a user changes, use `sp_change_users_login` to link the user to the new login without losing user permissions. The new *@LoginName* can't be `sa`, and the *@UserNamePattern* can't be `dbo`, `guest`, or an `INFORMATION_SCHEMA` user.
+
+`sp_change_users_login` can't be used to map database users to Windows-level principals, certificates, or asymmetric keys.
+
+`sp_change_users_login` can't be used with a  SQL Server 
+ login created from a Windows principal or with a user created by using `CREATE USER WITHOUT LOGIN`.
+
+`sp_change_users_login` can't be executed within a user-defined transaction.
+
+## Permissions
+
+Requires membership in the **db_owner** fixed database role. Only members of the **sysadmin** fixed server role can specify the `Auto_Fix` option.
+
+## Examples
+
+The code samples in this article use the  `AdventureWorks2025` ,  `AdventureWorksDW2025` , or  `AdventureWorksLT2025`  sample database, which you can download from the [Azure Data SQL Samples Repository](https://github.com/microsoft/sql-server-samples) GitHub repository.
+
+### A. Show a report of the current user to login mappings
+
+The following example produces a report of the users in the current database and their security identifiers (SIDs).
+
+```sql
+EXECUTE sp_change_users_login 'Report';
+```
+
+### B. Map a database user to a new SQL Server login
+
+In the following example, a database user is associated with a new  SQL Server 
+ login. Database user `MB-Sales`, which at first is mapped to another login, is remapped to login `MaryB`. Replace `<password>` with a strong password.
+
+```sql
+--Create the new login.
+CREATE LOGIN MaryB WITH PASSWORD = '<password>';
+GO
+
+--Map database user MB-Sales to login MaryB.
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_change_users_login 'Update_One', 'MB-Sales', 'MaryB';
+GO
+```
+
+### C. Automatically map a user to a login, and create a new login if necessary
+
+The following example shows how to use `Auto_Fix` to map an existing user to a login of the same name, or to create the  SQL Server 
+ login `Mary` with a password if the login `Mary` doesn't exist. Replace `<password>` with a strong password.
+
+```sql
+USE AdventureWorks2022;
+GO
+
+EXECUTE sp_change_users_login 'Auto_Fix', 'Mary', NULL, '<password>';
+GO
+```
+
+## Related content
+
+- [Security stored procedures (Transact-SQL)](security-stored-procedures-transact-sql.md)
+- [CREATE LOGIN (Transact-SQL)](../../t-sql/statements/create-login-transact-sql.md)
+- [sys.sp_adduser (Transact-SQL)](sp-adduser-transact-sql.md)
+- [sys.sp_helplogins (Transact-SQL)](sp-helplogins-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)
+- [sys.database_principals (Transact-SQL)](../system-catalog-views/sys-database-principals-transact-sql.md)

@@ -1,0 +1,58 @@
+---
+title: "ROUND (SSIS Expression)"
+description: "ROUND (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: reference
+helpviewer_keywords:
+  - "rounding expressions"
+  - "ROUND function [SSIS]"
+---
+# ROUND (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns a numeric expression that is rounded to the specified length or precision. The length parameter must evaluate to an integer.  
+  
+## Syntax  
+  
+```  
+  
+ROUND(numeric_expression,length)  
+```  
+  
+## Arguments  
+ *numeric_expression*  
+ Is an expression of a valid numeric type. For more information, see [Integration Services Data Types](../data-flow/integration-services-data-types.md).  
+  
+ *length*  
+ Is an integer expression. It is the precision to which *numeric_expression* is rounded.  
+  
+## Result Types  
+ The same type as *numeric*_*expression.*  
+  
+## Remarks  
+ The *length* argument must evaluate to a positive integer or zero.  
+  
+ ROUND returns a null result if the argument is null.  
+  
+## Expression Examples  
+ These examples round numeric literals to a length of three. The first return result is 137.1570, the second 137.1580.  
+  
+```  
+ROUND(137.1574,3)  
+ROUND(137.1575,3)  
+```  
+  
+## Related content
+
+- [Functions (SSIS Expression)](functions-ssis-expression.md)

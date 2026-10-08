@@ -1,0 +1,46 @@
+# Source code: docs/core/diagnostics/snippets/OTel-Prometheus-Grafana-Jaeger/csharp/Properties/launchSettings.json
+
+Complete source file; linked examples may select a region or line range.
+
+```
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:2165",
+      "sslPort": 44354
+    }
+  },
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5212",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:7275;http://localhost:5212",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=Fill in your version"
+        }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+
+```

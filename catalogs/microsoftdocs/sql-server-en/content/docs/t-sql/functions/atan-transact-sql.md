@@ -1,0 +1,133 @@
+---
+title: "ATAN (Transact-SQL)"
+description: "ATAN (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "07/24/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "ATAN_TSQL"
+  - "ATAN"
+helpviewer_keywords:
+  - "arctangent"
+  - "ATAN function"
+  - "tangent"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# ATAN (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+A function that returns the angle, in radians, whose tangent is a specified **float** expression. This is also called arctangent.
+  
+
+  
+## Syntax  
+  
+```syntaxsql
+ATAN ( float_expression )  
+```  
+  
+## Arguments
+*float_expression*  
+An [expression](../language-elements/expressions-transact-sql.md) of either type **float** or of a type that implicitly convert to **float**.
+  
+## Return types
+**float**
+  
+## Examples  
+This example takes a **float** expression and returns the ATAN of the specified angle.
+  
+```sql
+SELECT 'The ATAN of -45.01 is: ' + CONVERT(varchar, ATAN(-45.01))  
+SELECT 'The ATAN of -181.01 is: ' + CONVERT(varchar, ATAN(-181.01))  
+SELECT 'The ATAN of 0 is: ' + CONVERT(varchar, ATAN(0))  
+SELECT 'The ATAN of 0.1472738 is: ' + CONVERT(varchar, ATAN(0.1472738))  
+SELECT 'The ATAN of 197.1099392 is: ' + CONVERT(varchar, ATAN(197.1099392))  
+GO  
+```  
+  
+ Here's the result set. 
+
+  
+```
+  
+-------------------------------   
+The ATAN of -45.01 is: -1.54858                         
+  
+(1 row(s) affected)  
+  
+--------------------------------   
+The ATAN of -181.01 is: -1.56527                         
+  
+(1 row(s) affected)  
+  
+--------------------------------   
+The ATAN of 0 is: 0                                
+  
+(1 row(s) affected)  
+  
+----------------------------------   
+The ATAN of 0.1472738 is: 0.146223                         
+  
+(1 row(s) affected)  
+  
+-----------------------------------   
+The ATAN of 197.1099392 is: 1.56572                          
+  
+(1 row(s) affected)  
+```  
+  
+## Examples:  Azure Synapse Analytics   
+This example takes a **float** expression and returns the arctangent of the specified angle.
+  
+```sql
+SELECT ATAN(45.87) AS atanCalc1,  
+    ATAN(-181.01) AS atanCalc2,  
+    ATAN(0) AS atanCalc3,  
+    ATAN(0.1472738) AS atanCalc4,  
+    ATAN(197.1099392) AS atanCalc5;  
+```  
+  
+ Here's the result set. 
+
+  
+```
+atanCalc1  atanCalc2  atanCalc3  atanCalc4  atanCalc5
+---------  ---------  ---------  ---------  ---------
+1.55       -1.57       0.00       0.15       1.57
+```
+  
+## Related content
+
+- [CEILING (Transact-SQL)](ceiling-transact-sql.md)
+- [Mathematical functions (Transact-SQL)](mathematical-functions-transact-sql.md)

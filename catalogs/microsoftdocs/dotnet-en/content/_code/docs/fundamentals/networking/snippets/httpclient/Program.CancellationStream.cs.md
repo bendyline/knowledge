@@ -1,0 +1,32 @@
+# Source code: docs/fundamentals/networking/snippets/httpclient/Program.CancellationStream.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+static partial class Program
+{
+    static async Task WithCancellationExtensionsAsync(HttpClient httpClient)
+    {
+        // <helpers>
+        try
+        {
+            // These methods will throw HttpRequestException
+            // with StatusCode set when the HTTP response status code isn't 2xx:
+            //
+            //   GetByteArrayAsync
+            //   GetStreamAsync
+            //   GetStringAsync
+
+            using var stream = await httpClient.GetStreamAsync(
+                "https://localhost:5001/doesNotExists");
+        }
+        catch (HttpRequestException ex) when (ex is { StatusCode: HttpStatusCode.NotFound })
+        {
+            // Handle 404
+            Console.WriteLine($"Not found: {ex.Message}");
+        }
+        // </helpers>
+    }
+}
+
+```

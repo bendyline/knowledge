@@ -1,0 +1,100 @@
+---
+title: "Application domains for report server applications"
+description: Learn about events that cause an application domain to recycle for Reporting Services applications for troubleshooting.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-server
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "application domains [Reporting Services]"
+  - "recycling application domains"
+---
+# Application domains for report server applications
+  In  Reporting Services 
+, the report server is implemented as a single service that contains the Report Server Web service, Report Manager, and a background processing application. Each application runs in its own application domain within the single report server process. Usually, application domains are created, configured, and managed internally. However, knowing how recycle operations occur for report server application domains can be helpful if you're investigating performance or memory issues or troubleshooting service disruptions.  
+  
+> **Note:**  
+>  If you configure Report Builder access on a report server that uses Basic authentication, Report Builder will run in its own application domain. This application domain is different from other application domains that run in the server process. It's managed by the Service Controller and isn't subject memory management features that re-adjust memory allocation in response to memory pressure on the to report server.  
+  
+ The following list describes the events that cause application domain recycle operations for  Reporting Services 
+ applications:  
+  
+-   Scheduled recycle operations that occur at predefined intervals.  
+  
+-   Configuration changes on the report server.  
+  
+-    ASP.NET 
+ configuration changes.  
+  
+-   Memory allocation failures.  
+  
+ The following table summarizes application domain recycling behavior in response to these events:  
+  
+| Event | Event description | Applies to | Configurable | Recycle operation description |
+| --- | --- | --- | --- | --- |
+| Scheduled recycle operations that occur at predefined intervals | By default, application domains are recycled every 12 hours.<br /><br /> Scheduled recycle operations are a common practice for  ASP.NET |
+ | applications that promote overall process health. | Report server Web service<br /><br /> Report Manager<br /><br /> Background processing application | Yes. **RecycleTime** configuration setting in the RSReportServer.config file determines the recycle interval.<br /><br /> **MaxAppDomainUnloadTime** sets the wait time during which background processing is allowed to complete. | ASP.NET |
+ | manages the recycle operation for the Web service and Report Manager.<br /><br /> For the background processing application, the report server creates a new application domain for new jobs that are initiated from schedules. Jobs already in progress are allowed to complete in the current application domain until the wait time expires. |
+| Configuration changes on the report server | Reporting Services |
+ | recycles application domains in response to changes in the RSReportServer.config file. | Report server Web service<br /><br /> Report Manager<br /><br /> Background processing application | No. | You can't stop recycle operations from occurring. However, recycle operations that occur in response to configuration changes are handled the same way as the scheduled recycle operations. New application domains are created for new requests while current requests and jobs complete in the current application domain. |
+| ASP.NET |
+ | configuration changes | ASP.NET |
+ | recycles application domains if there are changes to the files that it monitors (for example, machine.config and Web.config files, and  ASP.NET |
+ | program files). | Report server Web service<br /><br /> Report Manager | No. | ASP.NET |
+ | manages the operation.<br /><br />  ASP.NET |
+ | initiates recycle operations that don't affect the background processing application domain. |
+| Memory pressure and memory allocation failures | SQL Server |
+ | CLR immediately recycles application domains if a memory allocation failure or when the server is under high memory pressure conditions. | Report server Web service<br /><br /> Report Manager<br /><br /> Background processing application | No. | Under high memory pressure, the report server doesn't accept new requests in the current application domain. During the period in which the server denies new requests, HTTP 503 errors occur. New application domains aren't created until the old application domain is unloaded. If you make a configuration file change while the server is under high memory pressure, requests and jobs that are in progress might not start. Additionally, they might not complete as expected.<br /><br /> If there's a memory allocation failure, all application domains are immediately restarted. Jobs and requests that were in progress are dropped. You must restart those jobs and requests manually. |
+  
+## Planned and unplanned recycle operations  
+ Recycle operations are either planned or unplanned depending on the conditions that bring about the operation:  
+  
+-   Planned recycle operations occur at regular intervals that are defined in the `RSReportServer.config` file. The default is every 12 hours. This setting is a common practice for  ASP.NET 
+ applications that promote overall process health. For planned recycle operations, the report server creates other application domains for new requests. Requests already in progress are allowed to complete in the current application domain until the wait time expires. Configuration settings that govern planned recycle operations are set for the server as a whole. You can't configure a different recycle schedule or memory threshold for each application.  
+  
+-   Unplanned recycle operations occur at arbitrary times in response to configuration changes, memory pressure, and memory allocation failures:  
+  
+    -   For configuration changes, the report server tries to use a soft recycle that redirects new requests to a new instance of the application domain. If the soft recycle fails, the server initiates a hard application domain recycle that cancels all in-progress requests, shuts down the current application domains, and restarts the application domains.  
+  
+    -   Memory allocation failures indicate that system resources are insufficient for the amount of report processing performed by the server. A hard recycle operation for all application domains occurs in response to a memory allocation failure. All request queues are cleared. Canceled requests aren't restarted. Users who were interactively viewing a report must refresh or reopen the report. Scheduled processing occurs at the next scheduled time. If the delay is unacceptable, you can refresh a report snapshot manually or modify a subscription schedule or report snapshot schedule so that it runs immediately.  
+  
+ The application domains for the Report Server Web service, Report Manager, and the background processing application might be recycled together or individually, depending on the circumstances that cause the recycling to occur:  
+  
+-   Recycle operations initiated by  ASP.NET 
+ affect only the  Reporting Services 
+  ASP.NET 
+ applications: Report Server Web service and Report Manager.  ASP.NET 
+ recycles application domains based if there are changes to the files that it monitors.  ASP.NET 
+ initiates recycle operations that are typically independent of recycle operations for the background processing application.  
+  
+-   Recycle operations initiated by the report server typically affect Report Server Web service, Report Manager, and the background processing application. Recycle operations occur in response to changes to the configuration settings and service restarts.  
+  
+## RSReportServer configuration settings for application domains  
+ Configuration settings are specified in the [RSReportServer.config file](rsreportserver-config-configuration-file.md). The following example shows the default configuration settings for planned application domain recycling behavior.  
+  
+ `<RecycleTime>720</RecycleTime>`  
+  
+ `<MaxAppDomainUnloadTime>30</MaxAppDomainUnloadTime>`  
+  
+ The following table describes these elements.  
+  
+| Element | Applies to | Definition |
+| --- | --- | --- |
+| **RecycleTime** | All three  Reporting Services |
+ | application domains | Specifies how often the application domains are recycled. The default recycle schedule conforms to the 12-hour pattern typically followed for  ASP.NET |
+ | application domain recycling. At the scheduled time, all new requests are forwarded to a new instance of the application domain. Requests that are currently in progress in the original instance are allowed to complete. Once all processes are complete, the original instance is deleted and the new instance becomes the sole active application domain instance.<br /><br /> The default value is 720 minutes. |
+| **MaxAppDomainUnloadTime** | Background processing application domain only | By default, a report server allocates a wait time of 30 minutes, during which an application domain is allowed to shut down during a recycle operation. |
+| If the jobs currently in process can't be completed within the allotted time, the application domain instance is restarted immediately. Similarly, if a job exceeds the specified wait time, the application domain instance is also restarted promptly. All incomplete jobs are terminated.<br /><br /> For more information about how to view status or cancel jobs that running on the report server, see [Cancel report server jobs (Management Studio)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/reporting-services/tools/cancel-report-server-jobs-management-studio.md). |
+  
+> **Note:**  
+>  Although the Report Server Web service and Report Manager are  ASP.NET 
+ applications, neither application responds to scheduled application domain recycling that might be specified in machine.config for  ASP.NET 
+ applications hosted in IIS.  
+  
+## Related content
+
+- [RsReportServer.config configuration file](rsreportserver-config-configuration-file.md)
+- [Modify a Reporting Services configuration file (RSreportserver.config)](modify-a-reporting-services-configuration-file-rsreportserver-config.md)
+- [Configure available memory for report server applications](configure-available-memory-for-report-server-applications.md)

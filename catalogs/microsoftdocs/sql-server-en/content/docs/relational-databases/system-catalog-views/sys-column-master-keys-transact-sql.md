@@ -1,0 +1,69 @@
+---
+title: "sys.column_master_keys (Transact-SQL)"
+description: sys.column_master_keys (Transact-SQL)
+author: jaszymas
+ms.author: jaszymas
+ms.date: "10/15/2019"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "column_master_key_definitions_TSQL"
+  - "column_master_key_definitions"
+  - "sys.column_master_key_definitions_TSQL"
+  - "sys.column_master_key_definitions"
+  - "column_master_keys_TSQL"
+  - "column_master_keys"
+  - "sys.column_master_keys_TSQL"
+  - "sys.column_master_keys"
+helpviewer_keywords:
+  - "sys.column_master_key_definitions catalog view"
+  - "sys.column_master_keys catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# sys.column_master_keys (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+ and later versions 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+  Returns a row for each database master key added by using the [CREATE MASTER KEY](../../t-sql/statements/create-column-master-key-transact-sql.md) statement. Each row represents a single column master key (CMK).  
+    
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **name** | **sysname** | The name of the CMK. |
+| **column_master_key_id** | **int** | ID of the column master key. |
+| **create_date** | **datetime** | Date the column master key was created. |
+| **modify_date** | **datetime** | Date the column master key was last modified. |
+| **key_store_provider_name** | **sysname** | Name of the provider for the column master key store that contains the CMK. Allowed values are:<br /><br /> MSSQL_CERTIFICATE_STORE - If the column master key store is a Certificate Store.<br /><br /> A user-defined value, if the column master key store is of a custom type. |
+| **key_path** | **nvarchar(4000)** | A column master key store-specific path of the key. The format of the path depends on the column master key store type. Example:<br /><br /> `'CurrentUser/Personal/'<thumbprint>`<br /><br /> For a custom column master key store, the developer is responsible for defining what a key path is for the custom column master key store. |
+| **allow_enclave_computations** | **bit** | Indicates if the column master key is enclave-enabled, (if column encryption keys, encrypted with this master key, can be used for computations inside server-side secure enclaves). For more information, see [Always Encrypted with secure enclaves](../security/encryption/always-encrypted-enclaves.md). |
+| **signature** | **varbinary(max)** | A digital signature of **key_path** and **allow_enclave_computations**, produced using the column master key, referenced by **key_path**. |
+
+
+  
+## Permissions  
+ Requires the **VIEW ANY COLUMN MASTER KEY** permission.  
+  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [CREATE COLUMN MASTER KEY (Transact-SQL)](../../t-sql/statements/create-column-master-key-transact-sql.md)
+- [Security Catalog Views (Transact-SQL)](security-catalog-views-transact-sql.md)
+- [sys.column_encryption_key_values (Transact-SQL)](sys-column-encryption-key-values-transact-sql.md)
+- [Always Encrypted](../security/encryption/always-encrypted-database-engine.md)
+- [Overview of key management for Always Encrypted](../security/encryption/overview-of-key-management-for-always-encrypted.md)
+- [Manage keys for Always Encrypted with secure enclaves](../security/encryption/always-encrypted-enclaves-manage-keys.md)

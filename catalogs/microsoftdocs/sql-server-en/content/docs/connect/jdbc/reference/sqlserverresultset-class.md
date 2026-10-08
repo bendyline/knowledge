@@ -1,0 +1,43 @@
+---
+title: "SQLServerResultSet Class"
+description: "SQLServerResultSet Class"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# SQLServerResultSet Class
+
+
+  Represents a JDBC result set.  
+  
+ **Package:** com.microsoft.sqlserver.jdbc  
+  
+ **Implements:** [ISQLServerResultSet](isqlserverresultset-interface.md)  
+  
+## Syntax  
+  
+```  
+  
+public final class SQLServerResultSet  
+```  
+  
+## Remarks  
+ There are two types of result sets: client-side and server-side.  
+  
+ Client-side result sets are used when the results can fit in the client process memory. These results provide the fastest performance and are read by the  Microsoft JDBC Driver for SQL Server 
+ in their entirety from the database. These result sets do not impose additional load on the database by incurring the overhead of creating server-side cursors. However, these types of result sets are not updatable.  
+  
+ Server-side result sets can be used when the results do not fit in the client process memory or when the result set is to be updatable. With this type of result set, the JDBC driver creates a server-side cursor and fetches rows of the result set transparently as the user scrolls through it.  
+  
+ The SQLServerResultSet class provides many methods to let you update the result set with any native Java data type and many Java object types.  
+  
+ This class supports unwrapping to SQLServerResultSet class, ISQLServerResultSet interface, and java.sql.ResultSet interface. For more information, see [Wrappers and Interfaces](../wrappers-and-interfaces.md).  
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [JDBC driver API reference](jdbc-driver-api-reference.md)

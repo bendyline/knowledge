@@ -1,0 +1,93 @@
+---
+title: "sys.sp_can_tlog_be_applied (Transact-SQL)"
+description: Verifies whether a transaction log backup can be applied to a SQL Server database.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_can_tlog_be_applied_TSQL"
+  - "sp_can_tlog_be_applied"
+helpviewer_keywords:
+  - "sp_can_tlog_be_applied"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_can_tlog_be_applied (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Verifies whether a transaction log backup can be applied to a  SQL Server 
+ database. `sp_can_tlog_be_applied` requires that the database is in the *restoring* state.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_can_tlog_be_applied
+    [ @backup_file_name = ] N'backup_file_name'
+    , [ @database_name = ] N'database_name'
+    [ , [ @result = ] result OUTPUT ]
+    [ , [ @verbose = ] verbose ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @backup_file_name = ] N'*backup_file_name*'
+
+The name of a backup file. *@backup_file_name* is **nvarchar(500)**, with no default.
+
+#### [ @database_name = ] N'*database_name*'
+
+The name of the database. *@database_name* is **sysname**, with no default.
+
+#### [ @result = ] *result* OUTPUT
+
+Indicates whether the transaction log can be applied to the database. *@result* is an `OUTPUT` parameter of type **bit**.
+
+- `1` = The log can be applies
+- `0` = The log can't be applied.
+
+#### [ @verbose = ] *verbose*
+
+ Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. 
+
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Permissions
+
+Only members of the **sysadmin** fixed server role can execute `sp_can_tlog_be_applied`.
+
+## Examples
+
+The following example declares a local variable, `@MyBitVar`, to store the result.
+
+```sql
+USE master;
+GO
+
+DECLARE @MyBitVar AS BIT;
+
+EXECUTE sp_can_tlog_be_applied
+    @backup_file_name = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup\AdventureWorks2022.bak',
+    @database_name = N'AdventureWorks2022',
+    @result = @MyBitVar OUTPUT;
+GO
+```
+
+## Related content
+
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

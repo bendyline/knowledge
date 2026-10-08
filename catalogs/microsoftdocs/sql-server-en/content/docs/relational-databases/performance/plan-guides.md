@@ -1,0 +1,204 @@
+---
+title: "Plan Guides"
+description: Learn about plan guides, which let you optimize the performance of queries without directly changing the text of the query in SQL Server.
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/01/2022
+ms.service: sql
+ms.subservice: performance
+ms.topic: concept-article
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "TEMPLATE plan guide"
+  - "SQL plan guides"
+  - "OPTIMIZE FOR query hint"
+  - "RECOMPILE query hint"
+  - "OBJECT plan guide"
+  - "plan guides [SQL Server], about plan guides"
+  - "OPTION clause"
+  - "plan guides [SQL Server]"
+  - "USE PLAN query hint"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Plan Guides
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+> **Important:**
+> [Query Store hints](query-store-hints.md) provide an easier-to-use method for shaping query plans without changing application code. Query Store hints are simpler than plan guides. Query Store hints are available in  Azure SQL Database 
+, SQL database in Microsoft Fabric
+, Azure SQL Managed Instance, and in  SQL Server 2022 (16.x) 
+ and later versions.
+
+  Plan guides let you optimize the performance of queries when you cannot or do not want to directly change the text of the actual query in  SQL Server 
+. Plan guides influence the optimization of queries by attaching query hints or a fixed query plan to them. Plan guides can be useful when a small subset of queries in a database application provided by a third-party vendor are not performing as expected. In the plan guide, you specify the Transact-SQL statement that you want optimized and either an OPTION clause that contains the query hints you want to use or a specific query plan you want to use to optimize the query. When the query executes,  SQL Server 
+ matches the Transact-SQL statement to the plan guide and attaches the OPTION clause to the query at run time or uses the specified query plan. Because the SQL Server Query Optimizer typically selects the best execution plan for a query, we recommend only using plan guides as a last resort for experienced developers and database administrators. 
+ 
+ The total number of plan guides you can create is limited only by available system resources. Nevertheless, plan guides should be limited to mission-critical queries that are targeted for improved or stabilized performance. Plan guides should not be used to influence most of the query load of a deployed application.  
+  
+ The resulting execution plan forced by this feature will be the same or similar to the plan being forced. Because the resulting plan may not be identical to the plan specified by the plan guide, the performance of the plans may vary. In rare cases, the performance difference may be significant and negative; in that case, the administrator must remove the forced plan.
+
+  Plan guides cannot be used in every edition of  SQL Server 
+. Plan guides are visible in any edition. You can also attach a database that contains plan guides to any edition. Plan guides remain intact when you restore or attach a database to an upgraded version of  SQL Server 
+. For a list of features supported by the editions in  SQL Server 
+, see [Editions and supported features of SQL Server 2025](../../sql-server/editions-and-components-of-sql-server-2025.md).
+  
+## Types of Plan Guides  
+ The following types of plan guides can be created.  
+  
+ ### OBJECT plan guide  
+ An OBJECT plan guide matches queries that execute in the context of  Transact-SQL  stored procedures, scalar user-defined functions, multi-statement table-valued user-defined functions, and DML triggers.  
+  
+ Suppose the following stored procedure, which takes the `@Country_region` parameter, is in a database application that is deployed against the  `AdventureWorks2025`  database:  
+  
+```sql  
+CREATE PROCEDURE Sales.GetSalesOrderByCountry (@Country_region nvarchar(60))  
+AS  
+BEGIN  
+    SELECT *  
+    FROM Sales.SalesOrderHeader AS h, Sales.Customer AS c,   
+        Sales.SalesTerritory AS t  
+    WHERE h.CustomerID = c.CustomerID  
+        AND c.TerritoryID = t.TerritoryID  
+        AND CountryRegionCode = @Country_region  
+END;  
+```  
+  
+ Assume that this stored procedure has been compiled and optimized for `@Country_region = N'AU'` (Australia). However, because there are relatively few sales orders that originate from Australia, performance decreases when the query executes using parameter values of countries/regions with more sales orders. Because the most sales orders originate in the United States, a query plan that is generated for `@Country_region = N'US'` would likely perform better for all possible values of the `@Country_region` parameter.  
+  
+ You could address this problem by modifying the stored procedure to add the `OPTIMIZE FOR` query hint to the query. However, because the stored procedure is in a deployed application, you cannot directly modify the application code. Instead, you can create the following plan guide in the  `AdventureWorks2025`  database.  
+  
+```sql  
+sp_create_plan_guide   
+@name = N'Guide1',  
+@stmt = N'SELECT *FROM Sales.SalesOrderHeader AS h,  
+        Sales.Customer AS c,  
+        Sales.SalesTerritory AS t  
+        WHERE h.CustomerID = c.CustomerID   
+            AND c.TerritoryID = t.TerritoryID  
+            AND CountryRegionCode = @Country_region',  
+@type = N'OBJECT',  
+@module_or_batch = N'Sales.GetSalesOrderByCountry',  
+@params = NULL,  
+@hints = N'OPTION (OPTIMIZE FOR (@Country_region = N''US''))';  
+```  
+  
+ When the query specified in the `sp_create_plan_guide` statement executes, the query is modified before optimization to include the `OPTIMIZE FOR (@Country = N''US'')` clause.  
+  
+ ### SQL plan guide  
+ A SQL plan guide matches queries that execute in the context of stand-alone  Transact-SQL  statements and batches that are not part of a database object. SQL-based plan guides can also be used to match queries that parameterize to a specified form. SQL plan guides apply to stand-alone  Transact-SQL  statements and batches. Frequently, these statements are submitted by an application by using the [sp_executesql](../system-stored-procedures/sp-executesql-transact-sql.md) system stored procedure. For example, consider the following stand-alone batch:  
+  
+```sql  
+SELECT TOP 1 * FROM Sales.SalesOrderHeader ORDER BY OrderDate DESC;  
+```  
+  
+ To prevent a parallel execution plan from being generated on this query, create the following plan guide and set the `MAXDOP` query hint to `1` in the `@hints` parameter.  
+  
+```sql  
+sp_create_plan_guide   
+@name = N'Guide2',   
+@stmt = N'SELECT TOP 1 * FROM Sales.SalesOrderHeader ORDER BY OrderDate DESC',  
+@type = N'SQL',  
+@module_or_batch = NULL,   
+@params = NULL,   
+@hints = N'OPTION (MAXDOP 1)';  
+```  
+As another example, consider the following SQL statement submitted using [sp_executesql](../system-stored-procedures/sp-executesql-transact-sql.md).
+
+```sql  
+exec sp_executesql N'SELECT * FROM Sales.SalesOrderHeader
+where SalesOrderID =  @so_id', N'@so_id int', @so_id = 43662;  
+```  
+ To create a unique plan for every execution of this query, create the following plan guide and use the `OPTION (RECOMPILE)` query hint  in the `@hints` parameter. 
+
+```sql  
+exec sp_create_plan_guide   
+@name = N'PlanGuide1_SalesOrders',   
+@stmt = N'SELECT * FROM Sales.SalesOrderHeader
+where SalesOrderID =  @so_id',
+@type = N'SQL',  
+@module_or_batch = NULL,   
+@params = N'@so_id int',   
+@hints = N'OPTION (recompile)';
+```
+
+> **Important:**  
+>  The values that are supplied for the `@module_or_batch` and `@params` arguments of the `sp_create_plan guide` statement must match the corresponding text submitted in the actual query. For more information, see [sp_create_plan_guide (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-transact-sql.md) and [Use SQL Server Profiler to Create and Test Plan Guides](use-sql-server-profiler-to-create-and-test-plan-guides.md).  
+  
+ SQL plan guides can also be created on queries that parameterize to the same form when the PARAMETERIZATION database option is SET to FORCED, or when a TEMPLATE plan guide is created specifying that a parameterized class of queries.  
+  
+ ### TEMPLATE plan guide  
+ A TEMPLATE plan guide matches stand-alone queries that parameterize to a specified form. These plan guides are used to override the current PARAMETERIZATION database SET option of a database for a class of queries.  
+  
+ You can create a TEMPLATE plan guide in either of the following situations:  
+  
+-   The PARAMETERIZATION database option is SET to FORCED, but there are queries you want compiled according to the rules of [Simple Parameterization](../query-processing-architecture-guide.md#simple-parameterization).  
+  
+-   The PARAMETERIZATION database option is SET to SIMPLE (the default setting), but you want [Forced Parameterization](../query-processing-architecture-guide.md#forced-parameterization) to be tried on a class of queries.  
+  
+## Plan Guide Matching Requirements  
+ Plan guides are scoped to the database in which they are created. Therefore, only plan guides that are in the database that is current when a query executes can be matched to the query. For example, if  `AdventureWorks2025`  is the current database and the following query executes:  
+  
+ ```sql
+ SELECT FirstName, LastName FROM Person.Person;
+ ```  
+  
+ Only plan guides in the  `AdventureWorks2025`  database are eligible to be matched to this query. However, if  `AdventureWorks2025`  is the current database and the following statements are run:  
+  
+ ```sql
+ USE DB1; 
+ SELECT FirstName, LastName FROM Person.Person;
+ ```  
+  
+ Only plan guides in `DB1` are eligible to be matched to the query because the query is executing in the context of `DB1`.  
+  
+ For SQL- or TEMPLATE-based plan guides,  SQL Server 
+ matches the values for the @module_or_batch and @params arguments to a query by comparing the two values character by character. This means you must provide the text exactly as  SQL Server 
+ receives it in the actual batch.  
+  
+ When @type = 'SQL' and @module_or_batch is set to NULL, the value of @module_or_batch is set to the value of @stmt. This means that the value for *statement_text* must be provided in the identical format, character-for-character, as it is submitted to  SQL Server 
+. No internal conversion is performed to facilitate this match.  
+  
+ When both a regular (SQL or OBJECT) plan guide and a TEMPLATE plan guide can apply to a statement, only the regular plan guide will be used.  
+  
+> **Note:**  
+>  The batch that contains the statement on which you want to create a plan guide cannot contain a USE *database* statement.  
+  
+## Plan Guide Effect on the Plan Cache  
+ Creating a plan guide on a module removes the query plan for that module from the plan cache. Creating a plan guide of type OBJECT or SQL on a batch removes the query plan for a batch that has the same hash value. Creating a plan guide of type TEMPLATE removes all single-statement batches from the plan cache within that database.  
+  
+## Related Tasks  
+  
+| Task | Topic |
+| --- | --- |
+| Describes how to create a plan guide. | [Create a New Plan Guide](create-a-new-plan-guide.md) |
+| Describes how to create a plan guide for parameterized queries. | [Create a Plan Guide for Parameterized Queries](create-a-plan-guide-for-parameterized-queries.md) |
+| Describes how to control query parameterization behavior by using plan guides. | [Specify Query Parameterization Behavior by Using Plan Guides](specify-query-parameterization-behavior-by-using-plan-guides.md) |
+| Describes how to include a fixed query plan in a plan guide. | [Apply a Fixed Query Plan to a Plan Guide](apply-a-fixed-query-plan-to-a-plan-guide.md) |
+| Describes how to specify query hints in a plan guide. | [Attach Query Hints to a Plan Guide](attach-query-hints-to-a-plan-guide.md) |
+| Describes how to view plan guide properties. | [View Plan Guide Properties](view-plan-guide-properties.md) |
+| Describes how to use SQL Server Profiler to create and test plan guides. | [Use SQL Server Profiler to Create and Test Plan Guides](use-sql-server-profiler-to-create-and-test-plan-guides.md) |
+| Describes how to validate plan guides. | [Validate Plan Guides After Upgrade](validate-plan-guides-after-upgrade.md) |
+  
+## Related content
+
+- [sys.sp_create_plan_guide (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-transact-sql.md)
+- [sys.sp_create_plan_guide_from_handle (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-from-handle-transact-sql.md)
+- [sys.sp_control_plan_guide (Transact-SQL)](../system-stored-procedures/sp-control-plan-guide-transact-sql.md)
+- [sys.plan_guides (Transact-SQL)](../system-catalog-views/sys-plan-guides-transact-sql.md)
+- [sys.fn_validate_plan_guide (Transact-SQL)](../system-functions/sys-fn-validate-plan-guide-transact-sql.md)

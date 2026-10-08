@@ -1,0 +1,44 @@
+---
+title: "sys.dm_os_enumerate_fixed_drives (Transact-SQL)"
+description: "sys.dm_os_enumerate_fixed_drives enumerates volumes mounted to drive letters."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 05/11/2023
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.dm_os_enumerate_fixed_drives"
+  - "sys.dm_os_enumerate_fixed_drives_TSQL"
+helpviewer_keywords:
+  - "sys.dm_os_enumerate_fixed_drives dynamic management view"
+dev_langs:
+  - "TSQL"
+monikerRange: ">=sql-server-2017 || >=sql-server-linux-2017 || =azure-sqldw-latest"
+---
+# sys.dm_os_enumerate_fixed_drives (Transact-SQL)
+
+Starting with  SQL Server 2017 (14.x) 
+ CU 1, `sys.dm_os_enumerate_fixed_drives` enumerates volumes mounted to drive letters like `C:\`.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `fixed_drive_path` | **nvarchar(512)** | Path to the volume, like `C:\`. |
+| `drive_type` <sup>1</sup> | **int** | Code for drive type. |
+| `drive_type_desc` <sup>1</sup> | **nvarchar(512)** | Description of drive type. |
+| `free_space_in_bytes` | **bigint** | Disk free space in bytes. |
+
+<sup>1</sup> For more information, see the [GetDriveTypeW function](https://learn.microsoft.com/windows/win32/api/fileapi/nf-fileapi-getdrivetypew).
+
+## Permissions
+
+For  SQL Server 2019 (15.x) 
+ and previous versions, requires VIEW SERVER STATE permission on the server.
+
+For  SQL Server 2022 (16.x) 
+ and later versions, requires VIEW SERVER PERFORMANCE STATE permission on the server.
+
+## Related content
+
+- [System dynamic management views and functions](system-dynamic-management-objects.md)
+- [I/O Related Dynamic Management Views and Functions (Transact-SQL)](i-o-related-dynamic-management-views-and-functions-transact-sql.md)

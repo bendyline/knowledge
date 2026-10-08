@@ -1,0 +1,47 @@
+---
+title: include file
+description: include file
+author: spelluru
+ms.service: azure-service-bus
+ms.topic: include
+ms.date: 06/19/2025
+ms.author: spelluru
+ms.custom:
+  - "include file"
+  - sfi-ropc-nochange
+
+---
+
+## Prerequisites
+
+If you don't have an [Azure subscription](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/guides/developer/azure-developer-guide.md#understanding-accounts-subscriptions-and-billing), create a [free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) before you begin.
+
+>**Note:**
+>Event Grid integration with Azure Service Bus does not support all receive modes and scenarios. In particular, **Peek-Lock** behavior and message settlement patterns may differ from native Service Bus triggers. If your workflow requires Peek-Lock semantics or advanced settlement control, use a Service Bus–native trigger or receiver instead of Event Grid. Ensure your topic and subscription are configured for Event Grid compatibility before using this sample.
+
+## Create a Service Bus namespace
+
+Follow instructions in this tutorial: [Quickstart: Use the Azure portal to create a Service Bus topic and subscriptions to the topic](../service-bus-quickstart-topics-subscriptions-portal.md) to do the following tasks:
+
+- Create a **premium** Service Bus namespace. 
+- Get the connection string. 
+- Create a Service Bus topic.
+- Create a subscription to the topic. You need only one subscription in this tutorial, so no need to create subscriptions S2 and S3. 
+
+## Send messages to the Service Bus topic
+
+In this section, you use a sample application to send messages to the Service Bus topic you created in the previous section. 
+
+1. Clone the [GitHub azure-service-bus repository](https://github.com/Azure/azure-service-bus/) or download the zip file and extract files from it. 
+1. In Visual Studio, go to the *\samples\DotNet\Azure.Messaging.ServiceBus\ServiceBusEventGridIntegrationV2* folder, and then open the *SBEventGridIntegration.sln* file.
+1. In the **Solution Explorer** window, expand the **MessageSender** project, and select **Program.cs**.
+1. Replace `<SERVICE BUS NAMESPACE - CONNECTION STRING>` with the connection string to your Service Bus namespace and `<TOPIC NAME>` with the name of the topic. 
+
+   ```csharp
+   const string ServiceBusConnectionString = "<SERVICE BUS NAMESPACE - CONNECTION STRING>";
+   const string TopicName = "<TOPIC NAME>";
+   ```
+
+1. Build and run the program to send five test messages (`const int numberOfMessages = 5;`) to the Service Bus topic. 
+
+   Screenshot shows the console app output, sending 5 messages.

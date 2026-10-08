@@ -1,0 +1,78 @@
+---
+title: Tables and indexes (Native Client OLE DB provider)
+description: "Tables and Indexes in SQL Server Native Client"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "OLE DB, indexes"
+  - "OLE DB, tables"
+  - "ITableDefinition interface"
+  - "tables [OLE DB]"
+  - "IIndexDefinition interface"
+  - "SQL Server Native Client OLE DB provider, tables"
+  - "SQL Server Native Client OLE DB provider, indexes"
+  - "indexes [OLE DB]"
+---
+# Tables and Indexes in SQL Server Native Client
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The  SQL Server 
+ Native Client OLE DB provider exposes the **IIndexDefinition** and **ITableDefinition** interfaces, allowing consumers to create, alter, and drop  SQL Server 
+ tables and indexes. Valid table and index definitions depend on the version of  SQL Server 
+.  
+  
+ The ability to create or drop tables and indexes depends on the  SQL Server 
+ access rights of the consumer-application user. Dropping a table can be further constrained by the presence of declarative referential integrity constraints or other factors.  
+  
+ Most applications targeting  SQL Server 
+ use SQL-DMO instead of these  SQL Server 
+ Native Client OLE DB provider interfaces. SQL-DMO is a collection of OLE Automation objects that support all the administrative functions of  SQL Server 
+. Applications targeting multiple OLE DB providers use these generic OLE DB interfaces that are supported by the various OLE DB providers.  
+  
+ In the provider-specific property set DBPROPSET_SQLSERVERCOLUMN,  SQL Server 
+ defines the following property.  
+  
+| Property ID | Description |
+| --- | --- |
+| SSPROP_COL_COLLATIONNAME | Type: VT_BSTR<br /><br /> R/W: Write<br /><br /> Default: Null<br /><br /> Description: This property is used only in **ITableDefinition**. The string specified in this property is used when creating a [CREATE TABLE](../../t-sql/statements/create-table-transact-sql.md)<br /><br /> statement. |
+  
+## In This Section  
+  
+-   [Creating SQL Server Tables](creating-sql-server-tables.md)  
+  
+-   [Adding a Column to a SQL Server Table](adding-a-column-to-a-sql-server-table.md)  
+  
+-   [Removing a Column from a SQL Server Table](removing-a-column-from-a-sql-server-table.md)  
+  
+-   [Dropping a SQL Server Table](dropping-a-sql-server-table.md)  
+  
+-   [Creating SQL Server Indexes](creating-sql-server-indexes.md)  
+  
+-   [Dropping a SQL Server Index](dropping-a-sql-server-index.md)  
+  
+## Related content
+
+- [SQL Server Native Client (OLE DB)](../native-client/ole-db/sql-server-native-client-ole-db.md)
+- [DROP TABLE (Transact-SQL)](../../t-sql/statements/drop-table-transact-sql.md)
+- [CREATE INDEX (Transact-SQL)](../../t-sql/statements/create-index-transact-sql.md)
+- [DROP INDEX (Transact-SQL)](../../t-sql/statements/drop-index-transact-sql.md)

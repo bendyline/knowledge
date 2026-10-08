@@ -1,0 +1,126 @@
+---
+title: "sp_syspolicy_configure (Transact-SQL)"
+description: "Configures settings for Policy-Based Management, such as whether Policy-Based Management is enabled."
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sp_syspolicy_configure"
+  - "sp_syspolicy_configure_TSQL"
+helpviewer_keywords:
+  - "sp_syspolicy_configure"
+dev_langs:
+  - "TSQL"
+---
+# sp_syspolicy_configure (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Configures settings for Policy-Based Management, such as whether Policy-Based Management is enabled.
+
+
+
+## Syntax
+
+```syntaxsql
+dbo.sp_syspolicy_configure
+    [ @name = ] N'name'
+    , [ @value = ] value
+[ ; ]
+```
+
+## Arguments
+
+#### [ @name = ] N'*name*'
+
+The name of the setting that you want to configure. *@name* is **sysname**, is required, and can't be `NULL` or an empty string.
+
+*@name* can be any of the following values:
+
+- `Enabled` - Determines whether Policy-Based Management is enabled.
+
+- `HistoryRetentionInDays` - Specifies the number of days that policy evaluation history should be retained. If set to `0`, the history isn't automatically removed.
+
+- `LogOnSuccess` - Specifies whether Policy-Based Management logs successful policy evaluations.
+
+#### [ @value = ] *value*
+
+The value that is associated with the specified value for *@name*. *@value* is **sql_variant**, and is required.
+
+- If you specify 'Enabled' for *@name*, you can use either of the following values:
+
+  - `0` - Disables Policy-Based Management.
+  - `1` - Enables Policy-Based Management.
+
+- If you specify `HistoryRetentionInDays` for *@name*, specify the number of days as an integer value.
+
+- If you specify `LogOnSuccess` for *@name*, you can use either of the following values:
+
+  - `0` - Logs only failed policy evaluations.
+  - `1` - Logs both successful and failed policy evaluations.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+You must run `sp_syspolicy_configure` in the context of the `msdb` system database.
+
+To view current values for these settings, query the `msdb.dbo.syspolicy_configuration` system view.
+
+## Permissions
+
+Requires membership in the **PolicyAdministratorRole** fixed database role.
+
+> **Important:**  
+> Possible elevation of credentials: Users in the **PolicyAdministratorRole** role can create server triggers and schedule policy executions that can affect the operation of the instance of the  Database Engine 
+. For example, users in the **PolicyAdministratorRole** role can create a policy that can prevent most objects from being created in the  Database Engine 
+. Because of this possible elevation of credentials, the **PolicyAdministratorRole** role should be granted only to users who are trusted with controlling the configuration of the  Database Engine 
+.
+
+
+## Examples
+
+The following example enables Policy-Based Management.
+
+```sql
+EXECUTE msdb.dbo.sp_syspolicy_configure
+    @name = N'Enabled',
+    @value = 1;
+GO
+```
+
+The following example sets the policy history retention to 14 days.
+
+```sql
+EXECUTE msdb.dbo.sp_syspolicy_configure
+    @name = N'HistoryRetentionInDays',
+    @value = 14;
+GO
+```
+
+The following example configures Policy-Based Management to log both successful and failed policy evaluations.
+
+```sql
+EXECUTE msdb.dbo.sp_syspolicy_configure
+    @name = N'LogOnSuccess',
+    @value = 1;
+GO
+```
+
+## Related content
+
+- [Policy-Based Management stored procedures (Transact-SQL)](policy-based-management-stored-procedures-transact-sql.md)
+- [sp_syspolicy_set_config_enabled (Transact-SQL)](sp-syspolicy-set-config-enabled-transact-sql.md)
+- [sp_syspolicy_set_config_history_retention (Transact-SQL)](sp-syspolicy-set-config-history-retention-transact-sql.md)
+- [sp_syspolicy_set_log_on_success (Transact-SQL)](sp-syspolicy-set-log-on-success-transact-sql.md)

@@ -1,0 +1,9 @@
+---
+author: PatrickFarley
+ms.service: azure-speech-foundry-tools
+ms.date: 02/04/2022
+ms.topic: include
+ms.author: pafarley
+---
+
+[Reference documentation](https://learn.microsoft.com/python/api/azure-cognitiveservices-speech/) | [Package (PyPi)](https://pypi.org/project/azure-cognitiveservices-speech/) | [Additional samples on GitHub](https://aka.ms/speech/github-python)

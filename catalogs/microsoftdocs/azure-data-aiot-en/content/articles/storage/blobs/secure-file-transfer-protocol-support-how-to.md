@@ -1,0 +1,116 @@
+---
+title: Enable or Disable SFTP in Azure Blob Storage
+titleSuffix: Azure Storage
+description: Enable or disable SFTP support in Azure Blob Storage to control secure file transfers and costs. Follow these steps to configure SFTP.
+author: normesta
+ms.service: azure-blob-storage
+ms.topic: how-to
+ms.date: 05/18/2026
+ms.author: normesta
+ms.custom:
+  - sfi-image-nochange
+# Customer intent: "As a cloud storage administrator, I want to enable or disable SFTP support for my Azure Blob Storage account, so that I can manage secure file transfers based on current usage and reduce costs when not needed."
+---
+
+# Enable or disable SSH File Transfer Protocol (SFTP) support in Azure Blob Storage
+
+This article shows you how to enable or disable support for SFTP so that you can securely connect to the Blob Storage endpoint of your Azure Storage account by using an SFTP client. 
+
+To learn more about SFTP support for Azure Blob Storage, see [SSH File Transfer Protocol (SFTP) in Azure Blob Storage](secure-file-transfer-protocol-support.md).
+
+## Prerequisites
+
+- A standard general-purpose v2 or premium block blob storage account. You can also enable SFTP as you create the account. For more information on these types of storage accounts, see [Storage account overview](../common/storage-account-overview.md).
+
+- The hierarchical namespace feature of the account must be enabled. To enable the hierarchical namespace feature, see [Upgrade Azure Blob Storage with Azure Data Lake Storage capabilities](upgrade-to-data-lake-storage-gen2-how-to.md).
+
+## Enable SFTP support
+
+This section shows you how to enable SFTP support for an existing storage account. To view an Azure Resource Manager template that enables SFTP support as part of creating the account, see [Create an Azure Storage Account and Blob Container accessible using SFTP protocol on Azure](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.storage/storage-sftp). To view the Local User REST APIs and .NET references, see [Local Users](https://learn.microsoft.com/rest/api/storagerp/local-users) and [LocalUser Class](https://learn.microsoft.com/dotnet/api/microsoft.azure.management.storage.models.localuser).
+
+### [Portal](#tab/azure-portal)
+
+1. In the [Azure portal](https://portal.azure.com/), go to your storage account.
+
+2. Under **Settings**, select **SFTP**.
+
+   > **Note:**
+   > This option appears only if the hierarchical namespace feature of the account is enabled. To enable the hierarchical namespace feature, see [Upgrade Azure Blob Storage with Azure Data Lake Storage capabilities](upgrade-to-data-lake-storage-gen2-how-to.md).
+
+1. Select **Enable SFTP**. 
+
+   > 
+   > Screenshot of the Enable SFTP option in the Azure portal SFTP settings pane.
+
+   >**Note:**
+   > If no local users appear in the SFTP configuration page, you need to add at least one. To add local users, see the next section.
+
+### [PowerShell](#tab/powershell)
+
+To enable SFTP support, run the [Set-AzStorageAccount](https://learn.microsoft.com/powershell/module/az.storage/set-azstorageaccount) command and set the `-EnableSftp` parameter to true. Replace the values in angle brackets with your own values:
+
+```powershell
+$resourceGroupName = "<resource-group>"
+$storageAccountName = "<storage-account>"
+
+Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -EnableSftp $true 
+```
+
+### [Azure CLI](#tab/azure-cli)
+
+To enable SFTP support, run the [az storage account update](https://learn.microsoft.com/cli/azure/storage/account#az-storage-account-update) command and set the `--enable-sftp` parameter to true. Replace the values in angle brackets with your own values:
+
+```azurecli
+az storage account update -g <resource-group> -n <storage-account> --enable-sftp=true
+```
+
+---
+
+## Disable SFTP support
+
+This section shows you how to disable SFTP support for an existing storage account. Because SFTP support incurs an hourly cost, consider disabling SFTP support when clients aren't actively using SFTP to transfer data. 
+
+### [Portal](#tab/azure-portal)
+
+1. In the [Azure portal](https://portal.azure.com/), go to your storage account.
+
+2. Under **Settings**, select **SFTP**.
+
+1. Select **Disable SFTP**. 
+
+   > 
+   > Screenshot of the Disable SFTP option in the Azure portal SFTP settings pane.
+
+### [PowerShell](#tab/powershell)
+
+To disable SFTP support, run the [Set-AzStorageAccount](https://learn.microsoft.com/powershell/module/az.storage/set-azstorageaccount) command and set the `-EnableSftp` parameter to false. Replace the values in angle brackets with your own values:
+
+```powershell
+$resourceGroupName = "<resource-group>"
+$storageAccountName = "<storage-account>"
+
+Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -EnableSftp $false 
+```
+
+### [Azure CLI](#tab/azure-cli)
+
+To disable SFTP support, run the [az storage account update](https://learn.microsoft.com/cli/azure/storage/account#az-storage-account-update) command and set the `--enable-sftp` parameter to false. Replace the values in angle brackets with your own values:
+
+```azurecli
+az storage account update -g <resource-group> -n <storage-account> --enable-sftp=false
+```
+
+---
+
+## Next steps
+
+- Configure access permissions for SFTP clients. See [Authorize access to SFTP clients](secure-file-transfer-protocol-support-authorize-access.md).
+- Connect to Azure Blob Storage by using an SFTP client. See [Connect from an SFTP client](secure-file-transfer-protocol-support-connect.md).
+ 
+## Related content
+
+- [SSH File Transfer Protocol (SFTP) in Azure Blob Storage](secure-file-transfer-protocol-support.md)
+- [Enable or disable SSH File Transfer Protocol (SFTP) support in Azure Blob Storage](secure-file-transfer-protocol-support-how-to.md)
+- [Limitations and known issues with SSH File Transfer Protocol (SFTP) support for Azure Blob Storage](secure-file-transfer-protocol-known-issues.md)
+- [Host keys for SSH File Transfer Protocol (SFTP) support for Azure Blob Storage](secure-file-transfer-protocol-host-keys.md)
+- [SSH File Transfer Protocol (SFTP) performance considerations in Azure Blob storage](secure-file-transfer-protocol-performance.md)

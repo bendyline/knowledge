@@ -1,0 +1,54 @@
+---
+title: "setObject Method (java.lang.String, java.lang.Object)"
+description: "setObject Method (java.lang.String, java.lang.Object)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.setObject (java.lang.String)"
+apitype: "Assembly"
+---
+# setObject Method (java.lang.String, java.lang.Object)
+
+
+  Sets the value of the designated parameter using the given object.  
+  
+## Syntax  
+  
+```  
+  
+public void setObject(java.lang.String sCol,  
+                      java.lang.Object o)  
+```  
+  
+#### Parameters  
+ *sCol*  
+  
+ A **String** that contains the parameter name.  
+  
+ *o*  
+  
+ An **Object** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setObject method is specified by the setObject method in the java.sql.CallableStatement interface.  
+  
+ This method converts the specified parameter to a CHAR if a NULL is given, before sending it to the database. If the parameter is declared as a binary, varbinary or image SQL type, then an exception will be thrown when the statement is executed.  
+  
+ Beginning with  SQL Server 
+ JDBC Driver 3.0, the behavior of this method is modified by the **sendTimeAsDatetime** connection property ([Setting the Connection Properties](../setting-the-connection-properties.md)) and [SQLServerDataSource.setSendTimeAsDatetime](setsendtimeasdatetime-method-sqlserverdatasource.md).  
+  
+ For more information, see [Configuring How java.sql.Time Values are Sent to the Server](../configuring-how-java-sql-time-values-are-sent-to-the-server.md).  
+  
+## Related content
+
+- [setObject Method (SQLServerCallableStatement)](setobject-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

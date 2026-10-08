@@ -1,0 +1,408 @@
+---
+title: Monitor Azure Queue Storage
+description: Start here to learn how to monitor Azure Queue Storage.
+ms.date: 02/12/2024
+ms.custom: horz-monitor, devx-track-csharp, devx-track-azurepowershell
+ms.topic: concept-article
+author: normesta
+ms.author: normesta
+ms.service: azure-queue-storage
+ms.devlang: csharp
+# ms.devlang: csharp, powershell, azurecli
+# Customer intent: "As a cloud administrator, I want to monitor Azure Queue Storage metrics and logs, so that I can ensure optimal performance and troubleshoot any issues effectively."
+---
+
+# Monitor Azure Queue Storage
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-intro.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-insights.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+Azure Storage insights offer a unified view of storage performance, capacity, and availability. See [Monitor storage with Azure Monitor Storage insights](../common/storage-insights-overview.md).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-types.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-data-storage.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-platform-metrics.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+For a list of available metrics for Azure Queue Storage, see [Azure Queue Storage monitoring data reference](monitor-queue-storage-reference.md#metrics).
+
+> **Important:**
+> On **January 9, 2024** Storage Analytics metrics, also referred to as *classic metrics*, retired. If you used classic metrics, see [Move from Storage Analytics metrics to Azure Monitor metrics](../common/storage-metrics-migration.md) to transition to metrics in Azure Monitor.
+
+> **Note:**
+> Azure Compute, not Azure Storage, supports metrics for managed disks or unmanaged disks. For more information, see [Per disk metrics for Managed and Unmanaged Disks](https://azure.microsoft.com/blog/per-disk-metrics-managed-disks/).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-resource-logs.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+For the available resource log categories, their associated Log Analytics tables, and the logs schemas for Azure Queue Storage, see [Azure Queue Storage monitoring data reference](monitor-queue-storage-reference.md#resource-logs).
+
+<a name="collection-and-routing"></a>
+### Azure Queue Storage diagnostic settings
+
+When you create the diagnostic setting, choose **queue** as the type of storage that you want to enable logs for. Then, specify one of the following categories of operations for which you want to collect logs.
+
+| Category | Description |
+| :--- | :--- |
+| StorageRead | Read operations on objects. |
+| StorageWrite | Write operations on objects. |
+| StorageDelete | Delete operations on objects. |
+
+The **audit** resource log category group allows you to collect the baseline of resource logs that Microsoft deems necessary for auditing your resource. What's collected is dynamic, and Microsoft may change it over time as new resource log categories become available. If you choose the **audit** category group, you can't specify any other resource categories, because the system will decide which logs to collect. For more information, see [Diagnostic settings in Azure Monitor: Resource logs](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings#resource-logs).
+
+#### Destination limitations
+
+For general destination limitations, see [Destination limitations](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings#destination-limitations). The following limitations apply only to monitoring Azure Storage accounts.
+
+- You can't send logs to the same storage account that you're monitoring with this setting. This situation would lead to recursive logs in which a log entry describes the writing of another log entry. You must create an account or use another existing account to store log information.
+
+- You can't set a retention policy. 
+
+  If you archive logs to a storage account, you can manage the retention policy of a log container by defining a lifecycle management policy. To learn how, see [Optimize costs by automatically managing the data lifecycle](../blobs/lifecycle-management-overview.md).
+
+  If you send logs to Log Analytics, you can manage the data retention period of Log Analytics at the workspace level or even specify different retention settings by data type. To learn how, see [Change the data retention period](https://learn.microsoft.com/azure/azure-monitor/logs/data-retention-archive).
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-activity-log.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-analyze-data.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-external-tools.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+### Analyze metrics for Azure Queue Storage
+
+Metrics for Azure Queue Storage are in these namespaces:
+
+- Microsoft.Storage/storageAccounts
+- Microsoft.Storage/storageAccounts/queueServices
+
+For a list of all Azure Monitor supported metrics, which includes Azure Queue Storage, see [Azure Monitor supported metrics](https://learn.microsoft.com/azure/azure-monitor/essentials/metrics-supported).
+
+### [Azure portal](#tab/azure-portal)
+
+You can analyze metrics for Azure Storage with metrics from other Azure services by using Metrics Explorer. Open Metrics Explorer by choosing **Metrics** from the **Azure Monitor** menu. For details on using this tool, see [Analyze metrics with Azure Monitor metrics explorer](https://learn.microsoft.com/azure/azure-monitor/essentials/analyze-metrics).
+
+This example shows how to view **Transactions** at the account level.
+
+Screenshot of accessing metrics in the Azure portal
+
+For metrics that support dimensions, you can filter the metric with the desired dimension value. This example shows how to view **Transactions** at the account level on a specific operation by selecting values for the **API Name** dimension.
+
+Screenshot of accessing metrics with dimension in the Azure portal
+
+For a complete list of the dimensions that Azure Storage supports, see [Metrics dimensions](monitor-queue-storage-reference.md#metrics-dimensions).
+
+### [PowerShell](#tab/azure-powershell)
+
+#### List the metric definition
+
+You can list the metric definition of your storage account or the Queue Storage service. Use the [Get-AzMetricDefinition](https://learn.microsoft.com/powershell/module/az.monitor/get-azmetricdefinition) cmdlet.
+
+In this example, replace the `<resource-ID>` placeholder with the resource ID of the entire storage account or the resource ID of the queue. You can find these resource IDs on the **Properties** pages of your storage account in the Azure portal.
+
+```powershell
+   $resourceId = "<resource-ID>"
+   Get-AzMetricDefinition -ResourceId $resourceId
+```
+
+#### Read metric values
+
+You can read account-level metric values of your storage account or the Queue Storage service. Use the [Get-AzMetric](https://learn.microsoft.com/powershell/module/az.monitor/get-azmetric) cmdlet.
+
+```powershell
+   $resourceId = "<resource-ID>"
+   Get-AzMetric -ResourceId $resourceId -MetricNames "UsedCapacity" -TimeGrain 01:00:00
+```
+
+#### Read metric values with dimensions
+
+When a metric supports dimensions, you can read metric values and filter them by using dimension values. Use the [Get-AzMetric](https://learn.microsoft.com/powershell/module/Az.Monitor/Get-AzMetric) cmdlet.
+
+```powershell
+$resourceId = "<resource-ID>"
+$dimFilter = [String](New-AzMetricFilter -Dimension ApiName -Operator eq -Value "GetMessages" 3> $null)
+Get-AzMetric -ResourceId $resourceId -MetricName Transactions -TimeGrain 01:00:00 -MetricFilter $dimFilter -AggregationType "Total"
+```
+
+### [Azure CLI](#tab/azure-cli)
+
+#### List the account-level metric definition
+
+You can list the metric definition of your storage account or the Queue Storage service. Use the [`az monitor metrics list-definitions`](https://learn.microsoft.com/cli/azure/monitor/metrics#az-monitor-metrics-list-definitions) command.
+
+In this example, replace the `<resource-ID>` placeholder with the resource ID of the entire storage account or the resource ID of the queue. You can find these resource IDs on the **Properties** pages of your storage account in the Azure portal.
+
+```azurecli-interactive
+   az monitor metrics list-definitions --resource <resource-ID>
+```
+
+#### Read account-level metric values
+
+You can read the metric values of your storage account or the Queue Storage service. Use the [`az monitor metrics list`](https://learn.microsoft.com/cli/azure/monitor/metrics#az-monitor-metrics-list) command.
+
+```azurecli-interactive
+   az monitor metrics list --resource <resource-ID> --metric "UsedCapacity" --interval PT1H
+```
+
+#### Read metric values with dimensions
+
+When a metric supports dimensions, you can read metric values and filter them by using dimension values. Use the [az monitor metrics list](https://learn.microsoft.com/cli/azure/monitor/metrics#az-monitor-metrics-list) command.
+
+```azurecli
+az monitor metrics list --resource <resource-ID> --metric "Transactions" --interval PT1H --filter "ApiName eq 'GetMessages' " --aggregation "Total" 
+```
+
+### [.NET](#tab/dotnet)
+
+Azure Monitor provides the [.NET SDK](https://www.nuget.org/packages/microsoft.azure.management.monitor/) to read metric definitions and values. 
+
+In these examples, replace the `<resource-ID>` placeholder with the resource ID of the entire storage account or the queue. You can find these resource IDs on the **Properties** pages of your storage account in the Azure portal.
+
+These examples use `DefaultAzureCredential` from the `Azure.Identity` package, which supports passwordless authentication using your local developer credentials or a managed identity in Azure. Before running these samples, install the [Azure.Monitor.Query](https://www.nuget.org/packages/Azure.Monitor.Query) and [Azure.Identity](https://www.nuget.org/packages/Azure.Identity) NuGet packages:
+
+```bash
+dotnet add package Azure.Monitor.Query
+dotnet add package Azure.Identity
+```
+
+#### List the account-level metric definition
+
+The following example shows how to list a metric definition at the account level:
+
+```csharp
+using Azure.Identity;
+using Azure.Monitor.Query;
+using Azure.Monitor.Query.Models;
+
+async Task ListStorageMetricDefinition()
+{
+    var resourceId = "<resource-ID>";
+
+    var credential = new DefaultAzureCredential();
+    var client = new MetricsQueryClient(credential);
+    
+    // Get metric definitions for the resource. The metrics namespace is optional. If not specified, it will return metric definitions for all namespaces.
+    var metricDefinitions = client.GetMetricDefinitionsAsync(resourceId, "<metrics-namespace>");
+    
+    await foreach (var metricDefinition in metricDefinitions)
+    {
+        // Enumerate metric definition:
+        //    Id
+        //    Name
+        //    Unit
+        //    MetricAvailabilities
+        //    PrimaryAggregationType
+        //    Dimensions
+        //    IsDimensionRequired
+    }
+}
+```
+
+#### Read account-level metric values
+
+The following example shows how to read `UsedCapacity` data at the account level:
+
+```csharp
+using Azure.Identity;
+using Azure.Monitor.Query;
+using Azure.Monitor.Query.Models;
+
+async Task ReadStorageMetricValue()
+{
+    var resourceId = "<resource-ID>";
+
+    var credential = new DefaultAzureCredential();
+    var client = new MetricsQueryClient(credential);
+
+    var response = await client.QueryResourceAsync(
+        resourceId,
+        new[] { "UsedCapacity" },
+        new MetricsQueryOptions
+        {
+            TimeRange = new QueryTimeRange(TimeSpan.FromHours(3)),
+            Granularity = TimeSpan.FromHours(1),
+            Aggregations = { MetricAggregationType.Average }
+        });
+
+    foreach (var metric in response.Value.Metrics)
+    {
+        // Enumerate metric value
+        //    Id
+        //    Name
+        //    Type
+        //    Unit
+        //    Timeseries
+        //        - Data
+        //        - Metadatavalues
+    }
+}
+```
+
+#### Read multidimensional metric values
+
+For multidimensional metrics, you need to define metadata filters if you want to read metric data on specific dimension values.
+
+The following example shows how to read metric data on the metric supporting multidimensional values:
+
+```csharp
+using Azure.Identity;
+using Azure.Monitor.Query;
+using Azure.Monitor.Query.Models;
+
+async Task ReadStorageMetricValueTest()
+{
+    // Resource ID for queue storage
+    var resourceId = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{storageAccountName}/queueServices/default";
+
+    var credential = new DefaultAzureCredential();
+    var client = new MetricsQueryClient(credential);
+
+    // It's applicable to define a metadata filter when a metric supports dimensions.
+    // More conditions can be added with the 'or' and 'and' operators, example: BlobType eq 'BlockBlob' or BlobType eq 'PageBlob'
+    var response = await client.QueryResourceAsync(
+        resourceId,
+        new[] { "BlobCapacity" },
+        new MetricsQueryOptions
+        {
+            TimeRange = new QueryTimeRange(TimeSpan.FromHours(3)),
+            Granularity = TimeSpan.FromHours(1),
+            Aggregations = { MetricAggregationType.Average },
+            Filter = "BlobType eq 'BlockBlob'"
+        });
+
+    foreach (var metric in response.Value.Metrics)
+    {
+        // Enumerate metric value
+        //    Id
+        //    Name
+        //    Type
+        //    Unit
+        //    Timeseries
+        //        - Data
+        //        - Metadatavalues
+    }
+}
+```
+
+---
+
+<a name="analyzing-logs"></a>
+### Analyze logs for Azure Queue Storage
+
+You can access resource logs either as a blob in a storage account, as event data, or through Log Analytics queries. For information about how to find those logs, see [Azure resource logs](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs).
+
+To get the list of SMB and REST operations that are logged, see [Storage logged operations and status messages](https://learn.microsoft.com/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages).
+
+Log entries are created only if there are requests made against the service endpoint. For example, if a storage account has activity in its queue endpoint but not in its table or blob endpoints, only logs that pertain to Queue Storage are created. Azure Storage logs contain detailed information about successful and failed requests to a storage service. This information can be used to monitor individual requests and to diagnose issues with a storage service. Requests are logged on a best-effort basis.
+
+When you view a storage account in the Azure portal, the operations called by the portal are also logged. For this reason, you may see operations logged in a storage account even though you haven't written any data to the account.
+
+#### Log authenticated requests
+
+ The following types of authenticated requests are logged:
+
+- Successful requests
+- Failed requests, including time-out, throttling, network, authorization, and other errors
+- Requests that use a shared access signature (SAS) or OAuth, including failed and successful requests
+- Requests to analytics data (classic log data in the **$logs** container and class metric data in the **$metric** tables)
+
+Requests made by the Queue Storage service itself, such as log creation or deletion, aren't logged. For a full list of the logged data, see [Storage logged operations and status messages](https://learn.microsoft.com/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages) and [Storage log format](monitor-queue-storage-reference.md).
+
+#### Log anonymous requests
+
+ The following types of anonymous requests are logged:
+
+- Successful requests
+- Server errors
+- Time out errors for both client and server
+- Failed GET requests with the error code 304 (`Not Modified`)
+
+<!-- ### Sample Kusto queries. Required section. If you have sample Kusto queries for your service, add them after the include. -->
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-kusto-queries.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+<!-- Add sample Kusto queries for your service here. -->
+Here are some queries that you can enter in the **Log search** bar to help you monitor your Queue Storage. These queries work with the [new language](https://learn.microsoft.com/azure/azure-monitor/logs/log-query-overview). For more information, see [Log Analytics tutorial](https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-tutorial).
+
+- To list the 10 most common errors over the last three days.
+
+    ```kusto
+    StorageQueueLogs
+    | where TimeGenerated > ago(3d) and StatusText !contains "Success"
+    | summarize count() by StatusText
+    | top 10 by count_ desc
+    ```
+
+- To list the top 10 operations that caused the most errors over the last three days.
+
+    ```kusto
+    StorageQueueLogs
+    | where TimeGenerated > ago(3d) and StatusText !contains "Success"
+    | summarize count() by OperationName
+    | top 10 by count_ desc
+    ```
+
+- To list the top 10 operations with the longest end-to-end latency over the last three days.
+
+    ```kusto
+    StorageQueueLogs
+    | where TimeGenerated > ago(3d)
+    | top 10 by DurationMs desc
+    | project TimeGenerated, OperationName, DurationMs, ServerLatencyMs, ClientLatencyMs = DurationMs - ServerLatencyMs
+    ```
+
+- To list all operations that caused server-side throttling errors over the last three days.
+
+    ```kusto
+    StorageQueueLogs
+    | where TimeGenerated > ago(3d) and StatusText contains "ServerBusy"
+    | project TimeGenerated, OperationName, StatusCode, StatusText
+    ```
+
+- To list all requests with anonymous access over the last three days.
+
+    ```kusto
+    StorageBlobLogs
+    | where TimeGenerated > ago(3d) and AuthenticationType == "Anonymous"
+    | project TimeGenerated, OperationName, AuthenticationType, Uri
+    ```
+
+- To create a pie chart of operations used over the last three days.
+
+    ```kusto
+    StorageQueueLogs
+    | where TimeGenerated > ago(3d)
+    | summarize count() by OperationName
+    | sort by count_ desc
+    | render piechart
+    ```
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-alerts.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+### Azure Queue Storage alert rules
+The following table lists common and recommended alert rules for Azure Queue Storage and the proper metric to use for the alert:
+
+| Alert type | Condition | Description |
+| --- | --- | --- |
+| Metric | Queue Storage service is throttled. | Transactions<br>Dimension name: Response type |
+| Metric | Queue Storage requests are successful 99% of the time. | Availability<br>Dimension names: Geo type, API name, Authentication |
+| Metric | Queue Storage egress has exceeded 500 GiB in one day. | Egress<br>Dimension names: Geo type, API name, Authentication |
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/azure-monitor/horizontals/horz-monitor-advisor-recommendations.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/queues/monitor-queue-storage.md)
+
+## Related content
+
+Other Queue Storage monitoring content:
+- [Azure Queue Storage monitoring data reference](monitor-queue-storage-reference.md). A reference of the logs and metrics created by Azure Queue Storage.
+- [Performance and scalability checklist for Queue Storage](storage-performance-checklist.md)
+
+Overall Azure Storage monitoring content:
+- [Monitor storage with Azure Monitor Storage insights](../common/storage-insights-overview.md). Get a unified view of storage performance, capacity, and availability.
+- [Transition to metrics in Azure Monitor](../common/storage-metrics-migration.md). Move from Storage Analytics metrics to metrics in Azure Monitor.
+- [Troubleshoot performance issues](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/troubleshoot-storage-performance.md?toc=/azure/storage/blobs/toc.json). See common performance issues and guidance about how to troubleshoot them.
+- [Troubleshoot availability issues](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/troubleshoot-storage-availability.md?toc=/azure/storage/blobs/toc.json). See common availability issues and guidance about how to troubleshoot them.
+- [Troubleshoot client application errors](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/common/troubleshoot-storage-client-application-errors.md?toc=/azure/storage/blobs/toc.json). See common issues with connecting clients and how to troubleshoot them.
+- [Monitor, diagnose, and troubleshoot your Azure Storage (training module)](https://learn.microsoft.com/training/modules/monitor-diagnose-and-troubleshoot-azure-storage/). Troubleshoot storage account issues, with step-by-step guidance.
+
+Azure Monitor content:
+- [Monitor Azure resources with Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/monitor-azure-resource). General details on monitoring Azure resources.
+- [Azure Monitor Metrics overview](https://learn.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics). The basics of metrics and metric dimensions.
+- [Azure Monitor Logs overview](https://learn.microsoft.com/azure/azure-monitor/logs/data-platform-logs). The basics of logs and how to collect and analyze them.
+- [Analyze metrics with Azure Monitor metrics explorer](https://learn.microsoft.com/azure/azure-monitor/essentials/analyze-metrics). A tour of Metrics Explorer.
+- [Overview of Log Analytics in Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/logs/log-analytics-overview). A tour of Log Analytics.

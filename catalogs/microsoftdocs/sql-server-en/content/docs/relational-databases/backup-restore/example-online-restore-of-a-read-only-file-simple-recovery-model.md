@@ -1,0 +1,62 @@
+---
+title: "Online restore: read-only file (simple recovery model)"
+description: This example shows an online restore in SQL Server of a read-only file for a database using the simple recovery model with multiple filegroups.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: how-to
+helpviewer_keywords:
+  - "restore sequences [SQL Server], online"
+  - "online restores [SQL Server], simple recovery model"
+  - "simple recovery model [SQL Server], RESTORE examples"
+---
+# Example: Online Restore of a Read-Only File (Simple Recovery Model)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This topic is relevant for  SQL Server 
+ databases under the simple recovery model that contain a read-only filegroup. Under the simple recovery model, a read-only file can be restored online if a file backup exists that was taken since the file became read-only for the last time.  
+  
+ In this example, a database named `adb` contains three filegroups. Filegroup `A` is read/write, and filegroups `B` and `C` are read-only. Initially, all of the filegroups are online. A read-only file in filegroup `B`, `b1`, has to be restored. The database administrator can restore it by using a backup that was taken after the file became read-only. For the duration of the restore, filegroup `B` will be offline, but the remainder of the database will remain online.  
+  
+## Restore Sequence  
+  
+> **Note:**  
+>  The syntax for an online restore sequence is the same as for an offline restore sequence.  
+  
+ To restore the file, the database administrator uses the following restore sequence:  
+  
+```  
+RESTORE DATABASE adb FILE='b1' FROM filegroup_B_backup   
+WITH RECOVERY  
+```  
+  
+ The file is now online.  
+  
+## Additional Examples  
+  
+-   [Example: Piecemeal Restore of Database (Simple Recovery Model)](example-piecemeal-restore-of-database-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Simple Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-simple-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Database (Full Recovery Model)](example-piecemeal-restore-of-database-full-recovery-model.md)  
+  
+-   [Example: Piecemeal Restore of Only Some Filegroups (Full Recovery Model)](example-piecemeal-restore-of-only-some-filegroups-full-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Write File (Full Recovery Model)](example-online-restore-of-a-read-write-file-full-recovery-model.md)  
+  
+-   [Example: Online Restore of a Read-Only File (Full Recovery Model)](example-online-restore-of-a-read-only-file-full-recovery-model.md)  
+  
+## Related content
+
+- [Online Restore (SQL Server)](online-restore-sql-server.md)
+- [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)
+- [File Restores (Simple Recovery Model)](file-restores-simple-recovery-model.md)
+- [Restore and recovery overview (SQL Server)](restore-and-recovery-overview-sql-server.md)
+- [RESTORE Statements (Transact-SQL)](../../t-sql/statements/restore-statements-transact-sql.md)

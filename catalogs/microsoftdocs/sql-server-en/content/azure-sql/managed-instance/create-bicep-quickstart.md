@@ -1,0 +1,108 @@
+---
+title: "Bicep: Create an Azure SQL Managed Instance using Bicep"
+description: Learn how to create an Azure SQL Managed Instance using Bicep.
+author: MladjoA
+ms.author: mlandzic
+ms.reviewer: mathoma
+ms.date: 05/16/2022
+ms.service: azure-sql-managed-instance
+ms.subservice: deployment-configuration
+ms.topic: quickstart
+ms.custom: subject-armqs, mode-arm, devx-track-bicep
+---
+
+# Quickstart: Create an Azure SQL Managed Instance using Bicep
+
+This quickstart focuses on the process of deploying a Bicep file to create an Azure SQL Managed Instance and vNet. [Azure SQL Managed Instance](sql-managed-instance-paas-overview.md) is an intelligent, fully managed, scalable cloud database, with almost 100% feature parity with the SQL Server database engine.
+
+[Bicep](https://learn.microsoft.com/azure/azure-resource-manager/bicep/overview?tabs=bicep) is a domain-specific language (DSL) that uses declarative syntax to deploy Azure resources. It provides concise syntax, reliable type safety, and support for code reuse. Bicep offers the best authoring experience for your infrastructure-as-code solutions in Azure.
+
+## Prerequisites
+
+- An Azure subscription. If you don't have an Azure subscription, [create a free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+- In the general case, your user needs to have the role [SQL Managed Instance Contributor](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#sql-managed-instance-contributor) assigned at subscription scope.
+- If provisioning in a subnet that is already delegated to Azure SQL Managed Instance, your user only needs the Microsoft.Sql/managedInstances/write permission assigned at subscription scope.
+
+> **Note:**  
+> You can't change some configuration choices after you create the instance. Review [Modifiable configuration reference](modifiable-configuration-reference.md) before you deploy.
+
+
+## Review the Bicep file
+
+The Bicep file used in this quickstart is from [Azure Quickstart Templates](https://azure.microsoft.com/resources/templates/sqlmi-new-vnet/).
+
+[Code reference unavailable in this source snapshot: ~/../quickstart-templates/quickstarts/microsoft.sql/sqlmi-new-vnet/main.bicep](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/managed-instance/create-bicep-quickstart.md)
+
+These resources are defined in the Bicep file:
+
+- [**Microsoft.Network/networkSecurityGroups**](https://learn.microsoft.com/azure/templates/microsoft.Network/networkSecurityGroups)
+- [**Microsoft.Network/routeTables**](https://learn.microsoft.com/azure/templates/microsoft.Network/routeTables)
+- [**Microsoft.Network/virtualNetworks**](https://learn.microsoft.com/azure/templates/microsoft.Network/virtualNetworks)
+- [**Microsoft.Sql/managedinstances**](https://learn.microsoft.com/azure/templates/microsoft.sql/managedinstances)
+
+## Deploy the Bicep file
+
+1. Save the Bicep file as **main.bicep** to your local computer.
+1. Deploy the Bicep file using either Azure CLI or Azure PowerShell.
+
+    # [CLI](#tab/CLI)
+
+    ```azurecli
+    az group create --name exampleRG --location eastus
+    az deployment group create --resource-group exampleRG --template-file main.bicep --parameters managedInstanceName=<instance-name> administratorLogin=<admin-login>
+    ```
+
+    # [PowerShell](#tab/PowerShell)
+
+    ```azurepowershell
+    New-AzResourceGroup -Name exampleRG -Location eastus
+    New-AzResourceGroupDeployment -ResourceGroupName exampleRG -TemplateFile ./main.bicep -managedInstanceName "<instance-name>" -administratorLogin "<admin-login>"
+    ```
+
+    ---
+
+> **Note:**
+> Replace **\<instance-name\>** with the name of the managed instance. Replace **\<admin-login\>** with the administrator username. You'll be prompted to enter **administratorLoginPassword**.
+
+  When the deployment finishes, you should see a message indicating the deployment succeeded.
+
+## Review deployed resources
+
+Use the Azure portal, Azure CLI, or Azure PowerShell to list the deployed resources in the resource group.
+
+# [CLI](#tab/CLI)
+
+```azurecli-interactive
+az resource list --resource-group exampleRG
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell-interactive
+Get-AzResource -ResourceGroupName exampleRG
+```
+
+---
+
+## Clean up resources
+
+When no longer needed, use the Azure portal, Azure CLI, or Azure PowerShell to delete the resource group and its resources.
+
+# [CLI](#tab/CLI)
+
+```azurecli-interactive
+az group delete --name exampleRG
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell-interactive
+Remove-AzResourceGroup -Name exampleRG
+```
+
+---
+
+## Next steps
+
+> 
+> [Configure an Azure VM to connect to Azure SQL Managed Instance](connect-vm-instance-configure.md)

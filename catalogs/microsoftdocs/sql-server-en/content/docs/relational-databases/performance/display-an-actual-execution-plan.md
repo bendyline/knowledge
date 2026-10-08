@@ -1,0 +1,89 @@
+---
+title: Display an Actual Execution Plan
+description: Learn how to generate actual graphical execution plans by using SQL Server Management Studio. An actual graphical execution plan contains runtime information.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: wiassaf
+ms.date: 08/04/2026
+ms.service: sql
+ms.subservice: performance
+ms.topic: how-to
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "displaying execution plans"
+  - "actual execution plans"
+  - "viewing execution plans"
+  - "execution plans [SQL Server], displaying"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb || =fabric"
+---
+# Display an actual execution plan
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+This article describes how to generate actual graphical execution plans by using  SQL Server Management Studio 
+. The SQL Database Engine generates actual execution plans after the T-SQL queries or batches finish executing. The generated execution plan shows the actual query execution plan that the  SQL Server Database Engine 
+ used to execute the queries. An actual execution plan contains runtime information, such as actual resource usage metrics and runtime warnings (if any).  
+
+To use this feature, you must have the appropriate permissions to execute the  Transact-SQL  queries for which you're generating a graphical execution plan. You must also have the `SHOWPLAN` permission for all databases referenced by the query.
+
+## Include an execution plan for a query during execution
+
+1. On the  SQL Server Management Studio 
+ toolbar, select **Database Engine Query**. You can also open an existing query and display the estimated execution plan by selecting the **Open File** toolbar button and locating the existing query.
+
+1. Enter the query for which you want to display the actual execution plan.
+
+1. On the **Query** menu, select **Include Actual Execution Plan** or select the **Include Actual Execution Plan** toolbar button.
+
+   Screenshot from SQL Server Management Studio showing the Actual Execution Plan button on the toolbar.
+
+1. Execute the query by selecting the **Execute** toolbar button. The plan used by the query optimizer is displayed on the **Execution Plan** tab in the results pane.
+
+   Screenshot from SQL Server Management Studio showing a graphical Actual Execution Plan.
+
+1. Pause the mouse over the logical and physical operators to view the description and properties of the operators in the displayed ToolTip, including properties of the overall execution plan, by selecting the root node operator, the `SELECT` node.
+
+   Alternatively, you can view operator properties in the **Properties** window. If **Properties** isn't visible, right-click an operator and select **Properties**. Select an operator to view its properties.
+
+   Screenshot from SQL Server Management Studio indicating where to right-click Properties in a plan operator.
+
+1. You can alter the display of the execution plan by right-clicking the execution plan and selecting **Zoom In**, **Zoom Out**, **Custom Zoom**, or **Zoom to Fit**. **Zoom In** and **Zoom Out** allow you to zoom in or out on the execution plan, while **Custom Zoom** allows you to define your own zoom, such as zooming at 80 percent. **Zoom to Fit** magnifies the execution plan to fit the result pane. Alternatively, use a combination of the CTRL key and your mouse wheel to activate **dynamic zoom**.
+
+1. To navigate the display of the execution plan, use the vertical and horizontal scroll bars, or **select and hold on any blank area** of the execution plan, and **drag your mouse**. Alternatively, select and hold the plus (+) sign in the right lower corner of the execution plan window, to display a miniature map of the entire execution plan.
+
+> **Note:**  
+> Alternatively, use [SET STATISTICS XML](../../t-sql/statements/set-statistics-xml-transact-sql.md) to return execution plan information for each statement after executing it. If used in  SQL Server Management Studio 
+, the *Results* tab has a link to open the execution plan in graphical format.
+
+For more information, see [Query Profiling Infrastructure](query-profiling-infrastructure.md).
+
+## Remarks
+
+To retrieve an actual execution plan for dedicated SQL pools (formerly SQL DW) and dedicated SQL pools in Azure Synapse Analytics, use different commands. For more information, see [Monitor your Azure Synapse Analytics dedicated SQL pool workload using DMVs](https://learn.microsoft.com/azure/synapse-analytics/sql-data-warehouse/sql-data-warehouse-manage-monitor#monitor-query-execution).
+
+## Related content
+
+- [Execution plan overview](execution-plans.md)
+- [Query processing architecture guide](../query-processing-architecture-guide.md)
+- [Display the Estimated Execution Plan](display-the-estimated-execution-plan.md)

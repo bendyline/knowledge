@@ -1,0 +1,38 @@
+---
+ms.date: 12/02/2025
+---
+| Microsoft 365 Geography | PreferredDataLocation (PDL) Value |
+| :--- | :--- |
+| South Korea, Japan, Singapore, Malaysia, Hong Kong Special Administrative Region | APC |
+| Australia | AUS |
+| Austria | AUT |
+| Brazil | BRA |
+| Canada | CAN |
+| Chile | CHL |
+| Denmark | DNK |
+| France, Netherlands, Ireland, Norway, Switzerland, Austria, Finland, Sweden, Germany | EUR |
+| France | FRA |
+| Germany | DEU |
+| India | IND |
+| Indonesia | IDN |
+| Israel | ISR |
+| Italy | ITA |
+| Japan | JPN |
+| Korea | KOR |
+| Malaysia | MYS |
+| Mexico | MEX |
+| New Zealand | NZL |
+| Norway | NOR |
+| Poland | POL |
+| Qatar | QAT |
+| South Africa | ZAF |
+| Spain | ESP |
+| Sweden | SWE |
+| Switzerland | CHE |
+| Taiwan | TWN |
+| United Arab Emirates | ARE |
+| United Kingdom | GBR |
+| United States | NAM |
+
+> **Note:**
+> To use a security filter for Italy, New Zealand, Spain, or Sweden in eDiscovery, you must have [premium features in eDiscovery](https://learn.microsoft.com/purview/edisc-settings-general) enabled.

@@ -1,0 +1,25 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_VBCSharp/VbXMLSamples/VB/XMLSamples12.vb
+
+Complete source file; linked examples may select a region or line range.
+
+```
+' Topic: XML Descendant Axis Property
+'<Snippet26>  
+Imports <xmlns:ns = "http://SomeNamespace"> 
+ 
+Class TestClass2
+
+    Shared Sub TestPrefix()
+        Dim contacts = 
+            <ns:contacts>
+                <ns:contact>
+                    <ns:name>Patrick Hines</ns:name>
+                </ns:contact>
+            </ns:contacts>
+
+        Console.WriteLine("Name: " & contacts...<ns:name>.Value)
+    End Sub
+
+End Class
+'</Snippet26>
+```

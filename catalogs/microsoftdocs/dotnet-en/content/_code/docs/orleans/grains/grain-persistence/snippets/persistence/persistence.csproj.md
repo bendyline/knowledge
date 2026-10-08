@@ -1,0 +1,24 @@
+# Source code: docs/orleans/grains/grain-persistence/snippets/persistence/persistence.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Server" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.Redis" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.Cosmos" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
+  </ItemGroup>
+
+</Project>
+
+```

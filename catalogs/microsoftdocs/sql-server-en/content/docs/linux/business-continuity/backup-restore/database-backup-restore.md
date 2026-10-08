@@ -1,0 +1,125 @@
+---
+title: Back up and Restore SQL Server Databases on Linux
+description: Learn how to back up and restore SQL Server databases on Linux. Also learn how to back up and restore with SQL Server Management Studio (SSMS).
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: amitkh, atsingh
+ms.date: 08/11/2026
+ms.service: sql
+ms.subservice: linux
+ms.topic: how-to
+ms.custom:
+  - linux-related-content
+---
+# Back up and restore SQL Server databases on Linux
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Linux
+
+
+You can back up SQL Server databases on Linux in many ways. On a Linux server, you can use the [sqlcmd utility](../../../tools/sqlcmd/sqlcmd-utility.md) to connect to the SQL Server and back up databases. From Windows, you can connect to SQL Server on Linux and back up databases with the user interface. The backup functionality is the same across platforms. For example, you can back up databases locally, to remote drives, or to [SQL Server backup to URL for Azure Blob Storage](../../../relational-databases/backup-restore/sql-server-backup-to-url.md).
+
+> **Important:**  
+> SQL Server on Linux only supports backing up to Azure Blob Storage with block blobs. Using a storage key for backup and restore uses a page blob, which isn't supported. Use a shared access signature (SAS) instead. For information on block blobs versus page blobs, see [Backup to block blob vs. page blob](../../../relational-databases/backup-restore/sql-server-backup-to-url.md#blockbloborpageblob).
+
+## Back up a database
+
+In the following example, **`sqlcmd`** connects to the local SQL Server instance and takes a full backup of a user database called `demodb`.
+
+```bash
+sqlcmd -S localhost -U sa -Q "BACKUP DATABASE [demodb] TO DISK = N'/var/opt/mssql/data/demodb.bak' WITH NOFORMAT, NOINIT, NAME = 'demodb-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
+```
+
+When you run the command, SQL Server prompts for a password. After you enter the password, the shell returns the results of the backup progress. For example:
+
+```output
+Password:
+10 percent processed.
+21 percent processed.
+32 percent processed.
+40 percent processed.
+51 percent processed.
+61 percent processed.
+72 percent processed.
+80 percent processed.
+91 percent processed.
+Processed 296 pages for database 'demodb', file 'demodb' on file 1.
+100 percent processed.
+Processed 2 pages for database 'demodb', file 'demodb_log' on file 1.
+BACKUP DATABASE successfully processed 298 pages in 0.064 seconds (36.376 MB/sec).
+```
+
+### Back up the transaction log
+
+If your database is in the full recovery model, you can also back up the transaction log for more granular restore options. In the following example, **`sqlcmd`** connects to the local SQL Server instance and takes a transaction log backup.
+
+```bash
+sqlcmd -S localhost -U sa -Q "BACKUP LOG [demodb] TO DISK = N'/var/opt/mssql/data/demodb_LogBackup.bak' WITH NOFORMAT, NOINIT, NAME = N'demodb_LogBackup', NOSKIP, NOREWIND, NOUNLOAD, STATS = 5"
+```
+
+## Restore a database
+
+In the following example, **`sqlcmd`** connects to the local instance of SQL Server and restores the demodb database. The `NORECOVERY` option allows additional restores of log file backups. If you don't plan to restore extra log files, remove the `NORECOVERY` option.
+
+```bash
+sqlcmd -S localhost -U sa -Q "RESTORE DATABASE [demodb] FROM DISK = N'/var/opt/mssql/data/demodb.bak' WITH FILE = 1, NOUNLOAD, REPLACE, NORECOVERY, STATS = 5"
+```
+
+> **Tip:**  
+> If you accidentally use `NORECOVERY` but don't have additional log file backups, run the command `RESTORE DATABASE demodb` with no additional parameters. This command finishes the restore and leaves your database operational.
+
+### Restore the transaction log
+
+The following command restores the previous transaction log backup.
+
+```bash
+sqlcmd -S localhost -U sa -Q "RESTORE LOG demodb FROM DISK = N'/var/opt/mssql/data/demodb_LogBackup.bak'"
+```
+
+## Backup and restore with SQL Server Management Studio (SSMS)
+
+You can use [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/sql-server-management-studio-ssms) from a Windows computer to connect to a Linux database and take a backup through the user interface.
+
+> **Note:**  
+> Install the latest version of [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/ssms/install/install). For more information on how to use SSMS, see [Use SQL Server Management Studio on Windows to manage SQL Server on Linux](../../sql-server-linux-manage-ssms.md).
+
+The following steps walk through taking a backup with SSMS.
+
+1. Start SSMS and connect to your SQL Server on Linux instance.
+
+1. In **Object Explorer**, right-click your database, select **Tasks**, and then select **Back Up...**.
+
+1. In the **Backup Database** dialog, verify the parameters and options, and select **OK**.
+
+SQL Server completes the database backup.
+
+### Restore with SQL Server Management Studio (SSMS)
+
+The following steps walk you through restoring a database with SSMS.
+
+1. In SSMS, right-click **Databases** and select **Restore Database...**.
+
+1. Under **Source**, select **Device:** and then select the ellipsis (***...***).
+
+1. Locate your database backup file and select **OK**.
+
+1. Under **Restore plan**, verify the backup file and settings. Select **OK**.
+
+1. SQL Server restores the database.
+
+## Related content
+
+- [Create a full database backup](../../../relational-databases/backup-restore/create-a-full-database-backup-sql-server.md)
+- [Back up a transaction log](../../../relational-databases/backup-restore/back-up-a-transaction-log-sql-server.md)
+- [BACKUP (Transact-SQL)](../../../t-sql/statements/backup-transact-sql.md)
+- [SQL Server backup to URL for Azure Blob Storage](../../../relational-databases/backup-restore/sql-server-backup-to-url.md)
+
+##  Contribute to SQL documentation
+
+Did you know that you can edit SQL content yourself? If you do so, not only do you help improve our documentation, but you also get credited as a contributor to the page.
+
+For more information, see [Edit Microsoft Learn documentation](../../../sql-server/sql-server-docs-contribute.md).

@@ -1,0 +1,44 @@
+---
+title: "IF Statement  (MDX)"
+description: "IF Statement  (MDX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: mdx
+---
+# MDX Scripting - IF
+
+
+  Executes a statement if the condition is true.  
+  
+## Syntax  
+  
+```  
+  
+IF expression THEN assignment END IF  
+```  
+  
+## Arguments  
+ *expression*  
+ A Multidimensional Expressions (MDX) expression that evaluates to a Boolean that returns true or false.  
+  
+ *assignment*  
+ An MDX expression that assigns a value to either a subcube or a calculated property.  
+  
+## Remarks  
+ Use the IF statement for control flow, which is unlike the [IIf (MDX)](iif-mdx.md) function and the [CASE Statement (MDX)](case-statement-mdx.md) that can only be used to return values or objects.  
+  
+## Examples  
+ In the following example, the scope is restricted to the Country level of the Customers Geography hierarchy in the Customers dimension. If the current measure is Internet Sales Amount, then the Internet Sales Amount is set to 10:  
+  
+```  
+SCOPE ([Customer].[Customer Geography].[Country].MEMBERS);  
+IF Measures.CurrentMember IS [Measures].[Internet Sales Amount] THEN this = 10 END IF;  
+```  
+  
+ `END SCOPE`;  
+  
+## Related content
+
+- [MDX Function Reference (MDX)](mdx-function-reference-mdx.md)

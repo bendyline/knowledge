@@ -1,0 +1,101 @@
+---
+title: "Using Encryption Without Validation"
+description: Learn how the SQL Server Native Client OLE DB provider and ODBC driver support encryption without validation and recommendations for when to use it.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/26/2025
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "data access [SQL Server Native Client], encryption"
+  - "cryptography [SQL Server Native Client]"
+  - "SQLNCLI, encryption"
+  - "encryption [SQL Server Native Client]"
+  - "SQL Server Native Client, encryption"
+---
+# Use encryption without validation in SQL Server Native Client
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+> **Important:**  
+> [SQL Server Native Client](../sql-server-native-client.md) (SNAC) isn't shipped with:
+
+-  SQL Server 2022 (16.x) 
+ and later versions
+-  SQL Server Management Studio 
+ 19 and later versions
+
+The SQL Server Native Client (SQLNCLI or SQLNCLI11) and the legacy Microsoft OLE DB Provider for SQL Server (SQLOLEDB) aren't recommended for new application development.
+
+For new projects, use one of the following drivers:
+
+- [Microsoft ODBC Driver for SQL Server](../../../connect/odbc/microsoft-odbc-driver-for-sql-server.md)
+- [Microsoft OLE DB Driver for SQL Server](../../../connect/oledb/oledb-driver-for-sql-server.md)
+
+For SQLNCLI that ships as a component of  SQL Server Database Engine 
+ (versions 2012 through 2019), see this [Support Lifecycle exception](../applications/support-policies-for-sql-server-native-client.md#support-lifecycle-exception).
+
+
+ SQL Server 
+ always encrypts network packets associated with logging in. If no certificate was provisioned on the server when it starts up,  SQL Server 
+ generates a self-signed certificate that is used to encrypt login packets.
+
+Self-signed certificates don't guarantee security. The encrypted handshake is based on NT LAN Manager (NTLM). You should provision a verifiable certificate on SQL Server for secure connectivity. Transport Layer Security (TLS) can be made secure only with certificate validation.
+
+Applications can also request encryption of all network traffic by using connection string keywords or connection properties. The keywords are "Encrypt" for ODBC and OLE DB when using a provider string with `IDbInitialize::Initialize`, or "Use Encryption for Data" for ADO and OLE DB when using an initialization string with `IDataInitialize`. This can also be configured by  SQL Server 
+ Configuration Manager using the **Force Protocol Encryption** option, and by configuring the client to request encrypted connections. By default, encryption of all network traffic for a connection requires that a certificate is provisioned on the server. By setting your client to trust the certificate on the server, you're vulnerable to man-in-the-middle attacks. If you deploy a verifiable certificate on the server, ensure that you change the client settings about trust the certificate to `FALSE`.
+
+For information about connection string keywords, see [Using Connection String Keywords with SQL Server Native Client](../applications/using-connection-string-keywords-with-sql-server-native-client.md).
+
+To enable encryption to be used when a certificate isn't provisioned on the server,  SQL Server 
+ Configuration Manager can be used to set both the **Force Protocol Encryption** and the **Trust Server Certificate** options. In this case, encryption uses a self-signed server certificate without validation if no verifiable certificate was provisioned on the server.
+
+Applications can also use the `TrustServerCertificate` keyword or its associated connection attribute to guarantee that encryption takes place. Application settings never reduce the level of security set by  SQL Server 
+ Client Configuration Manager, but could strengthen it. For example, if **Force Protocol Encryption** isn't set for the client, an application might request encryption itself. To guarantee encryption even when a server certificate isn't provisioned, an application might request encryption and `TrustServerCertificate`. However, if `TrustServerCertificate` isn't enabled in the client configuration, a provisioned server certificate is still required. The following table describes all cases:
+
+| Force Protocol Encryption client setting | Trust Server Certificate client setting | Connection string/connection attribute Encrypt/Use Encryption for Data | Connection string/connection attribute Trust Server Certificate | Result |
+| --- | --- | --- | --- | --- |
+| No | N/A | No (default) | Ignored | No encryption occurs. |
+| No | N/A | Yes | No (default) | Encryption occurs only if there's a verifiable server certificate, otherwise the connection attempt fails. |
+| No | N/A | Yes | Yes | Encryption always occurs, but might use a self-signed server certificate. |
+| Yes | No | Ignored | Ignored | Encryption occurs only if there's a verifiable server certificate, otherwise the connection attempt fails. |
+| Yes | Yes | No (default) | Ignored | Encryption always occurs, but might use a self-signed server certificate. |
+| Yes | Yes | Yes | No (default) | Encryption occurs only if there's a verifiable server certificate, otherwise the connection attempt fails. |
+| Yes | Yes | Yes | Yes | Encryption always occurs, but might use a self-signed server certificate. |
+
+> **Caution:**  
+> The preceding table only provides a guide on the system behavior under different configurations. For secure connectivity, ensure that both the client and server require encryption. Also ensure that the server has a verifiable certificate, and that the `TrustServerCertificate` setting on the client is set to `FALSE`.
+
+## SQL Server Native Client OLE DB Provider
+
+The  SQL Server 
+ Native Client OLE DB provider supports encryption without validation through the addition of the `SSPROP_INIT_TRUST_SERVER_CERTIFICATE` data source initialization property, which is implemented in the `DBPROPSET_SQLSERVERDBINIT` property set. In addition, a new connection string keyword, `TrustServerCertificate`, was added. It accepts `yes` or `no` values; `no` is the default. When using service components, it accepts `true` or `false` values; `false` is the default.
+
+For more information about enhancements made to the `DBPROPSET_SQLSERVERDBINIT` property set, see [Initialization and Authorization Properties (Native Client OLE DB Provider)](../../native-client-ole-db-data-source-objects/initialization-and-authorization-properties.md).
+
+## SQL Server Native Client ODBC Driver
+
+The  SQL Server 
+ Native Client ODBC driver supports encryption without validation through additions to the [SQLSetConnectAttr](../../native-client-odbc-api/sqlsetconnectattr.md) and [SQLGetConnectAttr](../../native-client-odbc-api/sqlgetconnectattr.md) functions. `SQL_COPT_SS_TRUST_SERVER_CERTIFICATE` was added to accept either `SQL_TRUST_SERVER_CERTIFICATE_YES` or `SQL_TRUST_SERVER_CERTIFICATE_NO`, with `SQL_TRUST_SERVER_CERTIFICATE_NO` being the default. In addition, a new connection string keyword, `TrustServerCertificate`, was added. It accepts `yes` or `no` values; `no` is the default.
+
+## Related content
+
+- [SQL Server Native Client Features](sql-server-native-client-features.md)

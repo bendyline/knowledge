@@ -1,0 +1,82 @@
+---
+title: "SMTP Connection Manager"
+description: "SMTP Connection Manager"
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+f1_keywords:
+  - "sql13.dts.designer.smtpconnection.f1"
+helpviewer_keywords:
+  - "connections [Integration Services], SMTP"
+  - "SMTP connection manager [Integration Services]"
+  - "connection managers [Integration Services], SMTP"
+---
+# SMTP Connection Manager
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  An SMTP connection manager enables a package to connect to a Simple Mail Transfer Protocol (SMTP) server. The Send Mail task that  Microsoft 
+  SQL Server 
+  Integration Services 
+ includes uses an SMTP connection manager.  
+  
+ When using Microsoft Exchange as the SMTP server, you may need to configure the SMTP connection manager to use Windows Authentication. Exchange servers may be configured to not allow unauthenticated SMTP connections.  
+  
+## Configuration the SMTP Connection Manager  
+ When you add an SMTP connection manager to a package,  Integration Services 
+ creates a connection manager that will resolve to an SMTP connection at run time, sets the connection manager properties, and adds the connection manager to the **Connections** collection on the package. The **ConnectionManagerType** property of the connection manager is set to **SMTP**.  
+  
+ You can configure an SMTP connection manager in the following ways:  
+  
+-   Provide a connection string.  
+  
+-   Specify the name of an SMTP server.  
+  
+-   Specify the authentication method to use.  
+  
+    > **Important:**  
+    >  The SMTP connection manager supports only anonymous authentication and Windows Authentication. It does not support basic authentication.  
+  
+-   Specify whether to encrypt communication using Transport Layer Security (TLS), previously known as Secure Sockets Layer (SSL),
+ when sending e-mail messages.  
+  
+ You can set properties through  SSIS 
+ Designer or programmatically.  
+  
+ For information about configuring a connection manager programmatically, see [Microsoft.SqlServer.Dts.Runtime.ConnectionManager](https://learn.microsoft.com/search/?terms=Microsoft.SqlServer.Dts.Runtime.ConnectionManager) and [Adding Connections Programmatically](../building-packages-programmatically/adding-connections-programmatically.md).  
+  
+## SMTP Connection Manager Editor
+  Use the **SMTP Connection Manager Editor** dialog box to specify a Simple Mail Transfer Protocol (SMTP) server.  
+  
+ To learn more about the SMTP connection manager, see [SMTP Connection Manager](#smtp-connection-manager).  
+  
+### Options  
+ **Name**  
+ Provide a unique name for the connection manager.  
+  
+ **Description**  
+ Describe the connection manager. As a best practice, describe the connection manager in terms of its purpose, to make packages self-documenting and easier to maintain.  
+  
+ **SMTP server**  
+ Provide the name of the SMTP server.  
+  
+ **Use Windows Authentication**  
+ Select to send mail using an SMTP server that uses Windows Authentication to authenticate access to the server.  
+  
+> **Important:**  
+>  The SMTP connection manager supports only anonymous authentication and Windows Authentication. It does not support basic authentication.  
+  
+> **Note:**  
+>  When using Microsoft Exchange as the SMTP server, you may need to set **Use Windows Authentication** to **True**. Exchange servers may be configured to disallow unauthenticated SMTP connections.  
+  
+ **Enable Secure Sockets Layer (SSL)**  
+ Select to encrypt communication using TLS/SSL when sending e-mail messages.

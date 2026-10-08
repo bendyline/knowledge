@@ -1,0 +1,573 @@
+---
+title: "Quickstart: Document Intelligence JavaScript SDK"
+titleSuffix: Foundry Tools
+description: Form and document processing, data extraction, and analysis using Document Intelligence JavaScript client library.
+author: laujan
+manager: mcleans
+ms.service: azure-document-intelligence-foundry-tools
+ms.topic: include
+ms.date: 01/30/2026
+ms.author: lajanuar
+---
+<!-- markdownlint-disable MD025 -->
+
+**Applies to: doc-intel-4.0.0**
+[Client library](https://learn.microsoft.com/javascript/api/overview/azure/ai-document-intelligence-rest-readme?view=azure-node-latest\&preserve-view=true) | [REST API reference](https://learn.microsoft.com/rest/api/aiservices/operation-groups?view=rest-aiservices-v4.0%20\(2024-11-30\)\&preserve-view=true) | [Package (npm)](https://www.npmjs.com/package/@azure-rest/ai-document-intelligence/v/1.1.0) | [Samples](https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/documentintelligence/ai-document-intelligence-rest/samples/v1/javascript) |[Supported REST API version](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/sdk-overview-v4-0.md)
+
+
+**Applies to: doc-intel-3.1.0**
+[Client library](https://learn.microsoft.com/javascript/api/overview/azure/ai-form-recognizer-readme?view=azure-node-latest\&preserve-view=true) |[REST API reference](https://learn.microsoft.com/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-2023-07-31\&preserve-view=true\&tabs=HTTP) | [Package (npm)](https://www.npmjs.com/package/@azure/ai-form-recognizer/v/5.0.0) | [Samples](https://github.com/witemple-msft/azure-sdk-for-js/tree/ai-form-recognizer/5.0.0-release/sdk/formrecognizer/ai-form-recognizer/samples/v5) |[Supported REST API version](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/sdk-overview-v3-1.md)
+
+
+**Applies to: doc-intel-3.0.0**
+
+[Client library](https://learn.microsoft.com/javascript/api/%40azure/ai-form-recognizer/) |[REST API reference](https://learn.microsoft.com/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-v3.0%20\(2022-08-31\)\&preserve-view=true\&tabs=HTTP) | [Package (npm)](https://www.npmjs.com/package/@azure/ai-form-recognizer/v/5.0.0) | [Samples](https://github.com/witemple-msft/azure-sdk-for-js/tree/26e85928088c6ee46ff9b357b2af8158b9da8b49/sdk/formrecognizer/ai-form-recognizer/samples/v4-beta/javascript) |[Supported REST API version](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/sdk-overview-v3-0.md)
+
+
+In this quickstart, use the following features to analyze and extract data and values from forms and documents:
+
+* [**Layout**](#layout-model)—Analyze and extract tables, lines, words, and selection marks like radio buttons and check boxes in documents, without the need to train a model.
+
+* [**Prebuilt Invoice**](#prebuilt-model)—Analyze and extract common fields from specific document types using a pretrained invoice model.
+
+## Prerequisites
+
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+* The latest version of [Visual Studio Code](https://code.visualstudio.com/) or your preferred IDE. For more information, *see* [Node.js in Visual Studio Code](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial).
+
+* The latest `LTS` version of [Node.js](https://nodejs.org/).
+
+* A Foundry Tools or Document Intelligence resource. Once you have your Azure subscription, create a [single-service](https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer) or [multi-service](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) Document Intelligence resource, in the Azure portal, to get your key and endpoint. You can use the free pricing tier (`F0`) to try the service, and upgrade later to a paid tier for production.
+
+    > **Tip:**
+    > Create a Microsoft Foundry resource if you plan to access multiple Foundry Tools under a single endpoint/key. For Document Intelligence access only, create a Document Intelligence resource. You need a single-service resource if you intend to use [Microsoft Entra authentication](https://learn.microsoft.com/azure/active-directory/authentication/overview-authentication).
+
+* After your resource deploys, select **Go to resource**. You need the key and endpoint from the resource you create to connect your application to the Document Intelligence API. You paste your key and endpoint into the code later in the quickstart:
+
+  Screenshot of keys and endpoint location in the Azure portal.
+
+## Set up
+
+1. Create a new Node.js Express application: In a console window (such as cmd, PowerShell, or Bash), create and navigate to a new directory for your app named `doc-intel-app`.
+
+    ```console
+    mkdir doc-intel-app && cd doc-intel-app
+    ```
+
+1. Run the `npm init` command to initialize the application and scaffold your project.
+
+    ```console
+    npm init
+    ```
+
+1. Specify your project's attributes using the prompts presented in the terminal.
+
+    * The most important attributes are name, version number, and entry point.
+    * We recommend keeping `index.js` for the entry point name. The description, test command, GitHub repository, keywords, author, and license information are optional attributes—they can be skipped for this project.
+    * Accept the suggestions in parentheses by selecting **Return** or **Enter**.
+    * After you complete the prompts, a `package.json` file will be created in your doc-intel-app directory.
+
+**Applies to: doc-intel-4.0.0**
+
+ 4. Install the `ai-document-intelligence` client library and `azure/identity` npm packages:
+
+    ```console
+    npm i @azure-rest/ai-document-intelligence@1.1.0
+    ```
+
+    Your app's `package.json` file is updated with the dependencies.
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+ 4. Install the `ai-form-recognizer` client library and `azure/identity` npm packages:
+
+    ```console
+    npm i @azure/ai-form-recognizer@5.0.0 @azure/identity
+    ```
+
+    * Your app's `package.json` file is updated with the dependencies.
+
+
+
+**Applies to: doc-intel-3.0.0**
+
+4. Install the `ai-form-recognizer` client library and `azure/identity` npm packages:
+
+    ```console
+    npm i @azure/ai-form-recognizer@4.0.0 @azure/identity
+    ```
+
+
+
+5. Create a file named `index.js` in the application directory.
+
+    > **Tip:**
+    >
+    > * You can create a new file using PowerShell.
+    > * Open a PowerShell window in your project directory by holding down the Shift key and right-clicking the folder.
+    > * Type the following command **New-Item index.js**.
+
+## Build your application
+
+**Applies to: doc-intel-4.0.0**
+To interact with the Document Intelligence service, you need to create an instance of the `DocumentIntelligenceClient` class. To do so, you create an `AzureKeyCredential` with your `key` from the Azure portal and a `DocumentIntelligenceClient` instance with the `AzureKeyCredential` and your Document Intelligence `endpoint`.
+
+
+**Applies to: doc-intel-3.1.0 || doc-intel-3.0.0**
+
+To interact with the Document Intelligence service, you need to create an instance of the `DocumentAnalysisClient` class. To do so, you create an `AzureKeyCredential` with your `key` from the Azure portal and a `DocumentAnalysisClient` instance with the `AzureKeyCredential` and your Form
+Recognizer `endpoint`.
+
+
+
+1. Open the `index.js` file in Visual Studio Code or your favorite IDE. Copy and paste one of the following code samples into your application:
+
+    * [**Layout**](#layout-model)
+
+    * [**Prebuilt Invoice**](#prebuilt-model)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/microsoft-entra-id-akv-expanded.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/quickstarts/includes/javascript-sdk.md)
+
+<!-- markdownlint-disable MD036 -->
+
+## Layout model
+
+Extract text, selection marks, text styles, table structures, and bounding region coordinates from documents.
+
+> * For this example, you'll need a **document file from a URL**. You can use our [sample document](https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf) for this quickstart.
+> * We've added the file URL value to the `formUrl` variable near the top of the file.
+> * To analyze a given file from a URL, you'll use the `beginAnalyzeDocuments` method and pass in `prebuilt-layout` as the model Id.
+
+**Applies to: doc-intel-4.0.0**
+
+```javascript
+const DocumentIntelligence = require("@azure-rest/ai-document-intelligence").default,
+{ getLongRunningPoller, isUnexpected } = require("@azure-rest/ai-document-intelligence");
+
+// set `<your-key>` and `<your-endpoint>` variables with the values from the Azure portal.
+const key = "<your-key>";
+const endpoint = "<your-endpoint>";
+
+// sample document
+const formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf"
+
+async function main() {
+  const client = DocumentIntelligence(endpoint, { key });
+
+  const initialResponse = await client
+    .path("/documentModels/{modelId}:analyze", "prebuilt-layout")
+    .post({
+      contentType: "application/json",
+      body: {
+        urlSource: formUrl
+      },
+    });
+
+  if (isUnexpected(initialResponse)) {
+    throw initialResponse.body.error;
+  }
+
+  const poller = getLongRunningPoller(client, initialResponse);
+  const analyzeResult = (await poller.pollUntilDone()).body.analyzeResult;
+
+  const pages = analyzeResult?.pages;
+  const tables = analyzeResult?.tables;
+
+  if (pages && pages.length > 0) {
+    console.log("Pages:");
+    for (const page of pages) {
+      console.log("- Page", page.pageNumber, `(unit: ${page.unit})`);
+      console.log(`  ${page.width}x${page.height}`);
+      console.log(`  ${page.lines?.length || 0} lines, ${page.words?.length || 0} words`);
+    }
+  } else {
+    console.log("No pages were extracted from the document.");
+  }
+
+  if (tables && tables.length > 0) {
+    console.log("Tables:");
+    for (const table of tables) {
+      console.log(
+        `- Extracted table: ${table.columnCount} columns, ${table.rowCount} rows (${table.cells.length} cells)`
+      );
+    }
+  } else {
+    console.log("No tables were extracted from the document.");
+  }
+}
+
+main().catch((error) => {
+  console.error("An error occurred:", error);
+  process.exit(1);
+});
+
+```
+
+**Run your application**
+
+After you add a code sample to your application, run your program:
+
+1. Navigate to the folder where you have your Document Intelligence application (doc-intel-app).
+
+1. Type the following command in your terminal:
+
+    ```console
+    node index.js
+    ```
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+**Add the following code sample to the `index.js` file. Make sure you update the key and endpoint variables with values from your Azure portal Document Intelligence instance:**
+
+```javascript
+
+ const { AzureKeyCredential, DocumentAnalysisClient } = require("@azure/ai-form-recognizer");
+
+    // set `<your-key>` and `<your-endpoint>` variables with the values from the Azure portal.
+    const key = "<your-key>";
+    const endpoint = "<your-endpoint>";
+
+    // sample document
+  const formUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf"
+
+  async function main() {
+    const client = new DocumentAnalysisClient(endpoint, new AzureKeyCredential(key));
+
+    const poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-layout", formUrl);
+
+    const {
+        pages,
+        tables
+    } = await poller.pollUntilDone();
+
+    if (pages.length <= 0) {
+        console.log("No pages were extracted from the document.");
+    } else {
+        console.log("Pages:");
+        for (const page of pages) {
+            console.log("- Page", page.pageNumber, `(unit: ${page.unit})`);
+            console.log(`  ${page.width}x${page.height}, angle: ${page.angle}`);
+            console.log(`  ${page.lines.length} lines, ${page.words.length} words`);
+        }
+    }
+
+    if (tables.length <= 0) {
+        console.log("No tables were extracted from the document.");
+    } else {
+        console.log("Tables:");
+        for (const table of tables) {
+            console.log(
+                `- Extracted table: ${table.columnCount} columns, ${table.rowCount} rows (${table.cells.length} cells)`
+            );
+        }
+    }
+}
+
+main().catch((error) => {
+    console.error("An error occurred:", error);
+    process.exit(1);
+});
+
+```
+
+**Run your application**
+
+After you add a code sample to your application, run your program:
+
+1. Navigate to the folder where you have your Document Intelligence application (doc-intel-app).
+
+1. Type the following command in your terminal:
+
+    ```console
+    node index.js
+    ```
+
+### Layout model output
+
+Here's a snippet of the expected output:
+
+```console
+Pages:
+- Page 1 (unit: inch)
+  8.5x11, angle: 0
+  69 lines, 425 words
+Tables:
+- Extracted table: 3 columns, 5 rows (15 cells)
+```
+
+To view the entire output, visit the Azure samples repository on GitHub to view the [layout model output](https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/javascript/FormRecognizer/v3-javascript-sdk-layout-output.md).
+
+
+
+## Prebuilt model
+
+In this example, we analyze an invoice using the **prebuilt-invoice** model.
+
+> **Tip:**
+> You aren't limited to invoices—there are several prebuilt models to choose from, each of which has its own set of supported fields. The model to use for the `analyze` operation depends on the type of document to be analyzed. See [**model data extraction**](../../model-overview.md#model-data-extraction).
+
+> 
+>
+> * Analyze an invoice using the prebuilt-invoice model. You can use our [sample invoice document](https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf) for this quickstart.
+> * We've added the file URL value to the `invoiceUrl` variable at the top of the file.
+> * To analyze a given file at a URI, you'll use the `beginAnalyzeDocuments` method and pass `PrebuiltModels.Invoice` as the model Id. The returned value is a `result` object containing data about the submitted document.
+> * For simplicity, all the key-value pairs that the service returns are not shown here. To see the list of all supported fields and corresponding types, see our [Invoice](../../prebuilt/invoice.md#field-extraction) concept page.
+
+**Applies to: doc-intel-4.0.0**
+
+```javascript
+const DocumentIntelligence = require("@azure-rest/ai-document-intelligence").default,
+{ getLongRunningPoller, isUnexpected } = require("@azure-rest/ai-document-intelligence");
+
+// set `<your-key>` and `<your-endpoint>` variables with the values from the Azure portal.
+const key = "<your-key>";
+const endpoint = "<your-endpoint>";
+
+// sample document
+const invoiceUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf"
+
+async function main() {
+  const client = DocumentIntelligence(endpoint, { key });
+
+  const initialResponse = await client
+    .path("/documentModels/{modelId}:analyze", "prebuilt-invoice")
+    .post({
+      contentType: "application/json",
+      body: {
+        urlSource: invoiceUrl,
+      },
+    });
+
+  if (isUnexpected(initialResponse)) {
+    throw initialResponse.body.error;
+  }
+
+  const poller = getLongRunningPoller(client, initialResponse);
+  const analyzeResult = (await poller.pollUntilDone()).body.analyzeResult;
+
+  const documents = analyzeResult?.documents;
+
+  const invoice = documents && documents[0];
+  if (!invoice) {
+    throw new Error("Expected at least one invoice in the result.");
+  }
+
+  console.log(
+    "Extracted invoice:",
+    invoice.docType,
+    `(confidence: ${invoice.confidence || "<undefined>"})`
+  );
+  console.log("Fields:", invoice.fields);
+}
+
+main().catch((error) => {
+  console.error("An error occurred:", error);
+  process.exit(1);
+});
+```
+
+**Run your application**
+
+After you add a code sample to your application, run your program:
+
+1. Navigate to the folder where you have your Document Intelligence application (doc-intel-app).
+
+1. Type the following command in your terminal:
+
+    ```console
+    node index.js
+    ```
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+```javascript
+
+ const {
+    AzureKeyCredential,
+    DocumentAnalysisClient
+} = require("@azure/ai-form-recognizer");
+
+// set `<your-key>` and `<your-endpoint>` variables with the values from the Azure portal.
+const key = "<your-key>";
+const endpoint = "<your-endpoint>";
+// sample document
+invoiceUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf"
+
+async function main() {
+    const client = new DocumentAnalysisClient(endpoint, new AzureKeyCredential(key));
+
+    const poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", invoiceUrl);
+
+    const {
+        pages,
+        tables
+    } = await poller.pollUntilDone();
+
+    if (pages.length <= 0) {
+        console.log("No pages were extracted from the document.");
+    } else {
+        console.log("Pages:");
+        for (const page of pages) {
+            console.log("- Page", page.pageNumber, `(unit: ${page.unit})`);
+            console.log(`  ${page.width}x${page.height}, angle: ${page.angle}`);
+            console.log(`  ${page.lines.length} lines, ${page.words.length} words`);
+
+            if (page.lines && page.lines.length > 0) {
+                console.log("  Lines:");
+
+                for (const line of page.lines) {
+                    console.log(`  - "${line.content}"`);
+
+                    // The words of the line can also be iterated independently. The words are computed based on their
+                    // corresponding spans.
+                    for (const word of line.words()) {
+                        console.log(`    - "${word.content}"`);
+                    }
+                }
+            }
+        }
+    }
+
+    if (tables.length <= 0) {
+        console.log("No tables were extracted from the document.");
+    } else {
+        console.log("Tables:");
+        for (const table of tables) {
+            console.log(
+                `- Extracted table: ${table.columnCount} columns, ${table.rowCount} rows (${table.cells.length} cells)`
+            );
+        }
+    }
+}
+
+main().catch((error) => {
+    console.error("An error occurred:", error);
+    process.exit(1);
+});
+```
+
+**Run your application**
+
+After you add a code sample to your application, run your program:
+
+1. Navigate to the folder where you have your Document Intelligence application (doc-intel-app).
+
+1. Type the following command in your terminal:
+
+    ```console
+    node index.js
+    ```
+
+### Prebuilt model output
+
+Here's a snippet of the expected output:
+
+```console
+  Vendor Name: CONTOSO LTD.
+  Customer Name: MICROSOFT CORPORATION
+  Invoice Date: 2019-11-15T00:00:00.000Z
+  Due Date: 2019-12-15T00:00:00.000Z
+  Items:
+  - <no product code>
+    Description: Test for 23 fields
+    Quantity: 1
+    Date: undefined
+    Unit: undefined
+    Unit Price: 1
+    Tax: undefined
+    Amount: 100
+```
+
+To view the entire output, visit the Azure samples repository on GitHub to view the [prebuilt invoice model output](https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/javascript/FormRecognizer/v3-javascript-sdk-prebuilt-invoice-output.md).
+
+
+
+**Applies to: doc-intel-3.0.0**
+
+```javascript
+const { AzureKeyCredential, DocumentAnalysisClient } = require("@azure/ai-form-recognizer");
+
+  // set `<your-key>` and `<your-endpoint>` variables with the values from the Azure portal.
+      const key = "<your-key>";
+      const endpoint = "<your-endpoint>";
+// sample document
+    invoiceUrl = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf"
+
+async function main() {
+    const client = new DocumentAnalysisClient(endpoint, new AzureKeyCredential(key));
+
+    const poller = await client.beginAnalyzeDocument("prebuilt-invoice", invoiceUrl);
+
+    const {
+    documents: [document],
+  } = await poller.pollUntilDone();
+
+
+  if (document) {
+    const {
+      vendorName,
+      customerName,
+      invoiceDate,
+      dueDate,
+      items,
+      subTotal,
+      previousUnpaidBalance,
+      totalTax,
+      amountDue,
+    } = document.fields;
+
+    // The invoice model has many fields. For details, *see* [Invoice model field extraction](../../prebuilt/invoice.md#field-extraction)
+    console.log("Vendor Name:", vendorName && vendorName.value);
+    console.log("Customer Name:", customerName && customerName.value);
+    console.log("Invoice Date:", invoiceDate && invoiceDate.value);
+    console.log("Due Date:", dueDate && dueDate.value);
+
+    console.log("Items:");
+    for (const item of (items && items.values) || []) {
+      const { productCode, description, quantity, date, unit, unitPrice, tax, amount } =
+        item.properties;
+
+      console.log("-", (productCode && productCode.value) || "<no product code>");
+      console.log("  Description:", description && description.value);
+      console.log("  Quantity:", quantity && quantity.value);
+      console.log("  Date:", date && date.value);
+      console.log("  Unit:", unit && unit.value);
+      console.log("  Unit Price:", unitPrice && unitPrice.value);
+      console.log("  Tax:", tax && tax.value);
+      console.log("  Amount:", amount && amount.value);
+    }
+
+    console.log("Subtotal:", subTotal && subTotal.value);
+    console.log("Previous Unpaid Balance:", previousUnpaidBalance && previousUnpaidBalance.value);
+    console.log("Tax:", totalTax && totalTax.value);
+    console.log("Amount Due:", amountDue && amountDue.value);
+  } else {
+    throw new Error("Expected at least one receipt in the result.");
+  }
+}
+
+
+main().catch((error) => {
+    console.error("An error occurred:", error);
+    process.exit(1);
+});
+```
+
+**Run your application**
+
+After you add a code sample to your application, run your program:
+
+1. Navigate to the folder where you have your Document Intelligence application (doc-intel-app).
+
+1. Type the following command in your terminal:
+
+    ```console
+    node index.js
+    ```

@@ -1,0 +1,53 @@
+# Source code: aspnetcore/fundamentals/app-state/3.0samples/RazorPagesContacts/Pages/Customers/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page
+@model IndexModel
+
+<h1>Index no Keep or Peek</h1>
+
+@{
+    if (TempData["Message"] != null)
+    {
+        <h3>Message: @TempData["Message"]</h3>
+    }
+}
+
+@*Content removed for brevity.*@
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Customer)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+```

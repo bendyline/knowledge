@@ -1,0 +1,48 @@
+---
+title: "SQL Server, Availability Group Object"
+description: "Learn about SQLServer:Availability Group performance object, which contains performance counters about Always On availability groups."
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 02/04/2026
+ms.service: sql
+ms.subservice: performance
+ms.topic: reference
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], monitoring"
+  - "performance counters [SQL Server], AlwaysOn Availability Groups"
+  - "performance counters [SQL Server], Always On Availability Groups"
+  - "SQLServer:Availability Group"
+  - "Availability Groups [SQL Server], performance counters"
+---
+# SQL Server, Availability Group object
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **SQLServer:Availability Group** performance object contains performance counters that report information about Always On availability groups in  SQL Server 
+.
+
+| Counter Name | Description |
+| --- | --- |
+| **Active Hadr Threads** | Number of active Hadr threads used by AG |
+
+## Examples
+
+You begin to explore the query performance counters in this object using this T-SQL query on the [sys.dm_os_performance_counters](../system-dynamic-management-objects/sys-dm-os-performance-counters-transact-sql.md) dynamic management view:
+
+```sql
+SELECT *
+FROM sys.dm_os_performance_counters
+WHERE object_name LIKE '%Availability Group%';
+```
+
+## Related content
+
+- [Monitor Resource Usage (Performance Monitor)](monitor-resource-usage-system-monitor.md)
+- [SQL Server, Availability Replica object](sql-server-availability-replica.md)
+- [What is an Always On availability group?](../../database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server.md)

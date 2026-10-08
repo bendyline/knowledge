@@ -1,0 +1,22 @@
+# Source code: samples/snippets/csharp/VS_Snippets_CFX/c_customx509token/cs/Project.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>net48</TargetFrameworks>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.IdentityModel" />
+  </ItemGroup>
+
+</Project>
+
+```

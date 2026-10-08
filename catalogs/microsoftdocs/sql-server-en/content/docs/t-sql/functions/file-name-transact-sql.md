@@ -1,0 +1,82 @@
+---
+title: "FILE_NAME (Transact-SQL)"
+description: "FILE_NAME (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/03/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "FILE_NAME_TSQL"
+  - "FILE_NAME"
+helpviewer_keywords:
+  - "viewing file names"
+  - "file names [SQL Server], FILE_NAME"
+  - "IDs [SQL Server], files"
+  - "file IDs [SQL Server]"
+  - "names [SQL Server], files"
+  - "displaying file names"
+  - "identification numbers [SQL Server], files"
+  - "FILE_NAME function"
+  - "logical file names [SQL Server]"
+dev_langs:
+  - "TSQL"
+---
+# FILE_NAME (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+This function returns the logical file name for a given file identification (ID) number, in the context of the current database.
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql  
+FILE_NAME ( file_id )   
+```  
+  
+## Arguments
+*file_id*  
+The file identification number whose file name `FILE_NAME` will return. *file_id* has an **int** data type.  
+  
+## Return Types  
+**nvarchar(128)**  
+  
+## Remarks  
+*file_ID* corresponds to the file_id column in the sys.master_files catalog view or the sys.database_files catalog view.  
+  
+## Examples  
+This example returns the file names for `file_ID 1` and `file_ID` in the  AdventureWorks2025  database.  
+  
+```sql  
+SELECT FILE_NAME(1) AS 'File Name 1', FILE_NAME(2) AS 'File Name 2';  
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+```
+File Name 1                File Name 2  
+-------------------------  ------------------------  
+AdventureWorks2022_Data    AdventureWorks2022_Log  
+
+(1 row(s) affected)
+``` 
+  
+## Related content
+
+- [FILE_IDEX (Transact-SQL)](file-idex-transact-sql.md)
+- [Metadata functions (Transact-SQL)](metadata-functions-transact-sql.md)
+- [sys.database_files (Transact-SQL)](../../relational-databases/system-catalog-views/sys-database-files-transact-sql.md)
+- [sys.master_files (Transact-SQL)](../../relational-databases/system-catalog-views/sys-master-files-transact-sql.md)

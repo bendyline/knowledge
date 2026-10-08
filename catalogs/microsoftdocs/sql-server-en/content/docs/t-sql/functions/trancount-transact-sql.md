@@ -1,0 +1,124 @@
+---
+title: "@@TRANCOUNT (Transact-SQL)"
+description: "@@TRANCOUNT (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "08/29/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "@@TRANCOUNT_TSQL"
+  - "@@TRANCOUNT"
+helpviewer_keywords:
+  - "@@TRANCOUNT function"
+  - "number of active transactions"
+  - "connections [SQL Server], active transactions"
+  - "active transactions"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# @@TRANCOUNT (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the number of BEGIN TRANSACTION statements that have occurred on the current connection.  
+  
+ 
+  
+## Syntax  
+  
+
+```syntaxsql  
+@@TRANCOUNT  
+```  
+
+> **Note:**
+>  This syntax is not supported by serverless SQL pool in Azure Synapse Analytics. 
+
+
+## Return Types
+ **integer**  
+  
+## Remarks  
+ The BEGIN TRANSACTION statement increments @@TRANCOUNT by 1. ROLLBACK TRANSACTION decrements @@TRANCOUNT to 0, except for ROLLBACK TRANSACTION *savepoint_name*, which does not affect @@TRANCOUNT. COMMIT TRANSACTION or COMMIT WORK decrement @@TRANCOUNT by 1.  
+  
+## Examples  
+  
+### A. Showing the effects of the BEGIN and COMMIT statements  
+ The following example shows the effect that nested `BEGIN` and `COMMIT` statements have on the `@@TRANCOUNT` variable.  
+  
+
+```sql  
+PRINT @@TRANCOUNT  
+--  The BEGIN TRAN statement will increment the  
+--  transaction count by 1.  
+BEGIN TRAN  
+    PRINT @@TRANCOUNT  
+    BEGIN TRAN  
+        PRINT @@TRANCOUNT  
+--  The COMMIT statement will decrement the transaction count by 1.  
+    COMMIT  
+    PRINT @@TRANCOUNT  
+COMMIT  
+PRINT @@TRANCOUNT  
+--Results  
+--0  
+--1  
+--2  
+--1  
+--0  
+```  
+  
+### B. Showing the effects of the BEGIN and ROLLBACK statements  
+ The following example shows the effect that nested `BEGIN TRAN` and `ROLLBACK` statements have on the `@@TRANCOUNT` variable.  
+  
+
+```sql  
+PRINT @@TRANCOUNT  
+--  The BEGIN TRAN statement will increment the  
+--  transaction count by 1.  
+BEGIN TRAN  
+    PRINT @@TRANCOUNT  
+    BEGIN TRAN  
+        PRINT @@TRANCOUNT  
+--  The ROLLBACK statement will clear the @@TRANCOUNT variable  
+--  to 0 because all active transactions will be rolled back.  
+ROLLBACK  
+PRINT @@TRANCOUNT  
+--Results  
+--0  
+--1  
+--2  
+--0  
+```  
+  
+## Related content
+
+- [BEGIN TRANSACTION (Transact-SQL)](../language-elements/begin-transaction-transact-sql.md)
+- [COMMIT TRANSACTION (Transact-SQL)](../language-elements/commit-transaction-transact-sql.md)
+- [ROLLBACK TRANSACTION (Transact-SQL)](../language-elements/rollback-transaction-transact-sql.md)
+- [System Functions by category for Transact-SQL](../../relational-databases/system-functions/system-functions-category-transact-sql.md)

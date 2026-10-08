@@ -1,0 +1,45 @@
+---
+title: "I/O Related Dynamic Management Views and Functions (Transact-SQL)"
+description: I/O Related Dynamic Management Views and Functions (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/16/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+helpviewer_keywords:
+  - "I/O [SQL Server], dynamic management objects"
+  - "dynamic management views [SQL Server]"
+  - "dynamic management objects [SQL Server], I/O"
+dev_langs:
+  - "TSQL"
+---
+# I/O Related Dynamic Management Views and Functions (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  This section contains the following dynamic management objects.  
+
+
+
+        [sys.dm_io_backup_tapes &#40;Transact-SQL&#41;](sys-dm-io-backup-tapes-transact-sql.md)
+
+        [sys.dm_io_pending_io_requests &#40;Transact-SQL&#41;](sys-dm-io-pending-io-requests-transact-sql.md)
+
+        [sys.dm_io_cluster_valid_path_names &#40;Transact-SQL&#41;](sys-dm-io-cluster-valid-path-names-transact-sql.md)
+    :::column-end:::
+    :::column:::
+        [sys.dm_io_cluster_shared_drives &#40;Transact-SQL&#41;](sys-dm-io-cluster-shared-drives-transact-sql.md)
+
+        [sys.dm_io_virtual_file_stats &#40;Transact-SQL&#41;](sys-dm-io-virtual-file-stats-transact-sql.md)
+    :::column-end:::
+
+  
+## Related content
+
+- [System dynamic management views and functions](system-dynamic-management-objects.md)
+- [Transact-SQL reference (Database Engine)](../../t-sql/language-reference.md)

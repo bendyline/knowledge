@@ -1,0 +1,10 @@
+---
+author: mattchenderson
+ms.service: azure-functions
+ms.topic: include
+ms.date: 02/29/2024
+ms.author: mahender
+---
+
+> **Important:**
+> [Support will end for the in-process model on November 10, 2026](https://aka.ms/azure-functions-retirements/in-process-model). We highly recommend that you [migrate your apps to the isolated worker model](https://learn.microsoft.com/azure/azure-functions/migrate-dotnet-to-isolated-model?tabs=net8) for full support.

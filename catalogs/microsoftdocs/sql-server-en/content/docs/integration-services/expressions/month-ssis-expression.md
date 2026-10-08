@@ -1,0 +1,76 @@
+---
+title: "MONTH (SSIS Expression)"
+description: "MONTH (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "dates [Integration Services], MONTH"
+  - "MONTH function"
+---
+# MONTH (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Returns an integer that represents the month datepart of a date.  
+  
+## Syntax  
+  
+```  
+  
+MONTH(date)  
+```  
+  
+## Arguments  
+ *date*  
+ Is a date in any date format.  
+  
+## Result Types  
+ DT_I4  
+  
+## Remarks  
+ MONTH returns a null result if the argument is null.  
+  
+ A date literal must be explicitly cast to one of the date data types. For more information, see [Integration Services Data Types](../data-flow/integration-services-data-types.md).  
+  
+> **Note:**  
+>  The expression fails to validate when a date literal is explicitly cast to one of these date data types: DT_DBTIMESTAMPOFFSET and DT_DBTIMESTAMP2.  
+  
+ Using the MONTH function is briefer but equivalent to using DATEPART("Month", date).  
+  
+## Expression Examples  
+ This example returns the number of the month in a date literal. If the date is in "mm/dd/yyyy" format, this example returns 11.  
+  
+```  
+MONTH((DT_DBTIMESTAMP)"11/23/2002")  
+```  
+  
+ This example returns the integer that represents the month in the **ModifiedDate** column.  
+  
+```  
+MONTH(ModifiedDate)  
+```  
+  
+ This example returns the integer that represents the month of the current date.  
+  
+```  
+MONTH(GETDATE())  
+```  
+  
+## Related content
+
+- [DATEADD (SSIS Expression)](dateadd-ssis-expression.md)
+- [DATEDIFF (SSIS Expression)](datediff-ssis-expression.md)
+- [DATEPART (SSIS Expression)](datepart-ssis-expression.md)
+- [DAY (SSIS Expression)](day-ssis-expression.md)
+- [YEAR (SSIS Expression)](year-ssis-expression.md)
+- [Functions (SSIS Expression)](functions-ssis-expression.md)

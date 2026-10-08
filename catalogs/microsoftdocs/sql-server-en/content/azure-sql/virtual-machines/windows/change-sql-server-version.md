@@ -1,0 +1,137 @@
+---
+title: In-Place Change of SQL Server Version
+description: Learn how to change the version of your SQL Server virtual machine in Azure.
+author: dplessMSFT
+ms.author: dpless
+ms.reviewer: sqlblt, daleche, mathoma, maghan
+ms.date: 09/17/2025
+ms.service: azure-vm-sql-server
+ms.subservice: management
+ms.topic: how-to
+ms.custom:
+  - sfi-image-nochange
+tags: azure-resource-manager
+---
+
+# In-place change of SQL Server version - SQL Server on Azure VMs
+
+
+
+  **Applies to:**    [SQL Server on Azure VM](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This article describes how to change the version of Microsoft SQL Server on a Windows virtual machine (VM) in Microsoft Azure.
+
+## Plan for a version upgrade
+
+Consider the following prerequisites before upgrading your version of SQL Server:
+
+1. Decide what version of SQL Server you want to upgrade to:
+   
+   - What's new in [SQL Server 2025](https://learn.microsoft.com/sql/sql-server/what-s-new-in-sql-server-2025)
+   - What's new in [SQL Server 2022](https://learn.microsoft.com/sql/sql-server/what-s-new-in-sql-server-2022)
+   - What's new in [SQL Server 2019](https://learn.microsoft.com/sql/sql-server/what-s-new-in-sql-server-ver15)
+   - What's new in [SQL Server 2017](https://learn.microsoft.com/sql/sql-server/what-s-new-in-sql-server-2017)
+
+1. We recommend that you check the [compatibility certification](https://learn.microsoft.com/sql/database-engine/install-windows/compatibility-certification) for the version that you change to so that you can use the database compatibility modes to minimize the upgrade's effect.
+1. You can review the following content to help ensure a successful outcome:
+
+   - [Video: Modernizing SQL Server](https://www.youtube.com/watch?v=5RPkuQHcxxs&feature=youtu.be)
+   - [Upgrading Databases by using the Query Tuning Assistant](https://learn.microsoft.com/sql/relational-databases/performance/upgrade-dbcompat-using-qta)
+   - [Change the Database Compatibility Level and use the Query Store](https://learn.microsoft.com/sql/database-engine/install-windows/change-the-database-compatibility-mode-and-use-the-query-store)
+
+## Prerequisites
+
+To do an in-place upgrade of SQL Server, you need the following:
+
+- SQL Server installation media. Customers who have [Software Assurance](https://www.microsoft.com/licensing/licensing-programs/software-assurance-default) can obtain their installation media from the [Volume Licensing Center](https://www.microsoft.com/Licensing/servicecenter/default.aspx). Customers who don't have Software Assurance can deploy an Azure Marketplace SQL Server VM image with the desired version of SQL Server, and then copy the setup media (typically located in `C:\SQLServerFull`) from it to their target SQL Server VM.
+- Version upgrades should follow the [support upgrade paths](https://learn.microsoft.com/sql/database-engine/install-windows/supported-version-and-edition-upgrades-version-15).
+
+## Delete the extension
+
+Before you modify the edition of SQL Server, be sure to [delete the SQL IaaS Agent extension](sql-agent-extension-manually-register-single-vm.md#delete-the-extension) from the SQL Server VM. You can do so with the Azure portal, PowerShell, or the Azure CLI.
+
+To delete the extension from your SQL Server VM with Azure PowerShell, use the following sample command:
+
+```powershell-interactive
+Remove-AzSqlVM -ResourceGroupName <resource_group_name> -Name <SQL VM resource name>
+```
+
+## Upgrade SQL Version
+
+> **Warning:**  
+> Upgrading the version of SQL Server restarts the SQL Server service, in addition to any associated services, such as Analysis Services and R Services.
+
+To upgrade the version of SQL Server, obtain the SQL Server setup media for the later version that would [support the upgrade path](https://learn.microsoft.com/sql/database-engine/install-windows/supported-version-and-edition-upgrades-version-15) of SQL Server and do the following steps:
+
+1. Back up the databases, including the system (except `tempdb`) and user databases before you start the process. You can also create an application-consistent VM-level backup by using Azure Backup Services.
+1. Start `Setup.exe` from the SQL Server installation media.
+1. The Installation Wizard starts the SQL Server Installation Center. To upgrade an existing instance of SQL Server, select **Installation** on the navigation pane, and then select **Upgrade from an earlier version of SQL Server**.
+
+   Selection for upgrading the version of SQL Server.
+
+1. On the **Product Key** page, select an option to indicate whether you're upgrading to a free edition of SQL Server or you have a PID key for a production version of the product. 
+1. Select **Next** until you reach the **Ready to upgrade** page, and then select **Upgrade**. The setup window might stop responding for several minutes while the change is taking effect. A **Complete** page confirms that your upgrade is completed. For a step-by-step procedure to upgrade, see [the complete procedure](https://learn.microsoft.com/sql/database-engine/install-windows/upgrade-sql-server-using-the-installation-wizard-setup#procedure).
+
+   Complete page.
+
+If you have changed the SQL Server edition in addition to changing the version, also update the edition, and refer to the [verify version and edition](#verify-the-version-and-edition-in-the-portal) section to change the SQL VM instance.
+
+Change version metadata.
+
+## Downgrade the version of SQL Server
+
+> **Warning:**  
+> An in-place downgrade of SQL Server isn't supported.
+
+To downgrade the version of SQL Server, you have to completely uninstall SQL Server, and reinstall it again by using the desired version. This is similar to a fresh installation of SQL Server because you can't restore the earlier database from a later version to the newly installed earlier version. The databases have to be recreated from scratch. If you also changed the edition of SQL Server during the upgrade, change the **Edition** property of the SQL Server VM in the Azure portal to the new edition value. This updates the metadata and billing that is associated with this VM.
+
+You can downgrade the version of SQL Server by following these steps:
+
+1. Back up all databases, including system (except `tempdb`) and user databases.
+1. Export all the necessary server-level objects (such as server triggers, roles, logins, linked servers, jobs, credentials, and certificates).
+1. If you don't have scripts to re-create your user databases on the earlier version, you must script out all objects and export all data by using BCP.exe, SSIS, or DACPAC.
+
+   Ensure you select the correct options when you script such items as the target version, dependent objects, and advanced options.
+
+   Scripting options.
+
+1. Completely uninstall SQL Server and all associated services.
+1. Restart the VM.
+1. Install SQL Server by using the media for the desired version of the program.
+1. Install the latest service packs and cumulative updates.
+1. Import all the necessary server-level objects (that were exported in Step 3).
+1. Recreate all the necessary user databases from scratch (by using created scripts or the files from Step 4).
+
+## Register with the extension
+
+After you've successfully changed the edition of SQL Server, you must register your SQL Server VM with the [SQL IaaS Agent extension](sql-agent-extension-manually-register-single-vm.md#register-with-extension) again to manage it from the Azure portal.
+
+Register a SQL Server VM with Azure PowerShell:
+
+```powershell-interactive
+# Get the existing Compute VM
+$vm = Get-AzVM -Name <vm_name> -ResourceGroupName <resource_group_name>
+
+New-AzSqlVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName -Location $vm.Location `
+-LicenseType <license_type>
+```
+
+## Verify the version and edition in the portal
+
+After you change the version of SQL Server, register your SQL Server VM with the [SQL IaaS Agent extension](sql-agent-extension-manually-register-single-vm.md) again so that you can use the Azure portal to view the version of SQL Server. The listed version number should now reflect your SQL Server installation's newly upgraded version and edition.
+
+Verify version.
+
+## Remarks
+
+- We recommend that you initiate backups/update statistics/rebuild indexes/check consistency after the upgrade is finished. You can also check the individual database compatibility levels to ensure they reflect your desired level.
+- After SQL Server is updated on the VM, make sure that the **Edition** property of SQL Server in the Azure portal matches the installed edition number for billing.
+- The ability to [change the edition](change-sql-server-edition.md#change-edition-property-for-billing) is a feature of the SQL IaaS Agent extension. Deploying an Azure Marketplace image through the Azure portal automatically registers a SQL Server VM with the extension. However, customers who self-install SQL Server have to manually [Register their SQL Server VM](sql-agent-extension-manually-register-single-vm.md).
+- If you drop your SQL Server VM resource, the hard-coded edition setting of the image is restored.
+
+## Related content
+
+- [What is SQL Server on Azure Windows Virtual Machines?](sql-server-on-azure-vm-iaas-what-is-overview.md)
+- [FAQ for SQL Server on Windows VMs](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/virtual-machines/windows/frequently-asked-questions-faq.yml)
+- [Pricing guidance for SQL Server on Azure VMs](pricing-guidance.md)
+- [What's new with SQL Server on Azure Virtual Machines?](doc-changes-updates-release-notes-whats-new.md)

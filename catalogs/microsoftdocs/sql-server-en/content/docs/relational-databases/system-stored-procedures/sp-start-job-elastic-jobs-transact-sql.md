@@ -1,0 +1,63 @@
+---
+title: "jobs.sp_start_job (Azure Elastic Jobs) (Transact-SQL)"
+description: "jobs.sp_start_job starts an existing job in the Azure Elastic Jobs service for Azure SQL Database."
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: randolphwest
+ms.date: 06/23/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current"
+---
+# jobs.sp_start_job (Azure Elastic Jobs) (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Starts an existing job in the [Azure Elastic Jobs service for Azure SQL Database](https://learn.microsoft.com/azure/azure-sql/database/elastic-jobs-overview?view=azuresql-db\&preserve-view=true).
+
+This stored procedure shares the name of `sp_start_job` with a similar object in  SQL Server 
+ for the  SQL Server 
+ Agent service. For information about the  SQL Server 
+ Agent version, see [sp_start_job](sp-start-job-transact-sql.md).
+
+
+
+## Syntax
+
+```syntaxsql
+[jobs].sp_start_job [ @job_name = ] 'job_name'
+     [ , [ @job_execution_id = ] job_execution_id OUTPUT ]
+```
+
+## Arguments
+
+#### @job_name
+
+The name of the job to start. *job_name* is nvarchar(128), with no default.
+
+#### @job_execution_id
+
+Output parameter that will be assigned the job execution's ID. *job_version* is uniqueidentifier.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Permissions
+
+By default, members of the **sysadmin** fixed server role can execute this stored procedure. Only members of sysadmin can use this stored procedure to edit the attributes of jobs that are owned by other users.
+
+## Related content
+
+- [Elastic jobs in Azure SQL Database](https://learn.microsoft.com/azure/azure-sql/database/elastic-jobs-overview?view=azuresql-db\&preserve-view=true)
+- [Create, configure, and manage elastic jobs](https://learn.microsoft.com/azure/azure-sql/database/elastic-jobs-tutorial?view=azuresql-db\&preserve-view=true)
+- [Create and manage elastic jobs by using T-SQL](https://learn.microsoft.com/azure/azure-sql/database/elastic-jobs-tsql-create-manage?view=azuresql-db\&preserve-view=true)

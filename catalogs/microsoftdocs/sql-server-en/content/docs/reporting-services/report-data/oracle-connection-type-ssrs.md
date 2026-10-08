@@ -1,0 +1,212 @@
+---
+title: Set up the Oracle connection type with SSRS and a Power BI report server
+description: Learn how to build a data source with the Oracle connection type in your Reporting Services or Power BI report server.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+# customer intent: As an Oracle database user, I want to learn how to connect a database to my report server so that I can use that data in my reports.
+---
+# Set up the Oracle connection type with SSRS and a Power BI report server
+
+  **Applies to:**
+ 
+ Reporting Services and later versions
+ 
+
+To use data from an Oracle database in your report, you must have a dataset based on a report data source of type Oracle. This built-in data source type uses the Oracle Data Provider directly and requires an Oracle client software component. This article explains how to download and install drivers for Reporting Services, Power BI Report Server, Report Builder, and Power BI Desktop.
+
+Use the information in this article to build a data source. For step-by-step instructions, see [Add and verify a data connection (Report Builder and SSRS)](add-and-verify-a-data-connection-report-builder-and-ssrs.md).
+
+> **Important:**
+> The following commands that use Oracle's OraProvCfg.exe tool to register Oracle's Managed and Unmanaged ODP.NET drivers are provided as examples for use with the above Microsoft products. For the configuration of the ODP.NET drivers specific to your environment, you might need to contact Oracle support or reference Oracle's documentation for [Configuring Oracle Data Provider for .NET](https://docs.oracle.com/en/database/oracle/oracle-database/19/odpnt/InstallConfig.html#GUID-1F689B90-2CC4-4907-B8FE-A5F4EE36F673).
+
+## 64-bit drivers for the report servers
+
+On the Oracle download site, install the [Oracle 64-bit ODAC Oracle Universal Installer (OUI)](https://www.oracle.com/database/technologies/net-downloads.html). You only need the following steps for Oracle Data Access Components (ODAC) drivers 12.2 and later. Otherwise, they install by default to a non-machine-wide configuration for a new Oracle home installation.
+
+Prerequisite: Install the ODAC 18.x files to the c:\oracle64 folder.
+
+### Paginated (RDL) reports use Managed ODP.NET
+
+Power BI Report Server and SQL Server Reporting Services 2016 and later all use Managed ODP.NET for paginated (RDL) reports.
+
+Register Managed ODP.NET:
+
+1. Register ODP.NET Managed Client to the Global Assembly Cache (GAC):
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:gac /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\managed\common\Oracle.ManagedDataAccess.dll
+    ```
+
+1. Add ODP.NET Managed Client entries to machine.config:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:config /force /product:odpm /frameworkversion:v4.0.30319 /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\managed\common\Oracle.ManagedDataAccess.dll
+    ```
+
+### Power BI reports use Unmanaged ODP.NET
+
+Power BI Report Server uses Unmanaged ODP.NET for Power BI reports.
+
+Register Unmanaged ODP.NET:
+
+1. Register ODP.NET Unmanaged Client to GAC:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:gac /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\Oracle.DataAccess.dll
+    ```
+
+1. Add ODP.NET Unmanaged Client entries to machine.config:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:config /force /product:odp /frameworkversion:v4.0.30319 /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\Oracle.DataAccess.dll
+    ```
+
+## 32-bit drivers for Report Builder
+
+[Microsoft Report Builder](https://www.microsoft.com/download/details.aspx?id=53613) uses Managed ODP.NET for authoring paginated (RDL) reports. You only need the following steps for Oracle ODAC drivers 12.2 and later. Otherwise, they install by default to a non-machine-wide configuration for a new Oracle home installation.
+
+Prerequisite: Install the ODAC 18.x files to the c:\oracle32 folder where Microsoft Report Builder is installed.
+
+Register Managed ODP.NET:
+
+1. Install the [Oracle "ODAC with Oracle Developer Tools for Visual Studio - OUI" (32-bit)](https://www.oracle.com/database/technologies/net-downloads.html) on the Oracle download site.
+
+1. Register ODP.NET Managed Client to GAC:
+
+    ``` cmd
+    C:\oracle32\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:gac /providerpath:C:\oracle32\product\18.0.0\client_1\odp.net\managed\common\Oracle.ManagedDataAccess.dll
+    ```
+1. Add ODP.NET Managed Client entries to machine.config:
+
+    ``` cmd
+    C:\oracle32\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:config /force /product:odpm /frameworkversion:v4.0.30319 /providerpath:C:\oracle32\product\18.0.0\client_1\odp.net\managed\common\Oracle.ManagedDataAccess.dll
+    ```
+
+## 64-bit drivers for Report Builder
+
+> **Note:**
+> The following instructions apply to Power BI Report Builder version 15.7.01678.0001 and later as well as Microsoft Report Builder version 15.1.20318.47 and later. For previous versions, follow the **32-bit drivers for Report Builder** instructions.
+
+[Power BI Report Builder](https://www.microsoft.com/download/details.aspx?id=105942) uses Managed ODP.NET for authoring paginated (RDL) reports. You only need the following steps for Oracle ODAC drivers 12.2 and later. Otherwise, they install by default to a non-machine-wide configuration for a new Oracle home installation.
+
+Prerequisite: Install the ODAC 18.x files to the c:\oracle64 folder where Power BI Report Builder is installed.  
+
+Register Managed ODP.NET:
+
+1. Install the [Oracle 64-bit ODAC Oracle Universal Installer (OUI)](https://www.oracle.com/database/technologies/net-downloads.html) on the Oracle download site.
+
+1. Register ODP.NET Managed Client to GAC:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:gac /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\managed\common\Oracle.ManagedDataAccess.dll
+    ```
+
+1. Add ODP.NET Managed Client entries to machine.config:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:config /force /product:odpm /frameworkversion:v4.0.30319 /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\managed\common\Oracle.ManagedDataAccess.dll
+    ```
+
+## 64-bit and 32-bit drivers for Power BI Desktop
+
+Power BI Desktop uses Unmanaged ODP.NET for authoring Power BI reports. You only need the following steps for Oracle ODAC drivers 12.2 and later. Otherwise, they install by default to a non-machine-wide configuration for a new Oracle home installation.
+
+Prerequisite: Install the ODAC 18.x files to the c:\oracle64 folder for 64-bit Power BI Desktop or the c:\oracle32 folder for 32-bit Power BI Desktop.  
+
+Register Unmanaged ODP.NET:
+
+### 64-bit Power BI Desktop
+
+1. Install the [Oracle 64-bit ODAC Oracle Universal Installer (OUI)](https://www.oracle.com/database/technologies/net-downloads.html) on the Oracle download site.
+
+1. Register ODP.NET Unmanaged Client to GAC:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:gac /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\Oracle.DataAccess.dll
+    ```
+
+1. Add ODP.NET Unmanaged Client entries to machine.config:
+
+    ``` cmd
+    C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:config /force /product:odp /frameworkversion:v4.0.30319 /providerpath:C:\oracle64\product\18.0.0\client_1\odp.net\bin\4\Oracle.DataAccess.dll
+    ```
+
+### 32-bit Power BI Desktop
+
+1. Install the [Oracle "ODAC with Oracle Developer Tools for Visual Studio - OUI" (32-bit)](https://www.oracle.com/database/technologies/net-downloads.html) on the Oracle download site.
+
+1. Register ODP.NET Unmanaged Client to GAC:
+
+    ``` cmd
+    C:\oracle32\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:gac /providerpath:C:\oracle32\product\18.0.0\client_1\odp.net\bin\4\Oracle.DataAccess.dll
+    ```
+
+1. Add ODP.NET Unmanaged Client entries to machine.config:
+
+    ``` cmd
+    C:\oracle32\product\18.0.0\client_1\odp.net\bin\4\OraProvCfg.exe /action:config /force /product:odp /frameworkversion:v4.0.30319 /providerpath:C:\oracle32\product\18.0.0\client_1\odp.net\bin\4\Oracle.DataAccess.dll
+    ```
+
+## <a name="Connection"></a> Connection string  
+
+Contact your database administrator for connection information and for the credentials to connect to the data source. The following connection string example specifies an Oracle database on the server named `Oracle18` by using Unicode. The server name must match the definition in the Tnsnames.ora configuration file as the Oracle server instance name:
+  
+``` C#
+Data Source="Oracle18"; Unicode="True"  
+```  
+  
+For more connection string examples, see [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md).  
+  
+## <a name="Credentials"></a> Credentials  
+
+Credentials are required to run queries, preview the report locally, and preview the report from the report server.  
+  
+After you publish your report, you might need to change the credentials for the data source so that when the report runs on the report server, the permissions to retrieve the data are valid.  
+  
+For more information, see [Specify credential and connection information for report data sources](specify-credential-and-connection-information-for-report-data-sources.md).  
+  
+## <a name="Query"></a> Queries  
+
+To create a dataset, you can either select a stored procedure from a dropdown list or create a SQL query. To build a query, you must use the text-based query designer. For more information, see [Text-based query designer user interface (Report Builder)](text-based-query-designer-user-interface-report-builder.md).  
+  
+You can specify stored procedures that return only one result set. Cursor-based queries aren't supported.  
+  
+## <a name="Parameters"></a> Parameters  
+
+If the query includes query variables, corresponding report parameters are automatically generated. This extension supports named parameters. For Oracle version 9 or later, multi-value parameters are supported.  
+  
+Report parameters are created with default property values that you might need to modify. For example, each report parameter is data type Text. After the report parameters are created, you might have to change default values. For more information, see [Paginated report parameters in Report Builder](../report-design/report-parameters-report-builder-and-report-designer.md).  
+  
+## <a name="Remarks"></a> Remarks  
+
+Before you can connect an Oracle data source, the system administrator must install the version of the .NET Data Provider for Oracle that supports retrieving data from the Oracle database. You must install the data provider on the same computer as Report Builder and also on the report server.
+  
+For more information, see the following articles:  
+  
+- [Configure Oracle data source for SQL Server Reporting Services (SSDT and Report Server)](https://learn.microsoft.com/archive/blogs/dataaccesstechnologies/configure-oracle-data-source-for-sql-server-reporting-services-ssdt-and-report-server)  
+- [Reporting Services can't run reports against Oracle databases](https://mskb.pkisolutions.com/kb/870668)  
+  
+### Alternate data extensions
+
+You can retrieve data from an Oracle database by using an OLE DB data source type. For more information, see [OLE DB connection type (SSRS)](ole-db-connection-type-ssrs.md).  
+
+**Applies to: \>=sql-server-2017**
+
+### Report models
+
+ You can create models based on an Oracle database.  
+
+
+### Platform and version information  
+
+For more information about platform and version support, see [Data sources supported by reporting Services (SSRS)](data-sources-supported-by-reporting-services-ssrs.md).  
+
+## Related content
+
+- [Paginated report parameters in Report Builder](../report-design/report-parameters-report-builder-and-report-designer.md)
+- [Filter, group, and sort data in Report Builder paginated reports](../report-design/filter-group-and-sort-data-report-builder-and-ssrs.md)
+- [Expressions in a paginated report (Report Builder)](../report-design/expressions-report-builder-and-ssrs.md)

@@ -1,0 +1,160 @@
+---
+title: Limitations and Unsupported Features in mssql-django
+description: Limitations and unsupported features of the mssql-django Django backend for SQL Server.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, sharmag, sumitsar
+ms.date: 09/18/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+ai-usage: ai-assisted
+---
+
+# Limitations and unsupported features in mssql-django
+
+This article lists limitations of the `mssql-django` backend when used with SQL Server, Azure SQL Database, Azure SQL Managed Instance, and SQL database in Microsoft Fabric.
+
+## Django feature limitations
+
+The following Django features aren't supported or have limited support with the `mssql-django` backend:
+
+| Feature | Status | Details |
+| --- | --- | --- |
+| `Avg` with `DurationField` | Not supported | Aggregate `Avg` doesn't work on `DurationField`. |
+| `__regex` and `__iregex` lookups | Requires setup | Supported after installing the CLR assembly on SQL Server or Azure SQL Managed Instance. Azure SQL Database doesn't support CLR assemblies. See [Set up regex lookups](#set-up-regex-lookups). |
+| `DISTINCT ON` | Not supported | SQL Server doesn't support `DISTINCT ON` clauses. Use `.values().distinct()` or subqueries. |
+| `Subquery` in `ORDER BY` | Not supported | Ordering by subquery expressions might not work. |
+| Database-level `CASCADE` | Limited | Some `SET NULL` and `SET DEFAULT` operations can require manual migration SQL. |
+| `DB_CASCADE`, `DB_SET_NULL`, `DB_SET_DEFAULT` | Not supported | Database-level referential actions added in Django 6.1. SQL Server rejects foreign key graphs with multiple cascade paths to the same table (error 1785), so there's no native path for this feature on any SQL Server version. Using one of these values raises the Django system check `fields.E324`. Use the standard Django-level `on_delete` instead. |
+| `BitAnd`, `BitOr`, `BitXor` | Not supported | Bitwise aggregates added in Django 6.1. SQL Server has no native bitwise aggregate function, and the backend doesn't emulate them, so these aggregates raise `NotSupportedError`. |
+| `is_dst` in `Trunc`/`Extract` | Not supported | `is_dst` parameter (used to resolve ambiguous times during daylight saving transitions) in `Extract()` and `Trunc()` isn't supported. Use `AT TIME ZONE` in raw SQL for DST-aware queries. |
+| Floating point annotate | Limited | Floating point `Avg` aggregates can lose precision compared to PostgreSQL due to SQL Server's **float** type behavior. For example, averaging 0.1 and 0.2 might yield 0.15000000000000000222 instead of exactly 0.15. Use `DecimalField` or `Cast(avg_expr, output_field=DecimalField())` for critical financial calculations. |
+| Annotate/exists in `ORDER BY` | Not supported | Using annotate or exists expressions in `order_by` might not work. |
+| Right-hand power and datetime arithmetic | Not supported | Right-hand power operations (for example, `F('value') ** 2` works but `2 ** F('value')` fails) and division with `timedelta` aren't supported. |
+| Time zones and timedeltas | Limited | Time zones and timedeltas aren't fully supported. See [Time zone support in mssql-django](timezone-support.md). |
+| `QuerySet.iterator()` without MARS | Limited | The mssql-python path doesn't enable Multiple Active Result Sets (MARS). On the pyodbc path, MARS is enabled by default with a Microsoft ODBC driver on Windows, and `MARS_Connection` in `extra_params` is honored case-insensitively. When MARS is off, `QuerySet.iterator()` buffers the whole result in memory before yielding. `chunk_size` doesn't change this behavior. |
+| `NthValue` window function | Not supported | SQL Server doesn't support `NTH_VALUE()`. Use `FIRST_VALUE`, `LAST_VALUE`, or a subquery. |
+| `ignore_conflicts` in `bulk_create` | Not supported | `bulk_create(objs, ignore_conflicts=True)` isn't supported. SQL Server has no equivalent to PostgreSQL's `ON CONFLICT DO NOTHING`. |
+| JSONField `contains` lookup | Not supported | Use key-path lookups instead (for example, `filter(metadata__color="blue")`). See [JSONField limitations](#jsonfield-limitations). |
+| `select_for_update(of=(...))` | Not supported | SQL Server doesn't support locking specific tables. The backend raises `NotSupportedError`. See [Transaction management](transactions.md#differences-from-postgresql). |
+
+## Migration limitations
+
+| Limitation | Details |
+| --- | --- |
+| Alter `AutoField` | Can't change a field to or from `AutoField` (IDENTITY column). Requires creating a new table. |
+| Rename with foreign keys | Renaming a column that has foreign key constraints can fail. Use `SeparateDatabaseAndState`. |
+| `AddConstraint`/`RemoveConstraint` conflicts | Some constraint operations can conflict. Apply in separate migrations. |
+| Date extract operations | `ExtractYear`, `ExtractMonth`, and similar operations have limited `tzinfo` support. |
+
+## JSONField limitations
+
+- `mssql-django` maps `JSONField` to **nvarchar(max)**. SQL Server 2025 introduced a native **json** type, but the Microsoft ODBC Driver for SQL Server doesn't expose it.
+- The `contains` lookup isn't supported. Use key-path lookups instead (for example, `filter(metadata__color="blue")`).
+- Quoted string values return with extra quotes (for example, `'"value"'` instead of `'value'`).
+- Some nested lookups might behave differently than on PostgreSQL.
+- For more information, see [JSONField with SQL Server](json-field.md).
+
+## inspectdb limitations
+
+- Composite primary keys aren't generated as `unique_together` automatically.
+- Some SQL Server-specific column types might map to generic Django fields.
+- Review and adjust generated models manually.
+- For more information, see [Reverse-engineer models with inspectdb](inspectdb.md).
+
+## SQL Server parameter limit
+
+SQL Server limits each query to a maximum of 2,100 parameters. This limit affects Django operations that generate parameterized queries with large value lists:
+
+| Operation | How it hits the limit |
+| --- | --- |
+| `filter(field__in=large_list)` | Each list item becomes a parameter. The backend auto-optimizes lists over 2,048 items into a temp table. |
+| `prefetch_related()` | Each parent object ID becomes a parameter in the related query's `WHERE IN` clause. Auto-optimized like `filter(field__in=...)` when over 2,048 IDs. |
+| `bulk_create()` | Each field of each object becomes a parameter. A model with 10 fields and 250 objects generates 2,500 parameters. |
+| `bulk_update()` | Each field uses two parameters per object (one for the PK match, one for the value). |
+| `Q()` with many conditions | Each value in chained `Q` objects becomes a parameter. |
+
+Set `batch_size` on bulk operations and chunk large `IN` queries. See [Performance tuning](performance-tuning.md#work-within-the-2100-parameter-limit) for solutions.
+
+## Bulk operations limitations
+
+- `bulk_create` with `return_rows_bulk_insert=False` doesn't return IDs. Required for tables with triggers. See [Bulk operations with mssql-django](bulk-operations.md).
+
+## Test framework limitations
+
+`--keepdb` is required when using managed identity authentication (`ActiveDirectoryMsi`) because the test runner can't create or destroy databases with that auth method.
+
+For more information, see [Test Django apps with SQL Server](testing.md).
+
+## Version-specific notes
+
+| mssql-django version | Notes |
+| --- | --- |
+| 2.0 | Supports Python 3.10 through 3.14, Django 5.2, 6.0, and 6.1, SQL Server 2017, 2019, 2022, and 2025, Azure SQL Database, Azure SQL Managed Instance, and SQL database in Microsoft Fabric. Adds the mssql-python driver path while keeping pyodbc as the default. For more information, see [Select the database driver for mssql-django](select-database-driver.md). |
+| 1.8.0 | Use this version for projects that require Python 3.8, Python 3.9, or a Django version earlier than 5.2. |
+
+The tested mssql-django 2.0 combinations are Django 5.2 with Python 3.10 through 3.13, and Django 6.0 or 6.1 with Python 3.12 through 3.14. If the backend connects to an unrecognized newer SQL Server major version, it uses the latest capability set it knows instead of failing version validation. This behavior doesn't declare untested features supported.
+
+## Django version-specific notes
+
+| Django version | Notes |
+| --- | --- |
+| 5.2 | `CompositePrimaryKey` support is partial. `inspectdb` still requires manual fixes, tuple comparison against subqueries requires Django 5.2.4 and later versions, and some migration plus JSONField bulk/CASE WHEN update paths still have test exclusions. For more information, see the [GitHub repository](https://github.com/microsoft/mssql-django). |
+| 6.0 | Requires Python 3.12 and later versions. All 5.2 limitations apply. The backend handles all 6.0 API changes transparently. |
+| 6.1 | Requires Python 3.12 and later versions. All 6.0 limitations apply. Requires `mssql-django` 1.8.0 and later versions. Database-level referential actions (`DB_CASCADE`, `DB_SET_NULL`, `DB_SET_DEFAULT`) and bitwise aggregates (`BitAnd`, `BitOr`, `BitXor`) aren't supported. |
+
+## Set up regex lookups
+
+The `mssql-django` backend supports Django's `__regex` and `__iregex` lookups, but they require a one-time setup step. The backend ships a CLR assembly (`regex_clr.dll`) that provides a `dbo.REGEXP_LIKE` function to SQL Server.
+
+### Prerequisites
+
+- A SQL Server instance that supports CLR integration. On-premises SQL Server and Azure SQL Managed Instance support CLR. **Azure SQL Database doesn't support CLR assemblies**, so `__regex` and `__iregex` lookups aren't available on Azure SQL Database.
+- The connecting user must have `sysadmin` or `ALTER SETTINGS` permission. The management command enables CLR automatically.
+- The `mssql` app must be in `INSTALLED_APPS`.
+
+### Install the CLR assembly
+
+Run the management command, passing your database name:
+
+```bash
+python manage.py install_regex_clr <database>
+```
+
+This command performs the following steps:
+
+1. Enables CLR on the server (`sp_configure 'clr enabled', 1`) if not already enabled.
+1. Sets `clr strict security` to `0` (required for `SAFE` assemblies on SQL Server 2017 and later versions).
+1. Creates the `regex_clr` assembly from the bundled DLL.
+1. Creates the `dbo.REGEXP_LIKE` scalar function.
+
+> **Caution:**  
+> Setting `clr strict security` to `0` allows unsigned CLR assemblies to load. This is required because the bundled `regex_clr.dll` isn't signed. Discuss this change with your DBA before running the command on production servers. The setting applies server-wide, not per-database.
+
+### Use regex lookups
+
+After installing the assembly, use `__regex` and `__iregex` in querysets:
+
+```python
+# Case-sensitive regex
+products = Product.objects.filter(name__regex=r"^Widget\s\d+$")
+
+# Case-insensitive regex
+products = Product.objects.filter(name__iregex=r"^widget\s\d+$")
+```
+
+The backend translates these lookups to `dbo.REGEXP_LIKE(column, pattern, case_flag) = 1`.
+
+> **Important:**  
+> `dbo.REGEXP_LIKE` ignores literal whitespace in the pattern. A pattern such as `^Widget \d+$` matches as though it were `^Widget\d+$`, so it returns no rows against the value `Widget 42`. Write spaces as `\s` or as a character class such as `[ ]`. Nothing raises, so the empty result looks like a data problem.
+
+> **Note:**  
+> You must run the `install_regex_clr` command once per database. If the database is dropped and recreated (for example, during testing), run the command again.
+
+## Related content
+
+- [Troubleshoot mssql-django](troubleshooting.md)
+- [FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/connect/python/mssql-django/faq.yml)
+- [mssql-django support and lifecycle](support-lifecycle.md)
+- [GitHub issues](https://github.com/microsoft/mssql-django/issues)

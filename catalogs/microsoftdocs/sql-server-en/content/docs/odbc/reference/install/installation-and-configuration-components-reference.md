@@ -1,0 +1,27 @@
+---
+title: "Installation and Configuration Components Reference"
+description: "Installation and Configuration Components Reference"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+ms.custom: intro-installation
+---
+# Installation and Configuration Components Reference
+> **Note:**  
+>  Starting with Windows XP and Windows Server 2003, ODBC is included in the Windows operation system. You should only explicitly install ODBC on earlier versions of Windows.  
+  
+ The following sections provide information about the components used to install and configure ODBC.  
+  
+-   [Administration Program](administration-program.md)  
+  
+-   [Driver Setup DLL](driver-setup-dll.md)  
+  
+-   [Installer DLL](installer-dll.md)  
+  
+-   [Setup Program](setup-program.md)  
+  
+-   [Translator Setup DLLs](translator-setup-dlls.md)

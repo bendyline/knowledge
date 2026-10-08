@@ -1,0 +1,36 @@
+# Source code: docs/core/tutorials/snippets/create-class-library/csharp/ShowCase/Program.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+using System;
+using UtilityLibraries;
+
+int row = 0;
+
+do
+{
+    if (row == 0 || row >= 25)
+        ResetConsole();
+
+    string? input = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(input)) break;
+    Console.WriteLine($"Input: {input} {"Begins with uppercase? ",30}: " +
+                      $"{(input.StartsWithUpper() ? "Yes" : "No")}{Environment.NewLine}");
+    row += 3;
+} while (true);
+return;
+
+// Declare a ResetConsole local method
+void ResetConsole()
+{
+    if (row > 0)
+    {
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
+    }
+    Console.Clear();
+    Console.WriteLine($"{Environment.NewLine}Press <Enter> only to exit; otherwise, enter a string and press <Enter>:{Environment.NewLine}");
+    row = 3;
+}
+```

@@ -1,0 +1,53 @@
+---
+title: Rollback Member Revision History
+description: Rollback Member Revision History (Master Data Services)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - build-2025
+---
+# Rollback Member Revision History (Master Data Services)
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  A member revision history is recorded each time a member is changed. You can rollback a member revision history to a previous version.  
+  
+## Prerequisites  
+  
+-   You must have permission to update at least one of the attributes of the selected member. When you rollback a revision history, all the attribute values that can be updated will be rolled back to the previous version values.  
+  
+-   Revision history is available only when the transaction log type of the entity is member.  
+  
+ **To rollback a member revision history**  
+  
+1.  In Master Data Manager, click Explorer.  
+  
+2.  Choose the entity and the member to rollback.  
+  
+3.  Click **View History.**  
+  
+4.  Choose the revision to rollback, and then click **Rollback**.  
+  
+## Related content
+
+- [Member Revision History (Master Data Services)](member-revision-history-master-data-services.md)
+- [Change the Entity Transaction Log Type (Master Data Services)](change-the-entity-transaction-log-type-master-data-services.md)

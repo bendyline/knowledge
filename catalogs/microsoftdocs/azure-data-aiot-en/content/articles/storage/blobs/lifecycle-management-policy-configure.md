@@ -1,0 +1,193 @@
+---
+title: Configure a lifecycle management policy
+titleSuffix: Azure Blob Storage
+description: Configure a lifecycle management policy to automatically move data between hot, cool, cold, and archive tiers during the data lifecycle.
+author: normesta
+ms.author: normesta
+ms.date: 08/19/2026
+ms.service: azure-blob-storage
+ms.topic: concept-article
+ms.reviewer: yzheng
+ms.custom: devx-track-azurepowershell, devx-track-azurecli, copilot-scenario-highlight
+ms.devlang: azurecli
+# Customer intent: "As a cloud storage administrator, I want to configure lifecycle management policies for blob storage, so that I can automatically transition or delete data based on access patterns to optimize storage costs and improve data management."
+---
+
+# Configure a lifecycle management policy
+
+This article shows you how to create or manage an Azure Blob Storage lifecycle management policy. 
+
+Use lifecycle management policies to transition blobs to cost-efficient access tiers based on their use patterns or delete them at the end of their lifecycle. To learn more, see [Azure Blob Storage lifecycle management overview](lifecycle-management-overview.md).
+
+> **Note:**
+> You must read or write a lifecycle management policy in full. The service doesn't support partial updates.
+
+> **Tip:**
+> Use Azure Copilot to help author lifecycle management policies. For more information, see [Manage and migrate storage accounts using Azure Copilot](https://learn.microsoft.com/azure/copilot/improve-storage-accounts#reduce-storage-costs).
+
+## Create or manage a policy
+
+### [Portal](#tab/azure-portal)
+
+1. In the Azure portal, go to your storage account.
+
+2. Under **Data management**, select **Lifecycle management** to view or change lifecycle management policies.
+
+3. Select the **List View** tab.
+
+4. Select **Add a rule** and name your rule on the **Details** form. You can also set the **Rule scope**, **Blob type**, and **Blob subtype** values. The following example sets the scope to filter blobs. This step adds the **Filter set** tab.
+
+   Screenshot of the lifecycle management add a rule details page in the Azure portal.
+
+5. Select **Base blobs** to set the conditions for your rule. In the following example, blobs are moved to the cool tier if they aren't modified for 30 days.
+
+   Screenshot of the lifecycle management base blobs page in the Azure portal.
+
+   The **Last accessed** option is available only if you enabled access time tracking and you selected **Block blobs** as the blob type. See [Enable access time tracking](#enable-access-time-tracking).
+
+6. If you selected **Limit blobs with filters** on the **Details** page, select **Filter set** to add an optional filter. The following example filters on blobs whose name begins with *log* in a container called *sample-container*. 
+
+   Screenshot of the lifecycle management filter set page in the Azure portal.
+
+   If you encounter unexpected results, see the following FAQ entry: [The blob prefix match string didn't apply the policy to the expected blobs](lifecycle-management-policy-faq.md#the-blob-prefix-match-string-didnt-apply-the-policy-to-the-expected-blobs).
+
+7. Select **Add** to add the new policy.
+
+   The new rule appears in the **List View** tab. Azure Storage runs the policy once per day.
+
+#### Manage a policy by using the code view
+
+You can also define a policy by adding JSON code directly in the **Code View** tab.
+
+The following screenshot shows JSON in the **Code View** tab. This JSON defines a lifecycle policy that moves a block blob whose name begins with *log* to the cool tier if it's been more than 30 days since the blob was modified.
+
+  > 
+  > Screenshot showing JSON in the Code View tab.
+
+
+### [PowerShell](#tab/azure-powershell)
+
+To add a lifecycle management policy with PowerShell, use these commands:
+
+- Call the [Add-AzStorageAccountManagementPolicyAction](https://learn.microsoft.com/powershell/module/az.storage/add-azstorageaccountmanagementpolicyaction) command to define the actions that make up a rule.
+
+- Call the [New-AzStorageAccountManagementPolicyFilter](https://learn.microsoft.com/powershell/module/az.storage/new-azstorageaccountmanagementpolicyfilter) command to specify one or more filters for a rule.
+
+- Call the [New-AzStorageAccountManagementPolicyRule](https://learn.microsoft.com/powershell/module/az.storage/new-azstorageaccountmanagementpolicyrule) command to create a policy rule that includes actions and optional filters.
+
+- Call the [Set-AzStorageAccountManagementPolicy](https://learn.microsoft.com/powershell/module/az.storage/set-azstorageaccountmanagementpolicy) command to create the policy on the storage account.
+
+The following example shows how to use each of these commands to create a lifecycle policy. Replace the placeholder values in angle brackets with your own values:
+
+```powershell
+# Initialize the following variables with your values.
+$rgName = "<resource-group>"
+$accountName = "<storage-account>"
+
+# Create a new action object.
+$action = Add-AzStorageAccountManagementPolicyAction -BaseBlobAction Delete `
+    -daysAfterModificationGreaterThan 180
+Add-AzStorageAccountManagementPolicyAction -InputObject $action `
+    -BaseBlobAction TierToArchive `
+    -daysAfterModificationGreaterThan 90
+Add-AzStorageAccountManagementPolicyAction -InputObject $action `
+    -BaseBlobAction TierToCool `
+    -daysAfterModificationGreaterThan 30
+Add-AzStorageAccountManagementPolicyAction -InputObject $action `
+    -SnapshotAction Delete `
+    -daysAfterCreationGreaterThan 90
+Add-AzStorageAccountManagementPolicyAction -InputObject $action `
+    -BlobVersionAction TierToArchive `
+    -daysAfterCreationGreaterThan 90
+
+# Create a new filter object.
+$filter = New-AzStorageAccountManagementPolicyFilter -PrefixMatch ab,cd `
+    -BlobType blockBlob
+
+# Create a new rule object.
+$rule1 = New-AzStorageAccountManagementPolicyRule -Name sample-rule `
+    -Action $action `
+    -Filter $filter
+
+# Create the policy.
+Set-AzStorageAccountManagementPolicy -ResourceGroupName $rgName `
+    -StorageAccountName $accountName `
+    -Rule $rule1
+```
+
+### [Azure CLI](#tab/azure-cli)
+
+To add a lifecycle management policy with Azure CLI, write the policy to a JSON file, then call the [az storage account management-policy create](https://learn.microsoft.com/cli/azure/storage/account/management-policy#az-storage-account-management-policy-create) command to create the policy.
+
+The following example shows how to use this command to create a lifecycle policy. Replace the placeholder values in angle brackets with your own values:
+
+```azurecli
+az storage account management-policy create \
+    --account-name <storage-account> \
+    --policy @policy.json \
+    --resource-group <resource-group>
+```
+
+### [Template](#tab/template)
+
+To define a lifecycle management policy with an Azure Resource Manager template, include the **Microsoft.Storage/storageAccounts/managementPolicies** object in your template. For configuration details, see [Microsoft.Storage/storageAccounts/managementPolicies - Bicep & ARM template reference](https://learn.microsoft.com/azure/templates/microsoft.storage/storageaccounts/managementpolicies?tabs=json). The **Microsoft.Storage/storageAccounts/managementPolicies** object is available in the Azure Storage Resource Provider REST API for versions 2018-11-01 and later.
+
+---
+
+<a id="optionally-enable-access-time-tracking"></a>
+
+## Enable access time tracking
+
+Enable access time tracking if you want to include an action based on the time that the blob was last accessed with a read or write operation. To learn about the behavior of this capability, see [Access time tracking](lifecycle-management-policy-structure.md#access-time-tracking).
+
+### [Portal](#tab/azure-portal)
+
+1. Go to your storage account in the Azure portal.
+2. In the **Data management** section, select **Lifecycle management**.
+3. Select the **Enable access tracking** checkbox.
+
+   > 
+   > Screenshot showing how to enable last access tracking in Azure portal.
+
+### [PowerShell](#tab/azure-powershell)
+
+
+To enable last access time tracking with PowerShell, call the [Enable-AzStorageBlobLastAccessTimeTracking](https://learn.microsoft.com/powershell/module/az.storage/enable-azstoragebloblastaccesstimetracking) command, as shown in the following example. Remember to replace placeholder values in angle brackets with your own values:
+
+```powershell
+# Initialize these variables with your values.
+$rgName = "<resource-group>"
+$accountName = "<storage-account>"
+
+Enable-AzStorageBlobLastAccessTimeTracking  -ResourceGroupName $rgName `
+    -StorageAccountName $accountName `
+    -PassThru
+```
+
+
+### [Azure CLI](#tab/azure-cli)
+
+
+To enable last access time tracking with Azure CLI, call the [az storage account blob-service-properties update](https://learn.microsoft.com/cli/azure/storage/account/blob-service-properties#az-storage-account-blob-service-properties-update) command, as shown in the following example. Remember to replace placeholder values in angle brackets with your own values:
+
+```azurecli
+az storage account blob-service-properties update \
+    --resource-group <resource-group> \
+    --account-name <storage-account> \
+    --enable-last-access-tracking true
+```
+
+### [Template](#tab/template)
+
+
+To enable last access time tracking for a new or existing storage account with an Azure Resource Manager template, include the **lastAccessTimeTrackingPolicy** object in the template definition. For details, see the [Microsoft.Storage/storageAccounts/blobServices 2021-02-01 - Bicep & ARM template reference](https://learn.microsoft.com/azure/templates/microsoft.storage/2021-02-01/storageaccounts/blobservices?tabs=json). The **lastAccessTimeTrackingPolicy** object is available in the Azure Storage Resource Provider REST API for versions 2019-06-01 and later.
+
+---
+
+## See also
+
+- [Azure Blob Storage lifecycle management overview](lifecycle-management-overview.md)
+- [Lifecycle management policies that transition blobs between tiers](lifecycle-management-policy-access-tiers.md)
+- [Lifecycle management policies that delete blobs](lifecycle-management-policy-delete.md)
+- [Lifecycle management policy monitoring](lifecycle-management-policy-monitor.md)
+- [Access tiers for blob data](access-tiers-overview.md)

@@ -1,0 +1,96 @@
+---
+title: "SIGNBYASYMKEY (Transact-SQL)"
+description: "SIGNBYASYMKEY (Transact-SQL)"
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "SIGNBYASYMKEY_TSQL"
+  - "SIGNBYASYMKEY"
+helpviewer_keywords:
+  - "text signing [SQL Server]"
+  - "encryption [SQL Server], asymmetric keys"
+  - "signing text [SQL Server]"
+  - "SIGNBYASYMKEY function"
+  - "asymmetric keys [SQL Server], SIGNBYASYMKEY function"
+  - "cryptography [SQL Server], asymmetric keys"
+  - "clear text signing"
+dev_langs:
+  - "TSQL"
+---
+# SIGNBYASYMKEY (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Signs plaintext with an asymmetric key  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+SignByAsymKey( Asym_Key_ID , @plaintext [ , 'password' ] )  
+```  
+  
+## Arguments
+ *Asym_Key_ID*  
+ Is the ID of an asymmetric key in the current database. *Asym_Key_ID* is **int**.  
+  
+ **\@plaintext**  
+ Is a variable of type **nvarchar**, **char**, **varchar**, or **nchar** containing data that will be signed with the asymmetric key.  
+  
+ *password*  
+ Is the password with which the private key is protected. *password* is **nvarchar(128)**.  
+  
+## Return Types  
+ **varbinary** with a maximum size of 8,000 bytes.  
+  
+## Remarks  
+ Requires CONTROL permission on the asymmetric key.  
+  
+## Examples  
+ The following example creates a table, `SignedData04`, in which to store plaintext and its signature. It next inserts a record in the table, signed with asymmetric key `PrimeKey`, which is first decrypted with password `'pGFD4bb925DGvbd2439587y'`.  
+  
+```sql  
+-- Create a table in which to store the data  
+CREATE TABLE [SignedData04](Description NVARCHAR(max), Data NVARCHAR(max), DataSignature VARBINARY(8000));  
+GO  
+-- Store data together with its signature  
+DECLARE @clear_text_data NVARCHAR(max);  
+set @clear_text_data = N'Important numbers 2, 3, 5, 7, 11, 13, 17,   
+      19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79,  
+      83, 89, 97';  
+INSERT INTO [SignedData04]   
+    VALUES( N'data encrypted by asymmetric key ''PrimeKey''',  
+    @clear_text_data, SignByAsymKey( AsymKey_Id( 'PrimeKey' ),  
+    @clear_text_data, N'pGFD4bb925DGvbd2439587y' ));  
+GO  
+```  
+  
+## Related content
+
+- [ASYMKEY_ID (Transact-SQL)](asymkey-id-transact-sql.md)
+- [VERIFYSIGNEDBYASYMKEY (Transact-SQL)](verifysignedbyasymkey-transact-sql.md)
+- [CREATE ASYMMETRIC KEY (Transact-SQL)](../statements/create-asymmetric-key-transact-sql.md)
+- [ALTER ASYMMETRIC KEY (Transact-SQL)](../statements/alter-asymmetric-key-transact-sql.md)
+- [DROP ASYMMETRIC KEY (Transact-SQL)](../statements/drop-asymmetric-key-transact-sql.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)

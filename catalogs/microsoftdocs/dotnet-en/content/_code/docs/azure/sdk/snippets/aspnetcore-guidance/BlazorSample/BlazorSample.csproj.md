@@ -1,0 +1,23 @@
+# Source code: docs/azure/sdk/snippets/aspnetcore-guidance/BlazorSample/BlazorSample.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.21.0" />
+	  <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.11.1" />
+	  <PackageReference Include="Azure.Storage.Blobs" Version="12.29.2" />
+	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.1" />
+  </ItemGroup>
+
+</Project>
+
+```

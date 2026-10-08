@@ -1,0 +1,111 @@
+---
+title: Create and manage a workspace—Custom Translator
+titleSuffix: Foundry Tools
+description: How to create and manage workspaces
+author: laujan
+manager: mcleans
+ms.service: azure-translator-foundry-tools
+ms.date: 06/02/2026
+ms.author: lajanuar
+ms.topic: how-to
+
+---
+
+# Create and manage a Custom Translator workspace 
+
+ Custom Translator workspaces are places to manage your documents, projects, and models. When you create a workspace, you can choose to use the workspace independently, or share it with teammates to divide up the work.
+
+  > **Note:**
+  >
+  > [Custom Translator Portal](https://portal.customtranslator.azure.ai/) access can only be enabled through a public network.
+  >
+  > For information on how to use selected networks and private endpoints, see [Enable Custom Translator through Azure Virtual Network](enable-vnet-service-endpoint.md).
+
+## Create workspace
+
+1. After you sign in to Custom Translator, you'll be asked for permission to read your profile from the Microsoft identity platform to request your user access token and refresh token. Both tokens are needed for authentication and to ensure that you aren't signed out during your live session or while training your models. </br>Select **Yes**.
+
+    Screenshot illustrating first-time sign-in.
+
+1. Select **My workspaces**
+
+1. Select **Create a new workspace**
+
+1. Type a **Workspace name** and select **Next**
+
+1. Select "Global" for **Select resource region** from the dropdown list.
+
+1. Copy/paste your Translator Services key.
+
+1. Select **Next**.
+
+1. Select **Done**
+
+   > **Note:**
+   > Region must match the region that was selected during the resource creation. You can use **KEY 1** or **KEY 2**.
+
+    > **Note:**
+    > All uploaded customer content, custom model binaries, custom model configurations, and training logs are kept encrypted-at-rest in the selected region.
+
+   Screenshot illustrating the resource key.
+
+   Screenshot illustrating workspace creation.
+
+## Manage workspace settings
+
+Select a workspace and navigate to **Workspace settings**. You can manage the following workspace settings:
+
+* Change the resource key if the region is **Global**. If you're using a region-specific resource such as **East US**, you can't change your resource key.
+
+* Change the workspace name.
+
+* [Share the workspace with others](#share-workspace-for-collaboration).
+
+* Delete the workspace.
+
+### Share workspace for collaboration
+
+The person who created the workspace is the owner. Within **Workspace settings**, an owner can designate three different roles for a collaborative workspace:
+
+* **Owner**. An owner has full permissions within the workspace.
+
+* **Editor**. An editor can add documents, train models, and delete documents and projects. They can't modify who the workspace is shared with, delete the workspace, or change the workspace name.
+
+* **Reader**. A reader can view (and download if available) all information in the workspace.
+
+> **Note:**
+> The Custom Translator workspace sharing policy is changed. For increased security measures, you can share a workspace only with people who are recently signed in to the Custom Translator portal.
+
+1. Select **Share**.
+
+1. Complete the **email address** field for collaborators.
+
+1. Select **role** from the dropdown list.
+
+1. Select **Share**.
+
+Screenshot illustrating how to share a workspace.
+
+Screenshot illustrating share workspace settings.
+
+### Remove somebody from a workspace
+
+1. Select **Share**.
+
+2. Select the **X** icon next to the **Role** and email address that you want to remove.
+
+Screenshot illustrating how to unshare a workspace.
+
+### Restrict access to workspace models 
+
+> **Warning:**
+> **Restrict access** blocks runtime translation requests to all published models in the workspace if the requests don't include the same Translator resource that was used to create the workspace.
+
+Select the **Yes** checkbox. Within few minutes, all published models are secured from unauthorized access.
+
+Screenshot illustrating how to secure a workspace.
+
+## Next steps
+
+> 
+> [Learn how to manage Custom Translator projects](create-manage-project.md)

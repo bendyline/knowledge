@@ -1,0 +1,161 @@
+---
+title: "New Availability Group Dialog Box in SSMS"
+description: Learn how to use the New Availability Group dialog box of SQL Server Management Studio to configure an Always On availability group.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "05/17/2016"
+ms.service: sql
+ms.subservice: availability-groups
+ms.topic: how-to
+helpviewer_keywords:
+  - "Availability Groups [SQL Server], creating"
+---
+# Use the New Availability Group Dialog Box (SQL Server Management Studio)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic contains information about how to use the **New Availability Group** dialog box of  SQL Server Management Studio 
+ to create an Always On availability group on instances of  SQL Server 
+ that are enabled for  Always On availability groups 
+. An *availability group* defines a set of user databases that will fail over as a single unit and a set of failover partners, known as *availability replicas*, that support failover.  
+  
+> **Note:**  
+>  For an introduction to availability groups, see [Overview of Always On Availability Groups (SQL Server)](overview-of-always-on-availability-groups-sql-server.md).  
+   
+> **Note:**  
+>  For information about alternative ways to create an availability group, see [Related Tasks](#RelatedTasks), later in this topic.  
+  
+  
+##  <a name="PrerequisitesRestrictions"></a> Prerequisites  
+  
+-   Before creating an availability group, verify that the instances of  SQL Server 
+ that host availability replicas reside on different Windows Server Failover Clustering (WSFC) node within the same WSFC failover cluster. Also, verify that each of the server instance is enabled for  Always On availability groups 
+ and meets all other  Always On availability groups 
+ prerequisites. For more information, we strongly recommend that you read [Prerequisites, Restrictions, and Recommendations for Always On Availability Groups (SQL Server)](prereqs-restrictions-recommendations-always-on-availability.md).  
+  
+-   Before you create an availability group, ensure that every server instance that will host an availability replica has a fully functioning database mirroring endpoint. For more information, see [The Database Mirroring Endpoint (SQL Server)](../../database-mirroring/the-database-mirroring-endpoint-sql-server.md).  
+  
+-   To use the **New Availability Group** dialog box, you need to know the names of the server instances that will host availability replicas. Also, you need know the names of any databases that you intend to add to your new availability group, and you need to ensure that these databases meet the availability database prerequisites and restrictions described in [Prerequisites, Restrictions, and Recommendations for Always On Availability Groups (SQL Server)](prereqs-restrictions-recommendations-always-on-availability.md). If you enter invalid values, the new availability group will not work.  
+  
+## <a name="Limitations"></a> Limitations  
+ The **New Availability Group** dialog box does not:  
+  
+-   Create an availability group listener.    
+-   Join secondary replicas to the availability group.    
+-   Perform initial data synchronization.  
+  
+ For information about these configuration tasks, see [Follow Up: After Creating an Availability Group](#FollowUp), later in this topic.  
+  
+<a id="Permissions"></a>
+
+## Permissions
+
+Requires membership in the **sysadmin** fixed server role and either CREATE AVAILABILITY GROUP server permission, ALTER ANY AVAILABILITY GROUP permission, or CONTROL SERVER permission.  
+  
+##  <a name="SSMSProcedure"></a> Using the New Availability Group Dialog Box (SQL Server Management Studio)  
+ **To create an availability group**  
+  
+1.  In Object Explorer, connect to the server instance that hosts the primary replica, and click the server name.  
+  
+2.  Expand the **Always On High Availability** node.  
+  
+3.  Right-click the **Availability Groups** node, and select the **New Availability Group** command.  
+  
+4.  This command opens up the **New Availability Group** dialog box.  
+  
+5.  On the **General** page, use the **Availability group name** field to enter a name for the new availability group. This name must be a valid SQL Server identifier that is unique across all availability groups in the WSFC cluster. The maximum length for an availability group name is 128 characters.  
+  
+6.  In the **Availability Databases** grid, click **Add** and enter the name of a local database that you want to belong to this availability group. Repeat this for every database to be added. When you click **OK**, the dialog will verify whether your specified database meet the prerequisites for belonging to an availability group. For information about these prerequisites, see [Prerequisites, Restrictions, and Recommendations for Always On Availability Groups (SQL Server)](prereqs-restrictions-recommendations-always-on-availability.md).  
+  
+7.  In the **Availability Databases** grid, click **Add** and enter the name of a server instance to host a secondary replica. The dialog will not attempt to connect to these instances. If you specify an incorrect server name, a secondary replica will be added but you will be unable to connect to that replica.  
+  
+    > **Tip:**  
+    >  If you have added a replica and cannot connect to the host server instance, you can remove the replica and add a new one. For more information, see [Remove a Secondary Replica from an Availability Group (SQL Server)](remove-a-secondary-replica-from-an-availability-group-sql-server.md) and [Add a Secondary Replica to an Availability Group (SQL Server)](add-a-secondary-replica-to-an-availability-group-sql-server.md).  
+  
+8.  On the **Select a page** pane of the dialog box, click **Backup Preferences**. Then, on the **Backup Preferences** page, specify where backups should occur based on replica role and assign backup priorities to each server instances that will host an availability replica for this availability group. For more information, see [Availability Group Properties: New Availability Group (Backup Preferences Page)](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/database-engine/availability-groups/windows/availability-group-properties-new-availability-group-backup-preferences-page.md).  
+  
+9. To create the availability group, click **OK**. This causes the dialog to verify whether that specified databases meet the prerequisites.  
+  
+     To exit the dialog box without creating the availability group, click **Cancel**.  
+  
+##  <a name="FollowUp"></a> Follow Up: After Using the New Availability Group Dialog Box to Create an Availability Group  
+  
+-   You will need to connect, in turn, to each server instance that is hosting a secondary replica for the availability group and complete the following steps:  
+  
+    1.  Join the secondary replica to the availability group. For more information, see [Join a Secondary Replica to an Availability Group (SQL Server)](join-a-secondary-replica-to-an-availability-group-sql-server.md).  
+  
+    2.  Restore current backups of each primary database and its transaction log (using RESTORE WITH NORECOVERY). For more information, see [Manually Prepare a Secondary Database for an Availability Group (SQL Server)](manually-prepare-a-secondary-database-for-an-availability-group-sql-server.md).  
+  
+    3.  Immediately join each newly prepared secondary database to the availability group. For more information, see [Join a Secondary Database to an Availability Group (SQL Server)](join-a-secondary-database-to-an-availability-group-sql-server.md).  
+  
+-   We recommend that you create an availability group listener for the new availability group. This requires that you be connected to the server instance that hosts the current primary replica. For more information, see [Create or Configure an Availability Group Listener (SQL Server)](create-or-configure-an-availability-group-listener-sql-server.md).  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+ **To configure availability group and replica properties**  
+  
+-   [Change the Availability Mode of an Availability Replica (SQL Server)](change-the-availability-mode-of-an-availability-replica-sql-server.md)  
+  
+-   [Change the Failover Mode of an Availability Replica (SQL Server)](change-the-failover-mode-of-an-availability-replica-sql-server.md)  
+  
+-   [Create or Configure an Availability Group Listener (SQL Server)](create-or-configure-an-availability-group-listener-sql-server.md)  
+  
+-   [Configure the Flexible Failover Policy to Control Conditions for Automatic Failover (Always On Availability Groups)](configure-flexible-automatic-failover-policy.md)  
+  
+-   [Specify the Endpoint URL When Adding or Modifying an Availability Replica (SQL Server)](specify-endpoint-url-adding-or-modifying-availability-replica.md)  
+  
+-   [Configure Backup on Availability Replicas (SQL Server)](configure-backup-on-availability-replicas-sql-server.md)  
+  
+-   [Configure Read-Only Access on an Availability Replica (SQL Server)](configure-read-only-access-on-an-availability-replica-sql-server.md)  
+  
+-   [Configure Read-Only Routing for an Availability Group (SQL Server)](configure-read-only-routing-for-an-availability-group-sql-server.md)  
+  
+-   [Change the Session-Timeout Period for an Availability Replica (SQL Server)](change-the-session-timeout-period-for-an-availability-replica-sql-server.md)  
+  
+ **To complete availability group configuration**  
+  
+-   [Join a Secondary Replica to an Availability Group (SQL Server)](join-a-secondary-replica-to-an-availability-group-sql-server.md)  
+  
+-   [Manually Prepare a Secondary Database for an Availability Group (SQL Server)](manually-prepare-a-secondary-database-for-an-availability-group-sql-server.md)  
+  
+-   [Join a Secondary Database to an Availability Group (SQL Server)](join-a-secondary-database-to-an-availability-group-sql-server.md)  
+  
+-   [Create or Configure an Availability Group Listener (SQL Server)](create-or-configure-an-availability-group-listener-sql-server.md)  
+  
+ **Alternative ways to create an availability group**  
+  
+-   [Use the Availability Group Wizard (SQL Server Management Studio)](use-the-availability-group-wizard-sql-server-management-studio.md)  
+  
+-   [Create an Availability Group (Transact-SQL)](create-an-availability-group-transact-sql.md)  
+  
+-   [Create an Availability Group (SQL Server PowerShell)](create-an-availability-group-sql-server-powershell.md)  
+  
+ **To enable Always On Availability Groups**  
+  
+-   [Enable and Disable Always On Availability Groups (SQL Server)](enable-and-disable-always-on-availability-groups-sql-server.md)  
+  
+ **To configure a database mirroring endpoint**  
+  
+-   [Create a Database Mirroring Endpoint for Always On Availability Groups (SQL Server PowerShell)](database-mirroring-always-on-availability-groups-powershell.md)  
+  
+-   [Create a Database Mirroring Endpoint for Windows Authentication (Transact-SQL)](../../database-mirroring/create-a-database-mirroring-endpoint-for-windows-authentication-transact-sql.md)  
+  
+-   [Use Certificates for a Database Mirroring Endpoint (Transact-SQL)](../../database-mirroring/use-certificates-for-a-database-mirroring-endpoint-transact-sql.md)  
+  
+-   [Specify the Endpoint URL When Adding or Modifying an Availability Replica (SQL Server)](specify-endpoint-url-adding-or-modifying-availability-replica.md)  
+  
+ **To troubleshoot Always On Availability Groups configuration**  
+  
+-   [Troubleshoot Always On Availability Groups Configuration (SQL Server)](troubleshoot-always-on-availability-groups-configuration-sql-server.md)  
+  
+-   [Troubleshoot a Failed Add-File Operation (Always On Availability Groups)](troubleshoot-a-failed-add-file-operation-always-on-availability-groups.md)  
+  
+## Related content
+
+- [Microsoft SQL Server Always On Solutions Guide for High Availability and Disaster Recovery](https://learn.microsoft.com/previous-versions/sql/sql-server-2012/hh781257\(v=msdn.10\))
+- [What is an Always On availability group?](overview-of-always-on-availability-groups-sql-server.md)
+- [The database mirroring endpoint (SQL Server)](../../database-mirroring/the-database-mirroring-endpoint-sql-server.md)
+- [Connect to an Always On availability group listener](listeners-client-connectivity-application-failover.md)
+- [Prerequisites, restrictions, and recommendations for Always On availability groups](prereqs-restrictions-recommendations-always-on-availability.md)

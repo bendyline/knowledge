@@ -1,0 +1,991 @@
+---
+title: "Quickstart: Document Intelligence C# SDK"
+titleSuffix: Foundry Tools
+description: 'Form and document processing, data extraction, and analysis using Document Intelligence C# client library.'
+author: laujan
+manager: mcleans
+ms.service: azure-document-intelligence-foundry-tools
+ms.topic: include
+ms.date: 01/30/2026
+ms.author: lajanuar
+monikerRange: ">=doc-intel-3.0.0"
+---
+
+<!-- markdownlint-disable MD025 -->
+<!-- markdownlint-disable MD036 -->
+<!-- markdownlint-disable MD029 -->
+
+**Applies to: doc-intel-4.0.0**
+[Client library](https://learn.microsoft.com/dotnet/api/azure.ai.documentintelligence?view=azure-dotnet\&preserve-view=true) | [REST API reference](https://learn.microsoft.com/rest/api/aiservices/operation-groups?view=rest-aiservices-v4.0%20\(2024-11-30\)\&preserve-view=true) | [Package](https://www.nuget.org/packages/Azure.AI.DocumentIntelligence/1.0.0)| [Samples](https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/documentintelligence/Azure.AI.DocumentIntelligence/samples/README.md)|[Supported REST API version](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/sdk-overview-v4-0.md)
+
+
+**Applies to: doc-intel-3.1.0**
+[Client library](https://learn.microsoft.com/dotnet/api/overview/azure/ai.formrecognizer-readme?view=azure-dotnet\&preserve-view=true) |[API reference](https://learn.microsoft.com/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-2023-07-31\&preserve-view=true\&tabs=HTTP) | [Package (NuGet)](https://www.nuget.org/packages/Azure.AI.FormRecognizer/4.1.0) | [Samples](https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/formrecognizer/Azure.AI.FormRecognizer/samples/README.md) | [Supported REST API version](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/sdk-overview-v3-1.md)
+
+
+
+**Applies to: doc-intel-3.0.0**
+[Client library](https://learn.microsoft.com/dotnet/api/overview/azure/ai.formrecognizer-readme?view=azure-dotnet\&preserve-view=true) |[REST API reference](https://learn.microsoft.com/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-v3.0%20\(2022-08-31\)\&preserve-view=true\&tabs=HTTP) | [Package](https://www.nuget.org/packages/Azure.AI.FormRecognizer/4.0.0) | [Samples](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/formrecognizer/Azure.AI.FormRecognizer/samples) |[Supported REST API version](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/sdk-overview-v3-0.md)
+
+
+In this quickstart, use the following features to analyze and extract data and values from forms and documents:
+
+* [**Layout model**](#layout-model)—Analyze and extract tables, lines, words, and selection marks like radio buttons and check boxes in documents, without the need to train a model.
+
+* [**Prebuilt model**](#prebuilt-model)—Analyze and extract common fields from specific document types using a prebuilt model.
+
+## Prerequisites
+
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+* The current version of [Visual Studio IDE](https://visualstudio.microsoft.com/vs/). <!-- or [.NET Core](https://dotnet.microsoft.com/download). -->
+
+**Applies to: doc-intel-4.0.0**
+
+* A Foundry Tools or Document Intelligence resource. Once you have your Azure subscription, create a [single-service](https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer) or [Azure multi-service](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) resource, in the Azure portal, to get your key and endpoint.
+
+* You can use the free pricing tier (`F0`) to try the service, and upgrade later to a paid tier for production.
+
+> **Tip:**
+> Create a Microsoft Foundry resource if you plan to access multiple Foundry Tools under a single endpoint/key. For Document Intelligence access only, create a Document Intelligence resource. You need a single-service resource if you intend to use [Microsoft Entra authentication](https://learn.microsoft.com/azure/active-directory/authentication/overview-authentication).
+
+* After your resource deploys, select **Go to resource**. You need the key and endpoint from the resource you create to connect your application to the Document Intelligence API. You paste your key and endpoint into the code later in the quickstart:
+
+  Screenshot of keys and endpoint location in the Azure portal.
+
+
+
+**Applies to: doc-intel-3.1.0 || doc-intel-3.0.0**
+
+* A Foundry Tools or Document Intelligence resource. Once you have your Azure subscription, create a [single-service](https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer) or [Azure multi-service](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) resource, in the Azure portal, to get your key and endpoint.
+
+* You can use the free pricing tier (`F0`) to try the service, and upgrade later to a paid tier for production.
+
+> **Tip:**
+> Create a Microsoft Foundry resource if you plan to access multiple Foundry Tools under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. You need a single-service resource if you intend to use [Microsoft Entra authentication](https://learn.microsoft.com/azure/active-directory/authentication/overview-authentication).
+
+* After your resource deploys, select **Go to resource**. You need the key and endpoint from the resource you create to connect your application to the Form Recognizer API. You paste your key and endpoint into the code later in the quickstart:
+
+  Screenshot of keys and endpoint location in the Azure portal.
+
+
+
+## Set up
+
+1. Start Visual Studio.
+
+1. On the start page, choose Create a new project.
+
+    Screenshot of Visual Studio start window.
+
+1. On the **Create a new project page**, enter **console** in the search box. Choose the **Console Application** template, then choose **Next**.
+
+    Screenshot of Visual Studio's create new project page.
+
+**Applies to: doc-intel-4.0.0**
+
+4. In the **Configure your new project** dialog window, enter `doc_intel_quickstart` in the Project name box. Then choose Next.
+
+
+
+**Applies to: doc-intel-3.1.0 || doc-intel-3.0.0**
+
+4. In the **Configure your new project** dialog window, enter `form_recognizer_quickstart` in the Project name box. Then choose Next.
+
+
+
+5. In the **Additional information** dialog window, select **.NET 8.0 (Long-term support)**, and then select **Create**.
+
+    Screenshot of Visual Studio's additional information dialog window.
+
+### Install the client library with NuGet
+
+**Applies to: doc-intel-4.0.0**
+
+1. Right-click on your **doc_intel_quickstart** project and select **Manage NuGet Packages...** .
+
+    Screenshot of select NuGet prerelease package window in Visual Studio.
+
+1. Select the **Browse** tab and type *Azure.AI.DocumentIntelligence*.
+
+1. Select the **`Include prerelease`** checkbox.
+
+    Screenshot of select prerelease NuGet package in Visual Studio.
+
+1. Choose a version from the dropdown menu and install the package in your project.
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+ 1. Right-click on your **form_recognizer_quickstart** project and select **Manage NuGet Packages...** .
+
+    Screenshot of find NuGet package window in Visual Studio.
+
+ 1. Select the Browse tab and type Azure.AI.FormRecognizer. Select version 4.1.0 from the dropdown menu
+
+     Screenshot of select NuGet Form Recognizer package in Visual Studio.
+
+
+
+**Applies to: doc-intel-3.0.0**
+
+ 1. Right-click on your **form_recognizer_quickstart** project and select **Manage NuGet Packages...** .
+
+    Screenshot of the NuGet package window in Visual Studio.
+
+ 1. Select the Browse tab and type Azure.AI.FormRecognizer. Select version 4.0.0 from the dropdown menu
+
+     Screenshot of select NuGet legacy package in Visual Studio.
+
+
+
+ <!-- 1. Choose the Include prerelease checkbox and select version 4.1.0 from the dropdown menu and install the package in your project. -->
+
+<!-- --- -->
+
+## Build your application
+
+**Applies to: doc-intel-4.0.0**
+To interact with the Document Intelligence service, you need to create an instance of the `DocumentIntelligenceClient` class. To do so, you create an `AzureKeyCredential` with your `key` from the Azure portal and a `DocumentIntelligenceClient`  instance with the `AzureKeyCredential` and your Document Intelligence `endpoint`.
+
+
+**Applies to: doc-intel-3.1.0 || doc-intel-3.0.0**
+
+To interact with the Form Recognizer service, you need to create an instance of the `DocumentAnalysisClient` class. To do so, you create an `AzureKeyCredential` with your `key` from the Azure portal and a `DocumentAnalysisClient`  instance with the `AzureKeyCredential` and your Form Recognizer `endpoint`.
+
+
+> **Note:**
+>
+> * Starting with .NET 6, new projects using the `console` template generate a new program style that differs from previous versions.
+> * The new output uses recent C# features that simplify the code you need to write.
+> * When you use the newer version, you only need to write the body of the `Main` method. You don't need to include top-level statements, global using directives, or implicit using directives.
+> * For more information, *see* [**New C# templates generate top-level statements**](https://learn.microsoft.com/dotnet/core/tutorials/top-level-templates).
+
+1. Open the **Program.cs** file.
+
+1. Delete the existing code, including the line `Console.Writeline("Hello World!")`, and select one of the following code samples to copy and paste into your application's Program.cs file:
+
+    * [**Layout model**](#layout-model)
+
+    * [**Prebuilt model**](#prebuilt-model)
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/ai-services/security/microsoft-entra-id-akv-expanded.md](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/document-intelligence/quickstarts/includes/csharp-sdk.md)
+
+<!-- ### [.NET Command-line interface (CLI)](#tab/cli)
+
+Open your command prompt and go to the directory that contains your project and type the following:
+
+```console
+dotnet run formrecognizer-quickstart.dll
+```
+
+### [Visual Studio](#tab/vs) -->
+
+## Layout model
+
+Extract text, selection marks, text styles, table structures, and bounding region coordinates from documents.
+
+> 
+>
+> * For this example, you'll need a **document file from a URI**. You can use our [sample document](https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf) for this quickstart.
+> * We've added the file URI value to the `Uri fileUri` variable at the top of the script.
+> * To extract the layout from a given file at a URI, use the `AnalyzeDocumentAsync` method and pass `prebuilt-layout` as the model ID. The returned value is an `AnalyzeResult` object containing data from the submitted document.
+
+**Applies to: doc-intel-4.0.0**
+
+**Add the following code sample to the Program.cs file. Make sure you update the key and endpoint variables with values from your Azure portal Document Intelligence instance:**
+
+```csharp
+
+using Azure;
+using Azure.AI.DocumentIntelligence;
+
+//set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal to create your `AzureKeyCredential` and `DocumentIntelligenceClient` instance
+string endpoint = "<your-endpoint>";
+string key = "<your-key>";
+AzureKeyCredential credential = new AzureKeyCredential(key);
+DocumentIntelligenceClient client = new DocumentIntelligenceClient(new Uri(endpoint), credential);
+
+//sample document
+Uri fileUri = new Uri ("https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf");
+
+AnalyzeDocumentContent content = new AnalyzeDocumentContent()
+{
+    UrlSource= fileUri
+};
+
+Operation<AnalyzeResult> operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-layout", content);
+
+AnalyzeResult result = operation.Value;
+
+foreach (DocumentPage page in result.Pages)
+{
+    Console.WriteLine($"Document Page {page.PageNumber} has {page.Lines.Count} line(s), {page.Words.Count} word(s)," +
+        $" and {page.SelectionMarks.Count} selection mark(s).");
+
+    for (int i = 0; i < page.Lines.Count; i++)
+    {
+        DocumentLine line = page.Lines[i];
+
+        Console.WriteLine($"  Line {i}:");
+        Console.WriteLine($"    Content: '{line.Content}'");
+
+        Console.Write("    Bounding polygon, with points ordered clockwise:");
+        for (int j = 0; j < line.Polygon.Count; j += 2)
+        {
+            Console.Write($" ({line.Polygon[j]}, {line.Polygon[j + 1]})");
+        }
+
+        Console.WriteLine();
+    }
+
+    for (int i = 0; i < page.SelectionMarks.Count; i++)
+    {
+        DocumentSelectionMark selectionMark = page.SelectionMarks[i];
+
+        Console.WriteLine($"  Selection Mark {i} is {selectionMark.State}.");
+        Console.WriteLine($"    State: {selectionMark.State}");
+
+        Console.Write("    Bounding polygon, with points ordered clockwise:");
+        for (int j = 0; j < selectionMark.Polygon.Count; j++)
+        {
+            Console.Write($" ({selectionMark.Polygon[j]}, {selectionMark.Polygon[j + 1]})");
+        }
+
+        Console.WriteLine();
+    }
+}
+
+for (int i = 0; i < result.Paragraphs.Count; i++)
+{
+    DocumentParagraph paragraph = result.Paragraphs[i];
+
+    Console.WriteLine($"Paragraph {i}:");
+    Console.WriteLine($"  Content: {paragraph.Content}");
+
+    if (paragraph.Role != null)
+    {
+        Console.WriteLine($"  Role: {paragraph.Role}");
+    }
+}
+
+foreach (DocumentStyle style in result.Styles)
+{
+    // Check the style and style confidence to see if text is handwritten.
+    // Note that value '0.8' is used as an example.
+
+    bool isHandwritten = style.IsHandwritten.HasValue && style.IsHandwritten == true;
+
+    if (isHandwritten && style.Confidence > 0.8)
+    {
+        Console.WriteLine($"Handwritten content found:");
+
+        foreach (DocumentSpan span in style.Spans)
+        {
+            var handwrittenContent = result.Content.Substring(span.Offset, span.Length);
+            Console.WriteLine($"  {handwrittenContent}");
+        }
+    }
+}
+
+for (int i = 0; i < result.Tables.Count; i++)
+{
+    DocumentTable table = result.Tables[i];
+
+    Console.WriteLine($"Table {i} has {table.RowCount} rows and {table.ColumnCount} columns.");
+
+    foreach (DocumentTableCell cell in table.Cells)
+    {
+        Console.WriteLine($"  Cell ({cell.RowIndex}, {cell.ColumnIndex}) is a '{cell.Kind}' with content: {cell.Content}");
+    }
+}
+
+```
+
+**Run your application**
+
+Once you add a code sample to your application, choose the green **Start** button next to formRecognizer_quickstart to build and run your program, or press **F5**.
+
+  Screenshot of run your Visual Studio program button.
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+**Add the following code sample to the Program.cs file. Make sure you update the key and endpoint variables with values from your Azure portal Form Recognizer instance:**
+
+```csharp
+using Azure;
+using Azure.AI.FormRecognizer.DocumentAnalysis;
+
+//set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal to create your `AzureKeyCredential` and `DocumentAnalysisClient` instance
+string endpoint = "<your-endpoint>";
+string key = "<your-key>";
+AzureKeyCredential credential = new AzureKeyCredential(key);
+DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+
+//sample document
+Uri fileUri = new Uri ("https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf");
+
+AnalyzeDocumentOperation operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, "prebuilt-layout", fileUri);
+
+AnalyzeResult result = operation.Value;
+
+foreach (DocumentPage page in result.Pages)
+{
+    Console.WriteLine($"Document Page {page.PageNumber} has {page.Lines.Count} line(s), {page.Words.Count} word(s),");
+    Console.WriteLine($"and {page.SelectionMarks.Count} selection mark(s).");
+
+    for (int i = 0; i < page.Lines.Count; i++)
+    {
+        DocumentLine line = page.Lines[i];
+        Console.WriteLine($"  Line {i} has content: '{line.Content}'.");
+
+        Console.WriteLine($"    Its bounding box is:");
+        Console.WriteLine($"      Upper left => X: {line.Polygon[0].X}, Y= {line.Polygon[0].Y}");
+        Console.WriteLine($"      Upper right => X: {line.Polygon[1].X}, Y= {line.Polygon[1].Y}");
+        Console.WriteLine($"      Lower right => X: {line.Polygon[2].X}, Y= {line.Polygon[2].Y}");
+        Console.WriteLine($"      Lower left => X: {line.Polygon[3].X}, Y= {line.Polygon[3].Y}");
+    }
+
+    for (int i = 0; i < page.SelectionMarks.Count; i++)
+    {
+        DocumentSelectionMark selectionMark = page.SelectionMarks[i];
+
+        Console.WriteLine($"  Selection Mark {i} is {selectionMark.State}.");
+        Console.WriteLine($"    Its bounding box is:");
+        Console.WriteLine($"      Upper left => X: {selectionMark.Polygon[0].X}, Y= {selectionMark.Polygon[0].Y}");
+        Console.WriteLine($"      Upper right => X: {selectionMark.Polygon[1].X}, Y= {selectionMark.Polygon[1].Y}");
+        Console.WriteLine($"      Lower right => X: {selectionMark.Polygon[2].X}, Y= {selectionMark.Polygon[2].Y}");
+        Console.WriteLine($"      Lower left => X: {selectionMark.Polygon[3].X}, Y= {selectionMark.Polygon[3].Y}");
+    }
+}
+
+foreach (DocumentStyle style in result.Styles)
+{
+    // Check the style and style confidence to see if text is handwritten.
+    // Note that value '0.8' is used as an example.
+
+    bool isHandwritten = style.IsHandwritten.HasValue && style.IsHandwritten == true;
+
+    if (isHandwritten && style.Confidence > 0.8)
+    {
+        Console.WriteLine($"Handwritten content found:");
+
+        foreach (DocumentSpan span in style.Spans)
+        {
+            Console.WriteLine($"  Content: {result.Content.Substring(span.Index, span.Length)}");
+        }
+    }
+}
+
+Console.WriteLine("The following tables were extracted:");
+
+for (int i = 0; i < result.Tables.Count; i++)
+{
+    DocumentTable table = result.Tables[i];
+    Console.WriteLine($"  Table {i} has {table.RowCount} rows and {table.ColumnCount} columns.");
+
+    foreach (DocumentTableCell cell in table.Cells)
+    {
+        Console.WriteLine($"    Cell ({cell.RowIndex}, {cell.ColumnIndex}) has kind '{cell.Kind}' and content: '{cell.Content}'.");
+    }
+}
+
+```
+
+**Run your application**
+
+Once you add a code sample to your application, choose the green **Start** button next to formRecognizer_quickstart to build and run your program, or press **F5**.
+
+  Screenshot of run your Visual Studio program button location.
+
+### Layout model output
+
+Here's a snippet of the expected output:
+
+```console
+  Document Page 1 has 69 line(s), 425 word(s), and 15 selection mark(s).
+  Line 0 has content: 'UNITED STATES'.
+    Its bounding box is:
+      Upper left => X: 3.4915, Y= 0.6828
+      Upper right => X: 5.0116, Y= 0.6828
+      Lower right => X: 5.0116, Y= 0.8265
+      Lower left => X: 3.4915, Y= 0.8265
+  Line 1 has content: 'SECURITIES AND EXCHANGE COMMISSION'.
+    Its bounding box is:
+      Upper left => X: 2.1937, Y= 0.9061
+      Upper right => X: 6.297, Y= 0.9061
+      Lower right => X: 6.297, Y= 1.0498
+      Lower left => X: 2.1937, Y= 1.0498
+```
+
+To view the entire output, visit the Azure samples repository on GitHub to view the [layout model output](https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/dotnet/FormRecognizer/v3-csharp-quickstart-layout-output.md).
+
+
+
+**Applies to: doc-intel-3.0.0**
+
+**Add the following code sample to the Program.cs file. Make sure you update the key and endpoint variables with values from your Azure portal Form Recognizer instance:**
+
+```csharp
+using Azure;
+using Azure.AI.FormRecognizer.DocumentAnalysis;
+
+//set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal to create your `AzureKeyCredential` and `DocumentAnalysisClient` instance
+string endpoint = "<your-endpoint>";
+string key = "<your-key>";
+AzureKeyCredential credential = new AzureKeyCredential(key);
+DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+
+//sample document
+Uri fileUri = new Uri ("https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-layout.pdf");
+
+AnalyzeDocumentOperation operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, "prebuilt-layout", fileUri);
+
+AnalyzeResult result = operation.Value;
+
+foreach (DocumentPage page in result.Pages)
+{
+    Console.WriteLine($"Document Page {page.PageNumber} has {page.Lines.Count} line(s), {page.Words.Count} word(s),");
+    Console.WriteLine($"and {page.SelectionMarks.Count} selection mark(s).");
+
+    for (int i = 0; i < page.Lines.Count; i++)
+    {
+        DocumentLine line = page.Lines[i];
+        Console.WriteLine($"  Line {i} has content: '{line.Content}'.");
+
+        Console.WriteLine($"    Its bounding polygon (points ordered clockwise):");
+
+        for (int j = 0; j < line.Polygon.Count; j++)
+        {
+            Console.WriteLine($"      Point {j} => X: {line.Polygon[j].X}, Y: {line.Polygon[j].Y}");
+        }
+    }
+
+    for (int i = 0; i < page.SelectionMarks.Count; i++)
+    {
+        DocumentSelectionMark selectionMark = page.SelectionMarks[i];
+
+        Console.WriteLine($"  Selection Mark {i} is {selectionMark.State}.");
+        Console.WriteLine($"    Its bounding polygon (points ordered clockwise):");
+
+        for (int j = 0; j < selectionMark.Polygon.Count; j++)
+        {
+            Console.WriteLine($"      Point {j} => X: {selectionMark.Polygon[j].X}, Y: {selectionMark.Polygon[j].Y}");
+        }
+    }
+}
+
+Console.WriteLine("Paragraphs:");
+
+foreach (DocumentParagraph paragraph in result.Paragraphs)
+{
+    Console.WriteLine($"  Paragraph content: {paragraph.Content}");
+
+    if (paragraph.Role != null)
+    {
+        Console.WriteLine($"    Role: {paragraph.Role}");
+    }
+}
+
+foreach (DocumentStyle style in result.Styles)
+{
+    // Check the style and style confidence to see if text is handwritten.
+    // Note that value '0.8' is used as an example.
+
+    bool isHandwritten = style.IsHandwritten.HasValue && style.IsHandwritten == true;
+
+    if (isHandwritten && style.Confidence > 0.8)
+    {
+        Console.WriteLine($"Handwritten content found:");
+
+        foreach (DocumentSpan span in style.Spans)
+        {
+            Console.WriteLine($"  Content: {result.Content.Substring(span.Index, span.Length)}");
+        }
+    }
+}
+
+Console.WriteLine("The following tables were extracted:");
+
+for (int i = 0; i < result.Tables.Count; i++)
+{
+    DocumentTable table = result.Tables[i];
+    Console.WriteLine($"  Table {i} has {table.RowCount} rows and {table.ColumnCount} columns.");
+
+    foreach (DocumentTableCell cell in table.Cells)
+    {
+        Console.WriteLine($"    Cell ({cell.RowIndex}, {cell.ColumnIndex}) has kind '{cell.Kind}' and content: '{cell.Content}'.");
+    }
+}
+Extract the layout of a document from a file stream
+To extract the layout from a given file at a file stream, use the AnalyzeDocument method and pass prebuilt-layout as the model ID. The returned value is an AnalyzeResult object containing data about the submitted document.
+
+string filePath = "<filePath>";
+using var stream = new FileStream(filePath, FileMode.Open);
+
+AnalyzeDocumentOperation operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-layout", stream);
+AnalyzeResult result = operation.Value;
+
+foreach (DocumentPage page in result.Pages)
+{
+    Console.WriteLine($"Document Page {page.PageNumber} has {page.Lines.Count} line(s), {page.Words.Count} word(s),");
+    Console.WriteLine($"and {page.SelectionMarks.Count} selection mark(s).");
+
+    for (int i = 0; i < page.Lines.Count; i++)
+    {
+        DocumentLine line = page.Lines[i];
+        Console.WriteLine($"  Line {i} has content: '{line.Content}'.");
+
+        Console.WriteLine($"    Its bounding polygon (points ordered clockwise):");
+
+        for (int j = 0; j < line.Polygon.Count; j++)
+        {
+            Console.WriteLine($"      Point {j} => X: {line.Polygon[j].X}, Y: {line.Polygon[j].Y}");
+        }
+    }
+
+    for (int i = 0; i < page.SelectionMarks.Count; i++)
+    {
+        DocumentSelectionMark selectionMark = page.SelectionMarks[i];
+
+        Console.WriteLine($"  Selection Mark {i} is {selectionMark.State}.");
+        Console.WriteLine($"    Its bounding polygon (points ordered clockwise):");
+
+        for (int j = 0; j < selectionMark.Polygon.Count; j++)
+        {
+            Console.WriteLine($"      Point {j} => X: {selectionMark.Polygon[j].X}, Y: {selectionMark.Polygon[j].Y}");
+        }
+    }
+}
+
+Console.WriteLine("Paragraphs:");
+
+foreach (DocumentParagraph paragraph in result.Paragraphs)
+{
+    Console.WriteLine($"  Paragraph content: {paragraph.Content}");
+
+    if (paragraph.Role != null)
+    {
+        Console.WriteLine($"    Role: {paragraph.Role}");
+    }
+}
+
+foreach (DocumentStyle style in result.Styles)
+{
+    // Check the style and style confidence to see if text is handwritten.
+    // Note that value '0.8' is used as an example.
+
+    bool isHandwritten = style.IsHandwritten.HasValue && style.IsHandwritten == true;
+
+    if (isHandwritten && style.Confidence > 0.8)
+    {
+        Console.WriteLine($"Handwritten content found:");
+
+        foreach (DocumentSpan span in style.Spans)
+        {
+            Console.WriteLine($"  Content: {result.Content.Substring(span.Index, span.Length)}");
+        }
+    }
+}
+
+Console.WriteLine("The following tables were extracted:");
+
+for (int i = 0; i < result.Tables.Count; i++)
+{
+    DocumentTable table = result.Tables[i];
+    Console.WriteLine($"  Table {i} has {table.RowCount} rows and {table.ColumnCount} columns.");
+
+    foreach (DocumentTableCell cell in table.Cells)
+    {
+        Console.WriteLine($"    Cell ({cell.RowIndex}, {cell.ColumnIndex}) has kind '{cell.Kind}' and content: '{cell.Content}'.");
+    }
+}
+
+```
+
+**Run your application**
+
+Once you add a code sample to your application, choose the green **Start** button next to formRecognizer_quickstart to build and run your program, or press **F5**.
+
+  Screenshot of run your Visual Studio program.
+
+
+
+## Prebuilt model
+
+Analyze and extract common fields from specific document types using a prebuilt model. In this example, we analyze an invoice using the **prebuilt-invoice** model.
+
+> **Tip:**
+> You aren't limited to invoices—there are several prebuilt models to choose from, each of which has its own set of supported fields. The model to use for the `analyze` operation depends on the type of document to be analyzed. See [**model data extraction**](../../model-overview.md#model-data-extraction).
+
+> 
+>
+> * Analyze an invoice using the prebuilt-invoice model. You can use our [sample invoice document](https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf) for this quickstart.
+> * We've added the file URI value to the `Uri invoiceUri` variable at the top of the Program.cs file.
+> * To analyze a given file at a URI, use the `AnalyzeDocumentAsync` method and pass `prebuilt-invoice` as the model ID. The returned value is an `AnalyzeResult` object containing data from the submitted document.
+> * For simplicity, all the key-value pairs that the service returns are not shown here. To see the list of all supported fields and corresponding types, see our [Invoice](../../prebuilt/invoice.md#field-extraction) concept page.
+
+**Applies to: doc-intel-4.0.0**
+
+**Add the following code sample to your Program.cs file. Make sure you update the key and endpoint variables with values from your Azure portal Document Intelligence instance:**
+
+```csharp
+
+using Azure;
+using Azure.AI.DocumentIntelligence;
+
+//set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal to create your `AzureKeyCredential` and `DocumentIntelligenceClient` instance
+string endpoint = "<your-endpoint>";
+string key = "<your-key>";
+AzureKeyCredential credential = new AzureKeyCredential(key);
+DocumentIntelligenceClient client = new DocumentIntelligenceClient(new Uri(endpoint), credential);
+
+//sample invoice document
+Uri invoiceUri = new Uri("https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf");
+
+AnalyzeDocumentContent content = new AnalyzeDocumentContent()
+{
+    UrlSource = invoiceUri
+};
+
+Operation<AnalyzeResult> operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-invoice", content);
+
+AnalyzeResult result = operation.Value;
+
+for (int i = 0; i < result.Documents.Count; i++)
+{
+    Console.WriteLine($"Document {i}:");
+
+    AnalyzedDocument document = result.Documents[i];
+
+    if (document.Fields.TryGetValue("VendorName", out DocumentField vendorNameField)
+        && vendorNameField.FieldType == DocumentFieldType.String)
+    {
+        string vendorName = vendorNameField.ValueString;
+        Console.WriteLine($"Vendor Name: '{vendorName}', with confidence {vendorNameField.Confidence}");
+    }
+
+    if (document.Fields.TryGetValue("CustomerName", out DocumentField customerNameField)
+        && customerNameField.FieldType == DocumentFieldType.String)
+    {
+        string customerName = customerNameField.ValueString;
+        Console.WriteLine($"Customer Name: '{customerName}', with confidence {customerNameField.Confidence}");
+    }
+
+    if (document.Fields.TryGetValue("Items", out DocumentField itemsField)
+        && itemsField.FieldType == DocumentFieldType.List)
+    {
+        foreach (DocumentField itemField in itemsField.ValueList)
+        {
+            Console.WriteLine("Item:");
+
+            if (itemField.FieldType == DocumentFieldType.Dictionary)
+            {
+                IReadOnlyDictionary<string, DocumentField> itemFields = itemField.ValueDictionary;
+
+                if (itemFields.TryGetValue("Description", out DocumentField itemDescriptionField)
+                    && itemDescriptionField.FieldType == DocumentFieldType.String)
+                {
+                    string itemDescription = itemDescriptionField.ValueString;
+                    Console.WriteLine($"  Description: '{itemDescription}', with confidence {itemDescriptionField.Confidence}");
+                }
+
+                if (itemFields.TryGetValue("Amount", out DocumentField itemAmountField)
+                    && itemAmountField.FieldType == DocumentFieldType.Currency)
+                {
+                    CurrencyValue itemAmount = itemAmountField.ValueCurrency;
+                    Console.WriteLine($"  Amount: '{itemAmount.CurrencySymbol}{itemAmount.Amount}', with confidence {itemAmountField.Confidence}");
+                }
+            }
+        }
+    }
+
+    if (document.Fields.TryGetValue("SubTotal", out DocumentField subTotalField)
+        && subTotalField.FieldType == DocumentFieldType.Currency)
+    {
+        CurrencyValue subTotal = subTotalField.ValueCurrency;
+        Console.WriteLine($"Sub Total: '{subTotal.CurrencySymbol}{subTotal.Amount}', with confidence {subTotalField.Confidence}");
+    }
+
+    if (document.Fields.TryGetValue("TotalTax", out DocumentField totalTaxField)
+        && totalTaxField.FieldType == DocumentFieldType.Currency)
+    {
+        CurrencyValue totalTax = totalTaxField.ValueCurrency;
+        Console.WriteLine($"Total Tax: '{totalTax.CurrencySymbol}{totalTax.Amount}', with confidence {totalTaxField.Confidence}");
+    }
+
+    if (document.Fields.TryGetValue("InvoiceTotal", out DocumentField invoiceTotalField)
+        && invoiceTotalField.FieldType == DocumentFieldType.Currency)
+    {
+        CurrencyValue invoiceTotal = invoiceTotalField.ValueCurrency;
+        Console.WriteLine($"Invoice Total: '{invoiceTotal.CurrencySymbol}{invoiceTotal.Amount}', with confidence {invoiceTotalField.Confidence}");
+    }
+}
+```
+
+**Run your application**
+
+Once you add a code sample to your application, choose the green **Start** button next to formRecognizer_quickstart to build and run your program, or press **F5**.
+
+  Screenshot of run your Visual Studio program button.
+
+
+
+**Applies to: doc-intel-3.1.0**
+
+**Add the following code sample to your Program.cs file. Make sure you update the key and endpoint variables with values from your Azure portal Form Recognizer instance:**
+
+```csharp
+
+using Azure;
+using Azure.AI.FormRecognizer.DocumentAnalysis;
+
+//set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal to create your `AzureKeyCredential` and `FormRecognizerClient` instance
+string endpoint = "<your-endpoint>";
+string key = "<your-key>";
+AzureKeyCredential credential = new AzureKeyCredential(key);
+DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+
+//sample invoice document
+
+Uri invoiceUri = new Uri ("https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf");
+
+Operation operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-invoice", invoiceUri);
+
+AnalyzeResult result = operation.Value;
+
+for (int i = 0; i < result.Documents.Count; i++)
+{
+    Console.WriteLine($"Document {i}:");
+
+    AnalyzedDocument document = result.Documents[i];
+
+    if (document.Fields.TryGetValue("VendorName", out DocumentField vendorNameField))
+    {
+        if (vendorNameField.FieldType == DocumentFieldType.String)
+        {
+            string vendorName = vendorNameField.Value.AsString();
+            Console.WriteLine($"Vendor Name: '{vendorName}', with confidence {vendorNameField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("CustomerName", out DocumentField customerNameField))
+    {
+        if (customerNameField.FieldType == DocumentFieldType.String)
+        {
+            string customerName = customerNameField.Value.AsString();
+            Console.WriteLine($"Customer Name: '{customerName}', with confidence {customerNameField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("Items", out DocumentField itemsField))
+    {
+        if (itemsField.FieldType == DocumentFieldType.List)
+        {
+            foreach (DocumentField itemField in itemsField.Value.AsList())
+            {
+                Console.WriteLine("Item:");
+
+                if (itemField.FieldType == DocumentFieldType.Dictionary)
+                {
+                    IReadOnlyDictionary<string, DocumentField> itemFields = itemField.Value.AsDictionary();
+
+                    if (itemFields.TryGetValue("Description", out DocumentField itemDescriptionField))
+                    {
+                        if (itemDescriptionField.FieldType == DocumentFieldType.String)
+                        {
+                            string itemDescription = itemDescriptionField.Value.AsString();
+
+                            Console.WriteLine($"  Description: '{itemDescription}', with confidence {itemDescriptionField.Confidence}");
+                        }
+                    }
+
+                    if (itemFields.TryGetValue("Amount", out DocumentField itemAmountField))
+                    {
+                        if (itemAmountField.FieldType == DocumentFieldType.Currency)
+                        {
+                            CurrencyValue itemAmount = itemAmountField.Value.AsCurrency();
+
+                            Console.WriteLine($"  Amount: '{itemAmount.Symbol}{itemAmount.Amount}', with confidence {itemAmountField.Confidence}");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (document.Fields.TryGetValue("SubTotal", out DocumentField subTotalField))
+    {
+        if (subTotalField.FieldType == DocumentFieldType.Currency)
+        {
+            CurrencyValue subTotal = subTotalField.Value.AsCurrency();
+            Console.WriteLine($"Sub Total: '{subTotal.Symbol}{subTotal.Amount}', with confidence {subTotalField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("TotalTax", out DocumentField totalTaxField))
+    {
+        if (totalTaxField.FieldType == DocumentFieldType.Currency)
+        {
+            CurrencyValue totalTax = totalTaxField.Value.AsCurrency();
+            Console.WriteLine($"Total Tax: '{totalTax.Symbol}{totalTax.Amount}', with confidence {totalTaxField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("InvoiceTotal", out DocumentField invoiceTotalField))
+    {
+        if (invoiceTotalField.FieldType == DocumentFieldType.Currency)
+        {
+            CurrencyValue invoiceTotal = invoiceTotalField.Value.AsCurrency();
+            Console.WriteLine($"Invoice Total: '{invoiceTotal.Symbol}{invoiceTotal.Amount}', with confidence {invoiceTotalField.Confidence}");
+        }
+    }
+}
+
+```
+
+**Run your application**
+
+Once you add a code sample to your application, choose the green **Start** button next to formRecognizer_quickstart to build and run your program, or press **F5**.
+
+  Screenshot of run your Visual Studio program button location.
+
+### Prebuilt model output
+
+Here's a snippet of the expected output:
+
+```console
+  Document 0:
+  Vendor Name: 'CONTOSO LTD.', with confidence 0.962
+  Customer Name: 'MICROSOFT CORPORATION', with confidence 0.951
+  Item:
+    Description: 'Test for 23 fields', with confidence 0.899
+    Amount: '100', with confidence 0.902
+  Sub Total: '100', with confidence 0.979
+```
+
+To view the entire output, visit the Azure samples repository on GitHub to view the [prebuilt invoice model output](https://github.com/Azure-Samples/cognitive-services-quickstart-code/blob/master/dotnet/FormRecognizer/v3-csharp-quickstart-prebuilt-invoice-output.md).
+
+
+
+**Applies to: doc-intel-3.0.0**
+
+**Add the following code sample to your Program.cs file. Make sure you update the key and endpoint variables with values from your Azure portal Form Recognizer instance:**
+
+```csharp
+
+using Azure;
+using Azure.AI.FormRecognizer.DocumentAnalysis;
+
+//set `<your-endpoint>` and `<your-key>` variables with the values from the Azure portal to create your `AzureKeyCredential` and `FormRecognizerClient` instance
+string endpoint = "<your-endpoint>";
+string key = "<your-key>";
+AzureKeyCredential credential = new AzureKeyCredential(key);
+DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+
+//sample invoice document
+
+Uri invoiceUri = new Uri ("https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/sample-invoice.pdf");
+
+AnalyzeDocumentOperation operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, "prebuilt-invoice", invoiceUri);
+
+AnalyzeResult result = operation.Value;
+
+for (int i = 0; i < result.Documents.Count; i++)
+{
+    Console.WriteLine($"Document {i}:");
+
+    AnalyzedDocument document = result.Documents[i];
+
+    if (document.Fields.TryGetValue("VendorName", out DocumentField vendorNameField))
+    {
+        if (vendorNameField.FieldType == DocumentFieldType.String)
+        {
+            string vendorName = vendorNameField.Value.AsString();
+            Console.WriteLine($"Vendor Name: '{vendorName}', with confidence {vendorNameField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("CustomerName", out DocumentField customerNameField))
+    {
+        if (customerNameField.FieldType == DocumentFieldType.String)
+        {
+            string customerName = customerNameField.Value.AsString();
+            Console.WriteLine($"Customer Name: '{customerName}', with confidence {customerNameField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("Items", out DocumentField itemsField))
+    {
+        if (itemsField.FieldType == DocumentFieldType.List)
+        {
+            foreach (DocumentField itemField in itemsField.Value.AsList())
+            {
+                Console.WriteLine("Item:");
+
+                if (itemField.FieldType == DocumentFieldType.Dictionary)
+                {
+                    IReadOnlyDictionary<string, DocumentField> itemFields = itemField.Value.AsDictionary();
+
+                    if (itemFields.TryGetValue("Description", out DocumentField itemDescriptionField))
+                    {
+                        if (itemDescriptionField.FieldType == DocumentFieldType.String)
+                        {
+                            string itemDescription = itemDescriptionField.Value.AsString();
+
+                            Console.WriteLine($"  Description: '{itemDescription}', with confidence {itemDescriptionField.Confidence}");
+                        }
+                    }
+
+                    if (itemFields.TryGetValue("Amount", out DocumentField itemAmountField))
+                    {
+                        if (itemAmountField.FieldType == DocumentFieldType.Currency)
+                        {
+                            CurrencyValue itemAmount = itemAmountField.Value.AsCurrency();
+
+                            Console.WriteLine($"  Amount: '{itemAmount.Symbol}{itemAmount.Amount}', with confidence {itemAmountField.Confidence}");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (document.Fields.TryGetValue("SubTotal", out DocumentField subTotalField))
+    {
+        if (subTotalField.FieldType == DocumentFieldType.Currency)
+        {
+            CurrencyValue subTotal = subTotalField.Value.AsCurrency();
+            Console.WriteLine($"Sub Total: '{subTotal.Symbol}{subTotal.Amount}', with confidence {subTotalField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("TotalTax", out DocumentField totalTaxField))
+    {
+        if (totalTaxField.FieldType == DocumentFieldType.Currency)
+        {
+            CurrencyValue totalTax = totalTaxField.Value.AsCurrency();
+            Console.WriteLine($"Total Tax: '{totalTax.Symbol}{totalTax.Amount}', with confidence {totalTaxField.Confidence}");
+        }
+    }
+
+    if (document.Fields.TryGetValue("InvoiceTotal", out DocumentField invoiceTotalField))
+    {
+        if (invoiceTotalField.FieldType == DocumentFieldType.Currency)
+        {
+            CurrencyValue invoiceTotal = invoiceTotalField.Value.AsCurrency();
+            Console.WriteLine($"Invoice Total: '{invoiceTotal.Symbol}{invoiceTotal.Amount}', with confidence {invoiceTotalField.Confidence}");
+        }
+    }
+}
+
+```
+
+**Run your application**
+
+Once you add a code sample to your application, choose the green **Start** button next to formRecognizer_quickstart to build and run your program, or press **F5**.
+
+  Screenshot of run your Visual Studio program.

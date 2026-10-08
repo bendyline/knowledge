@@ -1,0 +1,125 @@
+---
+title: "sys.fn_virtualfilestats (Transact-SQL)"
+description: "sys.fn_virtualfilestats (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 05/26/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "fn_virtualfilestats_TSQL"
+  - "fn_virtualfilestats"
+helpviewer_keywords:
+  - "I/O [SQL Server], statistics"
+  - "fn_virtualfilestats function"
+  - "sys.fn_virtualfilestats function"
+  - "statistical information [SQL Server], I/O"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.fn_virtualfilestats (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns I/O statistics for database files, including log files. In  SQL Server 
+, this information is also available from the [sys.dm_io_virtual_file_stats](../system-dynamic-management-objects/sys-dm-io-virtual-file-stats-transact-sql.md) dynamic management view.  
+
+ 
+  
+## Syntax  
+  
+```  
+  
+fn_virtualfilestats ( { database_id | NULL } , { file_id | NULL } )  
+```  
+  
+## Arguments  
+ *database_id* | NULL  
+ Is the ID of the database. *database_id* is **int**, with no default. Specify NULL to return information for all databases in the instance of  SQL Server 
+.  
+  
+ *file_id* | NULL  
+ Is the ID of the file. *file_id* is **int**, with no default. Specify NULL to return information for all files in the database.  
+  
+## Table Returned  
+  
+| Column Name | Data type | Description |
+| --- | --- | --- |
+| **DbId** | **smallint** | Database ID. |
+| **FileId** | **smallint** | File ID. |
+| **TimeStamp** | **bigint** | Database timestamp at which the data was taken. **int** in versions before  SQL Server 2016 (13.x) |
+| . |
+| **NumberReads** | **bigint** | Number of reads issued on the file. |
+| **BytesRead** | **bigint** | Number of bytes read issued on the file. |
+| **IoStallReadMS** | **bigint** | Total amount of time, in milliseconds, that users waited for the read I/Os to complete on the file. |
+| **NumberWrites** | **bigint** | Number of writes made on the file. |
+| **BytesWritten** | **bigint** | Number of bytes written made on the file. |
+| **IoStallWriteMS** | **bigint** | Total amount of time, in milliseconds, that users waited for the write I/Os to complete on the file. |
+| **IoStallMS** | **bigint** | Sum of **IoStallReadMS** and **IoStallWriteMS**. |
+| **FileHandle** | **bigint** | Value of the file handle. |
+| **BytesOnDisk** | **bigint** | Physical file size (count of bytes) on disk.<br /><br /> For database files, this is the same value as **size** in **sys.database_files**, but is expressed in bytes rather than pages.<br /><br /> For database snapshot sparse files, this is the space the operating system is using for the file. |
+  
+## Remarks  
+ **fn_virtualfilestats** is a system table-valued function that gives statistical information, such as the total number of I/Os performed on a file. You can use this function to help keep track of the length of time users have to wait to read or write to a file. The function also helps identify the files that encounter large numbers of I/O activity.  
+  
+## Permissions  
+ Requires VIEW SERVER STATE permission on the server.  
+
+### Permissions for SQL Server 2022 and later
+
+Requires `VIEW SERVER PERFORMANCE STATE` permission on the server, or `VIEW DATABASE PERFORMANCE STATE` permission on the database.
+
+## Examples
+  
+### A. Displaying statistical information for a database  
+ The following example displays statistical information for file ID 1 in the database with an ID of `1`.  
+  
+```sql  
+SELECT *  
+FROM fn_virtualfilestats(1, 1);  
+GO  
+```  
+  
+### B. Displaying statistical information for a named database and file  
+ The following example displays statistical information for the log file in the  AdventureWorks2025  sample database. The system function `DB_ID` is used to specify the *database_id* parameter.  
+  
+```sql  
+SELECT *  
+FROM fn_virtualfilestats(DB_ID(N'AdventureWorks2022'), 2);  
+GO  
+```  
+  
+### C. Displaying statistical information for all databases and files  
+ The following example displays statistical information for all files in all databases in the instance of  SQL Server 
+.  
+  
+```sql  
+SELECT *  
+FROM fn_virtualfilestats(NULL,NULL);  
+GO  
+```  
+  
+## Related content
+
+- [DB_ID (Transact-SQL)](../../t-sql/functions/db-id-transact-sql.md)
+- [FILE_IDEX (Transact-SQL)](../../t-sql/functions/file-idex-transact-sql.md)
+- [sys.database_files (Transact-SQL)](../system-catalog-views/sys-database-files-transact-sql.md)
+- [sys.master_files (Transact-SQL)](../system-catalog-views/sys-master-files-transact-sql.md)

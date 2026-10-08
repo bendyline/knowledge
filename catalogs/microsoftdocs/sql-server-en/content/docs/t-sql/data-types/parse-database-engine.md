@@ -1,0 +1,105 @@
+---
+title: "Parse (Database Engine)"
+description: "Parse (Database Engine)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "07/22/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "Parse"
+  - "Parse_TSQL"
+helpviewer_keywords:
+  - "Parse [Database Engine]"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# Parse (Database Engine)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Parse converts the canonical string representation of a **hierarchyid** to a **hierarchyid** value. Parse is called implicitly when a conversion from a string type to **hierarchyid** occurs. Acts as the opposite of [ToString](tostring-database-engine.md). Parse() is a static method.
+  
+## Syntax  
+  
+```syntaxsql
+-- Transact-SQL syntax  
+hierarchyid::Parse ( input )  
+-- This is functionally equivalent to the following syntax   
+-- which implicitly calls Parse():  
+CAST ( input AS hierarchyid )  
+```  
+  
+```csharp
+-- CLR syntax  
+static SqlHierarchyId Parse ( SqlString input )   
+```  
+  
+## Arguments
+*input*  
+ Transact-SQL : The character data type value that is being converted.
+  
+CLR: The String value that is being evaluated.
+  
+## Return Types  
+**SQL Server return type:hierarchyid**
+  
+**CLR return type:SqlHierarchyId**
+  
+## Remarks  
+If Parse receives a value that is not a valid string representation of a **hierarchyid**, an exception is raised. For example, if **char** data types contain trailing spaces, an exception is raised.
+  
+## Examples  
+  
+### A. Converting Transact-SQL values without a table  
+The following code example uses `ToString` to convert a **hierarchyid** value to a string, and `Parse` to convert a string value to a **hierarchyid**.
+  
+```sql
+DECLARE @StringValue AS NVARCHAR(4000), @hierarchyidValue AS hierarchyid  
+SET @StringValue = '/1/1/3/'  
+SET @hierarchyidValue = 0x5ADE  
+  
+SELECT hierarchyid::Parse(@StringValue) AS hierarchyidRepresentation,  
+@hierarchyidValue.ToString() AS StringRepresentation ;
+GO  
+```  
+  
+ Here's the result set. 
+
+  
+```text
+hierarchyidRepresentation    StringRepresentation
+-------------------------    -----------------------
+0x5ADE                       /1/1/3/
+```
+  
+### B. CLR example  
+The following code snippet calls the Parse() method:
+  
+```csharp
+string input = "/1/2/";  
+SqlHierarchyId.Parse(input);  
+```  
+  
+## Related content
+
+- [hierarchyid data type method reference](hierarchyid-data-type-method-reference.md)
+- [Hierarchical data (SQL Server)](../../relational-databases/hierarchical-data-sql-server.md)

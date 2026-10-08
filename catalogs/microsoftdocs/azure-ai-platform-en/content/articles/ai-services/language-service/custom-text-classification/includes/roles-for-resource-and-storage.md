@@ -1,0 +1,41 @@
+---
+title: How to create custom text classification projects
+titleSuffix: Foundry Tools
+description: Learn about the steps for using Azure resources with custom text classification.
+#services: cognitive-services
+author: laujan
+manager: mcleans
+ms.service: azure-language-foundry-tools
+ms.topic: include
+ms.date: 06/30/2026
+ms.author: lajanuar
+ms.custom: language-service-custom-classification
+---
+Use the following steps to set the required roles for your Language resource and storage account.
+
+An animated image showing how to set roles in the Azure portal.
+
+### Roles for your Azure Language in Foundry Tools resource
+
+1. Go to your storage account or Language resource in the [Azure portal](https://portal.azure.com/).
+2. Select **Access Control (IAM)** in the left pane.
+3. Select **Add** to **Add Role Assignments**, and choose the appropriate role for your account.
+
+    You should have the **owner** or **contributor** role assigned on your Language resource.
+
+4. Within **Assign access to**, select **User, group, or service principal**
+5. Select **Select members**
+6. Select your user name. You can search for user names in the **Select** field. Repeat this for all roles. 
+7. Repeat these steps for all the user accounts that need access to this resource. 
+
+### Roles for your storage account
+
+1. Go to your storage account page in the [Azure portal](https://portal.azure.com/).
+2. Select **Access Control (IAM)** in the left pane.
+3. Select **Add** to **Add Role Assignments**, and choose the **Storage blob data contributor** role on the storage account.
+4. Within **Assign access to**, select **Managed identity**. 
+5. Select **Select members**
+6. Select your subscription, and **Language** as the managed identity. You can search for user names in the **Select** field. 
+
+> **Important:**
+> If you have a virtual network or private endpoint, be sure to select **Allow Azure services on the trusted services list to access this storage account** in the Azure portal.

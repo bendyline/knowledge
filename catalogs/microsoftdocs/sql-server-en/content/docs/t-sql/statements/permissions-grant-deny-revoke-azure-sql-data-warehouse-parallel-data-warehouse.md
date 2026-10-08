@@ -1,0 +1,325 @@
+---
+title: "GRANT-DENY-REVOKE permissions"
+titleSuffix: "Azure Synapse Analytics, Microsoft Fabric"
+description: "Permissions: GRANT, DENY, REVOKE (Azure Synapse Analytics, Microsoft Fabric)"
+author: VanMSFT
+ms.author: vanto
+ms.date: 01/03/2025
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+dev_langs:
+  - "TSQL"
+monikerRange: "=azure-sqldw-latest||=fabric"
+---
+# Permissions: GRANT, DENY, REVOKE 
+
+**Applies to:**
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Use **GRANT** and **DENY** statements to grant or deny a permission (such as **UPDATE**) on a securable (such as a database, table, view, etc.) to a security principal (a login, a database user, or a database role). Use **REVOKE** to remove the grant or deny of a permission.  
+  
+ Server level permissions are applied to logins. Database level permissions are applied to database users and database roles.  
+  
+ To see what permissions have been granted and denied, query the sys.server_permissions and sys.database_permissions views. Permissions that are not explicitly granted or denied to a security principal can be inherited by having membership in a role that has permissions. The permissions of the fixed database roles cannot be changed and do not appear in the sys.server_permissions and sys.database_permissions views.  
+  
+-   **GRANT** explicitly grants one or more permissions.  
+  
+-   **DENY** explicitly denies the principal from having one or more permissions.  
+  
+-   **REVOKE** removes existing **GRANT** or **DENY** permissions.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+-- Azure Synapse Analytics and Microsoft Fabric
+GRANT   
+    <permission> [ ,...n ]  
+    [ ON [ <class_type> :: ] securable ]   
+    TO principal [ ,...n ]  
+    [ WITH GRANT OPTION ]  
+[;]  
+  
+DENY   
+    <permission> [ ,...n ]  
+    [ ON [ <class_type> :: ] securable ]   
+    TO principal [ ,...n ]  
+    [ CASCADE ]  
+[;]  
+  
+REVOKE   
+    <permission> [ ,...n ]  
+    [ ON [ <class_type> :: ] securable ]   
+    [ FROM | TO ] principal [ ,...n ]  
+    [ CASCADE ]  
+[;]  
+  
+<permission> ::=  
+{ see the tables below }  
+  
+<class_type> ::=  
+{  
+      LOGIN  
+    | DATABASE  
+    | OBJECT  
+    | ROLE  
+    | SCHEMA  
+    | USER  
+}  
+```  
+  
+## Arguments  
+ \<permission>[ **,**...*n* ]  
+ One or more permissions to grant, deny, or revoke.  
+  
+ ON [ \<class_type> :: ] *securable* 
+ The **ON** clause describes the securable parameter on which to grant, deny, or revoke permissions.  
+  
+ \<class_type> 
+ The class type of the securable. This can be **LOGIN**, **DATABASE**, **OBJECT**, **SCHEMA**, **ROLE**, or **USER**. Permissions can also be granted to the **SERVER**_class\_type_, but **SERVER** is not specified for those permissions. **DATABASE** is not specified when the permission includes the word **DATABASE** (for example **ALTER ANY DATABASE**). When no *class_type* is specified and the permission type is not restricted to the server or database class, the class is assumed to be **OBJECT**.  
+  
+ *securable*  
+ The name of the login, database, table, view, schema, procedure, role, or user on which to grant, deny, or revoke permissions. The object name can be specified with the three-part naming rules that are described in [Transact-SQL syntax conventions](../language-elements/transact-sql-syntax-conventions-transact-sql.md).  
+  
+ TO *principal* [ **,**...*n* ]  
+ One or more principals being granted, denied, or revoked permissions. Principal is the name of a login, database user, or database role.  
+  
+ FROM *principal* [ **,**...*n* ]  
+ One or more principals to revoke permissions from.  Principal is the name of a login, database user, or database role. **FROM** can only be used with a **REVOKE** statement. **TO** can be used with **GRANT**, **DENY**, or **REVOKE**.  
+  
+ WITH GRANT OPTION  
+ Indicates that the grantee will also be given the ability to grant the specified permission to other principals.  
+  
+ CASCADE  
+ Indicates that the permission is denied or revoked to the specified principal and to all other principals to which the principal granted the permission. Required when the principal has the permission with **GRANT OPTION**.  
+  
+ GRANT OPTION FOR  
+ Indicates that the ability to grant the specified permission will be revoked. This is required when you are using the **CASCADE** argument.  
+  
+> **Important:**  
+>  If the principal has the specified permission without the **GRANT** option, the permission itself will be revoked.  
+  
+## Permissions  
+ To grant a permission, the grantor must have either the permission itself with the **WITH GRANT OPTION**, or must have a higher permission that implies the permission being granted.  Object owners can grant permissions on the objects they own. Principals with **CONTROL** permission on a securable can grant permission on that securable.  Members of the **db_owner** and **db_securityadmin** fixed database roles can grant any permission in the database.  
+  
+## General Remarks  
+ Denying or revoking permissions to a principal will not affect requests that have passed authorization and are currently running. To restrict access immediately, you must cancel active requests or kill current sessions.  
+  
+> **Note:**  
+>  Most fixed server roles are not available in this release. Use user-defined database roles instead. Logins cannot be added to the **sysadmin** fixed server role. Granting the **CONTROL SERVER** permission approximates membership in the **sysadmin** fixed server role.  
+  
+ Some statements require multiple permissions. For example, to create a table requires the **CREATE TABLE** permissions in the database, and the **ALTER SCHEMA** permission for the table that will contain the table.  
+  
+  Azure Synapse Analytics  sometimes executes stored procedures to distribute user actions to the compute nodes. Therefore, the execute permission for an entire database cannot be denied. (For example `DENY EXECUTE ON DATABASE::<name> TO <user>;` will fail.) As a work around, deny the execute permission to user-schemas or specific objects (procedures).  
+  
+ In Microsoft Fabric, currently the CREATE USER cannot be explicitly executed. When GRANT or DENY is executed, the user will be created automatically. 
+
+ In Microsoft Fabric, server-level permissions are not manageable. 
+
+### Implicit and Explicit Permissions  
+ An *explicit permission* is a **GRANT** or **DENY** permission given to a principal by a **GRANT** or **DENY** statement.  
+  
+ An *implicit permission* is a **GRANT** or **DENY** permission that a principal (login, user, or database role) has inherited from another database role.  
+  
+ An implicit permission can also be inherited from a covering or parent permission. For example, **UPDATE** permission on a table can be inherited by having **UPDATE** permission on the schema that contains the table, or **CONTROL** permission on the table.  
+  
+### Ownership Chaining  
+ When multiple database objects access each other sequentially, the sequence is known as a *chain*. Although such chains do not independently exist, when  SQL Server 
+ traverses the links in a chain,  SQL Server 
+ evaluates permissions on the constituent objects differently than it would if it were accessing the objects separately. Ownership chaining has important implications for managing security. For more information about ownership chains, see [Ownership Chains](https://msdn.microsoft.com/library/ms188676\(v=sql11\).aspx) and [Tutorial: Ownership Chains and Context Switching](../../relational-databases/tutorial-ownership-chains-and-context-switching.md).  
+  
+## Permission List  
+  
+### Server Level Permissions  
+ Server level permissions can be granted, denied, and revoked from logins.  
+  
+ **Permissions that apply to servers**  
+  
+-   CONTROL SERVER  
+  
+-   ADMINISTER BULK OPERATIONS  
+  
+-   ALTER ANY CONNECTION  
+  
+-   ALTER ANY DATABASE  
+  
+-   CREATE ANY DATABASE  
+  
+-   ALTER ANY EXTERNAL DATA SOURCE  
+  
+-   ALTER ANY EXTERNAL FILE FORMAT  
+  
+-   ALTER ANY LOGIN  
+  
+-   ALTER SERVER STATE  
+  
+-   CONNECT SQL  
+  
+-   VIEW ANY DEFINITION  
+  
+-   VIEW ANY DATABASE  
+  
+-   VIEW SERVER STATE  
+  
+ **Permissions that apply to logins**  
+  
+-   CONTROL ON LOGIN  
+  
+-   ALTER ON LOGIN  
+  
+-   IMPERSONATE ON LOGIN  
+  
+-   VIEW DEFINITION  
+  
+### Database Level Permissions  
+ Database level permissions can be granted, denied, and revoked from database users and user-defined database roles.  
+  
+ **Permissions that apply to all database classes**  
+  
+-   CONTROL  
+  
+-   ALTER  
+  
+-   VIEW DEFINITION  
+  
+ **Permissions that apply to all database classes except users**  
+  
+-   TAKE OWNERSHIP  
+  
+ **Permissions that apply only to databases**  
+  
+-   ALTER ANY DATABASE  
+  
+-   ALTER ON DATABASE  
+  
+-   ALTER ANY DATASPACE  
+  
+-   ALTER ANY ROLE  
+  
+-   ALTER ANY SCHEMA  
+  
+-   ALTER ANY USER  
+  
+-   BACKUP DATABASE  
+  
+-   CONNECT ON DATABASE  
+  
+-   CREATE PROCEDURE  
+  
+-   CREATE ROLE  
+  
+-   CREATE SCHEMA  
+  
+-   CREATE TABLE  
+  
+-   CREATE VIEW  
+  
+-   SHOWPLAN  
+  
+ **Permissions that apply only to users**  
+  
+-   IMPERSONATE  
+  
+ **Permissions that apply to databases, schemas, and objects**  
+  
+-   ALTER  
+  
+-   DELETE  
+  
+-   EXECUTE  
+  
+-   INSERT  
+  
+-   SELECT  
+  
+-   UPDATE  
+  
+-   REFERENCES  
+  
+ For a definition of each type of permission, see [Permissions (Database Engine)](../../relational-databases/security/permissions-database-engine.md).   
+  
+## Default Permissions  
+ The following list describes the default permissions:  
+  
+-   When a login is created by using the **CREATE LOGIN** statement the new login receives the **CONNECT SQL** permission.  
+  
+-   All logins are members of the **public** server role and cannot be removed from **public**.  
+  
+-   When a database user is created by using the **CREATE USER** permission, the database user receives the **CONNECT** permission in the database.  
+  
+-   All principals, including the **public** role, have no explicit or implicit permissions by default.  
+  
+-   When a login or user becomes the owner of a database or object, the login or user always has all permissions on the database or object. The ownership permissions cannot be changed and are not visible as explicit permissions. The **GRANT**, **DENY**, and **REVOKE** statements have no effect on owners.  
+  
+-   The **sa** login has all permissions on the appliance. Similar to ownership permissions, the **sa** permissions cannot be changed and are not visible as explicit permissions. The **GRANT**, **DENY**, and **REVOKE** statements have no effect on **sa** login. The **sa** login cannot be renamed.  
+  
+-   The **USE** statement does not require permissions. All principals can run the **USE** statement on any database.  
+  
+##  <a name="Examples"></a> Examples:  Azure Synapse Analytics   
+  
+### A. Granting a server level permission to a login  
+ The following two statements grant a server level permission to a login.  
+  
+```sql  
+GRANT CONTROL SERVER TO [Ted];  
+```  
+  
+```sql  
+GRANT ALTER ANY DATABASE TO Mary;  
+```  
+  
+### B. Granting a server level permission to a login  
+ The following example grants a server level permission on a login to a server principal (another login).  
+  
+```sql  
+GRANT  VIEW DEFINITION ON LOGIN::Ted TO Mary;  
+```  
+  
+### C. Granting a database level permission to a user  
+ The following example grants a database level permission on a user to a database principal (another user).  
+  
+```sql  
+GRANT VIEW DEFINITION ON USER::[Ted] TO Mary;  
+```  
+  
+### D. Granting, denying, and revoking a schema permission  
+ The following **GRANT** statement grants Yuen the ability to select data from any table or view in the dbo schema.  
+  
+```sql  
+GRANT SELECT ON SCHEMA::dbo TO [Yuen];  
+```  
+  
+ The following **DENY** statement prevents Yuen from selecting data from any table or view in the dbo schema. Yuen cannot read the data even if he has permission in some other way, such as through a role membership.  
+  
+```sql  
+DENY SELECT ON SCHEMA::dbo TO [Yuen];  
+```  
+  
+ The following **REVOKE** statement removes the **DENY** permission. Now Yuen's explicit permissions are neutral. Yuen might be able to select data from any table through some other implicit permission such as a role membership.  
+  
+```sql  
+REVOKE SELECT ON SCHEMA::dbo TO [Yuen];  
+```  
+  
+### E. Demonstrating the optional OBJECT:: clause  
+ Because OBJECT is the default class for a permission statement, the following two statements are the same. The **OBJECT::** clause is optional.  
+  
+```sql  
+GRANT UPDATE ON OBJECT::dbo.StatusTable TO [Ted];  
+```  
+  
+```sql  
+GRANT UPDATE ON dbo.StatusTable TO [Ted];  
+```

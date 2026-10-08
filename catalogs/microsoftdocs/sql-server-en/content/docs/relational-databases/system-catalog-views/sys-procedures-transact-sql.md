@@ -1,0 +1,67 @@
+---
+title: "sys.procedures (Transact-SQL)"
+description: sys.procedures (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "procedures"
+  - "sys.procedures_TSQL"
+  - "sys.procedures"
+  - "procedures_TSQL"
+helpviewer_keywords:
+  - "sys.procedures catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# sys.procedures (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Contains a row for each object that is a procedure of some kind, with **sys.objects.type** = P, X, RF, and PC.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **\<Columns inherited from sys.objects>** |  | For a list of columns that this view inherits, see [sys.objects (Transact-SQL)](sys-objects-transact-sql.md) |
+| **is_auto_executed** | **bit** | 1 = Procedure is auto-executed at the server startup; otherwise, 0. Can only be set for procedures in the master database. |
+| **is_execution_replicated** | **bit** | Execution of this procedure is replicated. |
+| **is_repl_serializable_only** | **bit** | Replication of the procedure execution is done only when the transaction can be serialized. |
+| **skips_repl_constraints** | **bit** | During execution, the procedure skips constraints marked NOT FOR REPLICATION. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

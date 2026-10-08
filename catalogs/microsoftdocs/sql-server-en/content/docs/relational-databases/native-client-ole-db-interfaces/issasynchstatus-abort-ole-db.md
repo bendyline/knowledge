@@ -1,0 +1,91 @@
+---
+title: "ISSAsynchStatus::Abort (Native Client OLE DB provider)"
+description: "ISSAsynchStatus::Abort (Native Client OLE DB provider)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/07/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "Abort method"
+apiname: "ISSAsynchStatus::Abort (OLE DB)"
+apitype: "COM"
+---
+# ISSAsynchStatus::Abort (Native Client OLE DB Provider)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+> **Important:**
+> The [SQL Server Native Client](../native-client/sql-server-native-client.md) (often abbreviated SNAC) has been removed from  SQL Server 2022 (16.x) 
+ and  SQL Server Management Studio 
+ 19 (SSMS). Both the SQL Server Native Client OLE DB provider (SQLNCLI or SQLNCLI11) and the legacy Microsoft OLE DB Provider for SQL Server (SQLOLEDB) are not recommended for new development. Switch to the new [Microsoft OLE DB Driver (MSOLEDBSQL) for SQL Server](../../connect/oledb/oledb-driver-for-sql-server.md) going forward. 
+
+  Cancels an asynchronously executing operation.  
+  
+## Syntax  
+  
+```  
+  
+HRESULT Abort(  
+        HCHAPTER hChapter,  
+        DBASYNCHOP eOperation);  
+```  
+  
+## Arguments  
+ *hChapter*[in]  
+ The handle of the chapter for which to abort the operation. If the object being called is not a rowset object or the operation does not apply to a chapter, the caller must set *hChapter* to DB_NULL_HCHAPTER.  
+  
+ *eOperation*[in]  
+ The operation to abort. This should be the following value:  
+  
+ DBASYNCHOP_OPEN-The request to cancel applies to the asynchronous opening or population of a rowset or to the asynchronous initialization of a data source object.  
+  
+## Return Code Values  
+ S_OK  
+ The request to cancel the asynchronous operation was processed. This does not guarantee that the operation itself was canceled. To determine whether the operation was canceled, the consumer should call [ISSAsynchStatus::GetStatus](issasynchstatus-getstatus-ole-db.md) and check for DB_E_CANCELED; however, it might not be returned in the very next call.  
+  
+ DB_E_CANTCANCEL  
+ The asynchronous operation cannot be canceled.  
+  
+ DB_E_CANCELED  
+ The request to abort the asynchronous operation was canceled during notifications. The operation is still being executed asynchronously.  
+  
+ E_FAIL  
+ A provider-specific error occurred.  
+  
+ E_INVALIDARG  
+ The *hChapter* parameter is not DB_NULL_HCHAPTER or *eOperation* is not DBASYNCH_OPEN.  
+  
+ E_UNEXPECTED  
+ **ISSAsynchStatus::Abort** was called on a data source object on which **IDBInitialize::Initialize** has not been called, or has not completed.  
+  
+ **ISSAsynchStatus::Abort** was called on a data source object on which **IDBInitialize::Initialize** was called but subsequently canceled before initialization, or has timed out. The data source object is still uninitialized.  
+  
+ **ISSAsynchStatus::Abort** was called on a rowset on which **ITransaction::Commit** or **ITransaction::Abort** was previously called, and the rowset did not survive the commit or abort and is in a zombie state.  
+  
+ **ISSAsynchStatus::Abort** was called on a rowset that was asynchronously canceled in its initialization phase. The rowset is in a zombie state.  
+  
+## Remarks  
+ Aborting the initialization of a rowset or data source object might leave the rowset or data source object in a zombie state, such that all methods other than **IUnknown** methods return E_UNEXPECTED. When this happens, the only possible action for the consumer is to release the rowset or data source object.  
+  
+ Calling **ISSAsynchStatus::Abort** and passing a value for *eOperation* other than DBASYNCHOP_OPEN returns S_OK. This does not imply that the operation completed or was canceled.  
+  
+## Related content
+
+- [Performing Asynchronous Operations in SQL Server Native Client](../native-client/features/performing-asynchronous-operations.md)

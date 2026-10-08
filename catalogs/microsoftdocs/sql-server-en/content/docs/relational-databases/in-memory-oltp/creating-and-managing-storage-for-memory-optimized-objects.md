@@ -1,0 +1,71 @@
+---
+title: Create & Manage Storage - Memory-Optimized Objects
+description: Learn about attributes of memory-optimized tables and disk-based tables. Use these resources to create and manage storage for memory-optimized objects.
+author: rwestMSFT
+ms.author: randolphwest
+ms.reviewer: randolphwest
+ms.date: 10/20/2025
+ms.service: sql
+ms.subservice: in-memory-oltp
+ms.topic: concept-article
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Create and manage storage for memory-optimized objects
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+
+The  In-Memory OLTP 
+ engine is integrated into  SQL Server 
+, which lets you have both memory-optimized tables and (traditional) disk-based tables in the same database. However, the storage structure for memory-optimized tables is different from disk-based tables.
+
+Storage for disk-based table has following key attributes:
+
+- Mapped to a filegroup and the filegroup contains one or more files.
+
+- Each file is divided into extents of eight pages, and each page is 8 kilobytes (8,192 bytes) in size.
+
+- An extent can be shared across multiple tables, but there's a one-to-one mapping between an allocated page and the table or index. In other words, a page can't have rows from two or more tables or index.
+
+- The data is moved into memory (the buffer pool) as needed and the modified or newly created pages are asynchronously written to the disk generating mostly random IO.
+
+Storage for memory-optimized tables has following key attributes:
+
+- All memory-optimized tables are mapped to a memory-optimized data-filegroup. This filegroup uses syntax and semantics similar to Filestream.
+
+- There are no pages and the data is persisted as a row.
+
+- All changes to memory-optimized tables are stored by appending to active files. Both reading and writing to files is sequential.
+
+- An update is implemented as a delete followed by an insert. The deleted rows aren't immediately removed from the storage. The deleted rows are removed by a background process, called `MERGE`, based on a policy as described in [Durability for Memory-Optimized Tables](durability-for-memory-optimized-tables.md).
+
+- Unlike disk-based tables, storage for memory-optimized tables isn't compressed. When migrating a compressed (`ROW` or `PAGE`) disk-based table to memory-optimized table, you need to account for the change in size.
+
+- A memory-optimized table can be durable or can be non-durable. You only need to configure storage for durable memory-optimized tables.
+
+This section describes checkpoint file pairs and other aspects of how data in memory-optimized tables is stored.
+
+Articles in this section:
+
+- [Configuring Storage for Memory-Optimized Tables](configuring-storage-for-memory-optimized-tables.md)
+- [The memory-optimized filegroup](the-memory-optimized-filegroup.md)
+- [Durability for Memory-Optimized Tables](durability-for-memory-optimized-tables.md)
+- [Checkpoint Operation for Memory-Optimized Tables](checkpoint-operation-for-memory-optimized-tables.md)
+- [Defining Durability for Memory-Optimized Objects](defining-durability-for-memory-optimized-objects.md)
+- [Comparing Disk-Based Table Storage to Memory-Optimized Table Storage](comparing-disk-based-table-storage-to-memory-optimized-table-storage.md)
+
+## Related content
+
+- [In-Memory OLTP overview and usage scenarios](overview-and-usage-scenarios.md)

@@ -1,0 +1,63 @@
+---
+author: PatrickFarley
+ms.service: azure-speech-foundry-tools
+ms.date: 02/24/2022
+ms.topic: include
+ms.author: pafarley
+---
+
+#### Consonants
+
+| UPS Phonemes | IPA | Example |
+| --- | --- | --- |
+| `B` | b | big |
+| `CH` | t.ʃ / ʧ | chin |
+| `D` | d | dig |
+| `DH` | ð | then |
+| `F` | f | fork |
+| `G` | g | gut |
+| `H` | h | help |
+| `JH` | d.ʒ / ʤ | joy |
+| `K` | k | cut |
+| `L` | l | lid |
+| `M` | m | mat |
+| `N` | n | no |
+| `NG` | ŋ | sing |
+| `P` | p | put |
+| `R` | ɻ | red |
+| `S` | s | sit |
+| `SH` | ʃ | she |
+| `T` | t | talk |
+| `TH` | θ | thin |
+| `V` | v | vat |
+| `W` | w | with |
+| `J` | j | yard |
+| `Z` | z | zap |
+| `ZH` | ʒ | pleasure |
+
+### Vowels
+
+| UPS Phonemes | IPA | Example |
+| --- | --- | --- |
+| `AA` | ɑ | father |
+| `AE` | æ | cat |
+| `AH` | ʌ | cut |
+| `AO` | ɔ | dog |
+| `AOX` | ɔ.ə | four |
+| `AU` | ɑ.ʊ | foul |
+| `AX` | ə | ago |
+| `AX R` | ɚ | minor |
+| `AI` | ɑ.ɪ | bite |
+| `EH` | ɛ | pet |
+| `EHX` | ɛ.ə | stairs |
+| `ER R` | ɝ | urban |
+| `EI` | e.ɪ | ate |
+| `IH` | ɪ | fill |
+| `I` | i | feel |
+| `O` | o | go |
+| `OI` | ɔ.ɪ | toy |
+| `OWX` | o.ə | boa |
+| `Q` | ɒ | hot |
+| `UH` | ʊ | book |
+| `U` | u | too, blue |
+| `UWX` | u.ə | lure |

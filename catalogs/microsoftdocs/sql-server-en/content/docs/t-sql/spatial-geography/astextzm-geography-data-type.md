@@ -1,0 +1,72 @@
+---
+title: "AsTextZM (geography Data Type)"
+description: "AsTextZM (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "AsTextZM_(geography Data Type)"
+  - "AsTextZM_(geography_Data_Type)_TSQL"
+helpviewer_keywords:
+  - "AsTextZM method"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# AsTextZM (geography Data Type)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a **geography** instance augmented with any **Z** (elevation) and **M** (measure) values carried by the instance.  
+  
+## Syntax  
+  
+```sql  
+.AsTextZM ()  
+```  
+
+## Return Types
+
+ SQL Server 
+ return type: **nvarchar(max)**  
+  
+CLR return type: **SqlChars**  
+  
+## Remarks  
+  
+## Examples  
+
+The following example creates a `Point` instance that contains **Z** (elevation) and **M** (measure) values. `STAsText()` selects the WKT values, (-122.34900 47.65100); `AsTextZM()` selects the same WKT values and also returns the values for **Z** and **M**, yielding (-122.34900 47.65100 10.3 12).  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STGeomFromText('POINT(-122.34900 47.65100 10.3 12)', 4326);  
+SELECT @g.STAsText();  
+SELECT @g.AsTextZM();  
+```  
+  
+## Related content
+
+- [Extended methods on geography instances](extended-methods-on-geography-instances.md)
+- [M (geography Data Type)](m-geography-data-type.md)
+- [Z (geography Data Type)](z-geography-data-type.md)

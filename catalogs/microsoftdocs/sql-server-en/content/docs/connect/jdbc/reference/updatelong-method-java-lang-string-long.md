@@ -1,0 +1,47 @@
+---
+title: "updateLong Method (java.lang.String, long)"
+description: "updateLong Method (java.lang.String, long)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.updateLong (java.lang.String, long)"
+apitype: "Assembly"
+---
+# updateLong Method (java.lang.String, long)
+
+
+  Updates the designated column with a **long** value given the column name.  
+  
+## Syntax  
+  
+```  
+  
+public void updateLong(java.lang.String columnName,  
+                       long x)  
+```  
+  
+#### Parameters  
+ *columnName*  
+  
+ A **String** that contains the column name.  
+  
+ *x*  
+  
+ A **long** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This updateLong method is specified by the updateLong method in the java.sql.ResultSet interface.  
+  
+## Related content
+
+- [updateLong Method (SQLServerResultSet)](updatelong-method-sqlserverresultset.md)
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

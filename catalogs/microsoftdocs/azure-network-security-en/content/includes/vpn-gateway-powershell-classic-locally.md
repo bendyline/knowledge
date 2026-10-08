@@ -1,0 +1,18 @@
+When working with the classic deployment model, you can't use Azure Cloud Shell. Instead, you must install the latest version of the Azure Service Management (SM) PowerShell cmdlets locally on your computer. These cmdlets are different from the AzureRM or Az cmdlets. To install the SM cmdlets, see [Install Service Management cmdlets](https://www.powershellgallery.com/packages/Azure/). For more information about Azure PowerShell in general, see the [Azure PowerShell documentation](https://learn.microsoft.com/powershell/azure/).
+
+
+## Original source metadata
+
+```text
+---
+ title: include file
+ description: include file
+ services: vpn-gateway
+ author: duongau
+ ms.service: vpn-gateway
+ ms.topic: include
+ ms.date: 02/10/2020
+ ms.author: duau
+ms.custom: include file
+---
+```

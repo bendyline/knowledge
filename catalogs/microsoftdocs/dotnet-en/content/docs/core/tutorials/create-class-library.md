@@ -1,0 +1,453 @@
+---
+title: Create a .NET class library
+description: Learn how to create a .NET class library using Visual Studio, Visual Studio Code, or GitHub Codespaces.
+ms.date: 02/12/2026
+ai-usage: ai-assisted
+zone_pivot_groups: code-editor-set-one
+dev_langs:
+  - "csharp"
+  - "vb"
+---
+# Tutorial: Create a .NET class library
+
+In this tutorial, you create a simple utility library that contains a single string-handling method.
+
+A *class library* defines types and methods that are called by an application. If the library targets .NET Standard 2.0, it can be called by any .NET implementation (including .NET Framework) that supports .NET Standard 2.0. If the library targets .NET 10, it can be called by any application that targets .NET 10. This tutorial shows how to target .NET 10.
+
+When you create a class library, you can distribute it as a third-party component or as a bundled component with one or more applications.
+
+## Prerequisites
+
+**Applies to: visualstudio**
+
+
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=learn.microsoft.com&utm_campaign=inline+link) with the **.NET desktop development** workload installed. The .NET SDK is automatically installed when you select this workload.
+
+  For more information, see [Install the .NET SDK with Visual Studio](../install/windows.md#install-with-visual-studio).
+
+
+
+**Applies to: vscode**
+
+
+
+- The latest [.NET SDK](https://dotnet.microsoft.com/download)
+- [Visual Studio Code](https://code.visualstudio.com) editor
+- The [C# DevKit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)
+
+### Installation instructions
+
+On Windows, this [WinGet configuration file](https://builds.dotnet.microsoft.com/dotnet/install/dotnet_basic_config_docs.winget) to install all prerequisites. If you already have something installed, WinGet will skip that step.
+
+1. Download the file and double-click to run it.
+1. Read the license agreement, type <kbd>y</kbd>, and select <kbd>Enter</kbd> when prompted to accept.
+1. If you get a flashing User Account Control (UAC) prompt in your Taskbar, allow the installation to continue.
+
+On other platforms, you need to install each of these components separately.
+
+1. Download the recommended installer from the [.NET SDK download page](https://dotnet.microsoft.com/download) and double-click to run it. The download page detects your platform and recommends the latest installer for your platform.
+1. Download the latest installer from the [Visual Studio Code](https://code.visualstudio.com) home page and double click to run it. That page also detects your platform and the link should be correct for your system.
+1. Click the "Install" button on the [C# DevKit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) extension page. That opens Visual Studio code, and asks if you want to install or enable the extension. Select "install".
+
+
+
+
+**Applies to: codespaces**
+
+
+- A GitHub account to use [GitHub Codespaces](https://github.com/codespaces). If you don't already have one, you can create a free account at [GitHub.com](https://github.com).
+
+
+
+## Create a solution
+
+**Applies to: visualstudio**
+
+
+Start by creating a blank solution to hold the class library project. A Visual Studio solution serves as a container for one or more projects. Add related projects to the same solution.
+
+To create the blank solution:
+
+1. Start Visual Studio.
+
+1. On the start window, choose **Create a new project**.
+
+1. On the **Create a new project** page, enter **solution** in the search box. Choose the **Blank Solution** template, and then choose **Next**.
+
+   Blank solution template in Visual Studio
+
+1. On the **Configure your new project** page, enter **ClassLibraryProjects** in the **Solution name** box. Then choose **Create**.
+
+
+
+**Applies to: vscode**
+
+
+Start by creating a .NET class library project named "StringLibrary" and an associated solution. A solution serves as a container for one or more projects. You'll add additional, related projects to the same solution.
+
+1. Start Visual Studio Code.
+
+1. Go to the Explorer view and select **Create .NET Project**. Alternatively, you can bring up the Command Palette using Ctrl+Shift+P (Command+Shift+P on MacOS) and then type ".NET" and find and select the .NET: New Project command.
+
+1. Choose the project template **Class Library**.
+
+1. Then select the location where you would like the new project to be created: Create a folder named `ClassLibraryProjects` and select it.
+
+1. Name the project **StringLibrary**.
+
+1. Select **.sln** as the solution file format.
+
+1. Select **Show all template options**.
+
+1. Next select **.NET 10**. Then select **Create Project**.
+
+1. In the **Do you trust the authors of the files in this folder?** dialog, select **Yes, I trust the authors**. You can trust the authors because this folder only has files generated by .NET and added or modified by you.
+
+
+
+**Applies to: codespaces**
+
+
+Start by creating a GitHub Codespace with the tutorial environment, then create a .NET class library project.
+
+1. Open a browser window and navigate to the [tutorial codespace](https://github.com/dotnet/tutorial-codespace) repository.
+
+1. Select the green **Code** button, and then the **Codespaces** tab.
+
+1. Select the `+` sign or the green **Create codespace on main** button to create a new Codespace using this environment.
+
+   Create a new Codespace from the tutorial repository
+
+1. When your codespace loads, open the terminal and navigate to the tutorials folder:
+
+   ```bash
+   cd tutorials
+   ```
+
+1. Create a new class library project:
+
+   ```dotnetcli
+   dotnet new classlib -n StringLibrary
+   ```
+
+
+
+## Create a class library project
+
+**Applies to: visualstudio**
+
+
+1. Add a new .NET class library project named **StringLibrary** to the solution.
+
+   1. Right-click on the solution in **Solution Explorer** and select **Add** > **New Project**.
+
+   1. On the **Add a new project** page, enter **library** in the search box. Choose **C#** or **Visual Basic** from the Language list, and then choose **All platforms** from the Platform list. Choose the **Class Library** template, and then choose **Next**.
+
+   1. On the **Configure your new project** page, enter **StringLibrary** in the **Project name** box, and then choose **Next**.
+
+   1. On the **Additional information** page, select **.NET 10**, and then choose **Create**.
+
+1. Check to make sure that the library targets the correct version of .NET. Right-click on the library project in **Solution Explorer**, and then select **Properties**. The **Target Framework** text box shows that the project targets .NET 10.0.
+
+1. If you're using Visual Basic, clear the text in the **Default namespace** text box.
+
+   Project properties for the class library
+
+   For each project, Visual Basic automatically creates a namespace that corresponds to the project name. In this tutorial, you define a top-level namespace by using the [`namespace`](../../visual-basic/language-reference/statements/namespace-statement.md) keyword in the code file.
+
+1. Replace the code in the code window for *Class1.cs*  or *Class1.vb* with the following code, and save the file. If the language you want to use isn't shown, change the language selector at the top of the page.
+
+   [language="csharp" source="./snippets/create-class-library/csharp/StringLibrary/Class1.cs"::: (complete source file; reference: ./snippets/create-class-library/csharp/StringLibrary/Class1.cs)](../../../_code/docs/core/tutorials/snippets/create-class-library/csharp/StringLibrary/Class1.cs.md)
+   [language="vb" source="./snippets/create-class-library/vb/StringLibrary/Class1.vb"::: (complete source file; reference: ./snippets/create-class-library/vb/StringLibrary/Class1.vb)](../../../_code/docs/core/tutorials/snippets/create-class-library/vb/StringLibrary/Class1.vb.md)
+
+   The class library, `UtilityLibraries.StringLibrary`, contains a method named `StartsWithUpper`. This method returns a [System.Boolean](https://learn.microsoft.com/search/?terms=System.Boolean) value that indicates whether the current string instance begins with an uppercase character. The Unicode standard distinguishes uppercase characters from lowercase characters. The [System.Char.IsUpper(System.Char)](https://learn.microsoft.com/search/?terms=System.Char.IsUpper(System.Char)) method returns `true` if a character is uppercase.
+
+   `StartsWithUpper` is implemented as an [extension method](../../csharp/programming-guide/classes-and-structs/extension-methods.md) so that you can call it as if it were a member of the [System.String](https://learn.microsoft.com/search/?terms=System.String) class. The question mark (`?`) after `string` in the C# code indicates that the string may be null.
+
+1. On the menu bar, select **Build** > **Build Solution** or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to verify that the project compiles without error.
+
+
+
+**Applies to: vscode**
+
+
+1. The project is created and *Class1.cs* opens.
+
+1. Replace the contents of *Class1.cs* with the following code:
+
+   [language="csharp" source="./snippets/create-class-library/csharp/StringLibrary/Class1.cs"::: (complete source file; reference: ./snippets/create-class-library/csharp/StringLibrary/Class1.cs)](../../../_code/docs/core/tutorials/snippets/create-class-library/csharp/StringLibrary/Class1.cs.md)
+
+   The class library, `UtilityLibraries.StringLibrary`, contains a method named `StartsWithUpper`. This method returns a [System.Boolean](https://learn.microsoft.com/search/?terms=System.Boolean) value that indicates whether the current string instance begins with an uppercase character. The Unicode standard distinguishes uppercase characters from lowercase characters. The [System.Char.IsUpper(System.Char)](https://learn.microsoft.com/search/?terms=System.Char.IsUpper(System.Char)) method returns `true` if a character is uppercase.
+
+   `StartsWithUpper` is implemented as an [extension method](../../csharp/programming-guide/classes-and-structs/extension-methods.md) so that you can call it as if it were a member of the [System.String](https://learn.microsoft.com/search/?terms=System.String) class.
+
+1. Save the file.
+
+1. Expand **Solution Explorer** at the bottom of the **Explorer** view.
+
+1. Right click the solution in **Solution Explorer** and select **Build**, or open the Command Palette and select **.NET: Build** to build the solution and verify that the project compiles without error.
+
+   The terminal output looks like the following example:
+
+   ```output
+     Determining projects to restore...
+     All projects are up-to-date for restore.
+     StringLibrary -> C:\Projects\ClassLibraryProjects\StringLibrary\bin\Debug\net10.0\StringLibrary.dll
+   Build succeeded.
+       0 Warning(s)
+       0 Error(s)
+   Time Elapsed 00:00:02.78
+   ```
+
+
+
+**Applies to: codespaces**
+
+
+1. Navigate to the StringLibrary folder:
+
+   ```bash
+   cd StringLibrary
+   ```
+
+1. Open *Class1.cs* and replace its contents with the following code:
+
+   [language="csharp" source="./snippets/create-class-library/csharp/StringLibrary/Class1.cs"::: (complete source file; reference: ./snippets/create-class-library/csharp/StringLibrary/Class1.cs)](../../../_code/docs/core/tutorials/snippets/create-class-library/csharp/StringLibrary/Class1.cs.md)
+
+   The class library, `UtilityLibraries.StringLibrary`, contains a method named `StartsWithUpper`. This method returns a [System.Boolean](https://learn.microsoft.com/search/?terms=System.Boolean) value that indicates whether the current string instance begins with an uppercase character. The Unicode standard distinguishes uppercase characters from lowercase characters. The [System.Char.IsUpper(System.Char)](https://learn.microsoft.com/search/?terms=System.Char.IsUpper(System.Char)) method returns `true` if a character is uppercase.
+
+   `StartsWithUpper` is implemented as an [extension method](../../csharp/programming-guide/classes-and-structs/extension-methods.md) so that you can call it as if it were a member of the [System.String](https://learn.microsoft.com/search/?terms=System.String) class.
+
+1. Save the file and build the project:
+
+   ```dotnetcli
+   dotnet build
+   ```
+
+   The build should succeed with no errors.
+
+
+
+## Add a console app to the solution
+
+Add a console application that uses the class library. The app will prompt the user to enter a string and report whether the string begins with an uppercase character.
+
+**Applies to: visualstudio**
+
+
+1. Add a new .NET console application named **ShowCase** to the solution.
+
+   1. Right-click on the solution in **Solution Explorer** and select **Add** > **New Project**.
+
+   1. On the **Add a new project** page, enter **console** in the search box. Choose **C#** or **Visual Basic** from the Language list, and then choose **All platforms** from the Platform list.
+
+   1. Choose the **Console App** template, and then choose **Next**.
+
+   1. On the **Configure your new project** page, enter **ShowCase** in the **Project name** box. Then choose **Next**.
+
+   1. On the **Additional information** page, select **.NET 10** in the **Framework** box. Then choose **Create**.
+
+1. In the code window for the *Program.cs* or *Program.vb* file, replace all of the code with the following code.
+
+   [language="csharp" source="./snippets/create-class-library/csharp/ShowCase/Program.cs"::: (complete source file; reference: ./snippets/create-class-library/csharp/ShowCase/Program.cs)](../../../_code/docs/core/tutorials/snippets/create-class-library/csharp/ShowCase/Program.cs.md)
+   [language="vb" source="./snippets/create-class-library/vb/ShowCase/Program.vb"::: (complete source file; reference: ./snippets/create-class-library/vb/ShowCase/Program.vb)](../../../_code/docs/core/tutorials/snippets/create-class-library/vb/ShowCase/Program.vb.md)
+
+   The code uses the `row` variable to maintain a count of the number of rows of data written to the console window. Whenever it's greater than or equal to 25, the code clears the console window and displays a message to the user.
+
+   The program prompts the user to enter a string. It indicates whether the string starts with an uppercase character. If the user presses the <kbd>Enter</kbd> key without entering a string, the application ends, and the console window closes.
+
+
+
+**Applies to: vscode**
+
+
+1. Right-click the solution in **Solution Explorer** and select **New Project**, or in the Command Palette select **.NET: New Project**.
+
+1. Select **Console App**.
+
+1. Give it the name **ShowCase**, select the default directory and select **Create Project**.
+
+1. Open *ShowCase/Program.cs* and replace all of the code with the following code.
+
+   [language="csharp" source="./snippets/create-class-library/csharp/ShowCase/Program.cs"::: (complete source file; reference: ./snippets/create-class-library/csharp/ShowCase/Program.cs)](../../../_code/docs/core/tutorials/snippets/create-class-library/csharp/ShowCase/Program.cs.md)
+
+   The code uses the `row` variable to maintain a count of the number of rows of data written to the console window. Whenever it's greater than or equal to 25, the code clears the console window and displays a message to the user.
+
+   The program prompts the user to enter a string. It indicates whether the string starts with an uppercase character. If the user presses the <kbd>Enter</kbd> key without entering a string, the application ends, and the console window closes.
+
+1. Save your changes.
+
+
+
+**Applies to: codespaces**
+
+
+1. Navigate back to the tutorials folder and create a new console app:
+
+   ```bash
+   cd ..
+   dotnet new console -n ShowCase
+   ```
+
+1. Open *ShowCase/Program.cs* and replace all of the code with the following code:
+
+   [language="csharp" source="./snippets/create-class-library/csharp/ShowCase/Program.cs"::: (complete source file; reference: ./snippets/create-class-library/csharp/ShowCase/Program.cs)](../../../_code/docs/core/tutorials/snippets/create-class-library/csharp/ShowCase/Program.cs.md)
+
+   The code uses the `row` variable to maintain a count of the number of rows of data written to the console window. Whenever it's greater than or equal to 25, the code clears the console window and displays a message to the user.
+
+   The program prompts the user to enter a string. It indicates whether the string starts with an uppercase character. If the user presses the <kbd>Enter</kbd> key without entering a string, the application ends, and the console window closes.
+
+1. Save your changes.
+
+
+
+## Add a project reference
+
+Initially, the new console app project doesn't have access to the class library. To allow it to call methods in the class library, create a project reference to the class library project.
+
+**Applies to: visualstudio**
+
+
+1. In **Solution Explorer**, right-click the `ShowCase` project's **Dependencies** node, and select **Add Project Reference**.
+
+   Add reference context menu in Visual Studio
+
+1. In the **Reference Manager** dialog, select the **StringLibrary** project, and select **OK**.
+
+   Reference Manager dialog with StringLibrary selected
+
+
+
+**Applies to: vscode**
+
+
+1. In **Solution Explorer** right click on the **ShowCase** project and select **Add Project Reference**.
+
+1. Select StringLibrary.
+
+> **Tip:**
+> Alternatively, add the following to *ShowCase.csproj*:
+>
+> ```xml
+> <ItemGroup>
+>   <ProjectReference Include="..\StringLibrary\StringLibrary.csproj" />
+> </ItemGroup>
+> ```
+
+
+
+**Applies to: codespaces**
+
+
+Add a reference to the StringLibrary project from the ShowCase project:
+
+```bash
+cd ShowCase
+dotnet add reference ../StringLibrary/StringLibrary.csproj
+```
+
+
+
+## Run the app
+
+**Applies to: visualstudio**
+
+
+1. In **Solution Explorer**, right-click the **ShowCase** project and select **Set as StartUp Project** in the context menu.
+
+   Visual Studio project context menu to set startup project
+
+1. Press <kbd>Ctrl</kbd>+<kbd>F5</kbd> to compile and run the program without debugging.
+
+1. Try out the program by entering strings and pressing <kbd>Enter</kbd>, then press <kbd>Enter</kbd> to exit.
+
+   Console window with ShowCase running
+
+
+
+**Applies to: vscode**
+
+
+1. Use the top menu bar to select **Run** > **Run without debugging**.
+
+1. Select **C#**.
+
+1. Select **C#: ShowCase**.
+
+   If you get an error that says no C# program is loaded, close the folder that you have open, and open the `ShowCase` folder. Then try running the app again.
+
+1. Try out the program by entering strings and pressing <kbd>Enter</kbd>, then press <kbd>Enter</kbd> to exit.
+
+   The terminal output looks like the following example:
+
+   ```output
+   Press <Enter> only to exit; otherwise, enter a string and press <Enter>:
+
+   A string that starts with an uppercase letter
+   Input: A string that starts with an uppercase letter
+   Begins with uppercase? : Yes
+
+   a string that starts with a lowercase letter
+   Input: a string that starts with a lowercase letter
+   Begins with uppercase? : No
+   ```
+
+
+
+**Applies to: codespaces**
+
+
+1. Run the ShowCase app:
+
+   ```dotnetcli
+   dotnet run
+   ```
+
+1. Try out the program by entering strings and pressing <kbd>Enter</kbd>, then press <kbd>Enter</kbd> to exit.
+
+   The terminal output looks like the following example:
+
+   ```output
+   Press <Enter> only to exit; otherwise, enter a string and press <Enter>:
+
+   A string that starts with an uppercase letter
+   Input: A string that starts with an uppercase letter
+   Begins with uppercase? : Yes
+
+   a string that starts with a lowercase letter
+   Input: a string that starts with a lowercase letter
+   Begins with uppercase? : No
+   ```
+
+
+
+## Additional resources
+
+- [Develop libraries with the .NET CLI](libraries.md)
+- [.NET Standard versions and the platforms they support](../../standard/net-standard.md).
+
+**Applies to: codespaces**
+
+
+## Cleanup resources
+
+GitHub automatically deletes your Codespace after 30 days of inactivity. If you plan to explore more tutorials in this series, you can leave your Codespace provisioned. If you're ready to visit the [.NET site](https://dotnet.microsoft.com/download/dotnet) to download the .NET SDK, you can delete your Codespace. To delete your Codespace, open a browser window and navigate to [your Codespaces](https://github.com/codespaces). You see a list of your codespaces in the window. Select the three dots (`...`) in the entry for the learn tutorial codespace. Then select "Delete".
+
+
+
+## Next steps
+
+In this tutorial, you created a class library. In the next tutorial, you learn how to unit test the class library.
+
+> 
+> [Unit test a .NET class library](test-class-library.md)
+
+Or, you can skip automated unit testing and learn how to share the library by creating a NuGet package:
+
+> 
+> [Create and publish a package using Visual Studio](https://learn.microsoft.com/nuget/quickstart/create-and-publish-a-package-using-visual-studio)
+
+Or, learn how to publish a console app. If you publish the console app from the solution you created in this tutorial, the class library goes with it as a *.dll* file.
+
+> 
+> [Publish a .NET console application](publish-console-app.md)

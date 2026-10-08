@@ -1,0 +1,32 @@
+---
+author: cephalin
+ms.service: azure-app-service
+ms.topic: include
+ms.date: 11/18/2025
+ms.author: cephalin
+---
+
+## Add the Phi-4 sidecar extension
+
+In this section, you add the Phi-4 sidecar extension to your ASP.NET Core application hosted on Azure App Service.
+
+1. Navigate to the Azure portal and go to your app's management page.
+1. In the left-hand menu, select **Deployment** > **Deployment Center**.
+1. On the **Containers** tab, select **Add** > **Sidecar extension**.
+1. In the sidecar extension options, select **AI: phi-4-q4-gguf (Experimental)**.
+1. Provide a name for the sidecar extension.
+1. Select **Save** to apply the changes.
+1. Wait a few minutes for the sidecar extension to deploy. Keep selecting **Refresh** until the **Status** column shows **Running**.
+
+This Phi-4 sidecar extension uses a [chat completion API like OpenAI](https://platform.openai.com/docs/api-reference/chat/create) that can respond to chat completion response at `http://localhost:11434/v1/chat/completions`. For more information on how to interact with the API, see:
+
+- [OpenAI documentation: Create chat completion](https://platform.openai.com/docs/api-reference/chat/create)
+- [OpenAI documentation: Streaming](https://platform.openai.com/docs/api-reference/chat-streaming)
+
+## Test the chatbot
+
+1. In your app's management page, in the left-hand menu, select **Overview**.
+1. Under **Default domain**, select the URL to open your web app in a browser.
+1. Verify that the chatbot application is running and responding to user inputs.
+
+    Screenshot showing the fashion assistant app running in the browser.

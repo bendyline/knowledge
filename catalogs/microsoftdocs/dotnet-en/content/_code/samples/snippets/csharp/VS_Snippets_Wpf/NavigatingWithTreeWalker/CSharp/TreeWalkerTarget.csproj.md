@@ -1,0 +1,25 @@
+# Source code: samples/snippets/csharp/VS_Snippets_Wpf/NavigatingWithTreeWalker/CSharp/TreeWalkerTarget.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>TreeWalkerTarget</RootNamespace>
+    <AssemblyName>TreeWalkerTarget</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="TreeWalkerTarget.cs" />
+    <Compile Include="TreeWalkerTarget.Designer.cs" />
+  </ItemGroup>
+
+</Project>
+
+```

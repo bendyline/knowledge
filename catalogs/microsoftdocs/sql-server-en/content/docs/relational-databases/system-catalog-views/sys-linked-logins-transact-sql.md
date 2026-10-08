@@ -1,0 +1,54 @@
+---
+title: "sys.linked_logins (Transact-SQL)"
+description: sys.linked_logins returns a row per linked-server-login mapping, for use by RPC and distributed queries.
+author: VanMSFT
+ms.author: vanto
+ms.date: 02/05/2026
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sys.linked_logins"
+  - "sys.linked_logins_TSQL"
+  - "linked_logins_TSQL"
+  - "linked_logins"
+helpviewer_keywords:
+  - "sys.linked_logins catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.linked_logins (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+Returns a row per linked-server-login mapping, for use by RPC and distributed queries from local server to the corresponding linked server.
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `server_id` | **int** | ID of the server in `sys.servers`. |
+| `local_principal_id` | **int** | Server-principal to whom mapping applies.<br /><br />0 = wildcard or public. |
+| `uses_self_credential` | **bit** | If 1, mapping indicates session should use its own credentials; otherwise, 0 indicates that session uses the name and password that are supplied. |
+| `remote_name` | **sysname** | Remote user name to use when connecting. Password is also stored, but not exposed in catalog view interfaces. |
+| `modify_date` | **datetime** | Date the linked login was last changed. |
+  
+## Permissions
+
+The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).
+
+ SQL Server 2022 (16.x) 
+ and later versions require VIEW SERVER SECURITY STATE permission on the server.
+
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Linked Servers Catalog Views (Transact-SQL)](linked-servers-catalog-views-transact-sql.md)

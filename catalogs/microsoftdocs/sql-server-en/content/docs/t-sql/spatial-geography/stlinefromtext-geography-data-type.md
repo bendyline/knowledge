@@ -1,0 +1,76 @@
+---
+title: "STLineFromText (geography Data Type)"
+description: "STLineFromText (geography Data Type)"
+author: MladjoA
+ms.author: mlandzic
+ms.date: "07/30/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2024
+f1_keywords:
+  - "STLineFromText (geography Data Type)"
+  - "STLineFromText_TSQL"
+helpviewer_keywords:
+  - "STLineFromText method"
+dev_langs:
+  - "TSQL"
+---
+# STLineFromText (geography Data Type)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a **geography** instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.
+  
+## Syntax  
+  
+```  
+  
+STLineFromText ( 'linestring_tagged_text' , SRID )  
+```  
+  
+## Arguments
+ *linestring_tagged_text*  
+ Is the WKT representation of the **geographyLineString** instance you wish to return. *linestring_tagged_text* is an **nvarchar(max)** expression.  
+  
+ *SRID*  
+ Is an **int** expression representing the spatial reference ID (SRID) of the **geographyLineString** instance you wish to return.  
+  
+## Return Types  
+  SQL Server 
+ return type: **geography**  
+  
+ CLR return type: **SqlGeography**  
+  
+ OGC type: **LineString**  
+  
+## Remarks  
+ This method throws a **FormatException** if the input is not well-formatted.  
+  
+## Examples  
+ The following example uses `STLineFromText()` to create a `geography` instance.  
+  
+```sql
+DECLARE @g geography;  
+SET @g = geography::STLineFromText('LINESTRING(-122.360 47.656, -122.343 47.656 )', 4326);  
+SELECT @g.ToString();  
+```  
+  
+## Related content
+
+- [OGC Static Geography Methods](ogc-static-geography-methods.md)

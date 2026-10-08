@@ -1,0 +1,287 @@
+---
+title: Enable Azure Service Bus message sessions | Microsoft Docs
+description: This article explains how to enable message sessions using Azure portal, PowerShell, CLI, and programming languages (C#, Java, Python, and JavaScript)
+ms.topic: how-to
+ms.date: 04/19/2021 
+ms.custom: devx-track-azurepowershell, devx-track-azurecli, devx-track-arm-template, devx-track-python
+ms.devlang: azurecli
+---
+
+# Enable message sessions for an Azure Service Bus queue or a subscription
+Azure Service Bus sessions enable joint and ordered handling of unbounded sequences of related messages. Sessions can be used in **first in, first out (FIFO)** and **request-response** patterns. For more information, see [Message sessions](message-sessions.md). This article shows you different ways to enable sessions for a Service Bus queue or subscription. 
+
+> **Important:**
+> - The basic tier of Service Bus doesn't support sessions. The standard and premium tiers support sessions. For differences between these tiers, see [Service Bus pricing](https://azure.microsoft.com/pricing/details/service-bus/).
+> - You can't enable or disable message sessions after the queue or subscription is created. You can only do so at the time of creating the queue or subscription. 
+
+## Using Azure portal
+When creating a **queue** in the Azure portal, select **Enable sessions** as shown in the following image. 
+
+Enable session at the time of the queue creation
+
+When creating a subscription for a topic in the Azure portal, select **Enable sessions** as shown in the following image. 
+
+Enable session at the time of the subscription creation
+
+## Using Azure CLI
+To **create a queue with message sessions enabled**, use the [`az servicebus queue create`](https://learn.microsoft.com/cli/azure/servicebus/queue#az-servicebus-queue-create) command with `--enable-session` set to `true`.
+
+```azurecli-interactive
+az servicebus queue create \
+    --resource-group myresourcegroup \
+    --namespace-name mynamespace \
+    --name myqueue \
+    --enable-session true
+```
+
+To **create a subscription for a topic with message sessions enabled**, use the [`az servicebus topic subscription create`](https://learn.microsoft.com/cli/azure/servicebus/topic/subscription#az-servicebus-topic-subscription-create) command with `--enable-session` set to `true`.
+
+```azurecli-interactive
+az servicebus topic subscription create \
+    --resource-group myresourcegroup \
+    --namespace-name mynamespace \
+    --topic-name mytopic \
+    --name mysubscription \
+    --enable-session true
+```
+
+## Using Azure PowerShell
+To **create a queue with message sessions enabled**, use the [`New-AzServiceBusQueue`](https://learn.microsoft.com/powershell/module/az.servicebus/new-azservicebusqueue) command with `-RequiresSession` set to `$True`. 
+
+```azurepowershell-interactive
+New-AzServiceBusQueue -ResourceGroup myresourcegroup `
+    -NamespaceName mynamespace `
+    -QueueName myqueue `
+    -RequiresSession $True
+```
+
+To **create a subscription for a topic with message sessions enabled**, use the [`New-AzServiceBusSubscription`](https://learn.microsoft.com/powershell/module/az.servicebus/new-azservicebussubscription) command with `-RequiresSession` set to `true`. 
+
+```azurepowershell-interactive
+New-AzServiceBusSubscription -ResourceGroup myresourcegroup `
+    -NamespaceName mynamespace `
+    -TopicName mytopic `
+    -SubscriptionName mysubscription `
+    -RequiresSession $True
+```
+
+## Using a template
+To **create a queue with message sessions enabled**, set `requiresSession` to `true` in the queue properties section. For more information, see [Microsoft.ServiceBus namespaces/queues template reference](https://learn.microsoft.com/azure/templates/microsoft.servicebus/namespaces/queues?tabs=json). 
+
+# [Bicep](#tab/bicep)
+
+```bicep
+@description('Name of the Service Bus namespace')
+param serviceBusNamespaceName string
+
+@description('Name of the Queue')
+param serviceBusQueueName string
+
+@description('Location for all resources.')
+param location string = resourceGroup().location
+
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' = {
+  name: serviceBusNamespaceName
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+
+  resource queue 'queues' = {
+    name: serviceBusQueueName
+    properties: {
+      requiresSession: true
+    }
+  }
+}
+```
+
+# [ARM template](#tab/arm)
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus namespace"
+      }
+    },
+    "serviceBusQueueName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Queue"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2024-01-01",
+      "name": "[parameters('serviceBusNamespaceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "resources": [
+        {
+          "type": "queues",
+          "apiVersion": "2024-01-01",
+          "name": "[parameters('serviceBusQueueName')]",
+          "dependsOn": [
+            "[parameters('serviceBusNamespaceName')]"
+          ],
+          "properties": {
+            "requiresSession": true
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+To **create a subscription for a topic with message sessions enabled**, set `requiresSession` to `true` in the subscription properties section. For more information, see [Microsoft.ServiceBus namespaces/topics/subscriptions template reference](https://learn.microsoft.com/azure/templates/microsoft.servicebus/namespaces/topics/subscriptions?tabs=json). 
+
+# [Bicep](#tab/bicep)
+
+```bicep
+@description('Name of the Service Bus namespace')
+param serviceBusNamespaceName string
+
+@description('Name of the Topic')
+param serviceBusTopicName string
+
+@description('Name of the Subscription')
+param serviceBusSubscriptionName string
+
+@description('Location for all resources.')
+param location string = resourceGroup().location
+
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' = {
+  name: serviceBusNamespaceName
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+
+  resource topic 'topics' = {
+    name: serviceBusTopicName
+    properties: {
+      maxSizeInMegabytes: 1024
+    }
+
+    resource subscription 'subscriptions' = {
+      name: serviceBusSubscriptionName
+      properties: {
+        requiresSession: true
+      }
+    }
+  }
+}
+```
+
+# [ARM template](#tab/arm)
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus namespace"
+      }
+    },
+    "serviceBusTopicName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Topic"
+      }
+    },
+    "serviceBusSubscriptionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Subscription"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2024-01-01",
+      "name": "[parameters('serviceBusNamespaceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "resources": [
+        {
+          "type": "topics",
+          "apiVersion": "2024-01-01",
+          "name": "[parameters('serviceBusTopicName')]",
+          "dependsOn": [
+            "[parameters('serviceBusNamespaceName')]"
+          ],
+          "properties": {
+            "maxSizeInMegabytes": 1024
+          },
+          "resources": [
+            {
+              "type": "subscriptions",
+              "apiVersion": "2024-01-01",
+              "name": "[parameters('serviceBusSubscriptionName')]",
+              "dependsOn": [
+                "[parameters('serviceBusTopicName')]"
+              ],
+              "properties": {
+                "requiresSession": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+
+## Next steps
+Try the samples in the language of your choice to explore Azure Service Bus features. 
+
+- [Azure Service Bus client library samples for .NET (latest)](https://learn.microsoft.com/samples/azure/azure-sdk-for-net/azuremessagingservicebus-samples/) 
+- [Azure Service Bus client library samples for Java (latest)](https://learn.microsoft.com/samples/azure/azure-sdk-for-java/servicebus-samples/)
+- [Azure Service Bus client library samples for Python](https://learn.microsoft.com/samples/azure/azure-sdk-for-python/servicebus-samples/)
+- [Azure Service Bus client library samples for JavaScript](https://learn.microsoft.com/samples/azure/azure-sdk-for-js/service-bus-javascript/)
+- [Azure Service Bus client library samples for TypeScript](https://learn.microsoft.com/samples/azure/azure-sdk-for-js/service-bus-typescript/)
+
+Find samples for the older .NET and Java client libraries below:
+- [Azure Service Bus client library samples for .NET (legacy)](https://github.com/Azure/azure-service-bus/tree/master/samples/DotNet/Microsoft.Azure.ServiceBus/)
+- [Azure Service Bus client library samples for Java (legacy)](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus)
+
+
+> On 30 September 2026, we'll retire the Azure Service Bus SDK libraries WindowsAzure.ServiceBus, Microsoft.Azure.ServiceBus, and com.microsoft.azure.servicebus, which don't conform to Azure SDK guidelines. We'll also end support of the SBMP protocol, so you'll no longer be able to use this protocol after 30 September 2026. Migrate to the latest Azure SDK libraries, which offer critical security updates and improved capabilities, before that date.
+>
+>Although the older libraries can still be used beyond 30 September 2026, they'll no longer receive official support and updates from Microsoft. For more information, see the [support retirement announcement](https://azure.microsoft.com/updates/retirement-notice-update-your-azure-service-bus-sdk-libraries-by-30-september-2026/).

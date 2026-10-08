@@ -1,0 +1,114 @@
+---
+title: AI_EXTRACT (Transact-SQL)
+description: The AI_EXTRACT function extracts named values from text as JSON.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: jovanpop
+ms.date: 08/17/2026
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - sql-ai
+f1_keywords:
+  - "ai_extract_TSQL"
+  - "ai_extract"
+helpviewer_keywords:
+  - "ai_extract"
+dev_langs:
+  - TSQL
+monikerRange: "=fabric"
+---
+# AI_EXTRACT (Transact-SQL)
+
+**Applies to:**
+ 
+ in Microsoft Fabric
+ and Warehouse
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The `AI_EXTRACT` function extracts values from input text using the classes you provide, and returns the result as a JSON object.
+
+> **Note:**
+> - `AI_EXTRACT` is in preview.
+> - `AI_EXTRACT` is available only in SQL analytics endpoint
+ and Warehouse
+ in Microsoft Fabric
+.
+
+## Syntax
+
+
+
+```syntaxsql
+AI_EXTRACT ( text, class1, class2 [ , ...n ] [ (NULL | ERROR | DEFAULT <value>) ON ERROR ] )
+```
+
+## Arguments
+
+#### text
+
+An [expression](../language-elements/expressions-transact-sql.md) of a character type, for example **nvarchar**, **varchar**, **nchar**, or **char**.
+
+#### class1, class2, ...n
+
+One or more property names to extract from the text.
+
+#### ON ERROR
+
+The `ON ERROR` clause controls how an AI function handles processing errors.
+
+- `NULL ON ERROR` returns `NULL` when the function can't process a value. This is the default behavior and doesn't need to be explicitly specified.
+- `ERROR ON ERROR` causes the entire query to fail if an error occurs while processing any input value.
+- `DEFAULT <value> ON ERROR` returns the specified default value instead of `NULL` when an error occurs.
+
+Errors can be caused by [Responsible AI](https://www.microsoft.com/ai/tools-practices) safety checks, input size limits, transient service issues, or other processing failures.
+
+## Return types
+
+Returns `nvarchar(max)` containing JSON text.
+
+## Remarks
+
+AI functions return `NULL` if the AI model can't process the text. Common reasons include:
+
+- [Responsible AI](https://www.microsoft.com/ai/tools-practices) rules block inappropriate content in the input text.
+- Input text exceeds token limits. The current model supports up to 15 KB of text.
+
+## Examples
+
+### A. Extract properties from a sentence
+
+```sql
+SELECT ai_extract('Check-in was late and room dirty', 'sentiment', 'problem') AS extraction;
+```
+
+Expected result: `{"sentiment":"Negative","problem":"Dirty room"}`
+
+### B. Parse extracted JSON into columns
+
+```sql
+SELECT sentiment, time_reported, problem
+FROM dbo.hotel_reviews
+CROSS APPLY OPENJSON(
+    ai_extract(review_text, 'sentiment', 'time_reported', 'problem')
+) WITH (
+    sentiment VARCHAR(1000),
+    time_reported VARCHAR(100),
+    problem VARCHAR(1000)
+);
+```
+
+## Related content
+
+- [AI Functions (Preview) for Fabric Data Warehouse and SQL analytics endpoint](https://learn.microsoft.com/fabric/data-warehouse/ai-functions)
+- [AI_ANALYZE_SENTIMENT (Transact-SQL)](ai-analyze-sentiment-transact-sql.md)
+- [AI_CLASSIFY (Transact-SQL)](ai-classify-transact-sql.md)
+- [AI_FIX_GRAMMAR (Transact-SQL)](ai-fix-grammar-transact-sql.md)
+- [AI_GENERATE_RESPONSE (Transact-SQL)](ai-generate-response-transact-sql.md)
+- [AI_SUMMARIZE (Transact-SQL)](ai-summarize-transact-sql.md)
+- [AI_TRANSLATE (Transact-SQL)](ai-translate-transact-sql.md)
+- [OPENJSON (Transact-SQL)](openjson-transact-sql.md)

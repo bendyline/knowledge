@@ -1,0 +1,46 @@
+---
+title: "setFloat Method (SQLServerPreparedStatement)"
+description: "setFloat Method (SQLServerPreparedStatement)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerPreparedStatement.setFloat"
+apitype: "Assembly"
+---
+# setFloat Method (SQLServerPreparedStatement)
+
+
+  Sets the designated parameter to the given **float** value.  
+  
+## Syntax  
+  
+```  
+  
+public final void setFloat(int n,  
+                           float x)  
+```  
+  
+#### Parameters  
+ *n*  
+  
+ An **int** that indicates the parameter number.  
+  
+ *x*  
+  
+ A **float** value.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This setFloat method is specified by the setFloat method in the java.sql.PreparedStatement interface.  
+  
+## Related content
+
+- [SQLServerPreparedStatement Members](sqlserverpreparedstatement-members.md)
+- [SQLServerPreparedStatement Class](sqlserverpreparedstatement-class.md)

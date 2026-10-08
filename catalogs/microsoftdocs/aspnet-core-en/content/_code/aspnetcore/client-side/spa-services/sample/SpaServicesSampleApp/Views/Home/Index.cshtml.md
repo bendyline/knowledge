@@ -1,0 +1,24 @@
+# Source code: aspnetcore/client-side/spa-services/sample/SpaServicesSampleApp/Views/Home/Index.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<app asp-prerender-module="ClientApp/dist/main-server">Loading...</app>
+
+@* Example of asp-prerender-data Tag Helper passing data to server-side JavaScript *@
+@*
+<app asp-prerender-module="ClientApp/dist/main-server"
+        asp-prerender-data='new {
+            UserName = "John Doe"
+        }'>Loading...</app>
+*@
+
+<script src="~/dist/vendor.js" asp-append-version="true"></script>
+@section scripts {
+    <script src="~/dist/main-client.js" asp-append-version="true"></script>
+}
+```

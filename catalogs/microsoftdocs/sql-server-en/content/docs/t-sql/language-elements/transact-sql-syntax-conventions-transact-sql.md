@@ -1,0 +1,200 @@
+---
+title: "Transact-SQL Syntax Conventions (Transact-SQL)"
+description: "This article lists and describes conventions that are used in the syntax diagrams for Transact-SQL."
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 08/21/2024
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "sql13.TSQLExpandPortal.f1"
+helpviewer_keywords:
+  - "conventions [SQL Server]"
+  - "Applies to section in Transact-SQL topics"
+  - "code example conventions [SQL Server]"
+  - "objects [SQL Server], names"
+  - "code [SQL Server], conventions"
+  - "multipart names [SQL Server]"
+  - "Transact-SQL syntax conventions"
+  - "syntax conventions [SQL Server]"
+  - "code [SQL Server]"
+  - "Transact-SQL"
+  - "naming conventions [SQL Server]"
+  - "syntax [SQL Server], Transact-SQL"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+
+# Transact-SQL syntax conventions (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+The following table lists and describes conventions that are used in the syntax diagrams in the  Transact-SQL  reference.
+
+| Convention | Used for |
+| --- | --- |
+| UPPERCASE or `UPPERCASE` | Transact-SQL  keywords. |
+| *italic* | User-supplied parameters of  Transact-SQL  syntax. |
+| **bold** | Type database names, table names, column names, index names, stored procedures, utilities, data type names, and text exactly as shown. |
+| <code>&#124;</code> (vertical bar) | Separates syntax items enclosed in brackets or braces. You can use only one of the items. |
+| `[ ]` (brackets) | Optional syntax item. |
+| `{ }` (braces) | Required syntax items. Don't type the braces. |
+| `[ , ...n ]` | Indicates the preceding item can be repeated *n* number of times. The occurrences are separated by commas. |
+| `[ ...n ]` | Indicates the preceding item can be repeated *n* number of times. The occurrences are separated by blanks. |
+| `;` | Transact-SQL  statement terminator. Although the semicolon isn't required for most statements in this version of  SQL Server |
+| , it will be required in a future version. |
+| `<label> ::=` | The name for a block of syntax. Use this convention to group and label sections of lengthy syntax or a unit of syntax that you can use in more than one location within a statement. Each location in which the block of syntax could be used, is indicated with the label enclosed in chevrons: \<label>.<br /><br />A set is a collection of expressions, for example \<grouping set>; and a list is a collection of sets, for example \<composite element list>. |
+
+## Multipart names
+
+Unless specified otherwise, all  Transact-SQL  references to the name of a database object can be a four-part name in the following form:
+
+### [Displayed in code](#tab/code)
+
+`<server_name>.[<database_name>].[<schema_name>].<object_name>`
+
+| `<database_name>.[<schema_name>].<object_name>`
+
+| `<schema_name>.<object_name>`
+
+| `<object_name>`
+
+### [Displayed in italics](#tab/italics)
+
+*server_name*.[*database_name*].[*schema_name*].*object_name*
+
+| *database_name*.[*schema_name*].*object_name*
+
+| *schema_name*.*object_name*
+
+| *object_name*
+
+---
+
+- *server_name*
+
+  Specifies a linked server name or remote server name.
+
+- *database_name*
+
+  Specifies the name of a  SQL Server 
+ database when the object resides in a local instance of  SQL Server 
+. When the object is in a linked server, *database_name* specifies an OLE DB catalog.
+
+- *schema_name*
+
+  Specifies the name of the schema that contains the object if the object is in a  SQL Server 
+ database. When the object is in a linked server, *schema_name* specifies an OLE DB schema name.
+
+- *object_name*
+
+  Refers to the name of the object.
+
+When referencing a specific object, you don't always have to specify the server, database, and schema for the  SQL Server Database Engine 
+ to identify the object. However, if the object can't be found, an error is returned.
+
+To avoid name resolution errors, we recommend specifying the schema name whenever you specify a schema-scoped object.
+
+To omit intermediate nodes, use periods to indicate these positions. The following table shows the valid formats of object names.
+
+### [Displayed in code](#tab/code)
+
+| Object reference format | Description |
+| --- | --- |
+| `<server_name>.<database_name>.<schema_name>.<object_name>` | Four-part name. |
+| `<server_name>.<database_name>..<object_name>` | Schema name is omitted. |
+| `<server_name>..<schema_name>.<object_name>` | Database name is omitted. |
+| `<server_name>...<object_name>` | Database and schema name are omitted. |
+| `<database_name>.<schema_name>.<object_name>` | Server name is omitted. |
+| `<database_name>..<object_name>` | Server and schema name are omitted. |
+| `<schema_name>.<object_name>` | Server and database name are omitted. |
+| `<object_name>` | Server, database, and schema name are omitted. |
+
+### [Displayed in italics](#tab/italics)
+
+| Object reference format | Description |
+| --- | --- |
+| *server_name*.*database_name*.*schema_name*.*object_name* | Four-part name. |
+| *server_name*.*database_name*..*object_name* | Schema name is omitted. |
+| *server_name*..*schema_name*.*object_name* | Database name is omitted. |
+| *server_name*...*object_name* | Database and schema name are omitted. |
+| *database_name*.*schema_name*.*object_name* | Server name is omitted. |
+| *database_name*..*object_name* | Server and schema name are omitted. |
+| *schema_name*.*object_name* | Server and database name are omitted. |
+| *object_name* | Server, database, and schema name are omitted. |
+
+---
+
+## Data types
+
+When used inline in an article, data types are rendered in lowercase and bold. For example, **int**, **varchar(255)**, and **bit**.
+
+When used in Transact-SQL code blocks, data types are rendered in uppercase. For example:
+
+```sql
+DECLARE @int_example AS INT;
+DECLARE @varchar_example AS VARCHAR(255);
+DECLARE @bit_example AS BIT;
+```
+
+## Code example conventions
+
+Unless stated otherwise, the examples provided in the  Transact-SQL  reference were tested by using  SQL Server Management Studio 
+ and its default settings for the following options:
+
+- `ANSI_NULLS`
+- `ANSI_NULL_DFLT_ON`
+- `ANSI_PADDING`
+- `ANSI_WARNINGS`
+- `CONCAT_NULL_YIELDS_NULL`
+- `QUOTED_IDENTIFIER`
+
+Most code examples in the  Transact-SQL  reference were tested on servers that are running a case-sensitive sort order. The test servers were typically running the ANSI/ISO 1252 code page.
+
+Many code examples prefix Unicode character string constants with the letter `N`. Without the `N` prefix, the string is converted to the default code page of the database. This default code page might not recognize certain characters.
+
+## "Applies to" references
+
+The  Transact-SQL  reference articles encompass multiple versions of  SQL Server 
+, starting with  SQL Server 2008 (10.0.x) 
+, as well as  Azure SQL Database 
+, Azure SQL Managed Instance, and  Azure Synapse Analytics .
+
+A section near the top of each article indicates which products support the article's subject. If a product is omitted, then the feature described by the article isn't available in that product.
+
+The general subject of the article might be used in a product, but all of the arguments aren't supported in some cases. For example, contained database users were introduced in  SQL Server 2012 (11.x) 
+. Use the `CREATE USER` statement in any  SQL Server 
+ product; however the `WITH PASSWORD` syntax can't be used with older versions. Extra **Applies to** sections are inserted into the appropriate argument descriptions in the body of the article.
+
+## Related content
+
+- [Transact-SQL reference (Database Engine)](../language-reference.md)
+- [Reserved Keywords (Transact-SQL)](reserved-keywords-transact-sql.md)

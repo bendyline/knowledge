@@ -1,0 +1,88 @@
+---
+title: "Drilldown action in a paginated report"
+description: Enable users with drilldown action in a paginated report to hide and display items interactively in Report Builder by providing plus and minus icons on a text box.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-design
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "10249"
+  - "10186"
+  - "10092"
+  - "10167"
+  - "10174"
+  - "sql13.rtp.rptdesigner.charttitleproperties.visibility.f1"
+  - "10155"
+  - "sql13.rtp.rptdesigner.chartproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.pictureproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.majorgridlineproperties.visibility.f1"
+  - "10123"
+  - "10425"
+  - "sql13.rtp.rptdesigner.axisproperties.visibility.f1"
+  - "10217"
+  - "10161"
+  - "10215"
+  - "sql13.rtp.rptdesigner.legendproperties.visibility.f1"
+  - "10258"
+  - "10144"
+  - "sql13.rtp.rptdesigner.subreportproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.textboxproperties.visibility.f1"
+  - "10062"
+  - "sql13.rtp.rptdesigner.serieslabelproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.rectangleproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.calculatedseriesproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.chartareaproperties.visibility.f1"
+  - "10053"
+  - "sql13.rtp.rptdesigner.minorgridlineproperties.visibility.f1"
+  - "sql13.rtp.rptdesigner.seriesproperties.visibility.f1"
+---
+# Drilldown action in a paginated report (Report Builder)
+
+  **Applies to:**
+ Not supported
+
+
+By providing plus and minus icons on a text box, you can enable users in a paginated report to hide and display items interactively. This is called a *drilldown* action. For a table or matrix, you can show or hide static rows and columns, or rows and columns that are associated with groups.  
+  
+ rs_drilldown  
+  
+ In this illustration, the user clicks the plus signs (+) in the report to show detail data.  
+  
+ For example, you can initially hide all the rows except the outer group summary row for a table with row groups. For each inner group (including the details group), add an expand/collapse icon to the grouping cell of the containing group. When the report is rendered, the user can click the text box to expand and collapse the detail data. For more information, see [Tables (Report Builder  and SSRS)](tables-report-builder-and-ssrs.md).  
+  
+ To allow users to expand or collapse an item, you set the visibility properties for that item.  
+  
+> **Note:**  
+>  When you create a report with a drilldown action, the visibility information must be set on the group, column, or row that you want to hide, not just a single text box in the row or column. In addition, the text box that you use for the toggle must be in a containing scope that controls the item that you want to show or hide.  
+>   
+>  For example, to hide a row associated with a nested group, the text box must be in a row associated with the parent group or higher in the containment hierarchy.  
+>   
+>  For information on setting visibility information on the group, column or row, see [Add an Expand or Collapse Action to an Item (Report Builder and SSRS)](add-an-expand-or-collapse-action-to-an-item-report-builder-and-ssrs.md)  
+  
+ For more information about hiding report items, see [Hide an Item (Report Builder and SSRS)](../report-builder/hide-an-item-report-builder-and-ssrs.md).  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+## Comparing Drilldown and Drillthrough Reports  
+ In a drilldown report, a user clicks a plus or minus button to expand or collapse a section of a report to show detail data in place. In a drillthrough report, the user clicks a link for a summary value, and this opens a separate, related report to show detail data. The detail data is only retrieved when the detail report runs. Drillthrough reports typically require fewer resources than drilldown reports. For more information, see [Drillthrough, Drilldown, Subreports, and Nested Data Regions (Report Builder and SSRS)](drillthrough-drilldown-subreports-and-nested-data-regions.md).  
+  
+## Rendering Extension Support for Hidden Report Items  
+ The show-and-hide toggle on report items is supported only by rendering extensions that support user interactivity, such as the HTML rendering extension that is used when you run a report in Report Builder and in the web portal, for example. Other rendering extensions display hidden items. The following list describes support for report items with conditional visibility:  
+  
+-   In HTML, if items are hidden, they are not visible in the HTML source.  
+  
+-   The XML rendering extension displays all report items, regardless of whether they are hidden.  
+  
+-   The Excel rendering extension displays and expands hidden rows and columns for a table, matrix, or list. All rows and columns are visible.  
+  
+ For more information, see [Rendering Behaviors (Report Builder  and SSRS)](rendering-behaviors-report-builder-and-ssrs.md).  
+  
+## Related content
+
+- [Drillthrough, drilldown, subreports, and nested data regions in a paginated report (Report Builder)](drillthrough-drilldown-subreports-and-nested-data-regions.md)
+- [Interactive sort, document maps, and links in a paginated report (Report Builder)](interactive-sort-document-maps-and-links-report-builder-and-ssrs.md)
+- [Expression examples in Report Builder paginated reports](expression-examples-report-builder-and-ssrs.md)

@@ -1,0 +1,66 @@
+---
+title: "sys.sp_expired_subscription_cleanup (Transact-SQL)"
+description: sp_expired_subscription_cleanup checks the status of all the subscriptions of every publication and drops expired subscriptions.
+author: markingmyname
+ms.author: maghan
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "sp_expired_subscription_cleanup"
+  - "SP_EXPIRED_SUBSCRIPTION_CLEANUP_TSQL"
+helpviewer_keywords:
+  - "sp_expired_subscription_cleanup"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_expired_subscription_cleanup (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Checks the status of all the subscriptions of every publication and drops subscriptions that are expired. This stored procedure is executed at the Publisher on any database, or at the Distributor on the distribution database for a non- SQL Server 
+ Publisher.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_expired_subscription_cleanup [ [ @publisher = ] N'publisher' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @publisher = ] N'*publisher*'
+
+The name of a non- SQL Server 
+ publisher. *@publisher* is **sysname**, with a default of `NULL`. You shouldn't specify this parameter for a  SQL Server 
+ Publisher.
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_expired_subscription_cleanup` is used in all types of replication.
+
+The Expired Subscription Clean Up job runs `sp_expired_subscription_cleanup` to detect and remove expired subscriptions from publication databases every 24 hours. If any of the subscriptions are out-of-date, that is, aren't synchronized with the Publisher within the retention period, the publication is declared expired, and the traces of the subscription are cleaned up at the Publisher. For more information, see [Subscription Expiration and Deactivation](../replication/subscription-expiration-and-deactivation.md).
+
+## Permissions
+
+Only members of the **sysadmin** fixed server role or **db_owner** fixed database role can execute `sp_expired_subscription_cleanup`.
+
+## Related content
+
+- [sys.sp_mergesubscription_cleanup (Transact-SQL)](sp-mergesubscription-cleanup-transact-sql.md)
+- [sys.sp_subscription_cleanup (Transact-SQL)](sp-subscription-cleanup-transact-sql.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

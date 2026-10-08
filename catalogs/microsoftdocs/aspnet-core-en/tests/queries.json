@@ -1,0 +1,8 @@
+[
+  {
+    "query": "ASP.NET Core Middleware",
+    "expectedDocumentIds": [
+      "aspnetcore/fundamentals/middleware/index"
+    ]
+  }
+]

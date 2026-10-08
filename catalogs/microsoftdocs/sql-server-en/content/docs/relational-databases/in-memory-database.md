@@ -1,0 +1,93 @@
+---
+title: "In-memory database systems features and technologies"
+description: "In-memory database systems and technologies"
+author: dplessMSFT
+ms.author: dpless
+ms.date: 10/30/2019
+ms.service: sql
+ms.custom: linux-related-content
+ms.topic: concept-article
+helpviewer_keywords:
+  - "in-memory systems"
+  - "in-memory technologies"
+  - "in-memory features"
+  - "database, in-memory database"
+  - "system, in-memory system"
+  - "features, in-memory features"
+  - "in-memory"
+---
+
+# In-memory database systems and technologies
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+This page is intended to serve as a reference page for in-memory features and technologies within SQL Server. The concept of an in-memory database system refers to a database system that's designed to take advantage of larger memory capacities available on modern database systems. An in-memory database may be relational or non-relational in nature.
+
+It's assumed often that the performance advantages of an in-memory database system are mostly owing to it being faster to access data that's resident in memory rather than data that's sitting on even the fastest available disk subsystems (by several orders of magnitude). However, many SQL Server workloads can fit their entire working set in available memory. Many in-memory database systems can persist data to disk and may not always be able to fit the entire data set in available memory.
+
+A fast volatile cache that fronts a considerably slower but durable media has been predominant for relational database workloads. It necessitates particular approaches to workload management. The opportunities presented by faster memory transfer rates, greater capacity, or even persistent memory facilitates the development of new features and technologies that can spur new approaches to relational database workload management.
+
+## Hybrid buffer pool
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+[Hybrid buffer pool](../database-engine/configure-windows/hybrid-buffer-pool.md) expands the buffer pool for database files residing on byte-addressable persistent memory storage devices for both Windows and Linux platforms with  SQL Server 2019 (15.x) 
+.
+
+## Memory-optimized tempdb metadata
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+ SQL Server 2019 (15.x) 
+ introduces a new feature that is [memory-optimized tempdb metadata](databases/tempdb-database.md#memory-optimized-tempdb-metadata), which effectively removes some contention bottlenecks and unlocks a new level of scalability for `tempdb`-heavy workloads.
+
+For more information on recent `tempdb` improvements including memory-optimized metadata in  SQL Server 2019 (15.x) 
+ and newer features, see [Improve scalability with system page latch concurrency enhancements in SQL Server 2022](https://cloudblogs.microsoft.com/sqlserver/2022/07/21/improve-scalability-with-system-page-latch-concurrency-enhancements-in-sql-server-2022/) and watch [System Page Latch Concurrency Enhancements (Ep. 6) | Data Exposed](https://learn.microsoft.com/shows/data-exposed/system-page-latch-concurrency-enhancements).
+
+## In-memory OLTP
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+[In-memory OLTP](in-memory-oltp/overview-and-usage-scenarios.md) is a database technology available in  SQL Server 
+ and  SQL Database
+ for optimizing performance of transaction processing, data ingestion, data load, and transient data scenarios.
+
+## Configuring persistent memory support for Linux
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Linux
+
+
+ SQL Server 2019 (15.x) 
+ describes how to configure persistent memory (PMEM) using the `ndctl` utility [persistent memory](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/linux/sql-server-linux-configure-pmem.md).
+
+## Persisted log Buffer
+
+Service Pack 1 of  SQL Server 2016 (13.x) 
+ introduced a performance optimization for write intensive workloads that were bound by WRITELOG waits. Persistent memory is used to store the log buffer. This buffer, which is small (20 MB per user database), must be flushed to disk for the transactions written to the transaction log to be hardened. For write intensive OLTP workloads, this flushing mechanism can become a bottleneck. With the log buffer on persistent memory, the number of operations required to harden the log is reduced, improving overall transaction times and increasing workload performance. This process was introduced as [Tail of Log Caching](https://blogs.msdn.microsoft.com/bobsql/2016/11/08/how-it-works-it-just-runs-faster-non-volatile-memory-sql-server-tail-of-log-caching-on-nvdimm/). However, there was a perceived conflict with [Tail Log Backups](backup-restore/tail-log-backups-sql-server.md) and the traditional understanding that the tail of the log was the portion of the transaction log hardened but not yet backed up. Since the official feature name is Persisted Log Buffer, this is the name used here.
+
+See [Add persisted log buffer to a database](databases/add-persisted-log-buffer.md).

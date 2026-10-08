@@ -1,0 +1,62 @@
+---
+title: How to use the BlobFuse2 command set
+titleSuffix: Azure Storage
+description: Learn how to use the BlobFuse2 command set to mount blob storage containers as file systems on Linux, and manage them.
+author: normesta
+ms.service: azure-blob-storage
+ms.custom: linux-related-content
+ms.topic: reference
+ms.date: 12/02/2022
+ms.author: normesta
+# Customer intent: As a Linux administrator, I want to use the BlobFuse2 command set to mount blob storage containers as file systems, so that I can efficiently manage and interact with cloud storage directly from the Linux environment.
+---
+
+# How to use the BlobFuse2 command set
+
+This reference shows how to use the BlobFuse2 command set to mount Azure blob storage containers as file systems on Linux, and how to manage them.
+
+## Syntax
+
+The `blobfuse2` command has 2 formats:
+
+`blobfuse2 --[flag-name]=[flag-value]`
+
+`blobfuse2 [command] [arguments] --[flag-name]=[flag-value]`
+
+## Flags (Options)
+
+Most flags are specific to individual BlobFuse2 commands. See the documentation for [each command](#commands) for details and examples.
+
+The following options can be used without a command or are inherited by individual commands:
+
+| Flag | Short version | Value type | Default value | Description |
+| --- | --- | --- | --- | --- |
+| disable-version-check |  | boolean | false | Whether to disable the automatic BlobFuse2 version check |
+| help | -h | n/a | n/a | Help info for the blobfuse2 command and subcommands |
+| version | -v | n/a | n/a | Display BlobFuse2 version information |
+
+### Commands
+
+The supported commands for BlobFuse2 are:
+
+| Command | Description |
+| --- | --- |
+| [mount](blobfuse2-commands-mount.md) | Mounts an Azure blob storage container as a filesystem in Linux or lists mounted file systems |
+| [mountv1](blobfuse2-commands-mountv1.md) | Mounts a blob container using legacy BlobFuse configuration and CLI parameters |
+| [unmount](blobfuse2-commands-unmount.md) | Unmounts a BlobFuse2-mounted file system |
+| [completion](blobfuse2-commands-completion.md) | Generates an autocompletion script for BlobFuse2 for the specified shell |
+| [secure](blobfuse2-commands-secure.md) | Encrypts or decrypts a configuration file, or gets or sets values in an encrypted configuration file |
+| [version](blobfuse2-commands-version.md) | Displays the current version of BlobFuse2 |
+| [help](blobfuse2-commands-help.md) | Gives help information about any command |
+| **gen-config** | Auto generate recommended BlobFuse2 config file |
+
+## Arguments
+
+BlobFuse2 command arguments are specific to the individual commands. See the documentation for [each command](#commands) for details and examples.
+
+## See also
+
+- [What is BlobFuse2?](blobfuse2-what-is.md)
+- [How to mount an Azure blob storage container on Linux with BlobFuse2](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/storage/blobs/blobfuse2-how-to-deploy.md)
+- [BlobFuse2 configuration reference](blobfuse2-configuration.md)
+- [How to troubleshoot BlobFuse2 issues](blobfuse2-troubleshooting.md)

@@ -1,0 +1,227 @@
+---
+title: Attach a Kubernetes cluster to Azure Machine Learning workspace
+description: Learn about how to attach a Kubernetes cluster
+titleSuffix: Azure Machine Learning
+author: s-polly
+ms.author: scottpolly
+ms.reviewer: bozhlin
+ms.service: azure-machine-learning
+ms.subservice: core
+ms.date: 03/20/2026
+ms.topic: how-to
+ms.custom:
+  - build-spring-2022
+  - cliv2
+  - sdkv2
+  - code01
+  - sfi-image-nochange
+  - dev-focus
+ai-usage: ai-assisted
+---
+
+# Attach a Kubernetes cluster to Azure Machine Learning workspace
+
+
+**APPLIES TO:**
+
+
+
+After you deploy the Azure Machine Learning extension on an Azure Kubernetes Service (AKS) or Arc Kubernetes cluster, you can attach the Kubernetes cluster to your Azure Machine Learning workspace. You can also create compute targets for data scientists to use. 
+
+## Prerequisites
+
+Attaching a Kubernetes cluster to an Azure Machine Learning workspace can flexibly support many different scenarios. For example, you can share scenarios with multiple attachments, model training scripts can access Azure resources, and you can configure the authentication for the workspace. 
+
+#### Multi-attach and workload isolation
+
+**One cluster to one workspace, creating multiple compute targets**
+  * For the same Kubernetes cluster, you can attach it to the same workspace multiple times and create multiple compute targets for different projects, teams, or workloads.
+
+**One cluster to multiple workspaces**
+  * For the same Kubernetes cluster, you can also attach it to multiple workspaces, and the multiple workspaces can share the same Kubernetes cluster.
+
+
+If you plan to have different compute targets for different projects or teams, you can specify an existing **Kubernetes namespace** in your cluster for the compute target to **isolate workload** among different teams or projects. 
+
+> **Important:**
+>
+> You must create the namespace in your cluster before you attach the cluster to Azure Machine Learning workspace.
+
+#### Securely access Azure resource from training script
+
+ If you need to access Azure resources securely from your training script, you can specify a [managed identity](how-to-identity-based-service-authentication.md) for Kubernetes compute target during attach operation.
+
+#### Attach to workspace with user-assigned managed identity
+
+Azure Machine Learning workspace defaults to having a system-assigned managed identity to access Azure Machine Learning resources. The steps are completed if the system assigned default setting is on. 
+
+Otherwise, if you [specify a user-assigned managed identity in Azure Machine Learning workspace creation](how-to-identity-based-service-authentication.md#user-assigned-managed-identity), you need to grant the following role assignments to the managed identity manually before attaching the compute.
+
+| Azure resource name | Roles to be assigned | Description |
+| --- | --- | --- |
+| Azure Relay | Azure Relay Owner | Only applicable for Arc-enabled Kubernetes cluster. Azure Relay isn't created for AKS cluster without Arc connected. |
+| Kubernetes - Azure Arc or Azure Kubernetes Service | Reader <br> Kubernetes Extension Contributor <br> Azure Kubernetes Service Cluster Admin | Applicable for both Arc-enabled Kubernetes cluster and AKS cluster. |
+| Azure Kubernetes Service | Contributor | Required only for AKS clusters that use the Trusted Access feature. The workspace uses user-assigned managed identity. See [Azure Machine Learning access to AKS clusters with special configurations](https://github.com/Azure/AML-Kubernetes/blob/master/docs/azureml-aks-ta-support.md) for details. |
+| Azure Kubernetes Service | Contributor | Required only for AKS clusters that use the Trusted Access feature. The workspace uses user-assigned managed identity. See [Get secure access for Azure resources in AKS by using Trusted Access](https://learn.microsoft.com/azure/aks/trusted-access-feature) for details. |
+
+
+> **Tip:**
+>
+> You can create Azure Relay resource during the extension deployment under the same resource group as the Arc-enabled Kubernetes cluster.
+
+> **Note:**
+>
+> * If the "Kubernetes Extension Contributor" role permission isn't available, the cluster attachment fails with "extension not installed" error.
+> * If the "Azure Kubernetes Service Cluster Admin" role permission isn't available, the cluster attachment fails with "internal server" error.
+
+## How to attach a Kubernetes cluster to an Azure Machine Learning workspace
+
+You can attach a Kubernetes cluster to an Azure Machine Learning workspace by using the Azure CLI, studio UI, or the Python SDK.
+
+### [Azure CLI](#tab/cli)
+
+The following CLI v2 commands show how to attach an AKS and Azure Arc-enabled Kubernetes cluster, and use it as a compute target with managed identity enabled.
+
+**AKS cluster**
+
+```azurecli
+az ml compute attach --resource-group <resource-group-name> --workspace-name <workspace-name> --type Kubernetes --name k8s-compute --resource-id "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.ContainerService/managedClusters/<cluster-name>" --identity-type SystemAssigned --namespace <Kubernetes namespace to run Azure Machine Learning workloads> --no-wait
+```
+
+**Arc Kubernetes cluster**
+
+```azurecli
+az ml compute attach --resource-group <resource-group-name> --workspace-name <workspace-name> --type Kubernetes --name amlarc-compute --resource-id "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.Kubernetes/connectedClusters/<cluster-name>" --user-assigned-identities "subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<identity-name>" --no-wait
+```
+
+Set the `--type` argument to `Kubernetes`. Use the `identity_type` argument to enable `SystemAssigned` or `UserAssigned` managed identities.
+
+> **Important:**
+>
+> `--user-assigned-identities` is only required for `UserAssigned` managed identities. Although you can provide a list of comma-separated user managed identities, only the first one is used when you attach your cluster.
+>
+> Compute attach won't create the Kubernetes namespace automatically or validate whether the Kubernetes namespace exists. You need to verify that the specified namespace exists in your cluster. Otherwise, any Azure Machine Learning workloads submitted to this compute fail.  
+
+### [Studio](#tab/studio)
+
+When you attach a Kubernetes cluster, you make it available to your workspace for training or inferencing.
+
+1. Go to [Azure Machine Learning studio](https://ml.azure.com).
+1. Under **Manage**, select **Compute**.
+1. Select the **Kubernetes clusters** tab.
+1. Select **+New > Kubernetes**.
+
+   Screenshot of settings for Kubernetes cluster to make available in your workspace.
+
+1. Enter a compute name and select your Kubernetes cluster from the dropdown.
+
+    * **(Optional)** Enter Kubernetes namespace, which defaults to `default`. All machine learning workloads are sent to the specified Kubernetes namespace in the cluster. Compute attach doesn't create the Kubernetes namespace automatically or validate whether the Kubernetes namespace exists. You need to verify that the specified namespace exists in your cluster. Otherwise, any Azure Machine Learning workloads submitted to this compute fail.  
+
+    * **(Optional)** Assign system-assigned or user-assigned managed identity. Managed identities eliminate the need for developers to manage credentials. For more information, see the [Assign managed identity](#assign-managed-identity-to-the-compute-target) section of this article.
+
+    Screenshot of settings for developer configuration of Kubernetes cluster.
+
+1. Select **Attach**.
+
+    In the Kubernetes clusters tab, the initial state of your cluster is *Creating*. When you successfully attach the cluster, the state changes to *Succeeded*. Otherwise, the state changes to *Failed*.
+
+    Screenshot of attached settings for configuration of Kubernetes cluster.
+
+### [Azure SDK](#tab/sdk)
+
+The following Python SDK v2 code shows how to attach an AKS and Azure Arc-enabled Kubernetes cluster, and use it as a compute target with managed identity enabled.
+The following Python SDK v2 code shows how to attach an AKS and Azure Arc-enabled Kubernetes cluster, and use it as a compute target with managed identity enabled.
+
+**AKS cluster**
+
+```python
+from azure.ai.ml.entities import KubernetesCompute, IdentityConfiguration
+
+k8s_compute = KubernetesCompute(
+    name="<COMPUTE_NAME>",
+    resource_id=(
+        "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>"
+        "/providers/Microsoft.ContainerService"
+        "/managedClusters/<CLUSTER_NAME>"
+    ),
+    namespace="<NAMESPACE>",
+    identity=IdentityConfiguration(type="SystemAssigned"),
+)
+ml_client.begin_create_or_update(k8s_compute).result()
+```
+
+**Arc Kubernetes cluster**
+
+```python
+from azure.ai.ml.entities import (
+    KubernetesCompute,
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+)
+
+k8s_compute = KubernetesCompute(
+    name="<COMPUTE_NAME>",
+    resource_id=(
+        "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>"
+        "/providers/Microsoft.Kubernetes"
+        "/connectedClusters/<CLUSTER_NAME>"
+    ),
+    namespace="<NAMESPACE>",
+    identity=IdentityConfiguration(
+        type="UserAssigned",
+        user_assigned_identities=[
+            ManagedIdentityConfiguration(
+                resource_id=(
+                    "/subscriptions/<SUBSCRIPTION_ID>"
+                    "/resourceGroups/<RESOURCE_GROUP>"
+                    "/providers/Microsoft.ManagedIdentity"
+                    "/userAssignedIdentities/<IDENTITY_NAME>"
+                )
+            )
+        ],
+    ),
+)
+ml_client.begin_create_or_update(k8s_compute).result()
+```
+   
+---
+
+## Assign managed identity to the compute target
+
+A common challenge for developers is the management of secrets and credentials used to secure communication between different components of a solution. [Managed identities](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) eliminate the need for developers to manage credentials.
+
+To access Azure Container Registry (ACR) for a Docker image, and a Storage Account for training data, attach Kubernetes compute with a system-assigned or user-assigned managed identity enabled.
+
+### Assign managed identity
+- You can assign a managed identity to the compute in the compute attach step.
+- If you already attached the compute, you can update the settings to use a managed identity in Azure Machine Learning studio.
+    - Go to [Azure Machine Learning studio](https://ml.azure.com). Select **Compute**, **Attached compute**, and select your attached compute.
+    - Select the pencil icon to edit managed identity.
+
+    Screenshot of updating identity of the Kubernetes compute from Azure portal.
+    
+    Screenshot of selecting identity of the Kubernetes compute from Azure portal.
+     
+
+
+### Assign Azure roles to managed identity
+Azure offers several ways to assign roles to a managed identity:
+- [Use Azure portal to assign roles](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-portal)
+- [Use Azure CLI to assign roles](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-cli)
+- [Use Azure PowerShell to assign roles](https://learn.microsoft.com/azure/role-based-access-control/role-assignments-powershell)
+
+If you use the Azure portal to assign roles and have a **system-assigned managed identity**, **Select User**, **Group Principal**, or **Service Principal**, select **Select members** to search for the identity name. Format the identity name as: `<workspace name>/computes/<compute target name>`.
+
+If you have a user-assigned managed identity, select **Managed identity** to find the target identity.
+
+You can use a managed identity to pull images from Azure Container Registry. Grant the **AcrPull** role to the compute managed identity. For more information, see [Azure Container Registry roles and permissions](https://learn.microsoft.com/azure/container-registry/container-registry-roles).
+
+You can use a managed identity to access Azure Blob:
+- For read-only access, grant the **Storage Blob Data Reader** role to the compute managed identity.
+- For read-write access, grant the **Storage Blob Data Contributor** role to the compute managed identity.
+
+## Next steps
+
+- [Create and manage instance types](how-to-manage-kubernetes-instance-types.md)
+- [Azure Machine Learning inference router and connectivity requirements](how-to-kubernetes-inference-routing-azureml-fe.md)
+- [Secure AKS inferencing environment](how-to-secure-kubernetes-inferencing-environment.md)

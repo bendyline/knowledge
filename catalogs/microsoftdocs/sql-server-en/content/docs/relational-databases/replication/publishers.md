@@ -1,0 +1,45 @@
+---
+title: Publishers
+description: Publishers options in SQL Server replication let you grant servers permission to use this Distributor. See how to add and configure Publishers step by step.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+f1_keywords:
+  - "sql13.rep.configuredistributionwizard.enablepublishers.f1"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Publishers
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  You can give permission for other Publishers to use this Distributor. Be aware that enabling a Publisher to use this server as its remote Distributor does not make that server a Publisher. You must connect to the Publisher, configure it for publishing, and choose this server as the Distributor. You can configure the Publisher and choose a Distributor through the New Publication Wizard.  
+  
+ The servers you select as Publishers will use the distribution database specified on the **Distribution Database** page of this wizard. If you want to use a different distribution database, do not enable the Publisher at this time. Instead, use the **Distributor Properties** dialog box to add Publishers after you complete the Configure Distribution Wizard.  
+  
+## Options  
+ **Publishers**  
+ Select the servers that are allowed to use this distributor. Select the properties button (**...**) next to a Publisher to view and set additional properties.  
+  
+ **Add**  
+  If the server you want to allow isn't listed, select **Add** to add a  Microsoft 
+  SQL Server 
+ Publisher or Oracle Publisher to the list of available Publishers.    
+  
+## Related content
+
+- [Configure Distribution](configure-distribution.md)
+- [Configure Publishing and Distribution](configure-publishing-and-distribution.md)
+- [View and Modify Distributor and Publisher Properties](view-and-modify-distributor-and-publisher-properties.md)
+- [Create a publication](publish/create-a-publication.md)

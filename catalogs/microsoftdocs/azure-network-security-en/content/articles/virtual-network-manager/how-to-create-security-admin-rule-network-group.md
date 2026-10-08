@@ -1,0 +1,119 @@
+---
+title: Create a security admin rule using network groups
+titleSuffix: Azure Virtual Network Manager
+description: Learn how to deploy security admin rules using network groups as the source and destination in Azure Virtual Network Manager.
+author: mbender-ms
+ms.author: mbender
+ms.service: azure-virtual-network-manager
+ms.topic: how-to 
+ms.date: 07/29/2026
+ms.custom: template-how-to, references_regions
+#Customer intent: As a network administrator, I want to deploy security admin rules using network groups in Azure Virtual Network Manager so that I can define the source and destination of the traffic for the security admin rule.
+---
+# Create a security admin rule using network groups in Azure Virtual Network Manager
+
+In this article, you learn how to create a security admin rule using network groups in Azure Virtual Network Manager. You use the Azure portal to create a security admin configuration, add a security admin rule, and deploy the security admin configuration.
+
+In Azure Virtual Network Manager, you can deploy [security admin rules](concept-security-admins.md) using [network groups](concept-network-groups.md). Security admin rules and network groups allow you to define the source and destination of the traffic for the security admin rule.    
+
+
+> **Important:**
+> The creation of security admin rules with network groups as source and destination in Azure Virtual Network Manager is in public preview. Public previews are made available to you on the condition that you agree to the [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/). Some features might not be supported or might have constrained capabilities. This preview version is provided without a service level agreement, and it's not recommended for production workloads. 
+
+
+## Prerequisites
+
+To complete this article, you need the following resources:
+
+- An Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn) before you begin.
+
+- An Azure Virtual Network Manager instance. If you don't have an instance, see [Create an Azure Virtual Network Manager instance](create-virtual-network-manager-portal.md).
+
+- A network group. If you don't have a network group, see [Create a network group](create-virtual-network-manager-portal.md#create-a-network-group).
+
+## Create a security admin configuration
+
+To create a security admin configuration, follow these steps:
+
+1. In the **Azure portal**, search for and select **Virtual Network Manager**.
+
+1. Select **Network Managers** under **Virtual network manager** on the left side of the portal window.
+
+1. In the **Virtual Network Manager | Network managers** window, select your network manager instance.
+
+1. Select **Configuration** under **Settings** on the left side of the portal window.
+
+1. In the **Configurations** window, select the **Create security admin configuration** button or **+ Create > Security admin configuration** from the drop-down menu.
+1. In the **Basics** tab of the **Create security admin configuration** windows, enter the following settings:
+  
+    | **Setting** | **Value** |
+    | --- | --- |
+    | Name | Enter a name for the security admin rule. |
+    | Description | Enter a description for the security admin rule. |
+    
+
+1. Select the **Deployment Options** tab or **Next: Deployment Options >** and enter the following settings:
+
+    | **Setting** | **Value** |
+    | --- | --- |
+    | **Deployment option for network intent policy (NIP) virtual networks** |  |
+    | Deployment option | Select **None**. |
+    | **Option to use network group as source and destination** |  |
+    | Network group address space aggregation option | Select **Manual**. |
+
+    Screenshot of create a security admin configuration deployment options selecting manual aggregation option.
+
+    The **Network group address space aggregation option** setting determines whether the rules in this configuration can reference network groups as their source and destination. It takes the following values:
+
+    | Value | Description |
+    | --- | --- |
+    | **Manual** | Lets the rules in this configuration reference network groups as the source and destination. The virtual network manager instance aggregates the CIDR ranges of those network groups only when you deploy the security admin configuration, so you commit CIDR range changes on your own schedule. |
+    | **None** | Doesn't aggregate network group address spaces. The rules in this configuration can't reference network groups as the source or destination. |
+
+2. Select **Rule collections** or **Next: Rule collections >**.
+3. In the Rule collections tab, select **Add**.
+4. In the **Add a rule collection** window, enter the following settings:
+
+    | **Setting** | **Value** |
+    | --- | --- |
+    | Name | Enter a name for the rule collection. |
+    | Target network groups | Select the network group that contains the source and destination of the traffic for the security admin rule. |
+
+5. Select **Add** and enter the following settings in the **Add a rule** window:
+
+    | **Setting** | **Value** |
+    | --- | --- |
+    | Name | Enter a name for the security admin rule. |
+    | Description | Enter a description for the security admin rule. |
+    | Priority | Enter a priority for the security admin rule. |
+    | Action | Select the action type for the security admin rule. |
+    | Direction | Select the direction for the security admin rule. |
+    | Protocol | Select the protocol for the security admin rule. |
+    | **Source** |  |
+    | Source type | Select **Network group**. |
+    | Source port | Enter the source port for the security admin rule. |
+    | **Destination** |  |
+    | Destination type | Select **Network Group**. |
+    | Network Group | Select the network group ID that you wish to use for dynamically establishing IP address ranges. |
+    | Destination port | Enter the destination port for the security admin rule. |
+
+    Screenshot of add a rule window using network groups as source and destination in rule creation.
+
+6. Select **Add** and **Add** again to add the security admin rule to the rule collection.
+
+7. Select **Review + create** and then select **Create**.
+
+## Deploy the security admin configuration
+
+Use the following steps to deploy the security admin configuration:
+
+1. Return to the **Configurations** window and select the security admin configuration you created.
+
+1. Select your security admin configuration and then select **Deploy**.
+
+1. In **Deploy security admin configuration**, select the target Azure regions for security admin configuration and select **Next > Deploy**.
+
+## Next step
+
+> 
+> [View configurations applied by Azure Virtual Network Manager](how-to-view-applied-configurations.md)

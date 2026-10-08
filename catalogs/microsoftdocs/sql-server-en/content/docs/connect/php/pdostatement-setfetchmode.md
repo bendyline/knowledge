@@ -1,0 +1,83 @@
+---
+title: "PDOStatement::setFetchMode"
+description: "API reference for the PDOStatement::setFetchMode function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDOStatement::setFetchMode
+
+
+
+Specifies the fetch mode for the PDOStatement handle.  
+  
+## Syntax  
+  
+```php  
+  
+bool PDOStatement::setFetchMode( $mode );  
+```  
+  
+#### Parameters  
+$*mode*: Any parameter(s) that are valid to pass to [PDOStatement::fetch](pdostatement-fetch.md).  
+  
+## Return Value  
+true on success, false otherwise.  
+  
+## Remarks  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+  
+```php  
+<?php  
+   $server = "(local)";  
+   $database = "AdventureWorks";  
+   $conn = new PDO( "sqlsrv:server=$server ; Database = $database", "", "");  
+  
+   $stmt1 = $conn->query( "select * from Person.ContactType where ContactTypeID < 5 " );  
+   while ( $row = $stmt1->fetch()) {   
+      print($row['Name'] . "\n");   
+   }  
+   print( "\n---------- PDO::FETCH_ASSOC -------------\n" );  
+   $stmt = $conn->query( "select * from Person.ContactType where ContactTypeID < 5 " );  
+   $stmt->setFetchMode(PDO::FETCH_ASSOC);  
+   $result = $stmt->fetch();  
+   print_r( $result );  
+  
+   print( "\n---------- PDO::FETCH_NUM -------------\n" );  
+   $stmt = $conn->query( "select * from Person.ContactType where ContactTypeID < 5 " );  
+   $stmt->setFetchMode(PDO::FETCH_NUM);  
+   $result = $stmt->fetch();  
+   print_r ($result );  
+  
+   print( "\n---------- PDO::FETCH_BOTH -------------\n" );  
+   $stmt = $conn->query( "select * from Person.ContactType where ContactTypeID < 5 " );  
+   $stmt->setFetchMode(PDO::FETCH_BOTH);  
+   $result = $stmt->fetch();  
+   print_r( $result );  
+  
+   print( "\n---------- PDO::FETCH_LAZY -------------\n" );  
+   $stmt = $conn->query( "select * from Person.ContactType where ContactTypeID < 5 " );  
+   $stmt->setFetchMode(PDO::FETCH_LAZY);  
+   $result = $stmt->fetch();  
+   print_r( $result );  
+  
+   print( "\n---------- PDO::FETCH_OBJ -------------\n" );  
+   $stmt = $conn->query( "select * from Person.ContactType where ContactTypeID < 5 " );  
+   $stmt->setFetchMode(PDO::FETCH_OBJ);  
+   $result = $stmt->fetch();  
+   print $result->Name;  
+   print( "\n \n" );  
+?>  
+```  
+  
+## Related content
+
+- [PDOStatement Class](pdostatement-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

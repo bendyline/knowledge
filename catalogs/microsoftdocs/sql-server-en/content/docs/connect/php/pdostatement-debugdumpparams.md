@@ -1,0 +1,54 @@
+---
+title: "PDOStatement::debugDumpParams"
+description: "API reference for the PDOStatement::debugDumpParams function in the Microsoft PDO_SQLSRV Driver for PHP for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sumitsar, jathakkar
+ms.date: 07/23/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# PDOStatement::debugDumpParams
+
+
+
+Displays a prepared statement.  
+  
+## Syntax  
+  
+```php  
+  
+bool PDOStatement::debugDumpParams();  
+```  
+  
+## Remarks  
+Support for PDO was added in version 2.0 of the Microsoft Drivers for PHP for SQL Server
+.  
+  
+## Example  
+  
+```php  
+<?php  
+$database = "AdventureWorks";  
+$server = "(local)";  
+$conn = new PDO( "sqlsrv:server=$server ; Database = $database", "", "");  
+  
+$param = "Owner";  
+  
+$stmt = $conn->prepare("select * from Person.ContactType where name = :param");  
+$stmt->execute(array($param));  
+$stmt->debugDumpParams();  
+  
+echo "\n\n";  
+  
+$stmt = $conn->prepare("select * from Person.ContactType where name = ?");  
+$stmt->execute(array($param));  
+$stmt->debugDumpParams();  
+?>  
+```  
+  
+## Related content
+
+- [PDOStatement Class](pdostatement-class.md)
+- [PDO](https://php.net/manual/book.pdo.php)

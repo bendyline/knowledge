@@ -1,0 +1,20 @@
+# Source code: docs/connect/jdbc/codesnippet/Java/using-a-stored-procedure_0_1.java
+
+Complete source file; linked examples may select a region or line range.
+
+```
+public static void executeUpdateStoredProcedure(Connection con) {
+    try(CallableStatement cstmt = con.prepareCall("{call dbo.UpdateTestTable(?, ?)}");) {
+        cstmt.setString(1, "A");
+        cstmt.setInt(2, 100);
+        cstmt.execute();
+        int count = cstmt.getUpdateCount();
+        System.out.println("ROWS AFFECTED: " + count);
+    }
+    // Handle any errors that may have occurred.
+    catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+```

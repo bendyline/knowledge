@@ -1,0 +1,154 @@
+---
+title: "RIGHT (Transact-SQL)"
+description: "RIGHT (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "03/13/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "RIGHT_TSQL"
+  - "RIGHT"
+helpviewer_keywords:
+  - "rightmost character of expression"
+  - "RIGHT function"
+  - "character strings [SQL Server], RIGHT"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# RIGHT (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the right part of a character string with the specified number of characters.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+RIGHT ( character_expression , integer_expression )  
+```  
+  
+## Arguments
+ *character_expression*  
+ Is an [expression](../language-elements/expressions-transact-sql.md) of character or binary data. *character_expression* can be a constant, variable, or column. *character_expression* can be of any data type, except **text** or **ntext**, that can be implicitly converted to **varchar** or **nvarchar**. Otherwise, use the [CAST](cast-and-convert-transact-sql.md) function to explicitly convert *character_expression*.  
+   
+> **Note:**  
+> If *string_expression* is of type **binary** or **varbinary**, RIGHT will perform an implicit conversion to **varchar**, and therefore will not preserve the binary input.  
+  
+ *integer_expression*  
+ Is a positive integer that specifies how many characters of *character_expression* will be returned. If *integer_expression* is negative, an error is returned. If *integer_expression* is type **bigint** and contains a large value, *character_expression* must be of a large data type such as **varchar(max)**.  
+  
+## Return Types  
+ Returns **varchar** when *character_expression* is a non-Unicode character data type.  
+  
+ Returns **nvarchar** when *character_expression* is a Unicode character data type.  
+  
+## Supplementary Characters (Surrogate Pairs)  
+ When using SC collations, the RIGHT function counts a UTF-16 surrogate pair as a single character. For more information, see [Collation and Unicode Support](../../relational-databases/collations/collation-and-unicode-support.md).  
+  
+## Examples  
+  
+### A: Using RIGHT with a column  
+ The following example returns the five rightmost characters of the first name for each person in the  AdventureWorks2025  database.  
+  
+```sql  
+SELECT RIGHT(FirstName, 5) AS 'First Name'  
+FROM Person.Person  
+WHERE BusinessEntityID < 5  
+ORDER BY FirstName;  
+GO  
+```  
+  
+  Here's the result set. 
+  
+  
+```  
+First Name  
+----------  
+Ken  
+Terri  
+berto  
+Rob  
+  
+(4 row(s) affected)  
+  
+```  
+  
+## Examples:  Azure Synapse Analytics 
+  
+### B. Using RIGHT with a column  
+ The following example returns the five rightmost characters of each last name in the `DimEmployee` table.  
+  
+```sql  
+-- Uses AdventureWorks  
+  
+SELECT RIGHT(LastName, 5) AS Name  
+FROM dbo.DimEmployee  
+ORDER BY EmployeeKey;  
+```  
+  
+ Here is a partial result set.  
+  
+ ```
+Name
+-----
+lbert
+Brown
+rello
+lters
+ ```  
+  
+### C. Using RIGHT with a character string  
+ The following example uses `RIGHT` to return the two rightmost characters of the character string `abcdefg`.  
+  
+```sql  
+SELECT RIGHT('abcdefg', 2); 
+```  
+  
+  Here's the result set. 
+  
+  
+```
+-------  
+fg
+```  
+  
+## Related content
+
+- [LEFT (Transact-SQL)](left-transact-sql.md)
+- [LTRIM (Transact-SQL)](ltrim-transact-sql.md)
+- [RTRIM (Transact-SQL)](rtrim-transact-sql.md)
+- [STRING_SPLIT (Transact-SQL)](string-split-transact-sql.md)
+- [SUBSTRING (Transact-SQL)](substring-transact-sql.md)
+- [TRIM (Transact-SQL)](trim-transact-sql.md)
+- [CAST and CONVERT (Transact-SQL)](cast-and-convert-transact-sql.md)
+- [Data types (Transact-SQL)](../data-types/data-types-transact-sql.md)

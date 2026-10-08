@@ -1,0 +1,65 @@
+---
+title: "sys.crypt_properties (Transact-SQL)"
+description: sys.crypt_properties (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "crypt_properties"
+  - "crypt_properties_TSQL"
+  - "sys.crypt_properties_TSQL"
+  - "sys.crypt_properties"
+helpviewer_keywords:
+  - "sys.crypt_properties catalog view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# sys.crypt_properties (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns one row for each cryptographic property associated with a securable.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **class** | **tinyint** | Identifies class of thing on which property exists.<br /><br /> 1 = Object or column<br /> 5 = Assembly |
+| **class_desc** | **nvarchar(60)** | Description of the class of thing on which property exists.<br /><br /> OBJECT_OR_COLUMN<br /> ASSEMBLY |
+| **major_id** | **int** | ID of thing on which property exists, interpreted according to class |
+| **thumbprint** | **varbinary(32)** | SHA-1 hash of the certificate or asymmetric key used. |
+| **crypt_type** | **char(4)** | Encryption type.<br /><br /> SPVC = Signed by certificate private key<br /><br /> SPVA = Signed by asymmetric private key<br /><br /> CPVC = Counter signature by certificate private key<br /><br /> CPVA = Counter signature by asymmetric  key |
+| **crypt_type_desc** | **nvarchar(60)** | Description of encryption type.<br /><br /> SIGNATURE BY CERTIFICATE<br /><br /> SIGNATURE BY ASYMMETRIC KEY<br /><br /> COUNTER SIGNATURE BY CERTIFICATE<br /><br /> COUNTER SIGNATURE BY ASYMMETRIC KEY |
+| **crypt_property** | **varbinary(max)** | Signed or encrypted bits. For a signed module these are the signature bits of the module. |
+  
+## Permissions  
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [Security Catalog Views (Transact-SQL)](security-catalog-views-transact-sql.md)
+- [Encryption hierarchy](../security/encryption/encryption-hierarchy.md)
+- [Securables](../security/securables.md)
+- [CREATE CERTIFICATE (Transact-SQL)](../../t-sql/statements/create-certificate-transact-sql.md)
+- [CREATE SYMMETRIC KEY (Transact-SQL)](../../t-sql/statements/create-symmetric-key-transact-sql.md)
+- [CREATE ASYMMETRIC KEY (Transact-SQL)](../../t-sql/statements/create-asymmetric-key-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

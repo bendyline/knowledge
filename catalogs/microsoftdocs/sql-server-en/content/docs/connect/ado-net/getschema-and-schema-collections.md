@@ -1,0 +1,36 @@
+---
+title: "Get schema and schema collections"
+description: "Describes using GetSchema method to retrieve and restrict schema information from a database."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, paulmedynski, cmalhotra
+ms.date: "11/26/2020"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Get schema and schema collections
+
+ **Applies to**:  .NET Framework  .NET  .NET Standard 
+
+
+
+
+The **SqlConnection** classes in the Microsoft SqlClient Data Provider for SQL Server implements a **GetSchema** method which is used to retrieve schema information about the database that is currently connected, and the schema information returned from the **GetSchema** method comes in the form of a [System.Data.DataTable](https://learn.microsoft.com/search/?terms=System.Data.DataTable). The **GetSchema** method is an overloaded method that provides optional parameters for specifying the schema collection to return, and restricting the amount of information returned.
+
+## Specifying the schema collections
+
+The first optional parameter of the **GetSchema** method is the collection name which is specified as a string. There are two types of schema collections: common schema collections that are common to all providers, and specific schema collections which are specific to each provider.  
+
+You can query the Microsoft SqlClient Data Provider for SQL Server to determine the list of supported schema collections by calling the **GetSchema** method with no arguments, or with the schema collection name "MetaDataCollections". This will return a [System.Data.DataTable](https://learn.microsoft.com/search/?terms=System.Data.DataTable) with a list of the supported schema collections, the number of restrictions that they each support, and the number of identifier parts that they use.  
+
+### Retrieving schema collections example
+
+The following examples demonstrate how to use the [Microsoft.Data.SqlClient.SqlConnection.GetSchema%2A](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnection.GetSchema%252A) method of the Microsoft SqlClient Data Provider for SQL Server [Microsoft.Data.SqlClient.SqlConnection](https://learn.microsoft.com/search/?terms=Microsoft.Data.SqlClient.SqlConnection) class to retrieve schema information about all of the tables contained in the **AdventureWorks** sample database:  
+
+[Code reference unavailable in this source snapshot: ~/../sqlclient/doc/samples/SqlConnection_GetSchema_Tables.cs#1](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/connect/ado-net/getschema-and-schema-collections.md)  
+
+## Related content
+
+- [Retrieving database schema information](retrieving-database-schema-information.md)
+- [Microsoft.Data.SqlClient for SQL Server](microsoft-ado-net-sql-server.md)

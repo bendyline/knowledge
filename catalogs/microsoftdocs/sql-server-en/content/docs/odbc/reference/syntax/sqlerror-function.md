@@ -1,0 +1,31 @@
+---
+title: "SQLError Function"
+description: "SQLError Function"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+f1_keywords:
+  - "SQLError"
+helpviewer_keywords:
+  - "SQLError function [ODBC]"
+apilocation: "sqlsrv32.dll"
+apiname: "SQLError"
+apitype: "dllExport"
+---
+# SQLError Function
+**Conformance**  
+ Version Introduced: ODBC 1.0 Standards Compliance: Deprecated  
+  
+ **Summary**  
+ **SQLError** returns error or status information.  
+  
+ For more information about what the Driver Manager maps this function to when an ODBC 2.*x* application is working with an ODBC 3.*x* driver, see [Mapping Deprecated Functions](../appendixes/mapping-deprecated-functions.md) in Appendix G: Driver Guidelines for Backward Compatibility.  
+  
+## Related content
+
+- [ODBC API reference](odbc-api-reference.md)
+- [ODBC Header Files](../install/odbc-header-files.md)

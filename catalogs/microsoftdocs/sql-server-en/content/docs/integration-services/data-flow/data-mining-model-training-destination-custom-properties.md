@@ -1,0 +1,44 @@
+---
+title: "Data Mining Model Training Destination Custom Properties"
+description: "Data Mining Model Training Destination Custom Properties"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: reference
+ms.custom: sfi-ropc-nochange
+---
+# Data Mining Model Training Destination Custom Properties
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+> **Important:**
+> Data mining was deprecated in  SQL Server 2017 (14.x) 
+ Analysis Services and now discontinued in  SQL Server 2022 (16.x) 
+ Analysis Services. Documentation is not updated for deprecated and discontinued features. To learn more, see [Analysis Services backward compatibility](https://learn.microsoft.com/analysis-services/analysis-services-backward-compatibility).
+
+  The Data Mining Model Training destination has both custom properties and the properties common to all data flow components.  
+  
+ The following table describes the custom properties of the Data Mining Model Training destination. All properties are read/write.  
+  
+| Property | Data Type | Description |
+| --- | --- | --- |
+| ASConnectionId | String | The unique identifier of the connection manager. |
+| ASConnectionString | String | The connection string to an instance of  Analysis Services |
+ | or to an  Analysis Services |
+ | project. |
+| ObjectRef | String | An XML tag that identifies the data mining structure that the transformation uses. |
+  
+ The input and the input columns of the Data Mining Model Training destination have no custom properties.  
+  
+ For more information, see [Data Mining Model Training Destination](data-mining-model-training-destination.md).  
+  
+## Related content
+
+- [Set the Properties of a Data Flow Component](set-the-properties-of-a-data-flow-component.md)

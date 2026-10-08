@@ -1,0 +1,58 @@
+---
+title: "sys.sql_dependencies (Transact-SQL)"
+description: sys.sql_dependencies (Transact-SQL)
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "sql_dependencies"
+  - "sql_dependencies_TSQL"
+  - "sys.sql_dependencies_TSQL"
+  - "sys.sql_dependencies"
+helpviewer_keywords:
+  - "sys.sql_dependencies catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.sql_dependencies (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Contains a row for each dependency on a referenced entity as referenced in the  Transact-SQL  expression or statements that define some other referencing object.  
+  
+> **Important:**  
+>  This feature will be removed in a future version of  SQL Server 
+. Avoid using this feature in new development work, and plan to modify applications that currently use this feature.  Use [sys.sql_expression_dependencies](sys-sql-expression-dependencies-transact-sql.md) instead.  
+
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **class** | **tinyint** | Identifies the class of the referenced entity:<br /><br /> 0 = Object or column (non-schema-bound references only)<br /><br /> 1 = Object or column (schema-bound references)<br /><br /> 2 = Types (schema-bound references)<br /><br /> 3 = XML Schema collections (schema-bound references)<br /><br /> 4 = Partition function (schema-bound references) |
+| **class_desc** | **nvarchar(60)** | Description of class of referenced entity:<br /><br /> **OBJECT_OR_COLUMN_REFERENCE_NON_SCHEMA_BOUND**<br /><br /> **OBJECT_OR_COLUMN_REFERENCE_SCHEMA_BOUND**<br /><br /> **TYPE_REFERENCE**<br /><br /> **XML_SCHEMA_COLLECTION_REFERENCE**<br /><br /> **PARTITION_FUNCTION_REFERENCE** |
+| **object_id** | **int** | ID of the referencing object. |
+| **column_id** | **int** | If the referencing ID is a column, ID of referencing column; otherwise, 0. |
+| **referenced_major_id** | **int** | ID of the referenced entity, interpreted by value of class, according to:<br /><br /> 0, 1 = Object ID of object or column.<br /><br /> 2 = Type ID.<br /><br /> 3 = XML Schema collection ID. |
+| **referenced_minor_id** | **int** | Minor-ID of the referenced entity, interpreted by value of class, as shown in the following.<br /><br /> When class =:<br /><br /> 0, **referenced_minor_id** is a column ID; or if not a column, it is 0.<br /><br /> 1, **referenced_minor_id** is a column ID; or if not a column, it is 0.<br /><br /> Otherwise, **referenced_minor_id** = 0. |
+| **is_selected** | **bit** | Object or column is selected. |
+| **is_updated** | **bit** | Object or column is updated. |
+| **is_select_all** | **bit** | Object is used in SELECT * clause (object-level only). |
+  
+## Permissions  
+ Requires membership in the **public** role. For more information, see [Metadata Visibility Configuration](../security/metadata-visibility-configuration.md).  
+  
+## Related content
+
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [Querying the SQL Server System Catalog FAQ](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/docs/relational-databases/system-catalog-views/querying-the-sql-server-system-catalog-faq.yml)

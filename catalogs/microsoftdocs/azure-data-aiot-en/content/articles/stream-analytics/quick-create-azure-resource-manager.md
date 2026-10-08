@@ -1,0 +1,109 @@
+---
+title: 'Quickstart: Create a Stream Analytics job (ARM)'
+description: Use an Azure Resource Manager template (ARM template) to create an Azure Stream Analytics job in minutes, then validate the deployment in the Azure portal.
+ms.service: azure-stream-analytics
+author: ahartoon
+ms.author: anboisve
+ms.topic: quickstart-arm
+ms.custom: mvc, subject-armqs, mode-arm, devx-track-arm-template
+ms.date: 08/25/2026
+ai-usage: ai-assisted
+---
+
+# Quickstart: Create an Azure Stream Analytics job by using an ARM template
+
+Azure Stream Analytics is a real-time analytics service that processes streaming data from sources such as devices, sensors, and applications. In this quickstart, you use an Azure Resource Manager template (ARM template) to create an Azure Stream Analytics job. After you create the job, you validate the deployment.
+
+[Include unavailable in this source snapshot: ~/reusable-content/ce-skilling/azure/includes/resource-manager-quickstart-introduction.md](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/stream-analytics/quick-create-azure-resource-manager.md)
+
+If your environment meets the prerequisites and you're familiar with using ARM templates, select the **Deploy to Azure** button. The template opens in the Azure portal.
+
+Button to deploy the Resource Manager template to Azure.
+
+## Prerequisites
+
+To complete this article, you need to:
+
+- Have an Azure subscription - [create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+
+## Review the template
+
+This quickstart uses a template from [Azure Quickstart Templates](https://azure.microsoft.com/resources/templates/streamanalytics-create/).
+
+[Code reference unavailable in this source snapshot: ~/quickstart-templates/quickstarts/microsoft.streamanalytics/streamanalytics-create/azuredeploy.json](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/stream-analytics/quick-create-azure-resource-manager.md)
+
+The template defines the following resource:
+
+- [**Microsoft.StreamAnalytics/StreamingJobs**](https://learn.microsoft.com/azure/templates/microsoft.streamanalytics/streamingjobs): Creates an Azure Stream Analytics job.
+
+## Deploy the template
+
+In this section, you create an Azure Stream Analytics job by using the ARM template.
+
+1. Select the following image to sign in to Azure and open a template. The template creates an Azure Stream Analytics job.
+
+   Button to deploy the Resource Manager template to Azure.
+
+1. Provide the required values to create your Azure Stream Analytics job.
+
+   Screenshot of the Azure portal custom deployment page showing the property fields for creating an Azure Stream Analytics job from an ARM template.
+
+   Provide the following values:
+
+   | Property | Description |
+   | --- | --- |
+   | **Subscription** | From the drop-down, select your Azure subscription. |
+   | **Resource group** | Specify whether you want to create a new resource group or use an existing one. A resource group is a container that holds related resources for an Azure solution. For more information, see [Azure Resource Group overview](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/azure-resource-manager/management/overview.md). |
+   | **Region** | Select **East US**. For other available regions, see [Azure services available by region](https://azure.microsoft.com/regions/services/). |
+   | **Stream Analytics Job Name** | Provide a name for your Stream Analytics job. |
+   | **Number of Streaming Units** | Choose the number of streaming units you need. For more information, see [Understand and adjust Streaming Units](stream-analytics-streaming-unit-consumption.md). |
+
+1. Select **Review + Create**, then **Create**.
+
+
+## Review deployed resources
+
+Use either the Azure portal to check the Azure Stream Analytics job, or an Azure CLI or Azure PowerShell script to list the resource.
+
+### Azure portal
+
+When the deployment finishes, select **Go to resource** to go to the **Stream Analytics Job** page for the job.
+
+### Azure CLI
+
+Use the [az stream-analytics job show](https://learn.microsoft.com/cli/azure/stream-analytics/job#az-stream-analytics-job-show) command to get details about the job you created. Replace placeholders with your Azure subscription ID, resource group name, and Stream Analytics job name.
+
+```azurecli-interactive
+az stream-analytics job show -s SUBSCRIPTIONID -g RESOURCEGROUPNAME -n ASAJOBNAME
+```
+
+### Azure PowerShell
+
+Use the [Get-AzStreamAnalyticsJob](https://learn.microsoft.com/powershell/module/az.streamanalytics/get-azstreamanalyticsjob) command to get details about the job you created. Replace placeholders with your Azure subscription ID, resource group name, and Stream Analytics job name.
+
+```azurepowershell-interactive
+Get-AzStreamAnalyticsJob -SubscriptionID $subscriptionID -ResourceGroupName $resourceGroupName -Name $streamAnalyticsJobName
+```
+
+## Clean up resources
+
+If you plan to continue to subsequent tutorials, you might want to keep these resources. When you no longer need these resources, delete the resource group. Deleting the resource group also deletes the Azure Stream Analytics job. To delete the resource group by using Azure CLI or Azure PowerShell:
+
+### Azure CLI
+
+```azurecli-interactive
+az group delete --name RESOURCEGROUPNAME
+```
+
+### Azure PowerShell
+
+```azurepowershell-interactive
+Remove-AzResourceGroup -Name RESOURCEGROUPNAME
+```
+
+## Next steps
+
+In this quickstart, you created an Azure Stream Analytics job by using an ARM template and validated the deployment. Advance to the next article to learn how to export an ARM template for an existing job by using VS Code.
+
+> 
+> [Export an Azure Stream Analytics job ARM template](resource-manager-export.md)

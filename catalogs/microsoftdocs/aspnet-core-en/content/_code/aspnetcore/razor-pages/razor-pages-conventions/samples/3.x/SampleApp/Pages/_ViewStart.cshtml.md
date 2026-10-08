@@ -1,0 +1,10 @@
+# Source code: aspnetcore/razor-pages/razor-pages-conventions/samples/3.x/SampleApp/Pages/_ViewStart.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@{
+    Layout = "_Layout";
+}
+
+```

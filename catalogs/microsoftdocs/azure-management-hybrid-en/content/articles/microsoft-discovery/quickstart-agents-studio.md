@@ -1,0 +1,107 @@
+---
+title: "Quickstart: Get started with agents and shared sessions in Microsoft Discovery Studio"
+description: Create Microsoft Discovery agents and shared sessions to run your first AI-powered scientific research.
+author: surajmb
+ms.author: surmb
+ms.service: azure
+ms.topic: quickstart
+ms.date: 10/01/2026
+ms.custom:
+  - template-quickstart
+
+#customer intent: As a scientist or engineer, I want to set up Microsoft Discovery agents and shared sessions so that I can run AI-powered scientific research.
+
+---
+
+# Quickstart: Get started with agents and shared sessions in Microsoft Discovery Studio
+
+In this quickstart, you will set up resources for your Microsoft Discovery project, such as agents and shared sessions to run your first AI-powered scientific research. You will complete the following tasks:
+
+- Sign in to Microsoft Discovery Studio
+- Access Microsoft Discovery project
+- (Optional) Create a custom agent
+- Create a shared session
+- And then start a chat in your shared session
+
+## Prerequisites
+
+- An existing and functional Microsoft Discovery Workspace and Project.
+- Review [Get started with Microsoft Discovery Infrastructure](quickstart-infrastructure.md) before you begin this tutorial.
+- The **Scientist** or **Platform Administrator** persona role set assigned to the user. For the recommended one-step assignment, see [Assign Microsoft Discovery persona roles with a PowerShell script](how-to-assign-persona-roles.md).
+
+## 1. Sign in to Microsoft Discovery Studio
+
+Microsoft Discovery Studio is a secure, AI-powered research environment that enables scientists and engineers to accelerate innovation through autonomous agents, simulation workflows, and integrated data tools—all within a unified interface.
+
+After your infrastructure is set up, you can sign in to [Microsoft Discovery Studio](https://studio.discovery.microsoft.com) directly via the URL, or find the URL in the Workspace overview page in the Azure portal.
+
+Screenshot of the Microsoft Discovery Studio homepage.
+
+After signing in, you land on the **Discovery** tab, which provides quick access to recent shared sessions and common actions like creating new project or links to the official documentation.
+
+You must sign in with your Microsoft Entra ID (work or school account) credentials. Microsoft Discovery Studio supports single sign-on (SSO) with Microsoft Entra ID so that you don't have to explicitly provide credentials if you're already signed in to another service with your Microsoft Entra ID in the same browser.
+
+> **Note:**
+> If you have access to multiple Microsoft Entra tenants, ensure the right tenant is selected when signing in by selecting your profile icon on the top right corner of the page.
+
+## 2. (Optional) Create a custom agent
+
+Every project comes with a default **Discovery** agent that you can use immediately to start chatting. If you want to create a custom agent tailored to a specific domain, follow the steps below. Otherwise, skip to [step 3](#3-create-a-shared-session).
+
+> **Note:**
+> The default **Discovery** agent is intended only for basic questions and answers about the Microsoft Discovery platform. It's not designed to handle scientific use cases or specific user scenarios.
+
+Agents are autonomous, AI-powered systems that perform specific scientific tasks on behalf of users. Powered by large language models (LLMs), agents can use tools, models, and other agents to achieve a goal. In the Microsoft Discovery architecture, agents are the primary functional unit of execution.
+
+In this example, create a basic Chemistry Agent that answers questions about chemical properties of molecules and provides a plan to calculate any property.
+
+1. Sign in to [Microsoft Discovery Studio](https://studio.discovery.microsoft.com/).
+1. Select the **Workspaces** tab in the left navigation pane. This tab lists all existing workspaces across your Azure subscriptions.
+   Screenshot showing the Workspace list page in Microsoft Discovery Studio.
+1. Select the workspace you created in the [previous tutorial](quickstart-infrastructure.md#4-create-a-workspace). This selection opens your workspace in the studio.
+1. Select the project that you created in the [previous tutorial](quickstart-infrastructure.md#9-create-a-project).
+   Screenshot showing the Project list page after project creation in Microsoft Discovery Studio.
+1. In the **Discovery** tab in the left navigation pane, select **AI Capabilities**.
+1. In the **AI Capabilities** tab, select **Agents**, and then select **New agent** > **Create new agent**.
+   Screenshot showing the Agents section of the AI Capabilities tab with the New agent button in Discovery Studio.
+1. Enter a **Name** and **Description** for the agent. For example:
+   - **Name**: `ChemistryAgent`
+   - **Description**: `A chemistry expert agent that answers questions about chemical properties of molecules and provides high-level plans for computational needs.`
+1. Under **Model**, select the model deployment created in the [previous tutorial](quickstart-infrastructure.md#6-create-chat-model-deployment).
+
+   > **Note:**
+   > The following parameters are currently unsupported with reasoning models: `temperature`, `top_p`. To learn more about reasoning models, see [Azure OpenAI reasoning models](https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning#not-supported).
+
+1. Enter the agent **Instructions**. For example:
+   ```
+   You are a chemistry expert agent who can answer questions about chemical properties of molecules and provide high-level plans for the user's computational needs.
+   ```
+1. Select **Save**.
+Screenshot showing the agent creation form with name, description, model, instructions, tools, and bookshelves fields in Discovery Studio.
+
+> **Note:**
+> After you create your agent, you can create more agents from the **Agents** section of the **AI Capabilities** tab. Select **New agent** > **Create new agent** and repeat the process. To reuse an agent from another project, select **New agent** > **Add existing agent**.
+
+## 3. Create a shared session
+
+Shared sessions are research studies within a project where you can chat with your agents, run computational analyses, and get data-driven insights to scientific questions.
+
+To create a shared session, simply type a prompt in the chat box on the Welcome page and select **Send**. A new shared session is automatically created and the agent responds to your prompt. By default, the **Discovery** agent is selected.
+
+Alternatively, select **New session** from the **Discovery** tab in the left navigation pane.
+
+## 4. Start a chat
+
+After your shared session is created, follow these steps:
+
+1. In the chat input box, select an agent using the agent selector dropdown. The default **Discovery** agent is preselected, or you can choose a custom agent created in [step 2](#2-optional-create-a-custom-agent).
+1. Enter a prompt and select **Send** to get a response using the selected agent.
+   Screenshot showing the chat interface in a Microsoft Discovery shared session.
+
+> **Note:**
+> Session chat and tasks operate as independent modes of interaction and can't be combined within the same exchange. Each maintains its own separate context, and neither has visibility into the context, history, or state of the other. As a result, information shared or generated in a session chat isn't available to a task, and vice versa. Plan your workflow accordingly to ensure that any context required by both is provided explicitly in each.
+
+## Next steps
+
+- Explore [Microsoft Discovery agents](concept-discovery-agent.md) to understand agent capabilities in depth.
+- Review the [Microsoft Discovery FAQ](https://github.com/MicrosoftDocs/azure-docs/blob/4260367da6fe93d74e80662f882dd4e9f52b8924/articles/microsoft-discovery/faq.yml) for common questions about agents, models, knowledge retrieval, and platform operations.

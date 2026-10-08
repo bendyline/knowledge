@@ -1,0 +1,68 @@
+---
+title: "Drop a Database Snapshot (Transact-SQL)"
+description: Learn how to drop a database snapshot by using Transact-SQL, which deletes the snapshot from SQL Server and the sparse files that are used by the snapshot.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: how-to
+helpviewer_keywords:
+  - "removing database snapshots"
+  - "deleting database snapshots"
+  - "database snapshots [SQL Server], deleting"
+---
+# Drop a Database Snapshot (Transact-SQL)
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Dropping a database snapshot deletes the database snapshot from  SQL Server 
+ and deletes the sparse files that are used by the snapshot. When you drop a database snapshot, all user connections to it are terminated.  
+  
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+Any user with DROP DATABASE permissions can drop a database snapshot.  
+  
+##  <a name="TsqlProcedure"></a> How to Drop a Database Snapshot (Using Transact-SQL)  
+ **To drop a database snapshot**  
+  
+1.  Identify the database snapshot that you want to drop. You can view the snapshots on a database in  SQL Server Management Studio 
+. For more information, see [View a Database Snapshot (SQL Server)](view-a-database-snapshot-sql-server.md).  
+  
+2.  Issue a [DROP DATABASE](../../t-sql/statements/drop-database-transact-sql.md) statement, specifying the name of the database snapshot to be dropped. The syntax is as follows:  
+  
+     DROP DATABASE *database_snapshot_name* [ **,**...*n* ]  
+  
+     Where *database_snapshot_name* is the name of the database snapshot to be dropped.  
+  
+####  <a name="TsqlExample"></a> Example (Transact-SQL)  
+ This example drops a database snapshot named SalesSnapshot0600, without affecting the source database.  
+  
+```  
+DROP DATABASE SalesSnapshot0600 ;  
+```  
+  
+ Any user connections to SalesSnapshot0600 are terminated, and all of the NTFS file system sparse files used by the snapshot are deleted.  
+  
+> **Note:**  
+>  For information about the use of sparse files by database snapshots, see [Database Snapshots (SQL Server)](database-snapshots-sql-server.md).  
+  
+##  <a name="RelatedTasks"></a> Related Tasks  
+  
+-   [Create a Database Snapshot (Transact-SQL)](create-a-database-snapshot-transact-sql.md)  
+  
+-   [View a Database Snapshot (SQL Server)](view-a-database-snapshot-sql-server.md)  
+  
+-   [Revert a Database to a Database Snapshot](revert-a-database-to-a-database-snapshot.md)  
+  
+  
+## Related content
+
+- [DROP DATABASE (Transact-SQL)](../../t-sql/statements/drop-database-transact-sql.md)
+- [Database snapshots (SQL Server)](database-snapshots-sql-server.md)

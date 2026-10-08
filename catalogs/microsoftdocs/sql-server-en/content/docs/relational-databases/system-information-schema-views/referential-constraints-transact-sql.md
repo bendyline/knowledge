@@ -1,0 +1,66 @@
+---
+title: "REFERENTIAL_CONSTRAINTS (Transact-SQL)"
+description: "REFERENTIAL_CONSTRAINTS (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/15/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "REFERENTIAL_CONSTRAINTS"
+  - "REFERENTIAL_CONSTRAINTS_TSQL"
+helpviewer_keywords:
+  - "INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS view"
+  - "REFERENTIAL_CONSTRAINTS view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# REFERENTIAL_CONSTRAINTS (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns one row for each FOREIGN KEY constraint in the current database. This information schema view returns information about the objects to which the current user has permissions.  
+  
+ To retrieve information from these views, specify the fully qualified name of **INFORMATION_SCHEMA**.*view_name*.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **CONSTRAINT_CATALOG** | **nvarchar(**128**)** | Constraint qualifier. |
+| **CONSTRAINT_SCHEMA** | **nvarchar(**128**)** | Name of schema that contains the constraint.<br /><br /> **Important:** Don't use INFORMATION_SCHEMA views to determine the schema of an object. INFORMATION_SCHEMA views only represent a subset of the metadata of an object. The only reliable way to find the schema of an object is to query the `sys.objects` catalog view. |
+| **CONSTRAINT_NAME** | **sysname** | Constraint name. |
+| **UNIQUE_CONSTRAINT_CATALOG** | **nvarchar(**128**)** | UNIQUE constraint qualifier. |
+| **UNIQUE_CONSTRAINT_SCHEMA** | **nvarchar(**128**)** | Name of schema that contains the UNIQUE constraint.<br /><br /> **Important:** Don't use INFORMATION_SCHEMA views to determine the schema of an object. INFORMATION_SCHEMA views only represent a subset of the metadata of an object. The only reliable way to find the schema of an object is to query the `sys.objects` catalog view. |
+| **UNIQUE_CONSTRAINT_NAME** | **sysname** | UNIQUE constraint. |
+| **MATCH_OPTION** | **varchar(**7**)** | Referential constraint-matching conditions. Always returns SIMPLE. This means that no match is defined. The condition is considered a match when one of the following is true:<br /><br /> At least one value in the foreign key column is NULL.<br /><br /> All values in the foreign key column are not NULL, and there is a row in the primary key table that has the same key. |
+| **UPDATE_RULE** | **varchar(**11**)** | Action taken when a  Transact-SQL  statement violates the referential integrity that is defined by this constraint. Returns one of the following: <br />NO ACTION<br />CASCADE<br />SET NULL<br />SET DEFAULT<br /><br /> If NO ACTION is specified on ON UPDATE for this constraint, the update of the primary key that is referenced in the constraint won't be propagated to the foreign key. If such an update of a primary key will cause a referential integrity violation because at least one foreign key contains the same value,  SQL Server |
+ | won't make any change to the parent and referring tables.  SQL Server |
+ | also will raise an error.<br /><br /> If CASCADE is specified on ON UPDATE for this constraint, any change to the primary key value is automatically propagated to the foreign key value. |
+| **DELETE_RULE** | **varchar(**11**)** | Action taken when a  Transact-SQL  statement violates referential integrity defined by this constraint. Returns one of the following: <br />NO ACTION<br />CASCADE<br />SET NULL<br />SET DEFAULT<br /><br /> If NO ACTION is specified on ON DELETE for this constraint, the delete on the primary key that is referenced in the constraint won't be propagated to the foreign key. If such a delete of a primary key will cause a referential integrity violation because at least one foreign key contains the same value,  SQL Server |
+ | won't make any change to the parent and referring tables.  SQL Server |
+ | also will raise an error.<br /><br /> If CASCADE is specified on ON DELETE on this constraint, any change to the primary key value is automatically propagated to the foreign key value. |
+  
+## Related content
+
+- [Transact-SQL reference (Database Engine)](../../t-sql/language-reference.md)
+- [System information schema views (Transact-SQL)](system-information-schema-views-transact-sql.md)
+- [sys.indexes (Transact-SQL)](../system-catalog-views/sys-indexes-transact-sql.md)
+- [sys.objects (Transact-SQL)](../system-catalog-views/sys-objects-transact-sql.md)
+- [sys.foreign_keys (Transact-SQL)](../system-catalog-views/sys-foreign-keys-transact-sql.md)

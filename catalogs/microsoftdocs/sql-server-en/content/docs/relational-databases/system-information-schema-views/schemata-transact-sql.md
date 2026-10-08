@@ -1,0 +1,73 @@
+---
+title: "SCHEMATA (Transact-SQL)"
+description: "SCHEMATA (Transact-SQL)"
+author: markingmyname
+ms.author: maghan
+ms.date: "09/08/2017"
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "SCHEMATA_TSQL"
+  - "SCHEMATA"
+helpviewer_keywords:
+  - "INFORMATION_SCHEMA.SCHEMATA view"
+  - "SCHEMATA view"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azure-sqldw-latest || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric || =fabric-sqldb"
+---
+# SCHEMATA (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns one row for each schema in the current database. To retrieve information from these views, specify the fully qualified name of **INFORMATION_SCHEMA**.*view_name*. To retrieve information about all databases in an instance of  SQL Server 
+, query the [sys.databases (Transact-SQL)](../system-catalog-views/sys-databases-transact-sql.md) catalog view.  
+  
+| Column name | Data type | Description |
+| --- | --- | --- |
+| **CATALOG_NAME** | **sysname** | Name of current database |
+| **SCHEMA_NAME** | **nvarchar(**128**)** | Returns the name of the schema. |
+| **SCHEMA_OWNER** | **nvarchar(**128**)** | Schema owner name.<br /><br /> **Important:** Don't use INFORMATION_SCHEMA views to determine the schema of an object. INFORMATION_SCHEMA views only represent a subset of the metadata of an object. The only reliable way to find the schema of an object is to query the `sys.objects` catalog view. |
+| **DEFAULT_CHARACTER_SET_CATALOG** | **varchar(**6**)** | Always returns NULL. |
+| **DEFAULT_CHARACTER_SET_SCHEMA** | **varchar(**3**)** | Always returns NULL. |
+| **DEFAULT_CHARACTER_SET_NAME** | **sysname** | Returns the name of the default character set. |
+
+**Example**  
+The following example, returns information about the schemas in the master database:  
+```sql  
+SELECT * FROM master.INFORMATION_SCHEMA.SCHEMATA;
+```  
+
+## Related content
+
+- [Transact-SQL reference (Database Engine)](../../t-sql/language-reference.md)
+- [System information schema views (Transact-SQL)](system-information-schema-views-transact-sql.md)
+- [sys.databases (Transact-SQL)](../system-catalog-views/sys-databases-transact-sql.md)
+- [Schema catalog view - sys.schemas](../system-catalog-views/schemas-catalog-views-sys-schemas.md)
+- [sys.syscharsets (Transact-SQL)](../system-compatibility-views/sys-syscharsets-transact-sql.md)

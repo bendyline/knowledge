@@ -1,0 +1,39 @@
+---
+title: "getURL Method (SQLServerDataSource)"
+description: "getURL Method (SQLServerDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDataSource.getURL"
+apitype: "Assembly"
+---
+# getURL Method (SQLServerDataSource)
+
+
+  Returns the URL that is used to connect to the data source.  
+  
+## Syntax  
+  
+```  
+  
+public java.lang.String getURL()  
+```  
+  
+## Return Value  
+ A **String** that contains the URL.  
+  
+## Remarks  
+ For security reasons, you should not include the password in the URL that is supplied to the [setURL](seturl-method-sqlserverdatasource.md) method. The reason for this is that third-party Java Application Servers will very often display the value set for the URL property in their data source configuration user interface. Instead, use the [setPassword](setpassword-method-sqlserverdatasource.md) method to set the password value. Java Application Servers will not display a password that is set in their data source in the configuration user interface.  
+  
+> **Note:**  
+>  If the setURL method is not called before calling the getURL method, getURL returns the default value of "jdbc:sqlserver://".  
+  
+## Related content
+
+- [SQLServerDataSource Members](sqlserverdatasource-members.md)
+- [SQLServerDataSource Class](sqlserverdatasource-class.md)

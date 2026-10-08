@@ -1,0 +1,30 @@
+---
+title: "updateTime Method (SQLServerResultSet)"
+description: "updateTime Method (SQLServerResultSet)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerResultSet.updateTime"
+apitype: "Assembly"
+---
+# updateTime Method (SQLServerResultSet)
+
+
+  Updates the designated column with a time value.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [updateTime (int, java.sql.Time)](updatetime-method-int-java-sql-time.md) | Updates the designated column with a time value given the column index. |
+| [updateTime (java.lang.String, java.sql.Time)](updatetime-method-java-lang-string-java-sql-time.md) | Updates the designated column with a time value given the column name. |
+  
+## Related content
+
+- [SQLServerResultSet Members](sqlserverresultset-members.md)
+- [SQLServerResultSet Class](sqlserverresultset-class.md)

@@ -1,0 +1,32 @@
+# Source code: aspnetcore/fundamentals/app-state/3.0samples/RazorPagesContacts/Pages/Customers/Details.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "{id:int?}"
+@model DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Customer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Customer.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Customer.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+```

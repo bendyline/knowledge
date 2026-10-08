@@ -1,0 +1,68 @@
+---
+title: Ingestion Client - Speech service
+titleSuffix: Foundry Tools
+description: Learn about a tool released on GitHub that enables customers to push audio files to Speech service easily and quickly 
+author: PatrickFarley
+manager: mcleans
+ms.service: azure-speech-foundry-tools
+ms.topic: concept-article
+ms.date: 03/23/2026
+ms.author: pafarley
+ai-usage: ai-assisted
+#Customer intent: As a developer, I want to learn about the Ingestion Client tool that helps me quickly deploy a call center transcription solution to Azure with a no-code approach.
+---
+
+# Ingestion Client with Foundry Tools
+
+The Ingestion Client is a tool released by Microsoft on GitHub that helps you quickly deploy a call center transcription solution to Azure with a no-code approach. 
+
+> **Tip:**
+> You can use the tool and resulting solution in production to process a high volume of audio.
+
+Ingestion Client uses the [Azure Language in Foundry Tools](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/index.yml), [Azure Speech in Foundry Tools](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/speech-service/index.yml), [Azure storage](https://azure.microsoft.com/product-categories/storage/), and [Azure Functions](https://azure.microsoft.com/services/functions/). 
+
+## Get started with the Ingestion Client
+
+An Azure account and a multi-service Microsoft Foundry resource are needed to run the Ingestion Client.
+* Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn)
+* <a href="https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry"  title="Create a Foundry resource"  target="_blank">Create a Foundry resource</a> in the Azure portal.
+* Get the resource key and region. After your resource is deployed, select **Go to resource** to view and manage keys. For more information about Microsoft Foundry resources, see [this quickstart](../multi-service-resource.md?pivots=azportal). 
+
+
+## Ingestion Client Features
+
+The Ingestion Client works by connecting a dedicated [Azure storage](https://azure.microsoft.com/product-categories/storage/) account to custom [Azure Functions](https://azure.microsoft.com/services/functions/) in a serverless fashion to pass transcription requests to the service. The transcribed audio files land in the dedicated [Azure Storage container](https://azure.microsoft.com/product-categories/storage/). 
+
+> **Important:**
+> Pricing varies depending on the mode of operation (batch vs real-time) as well as the Azure Function SKU selected. By default the tool will create a Premium Azure Function SKU to handle large volume. Visit the [Pricing](https://azure.microsoft.com/pricing/details/functions/) page for more information.
+
+Internally, the tool uses Speech and Language services, and follows best practices to handle scale-up, retries and failover. The following schematic describes the resources and connections.
+
+Diagram that shows the Ingestion Client Architecture.
+
+The following Speech service feature is used by the Ingestion Client:
+
+- [Batch speech to text](batch-transcription.md): Transcribe large amounts of audio files asynchronously including speaker diarization and is typically used in post-call analytics scenarios. Diarization is the process of recognizing and separating speakers in mono channel audio data.
+
+Here are some Language service features that are used by the Ingestion Client:
+
+- [Personally Identifiable Information (PII) extraction and redaction](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/articles/ai-services/language-service/personally-identifiable-information/how-to-call-for-conversations.md): Identify, categorize, and redact sensitive information in conversation transcription.
+- [Sentiment analysis and opinion mining](../language-service/sentiment-opinion-mining/overview.md): Analyze transcriptions and associate positive, neutral, or negative sentiment at the utterance and conversation-level.
+
+Besides Foundry Tools, these Azure products are used to complete the solution:
+
+- [Azure storage](https://azure.microsoft.com/product-categories/storage/): Used for storing telephony data and the transcripts that batch transcription API returns. This storage account should use notifications, specifically for when new files are added. These notifications are used to trigger the transcription process.
+- [Azure Functions](https://azure.microsoft.com/services/functions/): Used for creating the shared access signature (SAS) URI for each recording, and triggering the HTTP POST request to start a transcription. Additionally, you use Azure Functions to create requests to retrieve and delete transcriptions by using the Batch Transcription API.
+
+## Tool customization
+
+The tool is built to show customers results quickly. You can customize the tool to your preferred SKUs and setup. The SKUs can be edited from the [Azure portal](https://portal.azure.com) and [the code itself is available on GitHub](https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch).
+
+> **Note:**
+> We suggest creating the resources in the same dedicated resource group to understand and track costs more easily.
+
+## Next steps
+
+* [Learn more about Foundry Tools features for call center](call-center-overview.md)
+* [Explore the Language service features](../language-service/overview.md)
+* [Explore the Speech service features](overview.md)

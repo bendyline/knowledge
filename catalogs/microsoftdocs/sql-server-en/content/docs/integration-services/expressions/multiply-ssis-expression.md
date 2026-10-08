@@ -1,0 +1,66 @@
+---
+title: "* (Multiply) (SSIS Expression)"
+description: "* (Multiply) (SSIS Expression)"
+ms.date: "03/01/2017"
+ms.service: sql
+ms.subservice: integration-services
+ms.topic: concept-article
+helpviewer_keywords:
+  - "* (multiply operator)"
+  - "multiply operator (*)"
+---
+# * (Multiply) (SSIS Expression)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+SSIS Integration Runtime in Azure Data Factory
+
+
+  Multiplies two numeric expressions.  
+  
+## Syntax  
+  
+```  
+  
+numeric_expression1 * numeric_expression2  
+  
+```  
+  
+## Arguments  
+ *numeric_expression1, numeric_expression2*  
+ Is any valid expression of a numeric data type. For more information, see [Integration Services Data Types](../data-flow/integration-services-data-types.md).  
+  
+## Result Types  
+ Determined by data types of the two arguments. For more information, see [Integration Services Data Types in Expressions](integration-services-data-types-in-expressions.md).  
+  
+## Remarks  
+ If either operand is null, the result is null.  
+  
+## Expression Examples  
+ This example multiplies numeric literals.  
+  
+```  
+5 * 6.09  
+```  
+  
+ This example multiplies values in the **ListPrice** column by 10 percent.  
+  
+```  
+ListPrice * .10  
+```  
+  
+ This example subtracts the result of an expression from the **ListPrice** column. The variable **Discount%** must be enclosed in brackets because the name includes the % character. For more information, see [Identifiers (SSIS)](identifiers-ssis.md).  
+  
+```  
+ListPrice - (ListPrice * @[Discount%])  
+```  
+  
+## Related content
+
+- [Operator Precedence and Associativity](operator-precedence-and-associativity.md)
+- [Operators (SSIS Expression)](operators-ssis-expression.md)

@@ -1,0 +1,132 @@
+---
+title: "REVOKE Asymmetric Key Permissions (Transact-SQL)"
+description: REVOKE Asymmetric Key Permissions (Transact-SQL)
+author: VanMSFT
+ms.author: vanto
+ms.date: "06/10/2016"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "permissions [SQL Server], asymmetric keys"
+  - "asymmetric keys [SQL Server], permissions"
+  - "REVOKE statement, asymmetric keys"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+# REVOKE Asymmetric Key Permissions (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Revokes permissions on an asymmetric key.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+  
+REVOKE [ GRANT OPTION FOR ] { permission  [ ,...n ] }   
+    ON ASYMMETRIC KEY :: asymmetric_key_name   
+    { TO | FROM } database_principal [ ,...n ]  
+    [ CASCADE ]  
+    [ AS revoking_principal ]  
+```  
+  
+## Arguments
+ GRANT OPTION FOR  
+ Indicates that the ability to grant the specified permission will be revoked.  
+  
+> **Important:**  
+>  If the principal has the specified permission without the GRANT option, the permission itself will be revoked.  
+  
+ *permission*  
+ Specifies a permission that can be revoked on an assembly. Listed below.  
+  
+ ON ASYMMETRIC KEY **::**_asymmetric_key_name_  
+ Specifies the asymmetric key on which the permission is being revoked. The scope qualifier **::** is required.  
+  
+ *database_principal*  
+ Specifies the principal from which the permission is being revoked. One of the following:  
+  
+-   Database user  
+  
+-   Database role  
+  
+-   Application role  
+  
+-   Database user mapped to a Windows login  
+  
+-   Database user mapped to a Windows group  
+  
+-   Database user mapped to a certificate  
+  
+-   Database user mapped to an asymmetric key  
+  
+-   Database user not mapped to a server principal.  
+  
+ CASCADE  
+ Indicates that the permission being revoked is also revoked from other principals to which it has been granted or denied by this principal. The permission itself will not be revoked.  
+  
+> **Caution:**  
+>  A cascaded revocation of a permission granted WITH GRANT OPTION will revoke both GRANT and DENY of that permission.  
+  
+ AS *revoking_principal*  
+ Specifies a principal from which the principal executing this query derives its right to revoke the permission. One of the following:  
+  
+-   Database user  
+  
+-   Database role  
+  
+-   Application role  
+  
+-   Database user mapped to a Windows login  
+  
+-   Database user mapped to a Windows group  
+  
+-   Database user mapped to a certificate  
+  
+-   Database user mapped to an asymmetric key  
+  
+-   Database user not mapped to a server principal.  
+  
+## Remarks  
+ An asymmetric key is a database-level securable contained by the database that is its parent in the permissions hierarchy. The most specific and limited permissions that can be revoked on an asymmetric key are listed below, together with the more general permissions that include them by implication.  
+  
+| Asymmetric Key permission | Implied by asymmetric key permission | Implied by database permission |
+| --- | --- | --- |
+| CONTROL | CONTROL | CONTROL |
+| TAKE OWNERSHIP | CONTROL | CONTROL |
+| ALTER | CONTROL | ALTER ANY ASYMMETRIC KEY |
+| REFERENCES | CONTROL | REFERENCES |
+| VIEW DEFINITION | CONTROL | VIEW DEFINITION |
+  
+## Permissions  
+ Requires CONTROL permission on the asymmetric key.  
+  
+## Related content
+
+- [REVOKE (Transact-SQL)](revoke-transact-sql.md)
+- [Permissions (Database Engine)](../../relational-databases/security/permissions-database-engine.md)
+- [Principals (Database Engine)](../../relational-databases/security/authentication-access/principals-database-engine.md)
+- [CREATE CERTIFICATE (Transact-SQL)](create-certificate-transact-sql.md)
+- [CREATE ASYMMETRIC KEY (Transact-SQL)](create-asymmetric-key-transact-sql.md)
+- [CREATE APPLICATION ROLE (Transact-SQL)](create-application-role-transact-sql.md)
+- [Encryption hierarchy](../../relational-databases/security/encryption/encryption-hierarchy.md)

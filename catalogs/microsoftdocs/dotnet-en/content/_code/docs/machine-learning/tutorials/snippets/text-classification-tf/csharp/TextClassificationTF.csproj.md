@@ -1,0 +1,44 @@
+# Source code: docs/machine-learning/tutorials/snippets/text-classification-tf/csharp/TextClassificationTF.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.SampleUtils" Version="0.23.0" />
+    <PackageReference Include="Microsoft.ML.TensorFlow" Version="5.0.0" />
+    <PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="sentiment_model\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="sentiment_model\imdb_word_index.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="sentiment_model\saved_model.pb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="sentiment_model\variables\variables.data-00000-of-00001">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="sentiment_model\variables\variables.index">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
+
+
+```

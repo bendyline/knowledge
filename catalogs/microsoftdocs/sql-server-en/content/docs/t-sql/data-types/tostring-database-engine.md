@@ -1,0 +1,137 @@
+---
+title: ToString (Database Engine)
+description: "ToString (Database Engine)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 10/05/2021
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "ToString"
+  - "ToString_TSQL"
+helpviewer_keywords:
+  - "ToString [Database Engine]"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current || =fabric-sqldb"
+---
+
+# ToString (Database Engine)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+Returns a string with the logical representation of *this*. ToString is called implicitly when a conversion from **hierarchyid** to a string type occurs. Acts as the opposite of [Parse (Database Engine)](parse-database-engine.md).
+  
+## Syntax  
+
+```syntaxsql
+-- Transact-SQL syntax
+node.ToString  ( )
+-- This is functionally equivalent to the following syntax  
+-- which implicitly calls ToString():  
+CAST(node AS nvarchar(4000))  
+```  
+  
+```syntaxsql
+-- CLR syntax
+string ToString  ( )
+```
+
+## Return types
+
+**SQL Server return type:nvarchar(4000)**
+  
+**CLR return type:String**
+  
+## Remarks  
+Returns the logical location in the hierarchy. For example, `/2/1/` represents the fourth row (  Microsoft 
+  SQL Server 
+) in the following hierarchical structure of a file system:
+  
+```sql
+/        C:\  
+/1/      C:\Database Files  
+/2/      C:\Program Files  
+/2/1/    C:\Program Files\Microsoft SQL Server  
+/2/2/    C:\Program Files\Microsoft Visual Studio  
+/3/      C:\Windows  
+```  
+  
+## Examples  
+  
+### A. Transact-SQL example in a table  
+The following example returns both the `OrgNode` column as both the **hierarchyid** data type and in the more readable string format:
+  
+```sql
+SELECT OrgNode,  
+OrgNode.ToString() AS Node  
+FROM HumanResources.EmployeeDemo  
+ORDER BY OrgNode ;  
+GO  
+```  
+  
+ Here's the result set. 
+
+  
+```sql
+OrgNode   Node  
+0x        /  
+0x58      /1/  
+0x5AC0    /1/1/  
+0x5B40    /1/2/  
+0x5BC0    /1/3/  
+0x5C20    /1/4/  
+...  
+```  
+  
+### B. Converting Transact-SQL values without a table  
+The following code example uses `ToString` to convert a **hierarchyid** value to a string, and `Parse` to convert a string value to a **hierarchyid**.
+  
+```sql
+DECLARE @StringValue AS nvarchar(4000), @hierarchyidValue AS hierarchyid  
+SET @StringValue = '/1/1/3/'  
+SET @hierarchyidValue = 0x5ADE  
+  
+SELECT hierarchyid::Parse(@StringValue) AS hierarchyidRepresentation,  
+@hierarchyidValue.ToString() AS StringRepresentation ;
+GO  
+```  
+  
+ Here's the result set. 
+
+  
+```
+hierarchyidRepresentation    StringRepresentation
+-------------------------    -----------------------
+0x5ADE                       /1/1/3/
+```
+  
+### C. CLR example  
+The following code snippet calls the ToString() method:
+  
+```sql
+this.ToString()  
+```  
+  
+## Related content
+
+- [hierarchyid data type method reference](hierarchyid-data-type-method-reference.md)
+- [Hierarchical data (SQL Server)](../../relational-databases/hierarchical-data-sql-server.md)

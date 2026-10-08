@@ -1,0 +1,182 @@
+---
+title: "OBJECT_SCHEMA_NAME (Transact-SQL)"
+description: "OBJECT_SCHEMA_NAME (Transact-SQL)"
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 02/21/2023
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+ms.custom:
+  - ignite-2025
+f1_keywords:
+  - "OBJECT_SCHEMA_NAME"
+  - "OBJECT_SCHEMA_NAME_TSQL"
+helpviewer_keywords:
+  - "objects [SQL Server], names"
+  - "schemas [SQL Server], names"
+  - "displaying schema names"
+  - "database objects [SQL Server], names"
+  - "OBJECT_SCHEMA_NAME function"
+dev_langs:
+  - "TSQL"
+monikerRange: "=azuresqldb-current || =azuresqldb-mi-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqledge-current || =azure-sqldw-latest || =fabric || =fabric-sqldb"
+---
+# OBJECT_SCHEMA_NAME (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+ in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+  Returns the database schema name for schema-scoped objects. For a list of schema-scoped objects, see [sys.objects (Transact-SQL)](../../relational-databases/system-catalog-views/sys-objects-transact-sql.md).  
+
+ 
+
+## Syntax
+
+```syntaxsql
+OBJECT_SCHEMA_NAME ( object_id [, database_id ] )  
+```  
+
+## Arguments
+
+#### *object_id*  
+ The ID of the object to be used. *object_id* is **int** and is assumed to be a schema-scoped object in the specified database, or in the current database context.  
+
+#### *database_id*  
+ The ID of the database where the object is to be looked up. *database_id* is **int**.  
+
+## Return Types
+
+ **sysname**  
+
+## Exceptions
+
+ Returns NULL on error or if a caller does not have permission to view the object. If the target database has the AUTO_CLOSE option set to ON, the function opens the database.  
+
+ A user can only view the metadata of securables that the user owns or on which the user has been granted permission. Metadata-emitting, built-in functions such as `OBJECT_SCHEMA_NAME` may return NULL if the user doesn't have any permission on the object. For more information, see [Metadata Visibility Configuration](../../relational-databases/security/metadata-visibility-configuration.md).  
+
+## Permissions
+
+ Requires ANY permission on the object. To specify a database ID, CONNECT permission to the database is also required, or the guest account must be enabled.  
+
+## Remarks
+
+ System functions can be used in the select list, in the WHERE clause, and anywhere an expression is allowed. For more information, see [Expressions](../language-elements/expressions-transact-sql.md) and [WHERE](../queries/where-transact-sql.md).  
+
+ The result set returned by this system function uses the collation of the current database.  
+
+ If *database_id* is not specified, the  SQL Server Database Engine 
+ assumes that `object_id` is in the context of the current database. A query that references an `object_id` in another database returns NULL or incorrect results. For example, in the following query, the context of the current database is  AdventureWorks2025 . The  Database Engine 
+ tries to return an object schema name for the specified `object_id` in current database instead of the database specified in the FROM clause of the query. Therefore, incorrect information is returned.  
+
+```sql
+SELECT DISTINCT OBJECT_SCHEMA_NAME(object_id)  
+FROM master.sys.objects;  
+```  
+
+ The following example specifies the database ID for the `master` database in the `OBJECT_SCHEMA_NAME` function and returns the correct results.  
+
+```sql
+SELECT DISTINCT OBJECT_SCHEMA_NAME(object_id, 1) AS schema_name  
+FROM master.sys.objects;   
+```  
+
+## Examples
+
+### A. Return the object schema name and object name
+
+*Applies to:* 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+ The following example returns the object schema name, object name, and SQL text for all cached query plans that are not ad hoc or prepared statements. 
+
+```sql
+SELECT DB_NAME(st.dbid) AS database_name,   
+    OBJECT_SCHEMA_NAME(st.objectid, st.dbid) AS schema_name,  
+    OBJECT_NAME(st.objectid, st.dbid) AS object_name,   
+    st.text AS query_statement  
+FROM sys.dm_exec_query_stats AS qs  
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st  
+WHERE st.objectid IS NOT NULL;  
+GO  
+```  
+
+### B. Return three-part object names
+
+The following example returns the database, schema, and object name for all objects in the current database context.
+
+```sql
+SELECT QUOTENAME(DB_NAME(db_id()))   
+    + N'.'   
+    + QUOTENAME(OBJECT_SCHEMA_NAME(object_id, db_id()))   
+    + N'.'   
+    + QUOTENAME(OBJECT_NAME(object_id, db_id()))  
+    , *   
+FROM sys.objects;
+GO  
+```
+
+ The following example returns the database, schema, and object name along with all other columns in the `sys.dm_db_index_operational_stats` dynamic management view for all objects in all databases.  
+
+*Applies to:* 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+```sql
+SELECT QUOTENAME(DB_NAME(database_id))   
+    + N'.'   
+    + QUOTENAME(OBJECT_SCHEMA_NAME(object_id, database_id))   
+    + N'.'   
+    + QUOTENAME(OBJECT_NAME(object_id, database_id))  
+    , *   
+FROM sys.dm_db_index_operational_stats(null, null, null, null);  
+GO  
+```  
+
+## Related content
+
+- [Metadata functions (Transact-SQL)](metadata-functions-transact-sql.md)
+- [OBJECT_DEFINITION (Transact-SQL)](object-definition-transact-sql.md)
+- [OBJECT_ID (Transact-SQL)](object-id-transact-sql.md)
+- [OBJECT_NAME (Transact-SQL)](object-name-transact-sql.md)
+- [Securables](../../relational-databases/security/securables.md)

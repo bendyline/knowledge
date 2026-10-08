@@ -1,0 +1,53 @@
+---
+title: "sys.server_event_notifications (Transact-SQL)"
+description: The sys.server_event_notifications system view returns a row for each server-level event notification object. 
+author: rwestMSFT
+ms.author: randolphwest
+ms.date: 09/23/2025
+ms.service: sql
+ms.subservice: system-objects
+ms.topic: "reference"
+f1_keywords:
+  - "server_event_notifications"
+  - "sys.server_event_notifications"
+  - "sys.server_event_notifications_TSQL"
+  - "server_event_notifications_TSQL"
+helpviewer_keywords:
+  - "sys.server_event_notifications catalog view"
+dev_langs:
+  - "TSQL"
+---
+# sys.server_event_notifications (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+  Returns a row for each server-level event notification object.    
+
+| Column name | Data type | Description |
+| --- | --- | --- |
+| `name` | **sysname** | Server event notification name. Is unique across all server-level event notifications. |
+| `object_id` | **int** | Object identification number. Is unique within the `master` database. |
+| `parent_class` | **tinyint** | Class of parent. Is always 100 = Server. |
+| `parent_class_desc` | **nvarchar(60)** | Description of class of parent. Is always `SERVER`. |
+| `parent_id` | **int** | Is always 0. |
+| `create_date` | **datetime** | Date created. |
+| `modify_date` | **datetime** | Date object was last modified by using an `ALTER` statement. |
+| `service_name` | **nvarchar(256)** | Name of the target service to which the notification is sent. |
+| `broker_instance` | **nvarchar(128)** | The service broker where the named target service is defined. |
+| `creator_sid` | **varbinary(85)** | SID of the login executing the statement that creates the event notification. `NULL` if `WITH FAN_IN` is not specified in the event notification definition. |
+| `principal_id` | **int** | ID of the server principal that owns this. |
+
+## Permissions
+
+ The visibility of the metadata in catalog views is limited to securables that a user either owns, or on which the user was granted some permission.
+ For more information, see [Metadata visibility configuration](../security/metadata-visibility-configuration.md).    
+
+## Related content
+
+- [Object catalog views (Transact-SQL)](object-catalog-views-transact-sql.md)
+- [System catalog views (Transact-SQL)](catalog-views-transact-sql.md)

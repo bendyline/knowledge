@@ -1,0 +1,43 @@
+---
+title: "SQLServerConnection Class"
+description: "Learn the public API details for the SQLServerConnection class in the JDBC Driver for SQL Server."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+---
+# SQLServerConnection Class
+
+
+  Represents a JDBC connection to a  Microsoft 
+  SQL Server 
+ database.  
+  
+ **Package:** com.microsoft.sqlserver.jdbc  
+  
+ **Implements:** [ISQLServerConnection](isqlserverconnection-interface.md), java.io.Serializable  
+  
+## Syntax  
+  
+```  
+  
+public class SQLServerConnection  
+```  
+  
+## Remarks  
+ SQLServerConnection supports JDBC connection pooling and can be either a physical JDBC connection or a logical JDBC connection. SQLServerConnection manages transaction control for all statements that were created from it, and it can participate in XA distributed transactions managed via a XAResource adapter.  
+  
+ SQLServerConnection manages a pool of prepared statement handles. Prepared statements are prepared once and are typically run many times with different data values for their parameters. Prepared statements are also maintained across logical (pooled) connection closes.  
+  
+> **Note:**  
+>  SQLServerConnection is not thread safe. However, multiple statements that are created from a single connection can be processed simultaneously in concurrent threads.  
+  
+ This class supports unwrapping to SQLServerConnection class, java.sql.connection interface, and ISQLServerConnection interface. For more information, see [Wrappers and Interfaces](../wrappers-and-interfaces.md).  
+  
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [JDBC driver API reference](jdbc-driver-api-reference.md)

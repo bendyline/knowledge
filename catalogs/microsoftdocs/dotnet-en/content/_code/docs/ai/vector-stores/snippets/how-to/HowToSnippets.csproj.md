@@ -1,0 +1,28 @@
+# Source code: docs/ai/vector-stores/snippets/how-to/HowToSnippets.csproj
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS8019;CS0219;CS1591;CS8602</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.AI.OpenAI" Version="2.*" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.*" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="10.*" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.10.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.*" />
+    <PackageReference Include="CommunityToolkit.VectorData.InMemory" Version="1.0.1" />
+    <PackageReference Include="CommunityToolkit.VectorData.Redis" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
+
+```

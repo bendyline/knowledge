@@ -1,0 +1,49 @@
+---
+title: "Comparison Operators (DMX)"
+description: "Comparison Operators (DMX)"
+ms.date: 02/17/2022
+ms.service: sql
+ms.subservice: analysis-services
+ms.topic: reference
+ms.custom: dmx
+---
+# Operators - Comparison
+
+**Applies to:**
+ 
+
+  Analysis Services 
+
+
+
+  You can use comparison operators with scalar data in any Data Mining Extensions (DMX) expression in  Microsoft 
+  SQL Server 
+  Analysis Services 
+. Comparison operators evaluate to a Boolean data type; they return TRUE or FALSE based on the outcome of the tested condition.  
+  
+ The following table identifies the comparison operators that DMX supports.  
+  
+| Operator | Description |
+| --- | --- |
+| [< (Less Than) (DMX)](less-than-dmx.md) | For arguments that evaluate to a non-null value, returns TRUE if the value of the argument on the left is less than the value of the argument on the right; returns FALSE otherwise. If either argument or both arguments evaluate to a null value, the operator returns a null value. |
+| [> (Greater Than) (DMX)](greater-than-dmx.md) | For arguments that evaluate to a non-null value, returns TRUE if the value of the argument on the left is greater than the value of the argument on the right; returns FALSE otherwise. If either argument or both arguments evaluate to a null value, the operator returns a null value. |
+| [= (Equal To) (DMX)](equal-to-dmx.md) | For arguments that evaluate to a non-null value, returns TRUE if the value of the argument on the left is equal to the value of the argument on the right; returns FALSE otherwise. If either argument or both arguments evaluate to a null value, the operator returns a null value. |
+| [<> (Not Equal To) (DMX)](not-equal-to-dmx.md) | For arguments that evaluate to a non-null value, returns TRUE if the value of the argument on the left is not equal to the value of the argument on the right; returns FALSE otherwise. If either argument or both arguments evaluate to a null value, the operator returns a null value. |
+| [<= (Less Than or Equal To) (DMX)](less-than-or-equal-to-dmx.md) | For arguments that evaluate to a non-null value, returns TRUE if the value of the argument on the left is less than or equal to the value of the argument on the right; returns FALSE otherwise. If either argument or both arguments evaluate to a null value, the operator returns a null value. |
+| [>= (Greater Than or Equal To) (DMX)](greater-than-or-equal-to-dmx.md) | For arguments that evaluate to a non-null value, returns TRUE if the value of the argument on the left is greater than or equal to the value of the argument on the right; returns FALSE otherwise. If either argument or both arguments evaluate to a null value, the operator returns a null value. |
+  
+ You can also use comparison operators in DMX statements and functions to look for a condition.  
+  
+## Related content
+
+- [Data Mining Extensions (DMX) Reference](data-mining-extensions-dmx-reference.md)
+- [Data Mining Extensions (DMX) Function Reference](data-mining-extensions-dmx-function-reference.md)
+- [Data Mining Extensions (DMX) Operator Reference](data-mining-extensions-dmx-operator-reference.md)
+- [Data Mining Extensions (DMX) Statements](data-mining-extensions-dmx-statements.md)
+- [Data Mining Extensions (DMX) Syntax Conventions](data-mining-extensions-dmx-syntax-conventions.md)
+- [Data Mining Extensions (DMX) Syntax Elements](data-mining-extensions-dmx-syntax-elements.md)
+- [Expressions (DMX)](expressions-dmx.md)
+- [General Prediction Functions (DMX)](general-prediction-functions-dmx.md)
+- [Operators (DMX)](operators-dmx.md)
+- [Structure and Usage of DMX Prediction Queries](structure-and-usage-of-dmx-prediction-queries.md)
+- [Understanding the DMX Select Statement](understanding-the-dmx-select-statement.md)

@@ -1,0 +1,231 @@
+---
+title: What is a server in Azure SQL Database?
+description: Learn about logical servers used by Azure SQL Database and how to manage them.
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.reviewer: mathoma
+ms.date: 05/28/2026
+ms.service: azure-sql-database
+ms.subservice: service-overview
+ms.topic: concept-article
+monikerRange: "=azuresql || =azuresql-db "
+---
+
+# What is a logical server in Azure SQL Database?
+
+
+
+  **Applies to:**    [Azure SQL Database](https://learn.microsoft.com/sql/sql-server/sql-docs-navigation-guide#applies-to)
+
+This article describes the logical server in Azure used by databases in Azure SQL Database. In the Azure portal, the logical server is named SQL server and is different to the SQL Server product. 
+
+For information on logical servers in Azure Synapse Analytics, see [What is a logical server in Azure Synapse Analytics?](https://learn.microsoft.com/azure/synapse-analytics/sql/logical-servers)
+
+## Overview 
+
+In Azure SQL Database, a server is a logical construct that acts as a central administrative point for a collection of databases. At the logical server level, you can administer [logins](logins-create-manage.md), [firewall rules](firewall-configure.md), [auditing rules](auditing-overview.md), [threat detection policies](threat-detection-configure.md), and [failover groups](failover-group-sql-db.md). A logical server can be in a different region than its resource group. The logical server must exist before you can create a database in Azure SQL Database. All databases managed by a single logical server are created within the same region as the logical server.
+
+This logical server is distinct from a SQL Server instance that you may be familiar with in the on-premises world. Specifically, there are no guarantees regarding location of the databases in relation to the server that manages them. Azure SQL Database don't expose any instance-level access or features. In contrast, the instance databases in a managed instance are all physically co-located - in the same way that you are familiar with SQL Server in the on-premises or virtual machine world.
+
+When you create a logical server, you provide a server login account and password that has administrative rights to the `master` database on that server and all databases created on that server. This initial account is a SQL login account. Azure SQL Database support both SQL authentication and Microsoft Entra authentication. For information about logins and authentication, see [Managing Databases and Logins in Azure SQL Database](logins-create-manage.md). Windows Authentication is not supported.
+
+A logical server in SQL Database:
+
+- Is created within an Azure subscription, but can be moved with its contained resources to another subscription.
+- Is the parent resource for databases and elastic pools.
+- Provides a namespace for databases and elastic pools.
+- Is a logical container with strong lifetime semantics - delete a server and it deletes its databases and elastic pools.
+- Participates in [Azure role-based access control (Azure RBAC)](https://learn.microsoft.com/azure/role-based-access-control/overview) - databases and elastic pools within a server inherit access rights from the server.
+- Is a high-order element of the identity of databases and elastic pools for Azure resource management purposes (see the URL scheme for databases).
+- Collocates resources in a region.
+- Provides a connection endpoint for database access (`<serverName>`.database.windows.net).
+- Provides access to metadata regarding contained resources via DMVs by connecting to a `master` database
+- Provides the scope for management policies that apply to its databases - logins, firewall, audit, threat detection, and such.
+- Is restricted by a quota within the parent subscription (six servers per subscription by default, for more information, refer to [subscription limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits)).
+- Provides the scope for database quota and DTU or vCore quota for the resources it contains (such as 45,000 DTU).
+- Is the versioning scope for capabilities enabled on contained resources.
+- Server-level principal logins can manage all databases on a server.
+- The `master` database of a logical server contains logins similar to those in instances of SQL Server that are granted access to one or more databases on the server, and can be granted limited administrative rights. For more information, see [logins](logins-create-manage.md).
+- Creating, altering, or dropping user objects such as tables, views, or stored procedures in the `master` database on a logical server is not supported.
+- The default collation for all databases created on a server is `SQL_LATIN1_GENERAL_CP1_CI_AS`, where `LATIN1_GENERAL` is English (United States), `CP1` is code page 1252, `CI` is case-insensitive, and `AS` is accent-sensitive.
+
+
+> **Note:**  
+> [Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/new-name) was previously known as Azure Active Directory (Azure AD).
+
+## Manage servers, databases, and firewalls
+
+You can manage logical servers, databases, and firewalls by using the Azure portal, Azure PowerShell, the Azure CLI, Transact-SQL (T-SQL) and REST API. 
+
+### [Portal](#tab/portal)
+
+You can create the resource group for a logical server ahead of time or while creating the server itself. There are multiple methods for getting to a new SQL server form, either by creating a new SQL server or as part of creating a new database.
+
+### Create a blank server
+
+To create a blank logical server (without a database or elastic pool) using the [Azure portal](https://portal.azure.com), navigate to a blank SQL server (**logical SQL server**) form.
+
+> **Important:**
+> Do not include any personal, sensitive, or confidential information in the server admin login name field. Data entered in this field is not considered *customer data*.
+
+
+### Create a blank or sample database in Azure SQL Database
+
+To create a database in SQL Database using the [Azure portal](https://portal.azure.com), navigate to create a new **SQL Database** and provide the requested information. You can create the resource group and server ahead of time or while creating the database itself. You can create a blank database or create a sample database based on `AdventureWorksLT`.
+
+  Screenshot of the first steps to create a new SQL Database in the Azure portal.
+
+> **Important:**
+> For information on selecting the pricing tier for your database, see [DTU-based purchasing model](service-tiers-dtu.md) and [vCore-based purchasing model](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/database/service-tiers-vcore.md).
+
+### Manage existing server
+
+To manage an existing server, navigate to the server using a number of methods - such as from specific database page, the **SQL servers** page, or the **All resources** page.
+
+To manage an existing database, navigate to the **SQL databases** page and select the database you wish to manage. 
+
+For example, to configure a firewall rule, follow these steps: 
+
+1. Navigate to your database resource in the [Azure portal](https://portal.azure.com). Select **Set server firewall** on the toolbar. 
+
+   A screenshot that shows where to copy your server name, and set server firewall on the toolbar.
+
+1. Set **Public network access** to **Selected networks** to reveal the virtual networks and firewall rules. When set to **Disabled**, virtual networks and firewall rule settings are hidden. 
+
+1. Choose **Add a firewall rule** to configure the firewall. 
+
+   A screenshot that shows configuration of a server-level IP firewall rule.
+
+> **Important:**
+> To configure performance properties for a database, see [DTU-based purchasing model](service-tiers-dtu.md) and [vCore-based purchasing model](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/database/service-tiers-vcore.md).
+
+> **Tip:**
+> For an Azure portal quickstart, see [Create a database in SQL Database in the Azure portal](single-database-create-quickstart.md).
+
+### [PowerShell](#tab/powershell)
+
+You can configure your database using Azure PowerShell. 
+
+To create and manage servers, databases, and firewalls with Azure PowerShell, use the following PowerShell cmdlets. If you need to install or upgrade PowerShell, see [Install Azure PowerShell module](https://learn.microsoft.com/powershell/azure/install-az-ps). For creating and managing elastic pools, see [Elastic pools](elastic-pool-overview.md).
+
+> **Important:**
+> Do not include any personal, sensitive, or confidential information in the server admin login name field. Data entered in this field is not considered *customer data*.
+
+
+| Cmdlet | Description |
+| --- | --- |
+| [New-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/new-azsqldatabase) | Creates a database |
+| [Get-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/get-azsqldatabase) | Gets one or more databases |
+| [Set-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/set-azsqldatabase) | Sets properties for a database, or moves an existing database into an elastic pool |
+| [Remove-AzSqlDatabase](https://learn.microsoft.com/powershell/module/az.sql/remove-azsqldatabase) | Removes a database |
+| [New-AzResourceGroup](https://learn.microsoft.com/powershell/module/az.resources/new-azresourcegroup) | Creates a resource group |
+| [New-AzSqlServer](https://learn.microsoft.com/powershell/module/az.sql/new-azsqlserver) | Creates a  server |
+| [Get-AzSqlServer](https://learn.microsoft.com/powershell/module/az.sql/get-azsqlserver) | Returns information about servers |
+| [Set-AzSqlServer](https://learn.microsoft.com/powershell/module/az.sql/set-azsqlserver) | Modifies properties of a server |
+| [Remove-AzSqlServer](https://learn.microsoft.com/powershell/module/az.sql/remove-azsqlserver) | Removes a server |
+| [New-AzSqlServerFirewallRule](https://learn.microsoft.com/powershell/module/az.sql/new-azsqlserverfirewallrule) | Creates a server-level firewall rule |
+| [Get-AzSqlServerFirewallRule](https://learn.microsoft.com/powershell/module/az.sql/get-azsqlserverfirewallrule) | Gets firewall rules for a server |
+| [Set-AzSqlServerFirewallRule](https://learn.microsoft.com/powershell/module/az.sql/set-azsqlserverfirewallrule) | Modifies a firewall rule in a server |
+| [Remove-AzSqlServerFirewallRule](https://learn.microsoft.com/powershell/module/az.sql/remove-azsqlserverfirewallrule) | Deletes a firewall rule from a server. |
+| New-AzSqlServerVirtualNetworkRule | Creates a [*virtual network rule*](vnet-service-endpoint-rule-overview.md), based on a subnet that is a Virtual Network service endpoint. |
+
+> **Tip:**
+> For a PowerShell quickstart, see [Create a database in Azure SQL Database using PowerShell](single-database-create-quickstart.md). For PowerShell example scripts, see [Use PowerShell to create a database in Azure SQL Database and configure a firewall rule](scripts/create-and-configure-database-powershell.md) and [Monitor and scale a database in Azure SQL Database using PowerShell](scripts/monitor-and-scale-database-powershell.md).
+>
+
+### [Azure CLI](#tab/azure-cli)
+
+To create and manage servers, databases, and firewalls with the [Azure CLI](https://learn.microsoft.com/cli/azure), use the following [Azure CLI SQL Database](https://learn.microsoft.com/cli/azure/sql/db) commands. Use the [Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/overview) to run the CLI in your browser, or [install](https://learn.microsoft.com/cli/azure/install-azure-cli) it on macOS, Linux, or Windows. For creating and managing elastic pools, see [Elastic pools](elastic-pool-overview.md).
+
+> **Important:**
+> Do not include any personal, sensitive, or confidential information in the server admin login name field. Data entered in this field is not considered *customer data*.
+
+
+| Cmdlet | Description |
+| --- | --- |
+| [az sql db create](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-create) | Creates a database |
+| [az sql db list](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-list) | Lists all databases managed by a server, or all databases in an elastic pool |
+| [az sql db list-editions](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-list-editions) | Lists available service objectives and storage limits |
+| [az sql db list-usages](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-list-usages) | Returns database usages |
+| [az sql db show](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-show) | Gets a database |
+| [az sql db update](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-update) | Updates a database |
+| [az sql db delete](https://learn.microsoft.com/cli/azure/sql/db#az-sql-db-delete) | Removes a database |
+| [az group create](https://learn.microsoft.com/cli/azure/group#az-group-create) | Creates a resource group |
+| [az sql server create](https://learn.microsoft.com/cli/azure/sql/server#az-sql-server-create) | Creates a server |
+| [az sql server list](https://learn.microsoft.com/cli/azure/sql/server#az-sql-server-list) | Lists servers |
+| [az sql server list-usages](https://learn.microsoft.com/cli/azure/sql/server#az-sql-server-list-usages) | Returns  server usages |
+| [az sql server show](https://learn.microsoft.com/cli/azure/sql/server#az-sql-server-show) | Gets a server |
+| [az sql server update](https://learn.microsoft.com/cli/azure/sql/server#az-sql-server-update) | Updates a server |
+| [az sql server delete](https://learn.microsoft.com/cli/azure/sql/server#az-sql-server-delete) | Deletes a server |
+| [az sql server firewall-rule create](https://learn.microsoft.com/cli/azure/sql/server/firewall-rule#az-sql-server-firewall-rule-create) | Creates a server firewall rule |
+| [az sql server firewall-rule list](https://learn.microsoft.com/cli/azure/sql/server/firewall-rule#az-sql-server-firewall-rule-list) | Lists the firewall rules on a server |
+| [az sql server firewall-rule show](https://learn.microsoft.com/cli/azure/sql/server/firewall-rule#az-sql-server-firewall-rule-show) | Shows the detail of a firewall rule |
+| [az sql server firewall-rule update](https://learn.microsoft.com/cli/azure/sql/server/firewall-rule##az-sql-server-firewall-rule-update) | Updates a firewall rule |
+| [az sql server firewall-rule delete](https://learn.microsoft.com/cli/azure/sql/server/firewall-rule#az-sql-server-firewall-rule-delete) | Deletes a firewall rule |
+
+> **Tip:**
+> For an Azure CLI quickstart, see [Create a database in Azure SQL Database using the Azure CLI](az-cli-script-samples-content-guide.md). For Azure CLI example scripts, see [Use the CLI to create a database in Azure SQL Database and configure a firewall rule](scripts/create-and-configure-database-cli.md) and [Use Azure CLI to monitor and scale a database in Azure SQL Database](scripts/monitor-and-scale-database-cli.md).
+>
+
+### [Transact-SQL](#tab/t-sql)
+
+To create and manage servers, databases, and firewalls with Transact-SQL, use the following T-SQL commands. You can issue these commands using the Azure portal, [SQL Server Management Studio](https://learn.microsoft.com/sql/ssms/use-sql-server-management-studio), [Visual Studio Code](https://code.visualstudio.com/docs), or any other program that can connect to a server and pass Transact-SQL commands. For managing elastic pools, see [Elastic pools](elastic-pool-overview.md).
+
+> **Important:**
+> You cannot create or delete a server using Transact-SQL.
+
+| Command | Description |
+| --- | --- |
+| [CREATE DATABASE (Azure SQL Database)](https://learn.microsoft.com/sql/t-sql/statements/create-database-transact-sql?view=azuresqldb-current\&preserve-view=true) | Creates a new database in Azure SQL Database. You must be connected to the `master` database to create a new database. |
+| [ALTER DATABASE (Azure SQL Database)](https://learn.microsoft.com/sql/t-sql/statements/alter-database-transact-sql?view=azuresqldb-current\&preserve-view=true) | Modifies database or elastic pool. |
+| [DROP DATABASE (Transact-SQL)](https://learn.microsoft.com/sql/t-sql/statements/drop-database-transact-sql) | Deletes a database. |
+| [sys.database_service_objectives (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-database-service-objectives-azure-sql-database) | Returns the edition (service tier), service objective (pricing tier), and elastic pool name, if any, for a database. If logged on to the `master` database for a server, returns information on all databases. |
+| [sys.dm_db_resource_stats (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-resource-stats-azure-sql-database) | Returns CPU, IO, and memory consumption for a database in Azure SQL Database. One row exists for every 15 seconds, even if there is no activity in the database. |
+| [sys.resource_stats (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-resource-stats-azure-sql-database) | Returns CPU usage and storage data for a database in Azure SQL Database. The data is collected and aggregated within five-minute intervals. |
+| [sys.database_connection_stats (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-database-connection-stats-azure-sql-database) | Contains statistics for database connectivity events for Azure SQL Database, providing an overview of database connection successes and failures. |
+| [sys.event_log (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-event-log-azure-sql-database) | Returns successful database connections and connection failures for Azure SQL Database. You can use this information to track or troubleshoot your database activity. |
+| [sp_set_firewall_rule (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-set-firewall-rule-azure-sql-database) | Creates or updates the server-level firewall settings for your server. This stored procedure is only available in the `master` database to the server-level principal login. A server-level firewall rule can only be created using Transact-SQL after the first server-level firewall rule has been created by a user with Azure-level permissions. |
+| [sys.firewall_rules (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-firewall-rules-azure-sql-database) | Returns information about the server-level firewall settings associated with a server. |
+| [sp_delete_firewall_rule (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-delete-firewall-rule-azure-sql-database) | Removes server-level firewall settings from a server. This stored procedure is only available in the `master` database to the server-level principal login. |
+| [sp_set_database_firewall_rule (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-set-database-firewall-rule-azure-sql-database) | Creates or updates the database-level firewall rules for a database in Azure SQL Database. Database firewall rules can be configured for the `master` database, and for user databases in SQL Database. Database firewall rules are useful when using contained database users. |
+| [sys.database_firewall_rules (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-database-firewall-rules-azure-sql-database) | Returns information about the database-level firewall settings for a database in Azure SQL Database. |
+| [sp_delete_database_firewall_rule (Azure SQL Database)](https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-delete-database-firewall-rule-azure-sql-database) | Removes database-level firewall setting for a database of yours in Azure SQL Database. |
+
+> **Tip:**
+> For a quickstart using SQL Server Management Studio on Microsoft Windows, see [Azure SQL Database: Use SQL Server Management Studio to connect and query data](connect-query-ssms.md). For a quickstart using Visual Studio Code on the macOS, Linux, or Windows, see [Azure SQL Database: Use Visual Studio Code to connect and query data](connect-query-vscode.md).
+
+### [REST API](#tab/rest-api)
+
+To create and manage servers, databases, and firewalls, use these REST API requests.
+
+| Command | Description |
+| --- | --- |
+| [Servers - Create or update](https://learn.microsoft.com/rest/api/sql/servers/create-or-update) | Creates or updates a new server. |
+| [Servers - Delete](https://learn.microsoft.com/rest/api/sql/servers/delete) | Deletes a server. |
+| [Servers - Get](https://learn.microsoft.com/rest/api/sql/servers/get) | Gets a server. |
+| [Servers - List](https://learn.microsoft.com/rest/api/sql/servers/list) | Returns a list of servers. |
+| [Servers - List by resource group](https://learn.microsoft.com/rest/api/sql/servers/list-by-resource-group) | Returns a list of servers in a resource group. |
+| [Servers - Update](https://learn.microsoft.com/rest/api/sql/servers/update) | Updates an existing server. |
+| [Databases - Create or update](https://learn.microsoft.com/rest/api/sql/databases/create-or-update) | Creates a new database or updates an existing database. |
+| [Databases - Delete](https://learn.microsoft.com/rest/api/sql/databases/delete) | Deletes a database. |
+| [Databases - Get](https://learn.microsoft.com/rest/api/sql/databases/get) | Gets a database. |
+| [Databases - List by elastic pool](https://learn.microsoft.com/rest/api/sql/databases/list-by-elastic-pool) | Returns a list of databases in an elastic pool. |
+| [Databases - List by server](https://learn.microsoft.com/rest/api/sql/databases/list-by-server) | Returns a list of databases in a server. |
+| [Databases - Update](https://learn.microsoft.com/rest/api/sql/databases/update) | Updates an existing database. |
+| [Firewall rules - Create or update](https://learn.microsoft.com/rest/api/sql/firewall-rules/create-or-update) | Creates or updates a firewall rule. |
+| [Firewall rules - Delete](https://learn.microsoft.com/rest/api/sql/firewall-rules/delete) | Deletes a firewall rule. |
+| [Firewall rules - Get](https://learn.microsoft.com/rest/api/sql/firewall-rules/get) | Gets a firewall rule. |
+| [Firewall rules - List by server](https://learn.microsoft.com/rest/api/sql/firewall-rules/list-by-server) | Returns a list of firewall rules. |
+
+---
+
+
+## Next step
+
+> 
+> [Migrate to Azure SQL Database](https://github.com/MicrosoftDocs/sql-docs/blob/e261e18779bfc7d6123e89ebb40055901b927c2a/azure-sql/database/migrate-to-database-from-sql-server.md)
+
+## Related content
+
+- [Features comparison: Azure SQL Database and Azure SQL Managed Instance](features-comparison.md)
+- [Modifiable configuration reference for Azure SQL Database](modifiable-configuration-reference.md)

@@ -1,0 +1,15 @@
+# Source code: samples/snippets/visualbasic/VS_Snippets_VBCSharp/vbvbalrwithstatement/vb/entrywindow.xaml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+<Window x:Class="EntryWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="EntryWindow" Height="300" Width="300">
+    <Grid>
+        <Label Name="InfoLabel" Content="" Height="28" HorizontalAlignment="Left" Margin="66,35,0,0" VerticalAlignment="Top" />
+    </Grid>
+</Window>
+
+```

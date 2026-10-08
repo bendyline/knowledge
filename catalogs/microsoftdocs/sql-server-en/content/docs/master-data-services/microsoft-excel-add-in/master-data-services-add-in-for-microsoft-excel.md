@@ -1,0 +1,112 @@
+---
+title: Master Data Services Add-In for Microsoft Excel
+description: Learn how to load data from Master Data Services into Excel, and then publish it back to MDS by using the Master Data Services Add-in for Excel.
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: concept-article
+ms.custom:
+  - microsoft-excel-add-in
+  - build-2025
+---
+# Master Data Services Add-in for Microsoft Excel
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+With the  SQL Server 
+  Master Data Services 
+  Add-in for Excel 
+, you can load filtered lists of data from Master Data Services (MDS) into Excel and then work with it just as you would any other data. When you are done, you can publish the data back to MDS where it's centrally stored. Security level determines which data you can view and update.
+
+> **Note:**  
+> If you want to use Add-in for Excel to view or update data, you must enable ActiveX controls in Microsoft Excel, otherwise the data from the MDS database might not complete the load. For more information, see [Enable or disable ActiveX settings in Office files](https://support.microsoft.com/office/enable-or-disable-activex-settings-in-office-files-f1303e08-a3f8-41c5-a17e-b0b8898743ed).
+  
+If you're an administrator, you can use the  Add-in for Excel 
+ to create entities and attributes, which you can load with data. This process eliminates the need to use other tools to load data into your models.  
+  
+With the  Add-in for Excel 
+, you can use Data Quality Services (DQS) to match data before loading it into MDS. This feature helps to prevent duplicate data in MDS.
+
+> **Note:**
+> Be aware of the following size limitations when interacting with the workbook in MDS Excel add-in.
+>
+> - Excel on the web has a payload size limit for requests and responses of 5 MB. A `RichAPI.Error` will be thrown if that limit is exceeded.
+> - A range is limited to five million cells for get operations.
+
+## Downloads
+
+- [Master Data Services Add-in for Excel for SQL Server 2016 SP2](https://www.microsoft.com/download/details.aspx?id=56838).
+- [ Master Data Services 
+  Add-in for Excel 
+ for SQL Server 2017](https://go.microsoft.com/fwlink/?linkid=836867).
+- [Master Data Services Add-in for Excel for SQL Server 2019](https://go.microsoft.com/fwlink/?linkid=2086948).
+- [Master Data Services Add-in for Excel for SQL Server 2022](https://www.microsoft.com/download/details.aspx?id=104535).
+
+> **Note:**
+> The Master Data Services Add-in for Excel requires the Office Automation Security to be set to one of the following:
+>
+> - Level 1 : Macros enabled (default)
+> - Level 2 : Use application macro security level
+
+## Terms
+
+When working with the add-in, you might come across the following terms. For more information about these concepts, see [Master Data Services Overview (MDS)](../master-data-services-overview-mds.md).  
+
+- The *MDS repository* is where all master data is stored. It's a  SQL Server 
+ database configured to store MDS data. To work with data from the repository, you load it into Excel. When you're done working with it, you publish the changes back to the repository. Administrators can add new entities and attributes to the repository.
+  
+- *MDS-managed data* is data stored in the MDS repository. When you load MDS-managed data into Excel, it's displayed as highlighted rows. You can also add data to your Excel worksheet that's not MDS-managed. Such data won't be affected if you refresh the MDS-managed data.
+
+- A *model* is a data container. You can create versions of these containers. The latest version is usually the most recent. For more information, see [Models (Master Data Services)](../models-master-data-services.md).  
+  
+- An *entity* is a list of data, like a table in a database. For example, the **Color** entity might contain a list of colors. For more information, see [Entities (Master Data Services)](../entities-master-data-services.md).  
+  
+- A *member* is a record or a row of data. Each entity contains members. For example, **Blue** could be a member of the **Color** entity. For more information, see [Members (Master Data Services)](../members-master-data-services.md).  
+  
+- An *attribute* is a column of data. Each member has attributes. For example, the **Code** attribute for the **Blue** member is **B**. For more information about attributes, see [Attributes (Master Data Services)](../attributes-master-data-services.md).  
+  
+## Related tasks  
+
+| Task Description | Topic |
+| --- | --- |
+| Create a connection to a  Master Data Services |
+ | repository. | [Connect to an MDS repository](connect-to-an-mds-repository-mds-add-in-for-excel.md) |
+| Load MDS-managed data into Excel. | [Export data to Excel from Master Data Services](export-data-to-excel-from-master-data-services.md) |
+| Save a shortcut query to open the currently displayed MDS-managed data in the future. | [Save a shortcut query file](save-a-shortcut-query-file-mds-add-in-for-excel.md) |
+| Share shortcuts with others. | [Email a shortcut query file](email-a-shortcut-query-file-mds-add-in-for-excel.md) |
+| View all the changes that have been made to a member. | [View all annotations or transactions for a member](view-all-annotations-or-transactions-for-a-member-mds-add-in-for-excel.md) |
+| Find duplications before publishing new data. | [Match similar data](match-similar-data-mds-add-in-for-excel.md) |
+| Publish data from a worksheet into the MDS repository. | [Import data from Excel to Master Data Services](import-data-from-excel-to-master-data-services-mds-add-in-for-excel.md) |
+| Create a new entity by using data in the worksheet. (Administrators only) | [Create an entity](create-an-entity-mds-add-in-for-excel.md) |
+| Create a domain-based attribute or a constrained list. (Administrators only) | [Create a domain-based attribute](create-a-domain-based-attribute-mds-add-in-for-excel.md) |
+| Set properties for loading and publishing data. (Administrators only) | [Setting properties](setting-properties-for-master-data-services-add-in-for-excel.md) |
+  
+## Related content
+
+- [Connections (MDS Add-in for Excel)](connections-mds-add-in-for-excel.md)
+- [Overview: Exporting Data to Excel (MDS Add-in for Excel)](overview-exporting-data-to-excel-mds-add-in-for-excel.md)
+- [Shortcut Query Files (MDS Add-in for Excel)](shortcut-query-files-mds-add-in-for-excel.md)
+- [Refreshing Data (MDS Add-in for Excel)](refreshing-data-mds-add-in-for-excel.md)
+- [Overview: Importing Data from Excel (MDS Add-in for Excel)](overview-importing-data-from-excel-mds-add-in-for-excel.md)
+- [Validating Data (MDS Add-in for Excel)](validating-data-mds-add-in-for-excel.md)
+- [Data Quality Matching in the MDS Add-in for Excel](data-quality-matching-in-the-mds-add-in-for-excel.md)
+- [Building a Model (MDS Add-in for Excel)](building-a-model-mds-add-in-for-excel.md)
+- [Setting Properties for Master Data Services Add-in for Excel](setting-properties-for-master-data-services-add-in-for-excel.md)
+- [Security (Master Data Services)](../security-master-data-services.md)

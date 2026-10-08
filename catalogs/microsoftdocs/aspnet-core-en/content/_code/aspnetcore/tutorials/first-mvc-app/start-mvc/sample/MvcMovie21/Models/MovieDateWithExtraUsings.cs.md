@@ -1,0 +1,31 @@
+# Source code: aspnetcore/tutorials/first-mvc-app/start-mvc/sample/MvcMovie21/Models/MovieDateWithExtraUsings.cs
+
+Complete source file; linked examples may select a region or line range.
+
+```
+#if AddDate
+#region snippet_1
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace MvcMovie.Models
+{
+    public class Movie
+    {
+        public int ID { get; set; }
+        public string Title { get; set; }
+
+        [Display(Name = "Release Date")]
+        [DataType(DataType.Date)]
+        public DateTime ReleaseDate { get; set; }
+        public string Genre { get; set; }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Price { get; set; }
+    }
+}
+#endregion
+#endif
+```

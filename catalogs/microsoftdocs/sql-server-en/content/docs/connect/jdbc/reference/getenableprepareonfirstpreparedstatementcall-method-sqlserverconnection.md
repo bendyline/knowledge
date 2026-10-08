@@ -1,0 +1,39 @@
+---
+title: "getEnablePrepareOnFirstPreparedStatementCall Method (SQLServerConnection)"
+description: "getEnablePrepareOnFirstPreparedStatementCall Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2018"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.getEnablePrepareOnFirstPreparedStatementCall"
+apitype: "Assembly"
+---
+# getEnablePrepareOnFirstPreparedStatementCall Method (SQLServerConnection)
+
+
+ Returns the value of **enablePrepareOnFirstPreparedStatementCall** connection property. If false the first execution will call sp_executesql and not prepare a statement, once the second execution happens it will call sp_prepexec and actually set up a prepared statement handle. Following executions will call sp_execute. This relieves the need for sp_unprepare on prepared statement close if the statement is only executed once. The default for this option can be changed by calling setDefaultEnablePrepareOnFirstPreparedStatementCall().
+
+## Syntax  
+  
+```  
+  
+public boolean getEnablePrepareOnFirstPreparedStatementCall()  
+```  
+
+## Return Value
+ A **boolean** that contains the value of **enablePrepareOnFirstPreparedStatementCall** connection property.
+
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+ 
+## Remarks  
+ This method is available from JDBC driver version 6.4 and onward.
+ 
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

@@ -1,0 +1,31 @@
+---
+title: "createStatement Method (SQLServerConnection)"
+description: "createStatement Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.createStatement"
+apitype: "Assembly"
+---
+# createStatement Method (SQLServerConnection)
+
+
+  Creates a [SQLServerStatement](sqlserverstatement-class.md) object for sending SQL statements to the database.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [createStatement ()](createstatement-method.md) | Creates a SQLServerStatement object for sending SQL statements to the database. |
+| [createStatement (int, int)](createstatement-method-int-int.md) | Creates a SQLServerStatement object that generates SQLServerResultSet objects with the given type and concurrency. |
+| [createStatement (int, int, int)](createstatement-method-int-int-int.md) | Creates a SQLServerStatement object that generates SQLServerResultSet objects with the given type, concurrency, and holdability. |
+  
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

@@ -1,0 +1,52 @@
+---
+title: Reinitialize Subscriptions
+description: Reinitialize subscriptions in SQL Server replication to apply a fresh snapshot to Subscribers. Learn when reinitialization happens and how to upload pending changes.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "initializing subscriptions [SQL Server replication], reinitializing"
+  - "subscriptions [SQL Server replication], reinitializing"
+  - "reinitializing subscriptions"
+monikerRange: "=azuresqldb-mi-current || >=sql-server-2017"
+---
+# Reinitialize subscriptions
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+  Reinitializing a subscription involves applying a new snapshot of one or more articles to one or more Subscribers. Transactional and snapshot replication allow individual articles to be reinitialized. Merge replication requires all articles to be reinitialized. You can't reinitialize nodes in a peer-to-peer transactional replication topology. To ensure a node has a new copy of the data, restore a backup at the node. Reinitialization occurs for one of two reasons:  
+  
+-   You explicitly mark a subscription for reinitialization.  
+  
+-   You perform an action, such as a property change, that requires a reinitialization. For more information about actions that require reinitialization, see [Change Publication and Article Properties](publish/change-publication-and-article-properties.md).  
+  
+ In both cases, the most recent snapshot is applied to the Subscriber the next time the Distribution Agent or the Merge Agent runs. For snapshot and transactional replication, when reinitialization occurs, any changes made at the Subscriber, but not yet synchronized with the Publisher, are overwritten by the application of the new snapshot.  
+  
+ For merge replication, you can choose to have all the data changes uploaded from the Subscriber before the snapshot is applied. Any pending schema changes from the Publisher are applied at the Subscriber, and then any updates that have been made at the Subscriber since the last synchronization are propagated to the Publisher before the snapshot is reapplied. This behavior is controlled by the **upload_first** and **automatic_reinitialization_policy** properties; for more information, see [Reinitialize a Subscription](reinitialize-a-subscription.md). If you mark a subscription for reinitialization using SQL Server Management Studio or Replication Monitor, you are given an option in the **Reinitialize Subscription(s)** dialog box to upload changes first.  
+  
+> **Important:**  
+>  If you add, drop, or change a parameterized filter in a merge publication, pending changes at the Subscriber cannot be uploaded to the Publisher during reinitialization. If you want to upload pending changes, synchronize all subscriptions before changing the filter.  
+  
+  If you specified that no initial snapshot was to be applied to the Subscriber when you created the subscription, and you then mark the subscription for reinitialization, a snapshot isn't applied. For more information, see [Initialize a Transactional Subscription Without a Snapshot](initialize-a-transactional-subscription-without-a-snapshot.md).    
+  
+ **To reinitialize a subscription**  
+  
+ To reinitialize all articles in a subscription, use  SQL Server Management Studio 
+, stored procedures or Replication Management Objects (RMO). To reinitialize individual articles in snapshot and transactional publications, you must use stored procedures. For more information, see [Reinitialize a Subscription](reinitialize-a-subscription.md).  
+  
+## Related content
+
+- [Initialize a Subscription](initialize-a-subscription.md)
+- [Subscription Expiration and Deactivation](subscription-expiration-and-deactivation.md)

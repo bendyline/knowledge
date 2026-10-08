@@ -1,0 +1,76 @@
+---
+title: "sys.sp_revoke_publication_access (Transact-SQL)"
+description: sp_revoke_publication_access removes the login from a publications access list.
+author: VanMSFT
+ms.author: vanto
+ms.reviewer: randolphwest
+ms.date: 06/19/2026
+ms.service: sql
+ms.subservice: replication
+ms.topic: "reference"
+f1_keywords:
+  - "sp_revoke_publication_access_TSQL"
+  - "sp_revoke_publication_access"
+helpviewer_keywords:
+  - "sp_revoke_publication_access"
+dev_langs:
+  - "TSQL"
+---
+# sys.sp_revoke_publication_access (Transact-SQL)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+Removes the login from a publications access list. This stored procedure is executed at the Publisher on the publication database.
+
+
+
+## Syntax
+
+```syntaxsql
+sys.sp_revoke_publication_access
+    [ @publication = ] N'publication'
+    , [ @login = ] N'login'
+    [ , [ @publisher = ] N'publisher' ]
+[ ; ]
+```
+
+## Arguments
+
+#### [ @publication = ] N'*publication*'
+
+The name of the publication to access. *@publication* is **sysname**, with no default.
+
+#### [ @login = ] N'*login*'
+
+The login ID. *@login* is **sysname**, with no default.
+
+#### [ @publisher = ] N'*publisher*'
+
+ Identified for informational purposes only. Not supported. Future compatibility is not guaranteed. 
+
+
+## Return code values
+
+`0` (success) or `1` (failure).
+
+## Remarks
+
+`sp_revoke_publication_access` is used in snapshot, transactional, and merge replication.
+
+`sp_revoke_publication_access` can be called repeatedly.
+
+## Permissions
+
+Only members of the **sysadmin** fixed server role or the **db_owner** fixed database role can execute `sp_revoke_publication_access`.
+
+## Related content
+
+- [sys.sp_grant_publication_access (Transact-SQL)](sp-grant-publication-access-transact-sql.md)
+- [sys.sp_help_publication_access (Transact-SQL)](sp-help-publication-access-transact-sql.md)
+- [Secure the Publisher](../replication/security/secure-the-publisher.md)
+- [System stored procedures (Transact-SQL)](system-stored-procedures-transact-sql.md)

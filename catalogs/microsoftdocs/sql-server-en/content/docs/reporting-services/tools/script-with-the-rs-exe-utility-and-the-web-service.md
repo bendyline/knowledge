@@ -1,0 +1,35 @@
+---
+title: "Script with the rs.exe utility and the web service"
+description: Learn about the RS.exe utility that can be used to programmatically administer a report server by using scripts written with Microsoft Visual Basic.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: tools
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "Web service [Reporting Services], scripts"
+  - "rs utility"
+  - "XML Web service [Reporting Services], scripts"
+  - "Report Server Web service, scripts"
+  - "scripts [Reporting Services], Web service"
+---
+# Script with the rs.exe utility and the web service
+  Developers and report server administrators can perform operations on a report server by using the **rs** utility (`RS.exe`). Using this utility, you can programmatically administer a report server using scripts written with  Microsoft 
+  Visual Basic .  
+  
+  Reporting Services 
+ scripts can be used to run any of the Report Server web service operations. Scripting can be used to copy security to multiple reports on a server, to add and delete items, to copy report server items from one server to another and more. For more information about the scripting environment, see [Run a Reporting Services script file](run-a-reporting-services-script-file.md). Script files take a certain format and are written in  Visual Basic  .NET. For more information, see [Format a Reporting Services script file](format-a-reporting-services-script-file.md).  
+  
+ For script samples, see the following articles:  
+  
+ [Sample Reporting Services rs.exe script to copy content between report servers](sample-reporting-services-rs-exe-script-to-copy-content-between-report-servers.md).  
+  
+ [SQL Server Reporting Services Product Samples](https://go.microsoft.com/fwlink/?LinkId=177889).  
+  
+## Related content
+
+- [Script deployment and administrative tasks](script-deployment-and-administrative-tasks.md)
+- [Report Server Web service](../report-server-web-service/report-server-web-service.md)
+- [Technical reference (SSRS)](../technical-reference-ssrs.md)
+- [RS.exe utility (SSRS)](rs-exe-utility-ssrs.md)

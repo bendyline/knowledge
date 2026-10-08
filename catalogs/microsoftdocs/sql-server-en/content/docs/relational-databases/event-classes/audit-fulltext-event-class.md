@@ -1,0 +1,53 @@
+---
+title: "Audit Fulltext Event Class"
+description: "Audit Fulltext Event Class"
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: reference
+monikerRange: "=azuresqldb-current || >=sql-server-2017 || >=sql-server-linux-2017 || =azuresqldb-mi-current"
+---
+# Audit Fulltext Event Class
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+
+
+  The **Audit Fulltext** event class occurs when  SQL Server 
+ connects to and communicates with the full-text filter daemon process.  
+  
+## Audit Fulltext Event Class Data Columns  
+  
+| Data column name | Data type | Description | Column ID | Filterable |
+| --- | --- | --- | --- | --- |
+| **Error** | **int** | The  SQL Server |
+ | error number, if this event reports an error. | 31 | Yes |
+| **EventSequence** | **int** | The sequence of a given event within the request. | 51 | No |
+| **EventSubClass** | **int** | Type of connection used by the login. 1 = Nonpooled, 2 = Pooled. | 21 | Yes |
+| **IsSystem** | **int** | Indicates whether the event occurred on a system process or a user process. 1 = system, 0 = user. | 60 | Yes |
+| **SessionLoginName** | **nvarchar** | Login name of the user who originated the session. For example, if you connect to  SQL Server |
+ | using Login1 and execute a statement as Login2, **SessionLoginName** shows Login1 and **LoginName** shows Login2. This column displays both  SQL Server |
+ | and Windows logins. | 64 | Yes |
+| **SPID** | **int** | ID of the session on which the event occurred. | 12 | Yes |
+| **StartTime** | **datetime** | Time at which the event started, if available. | 14 | Yes |
+| **Success** | **int** | 1 = success. 0 = failure. For example, a value of 1 indicates success of a permissions check and a value of 0 indicates failure of that check. | 23 | Yes |
+| **TargetLoginName** | **int** | For actions that target a login (for example, adding a new login), the name of the targeted login. | 42 | Yes |
+| **TargetLoginSid** | **int** | For actions that target a login (for example, adding a new login), the security identification number (SID) of the targeted login. | 43 | Yes |
+| **TextData** | **ntext** | Text information about the Full-Text event. Typically this field provides information about the connection between the  SQL Server |
+ | process and the full-text filter daemon process | 1 | Yes |
+  
+## Related content
+
+- [Extended Events overview](../extended-events/extended-events.md)
+- [sp_trace_setevent (Transact-SQL)](../system-stored-procedures/sp-trace-setevent-transact-sql.md)

@@ -1,0 +1,75 @@
+---
+title: "DROP QUEUE (Transact-SQL)"
+description: DROP QUEUE (Transact-SQL)
+author: WilliamDAssafMSFT
+ms.author: wiassaf
+ms.date: "03/06/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "DROP QUEUE"
+  - "DROP_QUEUE_TSQL"
+helpviewer_keywords:
+  - "dropping queues"
+  - "queues [Service Broker], removing"
+  - "deleting queues"
+  - "DROP QUEUE statement"
+  - "removing queues"
+dev_langs:
+  - "TSQL"
+---
+# DROP QUEUE (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Drops an existing queue.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+DROP QUEUE <object>  
+[ ; ]  
+  
+<object> ::=  
+{ database_name.schema_name.queue_name | schema_name.queue_name | queue_name }
+```  
+  
+## Arguments
+ *database_name*  
+ The name of the database that contains the queue to drop. When no *database_name* is provided, defaults to the current database.  
+  
+ *schema_name (object)*  
+ The name of the schema that owns the queue to drop. When no *schema_name* is provided, defaults to the default schema for the current user.  
+  
+ *queue_name*  
+ The name of the queue to drop.  
+  
+## Remarks  
+ You cannot drop a queue if any services refer to the queue.  
+  
+## Permissions  
+ Permission for dropping a queue defaults to the owner of the queue, members of the **db_ddladmin** or **db_owner** fixed database roles, and members of the **sysadmin** fixed server role.  
+  
+## Examples  
+ The following example drops the **ExpenseQueue** queue from the current database.  
+  
+```sql  
+DROP QUEUE ExpenseQueue ;  
+```  
+  
+## Related content
+
+- [CREATE QUEUE (Transact-SQL)](create-queue-transact-sql.md)
+- [ALTER QUEUE (Transact-SQL)](alter-queue-transact-sql.md)
+- [EVENTDATA (Transact-SQL)](../functions/eventdata-transact-sql.md)

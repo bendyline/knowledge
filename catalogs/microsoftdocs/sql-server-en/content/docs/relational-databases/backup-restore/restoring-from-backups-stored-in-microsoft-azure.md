@@ -1,0 +1,60 @@
+---
+title: "Restoring From Backups Stored in Microsoft Azure"
+description: Understand considerations for restoring a SQL Server database using a backup stored in Azure Blob storage.
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 03/08/2023
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: concept-article
+---
+# Restoring From Backups Stored in Microsoft Azure
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  This topic outlines the considerations when restoring a database using a backup stored in Azure Blob Storage. This applies to backups created either by using SQL Server Backup to URL backup or by  SQL Server managed backup to Microsoft Azure 
+.  
+  
+ We recommend reviewing this topic if you have backups stored in Azure Blob Storage that you plan to restore, and then review the topics that describe the steps on how to restore a database which is the same for both on-premises and Azure backups.  
+  
+## Overview  
+ The tools and methods that are used to restore a database from an on-premises backup apply to restoring a database from a cloud backup.  The following sections describe these considerations and any differences you should know about when you use backups stored in Azure Blob Storage.  
+  
+### Using Transact-SQL  
+  
+-   Since SQL Server must connect to an external source to retrieve the backup files, SQL Credential is used to authenticate to the storage account. Consequently, the RESTORE statement requires WITH CREDENTIAL option. For more information, see [SQL Server Backup and Restore with Microsoft Azure Blob Storage](sql-server-backup-and-restore-with-microsoft-azure-blob-storage-service.md).  
+  
+-   If you are using the  SQL Server managed backup to Microsoft Azure 
+ to manage your backups to the cloud, you can review all the available backups in the storage, by using the **smart_admin.fn_available_backups** system function. This system function returns all the available backups for a database in a table. As the results are returned in a table, you can filter or sort the results. For more information, see [managed_backup.fn_available_backups (Transact-SQL)](../system-functions/managed-backup-fn-available-backups-transact-sql.md).  
+  
+### Using SQL Server Management Studio  
+  
+-   The restore task is used to restore a database using the SQL Server Management Studio. The backup media page now includes the **URL** option to show backup files stored in Azure Blob Storage. You also must provide the SQL Credential that is used to authenticate to the storage account. The **Backup sets to restore** grid is then populated with the available backups in the Azure Blob storage. For more information, see [Restoring from Azure storage Using SQL Server Management Studio](sql-server-backup-to-url.md#RestoreSSMS).  
+  
+### Optimizing Restores  
+
+ To reduce restore write time, Add **perform volume maintenance tasks** user right to the SQL Server user account. For more information, see [Database File Initialization](../databases/database-instant-file-initialization.md). If restore is still slow with instant file initialization turned on, look at the size of the log file on the instance where the database was backed up. If the log is very large in size (multiple GBs), it would be expected that restore would be slow. During restore the log file must be zeroed which takes a significant amount of time. The initial restore of database transaction log files cannot benefit from instant file initialization.
+  
+ To reduce restore times it is recommended that you use compressed backups.  For backup sizes exceeding 25 GB, use [AzCopy utility](https://learn.microsoft.com/archive/blogs/windowsazurestorage/azcopy-uploadingdownloading-files-for-windows-azure-blobs) to download to the local drive and then perform the restore. For other backup best practices and recommendations, see [SQL Server Backup to URL Best Practices and Troubleshooting](sql-server-backup-to-url-best-practices-and-troubleshooting.md).  
+  
+In  SQL Server 2016 (13.x) 
+ and later versions, block blob is preferred for Backup to URL. 
+
+- If you're using page blobs, you can turn on [trace flag 3051](../../t-sql/database-console-commands/dbcc-traceon-trace-flags-transact-sql.md#tf3051) when doing the restore to generate a detailed log. This log file is placed in the log directory, and is named using the format: `BackupToUrl-\<instancename>-\<dbname>-action-\<PID>.log`. The log file includes information about each round trip to Azure Storage including timing that can be helpful in diagnosing the issue.  
+  
+### Topics on Performing Restore Operations  
+  
+-   [Complete Database Restores (Simple Recovery Model)](complete-database-restores-simple-recovery-model.md)  
+  
+-   [RESTORE &#40;Transact-SQL&#41;](../../t-sql/statements/restore-statements-transact-sql.md)  
+  
+-   [Complete Database Restores (Full Recovery Model)](complete-database-restores-full-recovery-model.md)  
+  
+-   [File Restores (Simple Recovery Model)](file-restores-simple-recovery-model.md)  
+  
+-   [File Restores (Full Recovery Model)](file-restores-full-recovery-model.md)  
+  
+-   [Piecemeal Restores (SQL Server)](piecemeal-restores-sql-server.md)

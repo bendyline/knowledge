@@ -1,0 +1,69 @@
+---
+title: "HOST_ID (Transact-SQL)"
+description: "HOST_ID (Transact-SQL)"
+author: VanMSFT
+ms.author: vanto
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: t-sql
+ms.topic: reference
+f1_keywords:
+  - "HOST_ID"
+  - "HOST_ID_TSQL"
+helpviewer_keywords:
+  - "IDs [SQL Server], workstations"
+  - "HOST_ID function"
+  - "workstation IDs [SQL Server]"
+  - "identification numbers [SQL Server], workstations"
+dev_langs:
+  - "TSQL"
+---
+# HOST_ID (Transact-SQL)
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+
+
+
+
+  Returns the workstation identification number. The workstation identification number is the process ID (PID) of the application on the client computer that is connecting to  SQL Server 
+.  
+  
+ 
+  
+## Syntax  
+  
+```syntaxsql
+HOST_ID ()  
+```  
+  
+## Return Types
+ **char(10)**  
+  
+## Remarks  
+ When the parameter to a system function is optional, the current database, host computer, server user, or database user is assumed. Built-in functions must always be followed by parentheses.  
+  
+ System functions can be used in the select list, in the WHERE clause, and anywhere an expression is allowed.  
+  
+## Examples  
+ The following example creates a table that uses `HOST_ID()` in a `DEFAULT` definition to record the terminal ID of computers that insert rows into a table recording orders.  
+  
+```sql  
+CREATE TABLE Orders  
+   (OrderID     INT       PRIMARY KEY,  
+    CustomerID  NCHAR(5)  REFERENCES Customers(CustomerID),  
+    TerminalID  CHAR(8)   NOT NULL DEFAULT HOST_ID(),  
+    OrderDate   DATETIME  NOT NULL,  
+    ShipDate    DATETIME  NULL,  
+    ShipperID   INT       NULL REFERENCES Shippers(ShipperID));  
+GO  
+```  
+  
+## Related content
+
+- [Expressions (Transact-SQL)](../language-elements/expressions-transact-sql.md)
+- [System Functions by category for Transact-SQL](../../relational-databases/system-functions/system-functions-category-transact-sql.md)

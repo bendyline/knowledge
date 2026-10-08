@@ -1,0 +1,67 @@
+---
+title: "When to Use OLE DB Driver"
+description: "Learn when to use OLE DB Driver for SQL Server and the high level data access concepts that differentiate the different it from other drivers."
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: vanto, randolphwest, davidengel, sunilbs, vbeiranvand
+ms.date: 05/26/2026
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: "reference"
+ms.custom:
+  - ignite-2024
+helpviewer_keywords:
+  - "OLE DB Driver for SQL Server"
+  - "MSOLEDBSQL, about OLE DB Driver for SQL Server"
+  - "data access [OLE DB Driver for SQL Server], about OLE DB Driver for SQL Server"
+---
+# When to use OLE DB Driver for SQL Server
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+
+
+
+
+  OLE DB Driver for SQL Server is one technology you can use to access data in a  SQL Server 
+ database. For a discussion of the different data-access technologies, see [Data Access Technologies Road Map](../connect-history.md).  
+  
+ When you decide whether to use OLE DB Driver for SQL Server as the data access technology for your application, consider several factors.
+
+For new applications, if you use a managed programming language such as Microsoft Visual C# or Visual Basic and need to access the new features in  SQL Server 
+, use the .NET Framework Data Provider for  SQL Server 
+, which is part of the .NET Framework.
+
+If you develop a COM-based application and need to access the new features introduced in  SQL Server 
+, use OLE DB Driver for SQL Server. If you don't need access to the new features of  SQL Server 
+, you can continue to use Windows Data Access Components (WDAC).
+
+For existing OLE DB applications, the primary issue is whether you need to access the new features of  SQL Server 
+. If you have a mature application that doesn't need the new features of  SQL Server 
+, you can continue to use WDAC. But if you need to access those new features, such as the [xml data type](../../t-sql/xml/xml-transact-sql.md), use OLE DB Driver for SQL Server.  
+  
+ Both OLE DB Driver for SQL Server and MDAC support read committed transaction isolation using row versioning, but only OLE DB Driver for SQL Server supports snapshot transaction isolation. (In programming terms, read committed transaction isolation with row versioning is the same as Read-Committed transaction.)  
+  
+ For information about the differences between OLE DB Driver for SQL Server and MDAC, see [Updating an Application to OLE DB Driver for SQL Server from MDAC](applications/updating-an-application-to-oledb-driver-for-sql-server-from-mdac.md).  
+  
+## Related content
+
+- [Microsoft OLE DB Driver for SQL Server](oledb-driver-for-sql-server.md)
+- [OLE DB How-to articles](ole-db-how-to/ole-db-how-to-topics.md)

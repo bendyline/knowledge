@@ -1,0 +1,39 @@
+---
+title: "Project Settings (Azure SQL Database) (MySQLToSQL)"
+description: "Project Settings (Azure SQL Database) (MySQLToSQL)"
+author: nilabjaball
+ms.author: niball
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: ssma
+ms.topic: concept-article
+ms.collection:
+  - sql-migration-content
+f1_keywords:
+  - "ssma.mysql.projectsettingsqlazure.f1"
+---
+# Project Settings (Azure SQL Database) (MySQLToSQL)
+The SQL Azure project settings let you configure the Azure SQL Database suffix to be added in the connection dialog and also allow implementing heartbeat mechanism in SQL Azure connection.  
+  
+The SQL Azure pane is available in the **Project Settings** and **Default Project Settings** dialog boxes.  
+  
+-   Use the Project Settings dialog box to set configuration options for the current project. To access the SQL Azure settings, on the **Tools** menu, select **Project Settings**, click **General** at the bottom of the left pane, and then select **SQL Azure**.  
+  
+-   Use the Default Project Settings dialog box to set configuration options for all projects. To access the SQL Azure settings, on the **Tools** menu, select **Default Project Settings**, select **SQL Azure** as the migration project type from the **Migration Target Version** dropdown list to access the settings in the SQL Azure pane, click **General** at the bottom of the left pane, and then select **SQL Azure**.  
+  
+## Options  
+  
+## Connectivity  
+**Heartbeat Interval**  
+  
+Specifies a time interval to be used for heartbeat mechanism to keep the SQL Azure connection alive in 'minutes : seconds' format.  
+  
+**Default Value**:'4:45'  
+  
+The value should be specified in 'm:ss' format (for example, '4:45' or '0:50').  
+  
+**SQL Azure Server Suffix**  
+  
+Specifies the SQL Azure server suffix  
+  
+**Default Value**: 'database.windows.net'.

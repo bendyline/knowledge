@@ -1,0 +1,76 @@
+---
+title: Integrate Microsoft OneDrive LTI with Schoology Learning
+author: jennplatt
+ms.author: avering
+manager: michal.gideoni
+ms.date: 01/14/2026
+last.review.date: 01/14/2026
+audience: admin
+ms.topic: integration
+ms.service: microsoft-365-education
+ms.collection: 
+- M365-modern-desktop
+- m365initiative-edu
+- tier2
+- m365-education
+- all-education
+- mesg
+ms.localizationpriority: medium
+description: Create and grade assignments, build and curate course content, and collaborate on files in real time with the new Microsoft OneDrive Learning Tools Interoperability App for PowerSchool Unified Classroom® Schoology Learning.
+---
+
+# Integrate Microsoft OneDrive LTI with Schoology Learning
+
+>**Note:**
+>The classic Microsoft OneDrive, OneNote, Teams Assignments, and Reflect LTI apps have been replaced by the [new Microsoft 365 LTI](https://aka.ms/LMSAdminDocs). The classic apps will be sunset on September 17, 2026. After that date, the classic apps and any content links in courses will stop working. However, the files, notebooks, teams, meetings, and check-ins created by the classic app will continue to be accessible through Microsoft 365. For further guidance on moving your users and courses to the new Microsoft 365 LTI experiences and migrating content links, review the [migration guidance for the classic LTI apps](https://learn.microsoft.com/microsoft-365/lti/microsoft-365-lti-first-time-configuration#migration-guidance).
+
+This guide provides IT admins steps for registering the OneDrive LTI app for PowerSchool Unified Classroom® Schoology Learning.
+
+For an overview of Microsoft LTI, see [Integrating Microsoft products with your Learning Management System (LMS)](index.md).
+
+The person who performs this integration should be an administrator of Schoology Learning and an administrator of the Microsoft 365 tenant.
+
+## Recommended browser settings
+
+- Cookies should be allowed for Microsoft OneDrive.
+- Popups shouldn't be blocked for Microsoft OneDrive.
+
+> **Note:**
+> Cookies aren't allowed by default in the Chrome browser incognito mode and will need to be allowed.
+>
+> Microsoft OneDrive LTI works in the private mode in Microsoft Edge browser. Ensure that you haven't blocked cookies (which are allowed by default).
+
+## Register a new Microsoft OneDrive LTI app for your Microsoft 365 tenant
+
+1. Sign into the [Microsoft OneDrive LTI Registration Portal](https://onedrivelti.microsoft.com/admin) using an Office 365 Global Admin credential.
+1. Select the **Admin Consent** button and accept the permissions.
+    1. If this step isn't completed successfully, the following step will give you an error, and you may not be able to take this step for an hour once you've gotten the error. If the consent fails, ensure you're signed in as a Global Admin and repeat this step.
+
+    > **Important:**
+    > Global Administrator is a highly privileged role. Limit its use to emergency scenarios when you can't use an existing role. For more information, see [About admin roles in the Microsoft 365 admin center](https://learn.microsoft.com/microsoft-365/admin/add-users/about-admin-roles).
+
+1. Select the **Create new LTI Tenant** button.
+1. In the **LTI Consumer Platform** list, select **Schoology**.
+1. In the **Schoology Base URL** field, enter your Schoology Learning base URL, like `https://testschool.schoology.com`.
+1. Select the **Next** button. The **Register LTI 1.3 App** page will load.
+
+## Deploy the OneDrive LTI app in Schoology Learning
+
+1. Sign into your Schoology Learning instance as an administrator with access to install and configure apps.
+1. Access the **Microsoft OneDrive** app in the [**App Center**](https://app.schoology.com/apps) by opening this direct link [Microsoft OneDrive on Schoology Learning](https://app.schoology.com/apps/profile/5910037138).
+1. Select the **Install LTI 1.3 App** button to begin the installation process.
+1. Select the **I agree** button.
+1. You'll be prompted to share required information with the app and to confirm access to *LTI Advantage services*, like **Deep Linking**, **Names and Roles**, and **Assignments and Grading**. Select the **Continue** button.
+1. You'll be asked if this should be installed for your entire organization, or just for you. Select **Add to Organization**, and you'll be redirected to the **Organization Apps** page to complete the configuration.
+1. From the [**Organization Apps list**](https://app.schoology.com/apps/school_apps), locate the **Microsoft OneDrive** app and select the **Configure** button.
+    1. Copy the **Deployment ID** assigned to your deployment of the app.
+        1. This ID will be used in the **Microsoft LMS Gateway's** configuration process.
+1. From the [**Organization Apps list**](https://app.schoology.com/apps/school_apps), locate the **Microsoft OneDrive** app and select the **Install/Remove** button.
+    1. To install the app for all courses, choose the **All Courses** checkbox.
+        1. Don't check the **Course Admins Only** option to ensure the app is available to all members of the course.
+
+> **Note:**
+> If you choose not to install the app for all courses, then *Course Admins* must install the app for themselves by either:
+>
+> 1. Going to the [Organization Apps list](https://app.schoology.com/apps/school_apps), selecting the **Install/Remove** button, and choosing the courses in which to install the app.
+> 1. Or, they can select the **Install Your App(s)** link at the bottom of the course left rail navigation menu, and then select the **Microsoft OneDrive** app to install.

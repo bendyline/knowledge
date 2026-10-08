@@ -1,0 +1,38 @@
+---
+title: "Constructing Interoperable SQL Statements"
+description: "Constructing Interoperable SQL Statements"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, sunilbs, mcimfl
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+helpviewer_keywords:
+  - "SQL statements [ODBC], interoperability"
+  - "interoperability of SQL statements [ODBC], constructing statements"
+---
+# Constructing Interoperable SQL Statements
+As mentioned in the previous sections, interoperable applications should use the ODBC SQL grammar. Beyond using this grammar, however, a number of additional problems are faced by interoperable applications. For example, what does an application do if it wants to use a feature, such as outer joins, that is not supported by all data sources?  
+  
+ At this point, the application writer must make some decisions about which language features are required and which are optional. In most cases, if a particular driver does not support a feature required by the application, the application simply refuses to run with that driver. However, if the feature is optional, the application can work around the feature. For example, it might disable those parts of the interface that allow the user to use the feature.  
+  
+ To determine which features are supported, applications start by calling **SQLGetInfo** with the SQL_SQL_CONFORMANCE option. The SQL conformance level gives the application a broad view of which SQL is supported. To refine this view, the application calls **SQLGetInfo** with any of a number of other options. For a complete list of these options, see the [SQLGetInfo](../syntax/sqlgetinfo-function.md) function description. Finally, **SQLGetTypeInfo** returns information about the data types supported by the data source. The following sections list a number of possible factors that applications should watch for when constructing interoperable SQL statements.  
+  
+ This section contains the following topics.  
+  
+-   [Catalog and Schema Usage](catalog-and-schema-usage.md)  
+  
+-   [Catalog Position](catalog-position.md)  
+  
+-   [Quoted Identifiers](quoted-identifiers.md)  
+  
+-   [Identifier Case](identifier-case.md)  
+  
+-   [Escape Sequences](escape-sequences.md)  
+  
+-   [Literal Prefixes and Suffixes](literal-prefixes-and-suffixes.md)  
+  
+-   [Parameter Markers in Procedure Calls](parameter-markers-in-procedure-calls.md)  
+  
+-   [DDL Statements](ddl-statements.md)

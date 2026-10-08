@@ -1,0 +1,55 @@
+---
+title: "IClientVirtualDeviceSet2::GetConfiguration"
+titleSuffix: SQL Server VDI reference
+description: "This article provides reference for the IClientVirtualDeviceSet2::GetConfiguration command."
+author: MashaMSFT
+ms.author: mathoma
+ms.date: 08/30/2019
+ms.service: sql
+ms.subservice: backup-restore
+ms.topic: reference
+---
+
+# IClientVirtualDeviceSet2::GetConfiguration (VDI)
+
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+The **GetConfiguration** function is used to wait for the server to configure the virtual device set.
+
+## Syntax
+
+```c
+HRESULT IClientVirtualDeviceSet2::GetConfiguration (
+   DWORD         dwTimeOut,
+   VDConfig*      pCfg
+);
+```
+
+## Parameters
+
+*DwTimeOut*
+This is the time-out in milliseconds. Use INFINITE to prevent time-out.
+
+*pCfg*
+Upon successful execution, this contains the configuration selected by the server. For more information, see Configuration.
+
+## Return Value
+
+| Return Value | Explanation |
+| --- | --- |
+| NOERROR | The configuration was returned. |
+| VD_E_ABORT | SignalAbort was invoked. |
+| VD_E_TIMEOUT | The function timed out. |
+
+## Remarks
+
+This function blocks in an Alertable state. After successful invocation, the devices in the virtual device set may be opened.
+
+## Related content
+
+- [Virtual device interface (VDI) reference](reference-virtual-device-interface.md)

@@ -1,0 +1,67 @@
+---
+title: Import Data from Excel
+description: Import Data from Excel to Master Data Services (MDS Add-in for Excel)
+author: meetdeepak
+ms.author: dkhare
+ms.date: 03/05/2026
+ms.service: sql
+ms.subservice: master-data-services
+ms.topic: how-to
+ms.custom:
+  - microsoft-excel-add-in
+  - build-2025
+---
+# Import Data from Excel to Master Data Services (MDS Add-in for Excel)
+
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ on Windows 
+
+
+
+
+
+> **Important:**  
+> Master Data Services (MDS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support MDS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  In the  Master Data Services 
+  Add-in for Excel 
+, publish data to the MDS repository when you are finished working in Excel and want to save your changes so other users have access to them.  
+  
+> **Note:**
+>  -   When you publish changes, comments on MDS-managed cells are deleted.  
+> -   A formula is not supported in an MDS-managed cell. A formula in an MDS-managed cell is handled as a text value.  
+  
+## Prerequisites  
+ To perform this procedure:  
+  
+-   You must have permission to access the **Explorer** functional area.  
+  
+-   The active worksheet must contain MDS-managed data and you must have made changes or additions to the MDS-managed data.  
+  
+-   If you are adding members, you do not have to specify a **Code** value if codes for the entity are being automatically generated. For more information, see [Automatic Code Creation (Master Data Services)](../automatic-code-creation-master-data-services.md).  
+  
+### To publish data to the MDS repository  
+  
+1.  In the **Publish and Validate** group, click **Publish**.  
+  
+2.  Optional. If the **Publish and Annotate** dialog box is displayed, choose to share the same annotation (comment) for all updates, or to annotate each change individually.  
+  
+3.  Optional. Select the **Do not show this dialog box again** check box. You can always show the dialog box in the future by choosing **Settings** and selecting the **Show Publish and Annotate dialog box when publishing** check box.  
+  
+4.  Click **Publish**.  
+  
+> **Note:**  
+>  If you are adding new members (rows) to your worksheet and you cannot successfully publish them to the MDS repository, you may not have **Update** permission to all of the attributes in the worksheet. On the **Review** tab, in the **Changes** group, click **Unprotect Sheet** and try to publish again.  
+  
+## Related content
+
+- [Overview: Importing Data from Excel (MDS Add-in for Excel)](overview-importing-data-from-excel-mds-add-in-for-excel.md)
+- [Validating Data (MDS Add-in for Excel)](validating-data-mds-add-in-for-excel.md)
+- [Apply Business Rules (MDS Add-in for Excel)](apply-business-rules-mds-add-in-for-excel.md)

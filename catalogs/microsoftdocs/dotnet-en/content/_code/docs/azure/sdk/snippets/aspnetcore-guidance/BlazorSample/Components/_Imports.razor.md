@@ -1,0 +1,17 @@
+# Source code: docs/azure/sdk/snippets/aspnetcore-guidance/BlazorSample/Components/_Imports.razor
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using BlazorSample
+@using BlazorSample.Components
+
+```

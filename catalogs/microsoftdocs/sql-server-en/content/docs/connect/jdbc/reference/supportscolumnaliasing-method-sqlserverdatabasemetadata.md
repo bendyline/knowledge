@@ -1,0 +1,40 @@
+---
+title: "supportsColumnAliasing Method (SQLServerDatabaseMetaData)"
+description: "supportsColumnAliasing Method (SQLServerDatabaseMetaData)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerDatabaseMetaData.supportsColumnAliasing"
+apitype: "Assembly"
+---
+# supportsColumnAliasing Method (SQLServerDatabaseMetaData)
+
+
+  Retrieves whether this database supports column aliasing.  
+  
+## Syntax  
+  
+```  
+  
+public boolean supportsColumnAliasing()  
+```  
+  
+## Return Value  
+ **true** if supported. Otherwise, **false**.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This supportsColumnAliasing method is specified by the supportsColumnAliasing method in the java.sql.DatabaseMetaData interface.  
+  
+## Related content
+
+- [SQLServerDatabaseMetaData Methods](sqlserverdatabasemetadata-methods.md)
+- [SQLServerDatabaseMetaData Members](sqlserverdatabasemetadata-members.md)
+- [SQLServerDatabaseMetaData Class](sqlserverdatabasemetadata-class.md)

@@ -1,0 +1,51 @@
+---
+title: "Comparability for IRowsetFind"
+description: "SQL Server Native Client Comparability for IRowsetFind"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/04/2017"
+ms.service: sql
+ms.topic: "reference"
+helpviewer_keywords:
+  - "IRowsetFind comparability [ODBC]"
+---
+# SQL Server Native Client Comparability for IRowsetFind
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  For date/time types only, IRowsetFind supports the following comparisons:  
+  
+-   LT  
+  
+-   LE  
+  
+-   EQ  
+  
+-   GE  
+  
+-   GT  
+  
+-   NE  
+  
+-   IGNORE  
+  
+ If any other comparison is attempted, DB_E_BADCOMPAREOP is returned. This is consistent with the OLE DB specification.  
+  
+## Related content
+
+- [SQL Server Native Client Date and Time Improvements (OLE DB)](date-and-time-improvements-ole-db.md)

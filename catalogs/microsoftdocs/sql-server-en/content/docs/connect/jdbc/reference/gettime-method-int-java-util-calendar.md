@@ -1,0 +1,53 @@
+---
+title: "getTime Method (int, java.util.Calendar)"
+description: "getTime Method (int, java.util.Calendar)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerCallableStatement.getTime (int, java.util.Calendar)"
+apitype: "Assembly"
+---
+# getTime Method (int, java.util.Calendar)
+
+
+  Retrieves the value of the designated parameter as a java.sql.Time object in the Java programming language, given the parameter index, by using the given Calendar object.  
+  
+## Syntax  
+  
+```  
+  
+public java.sql.Time getTime(int index,  
+                             java.util.Calendar cal)  
+```  
+  
+#### Parameters  
+ *index*  
+  
+ An **int** that indicates the parameter index.  
+  
+ *cal*  
+  
+ A Calendar object.  
+  
+## Return Value  
+ A Time object.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This getTime method is specified by the getTime method in the java.sql.CallableStatement interface.  
+  
+ See the chart titled "Getter Method Conversions" in [Understanding Data Type Conversions](../understanding-data-type-conversions.md) to see which  SQL Server 
+ data types can be retrieved with this method.  
+  
+## Related content
+
+- [getTime Method (SQLServerCallableStatement)](gettime-method-sqlservercallablestatement.md)
+- [SQLServerCallableStatement Members](sqlservercallablestatement-members.md)
+- [SQLServerCallableStatement Class](sqlservercallablestatement-class.md)

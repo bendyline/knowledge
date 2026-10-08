@@ -1,0 +1,54 @@
+---
+title: "MSSQLSERVER_10537"
+description: "MSSQLSERVER_10537"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+ms.custom:
+  - ignite-2025
+helpviewer_keywords:
+  - "10537 (Database Engine error)"
+---
+# MSSQLSERVER_10537
+
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 10537 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | PG_DUP_ENABLED |
+| Message Text | Cannot enable plan guide '%.*ls' because the enabled plan guide '%.\*ls' contains the same scope and starting offset value as the statement. Disable the existing plan guide before enabling the specified plan guide. |
+  
+## Explanation  
+An existing plan guide contains the same scope and starting offset value as the statement in the specified plan guide.  
+  
+## User Action  
+Disable the existing plan guide before enabling the specified plan guide.  
+  
+## Related content
+
+- [sys.sp_create_plan_guide (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-transact-sql.md)
+- [Plan Guides](../performance/plan-guides.md)
+- [sys.sp_create_plan_guide_from_handle (Transact-SQL)](../system-stored-procedures/sp-create-plan-guide-from-handle-transact-sql.md)

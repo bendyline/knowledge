@@ -1,0 +1,41 @@
+---
+title: Supporting XML data
+description: Learn about supporting XML data and the built-in types you can use with the JDBC Driver for SQL Server.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: 08/12/2019
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Supporting XML data
+
+
+
+ SQL Server 
+ provides an **xml** data type that lets you store XML documents and fragments in a  SQL Server 
+ database. The **xml** data type is a built-in data type in  SQL Server 
+, and is in some ways similar to other built-in types, such as **int** and **varchar**. Like other built-in types, you can use the **xml** data type as: a variable type, a parameter type, a function-return type, or a column type when you create a table; or in  Transact-SQL  CAST and CONVERT functions. In the JDBC driver, the **xml** data type can be mapped as a String, byte array, stream, CLOB, BLOB, or SQLXML object. String is the default mapping.
+
+The JDBC driver provides support for the JDBC 4.0 API, which introduces the SQLXML interface. The SQLXML interface defines methods to interact with and manipulate XML data. The **SQLXML** is a JDBC 4.0 data type and it maps to the  SQL Server 
+**xml** data type. Therefore, in order to use the SQLXML data type in your applications, you must set the classpath to include the sqljdbc4.jar file. If the application tries to use the sqljdbc3.jar when accessing the SQLXML object and its methods, an exception is thrown.
+
+> **Important:**
+>  SQL Server 
+ always validates the XML data before storing it in the database column. Applications can use **SQLXML** data type, because the JDBC driver maps it to the **xml** data type automatically. The **SQLXML** support is available in sqljdbc4.jar. See [System Requirements for the JDBC driver](system-requirements-for-the-jdbc-driver.md) for the list of JRE versions supported by the  Microsoft JDBC Driver for SQL Server 
+.
+
+The articles in this section describe the SQLXML interface and how to program against the **SQLXML** data type by using the JDBC API methods.
+
+## In this section
+
+| Article | Description |
+| --- | --- |
+| [SQLXML interface](sqlxml-interface.md) | Describes the SQLXML interface and its methods. |
+| [Programming with SQLXML](programming-with-sqlxml.md) | Describes how to use the  Microsoft JDBC Driver for SQL Server |
+ | API methods to store and retrieve an XML data in and from a relational database with the **SQLXML** Java data type. Also contains information about the types of SQLXML objects and provides a list of important guidelines and limitations when using SQLXML objects. |
+
+## Related content
+
+- [Understanding the JDBC driver data types](understanding-the-jdbc-driver-data-types.md)

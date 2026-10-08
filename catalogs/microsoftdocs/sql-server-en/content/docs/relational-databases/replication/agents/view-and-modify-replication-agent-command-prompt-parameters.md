@@ -1,0 +1,103 @@
+---
+title: "View & modify Agent command prompt parameters"
+description: Learn how to view and modify the command prompt parameters used by the different Replication Agents in SQL Server.
+author: "MashaMSFT"
+ms.author: "mathoma"
+ms.date: 09/25/2024
+ms.service: sql
+ms.subservice: replication
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "agents [SQL Server replication], command prompt parameters"
+---
+# View and Modify Replication Agent Command Prompt Parameters
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  Replication agents are executables that accept command line parameters. By default, agents run under  Microsoft 
+  SQL Server 
+ Agent job steps, so these parameters can be viewed and modified using the **Job Properties - \<Job>** dialog box. This dialog box is available from the **Jobs** folder in  SQL Server Management Studio 
+ and from the **Agents** tab in Replication Monitor. For information about starting Replication Monitor, see [Start the Replication Monitor](../monitor/start-the-replication-monitor.md).  
+  
+> **Note:**  
+>  Agent parameter changes take effect the next time the agent is started. If the agent runs continuously, you must stop and restart the agent.  
+  
+ Although parameters can be modified directly, it is more common to modify them through an agent profile. For more information, see [Replication Agent Profiles](replication-agent-profiles.md).  
+  
+ If you access agent jobs from the **Jobs** folder, use the following table to determine the agent job name and the parameters available for each agent.  
+  
+| Agent | Job name | For a list of parameters, see... |
+| --- | --- | --- |
+| Snapshot Agent | **\<Publisher>-\<PublicationDatabase>-\<Publication>-\<integer>** | [Replication Snapshot Agent](replication-snapshot-agent.md) |
+| Snapshot Agent for a merge publication partition | **Dyn_\<Publisher>-\<PublicationDatabase>-\<Publication>-\<GUID>** | [Replication Snapshot Agent](replication-snapshot-agent.md) |
+| Log Reader Agent | **\<Publisher>-\<PublicationDatabase>-\<integer>** | [Replication Log Reader Agent](replication-log-reader-agent.md) |
+| Merge Agent for pull subscriptions | **\<Publisher>-\<PublicationDatabase>-\<Publication>-\<Subscriber>-\<SubscriptionDatabase>-\<integer>** | [Replication Merge Agent](replication-merge-agent.md) |
+| Merge Agent for push subscriptions | **\<Publisher>-\<PublicationDatabase>-\<Publication>-\<Subscriber>-\<integer>** | [Replication Merge Agent](replication-merge-agent.md) |
+| Distribution Agent for push subscriptions | **\<Publisher>-\<PublicationDatabase>-\<Publication>-\<Subscriber>-\<integer>** | [Replication Distribution Agent](replication-distribution-agent.md) |
+| Distribution Agent for pull subscriptions | **\<Publisher>-\<PublicationDatabase>-\<Publication>-\<Subscriber>-\<SubscriptionDatabase>-\<GUID>** | [Replication Distribution Agent](replication-distribution-agent.md) |
+| Distribution Agent for push subscriptions to non-SQL Server Subscribers | **\<Publisher>-\<PublicationDatabase>-\<Publication>-\<Subscriber>-\<integer>** | [Replication Distribution Agent](replication-distribution-agent.md) |
+| Queue Reader Agent | **[\<Distributor>].\<integer>** | [Replication Queue Reader Agent](replication-queue-reader-agent.md) |
+  
+ \*For push subscriptions to Oracle publications, it is **\<Publisher>-\<Publisher**> rather than **\<Publisher>-\<PublicationDatabase>**  
+  
+ \*\*For pull subscriptions to Oracle publications, it is **\<Publisher>-\<DistributionDatabase**> rather than **\<Publisher>-\<PublicationDatabase>**  
+  
+### To view and modify replication agent command line parameters from Management Studio  
+  
+1.  Connect to the appropriate computer in  Management Studio
+, and then expand the server node:  
+  
+    -   For the Distribution Agent and Merge Agent for pull subscriptions, connect to the Subscriber.  
+  
+    -   For all other agents, connect to the Distributor.  
+  
+2.  Expand the **SQL Server Agent** folder, and then expand the **Jobs** folder.  
+  
+3.  Right-click a job, and then click **Properties**.  
+  
+4.  On the **Steps** page of the **Job Properties - \<Job>** dialog box, select the step **Run agent**, and then click **Edit**.  
+  
+5.  In the **Job Step Properties - Run agent** dialog box, edit the **Command** field.  
+  
+6.  Click **OK** on both dialog boxes.  
+  
+### To view and modify Distribution Agent and Merge Agent command line parameters from Replication Monitor  
+  
+1.  Expand a Publisher group in the left pane of Replication Monitor, expand a Publisher, and then click a publication.  
+  
+2.  Click the **All Subscriptions** tab.  
+  
+3.  Right-click a subscription, and then click **View Details**.  
+  
+4.  In the **Subscription < SubscriptionName>** window, click **Action**, and then click **\<AgentName> Job Properties**.  
+  
+5.  On the **Steps** page of the **Job Properties - \<Job>** dialog box, select the step **Run agent**, and then click **Edit**.  
+  
+6.  In the **Job Step Properties - Run agent** dialog box, edit the **Command** field.  
+  
+7.  Click **OK** on both dialog boxes.  
+  
+### To view and modify Snapshot Agent, Log Reader Agent, and Queue Reader Agent command line parameters from Replication Monitor  
+  
+1.  Expand a Publisher group in the left pane of Replication Monitor, expand a Publisher, and then click a publication.  
+  
+2.  Click the **Agents** tab.  
+  
+3.  Right-click an agent in the grid, and then click **Properties**.  
+  
+4.  On the **Steps** page of the **Job Properties - \<Job>** dialog box, select the step **Run agent**, and then click **Edit**.  
+  
+5.  In the **Job Step Properties - Run agent** dialog box, edit the **Command** field.  
+  
+6.  Click **OK** on both dialog boxes.  
+  
+## Related content
+
+- [Replication Agent Administration](replication-agent-administration.md)
+- [Replication Agent Executables Concepts](../concepts/replication-agent-executables-concepts.md)
+- [Replication Agents Overview](replication-agents-overview.md)

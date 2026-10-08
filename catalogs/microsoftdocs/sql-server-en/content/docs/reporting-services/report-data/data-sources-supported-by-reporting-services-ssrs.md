@@ -1,0 +1,458 @@
+---
+title: "Data Sources Supported by Reporting Services"
+description: Learn about the various data sources that are supported by Reporting Services, including Microsoft SQL Server, Oracle, and ODBC.
+ms.date: 09/11/2025
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: concept-article
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "SQL Server data processing extension [Reporting Services]"
+  - "XML data processing extension [Reporting Services]"
+  - "reports [Reporting Services], data"
+  - "data processing extensions [Reporting Services], data sources"
+  - "Oracle [Reporting Services]"
+  - "OLE DB data processing extension"
+  - "data sources [Reporting Services], about data sources"
+  - "ODBC data processing extension"
+  - "Reporting Services, data sources"
+---
+# Data Sources Supported by Reporting Services (SSRS)
+   Reporting Services 
+ retrieves report data from data sources through a modular and extensible data layer that uses data processing extensions. To retrieve report data from a data source, you must select a data processing extension that supports the type of data source, the version of software running on the data source, and the data source platform (32-bit or 64-bit).  
+  
+ When you deploy  Reporting Services 
+, a set of data processing extensions are automatically installed and registered on both the report authoring client and on the report server to provide access to a variety of data source types.  Reporting Services 
+ installs the following data source types:  
+  
+-    Microsoft 
+  SQL Server 
+  
+  
+-    Microsoft 
+  SQL Server 
+  Analysis Services 
+ for MDX, DMX,  Microsoft 
+  Power Pivot 
+, and tabular models  
+  
+-    Microsoft 
+  Azure SQL Database 
+ and SQL database in Microsoft Fabric
+
+ 
+-   [SQL analytics endpoint
+and Warehouse
+in Microsoft Fabric
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+  
+-   Oracle  
+  
+-   SAP BW 
+  
+-    Hyperion Essbase 
+  
+  
+-    Microsoft 
+ SharePoint List  
+  
+-   Teradata  
+  
+-   OLE DB  
+  
+-   ODBC  
+  
+-   XML  
+  
+ In addition, custom data processing extensions and standard  Microsoft 
+  .NET Framework 
+ data providers can be installed and registered by system administrators. To process and view a report, the data processing extensions and data providers must be installed and registered on the report server; to preview a report, they must be installed and registered on the report authoring client. Data processing extensions and data providers must be natively compiled for the platform where they are installed. If you deploy a data source programmatically by using the SOAP Web service, you must define the data source extension. Use data extension values from the **RSReportDesigner.config** file. By default, the file is located in the following folder:  
+  
+```  
+<drive letter>\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies  
+```  
+  
+ For example, the  Analysis Services 
+ data extension is OLEDB-MD.  
+  
+ Many third-party standard  .NET Framework 
+ data providers are available as downloads from the [Microsoft Download Center](https://www.microsoft.com/download/default.aspx) and from third-party sites. You can also search the  SQL Server 
+  Reporting Services 
+ public forum for information about third-party data providers.  
+  
+> **Note:**  
+>  Standard  .NET Framework 
+ data providers do not necessarily support all the functionality supplied by  Reporting Services 
+ data processing extensions. In addition, some OLE DB data providers and ODBC drivers can be used to author and preview reports, but are not designed to support reports published on a report server. For example, the  Microsoft 
+ OLE DB Provider for Jet is not supported on the report server. For more information, see [Data Processing Extensions and .NET Framework Data Providers (SSRS)](data-processing-extensions-and-net-framework-data-providers-ssrs.md).  
+  
+ For more information about custom data processing extensions, see [Implementing a Data Processing Extension](../extensions/data-processing/implementing-a-data-processing-extension.md). For more information about standard  .NET Framework 
+ data providers, see the [System.Data](https://learn.microsoft.com/search/?terms=System.Data) namespace.   
+  
+## Platform Support for Report Data Sources  
+ The data sources you can use in a  Reporting Services 
+ deployment vary by  SQL Server 
+ edition,  Reporting Services 
+ version, and by platform. For more information about features, see [Reporting Services Features Supported by the Editions of SQL Server](../reporting-services-features-supported-by-the-editions-of-sql-server.md). The table later in this topic provides information about supported data sources by version and by platform.  
+  
+ Platform considerations for  Reporting Services 
+ data sources are separate for the report authoring client and the report server.  
+  
+### On the report authoring client  
+  SQL Server 
+  SQL Server Data Tools - Business Intelligence 
+ is a 32-bit application.  SQL Server Data Tools - Business Intelligence 
+ is not supported on an Itanium-based platform. On an x64 platform, to edit and preview reports in Report Designer, you must have 32-bit data providers installed in the (x86) platform directory.  
+  
+### On the report server  
+ When you deploy a report to a 64-bit report server, the report server must have natively compiled 64-bit data providers installed. Wrapping a 32-bit data provider in 64-bit interfaces is not supported. For more information, check the documentation for the data provider.  
+  
+## Supported Data Sources  
+ The following table lists  Microsoft 
+ data processing extensions and data providers that you can use to retrieve data for report datasets and report models. For more information about an extension or data provider, click the link in the second column. The table columns are described as follows:  
+  
+-   Source of report data: The type of data being accessed; for example, relational database, multidimensional database, flat file, or XML. This column answers the question: "What types of data can  Reporting Services 
+ use for a report?"  
+  
+-    Reporting Services 
+ Data Source Type: One of the data source types you see in the dropdown list when you define a data source in  Reporting Services 
+. This list is populated from installed and registered DPEs and data providers. This column answers the question: "What data source type do I select from the dropdown list when I create a report data source?"  
+  
+-   Name of Data Processing Extension/Data Provider: The  Reporting Services 
+ data processing extension or other data provider that corresponds to the  Reporting Services 
+ data source type selected. This column answers the question: "When I select a data source type, which corresponding data processing extension or data provider is used?"  
+  
+-   Underlying Data Provider version (Optional): Some data source types support more than one data provider. These could be different versions of the same provider or different implementations by third-parties for a type of data provider. The provider name frequently appears in the connection string after you have configured a data source. This column answers the question: "After selecting the data source type, what data provider do I select in the **Connection Properties** dialog box?"  
+  
+-   Data Source *\<platform>*: The data source platform supported by the data processing extension or data provider for the target data source. This column answers the question: "Can this data processing extension or data provider retrieve data from a data source on this type of platform?"  
+  
+-   Version of data source: The version of the target data source supported by the DPE or data provider. This column answers the question: "Can this data processing extension or data provider retrieve data from this version of the data source?"  
+  
+-   RS *\<platform>*: The platforms for the report server and report authoring client where you can install a custom DPE or data provider. The built-in  Reporting Services 
+ data processing extensions are included with any installation of  Reporting Services 
+. A custom data processing extension or  .NET Framework 
+ data provider must be compiled natively for a specific platform. This column answers the question: "Can this data processing extension or data provider be installed on this type of platform?"  
+  
+###  <a name="DataSourcesTable"></a> Types of data sources  
+
+| Source of<br /><br />Report data | Reporting Services Data Source Type | Name of Data Processing Extension/Data Provider | Underlying Data Provider version<br /><br />(Optional) | Data<br /><br />Source<br /><br />Platform x86 | Data<br /><br />Source<br /><br />Platform x64 | Version of data source | RS<br /><br />Platform x86 | RS<br /><br />Platform x64 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| SQL Server |
+ | relational database | [Microsoft SQL Server](#MicrosoftSQLServer) | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.SqlClient | Yes | Yes | SQL Server 2012 and later. | Yes | Yes |
+| SQL Server |
+ | relational database | OLEDB | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.OledbClient | Yes | Yes | SQL Server 2012 and later. | Yes | Yes |
+| SQL Server |
+ | relational database | [ODBC](#ODBC) | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.OdbcClient | Yes | Yes | SQL Server 2012 and later. | Yes | Yes |
+| SQL Database |
+ | [Microsoft Azure SQL Database](#Azure) | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.SqlClient | N/A | N/A | SQL Database |
+ | Yes | Yes |
+| SQL Managed Instance | [Microsoft Azure SQL Database](#Azure) | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.SqlClient | N/A | N/A | SQL Managed Instance | Yes | Yes |
+| Azure Synapse Analytics | [Microsoft Azure SQL Database](#Azure) | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.SqlClient | N/A | N/A | Azure Synapse Analytics | Yes | Yes |
+| Analysis Services |
+ | multidimensional or tabular database | [Microsoft SQL Server Analysis Services](#AnalysisServices) | Built-in  Reporting Services |
+ | data processing extension | Uses ADOMD.NET | Yes | Yes | SQL Server 2012  Analysis Services |
+ | and later | Yes | Yes |
+| Power BI Premium dataset (Starting with Reporting Services 2019 and Power BI Report Server January 2020) | [Microsoft SQL Server Analysis Services](#AnalysisServices) | Built-in  Reporting Services |
+ | data processing extension | Uses ADOMD.NET | Yes | Yes | SQL Server 2019  Analysis Services |
+ | and later | Yes | Yes |
+| Azure Analysis Services<br />(Starting with Reporting Services 2017) | [Microsoft SQL Server Analysis Services](#AnalysisServices) | Built-in  Reporting Services |
+ | data processing extension | Uses ADOMD.NET | Yes | Yes | SQL Server 2017  Analysis Services |
+ | and later | Yes | Yes |
+| Analysis Services |
+ | multidimensional database | OLEDB | Built-in  Reporting Services |
+ | data processing extension | Extends System.Data.OledbClient<br /><br />Version 10.0 | Yes | Yes | SQL Server 2012  Analysis Services |
+ | Yes | Yes |
+| SharePoint lists | [Microsoft SharePoint List](#SharePointList) | Built-in  Reporting Services |
+ | data processing extension | Gets data from Lists.asmx or the SharePoint object model API interfaces.<br /><br />See [Note](#SharePointList). | No | Yes | SharePoint 2013 Products and later | Yes | Yes |
+| XML | [XML](#XML) | Built-in  Reporting Services |
+ | data processing extension | XML data sources don't have platform dependencies. | N/A | N/A | XML Web Services or documents | Yes | Yes |
+| Report Server Model | Report Model | Deprecated  Reporting Services |
+ | data processing extension for a published SMDL file | Data sources for a model use Built-in data processing extensions.<br /><br />Oracle-based models require Oracle client components.<br /><br />Teradata-based models require .NET Data Provider for Teradata from Teradata.<br /><br />See Teradata documentation for platform support. | N/A | N/A | Models can be created from: SQL Server 2005 (9.x) |
+ | and later.<br /><br /> Analysis Services |
+| <br /><br />Oracle 9.2.0.3 or later<br /><br />Teradata V14, v13, v12, and v6.2 | No | No |
+| SAP multidimensional database | SAP BW | Built-in  Reporting Services |
+ | data processing extension | See SAP documentation for platform support. | N/A | N/A | SAP BW 7.0-7.5 | Yes | N/A |
+| Hyperion Essbase |
+ | [Hyperion Essbase](#Hyperion) | Built-in  Reporting Services |
+ | data processing extension | See Hyperion documentation for platform support. | Yes | N/A | Hyperion Essbase |
+ | 9.3.1 | Yes | N/A |
+| Oracle relational database | [Oracle](#OracleClient) | Built-in  Reporting Services |
+ | data processing extension | Requires Oracle client components 12c or higher. | Yes | N/A | Oracle 11g, 11g R2, 12c, 18c, 19c | Yes | Yes |
+| Teradata | [Teradata](#Teradata) | Built-in  Reporting Services |
+ | data processing extension | Extends .NET Data Provider for Teradata from Teradata.<br /><br />Requires .NET Data Provider for Teradata from Teradata.<br /><br />See Teradata documentation for platform support. | Yes | N/A | Teradata v15<br /><br />Teradata v14<br /><br />Teradata v13 | Yes | No |
+| DB2 relational database | Customized registered data extension name |  | 2004 Host Integration (HI) Server<br /><br /> | Yes | N/A | N/A | Yes | No |
+| Generic OLE DB data source | OLEDB | Built-in  Reporting Services |
+ | data processing extension | Any data source that supports OLE DB.<br /><br />See the data source documentation for platform support. | Yes | N/A | Any data source that supports OLE DB. See [Note](#OLEDBStandard). | Yes | N/A |
+| Generic ODBC data source | [ODBC](#ODBCGeneric) | Built-in  Reporting Services |
+ | data processing extension | Any data source that supports ODBC.<br /><br />See the data source documentation for platform support. | Yes | N/A | Any data source that supports ODBC. See [Note](#ODBCGeneric). | Yes | Yes |
+  
+ For information about using external data sources, see [Add Data from External Data Sources (SSRS)](add-data-from-external-data-sources-ssrs.md).  
+  
+ Many standard  .NET Framework 
+ data providers are available from third parties. For more information, search the third-party Web sites or forums.  
+  
+ To install and register a custom data processing extension or standard  .NET Framework 
+ data provider, you will need to refer to the data provider reference documentation. For more information, see [Register a Standard .NET Framework Data Provider (SSRS)](register-a-standard-net-framework-data-provider-ssrs.md).  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+## Reporting Services Data Processing Extensions  
+ The following data processing extensions are automatically installed with  Reporting Services 
+ and  SQL Server Data Tools - Business Intelligence 
+. For more information and to verify the installation, see [RSReportDesigner Configuration File](../report-server/rsreportdesigner-configuration-file.md) and [RsReportServer.config Configuration File](../report-server/rsreportserver-config-configuration-file.md).  
+  
+> **Note:**
+>  The  SQL Server 
+  Integration Services 
+ data processing extension is not supported at this time.  
+  
+ For more information about data processing extensions supported by Report Builder, see [Create data connection strings - Report Builder & SSRS](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md).
+  
+###  <a name="MicrosoftSQLServer"></a> Microsoft SQL Server Data Processing Extension  
+ The data source type **Microsoft SQL Server** wraps and extends the  .NET Framework 
+ Data Provider for  SQL Server 
+. This data processing extension is natively compiled for and runs on x86 and x64-based platforms.  
+  
+ In  SQL Server Data Tools - Business Intelligence 
+, the query designer associated with this data extension is the Visual Database Tool Designer. If you use the query designer in graphical mode, the query is analyzed and possibly rewritten. Use the text-based query designer when you want to control the exact  Transact-SQL  syntax that is used for a query. For more information, see [Graphical Query Designer User Interface](graphical-query-designer-user-interface.md).  
+  
+ For more information, see [SQL Server Connection Type (SSRS)](sql-server-connection-type-ssrs.md).  
+  
+ In Report Builder, the query designer associated with this data extension is the Relational Query Designer. 
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="Azure"></a> Microsoft Azure SQL Database Processing Extension  
+ The data source type **Microsoft Azure  SQL Database
+** wraps and extends the  .NET Framework 
+ Data Provider for  SQL Server 
+.  
+  
+ In  SQL Server Data Tools - Business Intelligence 
+, the graphical query designer associated with this data extension is the Relational Query Designer not the Visual Database Tool Designer that you use with the **Microsoft SQL Server** data source type.  
+  
+  SQL Server Data Tools - Business Intelligence 
+ automatically differentiates between **Microsoft Azure  SQL Database
+** and **Microsoft SQL Server** data source types and opens the graphical query designer associated with the data source type.  
+  
+ If you use the query designer in graphical mode, the query is analyzed and possibly rewritten. A text-based query designer is also available for writing queries. Use the text-based query designer when you want to control the exact  Transact-SQL  syntax that is used for a query.   
+  
+ Retrieving data from  SQL Database
+, Azure Synapse Analytics and  SQL Server 
+ is similar, but there are a few requirements that apply only to  SQL Database
+. For more information, see [Azure SQL Connection Type (SSRS)](sql-azure-connection-type-ssrs.md).  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="AnalysisServices"></a> Microsoft SQL Server Analysis Services Data Processing Extension  
+ When you select data source type **Microsoft SQL Server Analysis Services**, you are selecting a  Reporting Services 
+ data processing extension that extends the  .NET Framework 
+ Data Provider for  Microsoft 
+  Analysis Services 
+. This data processing extension is natively compiled for and runs on x86 and x64-based platforms.  
+  
+ This data provider uses the ADOMD.NET object model to create queries using XML for Analysis (XMLA) version 1.1. Results are returned as a flattened rowset. For more information, see [Analysis Services Connection Type for MDX (SSRS)](analysis-services-connection-type-for-mdx-ssrs.md), [Analysis Services Connection Type for DMX (SSRS)](analysis-services-connection-type-for-dmx-ssrs.md), [Analysis Services MDX Query Designer User Interface](analysis-services-mdx-query-designer-user-interface.md), and [Analysis Services DMX Query Designer User Interface](analysis-services-dmx-query-designer-user-interface.md). 
+ 
+> **Note:**
+> For Azure Analysis Services and Power BI Premium dataset data sources, you must have multi-factor authentication (MFA) disabled for the credentials being used to connect to the data source. If you need multi-factor authentication enabled for your environment, review <a href="https://learn.microsoft.com/azure/active-directory/conditional-access/overview"></a>Azure Active Directory Conditional Access</a> as an option to disable multi-factor authentication for the credentials used in the data source.
+  
+ When using a Power BI Premium dataset as a data source, only Import mode and DirectQuery are supported.
+  
+ When connecting to an  Analysis Services 
+ data source, the  Microsoft 
+  SQL Server 
+  Analysis Services 
+ data processing extension supports multivalue parameters and maps cell and member properties to extended properties supported by  Reporting Services 
+. For more information, see [Extended Field Properties for an Analysis Services Database (SSRS)](extended-field-properties-for-an-analysis-services-database-ssrs.md).  
+  
+ You can also create models from  SQL Server 
+  Analysis Services 
+ data sources.  
+  
+###  <a name="OLEDBAll"></a> OLE DB Data Processing Extension  
+ The OLE DB data processing extension requires the choice of an additional data provider layer based on the version of the data source you want to use in your report. If you do not select a specific data provider, a default is provided. Choose a specific data provider through the **Connection Properties** dialog box, accessed through the **Edit** button on the Data Source or Shared Data Source dialog boxes.  
+  
+ For more information about the OLE DB associated query designer, see [Graphical Query Designer User Interface](graphical-query-designer-user-interface.md). For more information about specific support for OLE DB providers, see [Visual Studio .NET Designer Tool Supports Specific OLE DB Providers](https://www.betaarchive.com/wiki/index.php?title=Microsoft_KB_Archive/811241) in the  Microsoft 
+ Knowledge Base.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+####  <a name="OLEDBSQL"></a> OLE DB for SQL Server  
+ When you select data source type **OLE DB**, you are selecting a  Reporting Services 
+ data processing extension that extends the  .NET Framework 
+ Data Provider for OLE DB. This data processing extension is natively compiled for and runs on x86 and x64 platforms.  
+  
+ For more information, see [OLE DB Connection Type (SSRS)](ole-db-connection-type-ssrs.md).  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+#### OLE DB for OLAP 7.0  
+ OLE DB Provider for OLAP Services 7.0 is not supported.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+####  <a name="OracleOLEDB"></a> OLE DB for Oracle  
+ The data processing extension OLE DB for Oracle does not support the following Oracle data types: BLOB, CLOB, NCLOB, BFILE, UROWID.  
+  
+ Unnamed parameters that are position-dependent are supported. Named parameters are not supported by this extension. To use named parameters, use the [Oracle](#OracleClient) data processing extension.  
+  
+ For more information about configuring Oracle as a data source, see [How to use Reporting Services to configure and to access an Oracle data source](https://www.betaarchive.com/wiki/index.php?title=Microsoft_KB_Archive/834305). For more information about additional permissions configuration, see [How to add permissions for the NETWORK SERVICE security principal](https://mskb.pkisolutions.com/kb/870668) in the  Microsoft 
+ Knowledge Base.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+####  <a name="OLEDBStandard"></a> OLE DB Standard .NET Framework data provider  
+ To retrieve data from a data source that supports OLE DB  .NET Framework 
+ data providers, use the **OLE DB** data source type and select the default data provider, or select from the installed data providers in the **Connection String** dialog box.  
+  
+> **Note:**  
+>  Although a data provider may support previewing a report on your report authoring client, not all OLE DB data providers are designed to support reports published on a report server.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="ODBC"></a> ODBC Data Processing Extension  
+ When you select data source type **ODBC**, you are selecting a  Reporting Services 
+ data processing extension that extends the  .NET Framework 
+ Data Provider for ODBC. This data processing extension is natively compiled for and runs on x86 and x64 platforms. Use this extension to connect to and retrieve data from any data source that has an ODBC provider.  
+  
+> **Note:**  
+>  Although a data provider may support previewing a report on your report authoring client, not all ODBC data providers are designed to support reports published on a report server.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+####  <a name="ODBCGeneric"></a> ODBC Standard .NET Framework data provider  
+ To retrieve data from a data source that supports a standard ODBC  .NET Framework 
+ data provider, use the **ODBC** data source type and select the default data provider, or select from the installed data providers in the **Connection String** dialog box.  
+  
+> **Note:**  
+>  Although a data provider may support previewing a report on your report authoring client, not all ODBC data providers are designed to support reports published on a report server.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="OracleClient"></a> Oracle Data Processing Extension  
+ When you select data source type **Oracle**, you are selecting a  Reporting Services 
+ data processing extension that uses Oracle's Data Provider directly and no longer uses the Microsoft System.Data.OracleClient provider as it has been deprecated. To retrieve report data from an Oracle database, your administrator must install Oracle client software and the version must be 11g or later. It must be installed on the report authoring client to preview reports and on the report server to view published reports.  
+ 
+ To install the Oracle client software, see [Oracle Connection Type (SSRS)](oracle-connection-type-ssrs.md).
+  
+ Named parameters are supported by this extension. For Oracle version 11g or later, multivalue parameters are supported. For unnamed parameters that are position-dependent, use the OLE DB data processing extension with the data provider  Microsoft 
+ OLE DB Provider for Oracle. For more information about configuring Oracle as a data source, see [How to use Reporting Services to configure and to access an Oracle data source](https://www.betaarchive.com/wiki/index.php?title=Microsoft_KB_Archive/834305). For more information about additional permissions configuration, see [How to add permissions for the NETWORK SERVICE security principal](https://mskb.pkisolutions.com/kb/870668) in the  Microsoft 
+ Knowledge Base.  
+  
+ You can retrieve data from stored procedures with multiple input parameters, but the stored procedure must return only one output cursor. For more information, see [Returning results with Oracle REF CURSORs](https://learn.microsoft.com/dotnet/framework/data/adonet/retrieving-data-using-a-datareader#returning-results-with-oracle-ref-cursors) in "Retrieve data using a DataReader."
+  
+ For more information, see [Oracle Connection Type (SSRS)](oracle-connection-type-ssrs.md). For more information about the associated query designer, see [Graphical Query Designer User Interface](graphical-query-designer-user-interface.md).  
+  
+ You can also create models based on an Oracle database.  
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="Teradata"></a> Teradata Data Processing Extension  
+ When you select data source type **Teradata**, you are selecting a  Reporting Services 
+ data processing extension that extends the .NET Framework Data Provider for Teradata. To retrieve report data from Teradata, the system administrator must install the .NET Framework Data Provider for Teradata on the report authoring client to edit and preview reports on the client and on the report server to view published reports.  
+  
+ For report server projects, there is not a graphical query designer available for this extension. You must use the text-based query designer to create queries.  
+  
+ The following table shows which versions of the .NET Data Provider for Teradata are supported for defining a data source in a report definition in  SQL Server Data Tools - Business Intelligence 
+:  
+  
+| SQL Server Data Tools - Business Intelligence 
+ | version | Teradata version | .NET Framework Data Provider for Teradata version |
+| --- | --- | --- |
+| SQL Server 2008 (10.0.x) |
+| 12.00 | 12.00.01 |
+| SQL Server 2008 (10.0.x) |
+| 6.20 | 12.00.01 |
+| SQL Server 2008 (10.0.x) |
+| 13.00 | 13.0.0.1 |
+| SQL Server 2008 R2 (10.50.x) |
+| 12.00 | 12.00.01 |
+| SQL Server 2008 R2 (10.50.x) |
+| 6.20 | 12.00.01 |
+| SQL Server 2008 R2 (10.50.x) |
+| 13.00 | 13.0.0.1 |
+| SQL Server 2012 (11.x) |
+| 6.20 | 12.00.01 |
+| SQL Server 2012 (11.x) |
+| 12.00 | 12.00.01 |
+| SQL Server 2012 (11.x) |
+| 13.00 | 13.0.0.1 |
+| SQL Server 2012 (11.x) |
+| 14.00 | 14.00.01 |
+| SQL Server 2016 | 13.00 | 13.0.0.1 |
+| SQL Server 2016 | 14.00 | 14.00.01 |
+| SQL Server 2016 | 15.00 | 15.00.01 |
+  
+ Multivalue parameters are supported by this extension. Macros can be specified in a query by using the EXECUTE command in query mode TEXT.  
+  
+ For more information, see [Teradata Connection Type (SSRS)](teradata-connection-type-ssrs.md).  
+ 
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="SharePointList"></a> SharePoint List Data Extension  
+  Reporting Services 
+ includes the  Microsoft 
+  SQL Server 
+  Reporting Services 
+ SharePoint List Data Extension so that you can use SharePoint lists as a source of data in a report. You can retrieve list data from the following:  
+ 
+-   SharePoint Server 2019
+
+-   SharePoint Server 2016  
+
+-    SharePoint Server 2013 
+  
+  
+ There are three implementations of the SharePoint List data provider.  
+  
+1.  From a report authoring environment such as Report Builder or Report Designer in  SQL Server Data Tools - Business Intelligence 
+, or for a report server that is configured in native mode, list data comes from the Lists.asmx Web service for the SharePoint site.  
+  
+2.  On a report server that is configured in SharePoint integrated mode, list data comes from either the corresponding Lists.asmx Web service or from programmatic calls to the SharePoint API. In this mode, you can retrieve list data from a SharePoint farm.  
+  
+3.  For  SharePoint Server 2013 
+ and SharePoint Server 2016, the  Microsoft 
+  SQL Server 
+  Reporting Services 
+ Add-in for  Microsoft 
+ SharePoint Technologies enables you to retrieve list data from a Lists.asmx Web service for a SharePoint site, or from SharePoint site that is part of a SharePoint farm. This scenario is also known as *local mode* because a report server is not required.  
+  
+ The credentials that you can specify depend on the implementation that the client application uses. For more information, see [SharePoint List Connection Type (SSRS)](sharepoint-list-connection-type-ssrs.md).  
+  
+###  <a name="XML"></a> XML Data Processing Extension  
+  Reporting Services 
+ includes an XML data processing extension so that you can use XML data in a report. The data can be retrieved from an XML document, a Web service, or a Web-based application that can be accessed by way of a URL. For more information, see [XML Connection Type (SSRS)](xml-connection-type-ssrs.md). For more information about the associated query designer, see the text-based query designer section in [Graphical Query Designer User Interface](graphical-query-designer-user-interface.md).
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="SAPBW"></a> SAP BW Data Processing Extension  
+  Reporting Services 
+ includes a data processing extension that allows you to use data from an SAP BW data source in a report.
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+###  <a name="Hyperion"></a> Hyperion Essbase Business Intelligence Data Processing Extension  
+  Reporting Services 
+ includes a data processing extension that allows you to use data from a  Hyperion Essbase 
+ data source in a report.  
+  
+ For more information, see [Hyperion Essbase Connection Type (SSRS)](hyperion-essbase-connection-type-ssrs.md). For more information about the associated query designer, see [Hyperion Essbase Query Designer User Interface](hyperion-essbase-query-designer-user-interface.md).  
+  
+ For more information about  Hyperion Essbase 
+, see [Using SQL Server Reporting Services with Hyperion Essbase](hyperion-essbase-query-designer-user-interface.md). 
+  
+ [Return to Data sources table](#DataSourcesTable)  
+  
+## Related content
+
+- [Create data connection strings in Report Builder](data-connections-data-sources-and-connection-strings-report-builder-and-ssrs.md)
+- [Report Datasets (SSRS)](report-datasets-ssrs.md)
+- [Try the Reporting Services forum](https://learn.microsoft.com/answers/search.html?c=\&f=\&includeChildren=\&q=ssrs+OR+reporting+services\&redirect=search%2fsearch\&sort=relevance\&type=question+OR+idea+OR+kbentry+OR+answer+OR+topic+OR+user)

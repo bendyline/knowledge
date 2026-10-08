@@ -1,0 +1,51 @@
+---
+title: "MSSQLSERVER_7988"
+description: "MSSQLSERVER_7988"
+author: MashaMSFT
+ms.author: mathoma
+ms.date: "04/04/2017"
+ms.service: sql
+ms.subservice: supportability
+ms.topic: "reference"
+helpviewer_keywords:
+  - "7988 (Database Engine error)"
+---
+# MSSQLSERVER_7988
+ 
+**Applies to:**
+ 
+
+](../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+  
+## Details  
+  
+| Attribute | Value |
+| :--- | :--- |
+| Product Name | SQL Server |
+| Event ID | 7988 |
+| Event Source | MSSQLSERVER |
+| Component | SQLEngine |
+| Symbolic Name | DBCC2_PRE_CHECKS_CHAIN_LOOP_DETECTED |
+| Message Text | System table pre-checks: Object ID O_ID. Loop in data chain detected at P_ID. Check statement terminated because of an irreparable error. |
+  
+## Explanation  
+The first phase of a DBCC CHECKDB is to do primitive checks on the data pages of critical system tables. If any errors are found, they cannot be repaired; therefore, DBCC CHECKDB terminates immediately. A page linkage loop has been detected on page *P_ID*. A page linkage loop occurs when the next page pointers from a page eventually return to the page.  
+  
+## User Action  
+  
+### Look for Hardware Failure  
+Run hardware diagnostics and correct any problems. Also examine the  Microsoft 
+ Windows system and application logs and the  SQL Server 
+ error log to see whether the error occurred as the result of hardware failure. Fix any hardware-related problems that are contained in the logs.  
+  
+If you have persistent data corruption problems, try to swap out different hardware components to isolate the problem. Check to make sure that the system does not have write-caching enabled on the disk controller. If you suspect write-caching to be the problem, contact your hardware vendor.  
+  
+Finally, you might find it useful to switch to a new hardware system. This switch may include reformatting the disk drives and reinstalling the operating system.  
+  
+### Restore from Backup  
+If the problem is not hardware related and a known clean backup is available, restore the database from the backup.  
+  
+### Run DBCC CHECKDB  
+Not applicable. This error cannot be repaired automatically. If you cannot restore the database from a backup, contact  Microsoft 
+ Service and Support (CSS).

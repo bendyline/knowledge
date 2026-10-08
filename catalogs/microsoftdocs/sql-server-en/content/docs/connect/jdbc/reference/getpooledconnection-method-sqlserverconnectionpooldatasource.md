@@ -1,0 +1,31 @@
+---
+title: "getPooledConnection Method (SQLServerConnectionPoolDataSource)"
+description: "getPooledConnection Method (SQLServerConnectionPoolDataSource)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnectionPoolDataSource.getPooledConnection"
+apitype: "Assembly"
+---
+# getPooledConnection Method (SQLServerConnectionPoolDataSource)
+
+
+  Tries to establish a physical database connection that can be used as a pooled connection.  
+  
+## Overload List  
+  
+| Name | Description |
+| --- | --- |
+| [getPooledConnection ()](getpooledconnection-method.md) | Tries to establish a physical database connection that can be used as a pooled connection. |
+| [getPooledConnection (java.lang.String, java.lang.String)](getpooledconnection-method-java-lang-string-java-lang-string.md) | Tries to establish a physical database connection that can be used as a pooled connection based on the given user name and password. |
+  
+## Related content
+
+- [SQLServerConnectionPoolDataSource Methods](sqlserverconnectionpooldatasource-methods.md)
+- [SQLServerConnectionPoolDataSource Members](sqlserverconnectionpooldatasource-members.md)
+- [SQLServerConnectionPoolDataSource Class](sqlserverconnectionpooldatasource-class.md)

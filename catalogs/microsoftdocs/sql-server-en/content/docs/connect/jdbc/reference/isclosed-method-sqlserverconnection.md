@@ -1,0 +1,41 @@
+---
+title: "isClosed Method (SQLServerConnection)"
+description: "isClosed Method (SQLServerConnection)"
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: "01/19/2017"
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: reference
+apilocation: "sqljdbc.jar"
+apiname: "SQLServerConnection.isClosed"
+apitype: "Assembly"
+---
+# isClosed Method (SQLServerConnection)
+
+
+  Indicates whether this [SQLServerConnection](sqlserverconnection-class.md) object has been closed.  
+  
+## Syntax  
+  
+```  
+  
+public boolean isClosed()  
+```  
+  
+## Return Value  
+ **true** if the connection is close, **false** if it is not.  
+  
+## Exceptions  
+ [SQLServerException](sqlserverexception-class.md)  
+  
+## Remarks  
+ This isClosed method is specified by the isClosed method in the java.sql.Connection interface.  
+  
+ Verifies the state of the called SQLServerConnection object. A connection is closed if the [close](close-method-sqlserverconnection.md) method has been called on it, or if certain fatal errors have occurred. This method will return **true** only when it is called after the close method has been called.  
+  
+## Related content
+
+- [SQLServerConnection Members](sqlserverconnection-members.md)
+- [SQLServerConnection Class](sqlserverconnection-class.md)

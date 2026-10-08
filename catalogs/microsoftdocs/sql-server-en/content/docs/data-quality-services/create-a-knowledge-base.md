@@ -1,0 +1,79 @@
+---
+title: "Create a Knowledge Base"
+description: "Create a Knowledge Base"
+ms.date: "06/04/2013"
+ms.service: sql
+ms.subservice: data-quality-services
+ms.topic: how-to
+f1_keywords:
+  - "sql13.dqs.kb.selectkb.f1"
+  - "sql13.dqs.kb.newkb.f1"
+ms.custom:
+  - build-2025
+---
+# Create a Knowledge Base
+
+
+**Applies to:**
+ 
+
+](../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+> **Important:**  
+> Data Quality Services (DQS) is [removed](https://learn.microsoft.com/lifecycle/definitions#removal) in  SQL Server 2025 (17.x) 
+. We continue to support DQS in  SQL Server 2022 (16.x) 
+ and earlier versions.
+
+
+  This topic describes how to create a knowledge base in  Data Quality Services 
+ (DQS), and prepare it for domain management, knowledge discovery, or adding a matching policy.  
+  
+<a id="BeforeYouBegin"></a>
+<a id="Prerequisites"></a>
+
+## Prerequisites
+
+To create a knowledge base, you must have installed  Data Quality Server 
+ and  Data Quality Client 
+.  
+  
+<a id="Security"></a>
+<a id="Permissions"></a>
+
+## Permissions
+
+You must have the dqs_kb_editor or the dqs_administrator role on the DQS_MAIN database to create a knowledge base.  
+  
+##  <a name="Createaknowledgebase"></a> Create a knowledge base  
+  
+1.   Start Data Quality Client. For information about doing so, see 
+ [Run the Data Quality Client Application](run-the-data-quality-client-application.md).  
+  
+2.  In the  Data Quality Client 
+ home screen, click **New knowledge base**.  
+  
+3.  Enter a name and description for the new knowledge base.  
+  
+4.  In **Create knowledge base from**, select what to base the knowledge base on:  
+  
+    -   Select **None** if you do not want to base the new knowledge base on an existing knowledge base or data file.  
+  
+    -   Select **Existing Knowledge Base** to base the new knowledge base on a knowledge base that has already been created on  Data Quality Server 
+, or on the default knowledge base. Select the knowledge base from the **Select Knowledge Base** dropdown list, or click **Browse** to display the **Select a Knowledge Base** dialog box, select an existing knowledge base to base the new knowledge base on, and then click **OK**. When you select a knowledge base from the tablet, the domains and matching rules in the knowledge base will be displayed in the right-hand pane of the dialog box. You can also select the **DQS Data** knowledge base, which is the default knowledge base that contains common out-of-the-box domains and knowledge related to U.S. company, address, and party data.  
+  
+    -   Select **Import from DQS File** to base the new knowledge base on a DQS file on  Data Quality Server 
+. Click **Browse**, select a DQS data file with an extension of .dqs, and then click **OK**.  
+  
+5.  In **Select Activity**, select the activity that you want to perform on the new knowledge base:  
+  
+    -   Select **Domain Management** to create the knowledge base and enter the screens that you use to modify the domains in the knowledge base.  
+  
+    -   Select **Knowledge Discovery** to create the knowledge base and enter the wizard that you use to analyze a data sample and populate the domains of the knowledge base with the results.  
+  
+    -   Select **Matching Policy** to create a matching policy and add it to the knowledge base.  
+  
+6.  Click **Create**.  
+  
+##  <a name="FollowUp"></a> Follow Up: After Creating a Knowledge Base  
+ After you create a knowledge base, you are presented with a wizard that you can use to perform knowledge discovery, a wizard to create a matching policy, or pages to perform domain management. For more information about the knowledge discovery, domain management, or matching policy, see [Perform Knowledge Discovery](perform-knowledge-discovery.md), [Managing a Domain](managing-a-domain.md), or [Create a Matching Policy](create-a-matching-policy.md).

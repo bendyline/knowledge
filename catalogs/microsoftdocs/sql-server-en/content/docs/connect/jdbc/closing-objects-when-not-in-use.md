@@ -1,0 +1,23 @@
+---
+title: Closing objects when not in use
+description: In JDBC programming, it's important to close objects when the aren't in use. Closing improves performance and frees up client and server resources quickly.
+author: dlevy-msft-sql
+ms.author: dlevy
+ms.reviewer: davidengel, machavan, sunilbs
+ms.date: 04/20/2021
+ms.service: sql
+ms.subservice: connectivity
+ms.topic: concept-article
+---
+# Closing objects when not in use
+
+
+
+When you work with closable objects of  Microsoft JDBC Driver for SQL Server 
+, you should explicitly close them by using their close methods when they're no longer needed. This pattern particularly applies to [SQLServerResultSet](reference/sqlserverresultset-class.md) and the Statement objects like [SQLServerStatement](reference/sqlserverstatement-class.md), [SQLServerPreparedStatement](reference/sqlserverpreparedstatement-class.md), and [SQLServerCallableStatement](reference/sqlservercallablestatement-class.md). Closing improves performance by freeing up driver and server resources quickly, instead of waiting for the Java Virtual Machine garbage collector to do it for you.
+
+Closing objects is crucial to maintaining good concurrency on the server when you're using scroll locks. Scroll locks in the last accessed fetch buffer are held until the result set is closed. Similarly, statement prepared handles are held until the statement is closed. If you're reusing a connection for multiple statements, closing statements before they go out of scope allows the server to clean up the prepared handles earlier.
+
+## Related content
+
+- [Improving performance and reliability (JDBC)](improving-performance-and-reliability-with-the-jdbc-driver.md)

@@ -1,0 +1,62 @@
+---
+title: "Executing Statements (ODBC)"
+description: "Executing Statements (ODBC)"
+author: markingmyname
+ms.author: maghan
+ms.date: "03/14/2017"
+ms.service: sql
+ms.subservice: native-client
+ms.topic: "reference"
+helpviewer_keywords:
+  - "SQL Server Native Client ODBC driver, statements"
+  - "statements [ODBC]"
+  - "ODBC applications, statements"
+  - "statements [ODBC], executing"
+---
+# Executing Statements (ODBC)
+
+**Applies to:**
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+ 
+
+](../../../sql-server/sql-docs-navigation-guide.md#applies-to)
+
+ 
+
+
+ 
+
+
+
+
+
+  The  SQL Server 
+ Native Client ODBC driver offers a variety ways to execute SQL statements in a  SQL Server 
+ database:  
+  
+-   Direct execution  
+  
+-   Prepared execution  
+  
+ Direct execution involves building a character string containing a  Transact-SQL  statement and submitting it for execution using the **SQLExecDirect** function. Prepared execution involves building a character string containing a  Transact-SQL  statement and then executing it in two stages. The first stage uses the [SQLPrepare Function](../../../odbc/reference/syntax/sqlprepare-function.md) function to parse and compile the execution plan for the statement in the  Database Engine 
+. The second stage uses the **SQLExecute** function to execute the previously prepared execution plan. This saves the parsing and compiling overhead on each execution. Prepared execution is commonly used by applications to repeatedly execute the same, parameterized SQL statement.  
+  
+ Both direct and prepared execution can execute a single  Transact-SQL  statement or a batch of SQL statements, or they can call a stored procedure.  
+  
+## In This Section  
+  
+-   [Direct Execution](direct-execution.md)  
+  
+-   [Prepared Execution](prepared-execution.md)  
+  
+-   [Procedures](procedures.md)  
+  
+-   [Batches of Statements](batches-of-statements.md)  
+  
+-   [Effects of ISO Options](effects-of-iso-options.md)  
+  
+## Related content
+
+- [Executing Queries (ODBC)](../executing-queries-odbc.md)

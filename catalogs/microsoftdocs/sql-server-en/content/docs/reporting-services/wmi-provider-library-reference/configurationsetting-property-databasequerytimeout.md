@@ -1,0 +1,41 @@
+---
+title: "DatabaseQueryTimeout property (WMI MSReportServer_ConfigurationSetting)"
+description: "DatabaseQueryTimeout property (WMI MSReportServer_ConfigurationSetting)"
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: wmi-provider-library-reference
+ms.topic: ui-reference
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "DatabaseQueryTimeout property"
+apilocation: "reportingservices.mof"
+apiname: "DatabaseQueryTimeout Property"
+apitype: MOFDef
+---
+# ConfigurationSetting property - DatabaseQueryTimeout
+  Specifies the number of seconds that must elapse before the report server assumes the command failed or took too much time to perform. The report server is timing the querying against the SQL catalog, not a data source for the report. Read/write.  
+  
+## Syntax  
+  
+```vb  
+Public Dim DatabaseQueryTimeout As UInt32  
+```  
+  
+```csharp  
+public UInt32 DatabaseQueryTimeout;  
+```  
+  
+## Property values  
+ A 32-bit unsigned **integer** object that represents the number of seconds that the query is allowed to run.  
+  
+## Example code  
+ [MSReportServer_ConfigurationSetting class](msreportserver-configurationsetting-class.md)  
+  
+## Requirements  
+ **Namespace:**    **root\Microsoft\SqlServer\ReportServer\\<*InstanceName*>\v13\Admin**  
+  
+  
+## Related content
+
+- [MSReportServer_ConfigurationSetting members](msreportserver-configurationsetting-members.md)

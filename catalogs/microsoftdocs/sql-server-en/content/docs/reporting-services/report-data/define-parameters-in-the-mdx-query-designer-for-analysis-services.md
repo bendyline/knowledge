@@ -1,0 +1,84 @@
+---
+title: "Define Parameters in the MDX Query Designer for Analysis Services"
+description: Learn how to define query parameters in the Multidimensional Expression (MDX) query designer for Analysis Services.
+ms.date: 09/25/2024
+ms.service: reporting-services
+ms.subservice: report-data
+ms.topic: how-to
+ms.custom:
+  - updatefrequency5
+helpviewer_keywords:
+  - "parameters [Reporting Services], MDX"
+  - "Multidimensional Expressions [Reporting Services]"
+  - "Data Mining Prediction [Reporting Services]"
+  - "MDX [Reporting Services], defining parameters"
+  - "DMX [Reporting Services]"
+---
+# Define Parameters in the MDX Query Designer for Analysis Services
+  To parameterize an MDX query for an  Analysis Services 
+ data source, you must add a query parameter to the query. In the MDX query designer, you can add a query parameter in both Design mode and Query mode by specifying a filter. After you define the query with a query parameter, Reporting Services automatically creates a report parameter and a dataset to provide the list of valid values. This enables a user to specify a value that is passed directly to the query.  
+  
+> **Note:**  
+>    You can create and modify paginated report definition (.rdl) files in Microsoft Report Builder, [Power BI Report Builder](https://learn.microsoft.com/power-bi/paginated-reports/report-builder-power-bi), and in Report Designer in SQL Server Data Tools.
+  
+  
+### To define a query parameter in MDX in Design mode  
+  
+1.  In the Report Data pane, right-click on a dataset created from a  SQL Server 
+  Analysis Services 
+ data source type, and then click **Query**. The MDX query designer opens in Design mode.  
+  
+2.  Drag a dimension to the filter area and drop it on the first cell in the **Dimension** column.  
+  
+3.  In the **Hierarchy** column, choose a value from the dropdown list.  
+  
+4.  In the **Operator** column, choose an operator for the dropdown list.  
+  
+5.  In the **Filter Expression** column, select individual values from the dropdown list, or click the **All** member to choose all values.  
+  
+6.  In the **Parameters** column, select the check box to create a report parameter.  
+  
+7.  Click **Run**.  
+  
+     After you run the query, click **Design** on the toolbar to toggle to Query mode to view the MDX query that was created. Do not change the query text in Query mode if you want to continue to use Design mode to develop the query. Click **Design** to toggle back to Design mode.  
+  
+8.  Select **OK**.
+  
+     In the Report Data pane, expand the Parameters node to display the report parameter that was automatically created for the filter.  
+  
+     To view the dataset that provides available values for the report parameter, right-click any blank area in the Report Data pane, and then click **Show Hidden Datasets**. The Report Data pane displays all datasets in the report.  
+  
+### To define a query parameter in MDX in Query mode  
+  
+1.  In the Report Data pane, right-click on a dataset created from a  SQL Server 
+  Analysis Services 
+ data source type, and then click **Query**. The MDX query designer opens in Design mode.  
+  
+2.  On the toolbar, click **Design** to toggle to Query mode.  
+  
+3.  On the MDX query designer toolbar, click **Query Parameters** (Icon for the Query Parameters dialog box). The Query Parameters dialog box opens.  
+  
+4.  In the **Parameter** column, click **\<Enter Parameter>**, and then type the name of a parameter.  
+  
+5.  In the **Dimension** column, choose a value from the dropdown list.  
+  
+6.  In the **Hierarchy** column, choose a value from the dropdown list.  
+  
+7.  In the **Multiple values** column, select the check box to create a multivalue parameter.  
+  
+8.  In the **Default** column, from the dropdown list, select a single value or multiple values depending on your choice in step 5.  
+  
+9.  Select **OK**.
+  
+10. On the query designer toolbar, click **Run**.  
+  
+11. Select **OK**.
+  
+     In the Report Data pane, expand the Parameters node to display the report parameter that was automatically created for the filter.  
+  
+     To view the dataset that provides available values for the report parameter, right-click any blank area in the Report Data pane, and then click **Show Hidden Datasets**. The Report Data pane displays all datasets in the report.  
+  
+## Related content
+
+- [Analysis Services Connection Type for MDX (SSRS)](analysis-services-connection-type-for-mdx-ssrs.md)
+- [Analysis Services MDX Query Designer User Interface](analysis-services-mdx-query-designer-user-interface.md)

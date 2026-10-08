@@ -1,0 +1,117 @@
+---
+title: "Step 3: Multi-Turn Conversations"
+description: "Maintain context across multiple exchanges with AgentSession."
+zone_pivot_groups: programming-languages
+author: eavanvalkenburg
+ms.topic: tutorial
+ms.author: edvan
+ms.date: 10/07/2026
+ms.service: agent-framework
+ai-usage: ai-assisted
+ms.custom: update-code1
+---
+
+# Step 3: Multi-Turn Conversations
+
+Use a session to maintain conversation context so the agent remembers what was said earlier.
+
+**Applies to: programming-language-csharp**
+
+
+Use `AgentSession` to maintain context across multiple calls:
+
+```csharp
+using System;
+using Azure.AI.Projects;
+using Azure.Identity;
+using Microsoft.Agents.AI;
+
+var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
+    ?? throw new InvalidOperationException("Set AZURE_OPENAI_ENDPOINT");
+var deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME") ?? "gpt-4o-mini";
+
+AIAgent agent = new AIProjectClient(new Uri(endpoint), new DefaultAzureCredential())
+    .AsAIAgent(
+        model: deploymentName,
+        instructions: "You are a friendly assistant. Keep your answers brief.",
+        name: "ConversationAgent");
+
+// Create a session to maintain conversation history
+AgentSession session = await agent.CreateSessionAsync();
+
+// First turn
+Console.WriteLine(await agent.RunAsync("My name is Alice and I love hiking.", session));
+
+// Second turn — the agent remembers the user's name and hobby
+Console.WriteLine(await agent.RunAsync("What do you remember about me?", session));
+```
+
+> **Warning:**
+> `DefaultAzureCredential` is convenient for development but requires careful consideration in production. In production, consider using a specific credential (e.g., `ManagedIdentityCredential`) to avoid latency issues, unintended credential probing, and potential security risks from fallback mechanisms.
+
+> **Tip:**
+> See [here](https://github.com/microsoft/agent-framework/tree/main/dotnet/samples/01-get-started/03_multi_turn) for a full runnable sample application.
+
+
+
+**Applies to: programming-language-python**
+
+
+The complete sample creates an agent and reuses one `AgentSession` across multiple calls:
+
+[Code reference unavailable in this source snapshot: ~/../agent-framework-code/python/samples/01-get-started/03_multi_turn.py](https://github.com/MicrosoftDocs/azure-ai-docs/blob/766e4b444667054247ad440e9c5a418efa71c050/agent-framework/get-started/multi-turn.md)
+
+> **Tip:**
+> See the [full sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/01-get-started/03_multi_turn.py) for the complete runnable file.
+
+
+
+**Applies to: programming-language-go**
+
+
+Use `agent.Session` to maintain context across multiple calls:
+
+```go
+a := foundryprovider.NewAgent(
+    endpoint,
+    token,
+    foundryprovider.ModelDeployment(model),
+    foundryprovider.AgentConfig{
+        Instructions: "You are a friendly assistant. Keep your answers brief.",
+        Config: agent.Config{
+            Name: "ConversationAgent",
+        },
+    },
+)
+
+ctx := context.Background()
+
+// Create a session to maintain conversation history.
+session, err := a.CreateSession(ctx)
+if err != nil {
+    panic(err)
+}
+
+// First turn.
+resp, err := a.RunText(ctx, "My name is Alice and I love hiking.", agent.WithSession(session)).Collect()
+fmt.Println(resp, err)
+
+// Second turn — the agent remembers the user's name and hobby.
+resp, err = a.RunText(ctx, "What do you remember about me?", agent.WithSession(session)).Collect()
+fmt.Println(resp, err)
+```
+
+> **Tip:**
+> See the [full sample](https://github.com/microsoft/agent-framework-go/blob/main/examples/01-get-started/03_multi_turn/main.go) for the complete runnable file.
+
+
+
+## Next steps
+
+> 
+> [Step 4: Memory & Persistence](memory.md)
+
+**Go deeper:**
+
+- [Multi-turn conversations](../concepts/agents/conversations/session.md) — advanced conversation patterns
+- [Middleware](../concepts/agents/middleware/index.md) — intercept and modify agent interactions

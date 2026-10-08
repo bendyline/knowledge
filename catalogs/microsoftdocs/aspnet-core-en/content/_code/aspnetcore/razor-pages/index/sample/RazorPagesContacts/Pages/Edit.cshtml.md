@@ -1,0 +1,30 @@
+# Source code: aspnetcore/razor-pages/index/sample/RazorPagesContacts/Pages/Edit.cshtml
+
+Complete source file; linked examples may select a region or line range.
+
+```
+@page "{id:int}"
+@model RazorPagesContacts.Pages.EditModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Edit Customer";
+}
+
+<h1>Edit Customer - @Model.Customer.Id</h1>
+<form method="post">
+    <div asp-validation-summary="All"></div>
+    <input asp-for="Customer.Id" type="hidden" />
+    <div>
+        <label asp-for="Customer.Name"></label>
+        <div>
+            <input asp-for="Customer.Name" />
+            <span asp-validation-for="Customer.Name" ></span>
+        </div>
+    </div>
+ 
+    <div>
+        <button type="submit">Save</button>
+    </div>
+</form>
+```

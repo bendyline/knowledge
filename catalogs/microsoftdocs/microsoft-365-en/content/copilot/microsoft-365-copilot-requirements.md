@@ -1,0 +1,148 @@
+---
+title: App and network requirements for Microsoft 365 Copilot admins
+f1.keywords:
+- NOCSH
+ms.author: efrene
+author: efrene
+manager: scotv
+ms.date: 03/24/2026
+ms.update-cycle: 180-days
+audience: Admin
+ms.topic: overview
+ms.service: microsoft-365-copilot
+ms.subservice: reporting
+ms.localizationpriority: medium
+ms.collection:
+- scotvorg
+- m365copilot
+- magic-ai-copilot
+- operations-pod
+description: Enterprise and company IT admins can learn about the Microsoft 365 app and network requirements for Microsoft 365 Copilot. Admins must configure features in popular apps, like OneDrive, Teams, Loop, and Whiteboard that allow Copilot. Allow the network and endpoint URLs for Microsoft 365 Copilot to work properly in your network solution. Check your app privacy settings and run the Office Feature Updates task.
+ms.custom: [copilot-learning-hub]
+appliesto:
+- ✅ Microsoft 365 Copilot
+---
+
+# Microsoft 365 app and network requirements for Microsoft 365 Copilot
+
+[Microsoft 365 Copilot](microsoft-365-copilot-overview.md) is an AI-powered productivity tool that integrates with Microsoft 365 Apps. This integration allows users to use Copilot in individual apps, such as Word, PowerPoint, Teams, Excel, Outlook, and more. The Copilot experiences are designed to provide users with an AI assistant in the apps they use every day.
+
+As a result of this integration, there are some app and network requirements for Microsoft 365 Copilot to integrate with your Microsoft 365 apps. These requirements are nearly identical to the requirements for using Microsoft 365 Apps.
+
+As part of your [Microsoft 365 Copilot adoption](microsoft-365-copilot-enablement-resources.md), make sure you configure the app and network requirements that allow the app integration.
+
+Diagram that shows the app and network requirements step to adopt and enable Microsoft 365 Copilot.
+
+This article lists the Microsoft 365 app and network requirements to use Microsoft 365 Copilot in your Microsoft 365 apps.
+
+This article applies to:
+
+- Microsoft 365 Copilot
+
+## Prerequisites
+
+- Users must have a Microsoft 365 license assigned to them. You can find the list of eligible base licenses in [Microsoft 365 Copilot license options](microsoft-365-copilot-licensing.md) or in the [Microsoft 365 Copilot service description guide](https://learn.microsoft.com/office365/servicedescriptions/office-365-platform-service-description/microsoft-365-copilot).
+
+- Users must have [Microsoft Entra ID](https://learn.microsoft.com/microsoft-365/admin/add-users/add-users) accounts. You can add or sync users using the [onboarding wizard in the Microsoft 365 admin center](https://admin.microsoft.com/Adminportal/Home?Q=m365setup#/modernonboarding/identitywizard).
+
+- Microsoft 365 Copilot is only supported on primary mailboxes that are hosted on Exchange Online.
+
+> **Note:**
+> Chat experiences in Word, Excel, PowerPoint vary depending on your tenant configuration and license. Learn more in [Microsoft 365 copilot overview](microsoft-365-copilot-overview.md#copilot-features-in-microsoft-365-apps).
+> If you'd like to enable users with priority access to these capabilities, learn more about [Microsoft 365 Copilot](https://www.microsoft.com/microsoft-365/microsoft-365-enterprise).
+
+## App requirements
+
+- **[Microsoft 365 Apps](https://learn.microsoft.com/deployoffice/about-microsoft-365-apps)** - The apps must be deployed. You can use the [Microsoft 365 Apps setup guide in the Microsoft 365 admin center](https://admin.microsoft.com/Adminportal/Home?Q=learndocs#/modernonboarding/microsoft365copilotsetupguide) to deploy to your users.
+
+  > **Note:**
+  >
+  > - For Copilot to work in Word Online, Excel Online, and PowerPoint Online, you must enable third-party cookies.
+  > - Review your privacy settings for Microsoft 365 Apps. These settings might affect the availability of Microsoft 365 Copilot features. For more information, see [Microsoft 365 Copilot and privacy controls for connected experiences](microsoft-365-copilot-privacy.md#microsoft-365-copilot-and-privacy-controls-for-connected-experiences).
+  > - Copilot isn't available when using device-based licensing for Microsoft 365 Apps for enterprise.
+
+- **Microsoft OneDrive** - Some features in Microsoft 365 Copilot, such as file restore and OneDrive management, require that users have a [OneDrive account](https://learn.microsoft.com/sharepoint/introduction). You can use the [OneDrive setup guide in the Microsoft 365 admin center](https://admin.microsoft.com/Adminportal/Home?Q=m365setup#/modernonboarding/onedrivequickstartguide) to enable OneDrive for your users.
+
+- **Microsoft Outlook** - Microsoft 365 Copilot works with classic Outlook and new Outlook (for [Windows](https://support.microsoft.com/office/getting-started-with-the-new-outlook-for-windows-656bb8d9-5a60-49b2-a98b-ba7822bc7627) and [Mac](https://support.microsoft.com/office/the-new-outlook-for-mac-6283be54-e74d-434e-babb-b70cefc77439)). Users can switch to the new Outlook by selecting **Try the new Outlook** in their existing Outlook client.
+
+  > **Important:**
+  > Microsoft 365 Copilot is only supported on primary mailboxes that are hosted on Exchange Online. It isn't available on a user's archive mailbox, group mailboxes, or shared and delegate mailboxes that they have access to.
+
+- **Microsoft Teams** - You can use the [Microsoft Teams setup guide in the Microsoft 365 admin center](https://admin.microsoft.com/Adminportal/Home?Q=m365setup#/modernonboarding/microsoftteamssetupguide) to configure popular Teams settings, including external access, guest access, team creation permissions, and more. Copilot in Teams is available on Windows, Mac, web, Android, and iOS.
+
+  To enable Copilot in Teams to reference meeting content after the meeting ends, enable transcription or meeting recording. To learn more about configuring transcription and recording, see [Configure transcription and captions for Teams meetings](https://learn.microsoft.com/microsoftteams/meeting-transcription-captions) and [Teams meeting recording](https://learn.microsoft.com/microsoftteams/meeting-recording).
+
+- **Microsoft Teams Phone** - Copilot in [Teams Phone](https://learn.microsoft.com/microsoftteams/what-is-phone-system-in-office-365) supports voice over Internet Protocol (VOIP) and public switched telephone network (PSTN) calls.
+
+  - For support across VoIP calls, you need a Microsoft 365 Copilot license.
+  - To use Copilot for PSTN calls, you need a Teams Phone license, a calling plan, and a Microsoft 365 Copilot license.
+  - To enable Copilot in Teams Phone, you need to turn on transcription or recording.
+
+  For VoIP callers, all participants see a notification that the call is being transcribed or recorded. For PSTN callers, all participants hear an announcement that the call is being recorded.
+
+- **Microsoft Loop** - To use Microsoft 365 Copilot with Microsoft Loop, you must have Loop enabled for your tenant. You enable Loop in the [Microsoft 365 admin center](https://admin.microsoft.com/Adminportal/Home#/Settings/Services/:/Settings/L1/Loop) or the [Microsoft 365 Apps admin center](https://config.office.com) under **Customization** \| **Policy Management**.
+
+  To learn more, see:
+
+  - [Manage Loop workspaces in Syntex repository services](https://learn.microsoft.com/microsoft-365/loop/loop-workspaces-configuration)
+  - [Learn how to enable the Microsoft Loop app](https://techcommunity.microsoft.com/t5/microsoft-365-blog/learn-how-to-enable-the-microsoft-loop-app-now-in-public-preview/ba-p/3769013).
+
+- **Microsoft Whiteboard** - To use Microsoft 365 Copilot with Microsoft Whiteboard, you must have Whiteboard enabled for your tenant. To learn more about Microsoft Whiteboard, see [Manage access to Microsoft Whiteboard for your organization](https://learn.microsoft.com/microsoft-365/whiteboard/manage-whiteboard-access-organizations).
+
+## Review app privacy
+
+Review your Microsoft 365 apps privacy settings. The privacy settings in your Microsoft 365 apps can affect the availability of Microsoft 365 Copilot features. To ensure that users can access Copilot features, review the privacy settings in your Microsoft 365 apps.
+
+To learn more, see [Microsoft 365 Copilot and privacy controls for connected experiences](microsoft-365-copilot-privacy.md#microsoft-365-copilot-and-privacy-controls-for-connected-experiences).
+
+## Run the Office Feature Updates task
+
+The Office Feature Updates task is required for core Copilot experiences in apps such as Word, PowerPoint, Excel, and OneNote, to work properly. This task should be allowed to run on its regular schedule, and allowed to access the required network resources.
+
+For more information about the Office Feature Updates task, see [Office Feature Updates task description and FAQ](https://learn.microsoft.com/microsoft-365/troubleshoot/updates/office-feature-updates-task-faq).
+
+For more information about the network resources that should be allowed, see [Network requirements](#network-requirements) (in this article).
+
+## Network requirements
+
+Configure your network for Microsoft 365 Copilot. Copilot experiences are deeply integrated with Microsoft 365 applications and often use the same [network connections and endpoints that Microsoft 365 apps](https://learn.microsoft.com/microsoft-365/enterprise/urls-and-ip-address-ranges) use.
+
+Baseline network configuration customers should:
+
+- Make sure that the Microsoft 365 endpoints listed in this section aren't blocked within their environment.
+- Verify that their network setup follows [Microsoft 365 network connectivity principles and best practices](https://learn.microsoft.com/microsoft-365/enterprise/microsoft-365-network-connectivity-principles).
+
+✅ **Network endpoint requirements**:
+
+- Allow the [worldwide Microsoft 365 URLs and IP address ranges](https://learn.microsoft.com/microsoft-365/enterprise/urls-and-ip-address-ranges).
+
+✅ **WebSockets (WSS) protocol requirements**:
+
+Verify that your network supports full WSS connectivity from user devices running Microsoft 365 applications to the following domains:
+
+- Microsoft 365 Copilot enterprise experiences: `*.cloud.microsoft`, `*.office.com`
+
+Several Copilot integrations rely on WebSockets (WSS) to deliver a streamlined user experience. Some customer networks might not be configured to handle WSS connections properly, which can result in Copilot application failures. Typical network configurations that affect WSS include:
+
+- The network perimeter blocks the WSS protocol
+- Network devices attempting to perform Transport Layer Security (TLS) inspection of connections
+- Proxy servers enforcing aggressive connection timeouts
+
+✅ **FQDNs and subdomains**:
+
+Some organization might prefer to use granular definitions of endpoints, like individual FQDNs, instead of wildcards to configure their network settings. Due to hyperscale and the dynamic nature of its services, Microsoft 365 can't provide specific FQDNs used by individual features and scenarios. Doing so would result in unmanageable configuration surface, constant customer network changes, and connectivity incidents.
+
+When you review and implement the recommended network configurations, consider all the FQDNs and subdomains where wildcards are specified. These wildcards include functionality that the referenced scenarios require.
+
+✅ **cloud.microsoft domain**:
+
+Microsoft plans to consolidate Copilot experiences for Microsoft 365 under the `*.cloud.microsoft` domain. And, Copilot network requirements and associated required customer network configurations can be further simplified.
+
+For more information, see [Unified cloud.microsoft domain for Microsoft 365 apps](https://learn.microsoft.com/microsoft-365/enterprise/cloud-microsoft-domain).
+
+## Related content
+
+- [Microsoft 365 Copilot setup guide in the Microsoft admin center](https://admin.microsoft.com/Adminportal/Home?Q=learndocs#/modernonboarding/microsoft365copilotsetupguide)
+- [Copilot Prompt Gallery](https://m365.cloud.microsoft/copilot-prompts)
+- [Microsoft 365 Copilot - Microsoft Community Hub](https://techcommunity.microsoft.com/t5/microsoft-365-copilot/ct-p/Microsoft365Copilot)
+- [Microsoft 365 Copilot adoption guide and overview for IT admins](microsoft-365-copilot-reports-for-admins.md)
