@@ -8,6 +8,7 @@ node_modules/
 *.gezk
 coverage/
 *.log
+.DS_Store
 
 # CAP source content is prepared into .work, never versioned with definitions.
 catalogs/caselaw/*/content/
