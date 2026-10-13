@@ -30,7 +30,7 @@
     "@bendyline/gezel-knowledge": "1.2.2",
     "@bendyline/gezk": "1.0.2",
     "@bendyline/squisq": "2.11.12",
-    "@bendyline/squisq-formats": "2.6.12",
+    "@bendyline/squisq-formats": "2.6.18",
     "@huggingface/hub": "2.17.5",
     "@huggingface/transformers": "3.8.1",
     "parse5": "7.3.0",
