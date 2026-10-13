@@ -27,7 +27,7 @@
   "overrides": { "sharp": "0.35.5" },
   "dependencies": {
     "@bendyline/gezel": "1.2.2",
-    "@bendyline/gezel-knowledge": "1.2.2",
+    "@bendyline/gezel-knowledge": "1.2.3",
     "@bendyline/gezk": "1.0.2",
     "@bendyline/squisq": "2.11.12",
     "@bendyline/squisq-formats": "2.6.12",
