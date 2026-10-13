@@ -28,7 +28,7 @@
   "dependencies": {
     "@bendyline/gezel": "1.2.2",
     "@bendyline/gezel-knowledge": "1.2.2",
-    "@bendyline/gezk": "1.0.2",
+    "@bendyline/gezk": "1.0.3",
     "@bendyline/squisq": "2.11.12",
     "@bendyline/squisq-formats": "2.6.12",
     "@huggingface/hub": "2.17.5",
